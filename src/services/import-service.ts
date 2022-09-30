@@ -1,11 +1,10 @@
 import {EventStore} from "../stores/events-store";
 import TranslateService from "./translate-service";
-import {validateDuration} from "../utils/utils";
 import {TriplanEventPreferredTime, TriplanPriority} from "../utils/enums";
 import {ImportEventsConfirmInfo, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
 import ModalService from "./modal-service";
 import {defaultTimedEventDuration} from "../utils/defaults";
-import {formatDuration} from "../utils/time-utils";
+import {formatDuration, validateDuration} from "../utils/time-utils";
 
 const ImportService = {
 

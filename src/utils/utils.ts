@@ -3,20 +3,7 @@ import {EventStore} from "../stores/events-store";
 import moment from "moment";
 import {EventInput} from "@fullcalendar/react";
 import TranslateService from "../services/translate-service";
-
-export function getInputDateTimeValue (date: Date) {
-    return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().split('.')[0];
-}
-
-export function getEventDueDate (event: any){
-    const hoursToAdd = 1;
-    return event.end ? event.end : addHoursToDate(new Date(event.start), hoursToAdd);
-}
-
-export function addHoursToDate (date: Date, hoursToAdd: number) {
-    const hourToMilliseconds = 60 * 60 * 1000;
-    return new Date(date.setTime(date.getTime() + hoursToAdd * hourToMilliseconds))
-}
+import {getEventDueDate} from "./time-utils";
 
 export function padTo2Digits(num: number) {
     return num.toString().padStart(2, '0');
@@ -416,17 +403,6 @@ export const LOADER_DETAILS = () => {
 export function getClasses(...classes: any[]): string {
     return classes.filter(Boolean).join(" ");
     // return _.flatten(classes).filter(Boolean).join(' ');
-}
-
-export function validateDuration(duration: string) {
-    return (
-        duration.split(':').length == 2
-        && !Number.isNaN(duration.split(':')[0])
-        && !Number.isNaN(duration.split(':')[1])
-        && parseInt(duration.split(':')[0]) >= 0
-        && parseInt(duration.split(':')[1]) >= 0
-        && (parseInt(duration.split(':')[0]) + parseInt(duration.split(':')[1])) > 0
-    )
 }
 
 export function priorityKeyToValue(priority: string){
