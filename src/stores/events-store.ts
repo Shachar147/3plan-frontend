@@ -265,7 +265,7 @@ export class EventStore {
         this.sidebarEvents = getDefaultEvents(name);
         this.calendarEvents = getDefaultCalendarEvents(name);
         this.customDateRange = getDefaultCustomDateRange(name);
-        this.calendarLocalCode = calendarLocale || getDefaultCalendarLocale(name);
+        this.setCalendarLocalCode(calendarLocale || getDefaultCalendarLocale(name));
         this.allEventsTripName = name;
     }
 
@@ -343,9 +343,9 @@ export class EventStore {
     }
 
     initBodyLocaleClassName(){
-        document.querySelector("body")!.classList.remove("rtl")
-        document.querySelector("body")!.classList.remove("ltr")
-        document.querySelector("body")!.classList.add(this.getCurrentDirection())
+        document.querySelector("body")!.classList.remove("rtl");
+        document.querySelector("body")!.classList.remove("ltr");
+        document.querySelector("body")!.classList.add(this.getCurrentDirection());
     }
 
     initCustomDatesVisibilityBasedOnViewMode(){
