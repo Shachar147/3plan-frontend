@@ -30,7 +30,7 @@ const LoadingPage = (props: {
                                 fontWeight: "bold",
                                 position: "relative"
                             }}>
-                            <div className="header" style={textStyle}>
+                            <div className="loading-header" style={textStyle}>
                                 {props.title}
                             </div>
                             <p style={textStyle} dangerouslySetInnerHTML={{ __html: props.message }} />
