@@ -9,8 +9,7 @@ export function useIntervalWhile(action: () => boolean, interval: number, maxTri
 	}, deps);
 }
 
-// @ts-ignore
-function setIntervalWhile(action: () => boolean, interval: number, maxTries: number): NodeJS.Timeout {
+function setIntervalWhile(action: () => boolean, interval: number, maxTries: number): any {
 	/*
 		This function gets an action to run and run it as long as it returns false and not reached max tries.
 	 */
@@ -31,7 +30,7 @@ function setIntervalWhile(action: () => boolean, interval: number, maxTries: num
 export interface OptionToggleButton {
 	key: string;
 	name: string;
-	icon?: Element | string;
+	icon?: JSX.Element | string;
 	iconActive?: string;
 }
 
@@ -80,7 +79,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 		return isRendered;
 	}
 
-	function renderIcon(icon?: string | Element) {
+	function renderIcon(icon?: string | JSX.Element) {
 		if (!icon) {
 			return undefined;
 		}
@@ -90,7 +89,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 		if (typeof icon === 'string') {
 			return (
 				<div className="multiple-options-toggle-button-item-icon-container">
-					<img className="icon-image" src={icon}/>
+					<img className="icon-image" src={icon} alt={""}/>
 				</div>
 			);
 		}
@@ -100,7 +99,6 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 	function renderOption(option: OptionToggleButton, index: number) {
 		const { name, icon, iconActive, key } = option;
 		const isSelected = value === key;
-		// @ts-ignore
 		return (
 			<div
 				onClick={() => onChange(key)}
@@ -108,8 +106,10 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 				ref={(ref) => (refs[index] = ref)}
 				key={index}
 			>
-				{renderIcon(isSelected ? iconActive || icon : icon)}
-				<span className={'multiple-options-toggle-button-item-text'}>{name}</span>
+				<>
+					{renderIcon(isSelected ? iconActive || icon : icon)}
+					<span className={'multiple-options-toggle-button-item-text'}>{name}</span>
+				</>
 			</div>
 		);
 	}

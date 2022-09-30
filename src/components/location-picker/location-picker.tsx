@@ -6,8 +6,6 @@ const validIcon = 'images/map-pin.svg';
 
 const invalidIcon = 'images/map-pin-missing.svg';
 
-// const linkIcon = 'images/categories/company-events/link-indicator.svg';
-
 interface LocationPickerProps {
 	className?: string;
 	locationPlaceholder: string;
@@ -19,11 +17,11 @@ interface LocationPickerProps {
 	allowCoordinates?: boolean;
 }
 
-function LocationPicker(props: LocationPickerProps) {
+const LocationPicker = (props: LocationPickerProps) => {
 	const locationDefaultVal = props.locationData && props.locationData.address && (props.locationData.address || '');
 	const isDisabled = props.isDisabled != undefined ? props.isDisabled : false;
 	const [location, setLocation] = useState<string>(locationDefaultVal); // for display only
-	const [locationData, setLocationDataState] = useState<LocationData | undefined>(props.locationData); // the actual data
+	const [locationData, setLocationDataState] = useState<LocationData|undefined>(props.locationData); // the actual data
 
 	const autoCompleteRef = useRef<HTMLInputElement>(null);
 	let autoCompleteListener: any, autoCompleteObj: any;
@@ -60,11 +58,11 @@ function LocationPicker(props: LocationPickerProps) {
 
 	function populateLocationData() {
 
-		let address = locationData.address || '',
+		let address = locationData ? locationData.address : '',
 			longitude: number | undefined,
 			latitude: number | undefined;
 
-		const inputValue = autoCompleteRef.current.value;
+		const inputValue = autoCompleteRef.current?.value;
 		const place = autoCompleteObj.getPlace();
 		if (place) {
 			address = inputValue || place.formatted_address;
@@ -105,7 +103,7 @@ function LocationPicker(props: LocationPickerProps) {
 		const haveLocationCoordinates = locationData && locationData.longitude && locationData.latitude;
 
 		if (haveLocationCoordinates) {
-			return <img src={props.locationIcon || validIcon} className="location-indicator" />;
+			return <img src={props.locationIcon || validIcon} alt={""} className="location-indicator"></img>;
 		}
 
 		// if (props.supportLinkAsLocation && locationData?.address) {
@@ -179,4 +177,4 @@ function LocationPicker(props: LocationPickerProps) {
 	);
 }
 
-export { LocationPicker };
+export default LocationPicker;

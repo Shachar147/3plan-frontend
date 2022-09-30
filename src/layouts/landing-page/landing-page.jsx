@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import './landing-page.css';
-import { useHistory } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
@@ -10,7 +10,7 @@ import {renderHeaderLine} from "../../utils/uiUtils";
 const LandingPage = () => {
 
     const eventStore = useContext(eventStoreContext);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         document.querySelector("body").classList.remove("rtl");
@@ -40,10 +40,10 @@ const LandingPage = () => {
                     gap: "10px"
                 }}>
                     <button className={"primary-button main-font"} onClick={() => {
-                        history.push('/getting-started')
+                        navigate('/getting-started')
                     }}>{TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}</button>
                     <button className={"secondary-button black"} onClick={() => {
-                        history.push('/my-trips')
+                        navigate('/my-trips')
                     }}>{TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}</button>
                 </div>
             </div>

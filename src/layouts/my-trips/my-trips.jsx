@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import './my-trips.css';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
@@ -17,7 +17,7 @@ const MyTrips = () => {
     const [applyPageIntro, setApplyPageIntro] = useState(false);
     const [applyFadeIn, setApplyFadeIn] = useState(false);
     const eventStore = useContext(eventStoreContext);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setTimeout(() => {
@@ -65,7 +65,7 @@ const MyTrips = () => {
                         return (
                             <div className="sidebar-statistics main-font"
                                  onClick={() => {
-                                     history.push("/plan/" + LSTripName);
+                                     navigate("/plan/" + LSTripName);
                                  }}
                                  style={{
                                      paddingInlineStart: "10px",
@@ -122,7 +122,7 @@ const MyTrips = () => {
                     <div className={"trip main-font-heavy"}>{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}</div>
                 </div>
                 <img className={getClasses(["logo-container"], applyPageIntro && 'up')} style={{ cursor: "pointer" }} src={"/images/landing-page/main-centered.png"} onClick={() => {
-                    history.push('/');
+                    navigate('/');
                 }} />
                 <div className={getClasses(["create-new-trip-form display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>
 

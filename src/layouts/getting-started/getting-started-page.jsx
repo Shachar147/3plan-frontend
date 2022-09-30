@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import './getting-started-page.css';
-import { useHistory } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
@@ -13,7 +13,7 @@ const GettingStartedPage = () => {
     const [applyPageIntro, setApplyPageIntro] = useState(false);
     const [applyFadeIn, setApplyFadeIn] = useState(false);
     const eventStore = useContext(eventStoreContext);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const [customDateRange, setCustomDateRange] = useState(defaultCustomDateRange());
     const [tripName, setTripName] = useState(undefined);
@@ -91,7 +91,7 @@ const GettingStartedPage = () => {
                     <div className={"trip main-font-heavy"}>{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}</div>
                 </div>
                 <img className={getClasses(["logo-container"], applyPageIntro && 'up')} style={{ cursor: "pointer" }} src={"/images/landing-page/main-centered.png"} onClick={() => {
-                    history.push('/');
+                    navigate('/');
                 }} />
                 <div className={getClasses(["create-new-trip-form display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>
 
@@ -113,10 +113,10 @@ const GettingStartedPage = () => {
                         const TripName = tripName.replace(/\s/ig, "-");
                         eventStore.setCustomDateRange(customDateRange);
                         setDefaultCustomDateRange(customDateRange, TripName);
-                        history.push('/plan/' + TripName + '/' + eventStore.calendarLocalCode)
+                        navigate('/plan/' + TripName + '/' + eventStore.calendarLocalCode)
                     }}>{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}</button>
                     <button className={"secondary-button black"} onClick={() => {
-                        history.push('/my-trips')
+                        navigate('/my-trips')
                     }}>{TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}</button>
                 </div>
 

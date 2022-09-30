@@ -1,16 +1,16 @@
 import React, {useContext} from "react";
 import { render } from "react-dom";
-import MainPage from "./pages/main-page/main-page";
+import MainPage from "./layouts/main-page/main-page";
 import 'bootstrap/dist/css/bootstrap.css';
 import "./stylesheets/fonts.css";
 import "./stylesheets/colors.css";
 import "./stylesheets/buttons.css";
 import "./stylesheets/app.css";
 import "./stylesheets/fontawesome/css/font-awesome.css";
-import LandingPage from "./pages/landing-page/landing-page";
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import GettingStartedPage from "./pages/getting-started/getting-started-page";
-import MyTrips from "./pages/my-trips/my-trips";
+import LandingPage from "./layouts/landing-page/landing-page";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import GettingStartedPage from "./layouts/getting-started/getting-started-page";
+import MyTrips from "./layouts/my-trips/my-trips";
 import TranslateService from "./services/translate-service";
 import {eventStoreContext} from "./stores/events-store";
 
@@ -136,14 +136,14 @@ const RootRouter = () => {
 
     return (
         <BrowserRouter>
-            <Switch>
-                <Route exact path="/" component={LandingPage}/>
-                <Route exact path="/getting-started" component={GettingStartedPage}/>
-                <Route exact path="/my-trips" component={MyTrips}/>
-                <Route path="/plan/:tripName/:locale" component={MainPage}/>
-                <Route path="/plan/:tripName/" component={MainPage}/>
-                <Route path="/plan" component={MainPage}/>
-            </Switch>
+            <Routes>
+                <Route exact path="/" element={<LandingPage/>}/>
+                <Route exact path="/getting-started" element={<GettingStartedPage/>}/>
+                <Route exact path="/my-trips" element={<MyTrips/>}/>
+                <Route path="/plan/:tripName/:locale" element={<MainPage/>}/>
+                <Route path="/plan/:tripName/" element={<MainPage/>}/>
+                <Route path="/plan" element={<MainPage/>}/>
+            </Routes>
         </BrowserRouter>
     );
 }

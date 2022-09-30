@@ -2,7 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import {LOADER_DETAILS} from "../../utils/utils";
 
-const LoadingPage = (props: { title: string, message: string, loaderDetails: { loader: string, backgroundColor: string, top: string, textColor?: string }}) => {
+const LoadingPage = (props: {
+        title: string,
+        message: string,
+        loaderDetails: { loader: string, backgroundColor: string, top: string, textColor?: string }
+    }) => {
     const loaderDetails = props.loaderDetails || LOADER_DETAILS();
 
     const textStyle = { fontWeight: "normal", color: "black" }
@@ -12,12 +16,20 @@ const LoadingPage = (props: { title: string, message: string, loaderDetails: { l
 
     return (
         <div>
-            {/*<Header nologo={true} />*/}
-            <div className={"ui header cards centered"} style={{ width: "100%", height: "100vh", backgroundColor: loaderDetails.backgroundColor }} >
+            <div className={"ui header cards centered"} style={
+                { width: "100%", height: "100vh", backgroundColor: loaderDetails.backgroundColor }} >
                 <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
                     <div>
-                        <img src={loaderDetails.loader} style={{ width: "100%", maxWidth: "800px" }} />
-                        <div className="sub header content" style={{ width:"100%", textAlign: "center", top: loaderDetails.top, fontSize: "20px", fontWeight: "bold", position: "relative"}}>
+                        <img src={loaderDetails.loader} alt={""} style={{ width: "100%", maxWidth: "800px" }} />
+                        <div className="sub header content" style={
+                            {
+                                width:"100%",
+                                textAlign: "center",
+                                top: loaderDetails.top,
+                                fontSize: "20px",
+                                fontWeight: "bold",
+                                position: "relative"
+                            }}>
                             <div className="header" style={textStyle}>
                                 {props.title}
                             </div>

@@ -3,8 +3,7 @@ import React from "react";
 import {EventStore} from "../stores/events-store";
 import ToggleButton from "../components/toggle-button/toggle-button";
 import {ViewMode} from "./enums";
-// @ts-ignore
-import {Link, useHistory} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 const renderLanguageSelector = (eventStore: EventStore) => (
     <select id="locale-selector" className={"main-font"} onChange={(e) => {
@@ -32,14 +31,14 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
         withViewSelector = false,
     } = options;
 
-    const history = useHistory();
+    const navigate = useNavigate();
 
     return (
         <div className={"header"} style={{height: 'fit-content'}}>
             <div className={"start-side"}>
                 <div className={"choose-language main-font"}>
                     <a><img
-                        src={"/images/landing-page/icons/choose-lang.png"}/> {TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
+                        alt="" src={"/images/landing-page/icons/choose-lang.png"}/> {TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
                     </a>
                     {renderLanguageSelector(eventStore)}
                 </div>
@@ -53,10 +52,10 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
                 {withLogo && <div
                     className="header-logo"
                     onClick={() => {
-                        history.push('/')
+                        navigate('/');
                     }}
                     style={{ cursor:"pointer", display: "flex", maxHeight: "40px", height: "40px"}}>
-                        <img src={"/images/logo/logo-icon.png"}/>
+                        <img alt={""} src={"/images/logo/logo-icon.png"}/>
                     </div>
                 }
                 {withRecommended && renderMyTrips(eventStore)}
@@ -71,7 +70,7 @@ const renderMyTrips = (eventStore: EventStore) => (
             textDecoration: "none"
         }}>
             <button className={"link-button"}>
-            <img
+            <img alt={""}
             src={"/images/landing-page/icons/map.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
             </button>
         </Link>
@@ -93,7 +92,7 @@ const renderViewSelector = (eventStore: EventStore) => {
         <div className={"view-selector"} key={`view-selector-${eventStore.calendarLocalCode}`}>
             <ToggleButton
                 value={eventStore.viewMode}
-                onChange={(newVal) => eventStore.setViewMode(newVal)}
+                onChange={(newVal) => eventStore.setViewMode(newVal as ViewMode)}
                 options={[
                     {
                         key: ViewMode.calendar,
