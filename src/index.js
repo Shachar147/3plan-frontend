@@ -51,7 +51,7 @@ import {eventStoreContext} from "./stores/events-store";
 // todo complete:
 // V logo
 // - NODE SASS
-// - DEPLOY TO HEROKU
+// V DEPLOY TO HEROKU
 // - fix import (maybe 'numbers' issue, need to use a different app)
 // - create different trips, save it on different local storage settings.
 // - allow to resize the sidebar vs calendar space (?)

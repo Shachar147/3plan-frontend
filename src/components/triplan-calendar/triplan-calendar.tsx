@@ -12,6 +12,7 @@ import './triplan-calendar.css'
 import ModalService from "../../services/modal-service";
 import {defaultTimedEventDuration} from "../../utils/defaults";
 import TranslateService from "../../services/translate-service";
+import {getDateRangeString} from "../../utils/time-utils";
 
 export interface TriPlanCalendarProps {
     defaultCalendarEvents?: CalendarEvent[],
@@ -70,7 +71,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
 
     useEffect(() => {
         calendarComponentRef.current!.render();
-    }, [eventStore.calendarLocalCode])
+    }, [eventStore.calendarLocalCode]);
 
     const getEventData = (eventEl: any) => {
         let title = eventEl.getAttribute("title");
@@ -183,11 +184,15 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
             // defaultView="timeGridWeek"
             headerToolbar={{
                 left: 'prev,next today',
-                center: 'title',
+                center: 'customTitle',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                // left: "prev,next today",
-                // center: "title",
-                // right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
+            customButtons={{
+                customTitle: {
+                    text: `${eventStore.tripName} (${getDateRangeString(new Date(eventStore.customDateRange.start), new Date(eventStore.customDateRange.end))})`,
+                    click: function() {}
+                }
             }}
             buttonText={{
                 today:    TranslateService.translate(eventStore,'BUTTON_TEXT.TODAY'),

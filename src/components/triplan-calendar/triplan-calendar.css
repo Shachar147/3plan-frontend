@@ -130,3 +130,13 @@
     background-color: var(--fc-button-hover-bg-color, #1e2b37) !important;
     border-color: #1a252f !important;
 }
+
+
+
+button.fc-customTitle-button.fc-button.fc-button-primary {
+    border: 0 !important;
+    background-color: transparent !important;
+    cursor: default !important;
+    font-size: 20px;
+    max-width: 500px;
+}

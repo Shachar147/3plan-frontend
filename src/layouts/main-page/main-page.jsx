@@ -1,5 +1,4 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {Col, Row} from "reactstrap";
 import {addLineBreaks, buildHTMLSummary, getClasses, getDurationString, ucfirst} from '../../utils/utils';
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
@@ -27,7 +26,7 @@ import {renderHeaderLine} from "../../utils/uiUtils";
 import {useParams} from "react-router-dom";
 
 const MainPage = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, _setIsLoading] = useState(false);
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)
     const TriplanCalendarRef = useRef(null)
     let { tripName, locale } = useParams();
