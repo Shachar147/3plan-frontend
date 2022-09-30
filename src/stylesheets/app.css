@@ -76,3 +76,14 @@ body {
 .flex-shrink {
     flex-shrink: 1;
 }
+
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: visibility 0s 2s, height 2s linear;
+}
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 2s, opacity 2s linear;
+}

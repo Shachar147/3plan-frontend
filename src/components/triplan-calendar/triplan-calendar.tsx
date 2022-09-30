@@ -1,5 +1,5 @@
 import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
-import {CalendarEvent, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
+import {CalendarEvent, CustomDateRange, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import {observer} from 'mobx-react';
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -20,7 +20,7 @@ export interface TriPlanCalendarProps {
     allEvents: SidebarEvent[],
     addEventToSidebar: (event: SidebarEvent) => void,
     updateAllEventsEvent: (event: SidebarEvent) => void,
-    customDateRange: { start?: string, end?: string },
+    customDateRange: CustomDateRange,
     categories: TriPlanCategory[],
     addToEventsToCategories: (newEvent: CalendarEvent) => void,
 }
@@ -189,7 +189,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
             titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
             customButtons={{
                 customTitle: {
-                    text: `${eventStore.tripName} (${getDateRangeString(new Date(eventStore.customDateRange.start), new Date(eventStore.customDateRange.end))})`,
+                    text: `${eventStore.tripName.replaceAll('-',' ')} (${getDateRangeString(new Date(eventStore.customDateRange.start), new Date(eventStore.customDateRange.end))})`,
                     click: function() {}
                 }
             }}

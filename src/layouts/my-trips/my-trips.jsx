@@ -57,7 +57,6 @@ const MyTrips = () => {
 
                         const start = `${dates.start.split('-')[2]}.${dates.start.split('-')[1]}`;
                         const end = `${dates.end.split('-')[2]}.${dates.end.split('-')[1]}`;
-
                         const amountOfDays = parseInt(((new Date(dates.end) - new Date(dates.start)) / 86400000).toString()) + 1;
 
                         if (tripName === "") return <></>

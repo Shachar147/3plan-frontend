@@ -20,7 +20,7 @@ export function getDateRangeString(start: Date, end: Date){
     }
 }
 
-export function getDurationString(duration: string) {
+export function getDurationString(duration?: string) {
     if (!duration) {
         return `${DEFAULT_EVENT_DURATION}h`
     } else {

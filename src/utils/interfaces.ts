@@ -44,3 +44,8 @@ export interface ImportEventsConfirmInfo {
     numOfEventsWithErrors: number,
     errors: string[]
 }
+
+export interface CustomDateRange {
+    start?: string,
+    end?: string
+}

@@ -775,9 +775,9 @@ const ModalService = {
             cancelButtonText: TranslateService.translate(eventStore, 'MODALS.SAVE')
         }).then(result => handleEditSidebarEventResult(eventStore, result, removeEventFromSidebarById, event));
     },
-    openAddSidebarEventModal: (eventStore: EventStore, categoryId?: string) => {
+    openAddSidebarEventModal: (eventStore: EventStore, categoryId?: number) => {
 
-        const handleAddSidebarEventResult = (eventStore: EventStore, result:any, categoryId?: string) => {
+        const handleAddSidebarEventResult = (eventStore: EventStore, result:any, categoryId?: number) => {
             if (!eventStore) return;
 
             // @ts-ignore
@@ -844,11 +844,11 @@ const ModalService = {
                 }
 
                 const existingSidebarEvents = {...eventStore.getSidebarEvents()};
-                existingSidebarEvents[parseInt(categoryId)] = existingSidebarEvents[parseInt(categoryId)] || [];
-                existingSidebarEvents[parseInt(categoryId)].push(currentEvent);
+                existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
+                existingSidebarEvents[categoryId].push(currentEvent);
                 eventStore.setSidebarEvents(existingSidebarEvents);
 
-                eventStore.setAllEvents([...eventStore.allEvents, {...currentEvent, category: categoryId}]);
+                eventStore.setAllEvents([...eventStore.allEvents, {...currentEvent, category: categoryId.toString()}]);
 
                 Alert.fire(TranslateService.translate(eventStore, "MODALS.ADDED.TITLE"), TranslateService.translate(eventStore, "MODALS.ADDED.CONTENT"), "success");
             }

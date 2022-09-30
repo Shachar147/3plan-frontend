@@ -1,0 +1,115 @@
+.external-events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    max-height: 945px;
+    overflow-y: auto;
+    position: sticky;
+}
+.external-events {
+    /*z-index: 2;*/
+    /*padding: 0 10px;*/
+    /*border: 1px solid #dde3eb;*/
+    /*background: #eaeff5;*/
+    /*overflow-y: auto;*/
+    /*!*width: 90%;*!*/
+    /*height: auto;*/
+    /*min-height: 45px;*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*gap: 10px;*/
+    /*padding-block: 10px;*/
+    /*border-radius: 20px;*/
+}
+.custom-dates-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background: #eaeff5;
+    border: 1px solid #dde3eb;
+    border-radius: 20px;
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
+}
+.custom-dates-container.hidden {
+    height: 0;
+    overflow: hidden;
+    border: 0;
+    padding: 0;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    position: absolute;
+    top: -2000px;
+}
+.custom-dates-line {
+    display: flex;
+    gap: 10px;
+}
+.custom-dates-line input {
+    max-width: 300px !important;
+    border: 1px solid #dde3eb;
+    border-radius: 20px;
+    padding: 5px;
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.external-events .fc-event-main {
+    margin: 1em 0;
+    cursor: move;
+    padding: 2px;
+}
+
+.custom-dates-submit button {
+    width: 100%;
+}
+
+.preferred-time {
+    /*background-color: #d4dfec;*/
+    font-size: 12px;
+    font-weight: bold;
+    padding-block: 4px;
+    /*border-radius: 10px;*/
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+.preferred-time .preferred-time-divider {
+    display:flex;
+    flex: 1 1 0;
+    border-bottom: 1px solid #ccc;
+    height: 1px;
+}
+
+.preferred-time .preferred-time-title {
+    text-align: start;
+    font-size: 14px;
+}
+
+.sidebar-events {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.sidebar-event-title-container {
+    display: flex;
+}
+
+.sidebar-event-title-container .sidebar-event-title-text {
+    margin-inline-end: 3px;
+    flex-basis: content;
+    flex-grow: 0;
+    word-break: break-all;
+}
+
+.sidebar-event-title-container .sidebar-event-icon {
+    margin-inline-end: 3px;
+}
+
+.sidebar-event-title-container .sidebar-event-duration {
+    min-width: fit-content;
+}
