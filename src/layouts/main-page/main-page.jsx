@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {addLineBreaks, buildHTMLSummary, getClasses, getDurationString, ucfirst} from '../../utils/utils';
+import {addLineBreaks, buildHTMLSummary, getClasses, ucfirst} from '../../utils/utils';
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
@@ -24,6 +24,7 @@ import TranslateService from "../../services/translate-service";
 import modalService from "../../services/modal-service";
 import {renderHeaderLine} from "../../utils/ui-utils";
 import {useParams} from "react-router-dom";
+import {getDurationString} from "../../utils/time-utils";
 
 const MainPage = () => {
     const [isLoading, _setIsLoading] = useState(false);

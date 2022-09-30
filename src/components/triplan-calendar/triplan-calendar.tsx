@@ -1,6 +1,6 @@
 import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {CalendarEvent, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
-import {addHoursToDate, getTimeStringFromDate} from "../../utils/utils";
+import {addHoursToDate} from "../../utils/utils";
 import {observer} from 'mobx-react';
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -12,7 +12,7 @@ import './triplan-calendar.css'
 import ModalService from "../../services/modal-service";
 import {defaultTimedEventDuration} from "../../utils/defaults";
 import TranslateService from "../../services/translate-service";
-import {getDateRangeString} from "../../utils/time-utils";
+import {getDateRangeString, getTimeStringFromDate} from "../../utils/time-utils";
 
 export interface TriPlanCalendarProps {
     defaultCalendarEvents?: CalendarEvent[],
