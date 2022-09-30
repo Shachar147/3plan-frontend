@@ -2,6 +2,8 @@ import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
 import {CalendarEvent, SidebarEvent, TriPlanCategory} from "./interfaces";
 import {EventInput} from "@fullcalendar/react";
 import {padTo2Digits} from "./utils";
+import {EventStore} from "../stores/events-store";
+import TranslateService from "../services/translate-service";
 
 export const defaultLocalCode = "he";
 export const defaultTimedEventDuration = '01:00';
@@ -509,7 +511,7 @@ export const defaultEvents2: Record<number, SidebarEvent[]> = {
 
 export const defaultCalendarEvents = [];
 
-export const defaultCategories: TriPlanCategory[] = [];
+export const defaultCategoriesOldold: TriPlanCategory[] = [];
 export const defaultCategoriesHeb: TriPlanCategory[] = [{"id":2,"icon":"","title":"לוגיסטיקה"},{"id":3,"icon":"📸","title":"תמונות"},{"id":4,"icon":"","title":"כללי"},{"id":5,"icon":"⭐","title":"אטרקציות"},{"id":6,"icon":"🍴","title":"אוכל"},{"id":7,"icon":"🚨 🏖","title":"ביץ׳ קלאבס"},{"id":8,"icon":"🍻","title":"ברים"},{"id":9,"icon":"🛒","title":"קניות"},{"id":10,"icon":"","title":"מועדונים"},{"id":12,"title":"הערות","icon":""}] // [];
 export const defaultCategoriesEng: TriPlanCategory[] = [{"id":2,"icon":"","title":"Logistics"},{"id":3,"icon":"📸","title":"Photos"},{"id":4,"icon":"","title":"General"},{"id":5,"icon":"⭐","title":"Attractions"},{"id":6,"icon":"🍴","title":"Food"},{"id":7,"icon":"🚨 🏖","title":"Beach Clubs"},{"id":8,"icon":"🍻","title":"Bars"},{"id":9,"icon":"🛒","title":"Shopping"},{"id":10,"icon":"","title":"Clubs"},{"id":12,"title":"Notes","icon":""}] // [];
 export const defaultCategoriesOld: TriPlanCategory[] = [
@@ -597,6 +599,9 @@ export function getDefaultCalendarEvents(tripName?: string){
     if (!localStorage.getItem(key)){
         setDefaultCalendarEvents(defaultCalendarEvents, tripName);
     }
+    console.log("there1", localStorage.getItem(key));
+    console.log("there2", JSON.parse(localStorage.getItem(key)!));
+    console.log("there3", JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; }));
     return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
 }
 export function setDefaultCalendarEvents(calendarEvents: EventInput[], tripName?: string){
@@ -604,9 +609,21 @@ export function setDefaultCalendarEvents(calendarEvents: EventInput[], tripName?
     localStorage.setItem(key, JSON.stringify(calendarEvents))
 }
 
-export function getDefaultCategories(tripName?: string){
+export function getDefaultCategories(eventStore: EventStore, tripName?: string){
     const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
     if (!localStorage.getItem(key)){
+        const defaultCategories: TriPlanCategory[] = [
+            {
+                id: 1,
+                icon: "",
+                title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL')
+            },
+            {
+                id: 2,
+                icon: "",
+                title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS')
+            }
+        ]
         setDefaultCategories(defaultCategories, tripName);
     }
     return JSON.parse(localStorage.getItem(key)!);
@@ -616,12 +633,12 @@ export function setDefaultCategories(categories: TriPlanCategory[], tripName?: s
     localStorage.setItem(key, JSON.stringify(categories))
 }
 
-export function getAllEvents(tripName?: string){
+export function getAllEvents(eventStore: EventStore, tripName?: string){
     const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
     if (!localStorage.getItem(key)){
 
         const hash: any = {};
-        getDefaultCategories(tripName).forEach((x:any) => hash[x.id] = x.icon)
+        getDefaultCategories(eventStore, tripName).forEach((x:any) => hash[x.id] = x.icon)
 
         const defaultAllEvents = Object.keys(getDefaultEvents(tripName)).map((category) => {
             // @ts-ignore

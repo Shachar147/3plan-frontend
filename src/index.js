@@ -4,7 +4,7 @@ import MainPage from "./layouts/main-page/main-page";
 import 'bootstrap/dist/css/bootstrap.css';
 import "./stylesheets/fonts.css";
 import "./stylesheets/colors.css";
-import "./stylesheets/buttons.css";
+import "./stylesheets/buttons.scss";
 import "./stylesheets/app.css";
 import './stylesheets/rtl.css';
 import "./stylesheets/fontawesome/css/font-awesome.css";
@@ -26,6 +26,7 @@ import ThemeExample from "./layouts/theme-example/theme-example";
 // move all primary-button and secondary-button to their components
 // create a page with all of my basic components and colors. buttons, etc.
 // make it mobile-responsive
+// advanced - add location to import/export (location address, location lng, location lat)
 
 // todo complete - fix bugs:
 // (!!) trying to add new event when there are no categories returns no error and no success. either add popup / add default category general.
@@ -107,38 +108,37 @@ import ThemeExample from "./layouts/theme-example/theme-example";
 // V fix bug - placing event on board, editing it (rename for example), remove, re-add it <- old event still there.
 // V fix bug - editing category name does not affect already existing event.
 
-// var autoCompleteObj;
-//
-// document.addEventListener('change', function(e){
-//     try {
-//         if (e.target.classList && e.target.classList.value.indexOf('location-input') !== -1) {
-//             console.log('change heree', e.target.value);
-//         }
-//     } catch {
-//         debugger;
-//     }
-// });
-//
-// window.initLocationPicker = () => {
-//     if (!window.google) {
-//         debugger;
-//     } else {
-//         window.initLocationAutoComplete();
-//     }
-// }
-//
-// window.initLocationAutoComplete = () => {
-//     const autoCompleteRef = document.querySelector('.location-input');
-//     console.log("heyyyy", autoCompleteRef);
-//     if (autoCompleteRef){
-//         console.log("hereeee");
-//         autoCompleteObj = new window.google.maps.places.Autocomplete(autoCompleteRef);
-//     }
-// }
-
 const RootRouter = () => {
     const eventStore = useContext(eventStoreContext);
     document.title = TranslateService.translate(eventStore, 'APP.TITLE');
+
+    window.setManualLocation = () => {
+        const address = document.querySelector('.location-input').value;
+        window.selectedLocation = {
+            address,
+            latitude: undefined,
+            longitude: undefined
+        }
+    }
+
+    window.initLocationPicker = () => {
+        // console.log("hereeeee");
+        const autoCompleteRef = document.querySelector('.location-input');
+        const autocomplete = new google.maps.places.Autocomplete(autoCompleteRef);
+
+        google.maps.event.addListener(autocomplete, 'place_changed', function() {
+            let place = autocomplete.getPlace();
+            const latitude = place.geometry.location.lat();
+            const longitude = place.geometry.location.lng();
+            const address = document.querySelector('.location-input').value;
+            window.selectedLocation = {
+                address,
+                latitude,
+                longitude
+            }
+            return false;
+        });
+    }
 
     return (
         <BrowserRouter>

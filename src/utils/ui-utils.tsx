@@ -6,6 +6,7 @@ import Button, {ButtonFlavor} from "../components/common/button/button";
 import ToggleButton from "../components/toggle-button/toggle-button";
 import {ViewMode} from "./enums";
 import {getClasses} from "./utils";
+import TriplanTag from "../components/common/triplan-tag/triplan-tag";
 
 const renderLanguageSelector = (eventStore: EventStore) => (
     <select id="locale-selector" className={"main-font"} onChange={(e) => {
@@ -22,6 +23,7 @@ export interface HeaderLineOptions {
     withRecommended?: boolean
     withSearch?: boolean
     withViewSelector?: boolean
+    withFilterTags?: boolean
 }
 
 export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOptions = {}) => {
@@ -30,6 +32,7 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
         withLogo = false,
         withRecommended = true,
         withSearch = false,
+        withFilterTags = false,
         withViewSelector = false,
     } = options;
 
@@ -49,6 +52,7 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
             {/*    */}
             {/*</div>*/}
             <div className={"end-side"}>
+                {withFilterTags && renderFilterTags(eventStore)}
                 {withSearch && renderSearch(eventStore)}
                 {withViewSelector && renderViewSelector(eventStore)}
                 {withLogo && <div
@@ -87,6 +91,22 @@ const renderSearch = (eventStore: EventStore) => {
             <input type={"text"} name={"fc-search"} value={eventStore.searchValue} onChange={(e) => {
                 eventStore.setSearchValue(e.target.value);
             }} placeholder={TranslateService.translate(eventStore,"SEARCH_PLACEHOLDER")} />
+        </div>
+    )
+}
+
+const renderFilterTags = (eventStore: EventStore) => {
+    return (
+        <div className={"filter-tags-container"}>
+            {
+                eventStore.showOnlyEventsWithNoLocation && (
+                    <TriplanTag
+                        text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG')}
+                        onDelete={() => {
+                            eventStore.setShowOnlyEventsWithNoLocation(false);
+                        }}/>
+                )
+            }
         </div>
     )
 }

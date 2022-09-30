@@ -2,7 +2,7 @@ import React, {CSSProperties, useContext} from "react";
 import TranslateService from "../../services/translate-service";
 import ModalService from "../../services/modal-service";
 import modalService from "../../services/modal-service";
-import {addLineBreaks, ucfirst} from "../../utils/utils";
+import {addLineBreaks, getClasses, ucfirst} from "../../utils/utils";
 import {TriplanEventPreferredTime, TriplanPriority} from "../../utils/enums";
 import {getDurationString} from "../../utils/time-utils";
 import {eventStoreContext} from "../../stores/events-store";
@@ -11,6 +11,8 @@ import {observer} from "mobx-react";
 import './triplan-sidebar.css';
 import CustomDatesSelector from "./custom-dates-selector/custom-dates-selector";
 import Button, {ButtonFlavor} from "../common/button/button";
+// @ts-ignore
+import * as _ from 'lodash';
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
@@ -77,6 +79,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     }
 
     const renderStatistics = () => {
+        const eventsWithNoLocation =
+            _.uniq(
+                eventStore.allEvents
+                    .filter((x) =>
+                        !(x.location || (x.extendedProps && x.extendedProps.location)) &&
+                        !(x.allDay)
+                    ).map(x => x.id)
+            ).length;
+
+        const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation ?
+            'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
         return (
             <>
                 <div className={"sidebar-statistics"}>
@@ -87,6 +100,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
                     {Object.values(eventStore.sidebarEvents).flat().length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_SIDEBAR')}
                 </div>
+                {!!eventsWithNoLocation && <div className={getClasses(["sidebar-statistics"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
+                    <Button
+                        icon={"fa-exclamation-triangle"}
+                        text={`${eventsWithNoLocation} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_LOCATION')} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
+                        onClick={() => {
+                            eventStore.toggleShowOnlyEventsWithNoLocation();
+                        }}
+                        flavor={ButtonFlavor.link}
+                        className={getClasses(eventStore.showOnlyEventsWithNoLocation && 'blue-color')}
+                    />
+                </div>}
             </>
         )
     }
@@ -96,15 +120,21 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
         const renderExpandCollapse = () => {
             const eyeIcon = eventStore.hideEmptyCategories ? 'fa-eye-slash' : 'fa-eye';
             const expandMinimizedEnabled =
-                eventStore.hideEmptyCategories ? Object.values(eventStore.sidebarEvents).flat().length > 0 :
+                eventStore.hideEmptyCategories ? Object.values(eventStore.getSidebarEvents).flat().length > 0 :
                     eventStore.categories.length > 0;
 
             return (
                 <>
                     <div style={{ display: "flex", gap: "10px" }}>
-                        <Button className={"link-button padding-inline-start-10 pointer"} onClick={() => {
-                            eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);
-                        }} flavor={ButtonFlavor.link} icon={eyeIcon} text={TranslateService.translate(eventStore, !eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES')} />
+                        <Button
+                            className={getClasses(["link-button padding-inline-start-10 pointer"], eventStore.hideEmptyCategories && 'blue-color')}
+                            onClick={() => {
+                                eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);
+                            }}
+                            flavor={ButtonFlavor.link}
+                            icon={eyeIcon}
+                            text={TranslateService.translate(eventStore, !eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES')}
+                        />
                     </div>
                     <div style={{ display: "flex", gap: "10px", paddingBlockEnd: "10px" }}>
                         <Button
@@ -138,12 +168,12 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     const isOpen = eventStore.openCategories.has(category.id);
                     const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
 
-                    const itemsCount = (eventStore.sidebarEvents[category.id] || []).filter((e) => e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1).length;
+                    const itemsCount = (eventStore.getSidebarEvents[category.id] || []).filter((e) => e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1).length;
 
                     if (eventStore.hideEmptyCategories && itemsCount === 0) { return <></> }
 
                     const openStyle = {
-                        maxHeight: (100 * itemsCount) + 50 + 'px', padding: "10px", transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
+                        maxHeight: (100 * itemsCount) + 90 + 'px', padding: "10px", transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
                     };
                     const closedStyle = {
                         maxHeight: 0, overflowY: "hidden", padding: 0, transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
@@ -198,9 +228,15 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     )
 
     const renderAddEventButton = () => (
-        <Button flavor={ButtonFlavor.primary} onClick={() => {
-            modalService.openAddSidebarEventModal(eventStore, undefined);
-        }} text={TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')} />
+        <Button
+            flavor={ButtonFlavor.primary}
+            onClick={() => {
+                modalService.openAddSidebarEventModal(eventStore, undefined);
+            }}
+            text={TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')}
+            disabled={eventStore.categories.length === 0}
+            disabledReason={TranslateService.translate(eventStore, 'DISABLED_REASON.THERE_ARE_NO_CATEGORIES')}
+        />
     )
 
     const onEditCategory = (categoryId: number) => {
@@ -212,7 +248,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             flavor={ButtonFlavor.secondary}
             style={{
                 width: "100%",
-                marginTop: "10px"
+                marginBlock: "10px"
             }}
             onClick={() => {
                 ModalService.openAddSidebarEventModal(eventStore, categoryId)
@@ -223,7 +259,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
     const renderCategoryEvents = (categoryId: number) => {
 
-        const categoryEvents = eventStore.sidebarEvents[categoryId] || [];
+        const categoryEvents = eventStore.getSidebarEvents[categoryId] || [];
 
         const preferredHoursHash: Record<string, SidebarEvent[]> = {};
         // console.log(Object.keys(TriplanEventPreferredTime).filter((x) => !Number.isNaN(Number(x))));
@@ -288,6 +324,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     data-description={event.description}
                     data-priority={event.priority !== undefined ? event.priority : event.extendedProps ? event.extendedProps.priority : undefined}
                     data-preferred-time={event.preferredTime !== undefined ? event.preferredTime : event.extendedProps ? event.extendedProps.preferredTime : undefined}
+                    data-location={Object.keys(event).includes("location") ? JSON.stringify(event.location) : event.extendedProps && event.extendedProps.location ? JSON.stringify(event.extendedProps.location) : undefined}
                     key={event.id}
                 >
                         <span className="sidebar-event-title-container" title={"Edit"} onClick={() => {

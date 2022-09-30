@@ -25,6 +25,20 @@ const MainPage = () => {
     const eventStore = useContext(eventStoreContext);
     const [customDateRange, setCustomDateRange] = useState(getDefaultCustomDateRange(eventStore.tripName));
 
+    // useEffect(() => {
+    //
+    //     const newEvents = eventStore.allEvents.filter((x) => eventStore.calendarEvents.map(e => e.id).indexOf(x.id) === -1);
+    //     newEvents.push(
+    //         ...[...eventStore.calendarEvents].map((x) => {
+    //             delete x.start;
+    //             delete x.end;
+    //             return x;
+    //         })
+    //     )
+    //     eventStore.setAllEvents(newEvents);
+    //
+    // },[eventStore.calendarEvents])
+
     useEffect(() => {
         eventStore.setTripName(tripName, locale);
         setCustomDateRange(getDefaultCustomDateRange(eventStore.tripName));
@@ -37,8 +51,8 @@ const MainPage = () => {
         const arr = [...eventStore.allEvents];
         const idToEvent = {};
         const idToCategory = {};
-        Object.keys(eventStore.sidebarEvents).map((category) => {
-            eventStore.sidebarEvents[category].forEach((event) => {
+        Object.keys(eventStore.getSidebarEvents).map((category) => {
+            eventStore.getSidebarEvents[category].forEach((event) => {
                 if (event.priority){
                     event.className = `priority-${event.priority}`;
                 }
@@ -60,14 +74,17 @@ const MainPage = () => {
     const addEventToSidebar = (event) => {
         const newEvents = {...eventStore.sidebarEvents};
         let category = eventsToCategories[event.id];
+        console.log("category", category);
         if (!category){
             const findEvent = eventStore.allEvents.flat().find((x) => x.id = event.id);
+            console.log("category find", findEvent);
             if (findEvent && findEvent.extendedProps){
                 category = findEvent.extendedProps.categoryId;
+                console.log("category find 2", category);
             }
         }
 
-        if (category && newEvents[category]) {
+        if (category != undefined) {
             delete event.start;
             delete event.end;
 
@@ -75,6 +92,7 @@ const MainPage = () => {
                 event.preferredTime = event.extendedProps.preferredTime;
             }
 
+            newEvents[category] = newEvents[category] || [];
             newEvents[category].push(event)
             eventStore.setSidebarEvents(newEvents);
         }
@@ -99,7 +117,7 @@ const MainPage = () => {
 
     const renderListView = () => (
         <div className={getClasses(["list-container flex-1-1-0"], !eventStore.isListView && 'opacity-0 position-absolute')}>
-            <div className={"trip-summary bright-scrollbar"} dangerouslySetInnerHTML={{__html:buildHTMLSummary(eventStore)}} />
+            <div className={"trip-summary bright-scrollbar"} dangerouslySetInnerHTML={{__html: eventStore.isListView ? buildHTMLSummary(eventStore) : ""}} />
         </div>
     );
 
@@ -146,7 +164,8 @@ const MainPage = () => {
                     withLogo: true,
                     withSearch: true,
                     withViewSelector: true,
-                    withRecommended: false
+                    withRecommended: false,
+                    withFilterTags: true
                 })}
             </div>
             <div className={"main-layout-container"}>

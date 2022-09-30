@@ -411,7 +411,7 @@ const ImportService = {
         }
         if (info.eventsToAdd.length > 0) {
 
-            const existingSidebarEvents = eventStore.getSidebarEvents();
+            const existingSidebarEvents = eventStore.getSidebarEvents;
             const newSidebarEvents: Record<number, SidebarEvent[]> = {...existingSidebarEvents};
             info.eventsToAdd.forEach((event) => {
                 event.id = eventStore.createEventId();

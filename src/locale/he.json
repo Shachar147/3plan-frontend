@@ -135,6 +135,7 @@
   "MODALS.CATEGORY": "קטגוריה",
   "EVENTS_ON_THE_CALENDAR": "אירועים משובצים בלוח השנה",
   "EVENTS_ON_THE_SIDEBAR": "אירועים עדיין לא שובצו",
+  "EVENTS_WITH_NO_LOCATION": "אירועים ללא מיקום",
   "EXPAND_ALL": "פתח הכל",
   "COLLAPSE_ALL": "סגור הכל",
   "HIDE_EMPTY_CATEGORIES": "קבוצות ריקות: מוסתרות",
@@ -149,5 +150,12 @@
   "EDIT_TRIP_MODAL.TITLE": "ערוך טיול",
   "MODALS.ERROR.TRIP_NAME_ALREADY_EXIST": "טיול עם השם הזה כבר קיים",
   "MODALS.UPDATED_TRIP.CONTENT": "הטיול עודכן בהצלחה",
-  "APP.TITLE": "Triplan - תכנון טיולים מעולם לא היה פשוט יותר!"
+  "APP.TITLE": "Triplan - תכנון טיולים מעולם לא היה פשוט יותר!",
+  "CATEGORY.GENERAL": "כללי",
+  "CATEGORY.LOGISTICS": "לוגיסטיקה",
+  "MODALS.LOCATION.PLACEHOLDER": "הזן מיקום...",
+  "SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "הצג אילו",
+  "SHOW_ALL_EVENTS": "בטל סינון",
+  "SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG": "הצג רק אירועים ללא מיקום",
+  "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "אין קטגוריות. אנא צור קטגוריה לפני שאתה מנסה ליצור אירוע"
 }

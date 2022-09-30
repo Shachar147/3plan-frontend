@@ -14,6 +14,7 @@ export interface ButtonProps {
     flavor: ButtonFlavor,
     className?: string,
     disabled?: boolean,
+    disabledReason?: string,
     style?: object,
 
     icon?: string,
@@ -26,6 +27,7 @@ const Button = (props: ButtonProps) => (
         onClick={props.onClick}
         disabled={props.disabled}
         style={props.style}
+        title={props.disabled && props.disabledReason ? props.disabledReason : undefined}
     >
         {props.image && <img alt={""} src={props.image} />}
         {props.icon && (<i className={`fa ${props.icon}`} aria-hidden="true"></i>)}

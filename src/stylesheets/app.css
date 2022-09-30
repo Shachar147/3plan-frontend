@@ -121,3 +121,31 @@ body {
 .white-background {
     background-color: var(--white);
 }
+
+/* to make sure google autocomplete will appear even on modals */
+.pac-container {
+    z-index: 1000000 !important;
+}
+
+.strikethrough {
+    position: relative;
+}
+.strikethrough:before {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 50%;
+    right: 0;
+    border-top: 1px solid;
+    border-color: inherit;
+
+    -webkit-transform:rotate(-5deg);
+    -moz-transform:rotate(-5deg);
+    -ms-transform:rotate(-5deg);
+    -o-transform:rotate(-5deg);
+    transform:rotate(-5deg);
+}
+
+.fc-search {
+    transition: all 0.3s ease-in-out;
+}

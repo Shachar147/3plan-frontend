@@ -81,6 +81,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
         let description = eventEl.getAttribute("data-description");
         let priority = eventEl.getAttribute("data-priority");
         let preferredTime = eventEl.getAttribute("data-preferred-time");
+        let location = eventEl.getAttribute("data-location");
 
         return {
             title,
@@ -93,7 +94,8 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
                 description,
                 priority,
                 icon: eventIcon,
-                preferredTime
+                preferredTime,
+                location: location ? JSON.parse(location) : undefined
             }
         };
     }

@@ -19,3 +19,7 @@
 .blue-color {
     color: var(--blue);
 }
+
+.red-color {
+    color: var(--red);
+}

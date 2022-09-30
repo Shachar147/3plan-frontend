@@ -62,6 +62,13 @@ button.secondary-button.black:hover{
     gap: 5px;
     align-items: center;
     transition: all 0.3s ease-in-out;
+
+    &.red-color {
+        color: var(--red);
+     }
+    &.blue-color {
+        color: var(--blue)
+    }
 }
 
 .link-button:not(:disabled):hover {

@@ -125,6 +125,7 @@
   "MODALS.CATEGORY": "Category",
   "EVENTS_ON_THE_CALENDAR": "Events scheduled on the calendar",
   "EVENTS_ON_THE_SIDEBAR": "Events not scheduled yet",
+  "EVENTS_WITH_NO_LOCATION": "Events with no location",
   "EXPAND_ALL": "Expend all",
   "COLLAPSE_ALL": "Collapse all",
   "HIDE_EMPTY_CATEGORIES": "Empty categories: hidden",
@@ -139,5 +140,12 @@
   "EDIT_TRIP_MODAL.TITLE": "Edit Trip",
   "MODALS.ERROR.TRIP_NAME_ALREADY_EXIST": "a trip with that name already exist",
   "MODALS.UPDATED_TRIP.CONTENT": "Trip have been updated",
-  "APP.TITLE": "Triplan - planning your trips was never easier!"
+  "APP.TITLE": "Triplan - planning your trips was never easier!",
+  "CATEGORY.GENERAL": "General",
+  "CATEGORY.LOGISTICS": "Logistics",
+  "MODALS.LOCATION.PLACEHOLDER": "Enter Location...",
+  "SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "show which",
+  "SHOW_ALL_EVENTS": "cancel filter",
+  "SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG": "Show only events with no location",
+  "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "There are no categories. please add category before you try to add an event"
 }

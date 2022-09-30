@@ -12,6 +12,7 @@ export interface CalendarEvent {
     extendedProps?: any
     preferredTime?: TriplanEventPreferredTime,
     description?: string
+    location?: LocationData
 }
 
 export interface SidebarEvent {
@@ -24,7 +25,9 @@ export interface SidebarEvent {
     priority?: TriplanPriority,
     preferredTime?: TriplanEventPreferredTime,
     extendedProps?: any,
-    className?: string
+    className?: string,
+    location?: LocationData,
+    allDay?: Boolean;
 }
 
 export interface TriPlanCategory {

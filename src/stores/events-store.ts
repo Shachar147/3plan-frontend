@@ -18,15 +18,18 @@ import {CalendarEvent, SidebarEvent, TriPlanCategory} from "../utils/interfaces"
 import {ViewMode} from "../utils/enums";
 import {convertMsToHM} from "../utils/time-utils";
 
+// @ts-ignore
+import _ from "lodash";
+
 export class EventStore {
     categoryIdBuffer = 0;
     eventIdBuffer = 0;
     allowRemoveAllCalendarEvents = false;
     @observable weekendsVisible = true;
-    @observable categories: TriPlanCategory[] = getDefaultCategories();
+    @observable categories: TriPlanCategory[];
     @observable sidebarEvents: Record<number,SidebarEvent[]> = getDefaultEvents();
     @observable calendarEvents: EventInput[] = getDefaultCalendarEvents();
-    @observable allEvents: SidebarEvent[] = getAllEvents();
+    @observable allEvents: SidebarEvent[];
     @observable calendarLocalCode: "he" | "en" = getDefaultCalendarLocale();
     @observable searchValue = "";
     @observable viewMode = ViewMode.calendar;
@@ -36,8 +39,11 @@ export class EventStore {
     @observable tripName: string = "";
     @observable allEventsTripName: string = "";
     @observable customDateRange = getDefaultCustomDateRange();
+    @observable showOnlyEventsWithNoLocation: boolean = false;
 
     constructor() {
+        this.categories = getDefaultCategories(this);
+        this.allEvents = getAllEvents(this);
         this.init();
     }
 
@@ -50,7 +56,11 @@ export class EventStore {
 
     @computed
     get filteredCalendarEvents(): EventInput[] {
-        return this.getJSCalendarEvents().filter((event) => event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1);
+        return this.getJSCalendarEvents()
+            .filter((event) =>
+                (event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) &&
+                (this.showOnlyEventsWithNoLocation ? !(event.location != undefined || (event.extendedProps && event.extendedProps.location != undefined)) : true)
+            );
     }
 
     @computed
@@ -63,6 +73,17 @@ export class EventStore {
     @computed
     get isListView(){
         return this.viewMode === ViewMode.list
+    }
+
+    @computed
+    get getSidebarEvents(): Record<number,SidebarEvent[]> {
+        const toReturn: Record<number,SidebarEvent[]> = {};
+        Object.keys(this.sidebarEvents).forEach((category) => {
+            toReturn[parseInt(category)] = this.sidebarEvents[parseInt(category)]
+                .map((x) => toJS(x))
+                .filter((event) => (this.showOnlyEventsWithNoLocation ? !(event.location || (event.extendedProps && event.extendedProps.location)) : true))
+        })
+        return toReturn;
     }
 
     // --- actions --------------------------------------------------------------
@@ -93,7 +114,7 @@ export class EventStore {
             }
 
             this.setAllEvents([
-                ...this.allEvents
+                ...this.allEvents,
             ])
 
             return true;
@@ -153,7 +174,7 @@ export class EventStore {
 
     @action
     setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]){
-        this.allEvents = newAllEvents.map((x) => {
+        this.allEvents = [...newAllEvents].map((x) => {
             if ("start" in x) {
                 // @ts-ignore
                 delete x.start;
@@ -174,7 +195,7 @@ export class EventStore {
     @action
     clearCalendarEvents(){
         // add back to sidebar
-        const newEvents = {...this.getSidebarEvents()};
+        const newEvents = {...this.sidebarEvents};
         const eventToCategory: any = {};
         const eventIdToEvent: any = {};
         this.allEvents.forEach((e) => {
@@ -260,12 +281,13 @@ export class EventStore {
     @action
     setTripName(name: string, calendarLocale?: 'en' | 'he'){
         this.tripName = name;
-        this.allEvents = getAllEvents(name);
-        this.categories = getDefaultCategories(name);
-        this.sidebarEvents = getDefaultEvents(name);
-        this.calendarEvents = getDefaultCalendarEvents(name);
-        this.customDateRange = getDefaultCustomDateRange(name);
         this.setCalendarLocalCode(calendarLocale || getDefaultCalendarLocale(name));
+        this.setSidebarEvents(getDefaultEvents(name))
+        this.setCalendarEvents(getDefaultCalendarEvents(name))
+        console.log("hereee", this.calendarEvents);
+        this.customDateRange = getDefaultCustomDateRange(name);
+        this.allEvents = getAllEvents(this,name);
+        this.categories = getDefaultCategories(this, name);
         this.allEventsTripName = name;
     }
 
@@ -274,18 +296,20 @@ export class EventStore {
         this.customDateRange = customDateRange;
     }
 
+    @action
+    toggleShowOnlyEventsWithNoLocation(){
+        this.showOnlyEventsWithNoLocation = !this.showOnlyEventsWithNoLocation;
+    }
+
+    @action
+    setShowOnlyEventsWithNoLocation(newVal: boolean) {
+        this.showOnlyEventsWithNoLocation = newVal;
+    }
+
     // --- private functions ----------------------------------------------------
 
     getJSCalendarEvents(): EventInput[] {
         return toJS(this.calendarEvents);
-    }
-
-    getSidebarEvents(): Record<number,SidebarEvent[]> {
-        const toReturn: Record<number,SidebarEvent[]> = {};
-        Object.keys(this.sidebarEvents).forEach((category) => {
-            toReturn[parseInt(category)] = this.sidebarEvents[parseInt(category)].map((x) => toJS(x))
-        })
-        return toReturn;
     }
 
     updateEvent(storedEvent: SidebarEvent | EventInput | any, newEvent: SidebarEvent | EventInput | any){
@@ -312,6 +336,10 @@ export class EventStore {
         storedEvent.extendedProps.priority = storedEvent.priority;
         storedEvent.extendedProps.description = storedEvent.description;
 
+        storedEvent.extendedProps.location =
+            Object.keys(newEvent).includes('location') ? newEvent.location : storedEvent.extendedProps.location ? storedEvent.extendedProps.location : storedEvent.location;
+        storedEvent.location = storedEvent.extendedProps.location;
+
         // @ts-ignore
         const millisecondsDiff = storedEvent.end - storedEvent.start;
         if (millisecondsDiff > 0) {
@@ -327,10 +355,15 @@ export class EventStore {
         storedEvent.priority = newEvent.priority != undefined ? newEvent.priority : storedEvent.priority;
         storedEvent.preferredTime = newEvent.preferredTime != undefined ? newEvent.preferredTime : storedEvent.preferredTime;
         storedEvent.description = newEvent.description != undefined ? newEvent.description : storedEvent.description;
+        storedEvent.location = Object.keys(newEvent).includes("location") ? newEvent.location : storedEvent.location;
         if (newEvent.extendedProps){
             Object.keys(newEvent.extendedProps).forEach((key) => {
                 storedEvent.extendedProps![key] = newEvent.extendedProps[key];
             });
+
+            if (storedEvent.extendedProps.location){
+                delete storedEvent.extendedProps.location;
+            }
         }
     }
 
