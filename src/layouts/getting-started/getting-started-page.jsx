@@ -7,8 +7,7 @@ import {observer} from "mobx-react";
 import {defaultCustomDateRange, setDefaultCalendarLocale, setDefaultCustomDateRange} from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
-import PrimaryButton from "../../components/common/primary-button/primary-button";
-import SecondaryButton from "../../components/common/secondary-button/secondary-button";
+import Button, {ButtonFlavor} from "../../components/common/button/button";
 
 const GettingStartedPage = () => {
 
@@ -58,9 +57,7 @@ const GettingStartedPage = () => {
                         setTripName(value);
                     }}/>
                 </div>
-                <div className={"main-font"} style={{
-                    fontSize: "20px"
-                }}>
+                <div className={"main-font font-size-20"}>
                     {TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
                 </div>
                 <div className={"custom-dates-line"}>
@@ -76,8 +73,8 @@ const GettingStartedPage = () => {
                         setCustomDateRange({
                             start: customDateRange.start,
                             end: value
-                        })}}
-                    />
+                        })
+                    }}/>
                 </div>
             </div>
         )
@@ -111,8 +108,9 @@ const GettingStartedPage = () => {
                     justifyContent: "center",
                     gap: "10px"
                 }}>
-                    <PrimaryButton
+                    <Button
                         text={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}
+                        flavor={ButtonFlavor.primary}
                         onClick={() => {
                             const TripName = tripName.replace(/\s/ig, "-");
                             eventStore.setCustomDateRange(customDateRange);
@@ -120,8 +118,9 @@ const GettingStartedPage = () => {
                             navigate('/plan/' + TripName + '/' + eventStore.calendarLocalCode);
                         }}
                     />
-                    <SecondaryButton
+                    <Button
                         text={TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}
+                        flavor={ButtonFlavor.secondary}
                         onClick={() => {
                             navigate('/my-trips')
                         }}

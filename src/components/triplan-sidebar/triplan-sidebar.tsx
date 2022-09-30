@@ -1,9 +1,8 @@
 import React, {CSSProperties, useContext} from "react";
 import TranslateService from "../../services/translate-service";
 import ModalService from "../../services/modal-service";
-import {addLineBreaks, getClasses, ucfirst} from "../../utils/utils";
-import {setDefaultCustomDateRange} from "../../utils/defaults";
 import modalService from "../../services/modal-service";
+import {addLineBreaks, ucfirst} from "../../utils/utils";
 import {TriplanEventPreferredTime, TriplanPriority} from "../../utils/enums";
 import {getDurationString} from "../../utils/time-utils";
 import {eventStoreContext} from "../../stores/events-store";
@@ -11,6 +10,7 @@ import {CustomDateRange, SidebarEvent} from "../../utils/interfaces";
 import {observer} from "mobx-react";
 import './triplan-sidebar.css';
 import CustomDatesSelector from "./custom-dates-selector/custom-dates-selector";
+import Button, {ButtonFlavor} from "../common/button/button";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
@@ -40,32 +40,38 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
         )
     }
 
-    const renderClearAll = () => (
-        <button type="button" disabled={eventStore.calendarEvents.length === 0} onClick={() => {
-            ModalService.confirmModal(eventStore,
-                eventStore.clearCalendarEvents.bind(eventStore)
-            );
-        }} className={"clear-calendar-events sidebar-button"}>
-            <i className="fa fa-trash" aria-hidden="true"></i>
-            {TranslateService.translate(eventStore,'CLEAR_CALENDAR_EVENTS.BUTTON_TEXT')}
-        </button>
-    )
+    const renderClearAll = () => {
+        const isDisabled = eventStore.calendarEvents.length === 0;
+        return(
+            <Button
+                disabled={isDisabled}
+                icon={"fa-trash"}
+                text={TranslateService.translate(eventStore,'CLEAR_CALENDAR_EVENTS.BUTTON_TEXT')}
+                onClick={() => {
+                    ModalService.confirmModal(eventStore,
+                        eventStore.clearCalendarEvents.bind(eventStore)
+                    );
+                }}
+                flavor={ButtonFlavor["movable-link"]}
+            />
+        )
+    }
 
     const renderImportButtons = () => {
         return (
             <>
-                <button type="button" onClick={() => {
-                    modalService.openImportEventsModal(eventStore);
-                }} className={"sidebar-button"}>
-                    <i className="fa fa-download" aria-hidden="true"></i>
-                    {TranslateService.translate(eventStore,'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT')}
-                </button>
-                <button type="button" onClick={() => {
-                    modalService.openImportEventsStepTwoModal(eventStore);
-                }} className={"sidebar-button"}>
-                    <i className="fa fa-upload" aria-hidden="true"></i>
-                    {TranslateService.translate(eventStore,'IMPORT_EVENTS.BUTTON_TEXT')}
-                </button>
+                <Button
+                    icon={"fa-download"}
+                    text={TranslateService.translate(eventStore,'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT')}
+                    onClick={() => { modalService.openImportEventsModal(eventStore)}}
+                    flavor={ButtonFlavor["movable-link"]}
+                />
+                <Button
+                    icon={"fa-upload"}
+                    text={TranslateService.translate(eventStore,'IMPORT_EVENTS.BUTTON_TEXT')}
+                    onClick={() => { modalService.openImportEventsStepTwoModal(eventStore)}}
+                    flavor={ButtonFlavor["movable-link"]}
+                />
             </>
         )
     }
@@ -89,26 +95,36 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
         const renderExpandCollapse = () => {
             const eyeIcon = eventStore.hideEmptyCategories ? 'fa-eye-slash' : 'fa-eye';
+            const expandMinimizedEnabled =
+                eventStore.hideEmptyCategories ? Object.values(eventStore.sidebarEvents).flat().length > 0 :
+                    eventStore.categories.length > 0;
+
             return (
                 <>
                     <div style={{ display: "flex", gap: "10px" }}>
-                        <button className={"link-button padding-inline-start-10 pointer"} onClick={() => {
+                        <Button className={"link-button padding-inline-start-10 pointer"} onClick={() => {
                             eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);
-                        }}>
-                            <i className={"fa " + eyeIcon} aria-hidden="true"></i>
-                            {TranslateService.translate(eventStore, !eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES')}
-                        </button>
+                        }} flavor={ButtonFlavor.link} icon={eyeIcon} text={TranslateService.translate(eventStore, !eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES')} />
                     </div>
                     <div style={{ display: "flex", gap: "10px", paddingBlockEnd: "10px" }}>
-                        <button className={"link-button padding-inline-start-10 pointer"} onClick={eventStore.openAllCategories.bind(eventStore)}>
-                            <i className="fa fa-plus-square-o" aria-hidden="true"></i>
-                            {TranslateService.translate(eventStore, 'EXPAND_ALL')}
-                        </button>
+                        <Button
+                            disabled={!expandMinimizedEnabled}
+                            flavor={ButtonFlavor.link}
+                            className={"link-button padding-inline-start-10"}
+                            onClick={eventStore.openAllCategories.bind(eventStore)}
+                            icon={"fa-plus-square-o"}
+                            text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
+                        />
                         <div className={"sidebar-statistics"}> | </div>
-                        <button className={"link-button padding-inline-start-10 pointer"} onClick={eventStore.closeAllCategories.bind(eventStore)}>
-                            <i className="fa fa-minus-square-o" aria-hidden="true"></i>
-                            {TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
-                        </button>
+                        <Button
+                            disabled={!expandMinimizedEnabled}
+                            flavor={ButtonFlavor.link}
+                            className={"link-button padding-inline-start-10"}
+                            onClick={eventStore.closeAllCategories.bind(eventStore)}
+                            icon={"fa-minus-square-o"}
+                            text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
+                        />
+
                     </div>
                 </>
             )
@@ -176,17 +192,15 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     }
 
     const renderAddCategoryButton = () => (
-        <button type="button" onClick={() => {
+        <Button flavor={ButtonFlavor.secondary} className={"black"} onClick={() => {
             modalService.openAddCategoryModal(eventStore);
-        }} className={"add-category-button"}>{TranslateService.translate(eventStore,'ADD_CATEGORY.BUTTON_TEXT')}
-        </button>
+        }} text={TranslateService.translate(eventStore,'ADD_CATEGORY.BUTTON_TEXT')}/>
     )
 
     const renderAddEventButton = () => (
-        <button type="button" onClick={() => {
+        <Button flavor={ButtonFlavor.primary} onClick={() => {
             modalService.openAddSidebarEventModal(eventStore, undefined);
-        }} className={"add-event-button primary-button"}>{TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')}
-        </button>
+        }} text={TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')} />
     )
 
     const onEditCategory = (categoryId: number) => {

@@ -1,0 +1,153 @@
+body {
+    background-color: #eaeff5;
+}
+
+.landing-page-layout {
+    padding: 30px;
+    padding-block-start: 0;
+    background-color: #eaeff5;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100vw;
+    background-image: url('~/images/landing-page/background-2.png');
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    color: #282b3c;
+
+    .header {
+        padding: 20px;
+        height: 100px;
+        text-align:right;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-inline: 0;
+
+        a {
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.6;
+            }
+
+            img {
+                height: 20px;
+            }
+        }
+
+        .choose-language {
+            display: flex;
+            gap: 8px;
+            height: fit-content;
+            align-items: center;
+
+            a {
+                cursor: default;
+                display: flex;
+
+                img {
+                    display: flex;
+                    align-self: center;
+                    margin-inline: 5px;
+                }
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+            select {
+                width: fit-content;
+                background-color: transparent;
+                border: 0;
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 0.6;
+                }
+            }
+        }
+
+    }
+
+    .main-part {
+        width: 40%;
+        margin: 0 auto;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        .plan-your-trip-header {
+            font-size: 30px;
+            text-transform: uppercase;
+            color: #282b3c;
+
+            .trip {
+                font-size: 50px;
+                color: var(--blue);
+            }
+        }
+
+        .logo-container{
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+            width: 100%;
+        }
+
+        .slogan {
+            display: flex;
+            flex-direction: column;
+            padding-block: 40px;
+        }
+    }
+
+    .main-buttons {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        gap: 10px;
+
+        button {
+            border-radius: 25px;
+            outline: none;
+            box-shadow: none;
+            padding: 10px 25px;
+            border: 1px solid transparent;
+
+            &:not(:disabled):hover {
+                background-color: var(--dark-gray);
+            }
+        }
+    }
+
+    .footer {
+        padding: 20px;
+        height: 100px;
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        gap: 10px;
+        justify-content: center;
+
+        a {
+            color: #a6a6a6 !important;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-items: center;
+            cursor: default;
+
+            img {
+                height: 25px;
+                margin-inline: 5px;
+            }
+        }
+    }
+}

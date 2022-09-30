@@ -1,13 +1,12 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import './landing-page.css';
+import './landing-page.scss';
 import {useNavigate} from "react-router-dom";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {setDefaultCalendarLocale} from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
-import PrimaryButton from "../../components/common/primary-button/primary-button";
-import SecondaryButton from "../../components/common/secondary-button/secondary-button";
+import Button, {ButtonFlavor} from "../../components/common/button/button";
 
 const LandingPage = () => {
 
@@ -36,17 +35,19 @@ const LandingPage = () => {
                     <span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE2')}</span>
                 </div>
                 <div className={"main-buttons"}>
-                    <PrimaryButton
+                    <Button
                         text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
+                        flavor={ButtonFlavor.primary}
                         onClick={() => {
                             navigate('/getting-started')
                         }}
                     />
-                    <SecondaryButton
+                    <Button
                         text={TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}
                         onClick={() => {
                             navigate('/my-trips')
                         }}
+                        flavor={ButtonFlavor.secondary}
                         className={"black"}
                     />
                 </div>

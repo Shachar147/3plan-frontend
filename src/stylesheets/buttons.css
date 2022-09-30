@@ -10,14 +10,14 @@ button:not(:disabled):hover {
     border-color: #aaa;
 }
 button:disabled {
-    opacity: 0.6;
+    /*opacity: 0.6;*/
+    opacity: 0.4;
 }
 
 .primary-button {
     background-color: var(--blue);
     color: white;
     box-shadow: 0 5px 8px 0 rgb(41 152 255 / 21%);
-    /*border: 1px solid var(--dark-blue);*/
     border: 0;
 }
 
@@ -36,11 +36,12 @@ button:disabled {
 
 button.secondary-button.black {
     color: var(--black) !important;
-    border:1px solid var(--gray);
+    border: 1px solid var(--gray);
 }
 
 button.secondary-button.black:hover{
-    border: 1px solid var(--black) !important;
+    /*border: 1px solid var(--black) !important;*/
+    border-color: #aaa !important;
 }
 
 .dangerous-button {
@@ -51,7 +52,7 @@ button.secondary-button.black:hover{
     border: 1px solid var(--red);
 }
 
-.link-button {
+.link-button, .movable-link-button {
     background-color: transparent;
     border:0;
     color: black;
@@ -67,26 +68,7 @@ button.secondary-button.black:hover{
     opacity: 0.6;
 }
 
-.sidebar-statistics,
-.sidebar-button {
-    text-align: right;
-    border: 0;
-    background: transparent;
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    align-items: center;
-    transition: all 0.3s ease-in-out;
-}
-
-.sidebar-statistics {
-    padding-inline: 6px;
-    gap: 8px;
-    height: 38px;
-}
-
-.sidebar-button:not(:disabled):hover {
-    font-weight: bold;
+.movable-link-button:not(:disabled):hover {
     padding-inline-start: 15px;
 }
 

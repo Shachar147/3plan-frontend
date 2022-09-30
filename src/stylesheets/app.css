@@ -96,3 +96,28 @@ body {
 .pointer {
     cursor: pointer;
 }
+
+.gap-5 {
+    gap: 5px;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+.gap-15 {
+    gap: 15px;
+}
+
+.font-size-20 {
+    font-size: 20px;
+}
+
+.flex-flow-wrap {
+    display: flex;
+    flex-flow: wrap;
+}
+
+.white-background {
+    background-color: var(--white);
+}

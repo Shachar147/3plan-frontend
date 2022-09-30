@@ -14,12 +14,17 @@ import GettingStartedPage from "./layouts/getting-started/getting-started-page";
 import MyTrips from "./layouts/my-trips/my-trips";
 import TranslateService from "./services/translate-service";
 import {eventStoreContext} from "./stores/events-store";
+import ThemeExample from "./layouts/theme-example/theme-example";
 
 // feature requests
 // create tasks automatically for flight in, flight out, checkin, checkout with 'please fill in' text.
 // create automatically logistic category ^
 // create automatically tips category (with default - consider that on Sunday stuff may be closed)
 
+// refactor my css files to be scss
+// move stuff to components
+// move all primary-button and secondary-button to their components
+// create a page with all of my basic components and colors. buttons, etc.
 // make it mobile-responsive
 
 // todo complete - fix bugs:
@@ -144,6 +149,7 @@ const RootRouter = () => {
                 <Route path="/plan/:tripName/:locale" element={<MainPage/>}/>
                 <Route path="/plan/:tripName/" element={<MainPage/>}/>
                 <Route path="/plan" element={<MainPage/>}/>
+                <Route path="/theme" element={<ThemeExample/>}/>
             </Routes>
         </BrowserRouter>
     );

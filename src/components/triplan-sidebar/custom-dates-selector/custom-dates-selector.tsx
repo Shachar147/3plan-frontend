@@ -29,7 +29,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
                     setCustomDateRange(newCustomDateRange);
                     eventStore.setCustomDateRange(newCustomDateRange);
                     setDefaultCustomDateRange(newCustomDateRange, eventStore.tripName);
-                    TriplanCalendarRef.current.switchToCustomView();
+                    TriplanCalendarRef?.current?.switchToCustomView();
                 }}/>
                 <input type={"date"} value={customDateRange.end} onChange={(e) => {
                     const value = e.target.value;
@@ -41,7 +41,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
                     setCustomDateRange(newCustomDateRange);
                     eventStore.setCustomDateRange(newCustomDateRange);
                     setDefaultCustomDateRange(newCustomDateRange, eventStore.tripName);
-                    TriplanCalendarRef.current.switchToCustomView();
+                    TriplanCalendarRef?.current?.switchToCustomView();
                 }}
                 />
             </div>

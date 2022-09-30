@@ -10,21 +10,6 @@
     padding-inline-end: 10px;
     max-width: 400px;
 }
-.external-events {
-    /*z-index: 2;*/
-    /*padding: 0 10px;*/
-    /*border: 1px solid #dde3eb;*/
-    /*background: #eaeff5;*/
-    /*overflow-y: auto;*/
-    /*!*width: 90%;*!*/
-    /*height: auto;*/
-    /*min-height: 45px;*/
-    /*display: flex;*/
-    /*flex-direction: column;*/
-    /*gap: 10px;*/
-    /*padding-block: 10px;*/
-    /*border-radius: 20px;*/
-}
 .custom-dates-container {
     display: flex;
     flex-direction: column;
@@ -115,4 +100,18 @@
 
 .sidebar-event-title-container .sidebar-event-duration {
     min-width: fit-content;
+}
+
+.sidebar-statistics {
+    text-align: right;
+    border: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+
+    padding-inline: 6px;
+    gap: 8px;
+    height: 38px;
 }
