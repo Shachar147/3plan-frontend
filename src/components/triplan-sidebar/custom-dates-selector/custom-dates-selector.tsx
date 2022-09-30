@@ -4,6 +4,7 @@ import TranslateService from "../../../services/translate-service";
 import React, {useContext} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import {CustomDateRange} from "../../../utils/interfaces";
+import Button, {ButtonFlavor} from "../../common/button/button";
 
 export interface CustomDatesSelectorProps {
     customDateRange: CustomDateRange,
@@ -46,13 +47,14 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
                 />
             </div>
             <div className={"custom-dates-submit"}>
-                <button type="button" onClick={() => {
-                    if (TriplanCalendarRef && TriplanCalendarRef.current) {
-                        TriplanCalendarRef.current.switchToCustomView();
-                    }
-                }}>
-                    {TranslateService.translate(eventStore, 'CUSTOM_DATES.CHANGE_DATES')}
-                </button>
+                <Button
+                    flavor={ButtonFlavor.secondary}
+                    className={"black"}
+                    onClick={() => {
+                        if (TriplanCalendarRef && TriplanCalendarRef.current) {
+                            TriplanCalendarRef.current.switchToCustomView();
+                        }
+                    }} text={TranslateService.translate(eventStore, 'CUSTOM_DATES.CHANGE_DATES')} />
             </div>
         </div>
     );

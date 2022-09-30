@@ -1,9 +1,10 @@
 import TranslateService from "../services/translate-service";
 import React from "react";
 import {EventStore} from "../stores/events-store";
+import {Link, useNavigate} from "react-router-dom";
+import Button, {ButtonFlavor} from "../components/common/button/button";
 import ToggleButton from "../components/toggle-button/toggle-button";
 import {ViewMode} from "./enums";
-import {Link, useNavigate} from "react-router-dom";
 import {getClasses} from "./utils";
 
 const renderLanguageSelector = (eventStore: EventStore) => (
@@ -70,10 +71,12 @@ const renderMyTrips = (eventStore: EventStore) => (
         <Link to={"/my-trips"} style={{
             textDecoration: "none"
         }}>
-            <button className={"link-button"}>
-            <img alt={""}
-            src={"/images/landing-page/icons/map.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
-            </button>
+            <Button
+                flavor={ButtonFlavor.link}
+                image={"/images/landing-page/icons/map.png"}
+                text={TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
+                onClick={() => {}}
+            />
         </Link>
     </div>
 );

@@ -208,14 +208,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     }
 
     const renderAddSidebarEventButton = (categoryId: number) => (
-        <button type="button" className={"secondary-button"} style={{
-            width: "100%",
-            marginTop: "10px"
-        }} onClick={() => {
-            ModalService.openAddSidebarEventModal(eventStore, categoryId)}
-        }>
-            {TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')}
-        </button>
+        <Button
+            flavor={ButtonFlavor.secondary}
+            style={{
+                width: "100%",
+                marginTop: "10px"
+            }}
+            onClick={() => {
+                ModalService.openAddSidebarEventModal(eventStore, categoryId)
+            }}
+            text={TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')}
+            />
     )
 
     const renderCategoryEvents = (categoryId: number) => {

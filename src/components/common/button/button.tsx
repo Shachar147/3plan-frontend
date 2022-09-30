@@ -11,10 +11,13 @@ export enum ButtonFlavor {
 export interface ButtonProps {
     text: string,
     onClick: () => void,
-    flavor: ButtonFlavor;
+    flavor: ButtonFlavor,
     className?: string,
-    disabled?: boolean
-    icon?: string
+    disabled?: boolean,
+    style?: object,
+
+    icon?: string,
+    image?: string
 }
 
 const Button = (props: ButtonProps) => (
@@ -22,7 +25,9 @@ const Button = (props: ButtonProps) => (
         className={getClasses([`${props.flavor}-button main-font`], props.className)}
         onClick={props.onClick}
         disabled={props.disabled}
+        style={props.style}
     >
+        {props.image && <img alt={""} src={props.image} />}
         {props.icon && (<i className={`fa ${props.icon}`} aria-hidden="true"></i>)}
         {props.text}
     </button>
