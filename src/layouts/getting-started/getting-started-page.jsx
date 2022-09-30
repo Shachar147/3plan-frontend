@@ -5,7 +5,7 @@ import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {defaultCustomDateRange, setDefaultCalendarLocale, setDefaultCustomDateRange} from "../../utils/defaults";
-import {renderHeaderLine} from "../../utils/uiUtils";
+import {renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 
 const GettingStartedPage = () => {

@@ -5,7 +5,7 @@ import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {setDefaultCalendarLocale} from "../../utils/defaults";
-import {renderHeaderLine} from "../../utils/uiUtils";
+import {renderHeaderLine} from "../../utils/ui-utils";
 
 const LandingPage = () => {
 

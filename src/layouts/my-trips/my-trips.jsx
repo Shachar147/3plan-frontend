@@ -8,7 +8,7 @@ import {
     LS_CUSTOM_DATE_RANGE,
     setDefaultCalendarLocale,
 } from "../../utils/defaults";
-import {renderHeaderLine} from "../../utils/uiUtils";
+import {renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import ModalService from "../../services/modal-service";
 

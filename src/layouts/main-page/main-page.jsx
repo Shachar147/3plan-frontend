@@ -22,7 +22,7 @@ import {TriplanEventPreferredTime, TriplanPriority, ViewMode} from "../../utils/
 import ModalService from "../../services/modal-service";
 import TranslateService from "../../services/translate-service";
 import modalService from "../../services/modal-service";
-import {renderHeaderLine} from "../../utils/uiUtils";
+import {renderHeaderLine} from "../../utils/ui-utils";
 import {useParams} from "react-router-dom";
 
 const MainPage = () => {
