@@ -11,10 +11,8 @@ import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {
     defaultEventsToCategories,
-    getDefaultCalendarEvents, getDefaultCustomDateRange, setAllEvents,
-    setDefaultCalendarEvents, setDefaultCalendarLocale,
-    setDefaultCategories, setDefaultCustomDateRange,
-    setDefaultEvents
+    getDefaultCalendarEvents, getDefaultCustomDateRange,
+    setDefaultCustomDateRange,
 } from "../../utils/defaults";
 import {TriplanEventPreferredTime, TriplanPriority, ViewMode} from "../../utils/enums";
 import ModalService from "../../services/modal-service";
@@ -38,44 +36,6 @@ const MainPage = () => {
 
         TriplanCalendarRef.current.switchToCustomView();
     }, [tripName, locale]);
-
-    useEffect(() => {
-        setDefaultEvents(eventStore.sidebarEvents, eventStore.tripName);
-    },[eventStore.sidebarEvents]);
-
-    useEffect(() => {
-        if (eventStore.calendarEvents.length === 0 && !eventStore.allowRemoveAllCalendarEvents) return;
-        eventStore.allowRemoveAllCalendarEvents = false;
-        const defaultEvents = eventStore.getJSCalendarEvents();
-        setDefaultCalendarEvents(defaultEvents, eventStore.tripName);
-    },[eventStore.calendarEvents]);
-
-    useEffect(() => {
-        setDefaultCategories(eventStore.categories, eventStore.tripName);
-    },[eventStore.categories]);
-
-    useEffect(() => {
-        if (eventStore.allEventsTripName === eventStore.tripName) {
-            setAllEvents(eventStore.allEvents, eventStore.tripName);
-        }
-    },[eventStore.allEvents, eventStore.tripName, eventStore.allEventsTripName]);
-
-    useEffect(() => {
-        setTimeout(() => {
-            if (eventStore.isListView){
-                eventStore.setHideCustomDates(true);
-            } else {
-                eventStore.setHideCustomDates(false);
-            }
-        }, 300);
-    }, [eventStore.isListView]);
-
-    useEffect(() => {
-        document.querySelector("body").classList.remove("rtl")
-        document.querySelector("body").classList.remove("ltr")
-        document.querySelector("body").classList.add(eventStore.getCurrentDirection())
-        setDefaultCalendarLocale(eventStore.calendarLocalCode, eventStore.tripName);
-    }, [eventStore.calendarLocalCode])
 
     useEffect(() => {
         // update idtoevent, idtocategory and allevents array
@@ -102,18 +62,18 @@ const MainPage = () => {
 
     }, [eventStore.sidebarEvents]);
 
-    const updateAllEventsEvent = (event) => {
-        const updatedEvent =
-            {
-                ...eventStore.allEvents.find((e) => e.id === event.id),
-                ...event
-            };
-
-        eventStore.setAllEvents([
-            ...eventStore.allEvents.filter((e) => e.id !== event.id),
-            updatedEvent
-        ]);
-    }
+    // const updateAllEventsEvent = (event) => {
+    //     const updatedEvent =
+    //         {
+    //             ...eventStore.allEvents.find((e) => e.id === event.id),
+    //             ...event
+    //         };
+    //
+    //     eventStore.setAllEvents([
+    //         ...eventStore.allEvents.filter((e) => e.id !== event.id),
+    //         updatedEvent
+    //     ]);
+    // }
 
     const onEditCategory = (categoryId) => {
         ModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
@@ -509,7 +469,7 @@ const MainPage = () => {
         onEventReceive={removeEventFromSidebarById}
         allEvents={eventStore.allEvents}
         addEventToSidebar={addEventToSidebar}
-        updateAllEventsEvent={updateAllEventsEvent}
+        // updateAllEventsEvent={updateAllEventsEvent}
         customDateRange={customDateRange}
         categories={eventStore.categories}
         addToEventsToCategories={addToEventsToCategories}

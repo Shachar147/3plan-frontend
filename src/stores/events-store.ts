@@ -5,8 +5,14 @@ import {
     getAllEvents,
     getDefaultCalendarEvents,
     getDefaultCalendarLocale,
-    getDefaultCategories, getDefaultCustomDateRange,
-    getDefaultEvents
+    getDefaultCategories,
+    getDefaultCustomDateRange,
+    getDefaultEvents,
+    setAllEvents,
+    setDefaultCalendarEvents,
+    setDefaultCalendarLocale,
+    setDefaultCategories,
+    setDefaultEvents
 } from "../utils/defaults";
 import {CalendarEvent, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
 import {ViewMode} from "../utils/enums";
@@ -31,92 +37,39 @@ export class EventStore {
     @observable allEventsTripName: string = "";
     @observable customDateRange = getDefaultCustomDateRange();
 
-    getJSCalendarEvents(): EventInput[] {
-        return toJS(this.calendarEvents);
+    constructor() {
+        this.init();
     }
 
-    @action
-    setHideCustomDates(hide: boolean){
-        this.hideCustomDates = hide;
+    init(){
+        this.initBodyLocaleClassName();
+        this.initCustomDatesVisibilityBasedOnViewMode();
     }
+
+    // --- computed -------------------------------------------------------------
 
     @computed
     get filteredCalendarEvents(): EventInput[] {
         return this.getJSCalendarEvents().filter((event) => event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1);
     }
 
-    getSidebarEvents(): Record<number,SidebarEvent[]> {
-        const toReturn: Record<number,SidebarEvent[]> = {};
-        Object.keys(this.sidebarEvents).forEach((category) => {
-            toReturn[parseInt(category)] = this.sidebarEvents[parseInt(category)].map((x) => toJS(x))
-        })
-        return toReturn;
+    @computed
+    get categoriesIcons(): Record<number, string> {
+        const hash: Record<number, string> = {};
+        this.categories.forEach(x => hash[x.id] = x.icon);
+        return hash;
     }
 
-    public createEventId(): string {
-        this.eventIdBuffer++;
-
-        let minEventId = 0;
-        if (this.allEvents.length > 0) {
-            minEventId = Math.max(...this.allEvents.flat().map((x) => parseInt(x.id)));
-        }
-
-        return (minEventId + 1 + this.eventIdBuffer).toString();
+    @computed
+    get isListView(){
+        return this.viewMode === ViewMode.list
     }
 
-    public createCategoryId(): number {
-        this.categoryIdBuffer++;
-        let maxCategory = 0;
-        if (this.categories.length > 0){
-            maxCategory = Math.max(...this.categories.map((x) => x.id));
-        }
-        return maxCategory + 1 + this.categoryIdBuffer;
-    }
+    // --- actions --------------------------------------------------------------
 
-    updateEvent(storedEvent: SidebarEvent | EventInput | any, newEvent: SidebarEvent | EventInput | any){
-        storedEvent.title = newEvent.title;
-        storedEvent.allDay = newEvent.allDay;
-        storedEvent.start = newEvent.start || storedEvent.start;
-        storedEvent.end = newEvent.end || storedEvent.end;
-        storedEvent.icon = newEvent.icon != undefined ? newEvent.icon :
-            newEvent.extendedProps ? newEvent.extendedProps.icon :
-            storedEvent.extendedProps ? storedEvent.extendedProps.icon :
-            storedEvent.icon;
-        storedEvent.priority = newEvent.priority != undefined ? newEvent.priority : newEvent.extendedProps ? newEvent.extendedProps.priority : storedEvent.priority
-        storedEvent.description = newEvent.description != undefined ? newEvent.description : newEvent.extendedProps ? newEvent.extendedProps.description : storedEvent.description
-        storedEvent.className = `priority-${storedEvent.priority}`;
-        // storedEvent.className = newEvent.className || storedEvent.className;
-
-        storedEvent.extendedProps = storedEvent.extendedProps || {};
-        if (newEvent.extendedProps){
-            Object.keys(newEvent.extendedProps).forEach((key) => {
-                storedEvent.extendedProps![key] = newEvent.extendedProps[key];
-            });
-        }
-        storedEvent.extendedProps.icon = storedEvent.icon;
-        storedEvent.extendedProps.priority = storedEvent.priority;
-        storedEvent.extendedProps.description = storedEvent.description;
-
-        // @ts-ignore
-        const millisecondsDiff = storedEvent.end - storedEvent.start;
-        if (millisecondsDiff > 0) {
-            storedEvent.duration = convertMsToHM(millisecondsDiff);
-        }
-    }
-
-    updateSidebarEvent(storedEvent: SidebarEvent, newEvent: SidebarEvent){
-        storedEvent.title = newEvent.title;
-        storedEvent.icon = newEvent.icon != undefined ? newEvent.icon : storedEvent.icon;
-        storedEvent.duration = newEvent.duration || storedEvent.duration;
-        storedEvent.extendedProps = newEvent.extendedProps != undefined ? newEvent.extendedProps : storedEvent.extendedProps ? storedEvent.extendedProps : {};
-        storedEvent.priority = newEvent.priority != undefined ? newEvent.priority : storedEvent.priority;
-        storedEvent.preferredTime = newEvent.preferredTime != undefined ? newEvent.preferredTime : storedEvent.preferredTime;
-        storedEvent.description = newEvent.description != undefined ? newEvent.description : storedEvent.description;
-        if (newEvent.extendedProps){
-            Object.keys(newEvent.extendedProps).forEach((key) => {
-                storedEvent.extendedProps![key] = newEvent.extendedProps[key];
-            });
-        }
+    @action
+    setHideCustomDates(hide: boolean){
+        this.hideCustomDates = hide;
     }
 
     @action
@@ -174,16 +127,28 @@ export class EventStore {
     @action
     setCalendarEvents(newCalenderEvents: EventInput[]){
         this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes("start"));
+
+        // update local storage
+        if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
+        this.allowRemoveAllCalendarEvents = false;
+        const defaultEvents = this.getJSCalendarEvents();
+        setDefaultCalendarEvents(defaultEvents, this.tripName);
     }
 
     @action
     setSidebarEvents(newSidebarEvents: Record<number,SidebarEvent[]>){
         this.sidebarEvents = newSidebarEvents;
+
+        // update local storage
+        setDefaultEvents(newSidebarEvents, this.tripName);
     }
 
     @action
     setCategories(newCategories: TriPlanCategory[]){
         this.categories = newCategories;
+
+        // update local storage
+        setDefaultCategories(this.categories, this.tripName);
     }
 
     @action
@@ -199,6 +164,11 @@ export class EventStore {
             }
             return x;
         });
+
+        // update local storage
+        if (this.allEventsTripName === this.tripName) {
+            setAllEvents(this.allEvents, this.tripName);
+        }
     }
 
     @action
@@ -232,24 +202,15 @@ export class EventStore {
         this.setCalendarEvents([]);
     }
 
-    @computed
-    get categoriesIcons(): Record<number, string> {
-        const hash: Record<number, string> = {};
-        this.categories.forEach(x => hash[x.id] = x.icon);
-        return hash;
-    }
-
     @action
     setCalendarLocalCode(newCalendarLocalCode: 'he' | 'en'){
         this.calendarLocalCode = newCalendarLocalCode;
-    }
 
-    getCurrentDirection() {
-        if (this.calendarLocalCode === "he"){
-            return "rtl";
-        } else {
-            return "ltr";
-        }
+        // change body class name
+        this.initBodyLocaleClassName();
+
+        // update local storage
+        setDefaultCalendarLocale(this.calendarLocalCode, this.tripName);
     }
 
     @action
@@ -260,11 +221,9 @@ export class EventStore {
     @action
     setViewMode(newVideMode: ViewMode){
         this.viewMode = newVideMode;
-    }
 
-    @computed
-    get isListView(){
-        return this.viewMode === ViewMode.list
+        // show hide custom dates based on view
+        this.initCustomDatesVisibilityBasedOnViewMode();
     }
 
     @action
@@ -313,6 +272,112 @@ export class EventStore {
     @action
     setCustomDateRange(customDateRange: any){
         this.customDateRange = customDateRange;
+    }
+
+    // --- private functions ----------------------------------------------------
+
+    getJSCalendarEvents(): EventInput[] {
+        return toJS(this.calendarEvents);
+    }
+
+    getSidebarEvents(): Record<number,SidebarEvent[]> {
+        const toReturn: Record<number,SidebarEvent[]> = {};
+        Object.keys(this.sidebarEvents).forEach((category) => {
+            toReturn[parseInt(category)] = this.sidebarEvents[parseInt(category)].map((x) => toJS(x))
+        })
+        return toReturn;
+    }
+
+    updateEvent(storedEvent: SidebarEvent | EventInput | any, newEvent: SidebarEvent | EventInput | any){
+        storedEvent.title = newEvent.title;
+        storedEvent.allDay = newEvent.allDay;
+        storedEvent.start = newEvent.start || storedEvent.start;
+        storedEvent.end = newEvent.end || storedEvent.end;
+        storedEvent.icon = newEvent.icon != undefined ? newEvent.icon :
+            newEvent.extendedProps ? newEvent.extendedProps.icon :
+                storedEvent.extendedProps ? storedEvent.extendedProps.icon :
+                    storedEvent.icon;
+        storedEvent.priority = newEvent.priority != undefined ? newEvent.priority : newEvent.extendedProps ? newEvent.extendedProps.priority : storedEvent.priority
+        storedEvent.description = newEvent.description != undefined ? newEvent.description : newEvent.extendedProps ? newEvent.extendedProps.description : storedEvent.description
+        storedEvent.className = `priority-${storedEvent.priority}`;
+        // storedEvent.className = newEvent.className || storedEvent.className;
+
+        storedEvent.extendedProps = storedEvent.extendedProps || {};
+        if (newEvent.extendedProps){
+            Object.keys(newEvent.extendedProps).forEach((key) => {
+                storedEvent.extendedProps![key] = newEvent.extendedProps[key];
+            });
+        }
+        storedEvent.extendedProps.icon = storedEvent.icon;
+        storedEvent.extendedProps.priority = storedEvent.priority;
+        storedEvent.extendedProps.description = storedEvent.description;
+
+        // @ts-ignore
+        const millisecondsDiff = storedEvent.end - storedEvent.start;
+        if (millisecondsDiff > 0) {
+            storedEvent.duration = convertMsToHM(millisecondsDiff);
+        }
+    }
+
+    updateSidebarEvent(storedEvent: SidebarEvent, newEvent: SidebarEvent){
+        storedEvent.title = newEvent.title;
+        storedEvent.icon = newEvent.icon != undefined ? newEvent.icon : storedEvent.icon;
+        storedEvent.duration = newEvent.duration || storedEvent.duration;
+        storedEvent.extendedProps = newEvent.extendedProps != undefined ? newEvent.extendedProps : storedEvent.extendedProps ? storedEvent.extendedProps : {};
+        storedEvent.priority = newEvent.priority != undefined ? newEvent.priority : storedEvent.priority;
+        storedEvent.preferredTime = newEvent.preferredTime != undefined ? newEvent.preferredTime : storedEvent.preferredTime;
+        storedEvent.description = newEvent.description != undefined ? newEvent.description : storedEvent.description;
+        if (newEvent.extendedProps){
+            Object.keys(newEvent.extendedProps).forEach((key) => {
+                storedEvent.extendedProps![key] = newEvent.extendedProps[key];
+            });
+        }
+    }
+
+    getCurrentDirection() {
+        if (this.calendarLocalCode === "he"){
+            return "rtl";
+        } else {
+            return "ltr";
+        }
+    }
+
+    initBodyLocaleClassName(){
+        document.querySelector("body")!.classList.remove("rtl")
+        document.querySelector("body")!.classList.remove("ltr")
+        document.querySelector("body")!.classList.add(this.getCurrentDirection())
+    }
+
+    initCustomDatesVisibilityBasedOnViewMode(){
+        setTimeout(() => {
+            if (this.isListView){
+                this.setHideCustomDates(true);
+            } else {
+                this.setHideCustomDates(false);
+            }
+        }, 300);
+    }
+
+    // --- public functions -----------------------------------------------------
+
+    public createEventId(): string {
+        this.eventIdBuffer++;
+
+        let minEventId = 0;
+        if (this.allEvents.length > 0) {
+            minEventId = Math.max(...this.allEvents.flat().map((x) => parseInt(x.id)));
+        }
+
+        return (minEventId + 1 + this.eventIdBuffer).toString();
+    }
+
+    public createCategoryId(): number {
+        this.categoryIdBuffer++;
+        let maxCategory = 0;
+        if (this.categories.length > 0){
+            maxCategory = Math.max(...this.categories.map((x) => x.id));
+        }
+        return maxCategory + 1 + this.categoryIdBuffer;
     }
 }
 
