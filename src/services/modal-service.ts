@@ -2,7 +2,6 @@ import Alert from "sweetalert2";
 import {EventStore} from "../stores/events-store";
 import {
     addLineBreaks,
-    convertMsToHM,
     ucfirst
 } from "../utils/utils";
 import {EventInput} from "@fullcalendar/react";
@@ -11,7 +10,13 @@ import {defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE} fr
 import {TriplanEventPreferredTime, TriplanPriority} from "../utils/enums";
 import TranslateService from "./translate-service";
 import ImportService from "./import-service";
-import {formatDuration, getEventDueDate, getInputDateTimeValue, validateDuration} from "../utils/time-utils";
+import {
+    convertMsToHM,
+    formatDuration,
+    getEventDueDate,
+    getInputDateTimeValue,
+    validateDuration
+} from "../utils/time-utils";
 
 const ModalService = {
     _categoriesIcons: (eventStore: EventStore): Record<number, string> => {

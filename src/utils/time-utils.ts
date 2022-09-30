@@ -1,5 +1,5 @@
 import {DEFAULT_EVENT_DURATION} from "./consts";
-import {convertMsToHM, padTo2Digits} from "./utils";
+import {padTo2Digits} from "./utils";
 
 export function getDateRangeString(start: Date, end: Date){
     const startDay = start.getDate();
@@ -38,6 +38,27 @@ export function getTimeStringFromDate(date: Date) {
     const hours = padTo2Digits(date.getHours());
     const minutes = padTo2Digits(date.getMinutes());
     return `${hours}:${minutes}`;
+}
+
+export function convertMsToHM(milliseconds: number): string {
+    let seconds = Math.floor(milliseconds / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+    let days = Math.floor(hours / 24);
+
+    seconds = seconds % 60;
+    // 👇️ if seconds are greater than 30, round minutes up (optional)
+    minutes = seconds >= 30 ? minutes + 1 : minutes;
+
+    minutes = minutes % 60;
+
+    // 👇️ If you don't want to roll hours over, e.g. 24 to 00
+    // 👇️ comment (or remove) the line below
+    // commenting next line gets you `24:00:00` instead of `00:00:00`
+    // or `36:15:31` instead of `12:15:31`, etc.
+    hours = hours % 24;
+
+    return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
 }
 
 export function formatDuration(duration: string) {

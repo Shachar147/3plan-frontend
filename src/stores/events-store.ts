@@ -1,7 +1,6 @@
 import {createContext} from "react";
 import {action, computed, observable, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
-import {convertMsToHM} from "../utils/utils";
 import {
     getAllEvents,
     getDefaultCalendarEvents,
@@ -11,6 +10,7 @@ import {
 } from "../utils/defaults";
 import {CalendarEvent, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
 import {ViewMode} from "../utils/enums";
+import {convertMsToHM} from "../utils/time-utils";
 
 export class EventStore {
     categoryIdBuffer = 0;
