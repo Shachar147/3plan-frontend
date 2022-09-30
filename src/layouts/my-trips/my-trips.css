@@ -2,6 +2,15 @@ body {
     background-color: #eaeff5;
 }
 
+.my-trips {
+    background-color: transparent;
+    border: 0;
+    max-height: 350px;
+    min-height: 350px;
+    overflow-y: auto;
+    width: 500px;
+}
+
 .landing-page-layout{
     padding: 30px;
     padding-block-start: 0;

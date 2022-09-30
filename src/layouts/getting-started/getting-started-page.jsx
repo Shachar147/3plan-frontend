@@ -5,8 +5,10 @@ import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {defaultCustomDateRange, setDefaultCalendarLocale, setDefaultCustomDateRange} from "../../utils/defaults";
-import {renderHeaderLine} from "../../utils/ui-utils";
+import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
+import PrimaryButton from "../../components/common/primary-button/primary-button";
+import SecondaryButton from "../../components/common/secondary-button/secondary-button";
 
 const GettingStartedPage = () => {
 
@@ -109,23 +111,26 @@ const GettingStartedPage = () => {
                     justifyContent: "center",
                     gap: "10px"
                 }}>
-                    <button className={"primary-button main-font"} disabled={!tripName} title={!tripName ? TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.FILL_IN_TRIP_NAME') : undefined} onClick={() => {
-                        const TripName = tripName.replace(/\s/ig, "-");
-                        eventStore.setCustomDateRange(customDateRange);
-                        setDefaultCustomDateRange(customDateRange, TripName);
-                        navigate('/plan/' + TripName + '/' + eventStore.calendarLocalCode)
-                    }}>{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}</button>
-                    <button className={"secondary-button black"} onClick={() => {
-                        navigate('/my-trips')
-                    }}>{TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}</button>
+                    <PrimaryButton
+                        text={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}
+                        onClick={() => {
+                            const TripName = tripName.replace(/\s/ig, "-");
+                            eventStore.setCustomDateRange(customDateRange);
+                            setDefaultCustomDateRange(customDateRange, TripName);
+                            navigate('/plan/' + TripName + '/' + eventStore.calendarLocalCode);
+                        }}
+                    />
+                    <SecondaryButton
+                        text={TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}
+                        onClick={() => {
+                            navigate('/my-trips')
+                        }}
+                        className={"black"}
+                    />
                 </div>
 
             </div>
-            <div className={getClasses(["footer main-font"], applyPageIntro && 'up2')}>
-                <a><img src={"/images/landing-page/icons/checklist.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.LIST')}</a>
-                <a><img src={"/images/landing-page/icons/calendar.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.ORGANIZE')}</a>
-                <a><img src={"/images/landing-page/icons/organized-list.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.SUMMARY')}</a>
-            </div>
+            {renderFooterLine(eventStore, applyPageIntro && 'up2')}
         </div>
     )
 }

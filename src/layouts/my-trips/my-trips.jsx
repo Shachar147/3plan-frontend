@@ -8,7 +8,7 @@ import {
     LS_CUSTOM_DATE_RANGE,
     setDefaultCalendarLocale,
 } from "../../utils/defaults";
-import {renderHeaderLine} from "../../utils/ui-utils";
+import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import ModalService from "../../services/modal-service";
 
@@ -39,15 +39,7 @@ const MyTrips = () => {
 
     const renderForm = () => {
         return (
-            <div className={getClasses(["bright-scrollbar2"], eventStore.isListView && 'hidden')} style={{
-                backgroundColor: "transparent",
-                border: 0,
-                maxHeight: "350px",
-                minHeight: "350px",
-                overflowY: "auto",
-                // flexGrow: 1,
-                width: "500px"
-            }}>
+            <div className={getClasses(["my-trips"], eventStore.isListView && 'hidden')}>
                 {
                     Object.keys(localStorage).filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1).map((x) => x.replace(LS_CUSTOM_DATE_RANGE + "-","")).map((LSTripName) => {
                         LSTripName = LSTripName === LS_CUSTOM_DATE_RANGE ? "" : LSTripName;
@@ -130,11 +122,7 @@ const MyTrips = () => {
                 </div>
 
             </div>
-            <div className={getClasses(["footer main-font"], applyPageIntro && 'up2')}>
-                <a><img src={"/images/landing-page/icons/checklist.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.LIST')}</a>
-                <a><img src={"/images/landing-page/icons/calendar.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.ORGANIZE')}</a>
-                <a><img src={"/images/landing-page/icons/organized-list.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.SUMMARY')}</a>
-            </div>
+            {renderFooterLine(eventStore, applyPageIntro && 'up2')}
         </div>
     )
 }

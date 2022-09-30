@@ -10,6 +10,7 @@ import {eventStoreContext} from "../../stores/events-store";
 import {CustomDateRange, SidebarEvent} from "../../utils/interfaces";
 import {observer} from "mobx-react";
 import './triplan-sidebar.css';
+import CustomDatesSelector from "./custom-dates-selector/custom-dates-selector";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
@@ -31,44 +32,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
     const renderCustomDates = () => {
         return (
-            <div className={getClasses(["custom-dates-container"], eventStore.isListView && 'hidden')}>
-                <div className={"custom-dates-line"}>
-                    <input type={"date"} value={customDateRange.start} onChange={(e) => {
-                        const value = e.target.value;
-                        const newCustomDateRange = {
-                            start: value,
-                            end: customDateRange.end
-                        };
-                        console.log(newCustomDateRange);
-                        setCustomDateRange(newCustomDateRange);
-                        eventStore.setCustomDateRange(newCustomDateRange);
-                        setDefaultCustomDateRange(newCustomDateRange, eventStore.tripName);
-                        TriplanCalendarRef.current.switchToCustomView();
-                    }}/>
-                    <input type={"date"} value={customDateRange.end} onChange={(e) => {
-                        const value = e.target.value;
-                        const newCustomDateRange ={
-                            start: customDateRange.start,
-                            end: value
-                        };
-                        console.log(newCustomDateRange);
-                        setCustomDateRange(newCustomDateRange);
-                        eventStore.setCustomDateRange(newCustomDateRange);
-                        setDefaultCustomDateRange(newCustomDateRange, eventStore.tripName);
-                        TriplanCalendarRef.current.switchToCustomView();
-                    }}
-                    />
-                </div>
-                <div className={"custom-dates-submit"}>
-                    <button type="button" onClick={() => {
-                        if (TriplanCalendarRef && TriplanCalendarRef.current) {
-                            TriplanCalendarRef.current.switchToCustomView();
-                        }
-                    }}>
-                        {TranslateService.translate(eventStore,'CUSTOM_DATES.CHANGE_DATES')}
-                    </button>
-                </div>
-            </div>
+            <CustomDatesSelector
+                 TriplanCalendarRef={TriplanCalendarRef}
+                 customDateRange={customDateRange}
+                setCustomDateRange={setCustomDateRange}
+            />
         )
     }
 
@@ -332,10 +300,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     }
 
     return (
-        <div className={"external-events-container bright-scrollbar"} style={{
-            paddingInlineEnd: "10px",
-            maxWidth: "400px"
-        }}>
+        <div className={"external-events-container bright-scrollbar"}>
             {renderCustomDates()}
             {renderAddEventButton()}
             {renderAddCategoryButton()}

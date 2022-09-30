@@ -6,6 +6,9 @@
     max-height: 945px;
     overflow-y: auto;
     position: sticky;
+
+    padding-inline-end: 10px;
+    max-width: 400px;
 }
 .external-events {
     /*z-index: 2;*/

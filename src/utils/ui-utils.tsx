@@ -4,6 +4,7 @@ import {EventStore} from "../stores/events-store";
 import ToggleButton from "../components/toggle-button/toggle-button";
 import {ViewMode} from "./enums";
 import {Link, useNavigate} from "react-router-dom";
+import {getClasses} from "./utils";
 
 const renderLanguageSelector = (eventStore: EventStore) => (
     <select id="locale-selector" className={"main-font"} onChange={(e) => {
@@ -112,3 +113,11 @@ const renderViewSelector = (eventStore: EventStore) => {
         </div>
     )
 }
+
+export const renderFooterLine = (eventStore: EventStore, classList?: string) => (
+    <div className={getClasses(["footer main-font"], classList)}>
+        <a><img alt="" src={"/images/landing-page/icons/checklist.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.LIST')}</a>
+        <a><img alt="" src={"/images/landing-page/icons/calendar.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.ORGANIZE')}</a>
+        <a><img alt="" src={"/images/landing-page/icons/organized-list.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.SUMMARY')}</a>
+    </div>
+)
