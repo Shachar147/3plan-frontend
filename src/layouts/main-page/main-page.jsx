@@ -7,7 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './main-page.css';
 import './rtl.css'
 
-import LoadingPage from "../loading-page/loading-page";
 import TriplanCalendar from "../../components/triplan-calendar/triplan-calendar";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
@@ -27,7 +26,6 @@ import {useParams} from "react-router-dom";
 import {getDurationString} from "../../utils/time-utils";
 
 const MainPage = () => {
-    const [isLoading, _setIsLoading] = useState(false);
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)
     const TriplanCalendarRef = useRef(null)
     let { tripName, locale } = useParams();
@@ -497,8 +495,6 @@ const MainPage = () => {
 
     const renderListView = () => <div className={"trip-summary"} dangerouslySetInnerHTML={{__html:buildHTMLSummary(eventStore)}} />;
 
-    const renderLoading = () => <LoadingPage title={"loading"} message={"Please wait while loading..."} />;
-
     const addToEventsToCategories = (newEvent) => {
         setEventsToCategories(
             {
@@ -522,7 +518,7 @@ const MainPage = () => {
 
     console.log('date range', customDateRange);
 
-    return isLoading ? renderLoading () : (
+    return (
         <div className={"main-page"}>
             <div className={"header-container"} style={{
                 backgroundColor: "#eaeff5",
