@@ -5,7 +5,6 @@ import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './main-page.css';
-import './rtl.css'
 
 import TriplanCalendar from "../../components/triplan-calendar/triplan-calendar";
 import {eventStoreContext} from "../../stores/events-store";

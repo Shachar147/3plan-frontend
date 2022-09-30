@@ -6,6 +6,7 @@ import "./stylesheets/fonts.css";
 import "./stylesheets/colors.css";
 import "./stylesheets/buttons.css";
 import "./stylesheets/app.css";
+import './stylesheets/rtl.css';
 import "./stylesheets/fontawesome/css/font-awesome.css";
 import LandingPage from "./layouts/landing-page/landing-page";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
