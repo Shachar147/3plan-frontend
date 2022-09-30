@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import './my-trips.css';
+import './my-trips.scss';
 import { useNavigate } from "react-router-dom";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
