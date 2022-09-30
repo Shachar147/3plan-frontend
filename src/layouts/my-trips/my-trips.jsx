@@ -120,7 +120,7 @@ const MyTrips = () => {
                     <br/>
                     <div className={"trip main-font-heavy"}>{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}</div>
                 </div>
-                <img className={getClasses(["logo-container"], applyPageIntro && 'up')} style={{ cursor: "pointer" }} src={"/images/landing-page/main-centered.png"} onClick={() => {
+                <img className={getClasses(["logo-container pointer"], applyPageIntro && 'up')} src={"/images/landing-page/main-centered.png"} onClick={() => {
                     navigate('/');
                 }} />
                 <div className={getClasses(["create-new-trip-form display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>

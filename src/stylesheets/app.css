@@ -61,6 +61,11 @@ body {
     overflow: hidden;
 }
 
+.flex-1-1-0 {
+    display: flex;
+    flex: 1 1 0;
+}
+
 .flex-col {
     display: flex;
     flex-direction: column;
@@ -86,4 +91,8 @@ body {
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s 2s, opacity 2s linear;
+}
+
+.pointer {
+    cursor: pointer;
 }

@@ -24,6 +24,7 @@ export interface SidebarEvent {
     priority?: TriplanPriority,
     preferredTime?: TriplanEventPreferredTime,
     extendedProps?: any,
+    className?: string
 }
 
 export interface TriPlanCategory {

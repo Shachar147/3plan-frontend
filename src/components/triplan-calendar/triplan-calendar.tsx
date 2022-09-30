@@ -1,7 +1,7 @@
 import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {CalendarEvent, CustomDateRange, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import {observer} from 'mobx-react';
-import FullCalendar from "@fullcalendar/react";
+import FullCalendar, {EventContentArg} from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list"
 import interactionPlugin, {Draggable} from "@fullcalendar/interaction";
@@ -30,12 +30,12 @@ export interface TriPlanCalendarRef {
 }
 
 function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRef>) {
-    const { allEvents, customDateRange, defaultCalendarEvents = [] } = props;
+    const eventStore = useContext(eventStoreContext);
     const [draggables, setDraggables] = useState<any[]>([])
     const calendarComponentRef = useRef<FullCalendar>(null);
-    const eventStore = useContext(eventStoreContext);
+    const { customDateRange } = props;
 
-    // make our ref know myFunction function so we can use it outside.
+    // make our ref know our functions, so we can use them outside.
     useImperativeHandle(ref, () => ({
         refreshSources: refreshSources,
         switchToCustomView: switchToCustomView
@@ -98,7 +98,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
         };
     }
 
-    function switchToCustomView() {
+    const switchToCustomView = () => {
         if (calendarComponentRef && calendarComponentRef.current) {
 
             if (customDateRange && customDateRange.start && customDateRange.end) {
@@ -150,56 +150,68 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
         eventStore.changeEvent(changeInfo);
     }
 
-    // todo remove
-    function refreshSources(){
+    const refreshSources = () => {
+        // todo - check if we still need this function. if not - remove
         if (calendarComponentRef.current) {
-            // @ts-ignore
-            calendarComponentRef.current.getApi().getEventSources().forEach(function (item: EventApi) {
+            calendarComponentRef.current.getApi().getEventSources().forEach( (item) => {
                 item.remove();
             });
 
-            // @ts-ignore
             calendarComponentRef.current.getApi().addEventSource(eventStore.calendarEvents);
         }
     }
 
-    function onCalendarSelect(selectionInfo: any) {
+    const onCalendarSelect = (selectionInfo: any) => {
         ModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
-        // // set values in inputs
-        // $('#event-modal').find('input[name=evtStart]').val(
-        //     start.format('YYYY-MM-DD HH:mm:ss')
-        // );
-        // $('#event-modal').find('input[name=evtEnd]').val(
-        //     end.format('YYYY-MM-DD HH:mm:ss')
-        // );
-        //
-        // // show modal dialog
-        // $('#event-modal').modal('show');
     }
+
+    const renderEventContent = (eventContentArg: EventContentArg) => {
+        let eventEl = document.createElement('div')
+        eventEl.classList.add("triplan-calendar-event");
+
+        const event = eventContentArg.event;
+        const info = event.extendedProps;
+
+        const category = info.categoryId;
+        const icon = info.icon || eventStore.categoriesIcons[category];
+
+        eventEl.innerHTML = `
+                    <div>${icon} ${event.title}</div>
+                    ${event.allDay ? "" : `<div class="fc-event-time">${event.start ? getTimeStringFromDate(event.start) : ""}${event.end ? "-" + getTimeStringFromDate(event.end) : ""}</div>`}
+                `;
+
+        let arrayOfDomNodes = [ eventEl ]
+        return { domNodes: arrayOfDomNodes }
+    }
+
+    const buttonTexts = {
+        today:    TranslateService.translate(eventStore,'BUTTON_TEXT.TODAY'),
+        month:    TranslateService.translate(eventStore,'BUTTON_TEXT.MONTH'),
+        week:     TranslateService.translate(eventStore,'BUTTON_TEXT.WEEK'),
+        day:      TranslateService.translate(eventStore,'BUTTON_TEXT.DAY'),
+        list:     TranslateService.translate(eventStore,'BUTTON_TEXT.LIST'),
+    };
+
+    const headerToolbar = {
+        left: 'prev,next today',
+        center: 'customTitle',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    };
+
+    const customButtons = {
+        customTitle: {
+            text: `${eventStore.tripName.replaceAll('-',' ')} (${getDateRangeString(new Date(eventStore.customDateRange.start), new Date(eventStore.customDateRange.end))})`,
+            click: function() {}
+        }
+    };
 
     return (
         <FullCalendar
             initialView={"timeGridWeek"}
-            // defaultView="timeGridWeek"
-            headerToolbar={{
-                left: 'prev,next today',
-                center: 'customTitle',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            }}
+            headerToolbar={headerToolbar}
             titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
-            customButtons={{
-                customTitle: {
-                    text: `${eventStore.tripName.replaceAll('-',' ')} (${getDateRangeString(new Date(eventStore.customDateRange.start), new Date(eventStore.customDateRange.end))})`,
-                    click: function() {}
-                }
-            }}
-            buttonText={{
-                today:    TranslateService.translate(eventStore,'BUTTON_TEXT.TODAY'),
-                month:    TranslateService.translate(eventStore,'BUTTON_TEXT.MONTH'),
-                week:     TranslateService.translate(eventStore,'BUTTON_TEXT.WEEK'),
-                day:      TranslateService.translate(eventStore,'BUTTON_TEXT.DAY'),
-                list:     TranslateService.translate(eventStore,'BUTTON_TEXT.LIST'),
-            }}
+            customButtons={customButtons}
+            buttonText={buttonTexts}
             allDayText={TranslateService.translate(eventStore,'ALL_DAY_TEXT')}
             weekText={TranslateService.translate(eventStore,'WEEK_TEXT')}
             scrollTime={"07:00"}
@@ -217,15 +229,11 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
             droppable={true}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
             ref={calendarComponentRef}
-            // weekends={calendarWeekends}
             events={eventStore.filteredCalendarEvents}
-            // drop={eventDrop}
-            // drop={drop}
             eventReceive={onEventReceive}
             eventClick={onEventClick}
             eventChange={handleEventChange}
             eventResizableFromStart={true}
-            // selectable={true}
             locale={eventStore.calendarLocalCode}
             direction={eventStore.getCurrentDirection()}
             buttonIcons={false} // show the prev/next text
@@ -234,24 +242,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
             dayMaxEvents={true} // allow "more" link when too many events
             selectable={true}
             select={onCalendarSelect}
-            eventContent={function(eventContentArg) {
-                let eventEl = document.createElement('div')
-                eventEl.classList.add("triplan-calendar-event");
-
-                const event = eventContentArg.event;
-                const info = event.extendedProps;
-
-                const category = info.categoryId;
-                const icon = info.icon || eventStore.categoriesIcons[category];
-
-                eventEl.innerHTML = `
-                    <div>${icon} ${event.title}</div>
-                    ${event.allDay ? "" : `<div class="fc-event-time">${event.start ? getTimeStringFromDate(event.start) : ""}${event.end ? "-" + getTimeStringFromDate(event.end) : ""}</div>`}
-                `;
-
-                let arrayOfDomNodes = [ eventEl ]
-                return { domNodes: arrayOfDomNodes }
-            }}
+            eventContent={renderEventContent}
         />
     )
 }

@@ -9,6 +9,28 @@
     /*background-color: var(--white);*/
 }
 
+.main-page .header-container {
+    background-color: #eaeff5;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.main-page .main-layout-container {
+    padding: 0 30px 30px;
+}
+
+.main-page .main-layout-container .main-layout {
+    height: calc(100vh - 120px);
+    display: flex;
+    gap: 10px;
+}
+
+.main-page .calendar-container, .main-page .list-container {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
 .header .end-side {
     display: flex;
     flex-direction: row-reverse;
@@ -307,11 +329,6 @@ tbody tr:first-child .fc-timegrid-axis-frame {
 
 table, table tr, table tr td, table th {
     border-color: #dde3eb !important;
-}
-
-.calendar-container, .list-container {
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
 }
 
 .fc-media-screen {

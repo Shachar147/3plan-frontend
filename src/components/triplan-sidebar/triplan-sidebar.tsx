@@ -16,7 +16,7 @@ export interface TriplanSidebarProps {
     addToEventsToCategories: (event: SidebarEvent) => void,
     customDateRange: CustomDateRange,
     setCustomDateRange: (newRange: CustomDateRange) => void
-    TriplanCalendarRef: any,
+    TriplanCalendarRef: React.MutableRefObject<HTMLDivElement>,
 }
 
 const TriplanSidebar = (props: TriplanSidebarProps) => {
@@ -124,7 +124,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             return (
                 <>
                     <div style={{ display: "flex", gap: "10px" }}>
-                        <button className={"link-button padding-inline-start-10"} style={{ cursor: "pointer" }} onClick={() => {
+                        <button className={"link-button padding-inline-start-10 pointer"} onClick={() => {
                             eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);
                         }}>
                             <i className={"fa " + eyeIcon} aria-hidden="true"></i>
@@ -132,12 +132,12 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                         </button>
                     </div>
                     <div style={{ display: "flex", gap: "10px", paddingBlockEnd: "10px" }}>
-                        <button className={"link-button padding-inline-start-10"} style={{ cursor: "pointer" }} onClick={eventStore.openAllCategories.bind(eventStore)}>
+                        <button className={"link-button padding-inline-start-10 pointer"} onClick={eventStore.openAllCategories.bind(eventStore)}>
                             <i className="fa fa-plus-square-o" aria-hidden="true"></i>
                             {TranslateService.translate(eventStore, 'EXPAND_ALL')}
                         </button>
                         <div className={"sidebar-statistics"}> | </div>
-                        <button className={"link-button padding-inline-start-10"} style={{ cursor: "pointer" }} onClick={eventStore.closeAllCategories.bind(eventStore)}>
+                        <button className={"link-button padding-inline-start-10 pointer"} onClick={eventStore.closeAllCategories.bind(eventStore)}>
                             <i className="fa fa-minus-square-o" aria-hidden="true"></i>
                             {TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
                         </button>

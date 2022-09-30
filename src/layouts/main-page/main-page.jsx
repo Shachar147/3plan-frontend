@@ -98,13 +98,10 @@ const MainPage = () => {
     }
 
     const renderListView = () => (
-            <div style={{
-                display: "flex",
-                flex: "1 1 0",
-            }} className={getClasses(["list-container bright-scrollbar"], !eventStore.isListView && 'opacity-0 position-absolute')}>
-                <div className={"trip-summary"} dangerouslySetInnerHTML={{__html:buildHTMLSummary(eventStore)}} />
-            </div>
-        );
+        <div className={getClasses(["list-container flex-1-1-0"], !eventStore.isListView && 'opacity-0 position-absolute')}>
+            <div className={"trip-summary bright-scrollbar"} dangerouslySetInnerHTML={{__html:buildHTMLSummary(eventStore)}} />
+        </div>
+    );
 
     const addToEventsToCategories = (newEvent) => {
         setEventsToCategories(
@@ -116,11 +113,7 @@ const MainPage = () => {
     }
 
     const renderCalendarView = () => (
-        <div className={getClasses(["calender-container bright-scrollbar"], eventStore.isListView && 'opacity-0 position-absolute')}
-             style={{
-                 display: "flex",
-                 flex: "1 1 0",
-             }}>
+        <div className={getClasses(["calender-container bright-scrollbar flex-1-1-0"], eventStore.isListView && 'opacity-0 position-absolute')}>
             <TriplanCalendar
                 ref={TriplanCalendarRef}
                 defaultCalendarEvents={getDefaultCalendarEvents()}
@@ -144,16 +137,11 @@ const MainPage = () => {
         />
     )
 
-    console.log('date range', customDateRange);
+    // console.log('date range', customDateRange);
 
     return (
-        <div className={"main-page"}>
-            <div className={"header-container"} style={{
-                backgroundColor: "#eaeff5",
-                position: "sticky",
-                top: 0,
-                zIndex: 999
-            }}>
+        <div className={"main-page"} key={JSON.stringify(customDateRange)}>
+            <div className={"header-container"}>
                 {renderHeaderLine(eventStore, {
                     withLogo: true,
                     withSearch: true,
@@ -161,12 +149,8 @@ const MainPage = () => {
                     withRecommended: false
                 })}
             </div>
-            <div style={{ padding: 30, paddingTop: 0 }}>
-                <div className={getClasses("main-layout", eventStore.getCurrentDirection())} style={{
-                    height: "CALC(100vh - 120px)",
-                    display: "flex",
-                    gap: "10px"
-                }}>
+            <div className={"main-layout-container"}>
+                <div className={getClasses("main-layout", eventStore.getCurrentDirection())}>
                     {renderSidebar()}
                     {renderListView()}
                     {renderCalendarView()}
