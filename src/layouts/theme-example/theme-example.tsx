@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Button, {ButtonFlavor} from "../../components/common/button/button";
 import CustomDatesSelector from "../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector";
 import {defaultCustomDateRange} from "../../utils/defaults";
+import {CustomDateRange} from "../../utils/interfaces";
 
 const ThemeExample = () => {
 
@@ -71,7 +72,10 @@ const ThemeExample = () => {
             <div className={"flex-col gap-10"}>
                 <CustomDatesSelector
                     customDateRange={customDateRange}
-                    setCustomDateRange={setCustomDateRange}
+                    setCustomDateRange={(newRange: CustomDateRange) => {
+                        // @ts-ignore
+                        setCustomDateRange(newRange);
+                    }}
                     TriplanCalendarRef={undefined}
                 />
             </div>

@@ -9,7 +9,7 @@ import Button, {ButtonFlavor} from "../../common/button/button";
 export interface CustomDatesSelectorProps {
     customDateRange: CustomDateRange,
     setCustomDateRange: (newRange: CustomDateRange) => void,
-    TriplanCalendarRef: React.MutableRefObject<any>,
+    TriplanCalendarRef?: React.MutableRefObject<any>,
 }
 
 const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
