@@ -1,0 +1,115 @@
+/*landing page*/
+body.rtl .header, body.rtl .footer, body.rtl .main-part {
+    direction: rtl;
+}
+.main-page .header {
+    flex-direction: row-reverse;
+    padding-inline: 30px;
+}
+
+body.rtl .header {
+    flex-direction: row-reverse;
+}
+
+body.rtl .header .end-side {
+    flex-direction: row;
+}
+body.rtl .main-page .header .end-side {
+    flex-direction: row-reverse;
+}
+
+/*main page*/
+.main-layout.rtl {
+    display: flex;
+    flex-direction: row-reverse;
+}
+.main-layout.rtl .external-events-container {
+    direction: rtl;
+}
+body.rtl .swal2-container input[type=datetime-local],
+.main-layout.rtl .custom-dates-line input[type=date]{
+    text-align: right;
+}
+body.rtl .swal2-container {
+    direction: rtl;
+}
+body.rtl .swal2-container .table {
+    text-align: right;
+}
+
+body.rtl .import-events-steps {
+    text-align: right;
+}
+
+body.rtl .swal2-content ul {
+    text-align: right !important;
+    padding-block-start: 5px;
+}
+
+body.rtl .fc-timegrid-event,
+body.rtl .fc-event-main {
+    text-align: right;
+    direction: rtl;
+}
+
+body.rtl .fc-event {
+    direction: rtl;
+    text-align: right;
+}
+
+body.rtl .sidebar-event-title-container .sidebar-event-title-text {
+    float: right;
+}
+body.rtl .sidebar-event-title-container .sidebar-event-duration {
+    float: left;
+}
+
+body.rtl .trip-summary {
+    direction: rtl;
+    text-align: right;
+}
+
+body.rtl #top-bar {
+    direction: rtl;
+    text-align: right;
+}
+
+body.rtl .top-bar-end-side {
+    text-align: left;
+}
+
+body.rtl .logo {
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 0;
+    padding-inline-start: 20px;
+}
+
+body.rtl .top-bar-start-side {
+    border-top-left-radius: 30px;
+}
+
+body.rtl .top-bar-end-side {
+    border-bottom-right-radius: 30px;
+}
+
+body.rtl .fc-button-group button:first-child {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: 15px !important;
+    border-bottom-right-radius: 15px !important;
+}
+
+body.rtl .fc-button-group button:last-child {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+}
+
+body.rtl .main-page {
+    background-position-x: right;
+}
+
+body.rtl input[type=date]{
+    text-align:right;
+}

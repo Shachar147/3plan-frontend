@@ -1,0 +1,115 @@
+import TranslateService from "../services/translate-service";
+import React from "react";
+import {EventStore} from "../stores/events-store";
+import ToggleButton from "../components/toggle-button/toggle-button";
+import {ViewMode} from "./enums";
+// @ts-ignore
+import {Link, useHistory} from "react-router-dom";
+
+const renderLanguageSelector = (eventStore: EventStore) => (
+    <select id="locale-selector" className={"main-font"} onChange={(e) => {
+        // @ts-ignore
+        eventStore.setCalendarLocalCode(e.target.value);
+    }} value={eventStore.calendarLocalCode}>
+        <option value="en">{TranslateService.translate(eventStore, 'ENGLISH')}</option>
+        <option value="he">{TranslateService.translate(eventStore, 'HEBREW')}</option>
+    </select>
+)
+
+export interface HeaderLineOptions {
+    withLogo?: boolean
+    withRecommended?: boolean
+    withSearch?: boolean
+    withViewSelector?: boolean
+}
+
+export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOptions = {}) => {
+
+    const {
+        withLogo = false,
+        withRecommended = true,
+        withSearch = false,
+        withViewSelector = false,
+    } = options;
+
+    const history = useHistory();
+
+    return (
+        <div className={"header"} style={{height: 'fit-content'}}>
+            <div className={"start-side"}>
+                <div className={"choose-language main-font"}>
+                    <a><img
+                        src={"/images/landing-page/icons/choose-lang.png"}/> {TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
+                    </a>
+                    {renderLanguageSelector(eventStore)}
+                </div>
+            </div>
+            {/*<div className={"middle"}>*/}
+            {/*    */}
+            {/*</div>*/}
+            <div className={"end-side"}>
+                {withSearch && renderSearch(eventStore)}
+                {withViewSelector && renderViewSelector(eventStore)}
+                {withLogo && <div
+                    className="header-logo"
+                    onClick={() => {
+                        history.push('/')
+                    }}
+                    style={{ cursor:"pointer", display: "flex", maxHeight: "40px", height: "40px"}}>
+                        <img src={"/images/logo/logo-icon.png"}/>
+                    </div>
+                }
+                {withRecommended && renderMyTrips(eventStore)}
+            </div>
+        </div>
+    );
+}
+
+const renderMyTrips = (eventStore: EventStore) => (
+    <div className={"recommended-destinations main-font"}>
+        <Link to={"/my-trips"} style={{
+            textDecoration: "none"
+        }}>
+            <button className={"link-button"}>
+            <img
+            src={"/images/landing-page/icons/map.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
+            </button>
+        </Link>
+    </div>
+);
+
+const renderSearch = (eventStore: EventStore) => {
+    return (
+        <div className={"search-container"}>
+            <input type={"text"} name={"fc-search"} value={eventStore.searchValue} onChange={(e) => {
+                eventStore.setSearchValue(e.target.value);
+            }} placeholder={TranslateService.translate(eventStore,"SEARCH_PLACEHOLDER")} />
+        </div>
+    )
+}
+
+const renderViewSelector = (eventStore: EventStore) => {
+    return (
+        <div className={"view-selector"} key={`view-selector-${eventStore.calendarLocalCode}`}>
+            <ToggleButton
+                value={eventStore.viewMode}
+                onChange={(newVal) => eventStore.setViewMode(newVal)}
+                options={[
+                    {
+                        key: ViewMode.calendar,
+                        name: TranslateService.translate(eventStore, 'BUTTON_TEXT.CALENDAR_VIEW'),
+                        icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
+                        // iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+                    },
+                    {
+                        key: ViewMode.list,
+                        name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
+                        icon: (<i className="fa fa-list black-color" aria-hidden="true"></i>),
+                        // iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+                    }
+                ]}
+                customStyle="white"
+            />
+        </div>
+    )
+}

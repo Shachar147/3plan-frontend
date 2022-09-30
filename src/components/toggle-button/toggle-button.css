@@ -1,0 +1,102 @@
+.multiple-options-toggle-button {
+	border: 1px solid var(--light-blue);
+	background: var(--white-blue);
+	border-radius: 12px;
+	width: max-content;
+	font-size: 13px;
+	line-height: 23px;
+	position: relative;
+	overflow: hidden;
+}
+.multiple-options-toggle-button .multiple-options-toggle-button-items-container {
+	position: relative;
+	display: flex;
+	z-index: 1;
+}
+.multiple-options-toggle-button .multiple-options-toggle-button-items-container .multiple-options-toggle-button-item {
+	padding-inline: 10px;
+	cursor: pointer;
+	transition: color 0.1s linear;
+}
+.multiple-options-toggle-button .multiple-options-toggle-button-items-container .multiple-options-toggle-button-item.selected {
+	color: white;
+}
+.multiple-options-toggle-button .multiple-options-toggle-button-items-container .multiple-options-toggle-button-item .multiple-options-toggle-button-item-icon-container {
+	width: 15px;
+	display: flex;
+}
+.multiple-options-toggle-button .multiple-options-toggle-button-items-container .multiple-options-toggle-button-item .multiple-options-toggle-button-item-icon-container .icon-image {
+	width: 100%;
+}
+.multiple-options-toggle-button .background-circle {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	background-color: var(--dark-gray);
+	border-radius: 13px;
+	transition: left 0.2s ease-out 0s, width 0.3s ease 0s;
+}
+.multiple-options-toggle-button.white {
+	height: 40px;
+	line-height: normal;
+	border-radius: 20px;
+	display: flex;
+	background: var(--white-blue);
+	border-color: var(--white-blue-darker);
+}
+.multiple-options-toggle-button.white .multiple-options-toggle-button-item {
+	display: flex;
+	align-items: center;
+	padding-inline: 14px;
+	gap: 5px;
+}
+.multiple-options-toggle-button.white .multiple-options-toggle-button-item .multiple-options-toggle-button-item-text {
+	font-size: 15px;
+}
+.multiple-options-toggle-button.white .multiple-options-toggle-button-item.selected .multiple-options-toggle-button-item-text {
+	color: var(--dark-gray);
+}
+.multiple-options-toggle-button.white .background-circle {
+	border-radius: 20px;
+	background-color: white;
+	border: 2px solid #f0f0f0;
+}
+.multiple-options-toggle-button.tabs_underline {
+	width: 100%;
+	border: 0;
+	border-bottom: 1px solid #dcdcdc;
+	overflow: unset;
+	background-color: #fff;
+	border-radius: 10px 10px 0 0;
+}
+.multiple-options-toggle-button.tabs_underline .multiple-options-toggle-button-item-icon-container {
+	display: flex;
+	align-items: center;
+}
+.multiple-options-toggle-button.tabs_underline .multiple-options-toggle-button-item {
+	background-color: #fff;
+	font-size: 17px;
+	position: relative;
+	padding-inline: 20px;
+	display: flex;
+	gap: 8px;
+	height: 50px;
+	line-height: 50px;
+}
+.multiple-options-toggle-button.tabs_underline .multiple-options-toggle-button-item:first-child {
+	border-start-start-radius: 10px;
+}
+.multiple-options-toggle-button.tabs_underline .multiple-options-toggle-button-item:last-child {
+	border-start-end-radius: 10px;
+}
+.multiple-options-toggle-button.tabs_underline .multiple-options-toggle-button-item.selected {
+	color: var(--dark-gray);
+}
+.multiple-options-toggle-button.tabs_underline .background-circle {
+	position: absolute;
+	top: calc(100% - 2px);
+	transition: left 0.2s ease-out 0s, width 0.3s ease 0s;
+	background-color: var(--dark-gray);
+	height: 3px;
+	z-index: 2;
+}

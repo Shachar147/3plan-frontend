@@ -1,0 +1,62 @@
+body {
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.App {
+  font-family: GaretBook, Heebo;
+  text-align: center;
+}
+
+.locale-selector {
+  padding: 0;
+}
+
+.recommended-destinations {
+  min-height: 33px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.display-none {
+  display: none;
+}
+
+.opacity-0 {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.position-absolute {
+  position: absolute;
+  left: -2000px;
+}
+
+.fc-scroller::-webkit-scrollbar,
+.bright-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.fc-scroller::-webkit-scrollbar-track,
+.bright-scrollbar::-webkit-scrollbar-track {
+ width: 15px;
+ background-color: #fafafa;
+ border-color: #dcdcdc;
+}
+
+.fc-scroller::-webkit-scrollbar-thumb,
+.bright-scrollbar::-webkit-scrollbar-thumb {
+ background-color: rgba(224, 224, 224, 0.5);
+ border-radius: 16px;
+ width: 6px;
+}
+
+.padding-inline-start-10 {
+    padding-inline-start: 10px;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}

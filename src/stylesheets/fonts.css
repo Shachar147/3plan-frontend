@@ -1,0 +1,25 @@
+@font-face {
+    font-family: GaretBook;
+    src: url('/fonts/garet/Garet-Book.woff');
+}
+
+@font-face {
+    font-family: GaretHeavy;
+    src: url('/fonts/garet/Garet-Heavy.woff');
+}
+
+@font-face {
+    font-family: Heebo;
+    src: url('/fonts/heebo/Heebo-VariableFont_wght.ttf');
+}
+
+.main-font {
+    font-family: GaretBook, Heebo;
+}
+.main-font-heavy {
+    font-family: GaretHeavy, Heebo;
+}
+
+.main-page, .swal2-container{
+    font-family: GaretBook, Heebo;
+}
