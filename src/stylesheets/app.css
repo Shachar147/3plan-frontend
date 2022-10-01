@@ -57,6 +57,10 @@ body {
     padding-inline-start: 10px;
 }
 
+.padding-inline-0 {
+    padding-inline: 0;
+}
+
 .overflow-hidden {
     overflow: hidden;
 }

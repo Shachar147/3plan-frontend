@@ -100,14 +100,14 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
                     {Object.values(eventStore.sidebarEvents).flat().length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_SIDEBAR')}
                 </div>
-                {!!eventsWithNoLocation && <div className={getClasses(["sidebar-statistics"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
+                {!!eventsWithNoLocation && <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
                     <Button
                         icon={"fa-exclamation-triangle"}
                         text={`${eventsWithNoLocation} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_LOCATION')} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
                         onClick={() => {
                             eventStore.toggleShowOnlyEventsWithNoLocation();
                         }}
-                        flavor={ButtonFlavor.link}
+                        flavor={ButtonFlavor['movable-link']}
                         className={getClasses(eventStore.showOnlyEventsWithNoLocation && 'blue-color')}
                     />
                 </div>}
@@ -274,13 +274,15 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                         x.description = addLineBreaks(x.description, '&#10;');
                     }
                     return x;
-                }).filter((x) => x.preferredTime && x.preferredTime.toString() === preferredHour.toString()).filter((e) => {
+                }).filter((x) => x.preferredTime != undefined && x.preferredTime.toString() === preferredHour.toString()).filter((e) => {
                     if (e.title == undefined){
                         // debugger;
                     }
                     return e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1
                 }).sort(sortByPriority);
         });
+
+        // console.log("category events", categoryEvents, "by hour", preferredHoursHash);
 
         if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0){
             return undefined;

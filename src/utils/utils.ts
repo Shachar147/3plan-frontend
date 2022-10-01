@@ -436,7 +436,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
 
     const priorityToColor: Record<string, string> = {
         [TriplanPriority.must]: '#E06666FF',
-        [TriplanPriority.maybe]: '#8E7CC3FF'
+        [TriplanPriority.maybe]: '#ffb752', // '#8E7CC3FF'
     }
 
     const calendarEvents = eventStore.calendarEvents;
@@ -506,8 +506,10 @@ export function buildHTMLSummary(eventStore: EventStore) {
 
     const highlightsPerDay: Record<string, string> = {};
 
-    const notesColor = "#ff5252";
+    const notesColor = "#52a4ff"; // "#ff5252";
     const todoCompleteColor = "#ff5252";
+
+    const showIcons = true;
 
     Object.keys(calendarEventsPerDay).forEach((dayTitle) => {
         const events = calendarEventsPerDay[dayTitle];
@@ -587,7 +589,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 const color = Object.keys(priorityToColor).includes(priority) ? priorityToColor[priority] : 'inherit';
                 const fontWeight = color !== 'inherit' ? 'bold' : 'normal';
 
-                const icon = event.icon || eventStore.categoriesIcons[event.category] || "";
+                const icon = showIcons ? event.icon || eventStore.categoriesIcons[event.category] || "" : "";
                 const iconIndent = icon ? " " : "";
 
                 const indent = !previousLineWasOr && (previousEndTime > (event.start! as Date).getTime()) ? "... " : "";
@@ -626,7 +628,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
 
                 summaryPerDay[dayTitle].push(`
                     <span class="eventRow" style="${rowStyle}">
-                        ${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${icon}${iconIndent}${title}${iconIndent}${icon}${taskIndication}</span>${description}
+                        ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}</span>${description}
                     </span>
                 `);
                 previousLineWasOr = false;
