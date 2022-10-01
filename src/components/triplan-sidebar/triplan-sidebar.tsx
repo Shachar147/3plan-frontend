@@ -2,7 +2,7 @@ import React, {CSSProperties, useContext} from "react";
 import TranslateService from "../../services/translate-service";
 import ModalService from "../../services/modal-service";
 import modalService from "../../services/modal-service";
-import {addLineBreaks, getClasses, ucfirst} from "../../utils/utils";
+import {addLineBreaks, getClasses, padTo2Digits, ucfirst} from "../../utils/utils";
 import {TriplanEventPreferredTime, TriplanPriority} from "../../utils/enums";
 import {getDurationString} from "../../utils/time-utils";
 import {eventStoreContext} from "../../stores/events-store";
@@ -13,6 +13,7 @@ import CustomDatesSelector from "./custom-dates-selector/custom-dates-selector";
 import Button, {ButtonFlavor} from "../common/button/button";
 // @ts-ignore
 import * as _ from 'lodash';
+import {priorityToColor} from "../../utils/consts";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
@@ -79,43 +80,102 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     }
 
     const renderStatistics = () => {
-        const eventsWithNoLocationArr = eventStore.allEvents
-            .filter((x) => {
 
-                const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
-                const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
-                const eventIsANote = (x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay)); // in this case location is irrelevant.
-
-                return eventHaveNoLocation && !eventIsANote;
+        const renderPrioritiesStatistics = () => {
+            const eventsByPriority: Record<string, SidebarEvent[]> = {};
+            eventStore.allEvents.forEach((iter) => {
+                const priority = iter.priority || TriplanPriority.unset;
+                eventsByPriority[priority] = eventsByPriority[priority] || [];
+                eventsByPriority[priority].push(iter);
             });
 
-        const eventsWithNoLocation = _.uniq(eventsWithNoLocationArr.map(x => x.id));
+            const calendarEventsByPriority: Record<string, SidebarEvent[]> = {};
+            eventStore.calendarEvents.forEach((iter) => {
+                const priority = iter.extendedProps && iter.extendedProps.priority ? iter.extendedProps.priority : (iter.priority || TriplanPriority.unset);
+                calendarEventsByPriority[priority] = calendarEventsByPriority[priority] || [];
+                calendarEventsByPriority[priority].push(iter as SidebarEvent);
+            });
 
-        // console.log('events with no location', eventsWithNoLocationArr);
+            return Object.keys(TriplanPriority)
+                .filter((x) => !Number.isNaN(Number(x)))
+                .sort((a,b) => Number(a) - Number(b))
+                .map((priorityVal) => {
+                const priority = priorityVal as unknown as TriplanPriority;
+                const priorityText = TriplanPriority[priority];
 
-        const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation ?
-            'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
+                const total = eventsByPriority[priority] ? eventsByPriority[priority].length : 0;
+                const totalInCalendar = calendarEventsByPriority[priority] ? calendarEventsByPriority[priority].length : 0;
+                const calendarPercents = Number.parseFloat(((totalInCalendar/total) * 100).toString()).toFixed(2);
+                const notInCalendar = TranslateService.translate(eventStore, 'NOT_IN_CALENDAR');
+
+                return (
+                <div className={"sidebar-statistics"} style={{
+                    color: priorityToColor[priority],
+                    height: "30px"
+                }}>
+                    <i className="fa fa-sticky-note" aria-hidden="true"></i>
+                    {total} {TranslateService.translate(eventStore,priorityText)} ({total - totalInCalendar} {notInCalendar})
+                </div>
+            )})
+        }
+
+        const renderCalendarSidebarStatistics = () => {
+            return (
+                <>
+                    <div className={"sidebar-statistics"}>
+                        <i className="fa fa-calendar-check-o" aria-hidden="true"></i>
+                        {eventStore.calendarEvents.length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_CALENDAR')}
+                    </div>
+                    <div className={"sidebar-statistics"}>
+                        <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
+                        {Object.values(eventStore.sidebarEvents).flat().length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_SIDEBAR')}
+                    </div>
+                </>
+            );
+        }
+
+        const renderNoLocationEventsStatistics = () => {
+            const eventsWithNoLocationArr = eventStore.allEvents
+                .filter((x) => {
+
+                    const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
+                    const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
+                    const eventIsANote = (x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay)); // in this case location is irrelevant.
+
+                    return eventHaveNoLocation && !eventIsANote;
+                });
+
+            const eventsWithNoLocation = _.uniq(eventsWithNoLocationArr.map(x => x.id));
+
+            // console.log('events with no location', eventsWithNoLocationArr);
+
+            const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation ?
+                'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
+
+            return (!!eventsWithNoLocation.length) &&
+                (
+                    <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
+                        <Button
+                            icon={"fa-exclamation-triangle"}
+                            text={`${eventsWithNoLocation.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_LOCATION')} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
+                            onClick={() => {
+                                eventStore.toggleShowOnlyEventsWithNoLocation();
+                            }}
+                            flavor={ButtonFlavor['movable-link']}
+                            className={getClasses(eventStore.showOnlyEventsWithNoLocation && 'blue-color')}
+                        />
+                    </div>
+                );
+        }
+
         return (
             <>
-                <div className={"sidebar-statistics"}>
-                    <i className="fa fa-calendar-check-o" aria-hidden="true"></i>
-                    {eventStore.calendarEvents.length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_CALENDAR')}
+                {renderCalendarSidebarStatistics()}
+                {renderNoLocationEventsStatistics()}
+                <hr/>
+                <div>
+                    {renderPrioritiesStatistics()}
                 </div>
-                <div className={"sidebar-statistics"}>
-                    <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
-                    {Object.values(eventStore.sidebarEvents).flat().length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_SIDEBAR')}
-                </div>
-                {!!eventsWithNoLocation.length && <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
-                    <Button
-                        icon={"fa-exclamation-triangle"}
-                        text={`${eventsWithNoLocation.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_LOCATION')} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
-                        onClick={() => {
-                            eventStore.toggleShowOnlyEventsWithNoLocation();
-                        }}
-                        flavor={ButtonFlavor['movable-link']}
-                        className={getClasses(eventStore.showOnlyEventsWithNoLocation && 'blue-color')}
-                    />
-                </div>}
             </>
         )
     }
@@ -132,7 +192,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 <>
                     <div style={{ display: "flex", gap: "10px" }}>
                         <Button
-                            className={getClasses(["link-button padding-inline-start-10 pointer"], eventStore.hideEmptyCategories && 'blue-color')}
+                            className={getClasses(["padding-inline-start-10 pointer"], eventStore.hideEmptyCategories && 'blue-color')}
                             onClick={() => {
                                 eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);
                             }}
@@ -145,7 +205,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                         <Button
                             disabled={!expandMinimizedEnabled}
                             flavor={ButtonFlavor.link}
-                            className={"link-button padding-inline-start-10"}
+                            className={"padding-inline-start-10"}
                             onClick={eventStore.openAllCategories.bind(eventStore)}
                             icon={"fa-plus-square-o"}
                             text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
@@ -154,7 +214,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                         <Button
                             disabled={!expandMinimizedEnabled}
                             flavor={ButtonFlavor.link}
-                            className={"link-button padding-inline-start-10"}
+                            className={"padding-inline-start-10"}
                             onClick={eventStore.closeAllCategories.bind(eventStore)}
                             icon={"fa-minus-square-o"}
                             text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}

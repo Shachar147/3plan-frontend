@@ -42,8 +42,8 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
         <div className={"header"} style={{height: 'fit-content'}}>
             <div className={"start-side"}>
                 <div className={"choose-language main-font"}>
-                    <a><img
-                        alt="" src={"/images/landing-page/icons/choose-lang.png"}/> {TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
+                    <a>
+                        <img alt="" src={"/images/landing-page/icons/choose-lang.png"}/> {TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
                     </a>
                     {renderLanguageSelector(eventStore)}
                 </div>

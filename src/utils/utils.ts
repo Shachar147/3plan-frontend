@@ -6,6 +6,7 @@ import TranslateService from "../services/translate-service";
 import {getEventDueDate} from "./time-utils";
 import {Coordinate, DistanceResult, LocationData} from "./interfaces";
 import {runInAction} from "mobx";
+import {priorityToColor} from "./consts";
 
 export function padTo2Digits(num: number) {
     return num.toString().padStart(2, '0');
@@ -434,11 +435,6 @@ export function buildHTMLSummary(eventStore: EventStore) {
             .replaceAll('\n',"<br/>")
             .replaceAll('<br/><br/>',"<br/>");
 
-    const priorityToColor: Record<string, string> = {
-        [TriplanPriority.must]: '#E06666FF',
-        [TriplanPriority.maybe]: '#ffb752', // '#8E7CC3FF'
-    }
-
     const calendarEvents = eventStore.calendarEvents;
 
     const summaryPerDay: Record<string, string[]> = {};
@@ -587,7 +583,11 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 const title = event.title;
 
                 const priority = event.priority;
-                const color = Object.keys(priorityToColor).includes(priority) ? priorityToColor[priority] : 'inherit';
+                const color =
+                    [TriplanPriority.must.toString(), TriplanPriority.maybe.toString()].indexOf(priority) !== -1 &&
+                    Object.keys(priorityToColor).includes(priority) ?
+                        priorityToColor[priority] :
+                        'inherit';
                 const fontWeight = color !== 'inherit' ? 'bold' : 'normal';
 
                 const icon = showIcons ? event.icon || eventStore.categoriesIcons[event.category] || "" : "";

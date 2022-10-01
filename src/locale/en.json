@@ -164,5 +164,6 @@
   "TRAVEL_MODE.TRANSIT": "public transportation",
   "CALCULATING_DISTANCE": "Calculating distance to next destination...",
   "TO": "to ",
-  "FROM": "from "
+  "FROM": "from ",
+  "NOT_IN_CALENDAR": "not in calendar"
 }

@@ -20,8 +20,8 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 
 // feature requests
 // create tasks automatically for flight in, flight out, checkin, checkout with 'please fill in' text.
-// create automatically logistic category ^
-// create automatically tips category (with default - consider that on Sunday stuff may be closed)
+// V create automatically logistic category ^
+// create automatically notes category (with default - consider that on Sunday stuff may be closed)
 
 // refactor my css files to be scss
 // move stuff to components

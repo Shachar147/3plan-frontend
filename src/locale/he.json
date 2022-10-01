@@ -174,5 +174,6 @@
   "TRAVEL_MODE.TRANSIT": "נסיעה בתחבורה ציבורית",
   "CALCULATING_DISTANCE": "מחשב מרחק ליעד הבא...",
   "TO": "ל",
-  "FROM": "מ-"
+  "FROM": "מ-",
+  "NOT_IN_CALENDAR": "לא משובצים"
 }
