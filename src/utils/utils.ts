@@ -567,11 +567,12 @@ export function buildHTMLSummary(eventStore: EventStore) {
         let previousEndTime = 0;
         let prevEventTitle: string;
         let counter = 0;
+        const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
         events.forEach((event: EventInput, index: number) => {
             summaryPerDay[dayTitle] = summaryPerDay[dayTitle] || [];
 
                 if (Object.keys(event).length === 0){
-                    summaryPerDay[dayTitle].push(`<span style="padding-inline-start: 20px; font-weight:bold"><u>${or}</u></span>`);
+                    summaryPerDay[dayTitle].push(`<span style="padding-inline-start: 20px; font-weight:bold ${orBackgroundStyle}"><u>${or}</u></span>`);
                     previousLineWasOr = true;
                     return;
                 }
@@ -599,7 +600,13 @@ export function buildHTMLSummary(eventStore: EventStore) {
 
                 const description = event.description ? `<br>${indent}<span style="color:#999999">${formatDescription(event.description)}</span>` : "";
 
-                const rowStyle = indent ? "color: #999999" : "color:black";
+                let rowStyle = indent ? "color: #999999" : "color:black";
+
+                let backgroundStyle = "";
+                if (previousLineWasOr || (index+1 < events.length && Object.keys(events[index+1]).length === 0)) {
+                    backgroundStyle = orBackgroundStyle;
+                    rowStyle += backgroundStyle;
+                }
 
                 const taskIndication = taskKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
                     `<span style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>` : "";
@@ -630,7 +637,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 if (distanceToNextEvent !== "") {
                     const arrow = eventStore.getCurrentDirection() === 'rtl' ? '✈' : '✈'
                     const distanceColor = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '#ff5252' : 'rgba(55,181,255,0.6)';
-                    distanceToNextEvent = `<span style="color: ${distanceColor}; ">
+                    distanceToNextEvent = `<span style="color: ${distanceColor}; ${backgroundStyle}">
                         ${arrow}
                         ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'TO')}${title!.split('+')[0]}
                     </span>`;

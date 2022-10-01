@@ -82,11 +82,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
         const eventsWithNoLocation =
             _.uniq(
                 eventStore.allEvents
-                    .filter((x) =>
-                        !(x.location || (x.extendedProps && x.extendedProps.location)) &&
-                        !(x.allDay)
-                    ).map(x => x.id)
-            ).length;
+                    .filter((x) => {
+
+                        const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
+                        const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
+                        const eventIsActuallyNote = eventIsInCalendar && eventIsInCalendar.allDay; // in this case location is irrelevant.
+                        return eventHaveNoLocation && (!eventIsInCalendar || eventIsActuallyNote);
+
+                    }).map(x => x.id)
+            );
+
+        console.log('here', eventsWithNoLocation);
 
         const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation ?
             'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
@@ -100,10 +106,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
                     {Object.values(eventStore.sidebarEvents).flat().length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_SIDEBAR')}
                 </div>
-                {!!eventsWithNoLocation && <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
+                {!!eventsWithNoLocation.length && <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
                     <Button
                         icon={"fa-exclamation-triangle"}
-                        text={`${eventsWithNoLocation} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_LOCATION')} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
+                        text={`${eventsWithNoLocation.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_LOCATION')} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
                         onClick={() => {
                             eventStore.toggleShowOnlyEventsWithNoLocation();
                         }}
