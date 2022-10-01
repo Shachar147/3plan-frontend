@@ -593,7 +593,8 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 const icon = showIcons ? event.icon || eventStore.categoriesIcons[event.category] || "" : "";
                 const iconIndent = icon ? " " : "";
 
-                const indent = !previousLineWasOr && (previousEndTime > (event.start! as Date).getTime()) ? "... " : "";
+                const subItemIcon = eventStore.getCurrentDirection() === 'rtl' ? '↵' : '↳';
+                const indent = !previousLineWasOr && (previousEndTime > (event.start! as Date).getTime()) ? subItemIcon + " " : "";
                 previousEndTime = (event.end! as Date).getTime();
 
                 const prefix = previousLineWasOr || indent ? "" : counter === 0 ? startPrefix : index === events.length -1 ? lastPrefix : `${randomElement(middlePrefixes)} `;
