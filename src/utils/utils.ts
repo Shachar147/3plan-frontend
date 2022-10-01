@@ -1,9 +1,11 @@
-import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
+import {GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority} from "./enums";
 import {EventStore} from "../stores/events-store";
 import moment from "moment";
 import {EventInput} from "@fullcalendar/react";
 import TranslateService from "../services/translate-service";
 import {getEventDueDate} from "./time-utils";
+import {Coordinate, DistanceResult, LocationData} from "./interfaces";
+import {runInAction} from "mobx";
 
 export function padTo2Digits(num: number) {
     return num.toString().padStart(2, '0');
@@ -475,7 +477,10 @@ export function buildHTMLSummary(eventStore: EventStore) {
     let lastDayTitle = "";
     let lastStart = 0;
     let lastEnd = 0;
-    calendarEvents.sort((a,b) => (a.start as Date).getTime() - (b.start as Date).getTime()).forEach((event) => {
+
+    const sortedEvents = calendarEvents.sort((a,b) => (a.start as Date).getTime() - (b.start as Date).getTime());
+
+    sortedEvents.forEach((event) => {
         event.extendedProps = event.extendedProps || {};
 
         const clonedEvent = {...event, ...event.extendedProps};
@@ -506,6 +511,47 @@ export function buildHTMLSummary(eventStore: EventStore) {
 
     Object.keys(calendarEventsPerDay).forEach((dayTitle) => {
         const events = calendarEventsPerDay[dayTitle];
+        const eventDistanceKey: Record<number, string> = {};
+
+        let prevLocation: LocationData;
+        for (let i=0; i< events.length; i++){
+            const event = events[i];
+            if (Object.keys(event).length === 0) { continue; }
+            const thisLocation = event.extendedProps.location;
+            // @ts-ignore
+            if (thisLocation && prevLocation &&
+                prevLocation.longitude && prevLocation.latitude &&
+                thisLocation.longitude && thisLocation.latitude &&
+                !(thisLocation.longitude === prevLocation.longitude && thisLocation.latitude === prevLocation.latitude)
+            ){
+
+                const prevCoordinate = {
+                    lng: prevLocation.longitude!,
+                    lat: prevLocation.latitude!
+                };
+                const thisCoordinate = {
+                    lng: thisLocation.longitude!,
+                    lat: thisLocation.latitude!
+                };
+
+                const key = getCoordinatesRangeKey(eventStore.travelMode, prevCoordinate, thisCoordinate);
+                eventDistanceKey[event.id] = key;
+                if (!eventStore.distanceResults.has(key)){
+                    runInAction(() => {
+                        console.log(`checking distance between`,prevLocation.address,` and `,thisLocation.address, prevCoordinate, thisCoordinate);
+                        eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
+
+                        // @ts-ignore
+                        window.calculateMatrixDistance(eventStore, prevCoordinate, thisCoordinate);
+                    });
+                } else {
+                    console.log(`already have distance between`,prevLocation.address,` and `,thisLocation.address);
+                }
+            }
+
+            prevLocation = thisLocation;
+        }
+
         let highlightEvents = events.filter((x:EventInput) => x.priority && x.priority == TriplanPriority.must).map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
         // @ts-ignore
         highlightEvents = [...new Set(highlightEvents)];
@@ -551,6 +597,26 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 const taskIndication = taskKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
                     `<span style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>` : "";
 
+                const distanceKey = Object.keys(eventDistanceKey).includes(event.id!) ?
+                    eventDistanceKey[Number(event.id!)] : undefined;
+
+                let distanceToNextEvent =
+                    distanceKey ?
+                        eventStore.distanceResults.has(distanceKey) ?
+                            toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!) :
+                        TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
+                    : "";
+
+                if (distanceToNextEvent !== "") {
+                    const color = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '--red' : '--blue';
+                    distanceToNextEvent = `<span style="color:var(${color}); opacity: 0.6">
+                        <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+                        ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'TO')}${title}
+                        <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+                    </span>`;
+                    summaryPerDay[dayTitle].push(distanceToNextEvent);
+                }
+
                 summaryPerDay[dayTitle].push(`
                     <span class="eventRow" style="${rowStyle}">
                         ${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${icon}${iconIndent}${title}${iconIndent}${icon}${taskIndication}</span>${description}
@@ -572,4 +638,48 @@ export function buildHTMLSummary(eventStore: EventStore) {
             }).join("<br/><hr/><br/>")}
         </div>
     `
+}
+
+export function getCoordinatesRangeKey(travelMode: string, startDestination: Coordinate, endDestination: Coordinate){
+    return `[${travelMode}] ${startDestination.lat},${startDestination.lng}-${endDestination.lat},${endDestination.lng}`;
+}
+
+export function toDistanceString(eventStore: EventStore, distanceResult: DistanceResult){
+    let duration = distanceResult.duration;
+    let distance = distanceResult.distance;
+
+    const reachingTo = TranslateService.translate(eventStore, 'REACHING_TO_NEXT_DESTINATION');
+
+    // means there are no ways to get there in this travel mode
+    if (distance === "-" || duration === "-"){
+        return (
+            `${reachingTo}: ${TranslateService.translate(eventStore, 'DISTANCE.ERROR.NO_POSSIBLE_WAY')}${TranslateService.translate(eventStore, 'TRAVEL_MODE.' + eventStore.travelMode.toUpperCase())}`
+        )
+    }
+
+    duration = duration.replaceAll("mins", TranslateService.translate(eventStore, 'DURATION.MINS'));
+    duration = duration.replaceAll("min", TranslateService.translate(eventStore, 'DURATION.MIN'));
+    duration = duration.replaceAll("hours", TranslateService.translate(eventStore, 'DURATION.HOURS'));
+    duration = duration.replaceAll("hour", TranslateService.translate(eventStore, 'DURATION.HOUR'));
+
+    duration = duration.replaceAll("1 שעה","שעה");
+
+    distance = distance.replaceAll("km", TranslateService.translate(eventStore, 'DISTANCE.KM'));
+
+    let prefix, suffix;
+
+    switch(eventStore.travelMode){
+        case GoogleTravelMode.TRANSIT:
+            prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
+            suffix = TranslateService.translate(eventStore, 'DISTANCE.SUFFIX.TRANSIT');
+            return `${reachingTo}: ${prefix} ${duration} (${distance}) ${suffix}`;
+        case GoogleTravelMode.DRIVING:
+            prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
+            return `${reachingTo}: ${prefix} ${duration} (${distance})`;
+        case GoogleTravelMode.WALKING:
+            prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.WALKING');
+            return `${reachingTo}: ${prefix} ${duration} (${distance})`;
+        default:
+            return '';
+    }
 }

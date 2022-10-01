@@ -1,9 +1,10 @@
 import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
-import {CalendarEvent, SidebarEvent, TriPlanCategory} from "./interfaces";
+import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "./interfaces";
 import {EventInput} from "@fullcalendar/react";
 import {padTo2Digits} from "./utils";
 import {EventStore} from "../stores/events-store";
 import TranslateService from "../services/translate-service";
+import {observable} from "mobx";
 
 export const defaultLocalCode = "he";
 export const defaultTimedEventDuration = '01:00';
@@ -569,6 +570,7 @@ const LS_CALENDAR_EVENTS = "triplan-calendar-events";
 const LS_CATEGORIES = "triplan-categories"
 const LS_ALL_EVENTS = "triplan-all-events";
 const LS_CALENDAR_LOCALE = "triplan-calendar-locale"
+const LS_DISTANCE_RESULTS = "triplan-distance-results"
 export const LS_CUSTOM_DATE_RANGE = "triplan-custom-date-range"
 
 export function getLocalStorageKeys(){
@@ -599,9 +601,6 @@ export function getDefaultCalendarEvents(tripName?: string){
     if (!localStorage.getItem(key)){
         setDefaultCalendarEvents(defaultCalendarEvents, tripName);
     }
-    console.log("there1", localStorage.getItem(key));
-    console.log("there2", JSON.parse(localStorage.getItem(key)!));
-    console.log("there3", JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; }));
     return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
 }
 export function setDefaultCalendarEvents(calendarEvents: EventInput[], tripName?: string){
@@ -684,4 +683,17 @@ export function getDefaultCustomDateRange(tripName?: string){
 export function setDefaultCustomDateRange(customDateRange: any, tripName?: string){
     const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
     localStorage.setItem(key, JSON.stringify(customDateRange))
+}
+
+export function getDefaultDistanceResults(tripName?: string): Map<string, DistanceResult> {
+    const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
+    if (!localStorage.getItem(key)){
+        setDefaultDistanceResults({}, tripName);
+    }
+    // @ts-ignore
+    return JSON.parse(localStorage.getItem(key)) || {};
+}
+export function setDefaultDistanceResults(defaultDistanceResults: Map<string, DistanceResult> | object, tripName?: string){
+    const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
+    localStorage.setItem(key, JSON.stringify(defaultDistanceResults))
 }

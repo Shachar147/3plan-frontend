@@ -191,7 +191,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     const eventsStyle = isOpen ? openStyle : closedStyle;
 
                     return (
-                        <div className={"external-events"}>
+                        <div className={"external-events"} key={category.id}>
                             <div className={"sidebar-statistics"} style={{ paddingInlineStart: "10px", cursor: "pointer", backgroundColor: "#e5e9ef80", borderBottom: "1px solid #e5e9ef", height: "45px" }}  onClick={() => {
                                 eventStore.toggleCategory(category.id);
                             }}>

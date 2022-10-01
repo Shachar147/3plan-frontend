@@ -15,6 +15,8 @@ import MyTrips from "./layouts/my-trips/my-trips";
 import TranslateService from "./services/translate-service";
 import {eventStoreContext} from "./stores/events-store";
 import ThemeExample from "./layouts/theme-example/theme-example";
+import {runInAction} from "mobx";
+import {getCoordinatesRangeKey} from "./utils/utils";
 
 // feature requests
 // create tasks automatically for flight in, flight out, checkin, checkout with 'please fill in' text.
@@ -138,6 +140,74 @@ const RootRouter = () => {
             }
             return false;
         });
+    }
+
+    // calculate matrix distance
+    window.calculateMatrixDistance = (eventStore, startDestination, endDestination) => {
+
+        const googleMatrixService = new google.maps.DistanceMatrixService();
+
+        if (!startDestination || !endDestination) {
+            return;
+        }
+
+        const origin = new google.maps.LatLng(
+            startDestination.lat,
+            startDestination.lng
+        );
+        const dest = new google.maps.LatLng(
+            endDestination.lat,
+            endDestination.lng
+        );
+        googleMatrixService.getDistanceMatrix(
+            {
+                origins: [origin],
+                destinations: [dest],
+                travelMode: eventStore.travelMode
+            },
+            handleMatrixDistance
+        );
+
+        function handleMatrixDistance(response, status) {
+            if (status === "OK") {
+                const origins = response.originAddresses;
+                const destinations = response.destinationAddresses;
+
+                let result = {};
+
+                for (let i = 0; i < origins.length; i++) {
+                    const results = response.rows[i].elements;
+                    for (let j = 0; j < results.length; j++) {
+                        let element = results[j];
+
+                        let from = origins[i];
+                        let to = destinations[j];
+
+                        try {
+                            let distance = element.distance.text;
+                            let duration = element.duration.text;
+
+                            result = {
+                                distance, duration, from, to
+                            };
+                        } catch {
+                            // means there are no possible ways to get there in this travel mode
+                            result = {
+                                distance: "-", duration: "-", from, to
+                            };
+                        }
+                    }
+                }
+                runInAction(() => {
+                    eventStore.setDistance(
+                        getCoordinatesRangeKey(eventStore.travelMode, startDestination, endDestination), result
+                    );
+
+                    eventStore.calculatingDistance = eventStore.calculatingDistance - 1;
+                    console.log("finished", eventStore.calculatingDistance);
+                });
+            }
+        }
     }
 
     return (

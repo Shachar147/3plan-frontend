@@ -147,5 +147,20 @@
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "show which",
   "SHOW_ALL_EVENTS": "cancel filter",
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG": "Show only events with no location",
-  "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "There are no categories. please add category before you try to add an event"
+  "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "There are no categories. please add category before you try to add an event",
+  "DISTANCE.PREFIX.WALKING": "Walking",
+  "DISTANCE.PREFIX.DRIVING": "Driving",
+  "DISTANCE.PREFIX.TRANSIT.SUFFIX": "on public transportation",
+  "DURATION.MINS": "mins",
+  "DURATION.MIN": "min",
+  "DURATION.HOURS": "hours",
+  "DURATION.HOUR": "hour",
+  "DISTANCE.KM": "km",
+  "REACHING_TO_NEXT_DESTINATION": "Reaching to the next destination",
+  "DISTANCE.ERROR.NO_POSSIBLE_WAY": "There is no way to get to the next destination by",
+  "TRAVEL_MODE.DRIVING": "driving",
+  "TRAVEL_MODE.WALKING": "walking",
+  "TRAVEL_MODE.TRANSIT": "public transportation",
+  "CALCULATING_DISTANCE": "Calculating distance to next destination...",
+  "TO": "to "
 }

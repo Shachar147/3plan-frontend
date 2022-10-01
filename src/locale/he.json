@@ -157,5 +157,20 @@
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "הצג אילו",
   "SHOW_ALL_EVENTS": "בטל סינון",
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG": "הצג רק אירועים ללא מיקום",
-  "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "אין קטגוריות. אנא צור קטגוריה לפני שאתה מנסה ליצור אירוע"
+  "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "אין קטגוריות. אנא צור קטגוריה לפני שאתה מנסה ליצור אירוע",
+  "DISTANCE.PREFIX.WALKING": "הליכה של",
+  "DISTANCE.PREFIX.DRIVING": "נסיעה של",
+  "DISTANCE.PREFIX.TRANSIT.SUFFIX": "בתחבורה ציבורית",
+  "DURATION.MINS": "דקות",
+  "DURATION.MIN": "דקה",
+  "DURATION.HOURS": "שעות",
+  "DURATION.HOUR": "שעה",
+  "DISTANCE.KM": "קילומטר",
+  "REACHING_TO_NEXT_DESTINATION": "מעבר ליעד הבא",
+  "DISTANCE.ERROR.NO_POSSIBLE_WAY": "אין דרך להגיע ליעד הבא ב",
+  "TRAVEL_MODE.DRIVING": "נסיעה",
+  "TRAVEL_MODE.WALKING": "הליכה",
+  "TRAVEL_MODE.TRANSIT": "נסיעה בתחבורה ציבורית",
+  "CALCULATING_DISTANCE": "מחשב מרחק ליעד הבא...",
+  "TO": "ל"
 }

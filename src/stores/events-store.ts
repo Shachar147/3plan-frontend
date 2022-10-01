@@ -1,21 +1,21 @@
 import {createContext} from "react";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, observable, runInAction, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
 import {
     getAllEvents,
     getDefaultCalendarEvents,
     getDefaultCalendarLocale,
     getDefaultCategories,
-    getDefaultCustomDateRange,
+    getDefaultCustomDateRange, getDefaultDistanceResults,
     getDefaultEvents,
     setAllEvents,
     setDefaultCalendarEvents,
     setDefaultCalendarLocale,
-    setDefaultCategories,
+    setDefaultCategories, setDefaultDistanceResults,
     setDefaultEvents
 } from "../utils/defaults";
-import {CalendarEvent, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
-import {ViewMode} from "../utils/enums";
+import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
+import {GoogleTravelMode, ViewMode} from "../utils/enums";
 import {convertMsToHM} from "../utils/time-utils";
 
 // @ts-ignore
@@ -40,6 +40,9 @@ export class EventStore {
     @observable allEventsTripName: string = "";
     @observable customDateRange = getDefaultCustomDateRange();
     @observable showOnlyEventsWithNoLocation: boolean = false;
+    @observable calculatingDistance = 0;
+    @observable distanceResults = observable.map<string,DistanceResult>(getDefaultDistanceResults());
+    @observable travelMode = GoogleTravelMode.DRIVING;
 
     constructor() {
         this.categories = getDefaultCategories(this);
@@ -284,11 +287,15 @@ export class EventStore {
         this.setCalendarLocalCode(calendarLocale || getDefaultCalendarLocale(name));
         this.setSidebarEvents(getDefaultEvents(name))
         this.setCalendarEvents(getDefaultCalendarEvents(name))
-        console.log("hereee", this.calendarEvents);
         this.customDateRange = getDefaultCustomDateRange(name);
         this.allEvents = getAllEvents(this,name);
-        this.categories = getDefaultCategories(this, name);
+        this.categories = getDefaultCategories(this, name);;
         this.allEventsTripName = name;
+
+        runInAction(() => {
+            const newMap = getDefaultDistanceResults(name);
+            this.distanceResults = observable.map(newMap);
+        })
     }
 
     @action
@@ -304,6 +311,14 @@ export class EventStore {
     @action
     setShowOnlyEventsWithNoLocation(newVal: boolean) {
         this.showOnlyEventsWithNoLocation = newVal;
+    }
+
+    @action
+    setDistance(key: string, value: DistanceResult){
+        this.distanceResults.set(key, value);
+
+        // update local storage
+        setDefaultDistanceResults(this.distanceResults, this.tripName);
     }
 
     // --- private functions ----------------------------------------------------

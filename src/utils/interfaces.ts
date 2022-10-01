@@ -42,6 +42,11 @@ export interface LocationData {
     longitude?: number;
 }
 
+export interface Coordinate {
+    lat: number;
+    lng: number;
+}
+
 export interface ImportEventsConfirmInfo {
     eventsToAdd: SidebarEvent[],
     categoriesToAdd: TriPlanCategory[],
@@ -52,4 +57,11 @@ export interface ImportEventsConfirmInfo {
 export interface CustomDateRange {
     start?: string,
     end?: string
+}
+
+export interface DistanceResult {
+    from: string,
+    to: string,
+    duration: string,
+    distance: string
 }

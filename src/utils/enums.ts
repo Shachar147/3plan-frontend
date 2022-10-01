@@ -19,3 +19,9 @@ export enum ViewMode {
     list = "list",
     calendar = "calendar"
 }
+
+export enum GoogleTravelMode {
+    TRANSIT = "TRANSIT",
+    DRIVING = "DRIVING",
+    WALKING = "WALKING"
+}
