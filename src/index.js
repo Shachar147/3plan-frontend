@@ -186,14 +186,15 @@ const RootRouter = () => {
                         try {
                             let distance = element.distance.text;
                             let duration = element.duration.text;
+                            let duration_value = element.duration.value;
 
                             result = {
-                                distance, duration, from, to
+                                distance, duration, from, to, duration_value
                             };
                         } catch {
                             // means there are no possible ways to get there in this travel mode
                             result = {
-                                distance: "-", duration: "-", from, to
+                                distance: "-", duration: "-", from, to, duration_value: 9999999999
                             };
                         }
                     }

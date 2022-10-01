@@ -547,7 +547,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
                         window.calculateMatrixDistance(eventStore, prevCoordinate, thisCoordinate);
                     });
                 } else {
-                    console.log(`already have distance between`,prevLocation.address,` and `,thisLocation.address);
+                    // console.log(`already have distance between`,prevLocation.address,` and `,thisLocation.address);
                 }
             }
 
@@ -604,13 +604,24 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 const taskIndication = taskKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
                     `<span style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>` : "";
 
-                const distanceKey = Object.keys(eventDistanceKey).includes(event.id!) ?
+                let distanceKey = Object.keys(eventDistanceKey).includes(event.id!) ?
                     eventDistanceKey[Number(event.id!)] : undefined;
+
+                // test
+                let travelMode = eventStore.travelMode;
+                if (distanceKey && eventStore.distanceResults.has(distanceKey) && eventStore.distanceResults.has(distanceKey.replace('DRIVING','WALKING'))) {
+                    if (
+                        eventStore.distanceResults.get(distanceKey)!.duration_value! >
+                        eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value!) {
+                        distanceKey = distanceKey.replace('DRIVING', 'WALKING');
+                        travelMode = GoogleTravelMode.WALKING;
+                    }
+                }
 
                 let distanceToNextEvent =
                     distanceKey ?
                         eventStore.distanceResults.has(distanceKey) ?
-                            toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!) :
+                            toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, travelMode) :
                         TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
                     : "";
 
@@ -655,9 +666,13 @@ export function getCoordinatesRangeKey(travelMode: string, startDestination: Coo
     return `[${travelMode}] ${startDestination.lat},${startDestination.lng}-${endDestination.lat},${endDestination.lng}`;
 }
 
-export function toDistanceString(eventStore: EventStore, distanceResult: DistanceResult){
+export function toDistanceString(eventStore: EventStore, distanceResult: DistanceResult, travelMode?: GoogleTravelMode){
     let duration = distanceResult.duration;
     let distance = distanceResult.distance;
+
+    if (!travelMode){
+        travelMode = eventStore.travelMode
+    }
 
     const reachingTo = TranslateService.translate(eventStore, 'REACHING_TO_NEXT_DESTINATION');
 
@@ -674,13 +689,14 @@ export function toDistanceString(eventStore: EventStore, distanceResult: Distanc
     duration = duration.replaceAll("hour", TranslateService.translate(eventStore, 'DURATION.HOUR'));
 
     duration = duration.replaceAll("1 שעה","שעה");
+    duration = duration.replaceAll("1 דקה","דקה");
 
     distance = distance.replaceAll("km", TranslateService.translate(eventStore, 'DISTANCE.KM'));
     distance = distance.replaceAll("m", TranslateService.translate(eventStore, 'DISTANCE.M'));
 
     let prefix, suffix;
 
-    switch(eventStore.travelMode){
+    switch(travelMode){
         case GoogleTravelMode.TRANSIT:
             prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
             suffix = TranslateService.translate(eventStore, 'DISTANCE.SUFFIX.TRANSIT');

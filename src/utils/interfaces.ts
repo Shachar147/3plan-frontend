@@ -63,5 +63,6 @@ export interface DistanceResult {
     from: string,
     to: string,
     duration: string,
-    distance: string
+    distance: string,
+    duration_value: number,
 }
