@@ -96,25 +96,33 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 calendarEventsByPriority[priority].push(iter as SidebarEvent);
             });
 
+            const getPriorityTotalEvents = (priorityVal: string) => {
+                const priority = priorityVal as unknown as TriplanPriority;
+                return eventsByPriority[priority] ? eventsByPriority[priority].length : 0;
+            }
+
             return Object.keys(TriplanPriority)
                 .filter((x) => !Number.isNaN(Number(x)))
-                .sort((a,b) => Number(a) - Number(b))
+                .sort((a,b) => getPriorityTotalEvents(b) - getPriorityTotalEvents(a))
                 .map((priorityVal) => {
                 const priority = priorityVal as unknown as TriplanPriority;
                 const priorityText = TriplanPriority[priority];
 
-                const total = eventsByPriority[priority] ? eventsByPriority[priority].length : 0;
+                const total = getPriorityTotalEvents(priorityVal);
                 const totalInCalendar = calendarEventsByPriority[priority] ? calendarEventsByPriority[priority].length : 0;
-                const calendarPercents = Number.parseFloat(((totalInCalendar/total) * 100).toString()).toFixed(2);
                 const notInCalendar = TranslateService.translate(eventStore, 'NOT_IN_CALENDAR');
+                const prefix = TranslateService.translate(eventStore, 'EVENTS_ON_PRIORITY');
+
+                const color = priorityToColor[priority];
 
                 return (
-                <div className={"sidebar-statistics"} style={{
-                    color: priorityToColor[priority],
-                    height: "30px"
-                }}>
-                    <i className="fa fa-sticky-note" aria-hidden="true"></i>
-                    {total} {TranslateService.translate(eventStore,priorityText)} ({total - totalInCalendar} {notInCalendar})
+                <div className={"sidebar-statistics"}>
+                    <i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }}></i>
+                    <div>
+                        {`${total} ${prefix} `}
+                        <span>{TranslateService.translate(eventStore,priorityText)}</span>
+                        {` (${total - totalInCalendar} ${notInCalendar})`}
+                    </div>
                 </div>
             )})
         }

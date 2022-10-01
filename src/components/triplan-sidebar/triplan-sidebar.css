@@ -8,7 +8,8 @@
     position: sticky;
 
     padding-inline-end: 10px;
-    max-width: 400px;
+    width: fit-content;
+    max-width: 430px;
 }
 .custom-dates-container {
     display: flex;
@@ -44,9 +45,9 @@
     flex-shrink: 0;
 }
 
-.custom-dates-line input {
-    max-width: 150px !important;
-}
+/*.custom-dates-line input {*/
+/*    max-width: 150px !important;*/
+/*}*/
 
 .trip-name-line {
     width: 300px;

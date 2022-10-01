@@ -7,6 +7,7 @@ import ToggleButton from "../components/toggle-button/toggle-button";
 import {ViewMode} from "./enums";
 import {getClasses} from "./utils";
 import TriplanTag from "../components/common/triplan-tag/triplan-tag";
+import IconSelector from "../components/icon-selector/icon-selector";
 
 const renderLanguageSelector = (eventStore: EventStore) => (
     <select id="locale-selector" className={"main-font"} onChange={(e) => {

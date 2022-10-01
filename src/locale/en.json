@@ -165,5 +165,6 @@
   "CALCULATING_DISTANCE": "Calculating distance to next destination...",
   "TO": "to ",
   "FROM": "from ",
-  "NOT_IN_CALENDAR": "not in calendar"
+  "NOT_IN_CALENDAR": "unscheduled",
+  "EVENTS_ON_PRIORITY": "events on priority"
 }

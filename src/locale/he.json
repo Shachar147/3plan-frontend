@@ -12,7 +12,7 @@
   "CLEAR_CALENDAR_EVENTS.BUTTON_TEXT": "נקה את אירועי לוח השנה",
   "TIME": "זמן",
   "morning": "בוקר",
-  "unset": "לא הוגדר",
+  "unset": "לא מוגדרת",
   "nevermind": "לא משנה",
   "noon": "צהריים",
   "afternoon": "אחר-הצהריים",
@@ -175,5 +175,6 @@
   "CALCULATING_DISTANCE": "מחשב מרחק ליעד הבא...",
   "TO": "ל",
   "FROM": "מ-",
-  "NOT_IN_CALENDAR": "לא משובצים"
+  "NOT_IN_CALENDAR": "לא משובצים",
+  "EVENTS_ON_PRIORITY": "אירועים בעדיפות"
 }
