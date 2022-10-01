@@ -549,7 +549,11 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 }
             }
 
-            prevLocation = thisLocation;
+            if (i+1 < events.length && Object.keys(events[i+1]).length === 0){
+
+            } else {
+                prevLocation = thisLocation;
+            }
         }
 
         let highlightEvents = events.filter((x:EventInput) => x.priority && x.priority == TriplanPriority.must).map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
@@ -559,6 +563,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
 
         let previousLineWasOr = false;
         let previousEndTime = 0;
+        let prevEventTitle: string;
         let counter = 0;
         events.forEach((event: EventInput, index: number) => {
             summaryPerDay[dayTitle] = summaryPerDay[dayTitle] || [];
@@ -607,11 +612,13 @@ export function buildHTMLSummary(eventStore: EventStore) {
                         TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
                     : "";
 
+                // const from = previousLineWasOr ? `${TranslateService.translate(eventStore, 'FROM')} ${prevEventTitle} ` : "";
+
                 if (distanceToNextEvent !== "") {
                     const color = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '--red' : '--blue';
                     distanceToNextEvent = `<span style="color:var(${color}); opacity: 0.6">
                         <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
-                        ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'TO')}${title}
+                        ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'TO')}${title!.split('+')[0]}
                         <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
                     </span>`;
                     summaryPerDay[dayTitle].push(distanceToNextEvent);
@@ -624,6 +631,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 `);
                 previousLineWasOr = false;
                 counter++;
+                prevEventTitle = title!;
             })
         })
 
@@ -665,6 +673,7 @@ export function toDistanceString(eventStore: EventStore, distanceResult: Distanc
     duration = duration.replaceAll("1 שעה","שעה");
 
     distance = distance.replaceAll("km", TranslateService.translate(eventStore, 'DISTANCE.KM'));
+    distance = distance.replaceAll("m", TranslateService.translate(eventStore, 'DISTANCE.M'));
 
     let prefix, suffix;
 

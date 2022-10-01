@@ -156,11 +156,13 @@
   "DURATION.HOURS": "hours",
   "DURATION.HOUR": "hour",
   "DISTANCE.KM": "km",
+  "DISTANCE.M": "m",
   "REACHING_TO_NEXT_DESTINATION": "Reaching to the next destination",
   "DISTANCE.ERROR.NO_POSSIBLE_WAY": "There is no way to get to the next destination by",
   "TRAVEL_MODE.DRIVING": "driving",
   "TRAVEL_MODE.WALKING": "walking",
   "TRAVEL_MODE.TRANSIT": "public transportation",
   "CALCULATING_DISTANCE": "Calculating distance to next destination...",
-  "TO": "to "
+  "TO": "to ",
+  "FROM": "from "
 }

@@ -166,11 +166,13 @@
   "DURATION.HOURS": "שעות",
   "DURATION.HOUR": "שעה",
   "DISTANCE.KM": "קילומטר",
+  "DISTANCE.M": "מטרים",
   "REACHING_TO_NEXT_DESTINATION": "מעבר ליעד הבא",
   "DISTANCE.ERROR.NO_POSSIBLE_WAY": "אין דרך להגיע ליעד הבא ב",
   "TRAVEL_MODE.DRIVING": "נסיעה",
   "TRAVEL_MODE.WALKING": "הליכה",
   "TRAVEL_MODE.TRANSIT": "נסיעה בתחבורה ציבורית",
   "CALCULATING_DISTANCE": "מחשב מרחק ליעד הבא...",
-  "TO": "ל"
+  "TO": "ל",
+  "FROM": "מ-"
 }
