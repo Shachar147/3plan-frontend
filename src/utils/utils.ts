@@ -615,11 +615,11 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 // const from = previousLineWasOr ? `${TranslateService.translate(eventStore, 'FROM')} ${prevEventTitle} ` : "";
 
                 if (distanceToNextEvent !== "") {
-                    const color = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '--red' : '--blue';
-                    distanceToNextEvent = `<span style="color:var(${color}); opacity: 0.6">
-                        <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+                    const arrow = eventStore.getCurrentDirection() === 'rtl' ? '✈' : '✈'
+                    const distanceColor = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '#ff5252' : 'rgba(55,181,255,0.6)';
+                    distanceToNextEvent = `<span style="color: ${distanceColor}; ">
+                        ${arrow}
                         ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'TO')}${title!.split('+')[0]}
-                        <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
                     </span>`;
                     summaryPerDay[dayTitle].push(distanceToNextEvent);
                 }
@@ -639,8 +639,9 @@ export function buildHTMLSummary(eventStore: EventStore) {
         <div>
             <h3><b><u>${tripSummaryTitle}</b></u></h3>
             ${Object.keys(summaryPerDay).map((dayTitle) => {
+                const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
                 return `
-                    <b>${dayTitle}${highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : ""}</b><br>
+                    <b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span><br>
                     ${summaryPerDay[dayTitle].join("<br/>")}
                 `
             }).join("<br/><hr/><br/>")}

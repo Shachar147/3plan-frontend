@@ -321,6 +321,7 @@ thead th {
     font-family: GaretBook, Heebo;
     border: 0;
     border-bottom: 1px solid #ddd;
+    font-weight: normal !important;
 }
 
 tbody tr:first-child .fc-timegrid-axis-frame {
