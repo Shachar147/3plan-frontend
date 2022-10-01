@@ -92,8 +92,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     }).map(x => x.id)
             );
 
-        console.log('here', eventsWithNoLocation);
-
         const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation ?
             'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
         return (

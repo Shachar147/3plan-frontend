@@ -7,7 +7,7 @@ import listPlugin from "@fullcalendar/list"
 import interactionPlugin, {Draggable} from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import {eventStoreContext} from "../../stores/events-store";
-import './triplan-calendar.css'
+import './triplan-calendar.scss'
 import ModalService from "../../services/modal-service";
 import {defaultTimedEventDuration} from "../../utils/defaults";
 import TranslateService from "../../services/translate-service";

@@ -40,7 +40,14 @@
 
 .fc-event-main, .fc-event {
     /*border-color: #cccccc;*/
+    /*margin: 3px;*/
+    border-color: var(--gray);
     margin: 3px;
+
+    //transition: all 0.2s ease;
+    //&:hover {
+    //    margin: 5px;
+    //}
 }
 
 .fc-event-main.priority-1,
