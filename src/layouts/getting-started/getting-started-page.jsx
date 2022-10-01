@@ -48,10 +48,11 @@ const GettingStartedPage = () => {
                 }}>
                     {TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
                 </div>
-                <div className={"custom-dates-line"}>
+                <div className={"trip-name-line"}>
                     <input type={"text"} style={{
                         paddingInline: "15px",
-                        height: "40px"
+                        height: "40px",
+                        maxWidth: "300px"
                     }} placeholder={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')} value={tripName} onChange={(e) => {
                         const value = e.target.value;
                         setTripName(value);

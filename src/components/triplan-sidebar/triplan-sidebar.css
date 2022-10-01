@@ -35,13 +35,21 @@
     display: flex;
     gap: 10px;
 }
+.trip-name-line input,
 .custom-dates-line input {
-    max-width: 300px !important;
     border: 1px solid #dde3eb;
     border-radius: 20px;
     padding: 5px;
     flex-grow: 1;
     flex-shrink: 0;
+}
+
+.custom-dates-line input {
+    max-width: 150px !important;
+}
+
+.trip-name-line {
+    width: 300px;
 }
 
 .external-events .fc-event-main {
