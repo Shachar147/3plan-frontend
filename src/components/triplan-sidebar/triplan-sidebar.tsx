@@ -79,18 +79,19 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     }
 
     const renderStatistics = () => {
-        const eventsWithNoLocation =
-            _.uniq(
-                eventStore.allEvents
-                    .filter((x) => {
+        const eventsWithNoLocationArr = eventStore.allEvents
+            .filter((x) => {
 
-                        const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
-                        const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
-                        const eventIsActuallyNote = eventIsInCalendar && eventIsInCalendar.allDay; // in this case location is irrelevant.
-                        return eventHaveNoLocation && (!eventIsInCalendar || eventIsActuallyNote);
+                const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
+                const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
+                const eventIsANote = (x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay)); // in this case location is irrelevant.
 
-                    }).map(x => x.id)
-            );
+                return eventHaveNoLocation && !eventIsANote;
+            });
+
+        const eventsWithNoLocation = _.uniq(eventsWithNoLocationArr.map(x => x.id));
+
+        // console.log('events with no location', eventsWithNoLocationArr);
 
         const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation ?
             'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
