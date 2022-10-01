@@ -656,7 +656,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
         })
 
     return `
-        <div>
+        <div style="max-width: 990px;">
             <h3><b><u>${tripSummaryTitle}</b></u></h3>
             ${Object.keys(summaryPerDay).map((dayTitle) => {
                 const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
