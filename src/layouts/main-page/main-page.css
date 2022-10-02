@@ -95,6 +95,7 @@
     border: 1px solid #dde3eb;
     border-radius: 20px;
     height: 40px;
+    min-width: 300px;
 }
 
 .table-responsive {
