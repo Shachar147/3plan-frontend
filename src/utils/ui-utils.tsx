@@ -126,11 +126,17 @@ const renderViewSelector = (eventStore: EventStore) => {
                         // iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
                     },
                     {
+                        key: ViewMode.map,
+                        name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
+                        icon: (<i className="fa fa-map-o black-color" aria-hidden="true"></i>),
+                        // iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+                    },
+                    {
                         key: ViewMode.list,
                         name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
                         icon: (<i className="fa fa-list black-color" aria-hidden="true"></i>),
                         // iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
-                    }
+                    },
                 ]}
                 customStyle="white"
             />

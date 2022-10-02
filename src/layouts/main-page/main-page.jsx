@@ -16,6 +16,7 @@ import {
 import {renderHeaderLine} from "../../utils/ui-utils";
 import {useParams} from "react-router-dom";
 import TriplanSidebar from "../../components/triplan-sidebar/triplan-sidebar";
+import MapContainer from "../../components/map-container/map-container";
 
 const MainPage = () => {
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)
@@ -121,6 +122,12 @@ const MainPage = () => {
         </div>
     );
 
+    const renderMapView = () => (
+        <div className={getClasses(["map-container flex-1-1-0"], !eventStore.isMapView && 'opacity-0 position-absolute')}>
+            <MapContainer />
+        </div>
+    );
+
     const addToEventsToCategories = (newEvent) => {
         setEventsToCategories(
             {
@@ -131,7 +138,7 @@ const MainPage = () => {
     }
 
     const renderCalendarView = () => (
-        <div className={getClasses(["calender-container bright-scrollbar flex-1-1-0"], eventStore.isListView && 'opacity-0 position-absolute')}>
+        <div className={getClasses(["calender-container bright-scrollbar flex-1-1-0"], !eventStore.isCalendarView && 'opacity-0 position-absolute')}>
             <TriplanCalendar
                 ref={TriplanCalendarRef}
                 defaultCalendarEvents={getDefaultCalendarEvents()}
@@ -171,6 +178,7 @@ const MainPage = () => {
             <div className={"main-layout-container"}>
                 <div className={getClasses("main-layout", eventStore.getCurrentDirection())}>
                     {renderSidebar()}
+                    {renderMapView()}
                     {renderListView()}
                     {renderCalendarView()}
                 </div>

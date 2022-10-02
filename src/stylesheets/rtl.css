@@ -113,3 +113,13 @@ body.rtl .main-page {
 body.rtl input[type=date]{
     text-align:right;
 }
+
+body.rtl div[role=dialog]{
+    text-align: right;
+    direction: rtl;
+    padding: 12px 12px 0 0 !important;
+}
+
+body.rtl div[role=dialog] .gm-ui-hover-effect {
+    right: CALC(100% - 27px) !important;
+}

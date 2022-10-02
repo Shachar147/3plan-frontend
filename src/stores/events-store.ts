@@ -6,12 +6,14 @@ import {
     getDefaultCalendarEvents,
     getDefaultCalendarLocale,
     getDefaultCategories,
-    getDefaultCustomDateRange, getDefaultDistanceResults,
+    getDefaultCustomDateRange,
+    getDefaultDistanceResults,
     getDefaultEvents,
     setAllEvents,
     setDefaultCalendarEvents,
     setDefaultCalendarLocale,
-    setDefaultCategories, setDefaultDistanceResults,
+    setDefaultCategories,
+    setDefaultDistanceResults,
     setDefaultEvents
 } from "../utils/defaults";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
@@ -76,6 +78,16 @@ export class EventStore {
     @computed
     get isListView(){
         return this.viewMode === ViewMode.list
+    }
+
+    @computed
+    get isMapView(){
+        return this.viewMode === ViewMode.map;
+    }
+
+    @computed
+    get isCalendarView(){
+        return this.viewMode === ViewMode.calendar;
     }
 
     @computed
@@ -177,6 +189,7 @@ export class EventStore {
 
     @action
     setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]){
+        // debugger;
         this.allEvents = [...newAllEvents].map((x) => {
             if ("start" in x) {
                 // @ts-ignore

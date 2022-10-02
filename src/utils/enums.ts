@@ -17,7 +17,8 @@ export enum TriplanEventPreferredTime {
 
 export enum ViewMode {
     list = "list",
-    calendar = "calendar"
+    calendar = "calendar",
+    map = "map"
 }
 
 export enum GoogleTravelMode {
