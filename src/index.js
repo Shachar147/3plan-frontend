@@ -18,6 +18,13 @@ import ThemeExample from "./layouts/theme-example/theme-example";
 import {runInAction} from "mobx";
 import {getCoordinatesRangeKey} from "./utils/utils";
 
+// refactor SweetAlert from HTML to React
+// ... use IconSelector and LocationPicker
+// Design changes - make it mobile friendly like Dubai site / SecretFlights
+// On which dates are you staying at each hotel settings
+// ... + auto create events for these hotels, place them first on each day. make them from different type so it will be undeletable (?), without start-end dates
+// Flight finder based on your trip dates.
+
 // feature requests
 // create tasks automatically for flight in, flight out, checkin, checkout with 'please fill in' text.
 // V create automatically logistic category ^
