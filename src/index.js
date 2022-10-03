@@ -19,11 +19,14 @@ import {runInAction} from "mobx";
 import {getCoordinatesRangeKey} from "./utils/utils";
 
 // map tasks
-// make marker look better
-// find a way to show monocity view instead of this view.
+// V make marker look better
+// V find a way to show monocity view instead of this view.
+// (!!!!!) add search mode to the map, allowing to search for address + display results markers on the map. clicking on the map should open create event with location and title already filled in.
 // make markers be circles with the icon of the attraction / its category in the middle.
 // (!!) when clicking on a coordinate in the map, allow editing the event from there and then we can change the location.
 // ^ if there are more then 1 events with the same location make sure to update all of them.
+// (!!) show another mini sidebar over the map showing which events are currently displayed in the map. (visible) <- I sent myself example for that on whatsapp
+// (!!) filters on map - for example - highlight all unscheduled events. when they are highlighted it'll be easier to see what are they close to and how can we combine them to make them in the schedule.
 
 // fix allevents duplicate items so statistics in the sidebar will be correct.
 // refactor SweetAlert from HTML to React

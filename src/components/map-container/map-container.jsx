@@ -5,7 +5,9 @@ import * as _ from "lodash";
 import {eventStoreContext} from "../../stores/events-store";
 import {priorityToColor, priorityToMapColor} from "../../utils/consts";
 import TranslateService from "../../services/translate-service";
-import {formatTime, getDurationString} from "../../utils/time-utils";
+import {formatDate, formatTime, getDurationString} from "../../utils/time-utils";
+import {ucfirst} from "../../utils/utils";
+import {TriplanEventPreferredTime} from "../../utils/enums";
 
 function Marker(props) {
     return (
@@ -63,13 +65,9 @@ const MapContainer = () => {
             // todo complete - add shopping icon
 
             let icon = "";
-            const bgColor = priorityToMapColor[event.priority].replace('#','');
+            let bgColor = priorityToMapColor[event.priority].replace('#','');
             let category = event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
-            console.log("categoryId", category)
-
             category = eventStore.categories.find((x) => x.id.toString() === category)?.title;
-
-            console.log("category", category);
 
             category = category ? category.toLowerCase() : "";
 
@@ -77,23 +75,23 @@ const MapContainer = () => {
                 event.title.indexOf("כדורסל") !== -1) {
                 icon = "icons/onion/1520-basketball_4x.png";
             }
-
-            if ("food".indexOf(category) !== -1 ||
-                "resturant".indexOf(category) !== -1 ||
-                "אוכל".indexOf(category) !== -1 ||
-                "מסעדות".indexOf(category) !== -1
+            else if (category.indexOf("food") !== -1 ||
+                category.indexOf("resturant") !== -1 ||
+                category.indexOf("אוכל") !== -1 ||
+                category.indexOf("מסעדות") !== -1
             ) {
                 icon = "icons/onion/1577-food-fork-knife_4x.png";
-            } else if ("photo".indexOf(category) !== -1 || "תמונות".indexOf(category) !== -1) {
+            } else if (category.indexOf("photo") !== -1 || category.indexOf("תמונות") !== -1) {
                 icon = "icons/onion/1535-camera-photo_4x.png";
-            } else if ("hotel".indexOf(category) !== -1 || "מלון".indexOf(category) !== -1) {
-                icon = "icons/onion/1602-hotel-bed_4x.png";
-            } else if ("attraction".indexOf(category) !== -1 || "אטרקציות".indexOf(category) !== -1 || "פעילויות".indexOf(category) !== -1) {
+            } else if (category.indexOf("attraction") !== -1 || category.indexOf("אטרקציות") !== -1 || category.indexOf("פעילויות") !== -1) {
                 icon = "icons/onion/1502-shape_star_4x.png";
-            } else if ("beach".indexOf(category) !== -1 || "beach club".indexOf(category) !== -1 || "beach bar".indexOf(category) !== -1 || "חופים".indexOf(category) !== -1 || "ביץ׳ בר".indexOf(category) !== -1 || "ביץ׳ באר".indexOf(category) !== -1) {
+            } else if (category.indexOf("beach") !== -1 || category.indexOf("beach club") !== -1 || category.indexOf("beach bar") !== -1 || category.indexOf("חופים") !== -1 || category.indexOf("ביץ׳ בר") !== -1 || category.indexOf("ביץ׳ באר") !== -1) {
                 icon = "icons/onion/1521-beach_4x.png";
-            } else if ("club".indexOf(category) !== -1 || "cocktail".indexOf(category) !== -1 || "bar".indexOf(category) !== -1 || "מועדונים".indexOf(category) !== -1 || "ברים".indexOf(category) !== -1) {
+            } else if (category.indexOf("club") !== -1 || category.indexOf("cocktail") !== -1 || category.indexOf("bar") !== -1 || category.indexOf("מועדונים") !== -1 || category.indexOf("ברים") !== -1) {
                 icon = "icons/onion/1517-bar-cocktail_4x.png";
+            } else if (category.indexOf("hotel") !== -1 || category.indexOf("מלון") !== -1 || event.title.toLowerCase().indexOf("hotel") !== -1 || event.title.indexOf("מלון") !== -1) {
+                icon = "icons/onion/1602-hotel-bed_4x.png";
+                bgColor = "7cb342";
             }
             else if (icon === "") {
                 return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
@@ -121,6 +119,8 @@ const MapContainer = () => {
         const addressPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.ADDRESS");
         const descriptionPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.DESCRIPTION");
         const scheduledToPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.SCHEDULED_TO");
+        const preferredHoursPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.PREFERRED_HOURS");
+        const categoryPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.CATEGORY");
 
         const iStyle = "min-width: 13px; text-align: center;";
         const rowContainerStyle = "display: flex; flex-direction: row; align-items: center; gap: 10px;";
@@ -158,11 +158,11 @@ const MapContainer = () => {
                     const description = event.description ? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${event.description}</span></span>` : '';
 
                     const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
-                    let scheduledTo = "not scheduled yet";
+                    let scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED')
                     if (calendarEvent){
-                        const dt = calendarEvent.start.toLocaleDateString();
-                        const startTime = calendarEvent.start.toLocaleTimeString();
-                        const endTime = calendarEvent.end.toLocaleTimeString();
+                        const dt = formatDate(calendarEvent.start);
+                        const startTime = calendarEvent.start.toLocaleTimeString('en-US', {hour12: false});
+                        const endTime = calendarEvent.end.toLocaleTimeString('en-US', {hour12: false});
                         const start = formatTime(startTime);
                         const end = formatTime(endTime);
 
@@ -170,6 +170,12 @@ const MapContainer = () => {
                     }
 
                     scheduledTo = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-calendar" aria-hidden="true"></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
+
+                    let category = event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
+                    category = eventStore.categories.find((x) => x.id.toString() === category)?.title;
+                    const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
+
+                    const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(eventStore,TriplanEventPreferredTime[event.extendedProps.preferredTime])}</span></span>`;
 
                     const lat = event.location.latitude.toFixed(7);
                     const lng = event.location.longitude.toFixed(7);
@@ -181,9 +187,11 @@ const MapContainer = () => {
                                 ${title}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
                                 ${address}
+                                ${categoryBlock}
                                 ${description}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
                                 ${scheduledTo}
+                                ${preferredHoursBlock}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
                                 ${urlBlock}
                              </div>`);

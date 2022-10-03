@@ -22,6 +22,11 @@ export function getDateRangeString(start: Date, end: Date){
     }
 }
 
+export function formatDate(dt: Date){
+    const parts = dt.toLocaleDateString().replace(/\//ig,'-').split('-')
+    return [padTo2Digits(Number(parts[1])), padTo2Digits(Number(parts[0])), parts[2]].join("/");
+}
+
 export function getDurationString(eventStore: EventStore, duration?: string) {
     if (!duration) {
         return `${DEFAULT_EVENT_DURATION}h`
