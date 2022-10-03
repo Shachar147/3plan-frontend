@@ -8,3 +8,10 @@ export const priorityToColor: Record<string, string> = {
     [TriplanPriority.unset]: 'var(--gray)',
     [TriplanPriority.least]: 'var(--black)',
 }
+
+export const priorityToMapColor: Record<string, string> = {
+    [TriplanPriority.must]: '#FF5252',
+    [TriplanPriority.maybe]: '#ffb752', // '#8E7CC3FF'
+    [TriplanPriority.unset]: '#b4b4b4',
+    [TriplanPriority.least]: '#000000',
+}

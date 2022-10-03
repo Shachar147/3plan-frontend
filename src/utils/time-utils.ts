@@ -1,5 +1,7 @@
 import {DEFAULT_EVENT_DURATION} from "./consts";
 import {padTo2Digits} from "./utils";
+import TranslateService from "../services/translate-service";
+import {EventStore} from "../stores/events-store";
 
 export function getDateRangeString(start: Date, end: Date){
     const startDay = start.getDate();
@@ -20,17 +22,20 @@ export function getDateRangeString(start: Date, end: Date){
     }
 }
 
-export function getDurationString(duration?: string) {
+export function getDurationString(eventStore: EventStore, duration?: string) {
     if (!duration) {
         return `${DEFAULT_EVENT_DURATION}h`
     } else {
         const minutes = Number(duration.split(':')[1]);
         const hours = Number(duration.split(':')[0]);
 
+        const h = TranslateService.translate(eventStore, 'DURATION_STRING.H');
+        const m = TranslateService.translate(eventStore, 'DURATION_STRING.M');
+
         if (minutes) {
-            return `${hours}h ${minutes}m`;
+            return `${hours}${h} ${minutes}${m}`;
         }
-        return `${Number(hours)}h`;
+        return `${Number(hours)}${h}`;
     }
 }
 
@@ -66,6 +71,16 @@ export function formatDuration(duration: string) {
     const minutes = parseInt(duration.split(':')[1]);
     const milliseconds = (minutes * 60000) + (hours * 3600000);
     return convertMsToHM(milliseconds);
+}
+
+export function formatTime(timeString: string) {
+
+    const parts = timeString
+        .replace(' PM','')
+        .replace(' AM','')
+        .split(':');
+
+    return padTo2Digits(parseInt(parts[0])) + ':' + padTo2Digits(parseInt(parts[1]));
 }
 
 export function getInputDateTimeValue(date: Date) {

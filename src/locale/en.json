@@ -167,5 +167,10 @@
   "TO": "to ",
   "FROM": "from ",
   "NOT_IN_CALENDAR": "unscheduled",
-  "EVENTS_ON_PRIORITY": "events on priority"
+  "EVENTS_ON_PRIORITY": "events on priority",
+  "MAP.INFO_WINDOW.ADDRESS": "Address",
+  "MAP.INFO_WINDOW.DESCRIPTION": "Description",
+  "MAP.INFO_WINDOW.SCHEDULED_TO": "Scheduled to",
+  "DURATION_STRING.H": "h",
+  "DURATION_STRING.M": "m"
 }

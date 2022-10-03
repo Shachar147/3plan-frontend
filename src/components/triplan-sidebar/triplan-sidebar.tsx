@@ -412,7 +412,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                                 {event.title}
                             </span>
                             <span className={"sidebar-event-duration"}>
-                                ({getDurationString(event.duration)})
+                                ({getDurationString(eventStore, event.duration)})
                             </span>
                         </span>
                     <div className="fc-duplicate-event" onClick={() => {

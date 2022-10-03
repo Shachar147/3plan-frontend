@@ -177,5 +177,10 @@
   "TO": "ל",
   "FROM": "מ-",
   "NOT_IN_CALENDAR": "לא משובצים",
-  "EVENTS_ON_PRIORITY": "אירועים בעדיפות"
+  "EVENTS_ON_PRIORITY": "אירועים בעדיפות",
+  "MAP.INFO_WINDOW.ADDRESS": "כתובת",
+  "MAP.INFO_WINDOW.DESCRIPTION": "תיאור",
+  "MAP.INFO_WINDOW.SCHEDULED_TO": "מתוזמן ל",
+  "DURATION_STRING.H": " שעות",
+  "DURATION_STRING.M": " דקות"
 }
