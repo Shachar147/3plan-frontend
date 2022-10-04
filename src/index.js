@@ -29,6 +29,7 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // (!!) filters on map - for example - highlight all unscheduled events. when they are highlighted it'll be easier to see what are they close to and how can we combine them to make them in the schedule.
 
 // fix allevents duplicate items so statistics in the sidebar will be correct.
+// ... changing calendar events category isn't working. maybe its related (maybe its duplicating instead of editing or something)
 // refactor SweetAlert from HTML to React
 // ... use IconSelector and LocationPicker
 // Design changes - make it mobile friendly like Dubai site / SecretFlights
@@ -59,17 +60,7 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // sort categories by fixed thing. (if i change icon its jump to end - avoid that)
 
 // todo complete - design fixes
-// V Heebo / Rubik instead of current Hebrew font
-// V fix scrollbars (currently there are too many)
-// V fix header alignment (choose lang, recomended destinations)
-// V brighter scrollbar
-// V choose view - toggle not 2 buttons.
-// X clear all items in red
-// V logo - maybe remove.
-// V (!!) preferred time titles - text with divider for example: -- morning ----------------
-// V (!!) add more white as background. its more pleasent and easy to read. maybe the sidebar / calendar in white. see gmail for example.
-// V make the regular hours white compared to the sleepy hours.
-// V (!!) same design for all buttons (modals too)
+// (!!) Inter font for english
 // - Clean up the colors. decide 1 cta color, set it on the things we want the user to click.
 // ... - primary, secondary (white with border), noBackground
 // - clear all items maybe place in the calendar area since its calendar related action.
@@ -78,9 +69,7 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // - improve events styles (make them look more then google calendar / job scheduler)
 
 // todo complete:
-// V logo
 // - NODE SASS
-// V DEPLOY TO HEROKU
 // - fix import (maybe 'numbers' issue, need to use a different app)
 // - create different trips, save it on different local storage settings.
 // - allow to resize the sidebar vs calendar space (?)
@@ -88,10 +77,8 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // - find a better location to the trip summary.
 // - (!!) add 'days & hours' to each event, and mark it in error if you placed something in a day its supposed to be closed.
 // - allow duplicate calendar event as well (!)
-// V add total sidebar events and total calendar events. (for easier tracking)
 // - export to excel (csv), text summary, json (json for backups)
 // - option to add 'tasks' for yourself about events for example - check hours, check where to bla bla bla. events with tasks will have red indication
-// V style scrollbar + add scrollbar to events sidebar?
 // - add the ability to render only part of the calendar hours wise (for example hours 1-2-3-4-5-6.. irrelevant.)
 // - add description, external links (so we can easily find the posts/sources of the description)
 // - location picker javascript/html version.
@@ -106,6 +93,8 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // - [ADVANCED] [GOOGLE MAPS] automatically suggest near locations from your list. <- suggested days based on 1 breakfast, 1 lunch, 1 evening, attractions etc. inc. driving/walking times
 // - [ADVANCED] [GOOGLE MAPS] setting of how much time MAX are you willing to walk, otherwise suggest only drive.
 // - [ADVANCED] keep it on db
+
+// ----------------------------------------
 
 // completed tasks:
 // V remove from events sidebar after drop
@@ -125,6 +114,21 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // V if it includes "לברר" or "todo" or "need to check" - mark it as red and big in the summary
 // V change "כל היום" to notes and allow users to drag notes blocks to the upper of each day to include notes that will appear in the summary
 // V change hebrew stuff to localise on the summary.
+// V add total sidebar events and total calendar events. (for easier tracking)
+// V style scrollbar + add scrollbar to events sidebar?
+// V logo
+// V DEPLOY TO HEROKU
+// V Heebo / Rubik instead of current Hebrew font
+// V fix scrollbars (currently there are too many)
+// V fix header alignment (choose lang, recomended destinations)
+// V brighter scrollbar
+// V choose view - toggle not 2 buttons.
+// X clear all items in red
+// V logo - maybe remove.
+// V (!!) preferred time titles - text with divider for example: -- morning ----------------
+// V (!!) add more white as background. its more pleasent and easy to read. maybe the sidebar / calendar in white. see gmail for example.
+// V make the regular hours white compared to the sleepy hours.
+// V (!!) same design for all buttons (modals too)
 
 // fixed bugs:
 // V fix bug - placing event on board, editing it (rename for example), remove, re-add it <- old event still there.

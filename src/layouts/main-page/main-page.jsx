@@ -178,9 +178,9 @@ const MainPage = () => {
             <div className={"main-layout-container"}>
                 <div className={getClasses("main-layout", eventStore.getCurrentDirection())}>
                     {renderSidebar()}
-                    {renderMapView()}
-                    {renderListView()}
-                    {renderCalendarView()}
+                    {eventStore.isMapView && renderMapView()}
+                    {eventStore.isListView && renderListView()}
+                    {eventStore.isCalendarView && renderCalendarView()}
                 </div>
             </div>
         </div>

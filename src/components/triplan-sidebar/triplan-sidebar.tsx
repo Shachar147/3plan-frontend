@@ -83,7 +83,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
         const renderPrioritiesStatistics = () => {
             const eventsByPriority: Record<string, SidebarEvent[]> = {};
-            eventStore.allEvents.forEach((iter) => {
+            // eventStore.allEvents.forEach((iter) => {
+            [...Object.values(eventStore.sidebarEvents).flat(), ...eventStore.calendarEvents].forEach((iter) => {
                 const priority = iter.priority || TriplanPriority.unset;
                 eventsByPriority[priority] = eventsByPriority[priority] || [];
                 eventsByPriority[priority].push(iter);

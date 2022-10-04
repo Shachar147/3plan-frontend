@@ -175,7 +175,13 @@ const MapContainer = () => {
                     category = eventStore.categories.find((x) => x.id.toString() === category)?.title;
                     const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
 
-                    const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(eventStore,TriplanEventPreferredTime[event.extendedProps.preferredTime])}</span></span>`;
+                    let preferredTime = event.extendedProps && Object.keys(event.extendedProps).includes('preferredTime') ? event.extendedProps.preferredTime : event.preferredTime;
+                    if (preferredTime != undefined){
+                        preferredTime = TriplanEventPreferredTime[preferredTime];
+                    } else {
+                        preferredTime = TriplanEventPreferredTime.unset;
+                    }
+                    const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(eventStore,preferredTime)}</span></span>`;
 
                     const lat = event.location.latitude.toFixed(7);
                     const lng = event.location.longitude.toFixed(7);
@@ -229,7 +235,7 @@ const MapContainer = () => {
 
         let markerCluster = new MarkerClusterer(map, markers, {
             imagePath: "/images/marker_images/m",
-            minimumClusterSize: 4
+            minimumClusterSize: 10
         });
     };
 
