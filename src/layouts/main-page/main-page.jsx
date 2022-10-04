@@ -44,7 +44,9 @@ const MainPage = () => {
         eventStore.setTripName(tripName, locale);
         setCustomDateRange(getDefaultCustomDateRange(eventStore.tripName));
 
-        TriplanCalendarRef.current.switchToCustomView();
+        if (TriplanCalendarRef && TriplanCalendarRef.current) {
+            TriplanCalendarRef.current.switchToCustomView();
+        }
     }, [tripName, locale]);
 
     useEffect(() => {

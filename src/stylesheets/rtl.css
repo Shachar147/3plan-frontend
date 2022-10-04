@@ -114,10 +114,10 @@ body.rtl input[type=date]{
     text-align:right;
 }
 
-body.rtl div[role=dialog]{
+body.rtl div[role=dialog].gm-style-iw{
     text-align: right;
     direction: rtl;
-    padding: 30px 30px 0 0 !important;
+    padding: 12px 12px 0 0 !important;
 }
 
 body.rtl div[role=dialog] .gm-ui-hover-effect {

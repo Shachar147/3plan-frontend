@@ -43,6 +43,7 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // create tasks automatically for flight in, flight out, checkin, checkout with 'please fill in' text.
 // V create automatically logistic category ^
 // create automatically notes category (with default - consider that on Sunday stuff may be closed)
+// add "order status" select with "not relevat" as default and then "need to order" (that populates 'להזמין' message in the summary) and "ordered!" that populates ordered (הוזמן) in the summary
 
 // refactor my css files to be scss
 // move stuff to components
