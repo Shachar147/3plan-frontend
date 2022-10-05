@@ -531,6 +531,11 @@ const MapContainer = () => {
                     </div>
                 </div>
             </div>
+            {/*{!googleMapRef && (*/}
+            {/*    <div>*/}
+            {/*        {TranslateService.translate(eventStore, 'MAP_VIEW.LOADING_PLACEHOLDER')}*/}
+            {/*    </div>*/}
+            {/*)}*/}
             <GoogleMapReact
                 bootstrapURLKeys={{key: "AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo"}} /* AIzaSyA16d9FJFh__vK04jU1P64vnEpPc3jenec */
                 center={

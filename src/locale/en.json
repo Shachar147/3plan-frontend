@@ -176,5 +176,6 @@
   "DURATION_STRING.H": "h",
   "DURATION_STRING.M": "m",
   "MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED": "Unscheduled",
-  "MAP_VIEW.SEARCH.PLACEHOLDER": "Search Google Maps"
+  "MAP_VIEW.SEARCH.PLACEHOLDER": "Add places by searching them on google maps",
+  "MAP_VIEW.LOADING_PLACEHOLDER": "Loading map... please wait"
 }

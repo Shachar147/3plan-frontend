@@ -6,7 +6,7 @@ import {addLineBreaks, getClasses, padTo2Digits, ucfirst} from "../../utils/util
 import {TriplanEventPreferredTime, TriplanPriority} from "../../utils/enums";
 import {getDurationString} from "../../utils/time-utils";
 import {eventStoreContext} from "../../stores/events-store";
-import {CustomDateRange, SidebarEvent} from "../../utils/interfaces";
+import {CalendarEvent, CustomDateRange, SidebarEvent} from "../../utils/interfaces";
 import {observer} from "mobx-react";
 import './triplan-sidebar.css';
 import CustomDatesSelector from "./custom-dates-selector/custom-dates-selector";
@@ -14,6 +14,7 @@ import Button, {ButtonFlavor} from "../common/button/button";
 // @ts-ignore
 import * as _ from 'lodash';
 import {priorityToColor} from "../../utils/consts";
+import {EventInput} from "@fullcalendar/react";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
@@ -82,7 +83,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     const renderStatistics = () => {
 
         const renderPrioritiesStatistics = () => {
-            const eventsByPriority: Record<string, SidebarEvent[]> = {};
+            const eventsByPriority: Record<string, SidebarEvent[] & CalendarEvent[]> = {};
             // eventStore.allEvents.forEach((iter) => {
             [...Object.values(eventStore.sidebarEvents).flat(), ...eventStore.calendarEvents].forEach((iter) => {
                 const priority = iter.priority || TriplanPriority.unset;
@@ -117,7 +118,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 const color = priorityToColor[priority];
 
                 return (
-                <div className={"sidebar-statistics"}>
+                <div className={"sidebar-statistics"} key={`sidebar-statistics-for-${priorityText}`}>
                     <i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }}></i>
                     <div>
                         {`${total} ${prefix} `}
