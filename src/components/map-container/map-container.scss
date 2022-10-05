@@ -1,0 +1,23 @@
+.map-search-location-input {
+  position: relative;
+
+  .map-header-location-input-search {
+    border: 1px solid #dde3eb;
+    padding: 5px;
+    flex-grow: 1;
+    flex-shrink: 0;
+    height: 38px !important;
+  }
+
+  .clear-search {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    opacity: 0.6;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.4;
+    }
+  }
+}

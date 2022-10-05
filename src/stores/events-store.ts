@@ -22,6 +22,7 @@ import {convertMsToHM} from "../utils/time-utils";
 
 // @ts-ignore
 import _ from "lodash";
+import {containsDuplicates} from "../utils/utils";
 
 export class EventStore {
     categoryIdBuffer = 0;
@@ -189,6 +190,12 @@ export class EventStore {
 
     @action
     setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]){
+
+        if (containsDuplicates(newAllEvents.map((x) => x.id))){
+            alert("error! contains duplicates!");
+            debugger;
+        }
+
         // debugger;
         this.allEvents = [...newAllEvents].map((x) => {
             if ("start" in x) {

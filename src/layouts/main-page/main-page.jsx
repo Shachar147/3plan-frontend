@@ -64,9 +64,9 @@ const MainPage = () => {
             })
         });
 
-        const existingIds = eventStore.allEvents.map(e => e.id);
+        const existingIds = eventStore.allEvents.map(e => e.id.toString());
         Object.keys(idToEvent).forEach((eventId) => {
-            if (!existingIds.includes(eventId)){
+            if (existingIds.indexOf(eventId) === -1){
                 arr.push({...idToEvent[eventId], category: idToCategory[eventId]});
             }
         });

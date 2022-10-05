@@ -719,3 +719,9 @@ export function toDistanceString(eventStore: EventStore, distanceResult: Distanc
             return '';
     }
 }
+
+export function containsDuplicates(array: any[]) {
+    return array.length !== new Set(array).size;
+
+
+}

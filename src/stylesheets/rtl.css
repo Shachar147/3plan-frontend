@@ -123,3 +123,17 @@ body.rtl div[role=dialog].gm-style-iw{
 body.rtl div[role=dialog] .gm-ui-hover-effect {
     right: CALC(100% - 27px) !important;
 }
+
+body.rtl .map-header {
+    direction: rtl;
+}
+
+body.rtl .map-header input {
+    direction: rtl;
+    text-align: right;
+}
+
+body.rtl .map-search-location-input .clear-search {
+    left: 10px !important;
+    right: unset !important;
+}

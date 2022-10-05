@@ -19,14 +19,14 @@ import {runInAction} from "mobx";
 import {getCoordinatesRangeKey} from "./utils/utils";
 
 // map tasks
-// V make marker look better
-// V find a way to show monocity view instead of this view.
 // (!!!!!) add search mode to the map, allowing to search for address + display results markers on the map. clicking on the map should open create event with location and title already filled in.
 // make markers be circles with the icon of the attraction / its category in the middle.
 // (!!) when clicking on a coordinate in the map, allow editing the event from there and then we can change the location.
 // ^ if there are more then 1 events with the same location make sure to update all of them.
 // (!!) show another mini sidebar over the map showing which events are currently displayed in the map. (visible) <- I sent myself example for that on whatsapp
 // (!!) filters on map - for example - highlight all unscheduled events. when they are highlighted it'll be easier to see what are they close to and how can we combine them to make them in the schedule.
+// V make marker look better
+// V find a way to show monocity view instead of this view.
 
 // fix allevents duplicate items so statistics in the sidebar will be correct.
 // ... changing calendar events category isn't working. maybe its related (maybe its duplicating instead of editing or something)
@@ -139,30 +139,35 @@ const RootRouter = () => {
     const eventStore = useContext(eventStoreContext);
     document.title = TranslateService.translate(eventStore, 'APP.TITLE');
 
-    window.setManualLocation = () => {
-        const address = document.querySelector('.location-input').value;
-        window.selectedLocation = {
+    window.setManualLocation = (className = 'location-input', variableName = 'selectedLocation') => {
+        const address = document.querySelector(`.${className}`).value;
+        window[variableName] = {
             address,
             latitude: undefined,
             longitude: undefined
         }
     }
 
-    window.initLocationPicker = () => {
+    window.initLocationPicker = (className = 'location-input', variableName = 'selectedLocation', placeChangedCallback) => {
         // console.log("hereeeee");
-        const autoCompleteRef = document.querySelector('.location-input');
+        const autoCompleteRef = document.querySelector(`.${className}`);
         const autocomplete = new google.maps.places.Autocomplete(autoCompleteRef);
 
         google.maps.event.addListener(autocomplete, 'place_changed', function() {
             let place = autocomplete.getPlace();
             const latitude = place.geometry.location.lat();
             const longitude = place.geometry.location.lng();
-            const address = document.querySelector('.location-input').value;
-            window.selectedLocation = {
+            const address = document.querySelector('.' + className).value;
+            window[variableName] = {
                 address,
                 latitude,
                 longitude
             }
+
+            if (placeChangedCallback) {
+                placeChangedCallback();
+            }
+
             return false;
         });
     }

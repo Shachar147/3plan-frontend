@@ -786,7 +786,7 @@ const ModalService = {
             cancelButtonText: TranslateService.translate(eventStore, 'MODALS.SAVE')
         }).then(result => handleEditSidebarEventResult(eventStore, result, removeEventFromSidebarById, event));
     },
-    openAddSidebarEventModal: (eventStore: EventStore, categoryId?: number) => {
+    openAddSidebarEventModal: (eventStore: EventStore, categoryId?: number, initialData: any = {}) => {
 
         const handleAddSidebarEventResult = (eventStore: EventStore, result:any, categoryId?: number) => {
             if (!eventStore) return;
@@ -911,7 +911,7 @@ const ModalService = {
       ` + ModalService._renderPreferredTime(eventStore, TriplanEventPreferredTime.unset) + `
       </strong></td>
       </tr>
-      ` + ModalService._renderLocationRow(eventStore) + `
+      ` + ModalService._renderLocationRow(eventStore, initialData.location) + `
       </table>
       </div>`,
 
