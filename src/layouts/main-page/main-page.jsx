@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import { buildHTMLSummary, getClasses } from '../../utils/utils';
+import {buildHTMLSummary, containsDuplicates, getClasses} from '../../utils/utils';
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
@@ -11,12 +11,13 @@ import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {
     defaultEventsToCategories,
-    getDefaultCalendarEvents, getDefaultCustomDateRange,
+    getDefaultCalendarEvents, getDefaultCustomDateRange, setAllEvents,
 } from "../../utils/defaults";
 import {renderHeaderLine} from "../../utils/ui-utils";
 import {useParams} from "react-router-dom";
 import TriplanSidebar from "../../components/triplan-sidebar/triplan-sidebar";
 import MapContainer from "../../components/map-container/map-container";
+import _ from "lodash";
 
 const MainPage = () => {
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)
@@ -25,6 +26,7 @@ const MainPage = () => {
 
     const eventStore = useContext(eventStoreContext);
     const [customDateRange, setCustomDateRange] = useState(getDefaultCustomDateRange(eventStore.tripName));
+    const [allEventsFixed, setAllEventsFixed] = useState(false);
 
     // useEffect(() => {
     //
@@ -39,6 +41,42 @@ const MainPage = () => {
     //     eventStore.setAllEvents(newEvents);
     //
     // },[eventStore.calendarEvents])
+
+    // useEffect(() => {
+    //
+    //     const { allEvents, sidebarEvents, calendarEvents } = eventStore;
+    //
+    //     if (!allEventsFixed && allEvents.length && Object.values(sidebarEvents).flat().length && calendarEvents.length) {
+    //
+    //         setAllEventsFixed(true);
+    //
+    //         debugger;
+    //         const allEventsIds = allEvents.map((x) => x.id);
+    //         const visibleEvents = [...Object.values(sidebarEvents).flat(), ...calendarEvents];
+    //         const visibleIds = visibleEvents.map((x) => x.id);
+    //         const missingEvents = allEvents.filter((x) => visibleIds.indexOf(x.id) === -1 && !visibleEvents.find((y) => y.title === x.title));
+    //
+    //         console.log("missing:", missingEvents.length, allEvents.filter((x) => missingEvents.indexOf(x.id) !== -1))
+    //
+    //         console.log("all events ids", allEventsIds.length);
+    //         console.log("all events ids unified", _.uniq(allEventsIds).length);
+    //         console.log("visible ids", visibleIds.length);
+    //
+    //         if (missingEvents.length === 0){
+    //             const newEvents = visibleEvents.map((x) => {
+    //                 if (!x.category && x.extendedProps && x.extendedProps.categoryId){
+    //                     x.category = x.extendedProps.categoryId;
+    //                 }
+    //                 return x;
+    //             });
+    //             if (containsDuplicates(newEvents)){
+    //                 debugger;
+    //             }
+    //             eventStore.setAllEvents(newEvents)
+    //         }
+    //     }
+    //
+    // }, [eventStore.calendarEvents, eventStore.sidebarEvents, eventStore.allEvents])
 
     useEffect(() => {
         eventStore.setTripName(tripName, locale);
