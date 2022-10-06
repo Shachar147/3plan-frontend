@@ -171,9 +171,9 @@ const ModalService = {
             }
         });
     },
-    openEditCalendarEventModal: (eventStore: EventStore, addEventToSidebar: (event: SidebarEvent) => void, info: any) => {
+    openEditCalendarEventModal: (eventStore: EventStore, addEventToSidebar: (event: SidebarEvent) => boolean, info: any) => {
 
-        const handleEditEventResult = (eventStore: EventStore, result:any, addEventToSidebar: (event: SidebarEvent) => void, originalEvent: EventInput) => {
+        const handleEditEventResult = (eventStore: EventStore, result:any, addEventToSidebar: (event: SidebarEvent) => boolean, originalEvent: EventInput) => {
 
             const eventId = originalEvent.id!;
             if (!eventStore) return;
@@ -251,14 +251,18 @@ const ModalService = {
 
             if (result.value) {
                 // add back to sidebar
-                addEventToSidebar(currentEvent);
+                if(addEventToSidebar(currentEvent)) {
 
-                // remove from calendar
-                eventStore.allowRemoveAllCalendarEvents = true;
-                eventStore.deleteEvent(eventId);
+                    // remove from calendar
+                    eventStore.allowRemoveAllCalendarEvents = true;
+                    eventStore.deleteEvent(eventId);
 
-                // refreshSources();
-                Alert.fire(TranslateService.translate(eventStore,"MODALS.DELETED.TITLE"), TranslateService.translate(eventStore, "MODALS.DELETED.CONTENT"), "success");
+                    // refreshSources();
+                    Alert.fire(TranslateService.translate(eventStore, "MODALS.DELETED.TITLE"), TranslateService.translate(eventStore, "MODALS.DELETED.CONTENT"), "success");
+                } else {
+                    Alert.fire(TranslateService.translate(eventStore, "MODALS.ERROR.TITLE"), TranslateService.translate(eventStore, "MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG"), "error");
+                    return;
+                }
             } else {
 
                 if (!title){

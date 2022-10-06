@@ -18,7 +18,7 @@ export interface TriPlanCalendarProps {
     onEventReceive?: (eventId: string) => void,
     onEventClick?: (info: any) => void
     allEvents: SidebarEvent[],
-    addEventToSidebar: (event: SidebarEvent) => void,
+    addEventToSidebar: (event: SidebarEvent) => boolean,
     updateAllEventsEvent: (event: SidebarEvent) => void,
     customDateRange: CustomDateRange,
     categories: TriPlanCategory[],

@@ -117,9 +117,10 @@ const MainPage = () => {
         let category = eventsToCategories[event.id];
         console.log("category", category);
         if (!category){
-            const findEvent = eventStore.allEvents.flat().find((x) => x.id = event.id);
+            const findEvent = eventStore.allEvents.find((x) => x.id.toString() === event.id.toString());
             console.log("category find", findEvent);
-            if (findEvent && findEvent.extendedProps){
+            category = findEvent.category;
+            if (!category && findEvent && findEvent.extendedProps){
                 category = findEvent.extendedProps.categoryId;
                 console.log("category find 2", category);
             }
@@ -136,6 +137,9 @@ const MainPage = () => {
             newEvents[category] = newEvents[category] || [];
             newEvents[category].push(event)
             eventStore.setSidebarEvents(newEvents);
+            return true;
+        } else {
+            return false;
         }
     }
 
