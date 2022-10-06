@@ -76,7 +76,15 @@ const MapContainer = () => {
 
         const getIconUrl = (event) => {
 
-            // todo complete - add shopping icon
+            const isMatching = (category, options) => {
+                let isMatch = false;
+                let idx = 0;
+                while (!isMatch && idx < options.length){
+                    isMatch = category.indexOf(options[idx]) !== -1
+                    idx++;
+                }
+                return isMatch;
+            }
 
             let icon = "";
             let bgColor = priorityToMapColor[event.priority].replace('#', '');
@@ -85,27 +93,43 @@ const MapContainer = () => {
 
             category = category ? category.toLowerCase() : "";
 
-            if (event.title.toLowerCase().indexOf("basketball") !== -1 ||
-                event.title.indexOf("כדורסל") !== -1) {
-                icon = "icons/onion/1520-basketball_4x.png";
-            } else if (category.indexOf("food") !== -1 ||
-                category.indexOf("resturant") !== -1 ||
-                category.indexOf("אוכל") !== -1 ||
-                category.indexOf("מסעדות") !== -1
-            ) {
-                icon = "icons/onion/1577-food-fork-knife_4x.png";
-            } else if (category.indexOf("photo") !== -1 || category.indexOf("תמונות") !== -1) {
-                icon = "icons/onion/1535-camera-photo_4x.png";
-            } else if (category.indexOf("attraction") !== -1 || category.indexOf("אטרקציות") !== -1 || category.indexOf("פעילויות") !== -1) {
-                icon = "icons/onion/1502-shape_star_4x.png";
-            } else if (category.indexOf("beach") !== -1 || category.indexOf("beach club") !== -1 || category.indexOf("beach bar") !== -1 || category.indexOf("חופים") !== -1 || category.indexOf("ביץ׳ בר") !== -1 || category.indexOf("ביץ׳ באר") !== -1) {
-                icon = "icons/onion/1521-beach_4x.png";
-            } else if (category.indexOf("club") !== -1 || category.indexOf("cocktail") !== -1 || category.indexOf("bar") !== -1 || category.indexOf("מועדונים") !== -1 || category.indexOf("ברים") !== -1) {
-                icon = "icons/onion/1517-bar-cocktail_4x.png";
-            } else if (category.indexOf("hotel") !== -1 || category.indexOf("מלון") !== -1 || event.title.toLowerCase().indexOf("hotel") !== -1 || event.title.indexOf("מלון") !== -1) {
-                icon = "icons/onion/1602-hotel-bed_4x.png";
+            const iconsMap = {
+                "basketball": "icons/onion/1520-basketball_4x.png",
+                "food": "icons/onion/1577-food-fork-knife_4x.png",
+                "photos": "icons/onion/1535-camera-photo_4x.png",
+                "attractions": "icons/onion/1502-shape_star_4x.png",
+                "beach": "icons/onion/1521-beach_4x.png",
+                "nightlife": "icons/onion/1517-bar-cocktail_4x.png",
+                "hotel": "icons/onion/1602-hotel-bed_4x.png",
+                "shopping": "icons/onion/1684-shopping-bag_4x.png"
+            }
+
+            if (isMatching(event.title.toLowerCase(),["basketball","כדורסל"])){
+                icon = iconsMap["basketball"];
+            }
+            else if (isMatching(category, ["food", "resturant", "אוכל", "מסעדות"])){
+                icon = iconsMap["food"];
+            }
+            else if (isMatching(category,["photo", "תמונות"])){
+                icon = iconsMap["photos"]
+            }
+            else if (isMatching(category,["attraction", "אטרקציות", "פעילויות"])){
+                icon = iconsMap["attractions"]
+            }
+            else if (isMatching(category,["beach", "beach club", "beach bar", "חופים", "ביץ׳ באר", "ביץ׳ בר"])){
+                icon = iconsMap["beach"]
+            }
+            else if (isMatching(category, ["club", "cocktail", "beer", "bar", "מועדונים", "ברים", "מסיבות"])){
+                icon = iconsMap["nightlife"]
+            }
+            else if (isMatching(category, ["hotel", "מלון"]) || isMatching(event.title.toLowerCase(),["hotel", "מלון"])){
+                icon = iconsMap["hotel"]
                 bgColor = "7cb342";
-            } else if (icon === "") {
+            }
+            else if (isMatching(category, ["shopping", "stores", "חנויות", "קניות", "malls", "קניונים"])){
+                icon = iconsMap["shopping"]
+            }
+            else if (icon === "") {
                 return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
             }
             return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
