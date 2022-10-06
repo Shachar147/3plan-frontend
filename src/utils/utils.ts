@@ -474,7 +474,20 @@ export function buildHTMLSummary(eventStore: EventStore) {
     let lastStart = 0;
     let lastEnd = 0;
 
-    const sortedEvents = calendarEvents.sort((a,b) => (a.start as Date).getTime() - (b.start as Date).getTime());
+    let sortedEvents = calendarEvents.sort((a,b) => {
+        const aTime = (a.start as Date).getTime();
+        const bTime = (b.start as Date).getTime();
+        if (aTime === bTime){
+            const aEndTime = (a.end as Date).getTime();
+            const bEndTime = (b.end as Date).getTime();
+            return bEndTime - aEndTime;
+        }
+        return aTime - bTime;
+    });
+
+    // sortedEvents = sortedEvents.filter((x) => new Date(x.start!.toString()).toLocaleDateString() === '12/6/2022');
+    // console.log(sortedEvents);
+    // debugger;
 
     sortedEvents.forEach((event) => {
         event.extendedProps = event.extendedProps || {};
@@ -511,7 +524,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
         const events = calendarEventsPerDay[dayTitle];
         const eventDistanceKey: Record<number, string> = {};
 
-        let prevLocation: LocationData;
+        let prevLocation: LocationData | undefined;
         for (let i=0; i< events.length; i++){
             const event = events[i];
             if (Object.keys(event).length === 0) { continue; }
@@ -536,20 +549,22 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 eventDistanceKey[event.id] = key;
                 if (!eventStore.distanceResults.has(key)){
                     runInAction(() => {
-                        console.log(`checking distance between`,prevLocation.address,` and `,thisLocation.address, prevCoordinate, thisCoordinate);
+                        console.log(`checking distance between`,prevLocation?.address,` and `,thisLocation.address, prevCoordinate, thisCoordinate);
                         eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
 
                         // @ts-ignore
                         window.calculateMatrixDistance(eventStore, prevCoordinate, thisCoordinate);
                     });
                 } else {
-                    // console.log(`already have distance between`,prevLocation.address,` and `,thisLocation.address);
+
+                    if (event.start.toLocaleDateString() === '12/6/2022') {
+                        console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address);
+                    }
                 }
             }
 
-            if (i+1 < events.length && Object.keys(events[i+1]).length === 0){
-
-            } else {
+            // set prev location to this location only if next line is not OR.
+            if (!(i+1 < events.length && Object.keys(events[i+1]).length === 0)){
                 prevLocation = thisLocation;
             }
         }
@@ -563,6 +578,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
         let previousEndTime = 0;
         let prevEventTitle: string;
         let counter = 0;
+        prevLocation = undefined;
         const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
         events.forEach((event: EventInput, index: number) => {
             summaryPerDay[dayTitle] = summaryPerDay[dayTitle] || [];
@@ -572,6 +588,8 @@ export function buildHTMLSummary(eventStore: EventStore) {
                     previousLineWasOr = true;
                     return;
                 }
+
+                const nextLineIsOr = index + 1 < events.length && Object.keys(events[index+1]).length === 0;
 
                 if (event.allDay){
                     summaryPerDay[dayTitle].push(`<span style="color:${notesColor}; font-size:10px; font-weight:bold;">${formatDescription(event.description)}</span>`);
@@ -597,7 +615,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 const indent = !previousLineWasOr && (previousEndTime > (event.start! as Date).getTime()) ? subItemIcon + " " : "";
                 previousEndTime = (event.end! as Date).getTime();
 
-                const prefix = previousLineWasOr || indent ? "" : counter === 0 ? startPrefix : index === events.length -1 ? lastPrefix : `${randomElement(middlePrefixes)} `;
+                const prefix = previousLineWasOr || nextLineIsOr || indent ? "" : counter === 0 ? startPrefix : index === events.length -1 ? lastPrefix : `${randomElement(middlePrefixes)} `;
 
                 const description = event.description ? `<br><span style="opacity:0;">${indent}</span><span style="color:#999999">${formatDescription(event.description)}</span>` : "";
 
@@ -642,9 +660,12 @@ export function buildHTMLSummary(eventStore: EventStore) {
                     const arrow = eventStore.getCurrentDirection() === 'rtl' ? '✈' : '✈'
                     const distanceColor = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '#ff5252' : 'rgba(55,181,255,0.6)';
                     distanceToNextEvent = `<span style="color: ${distanceColor}; ${backgroundStyle}">
-                        ${arrow}
-                        ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'TO')}${title!.split('+')[0]}
-                    </span>`;
+                                ${arrow}
+                                ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${event.location.address.split(' - ')[0]}
+                            </span>`;
+                }
+
+                if (distanceToNextEvent !== "") {
                     summaryPerDay[dayTitle].push(distanceToNextEvent);
                 }
 
@@ -653,6 +674,11 @@ export function buildHTMLSummary(eventStore: EventStore) {
                         ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}</span>${description}
                     </span>
                 `);
+
+                if (!previousLineWasOr && !nextLineIsOr) {
+                    prevLocation = event.location;
+                }
+
                 previousLineWasOr = false;
                 counter++;
                 prevEventTitle = title!;
