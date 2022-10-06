@@ -178,7 +178,7 @@ const ModalService = {
             const eventId = originalEvent.id!;
             if (!eventStore) return;
 
-            const oldEvent = eventStore.allEvents.find(e => e.id === eventId);
+            const oldEvent = eventStore.allEvents.find(e => e.id.toString() === eventId.toString());
             if (!oldEvent){
                 console.error("old event not found");
                 return;
@@ -218,7 +218,7 @@ const ModalService = {
                 location = undefined;
             }
 
-            const currentEvent: CalendarEvent = {
+            let currentEvent: CalendarEvent = {
                 title,
                 start: new Date(startDate),
                 end: new Date(endDate),
@@ -275,9 +275,32 @@ const ModalService = {
                 const isLocationChanged = originalEvent.extendedProps && originalEvent.extendedProps.location != currentEvent.location;
                 const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
                 const isCategoryChanged = oldCategory != categoryId;
-                const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || descriptionChanged || isLocationChanged || isCategoryChanged;
+                const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || descriptionChanged || isLocationChanged;
 
-                if (isChanged) {
+                if (isCategoryChanged){
+
+                    // add it to the new category
+                    // @ts-ignore
+                    currentEvent = {
+                        ...currentEvent,
+                        id: eventStore.createEventId(),
+                        extendedProps: {
+                            categoryId
+                        }
+                    };
+
+                    // @ts-ignore
+                    currentEvent["categoryId"] = categoryId;
+
+                    eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== eventId), currentEvent])
+                    const allEventsEvent = {
+                        ...currentEvent,
+                        category: categoryId.toString()
+                    };
+                    eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== eventId), allEventsEvent]);
+                    Alert.fire(TranslateService.translate(eventStore, "MODALS.UPDATED.TITLE"), TranslateService.translate(eventStore, "MODALS.UPDATED_EVENT.CONTENT"), "success");
+                }
+                else if (isChanged) {
                     // originalEvent.remove(); // It will remove event from the calendar
                     // eventStore.setCalendarEvents([
                     //     ...eventStore.calendarEvents.filter((event) => event!.id!.toString() !== eventId.toString()),
@@ -286,7 +309,6 @@ const ModalService = {
                     // refreshSources();
                     // props.updateAllEventsEvent(currentEvent);
 
-                    debugger;
                     const isUpdated = eventStore.changeEvent({
                         event: {
                             id: eventId,
@@ -313,7 +335,7 @@ const ModalService = {
 
         // on event click - show edit event popup
         const eventId = info.event.id;
-        const currentEvent = eventStore.allEvents.find((e: any) => e.id === eventId);
+        const currentEvent = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
         if (!currentEvent) {
             console.error("event not found")
             return;
@@ -390,6 +412,7 @@ const ModalService = {
             /* Read more about isConfirmed, isDenied below */
             if (result.value) {
                 removeEventFromSidebarById(event.id);
+                eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
             }
         })
     },
@@ -663,11 +686,16 @@ const ModalService = {
                             categoryId
                         }
                     };
-                    const existingSidebarEvents = {...eventStore.getSidebarEvents};
-                    existingSidebarEvents[parseInt(categoryId)] = existingSidebarEvents[parseInt(categoryId)] || [];
-                    existingSidebarEvents[parseInt(categoryId)].push(currentEvent);
-                    eventStore.setSidebarEvents(existingSidebarEvents);
-                    eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), currentEvent]);
+                    const sidebarEvents = eventStore.sidebarEvents;
+
+                    sidebarEvents[parseInt(categoryId)] = sidebarEvents[parseInt(categoryId)] || [];
+                    sidebarEvents[parseInt(categoryId)].push(currentEvent);
+                    eventStore.setSidebarEvents(sidebarEvents);
+                    const allEventsEvent = {
+                        ...currentEvent,
+                        category: categoryId.toString()
+                    };
+                    eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== eventId), allEventsEvent]);
 
                     addToEventsToCategories(currentEvent);
 
@@ -727,7 +755,7 @@ const ModalService = {
         }
         // on event click - show edit event popup
         const eventId = event.id;
-        const currentEvent = eventStore.allEvents.find((e: any) => e.id === eventId);
+        const currentEvent = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
         if (!currentEvent) {
             console.error("event not found")
             return;
@@ -863,7 +891,11 @@ const ModalService = {
                 existingSidebarEvents[categoryId].push(currentEvent);
                 eventStore.setSidebarEvents(existingSidebarEvents);
 
-                eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), {...currentEvent, category: categoryId.toString()}]);
+                const allEventsEvent = {
+                    ...currentEvent,
+                    category: categoryId.toString()
+                };
+                eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
 
                 Alert.fire(TranslateService.translate(eventStore, "MODALS.ADDED.TITLE"), TranslateService.translate(eventStore, "MODALS.ADDED.CONTENT"), "success");
             }
@@ -1136,7 +1168,11 @@ const ModalService = {
                 existingSidebarEvents[parseInt(categoryId)].push(currentEvent);
                 eventStore.setSidebarEvents(existingSidebarEvents);
 
-                eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), {...currentEvent, category: categoryId}]);
+                const allEventsEvent = {
+                    ...currentEvent,
+                    category: categoryId.toString()
+                }
+                eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
 
                 Alert.fire(TranslateService.translate(eventStore, "MODALS.ADDED.TITLE"), TranslateService.translate(eventStore, "MODALS.ADDED.CONTENT"), "success");
             }
