@@ -137,7 +137,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
 
         // add it to our store (so it'll be updated on fullcalendar via calendarEvents prop)
         eventStore.setCalendarEvents([
-            ...eventStore.calendarEvents,
+            ...eventStore.calendarEvents.filter((x) => x.id !== id),
             event
         ])
 

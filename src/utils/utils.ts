@@ -620,7 +620,10 @@ export function buildHTMLSummary(eventStore: EventStore) {
                 if (distanceKey && eventStore.distanceResults.has(distanceKey) && eventStore.distanceResults.has(distanceKey.replace('DRIVING','WALKING'))) {
                     if (
                         eventStore.distanceResults.get(distanceKey)!.duration_value! >
-                        eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value!) {
+                        eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value!
+                         ||
+                        (eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value! < 10 * 60)
+                    ) {
                         distanceKey = distanceKey.replace('DRIVING', 'WALKING');
                         travelMode = GoogleTravelMode.WALKING;
                     }
@@ -677,6 +680,10 @@ export function getCoordinatesRangeKey(travelMode: string, startDestination: Coo
 export function toDistanceString(eventStore: EventStore, distanceResult: DistanceResult, travelMode?: GoogleTravelMode){
     let duration = distanceResult.duration;
     let distance = distanceResult.distance;
+
+    if (duration.indexOf('day') !== -1){
+        return '';
+    }
 
     if (!travelMode){
         travelMode = eventStore.travelMode

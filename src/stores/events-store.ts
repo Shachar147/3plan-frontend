@@ -192,8 +192,8 @@ export class EventStore {
     setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]){
 
         if (containsDuplicates(newAllEvents.map((x) => x.id))){
-            alert("error! contains duplicates!");
-            debugger;
+            // alert("error! contains duplicates!");
+            // debugger;
         }
 
         // debugger;
