@@ -599,7 +599,7 @@ export function buildHTMLSummary(eventStore: EventStore) {
 
                 const prefix = previousLineWasOr || indent ? "" : counter === 0 ? startPrefix : index === events.length -1 ? lastPrefix : `${randomElement(middlePrefixes)} `;
 
-                const description = event.description ? `<br>${indent}<span style="color:#999999">${formatDescription(event.description)}</span>` : "";
+                const description = event.description ? `<br><span style="opacity:0;">${indent}</span><span style="color:#999999">${formatDescription(event.description)}</span>` : "";
 
                 let rowStyle = indent ? "color: #999999" : "color:black";
 
