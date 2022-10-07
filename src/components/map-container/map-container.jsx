@@ -31,11 +31,13 @@ const MapContainer = () => {
     const [searchValue, setSearchValue] = useState("");
     const [searchCoordinatesSearchValue, setSearchCoordinatesSearchValue] = useState(""); // keeps searchValue that matches current search coordinates
     const [searchCoordinates, setSearchCoordinates] = useState([]);
+    const [visibleItems, setVisibleItems] = useState([]);
+    const [center, setCenter] = useState(undefined)
     const eventStore = useContext(eventStoreContext);
 
     const coordinatesToEvents = {};
     const texts = {};
-    let googleRef, googleMapRef;
+    let googleRef, googleMapRef, infoWindow;
     let searchMarkers = [];
     let markerCluster;
     let markers = [];
@@ -68,11 +70,71 @@ const MapContainer = () => {
     });
 
     // --- functions --------------------------------------------------------------------
+    const addressPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.ADDRESS");
+    const descriptionPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.DESCRIPTION");
+    const scheduledToPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.SCHEDULED_TO");
+    const preferredHoursPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.PREFERRED_HOURS");
+    const categoryPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.CATEGORY");
+    const iStyle = "min-width: 13px; text-align: center;";
+    const rowContainerStyle = "display: flex; flex-direction: row; align-items: center; gap: 10px;";
+
+    const buildInfoWindowContent = (event) => {
+
+        const title = `<div style="font-size:20px; margin-inline-end: 5px;"><b><u>${event.title}</u></b></div>`;
+        const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${event.location.address}</span></span>`
+
+        const description = event.description ? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${event.description}</span></span>` : '';
+
+        const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
+        let scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED')
+        if (calendarEvent) {
+            const dt = formatDate(calendarEvent.start);
+            const startTime = calendarEvent.start.toLocaleTimeString('en-US', {hour12: false});
+            const endTime = calendarEvent.end.toLocaleTimeString('en-US', {hour12: false});
+            const start = formatTime(startTime);
+            const end = formatTime(endTime);
+
+            scheduledTo = `${dt} ${end}-${start} (${getDurationString(eventStore, calendarEvent.duration)})`
+        }
+
+        scheduledTo = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-calendar" aria-hidden="true"></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
+
+        let category = event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
+        category = eventStore.categories.find((x) => x.id.toString() === category)?.title;
+        const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
+
+        let preferredTime = event.extendedProps && Object.keys(event.extendedProps).includes('preferredTime') ? event.extendedProps.preferredTime : event.preferredTime;
+        if (preferredTime != undefined) {
+            preferredTime = TriplanEventPreferredTime[preferredTime];
+        } else {
+            preferredTime = TriplanEventPreferredTime.unset;
+        }
+        const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(eventStore, preferredTime)}</span></span>`;
+
+        const lat = event.location.latitude.toFixed(7);
+        const lng = event.location.longitude.toFixed(7);
+        const url = `https://maps.google.com/maps?q=${lat},${lng}`;
+        const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`
+
+        return `<div style="display: flex; flex-direction: column; gap: 6px; max-width: 450px; padding: 10px;">
+                                ${title}
+                                <hr style="height: 1px; width: 100%;margin-block: 3px;" />
+                                ${address}
+                                ${categoryBlock}
+                                ${description}
+                                <hr style="height: 1px; width: 100%;margin-block: 3px;" />
+                                ${scheduledTo}
+                                ${preferredHoursBlock}
+                                <hr style="height: 1px; width: 100%;margin-block: 3px;" />
+                                ${urlBlock}
+                             </div>`;
+    }
+
     const setGoogleMapRef = (map, maps) => {
         googleMapRef = map;
         googleRef = maps;
 
-        const infoWindow = new googleRef.InfoWindow();
+        infoWindow = new googleRef.InfoWindow();
 
         const getIconUrl = (event) => {
 
@@ -150,57 +212,6 @@ const MapContainer = () => {
             return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
         }
 
-        const buildInfoWindowContent = (event) => {
-            const title = `<div style="font-size:20px; margin-inline-end: 5px;"><b><u>${event.title}</u></b></div>`;
-            const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${event.location.address}</span></span>`
-
-            const description = event.description ? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${event.description}</span></span>` : '';
-
-            const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
-            let scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED')
-            if (calendarEvent) {
-                const dt = formatDate(calendarEvent.start);
-                const startTime = calendarEvent.start.toLocaleTimeString('en-US', {hour12: false});
-                const endTime = calendarEvent.end.toLocaleTimeString('en-US', {hour12: false});
-                const start = formatTime(startTime);
-                const end = formatTime(endTime);
-
-                scheduledTo = `${dt} ${end}-${start} (${getDurationString(eventStore, calendarEvent.duration)})`
-            }
-
-            scheduledTo = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-calendar" aria-hidden="true"></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
-
-            let category = event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
-            category = eventStore.categories.find((x) => x.id.toString() === category)?.title;
-            const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
-
-            let preferredTime = event.extendedProps && Object.keys(event.extendedProps).includes('preferredTime') ? event.extendedProps.preferredTime : event.preferredTime;
-            if (preferredTime != undefined) {
-                preferredTime = TriplanEventPreferredTime[preferredTime];
-            } else {
-                preferredTime = TriplanEventPreferredTime.unset;
-            }
-            const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(eventStore, preferredTime)}</span></span>`;
-
-            const lat = event.location.latitude.toFixed(7);
-            const lng = event.location.longitude.toFixed(7);
-            const url = `https://maps.google.com/maps?q=${lat},${lng}`;
-            const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`
-
-            return `<div style="display: flex; flex-direction: column; gap: 6px; max-width: 450px; padding: 10px;">
-                                ${title}
-                                <hr style="height: 1px; width: 100%;margin-block: 3px;" />
-                                ${address}
-                                ${categoryBlock}
-                                ${description}
-                                <hr style="height: 1px; width: 100%;margin-block: 3px;" />
-                                ${scheduledTo}
-                                ${preferredHoursBlock}
-                                <hr style="height: 1px; width: 100%;margin-block: 3px;" />
-                                ${urlBlock}
-                             </div>`;
-        }
-
         const initMarkerFromCoordinate = (coordinate) => {
             const key = getKey(coordinate);
             const event = coordinatesToEvents[key];
@@ -224,6 +235,9 @@ const MapContainer = () => {
                 // label: event.icon
             });
 
+            // for visible items to be able to get more info about this marker
+            refMarker.eventId = event.id;
+
             // on click event
             googleRef.event.addListener(refMarker, 'click', (function () {
                 return function () {
@@ -244,6 +258,12 @@ const MapContainer = () => {
                 }
             })(refMarker));
 
+            // visible items change event
+            // Fired when the map becomes idle after panning or zooming.
+            googleRef.event.addListener(map, 'idle', function() {
+                updateVisibleMarkers();
+            });
+
             return refMarker;
         }
 
@@ -255,14 +275,6 @@ const MapContainer = () => {
             strokeWeight: 0.4,
             strokeColor: "#ffffff"
         };
-
-        const addressPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.ADDRESS");
-        const descriptionPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.DESCRIPTION");
-        const scheduledToPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.SCHEDULED_TO");
-        const preferredHoursPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.PREFERRED_HOURS");
-        const categoryPrefix = TranslateService.translate(eventStore, "MAP.INFO_WINDOW.CATEGORY");
-        const iStyle = "min-width: 13px; text-align: center;";
-        const rowContainerStyle = "display: flex; flex-direction: row; align-items: center; gap: 10px;";
 
         markers =
             coordinates &&
@@ -357,6 +369,18 @@ const MapContainer = () => {
             return refMarker;
         }
     },[googleRef, googleMapRef])
+
+    const onVisibleItemClick = useMemo(() => {
+        return (event, marker) => {
+            if (googleMapRef && infoWindow) {
+                const coordinates = event.location;
+                setCenter({lat: coordinates.latitude, lng: coordinates.longitude});
+
+                infoWindow.setContent(buildInfoWindowContent(event));
+                infoWindow.open(googleMapRef, marker);
+            }
+        }
+    },[googleMapRef, infoWindow]);
 
     const getOptions = () => {
         const noDefaultMarkers = {
@@ -547,6 +571,22 @@ const MapContainer = () => {
         }
     }
 
+    const updateVisibleMarkers = () => {
+        const bounds = googleMapRef.getBounds();
+        let count = 0;
+        const visibleItems = [];
+
+        for (var i = 0; i < markers.length; i++) {
+            const marker = markers[i];
+            if(bounds.contains(marker.getPosition())===true) {
+                const event = eventStore.allEvents.find((x) => x.id.toString() === marker.eventId.toString());
+                visibleItems.push({ event, marker });
+                count++;
+            }
+        }
+        setVisibleItems(visibleItems);
+    }
+
     // --- render -----------------------------------------------------------------------
     return (
         <div className="map-container" style={{height: "CALC(100vh - 200px)", width: "100%", display: "flex", flexDirection: "column", gap: "10px"}}>
@@ -579,9 +619,11 @@ const MapContainer = () => {
             <GoogleMapReact
                 bootstrapURLKeys={{key: "AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo"}} /* AIzaSyA16d9FJFh__vK04jU1P64vnEpPc3jenec */
                 center={
-                    searchCoordinates.length > 0 ? searchCoordinates[0] : coordinates .length > 0 ? {lat: coordinates[0].lat, lng: coordinates[0].lng} : undefined
+                    searchCoordinates.length > 0 ? searchCoordinates[0] :
+                    center ? center :
+                    coordinates .length > 0 ? {lat: coordinates[0].lat, lng: coordinates[0].lng} : undefined
                 }
-                zoom={searchCoordinates.length > 0 ? 14 : 11}
+                zoom={searchCoordinates.length > 0 || center ? 14 : 11}
                 yesIWantToUseGoogleMapApiInternals
                 onGoogleApiLoaded={({map, maps}) => setGoogleMapRef(map, maps)}
                 clickableIcons={false}
@@ -604,6 +646,23 @@ const MapContainer = () => {
                     />
                 ))}
             </GoogleMapReact>
+            <div className={"visible-items-pane"}>
+                <div className={"visible-items-header"}><b>{TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.TITLE')}:</b></div>
+                <div className={"visible-items-fc-events"}>
+                    {visibleItems.length === 0 && TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
+                    { visibleItems.sort((a,b) => {
+                        const priority1 = Number(a.event.priority) === 0 ? 999 : a.event.priority;
+                        const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
+                        return priority1 - priority2;
+                    }).map((x) => (
+                        <div className={`fc-event priority-${x.event.priority}`} onClick={() => {
+                            onVisibleItemClick(x.event, x.marker);
+                        }}>
+                            {x.event.title}
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }

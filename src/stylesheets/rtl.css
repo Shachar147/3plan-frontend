@@ -137,3 +137,8 @@ body.rtl .map-search-location-input .clear-search {
     left: 10px !important;
     right: unset !important;
 }
+
+body.rtl .map-container .visible-items-pane {
+    text-align: right;
+    direction: rtl;
+}
