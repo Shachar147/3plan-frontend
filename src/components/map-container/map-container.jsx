@@ -101,7 +101,8 @@ const MapContainer = () => {
                 "beach": "icons/onion/1521-beach_4x.png",
                 "nightlife": "icons/onion/1517-bar-cocktail_4x.png",
                 "hotel": "icons/onion/1602-hotel-bed_4x.png",
-                "shopping": "icons/onion/1684-shopping-bag_4x.png"
+                "shopping": "icons/onion/1684-shopping-bag_4x.png",
+                "tourism": "icons/onion/1715-tower_4x.png"
             }
 
             if (isMatching(event.title.toLowerCase(),["basketball","כדורסל"])){
@@ -128,6 +129,9 @@ const MapContainer = () => {
             }
             else if (isMatching(category, ["shopping", "stores", "חנויות", "קניות", "malls", "קניונים"])){
                 icon = iconsMap["shopping"]
+            }
+            else if (isMatching(category, ["tourism", "תיירות", "אתרים"])){
+                icon = iconsMap["tourism"]
             }
             else if (icon === "") {
                 return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
