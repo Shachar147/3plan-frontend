@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {buildHTMLSummary, containsDuplicates, getClasses} from '../../utils/utils';
+import {containsDuplicates, getClasses} from '../../utils/utils';
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
@@ -18,6 +18,7 @@ import {useParams} from "react-router-dom";
 import TriplanSidebar from "../../components/triplan-sidebar/triplan-sidebar";
 import MapContainer from "../../components/map-container/map-container";
 import _ from "lodash";
+import ListViewService from "../../services/list-view-service";
 
 const MainPage = () => {
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)
@@ -162,7 +163,7 @@ const MainPage = () => {
 
     const renderListView = () => (
         <div className={getClasses(["list-container flex-1-1-0"], !eventStore.isListView && 'opacity-0 position-absolute')}>
-            <div className={"trip-summary bright-scrollbar"} dangerouslySetInnerHTML={{__html: eventStore.isListView ? buildHTMLSummary(eventStore) : ""}} />
+            <div className={"trip-summary bright-scrollbar"} dangerouslySetInnerHTML={{__html: eventStore.isListView ? ListViewService.buildHTMLSummary(eventStore) : ""}} />
         </div>
     );
 

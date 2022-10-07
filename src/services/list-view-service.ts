@@ -1,0 +1,458 @@
+import {EventStore} from "../stores/events-store";
+import moment from "moment/moment";
+import TranslateService from "./translate-service";
+import {EventInput} from "@fullcalendar/react";
+import {getEventDueDate} from "../utils/time-utils";
+import {LocationData} from "../utils/interfaces";
+import {runInAction} from "mobx";
+import {GoogleTravelMode, TriplanPriority} from "../utils/enums";
+import {priorityToColor} from "../utils/consts";
+import {getCoordinatesRangeKey, padTo2Digits, toDistanceString} from "../utils/utils";
+
+const ListViewService = {
+    _getDayName: (dateStr: string, locale: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString(locale, { weekday: 'long' });
+    },
+    _formatTime: (timeString: string) =>  moment(timeString, ["h:mm A"]).format("HH:mm"),
+    _randomElement: (array:any[]) => array[Math.floor(Math.random() * array.length)],
+    _formatDescription: (description: string) => {
+        return description.replaceAll('&#10;', '<br/>')
+            .replaceAll('\n', "<br/>")
+            .replaceAll('<br/><br/>', "<br/>");
+    },
+    _handleOrAndIndentRules: (summaryPerDay: Record<string, string[]>): Record<string, string[]> => {
+        Object.keys(summaryPerDay).forEach((dayTitle) => {
+            const indentTextsParents = summaryPerDay[dayTitle].filter((x) => x.indexOf('indent-or-group') === -1 && x.indexOf('or-group') !== -1).map((x) => {
+                const regex = /or-group-(\d*)/g;
+                const results = x.match(regex);
+                if (results) {
+                    return results[0]
+                }
+                return  undefined
+            }).filter((x) => x != undefined);
+
+            const indentTexts = summaryPerDay[dayTitle].filter((x) => x.indexOf('indent-or-group') !== -1);
+            const indentOrGroupKeys: Record<string, string[]> = {}; // for or group that have also indent sub items
+            let error = false;
+            indentTexts.forEach((indentText) => {
+                const regex = /or-group-(\d*)/g;
+                const results = indentText.match(regex);
+                if (results) {
+                    const orGroupKey = results[0].toString();
+                    indentOrGroupKeys[orGroupKey] = indentOrGroupKeys[orGroupKey] || [];
+                    indentOrGroupKeys[orGroupKey].push(indentText);
+                } else {
+                    error = true;
+                    debugger;
+                }
+            });
+
+            if (!error){
+                summaryPerDay[dayTitle] =  summaryPerDay[dayTitle]
+                    .map((row) => {
+                        const regex = /or-group-(\d*)/g;
+                        const results = row.match(regex);
+                        if (results){
+                            const orGroupKey = results[0].toString();
+                            if (indentOrGroupKeys[orGroupKey]) {
+                                if (row.indexOf("indent-or-group") !== -1){
+                                    if (indentTextsParents.indexOf(orGroupKey) === -1){
+                                        return row;
+                                    }
+                                    return "---";
+                                }
+                                return row + "</br>" + indentOrGroupKeys[orGroupKey].join("<br/>")
+                            }
+                        }
+                        return row;
+                    }).filter((x) => x != "---");
+
+                // remove leading ORs
+                summaryPerDay[dayTitle] = summaryPerDay[dayTitle].map((x, index) => {
+                    if (x.indexOf('or-row') !== -1 && index + 1 < summaryPerDay[dayTitle].length && summaryPerDay[dayTitle][index+1] === ''){
+                        return "---";
+                    }
+                    return x;
+                }).filter((x) => x != "---")
+            }
+        });
+        return summaryPerDay;
+    },
+    _initTranslateKeys: (eventStore: EventStore) => {
+
+        const todoComplete = TranslateService.translate(eventStore, 'TRIP_SUMMARY.TODO_COMPLETE');
+        const startPrefix = TranslateService.translate(eventStore, 'TRIP_SUMMARY.START_PREFIX');
+        const lastPrefix = TranslateService.translate(eventStore, 'TRIP_SUMMARY.LAST_PREFIX');
+        const middlePrefixes = [
+            TranslateService.translate(eventStore, 'TRIP_SUMMARY.MIDDLE_PREFIX1'),
+            TranslateService.translate(eventStore, 'TRIP_SUMMARY.MIDDLE_PREFIX2'),
+            TranslateService.translate(eventStore, 'TRIP_SUMMARY.MIDDLE_PREFIX3'),
+            TranslateService.translate(eventStore, 'TRIP_SUMMARY.MIDDLE_PREFIX4'),
+            "",
+            "",
+            "",
+            "",
+            ""
+        ];
+        const or = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OR');
+        const tripSummaryTitle = TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE');
+
+        return {
+            todoComplete,
+            startPrefix,
+            lastPrefix,
+            middlePrefixes,
+            or,
+            tripSummaryTitle
+        }
+    },
+    _initSummaryConfiguration: () => {
+        const taskKeywords = [
+            "לברר",
+            "לבדוק",
+            "להזמין",
+            "להשלים",
+            "צריך לעשות",
+            "צריך להחליט",
+            "צריך לנסות",
+            "need to decide",
+            "todo",
+            "need to check",
+        ];
+
+        const notesColor = "#52a4ff"; // "#ff5252";
+        const todoCompleteColor = "#ff5252";
+
+        const showIcons = true;
+
+        return {
+            taskKeywords,
+            notesColor,
+            todoCompleteColor,
+            showIcons
+        }
+    },
+    _sortEvents: (calendarEvents: EventInput[]) => {
+        return calendarEvents.sort((a,b) => {
+            const aTime = (a.start as Date).getTime();
+            const bTime = (b.start as Date).getTime();
+            if (aTime === bTime){
+                const aEndTime = (a.end as Date).getTime();
+                const bEndTime = (b.end as Date).getTime();
+                return bEndTime - aEndTime;
+            }
+            return aTime - bTime;
+        });
+    },
+    _buildCalendarEventsPerDay: (eventStore:EventStore, calendarEvents: EventInput[]) => {
+        const calendarEventsPerDay:Record<string, EventInput> = {};
+
+        let lastDayTitle = "";
+        let lastStart = 0;
+        let lastEnd = 0;
+
+        // or item is an empty item.
+        // when we'll build the summary itself, we'll consider empty items as OR.
+        const OR_ITEM_INDICATION = {};
+
+        const sortedEvents = ListViewService._sortEvents(calendarEvents);
+        sortedEvents.forEach((event, index) => {
+
+            // clone event
+            event.extendedProps = event.extendedProps || {};
+            const clonedEvent = {...event, ...event.extendedProps};
+
+            // day title
+            const dtStartName = ListViewService._getDayName(clonedEvent.start!.toString(), eventStore.calendarLocalCode);
+            const parts = (clonedEvent.start! as Date).toLocaleDateString().replace(/\//ig,'-').split('-')
+            const dtStart = [padTo2Digits(Number(parts[1])), padTo2Digits(Number(parts[0])), parts[2]].join("/")
+            const dayTitle = `${dtStartName} - ${dtStart}`;
+
+            // init calendar events per day
+            calendarEventsPerDay[dayTitle] = calendarEventsPerDay[dayTitle] || [];
+
+            // push OR indication if needed
+            const stillSameDay = lastDayTitle === dayTitle;
+            const sameStart = (event.start as Date).getTime() === lastStart;
+            const sameEnd = (event.end as Date).getTime() === lastEnd;
+            if (stillSameDay && sameStart && sameEnd) {
+                calendarEventsPerDay[dayTitle].push(OR_ITEM_INDICATION);
+            }
+
+            // push our cloned event
+            calendarEventsPerDay[dayTitle].push(clonedEvent);
+
+            // deal with items that aren't exactly on the same times but collide with each other
+            // for example:
+            // current item 06:00 - 08:00
+            // next item 07:00 - 09:00
+            // on that case, we can't do both items and we need to choose. therefore we push the OR indication
+            const isNotLastItem = index + 1 < sortedEvents.length;
+            const currentItemEndsAfterNextItemStarts = isNotLastItem && (event.end as Date).getTime() > (sortedEvents[index+1].start as Date).getTime();
+            const currentItemEndsBeforeNextItemEnds = isNotLastItem && (event.end as Date).getTime() < (sortedEvents[index+1].end as Date).getTime();
+            if (isNotLastItem && currentItemEndsAfterNextItemStarts && currentItemEndsBeforeNextItemEnds){
+                calendarEventsPerDay[dayTitle].push(OR_ITEM_INDICATION);
+            }
+
+            // keep current event info to "last" variables.
+            lastDayTitle = dayTitle;
+            lastStart = (event.start as Date).getTime();
+            lastEnd = getEventDueDate(event).getTime();
+        });
+
+        return calendarEventsPerDay;
+    },
+    _buildSummaryPerDay: (eventStore: EventStore, calendarEventsPerDay:Record<string, EventInput>) => {
+
+        const highlightsPerDay: Record<string, string> = {};
+
+        const {
+            todoComplete,
+            startPrefix,
+            lastPrefix,
+            middlePrefixes,
+            or,
+            tripSummaryTitle,
+        } = ListViewService._initTranslateKeys(eventStore);
+
+        const {
+            taskKeywords,
+            notesColor,
+            todoCompleteColor,
+            showIcons
+        } = ListViewService._initSummaryConfiguration();
+
+        let summaryPerDay: Record<string, string[]> = {};
+
+        Object.keys(calendarEventsPerDay).forEach((dayTitle) => {
+            const events = calendarEventsPerDay[dayTitle];
+            const eventDistanceKey: Record<number, string> = {};
+
+            let prevLocation: LocationData | undefined;
+            for (let i=0; i< events.length; i++){
+                const event = events[i];
+                if (Object.keys(event).length === 0) { continue; }
+                const thisLocation = event.extendedProps.location;
+                // @ts-ignore
+                if (thisLocation && prevLocation &&
+                    prevLocation.longitude && prevLocation.latitude &&
+                    thisLocation.longitude && thisLocation.latitude &&
+                    !(thisLocation.longitude === prevLocation.longitude && thisLocation.latitude === prevLocation.latitude)
+                ){
+
+                    const prevCoordinate = {
+                        lng: prevLocation.longitude!,
+                        lat: prevLocation.latitude!
+                    };
+                    const thisCoordinate = {
+                        lng: thisLocation.longitude!,
+                        lat: thisLocation.latitude!
+                    };
+
+                    const key = getCoordinatesRangeKey(eventStore.travelMode, prevCoordinate, thisCoordinate);
+                    eventDistanceKey[event.id] = key;
+                    if (!eventStore.distanceResults.has(key)){
+                        runInAction(() => {
+                            console.log(`checking distance between`,prevLocation?.address,` and `,thisLocation.address, prevCoordinate, thisCoordinate);
+                            eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
+
+                            // @ts-ignore
+                            window.calculateMatrixDistance(eventStore, prevCoordinate, thisCoordinate);
+                        });
+                    } else {
+
+                        if (event.start.toLocaleDateString() === '12/6/2022') {
+                            console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address);
+                        }
+                    }
+                }
+
+                // set prev location to this location only if next line is not OR.
+                if (!(i+1 < events.length && Object.keys(events[i+1]).length === 0)){
+                    prevLocation = thisLocation;
+                }
+            }
+
+            let highlightEvents = events.filter((x:EventInput) => x.priority && x.priority == TriplanPriority.must).map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
+            // @ts-ignore
+            highlightEvents = [...new Set(highlightEvents)];
+            highlightsPerDay[dayTitle] = highlightEvents.join(", ");
+
+            let previousLineWasOr = false;
+            let previousLineWasIndent = false;
+            let previousEndTime = 0;
+            let previousStartTime = 0;
+            let prevEventTitle: string;
+            let counter = 0;
+            let lastGroupNum = 800;
+            prevLocation = undefined;
+            const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
+            events.forEach((event: EventInput, index: number) => {
+                summaryPerDay[dayTitle] = summaryPerDay[dayTitle] || [];
+
+                if (Object.keys(event).length === 0){
+                    summaryPerDay[dayTitle].push(`<span class="or-row" style="padding-inline-start: 20px; font-weight:bold ${orBackgroundStyle}"><u>${or}</u></span>`);
+                    previousLineWasOr = true;
+                    return;
+                }
+
+                const nextLineIsOr = index + 1 < events.length && Object.keys(events[index+1]).length === 0;
+
+                // if ((previousLineWasOr && !nextLineIsOr) && summaryPerDay[dayTitle][-1] !== ''){
+                //     summaryPerDay[dayTitle].push(``);
+                // }
+
+                if (event.allDay){
+                    summaryPerDay[dayTitle].push(`<span style="color:${notesColor}; font-size:10px; font-weight:bold;">${ListViewService._formatDescription(event.description)}</span>`);
+                    return;
+                }
+
+                const startTime = ListViewService._formatTime((event.start! as Date).toLocaleTimeString());
+                const endTime = ListViewService._formatTime((getEventDueDate(event)).toLocaleTimeString());
+                const title = event.title;
+
+                const priority = event.priority;
+                const color =
+                    [TriplanPriority.must.toString(), TriplanPriority.maybe.toString()].indexOf(priority) !== -1 &&
+                    Object.keys(priorityToColor).includes(priority) ?
+                        priorityToColor[priority] :
+                        'inherit';
+                const fontWeight = color !== 'inherit' ? 'bold' : 'normal';
+
+                const icon = showIcons ? event.icon || eventStore.categoriesIcons[event.category] || "" : "";
+                const iconIndent = icon ? " " : "";
+
+                const subItemIcon = eventStore.getCurrentDirection() === 'rtl' ? '↵' : '↳';
+                const previousAndCurrentExactTimes = ( previousEndTime === (event.end! as Date).getTime() && previousStartTime === (event.start! as Date).getTime() );
+                const previousEndTimeAfterCurrentStart = previousEndTime > (event.start! as Date).getTime();
+                const previousEndTimeAfterCurrentEnd = previousEndTime >= (event.end! as Date).getTime();
+                const indent = (previousEndTimeAfterCurrentStart && previousEndTimeAfterCurrentEnd && !previousAndCurrentExactTimes) ? subItemIcon + " " : "";
+
+                if (indent !== '' && summaryPerDay[dayTitle][summaryPerDay[dayTitle].length-1] == ''){
+                    previousLineWasOr = true;
+                    summaryPerDay[dayTitle].pop();
+                    lastGroupNum--;
+                }
+
+                if (!indent) {
+                    previousEndTime = (event.end! as Date).getTime();
+                    previousStartTime = (event.start! as Date).getTime();
+                }
+
+                const prefix = previousLineWasOr || nextLineIsOr || indent ? "" : counter === 0 ? startPrefix : index === events.length -1 ? lastPrefix : `${ListViewService._randomElement(middlePrefixes)} `;
+
+                const description = event.description ? `<br><span style="opacity:0;">${indent}</span><span style="color:#999999">${ListViewService._formatDescription(event.description)}</span>` : "";
+
+                let rowStyle = indent ? "color: #999999" : "color:black";
+                let rowClass = "";
+
+                let backgroundStyle = "";
+                if (previousLineWasOr || (index+1 < events.length && Object.keys(events[index+1]).length === 0)) {
+                    backgroundStyle = orBackgroundStyle;
+                    rowStyle += backgroundStyle;
+                    if (indent){
+                        rowClass += ` indent-or-group-${lastGroupNum}`
+                    } else {
+                        rowClass += ` or-group-${lastGroupNum}`
+                    }
+                }
+
+                const taskIndication = taskKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
+                    `<span style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>` : "";
+
+                let distanceKey = Object.keys(eventDistanceKey).includes(event.id!) ?
+                    eventDistanceKey[Number(event.id!)] : undefined;
+
+                // test
+                let travelMode = eventStore.travelMode;
+                if (distanceKey && eventStore.distanceResults.has(distanceKey) && eventStore.distanceResults.has(distanceKey.replace('DRIVING','WALKING'))) {
+                    if (
+                        eventStore.distanceResults.get(distanceKey)!.duration_value! >
+                        eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value!
+                        ||
+                        (eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value! < 10 * 60)
+                    ) {
+                        distanceKey = distanceKey.replace('DRIVING', 'WALKING');
+                        travelMode = GoogleTravelMode.WALKING;
+                    }
+                }
+
+                let distanceToNextEvent =
+                    distanceKey ?
+                        eventStore.distanceResults.has(distanceKey) ?
+                            toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, travelMode) :
+                            TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
+                        : "";
+
+                // const from = previousLineWasOr ? `${TranslateService.translate(eventStore, 'FROM')} ${prevEventTitle} ` : "";
+
+                if (distanceToNextEvent !== "") {
+                    const arrow = eventStore.getCurrentDirection() === 'rtl' ? '✈' : '✈'
+                    const distanceColor = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '#ff5252' : 'rgba(55,181,255,0.6)';
+                    distanceToNextEvent = `<span style="color: ${distanceColor}; ${backgroundStyle}">
+                                ${arrow}
+                                ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${event.location.address.split(' - ')[0]}
+                            </span>`;
+                }
+
+                if (previousLineWasIndent && indent === "" && !previousLineWasOr && summaryPerDay[dayTitle][summaryPerDay[dayTitle].length-1] !== ''){
+                    summaryPerDay[dayTitle].push(``);
+                }
+
+                if (distanceToNextEvent !== "") {
+                    summaryPerDay[dayTitle].push(distanceToNextEvent);
+                }
+
+                summaryPerDay[dayTitle].push(`
+                    <span class="eventRow${rowClass}" style="${rowStyle}">
+                        ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}</span>${description}
+                    </span>
+                `);
+
+                if (previousLineWasOr && !nextLineIsOr && summaryPerDay[dayTitle][summaryPerDay[dayTitle].length-1] !== ''){
+                    summaryPerDay[dayTitle].push(``);
+                    lastGroupNum++;
+                }
+
+                if (!previousLineWasOr && !nextLineIsOr) {
+                    prevLocation = event.location;
+                }
+
+                previousLineWasIndent = indent !== "";
+                previousLineWasOr = false;
+                counter++;
+                prevEventTitle = title!;
+            })
+        });
+
+        return { summaryPerDay, highlightsPerDay};
+    },
+
+    buildHTMLSummary: (eventStore: EventStore) => {
+
+        const calendarEvents = eventStore.calendarEvents;
+        const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
+
+        // build calendar events per day
+        const calendarEventsPerDay:Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(eventStore, calendarEvents);
+
+        let { summaryPerDay, highlightsPerDay } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
+        summaryPerDay = ListViewService._handleOrAndIndentRules(summaryPerDay);
+
+        return `
+        <div style="max-width: 990px;">
+            <h3><b><u>${tripSummaryTitle}</b></u></h3>
+            ${Object.keys(summaryPerDay).map((dayTitle) => {
+            const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
+            return `
+                    <b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span><br>
+                    ${summaryPerDay[dayTitle].join("<br/>")}
+                `
+        }).join("<br/><hr/><br/>")}
+        </div>
+    `
+    }
+}
+
+export default ListViewService;
