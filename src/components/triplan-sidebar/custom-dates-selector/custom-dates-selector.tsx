@@ -18,7 +18,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
     const { customDateRange, setCustomDateRange, TriplanCalendarRef } = props;
 
     return (
-        <div className={getClasses(["custom-dates-container"], eventStore.isListView && 'hidden')}>
+        <div className={getClasses(["custom-dates-container"], !eventStore.isCalendarView && 'hidden')}>
             <div className={"custom-dates-line"}>
                 <input type={"date"} value={customDateRange.start} onChange={(e) => {
                     const value = e.target.value;
