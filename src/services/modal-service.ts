@@ -296,6 +296,9 @@ const ModalService = {
                     // @ts-ignore
                     currentEvent["categoryId"] = categoryId;
 
+                    // @ts-ignore
+                    currentEvent['className'] = currentEvent.priority? `priority-${currentEvent.priority}` : undefined;
+
                     eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== eventId), currentEvent])
                     const allEventsEvent = {
                         ...currentEvent,
@@ -690,6 +693,10 @@ const ModalService = {
                             categoryId
                         }
                     };
+
+                    // @ts-ignore
+                    currentEvent['className'] = currentEvent.priority? `priority-${currentEvent.priority}` : undefined;
+
                     const sidebarEvents = eventStore.sidebarEvents;
 
                     sidebarEvents[parseInt(categoryId)] = sidebarEvents[parseInt(categoryId)] || [];

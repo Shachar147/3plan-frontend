@@ -92,6 +92,7 @@ const MapContainer = () => {
             category = eventStore.categories.find((x) => x.id.toString() === category)?.title;
 
             category = category ? category.toLowerCase() : "";
+            const title = event.title.toLowerCase();
 
             const iconsMap = {
                 "basketball": "icons/onion/1520-basketball_4x.png",
@@ -102,17 +103,27 @@ const MapContainer = () => {
                 "nightlife": "icons/onion/1517-bar-cocktail_4x.png",
                 "hotel": "icons/onion/1602-hotel-bed_4x.png",
                 "shopping": "icons/onion/1684-shopping-bag_4x.png",
-                "tourism": "icons/onion/1715-tower_4x.png"
+                "tourism": "icons/onion/1715-tower_4x.png",
+                "flowers": "icons/onion/1582-garden-flower_4x.png",
+                "desserts": "icons/onion/1607-ice-cream_4x.png"
             }
 
-            if (isMatching(event.title.toLowerCase(),["basketball","כדורסל"])){
+            if (isMatching(title,["basketball","כדורסל"])){
                 icon = iconsMap["basketball"];
+            }
+            else if (isMatching(category, ["desserts", "קינוחים"]) ||
+                isMatching(title, ["desserts", "קינוחים", "גלידה"])){
+                icon = iconsMap["desserts"]
             }
             else if (isMatching(category, ["food", "resturant", "אוכל", "מסעדות"])){
                 icon = iconsMap["food"];
             }
             else if (isMatching(category,["photo", "תמונות"])){
                 icon = iconsMap["photos"]
+            }
+            else if (isMatching(category, ["nature", "flower", "garden", "גן ה", "גני ה", "פרח", "טבע"]) ||
+                isMatching(title, ["nature", "flower", "garden", "גן ה", "גני ה", "פרח", "טבע"])){
+                icon = iconsMap["flowers"]
             }
             else if (isMatching(category,["attraction", "אטרקציות", "פעילויות"])){
                 icon = iconsMap["attractions"]
@@ -123,7 +134,7 @@ const MapContainer = () => {
             else if (isMatching(category, ["club", "cocktail", "beer", "bar", "מועדונים", "ברים", "מסיבות"])){
                 icon = iconsMap["nightlife"]
             }
-            else if (isMatching(category, ["hotel", "מלון"]) || isMatching(event.title.toLowerCase(),["hotel", "מלון"])){
+            else if (isMatching(category, ["hotel", "מלון"]) || isMatching(title,["hotel", "מלון"])){
                 icon = iconsMap["hotel"]
                 bgColor = "7cb342";
             }
@@ -529,6 +540,7 @@ const MapContainer = () => {
         return {
             styles:[
                 ...lightModeStyles,
+                // ...darkModeStyles,
                 noDefaultMarkers,
                 noRoadLabels
             ]
