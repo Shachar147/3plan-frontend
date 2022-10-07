@@ -178,5 +178,7 @@
   "MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED": "Unscheduled",
   "MAP_VIEW.SEARCH.PLACEHOLDER": "Add places by searching them on google maps",
   "MAP_VIEW.LOADING_PLACEHOLDER": "Loading map... please wait",
-  "MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG": "Oops! something went wrong"
+  "MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG": "Oops! something went wrong",
+  "THE_FOLLOWING_EVENTS": "The following events",
+  "AND_THEN_ONE_OF_THE_FOLLOWING": "And then one of the following"
 }

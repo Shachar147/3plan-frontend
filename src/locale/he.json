@@ -188,5 +188,7 @@
   "MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED": "לא מתוזמן",
   "MAP_VIEW.SEARCH.PLACEHOLDER": "הוסף מקומות על ידי חיפושם במפה",
   "MAP_VIEW.LOADING_PLACEHOLDER": "המפה בטעינה... אנא המתן",
-  "MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG": "אופס! משהו השתבש"
+  "MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG": "אופס! משהו השתבש",
+  "THE_FOLLOWING_EVENTS": "האירועים הבאים",
+  "AND_THEN_ONE_OF_THE_FOLLOWING": "ואז - אחד מהבאים"
 }

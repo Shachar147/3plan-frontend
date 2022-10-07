@@ -28,6 +28,8 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // V make marker look better
 // V find a way to show monocity view instead of this view.
 
+// add "navigate" button to the list view that opens google maps to that location
+
 // fix allevents duplicate items so statistics in the sidebar will be correct.
 // ... changing calendar events category isn't working. maybe its related (maybe its duplicating instead of editing or something)
 // refactor SweetAlert from HTML to React
@@ -37,7 +39,7 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // ... + auto create events for these hotels, place them first on each day. make them from different type so it will be undeletable (?), without start-end dates
 // Flight finder based on your trip dates.
 
-// (!!) fix "or" calculation when there is 1 event and 2 other events that together are at the same times as the first event.
+// V (!!) fix "or" calculation when there is 1 event and 2 other events that together are at the same times as the first event.
 
 // feature requests
 // create tasks automatically for flight in, flight out, checkin, checkout with 'please fill in' text.

@@ -8,6 +8,7 @@ import {runInAction} from "mobx";
 import {GoogleTravelMode, TriplanPriority} from "../utils/enums";
 import {priorityToColor} from "../utils/consts";
 import {getCoordinatesRangeKey, padTo2Digits, toDistanceString} from "../utils/utils";
+import listViewService from "./list-view-service";
 
 const ListViewService = {
     _getDayName: (dateStr: string, locale: string) => {
@@ -21,12 +22,32 @@ const ListViewService = {
             .replaceAll('\n', "<br/>")
             .replaceAll('<br/><br/>', "<br/>");
     },
-    _handleOrAndIndentRules: (summaryPerDay: Record<string, string[]>): Record<string, string[]> => {
+    _getEventFromEventRow: (eventStore: EventStore, eventRow: string) => {
+        const regex = /data-eventId="(\d*)/g;
+        const results = eventRow.match(regex);
+        if (results) {
+            const eventId = results[0].replace('data-eventId="', '')
+            return eventStore.calendarEvents.find((e) => e.id === eventId)!;
+        }
+        return undefined;
+    },
+    _findLastIndex: (arr: string[], search: string) => {
+        let lastIndex = -1;
+        arr.forEach((x, index) => {
+            if (x.indexOf(search) !== -1){
+                lastIndex = index;
+            }
+        })
+        return lastIndex;
+    },
+    _handleOrAndIndentRules: (eventStore: EventStore, summaryPerDay: Record<string, string[]>): Record<string, string[]> => {
         Object.keys(summaryPerDay).forEach((dayTitle) => {
+            const parents: Record<string, string> = {};
             const indentTextsParents = summaryPerDay[dayTitle].filter((x) => x.indexOf('indent-or-group') === -1 && x.indexOf('or-group') !== -1).map((x) => {
                 const regex = /or-group-(\d*)/g;
                 const results = x.match(regex);
                 if (results) {
+                    parents[results[0]] = x;
                     return results[0]
                 }
                 return  undefined
@@ -48,6 +69,48 @@ const ListViewService = {
                 }
             });
 
+            const changeIndentToOr: Record<string, string[]> = {};
+            Object.keys(indentOrGroupKeys).forEach((key) => {
+                let start = 0, end = 0, isOk = true;
+                indentOrGroupKeys[key].forEach((x) => {
+                    const event = ListViewService._getEventFromEventRow(eventStore, x);
+                    if (event){
+                        if (start === 0) {
+                            start = (event.start as Date).getTime();
+                            end = (event.end as Date).getTime();
+                        } else {
+                            const _start = (event.start as Date).getTime();
+                            const _end = (event.end as Date).getTime();
+                            if (_start === end && _end > end){
+                                end = _end;
+                            } else {
+                                isOk = false;
+                            }
+                        }
+                        // start = Math.min((event!.start as Date).getTime(), start);
+                        // end = Math.max((event!.end as Date).getTime(), end);
+                        console.log(event.title, event.start as Date, event.end as Date)
+                    }
+                });
+
+                if (isOk){
+                    const parentEvent = ListViewService._getEventFromEventRow(eventStore, parents[key])!;
+                    const pStart = (parentEvent.start as Date).getTime();
+                    const pEnd = (parentEvent.end as Date).getTime();
+
+                    if (pStart === start && pEnd === end){
+
+                        const startTime = ListViewService._formatTime((new Date(pStart)).toLocaleTimeString());
+                        const endTime = ListViewService._formatTime((getEventDueDate(parentEvent)).toLocaleTimeString());
+
+                        const { orBackgroundStyle } = ListViewService._initSummaryConfiguration();
+                        const title = `<span class="eventRow ${key}" style="${orBackgroundStyle}">${startTime} - ${endTime} ${TranslateService.translate(eventStore, "THE_FOLLOWING_EVENTS")}:</span>`;
+
+                        changeIndentToOr[key] = [title, ...indentOrGroupKeys[key]];
+                    }
+                }
+            })
+
             if (!error){
                 summaryPerDay[dayTitle] =  summaryPerDay[dayTitle]
                     .map((row) => {
@@ -55,6 +118,7 @@ const ListViewService = {
                         const results = row.match(regex);
                         if (results){
                             const orGroupKey = results[0].toString();
+
                             if (indentOrGroupKeys[orGroupKey]) {
                                 if (row.indexOf("indent-or-group") !== -1){
                                     if (indentTextsParents.indexOf(orGroupKey) === -1){
@@ -62,6 +126,10 @@ const ListViewService = {
                                     }
                                     return "---";
                                 }
+                                else if (Object.keys(changeIndentToOr).indexOf(orGroupKey) !== -1){
+                                    return row;
+                                }
+
                                 return row + "</br>" + indentOrGroupKeys[orGroupKey].join("<br/>")
                             }
                         }
@@ -75,6 +143,17 @@ const ListViewService = {
                     }
                     return x;
                 }).filter((x) => x != "---")
+
+                // handle indents that should be transformed to ORs
+                Object.keys(changeIndentToOr).forEach((groupKey) => {
+                    const idx = ListViewService._findLastIndex(summaryPerDay[dayTitle], groupKey);
+                    if (idx === -1){
+                        console.error("error!!!");
+                    } else {
+                        summaryPerDay[dayTitle][idx] +=
+                            ["",listViewService._renderOrLine(eventStore), ...changeIndentToOr[groupKey]].join("<br/>");
+                    }
+                })
             }
         });
         return summaryPerDay;
@@ -123,6 +202,7 @@ const ListViewService = {
 
         const notesColor = "#52a4ff"; // "#ff5252";
         const todoCompleteColor = "#ff5252";
+        const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
 
         const showIcons = true;
 
@@ -130,7 +210,8 @@ const ListViewService = {
             taskKeywords,
             notesColor,
             todoCompleteColor,
-            showIcons
+            showIcons,
+            orBackgroundStyle
         }
     },
     _sortEvents: (calendarEvents: EventInput[]) => {
@@ -203,6 +284,11 @@ const ListViewService = {
 
         return calendarEventsPerDay;
     },
+    _renderOrLine:(eventStore: EventStore) => {
+        const { or } = ListViewService._initTranslateKeys(eventStore);
+        const { orBackgroundStyle } = ListViewService._initSummaryConfiguration();
+        return `<span class="or-row" style="padding-inline-start: 20px; font-weight:bold ${orBackgroundStyle}"><u>${or}</u></span>`;
+    },
     _buildSummaryPerDay: (eventStore: EventStore, calendarEventsPerDay:Record<string, EventInput>) => {
 
         const highlightsPerDay: Record<string, string> = {};
@@ -212,15 +298,14 @@ const ListViewService = {
             startPrefix,
             lastPrefix,
             middlePrefixes,
-            or,
-            tripSummaryTitle,
         } = ListViewService._initTranslateKeys(eventStore);
 
         const {
             taskKeywords,
             notesColor,
             todoCompleteColor,
-            showIcons
+            showIcons,
+            orBackgroundStyle
         } = ListViewService._initSummaryConfiguration();
 
         let summaryPerDay: Record<string, string[]> = {};
@@ -230,6 +315,7 @@ const ListViewService = {
             const eventDistanceKey: Record<number, string> = {};
 
             let prevLocation: LocationData | undefined;
+            let prevLocationBackup: LocationData | undefined
             for (let i=0; i< events.length; i++){
                 const event = events[i];
                 if (Object.keys(event).length === 0) { continue; }
@@ -287,12 +373,11 @@ const ListViewService = {
             let counter = 0;
             let lastGroupNum = 800;
             prevLocation = undefined;
-            const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
             events.forEach((event: EventInput, index: number) => {
                 summaryPerDay[dayTitle] = summaryPerDay[dayTitle] || [];
 
                 if (Object.keys(event).length === 0){
-                    summaryPerDay[dayTitle].push(`<span class="or-row" style="padding-inline-start: 20px; font-weight:bold ${orBackgroundStyle}"><u>${or}</u></span>`);
+                    summaryPerDay[dayTitle].push(listViewService._renderOrLine(eventStore));
                     previousLineWasOr = true;
                     return;
                 }
@@ -333,6 +418,8 @@ const ListViewService = {
                     previousLineWasOr = true;
                     summaryPerDay[dayTitle].pop();
                     lastGroupNum--;
+                    prevLocation = prevLocationBackup;
+                    prevLocationBackup = undefined;
                 }
 
                 if (!indent) {
@@ -347,14 +434,24 @@ const ListViewService = {
                 let rowStyle = indent ? "color: #999999" : "color:black";
                 let rowClass = "";
 
+                let firstRowInGroup = false;
                 let backgroundStyle = "";
-                if (previousLineWasOr || (index+1 < events.length && Object.keys(events[index+1]).length === 0)) {
+                // if (previousLineWasOr || (index+1 < events.length && Object.keys(events[index+1]).length === 0)) {
+                if (previousLineWasOr || nextLineIsOr) {
                     backgroundStyle = orBackgroundStyle;
                     rowStyle += backgroundStyle;
                     if (indent){
                         rowClass += ` indent-or-group-${lastGroupNum}`
                     } else {
                         rowClass += ` or-group-${lastGroupNum}`
+                    }
+                    if (nextLineIsOr && !previousLineWasOr){
+                        // firstRowInGroup = true;
+                        summaryPerDay[dayTitle].push(
+                            `<span style="background-color:white; line-height:33px; text-decoration:underline;">
+                                ${TranslateService.translate(eventStore, 'AND_THEN_ONE_OF_THE_FOLLOWING')}:
+                            </span>`
+                        );
                     }
                 }
 
@@ -387,10 +484,16 @@ const ListViewService = {
 
                 // const from = previousLineWasOr ? `${TranslateService.translate(eventStore, 'FROM')} ${prevEventTitle} ` : "";
 
+                if (!prevLocation){
+                    distanceToNextEvent = "";
+                }
+
                 if (distanceToNextEvent !== "") {
                     const arrow = eventStore.getCurrentDirection() === 'rtl' ? '✈' : '✈'
                     const distanceColor = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '#ff5252' : 'rgba(55,181,255,0.6)';
-                    distanceToNextEvent = `<span style="color: ${distanceColor}; ${backgroundStyle}">
+                    const firstRowClass = firstRowInGroup ? ` class="first-row-in-group ${rowClass}"` : ` class="${rowClass}"`;
+                    const lineBefore = firstRowInGroup ? '<br/>' : '';
+                    distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
                                 ${arrow}
                                 ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${event.location.address.split(' - ')[0]}
                             </span>`;
@@ -404,8 +507,13 @@ const ListViewService = {
                     summaryPerDay[dayTitle].push(distanceToNextEvent);
                 }
 
+                if (distanceToNextEvent === "" && firstRowInGroup){
+                    rowClass += ' first-row-in-group';
+                    summaryPerDay[dayTitle].push("");
+                }
+
                 summaryPerDay[dayTitle].push(`
-                    <span class="eventRow${rowClass}" style="${rowStyle}">
+                    <span class="eventRow${rowClass}" style="${rowStyle}" data-eventId="${event.id}">
                         ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}</span>${description}
                     </span>
                 `);
@@ -413,6 +521,8 @@ const ListViewService = {
                 if (previousLineWasOr && !nextLineIsOr && summaryPerDay[dayTitle][summaryPerDay[dayTitle].length-1] !== ''){
                     summaryPerDay[dayTitle].push(``);
                     lastGroupNum++;
+                    prevLocationBackup = prevLocation;
+                    prevLocation = undefined;
                 }
 
                 if (!previousLineWasOr && !nextLineIsOr) {
@@ -438,7 +548,7 @@ const ListViewService = {
         const calendarEventsPerDay:Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(eventStore, calendarEvents);
 
         let { summaryPerDay, highlightsPerDay } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
-        summaryPerDay = ListViewService._handleOrAndIndentRules(summaryPerDay);
+        summaryPerDay = ListViewService._handleOrAndIndentRules(eventStore, summaryPerDay);
 
         return `
         <div style="max-width: 990px;">
@@ -447,7 +557,7 @@ const ListViewService = {
             const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
             return `
                     <b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span><br>
-                    ${summaryPerDay[dayTitle].join("<br/>")}
+                    ${summaryPerDay[dayTitle].join("<br/>").replaceAll("<br/><br/>", "<br/>")}
                 `
         }).join("<br/><hr/><br/>")}
         </div>
