@@ -175,7 +175,7 @@ const ListViewService = {
             ""
         ];
         const or = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OR');
-        const tripSummaryTitle = TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE');
+        const tripSummaryTitle = TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE') + ' - ' + eventStore.tripName;
 
         return {
             todoComplete,
