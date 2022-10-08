@@ -182,5 +182,6 @@
   "THE_FOLLOWING_EVENTS": "The following events",
   "AND_THEN_ONE_OF_THE_FOLLOWING": "And then one of the following",
   "MAP.VISIBLE_ITEMS.TITLE": "You're looking now at",
-  "MAP.VISIBLE_ITEMS.NO_ITEMS": "There are no events currently on the map"
+  "MAP.VISIBLE_ITEMS.NO_ITEMS": "There are no events currently on the map",
+  "MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS": "No search results"
 }

@@ -52,6 +52,16 @@
       padding-inline: 10px;
     }
 
+    .search-container{
+      padding-inline: 10px;
+
+      input[type=text] {
+        min-width: unset;
+        border-radius: 0;
+        height: unset;
+      }
+    }
+
     .visible-items-fc-events {
       max-height: 200px;
       overflow: auto;

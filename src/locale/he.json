@@ -192,5 +192,6 @@
   "THE_FOLLOWING_EVENTS": "האירועים הבאים",
   "AND_THEN_ONE_OF_THE_FOLLOWING": "ואז - אחד מהבאים",
   "MAP.VISIBLE_ITEMS.TITLE": "אתה מסתכל כרגע על",
-  "MAP.VISIBLE_ITEMS.NO_ITEMS": "אין אירועים שמוצגים כרגע על המפה"
+  "MAP.VISIBLE_ITEMS.NO_ITEMS": "אין אירועים שמוצגים כרגע על המפה",
+  "MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS": "אין תוצאות לחיפוש שביצעת"
 }

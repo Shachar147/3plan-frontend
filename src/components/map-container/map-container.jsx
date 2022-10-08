@@ -32,6 +32,7 @@ const MapContainer = () => {
     const [searchCoordinatesSearchValue, setSearchCoordinatesSearchValue] = useState(""); // keeps searchValue that matches current search coordinates
     const [searchCoordinates, setSearchCoordinates] = useState([]);
     const [visibleItems, setVisibleItems] = useState([]);
+    const [visibleItemsSearchValue, setVisibleItemsSearchValue] = useState("");
     const [center, setCenter] = useState(undefined)
     const eventStore = useContext(eventStoreContext);
 
@@ -588,6 +589,13 @@ const MapContainer = () => {
     }
 
     // --- render -----------------------------------------------------------------------
+
+    const filteredVisibleItems = visibleItems.sort((a,b) => {
+        const priority1 = Number(a.event.priority) === 0 ? 999 : a.event.priority;
+        const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
+        return priority1 - priority2;
+    }).filter((x) => x.event.title.indexOf(visibleItemsSearchValue) !== -1);
+
     return (
         <div className="map-container" style={{height: "CALC(100vh - 200px)", width: "100%", display: "flex", flexDirection: "column", gap: "10px"}}>
             <div className={"map-header"}>
@@ -648,13 +656,16 @@ const MapContainer = () => {
             </GoogleMapReact>
             <div className={"visible-items-pane"}>
                 <div className={"visible-items-header"}><b>{TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.TITLE')}:</b></div>
+                <div className={"search-container"}>
+                    <input type={"text"} name={"fc-search"} value={visibleItemsSearchValue} onChange={(e) => {
+                        setVisibleItemsSearchValue(e.target.value);
+                    }} placeholder={TranslateService.translate(eventStore,"SEARCH_PLACEHOLDER")} />
+                </div>
                 <div className={"visible-items-fc-events"}>
                     {visibleItems.length === 0 && TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
-                    { visibleItems.sort((a,b) => {
-                        const priority1 = Number(a.event.priority) === 0 ? 999 : a.event.priority;
-                        const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
-                        return priority1 - priority2;
-                    }).map((x) => (
+                    { visibleItems.length > 0 && filteredVisibleItems.length === 0 && TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
+                    { filteredVisibleItems
+                      .map((x) => (
                         <div className={`fc-event priority-${x.event.priority}`} onClick={() => {
                             onVisibleItemClick(x.event, x.marker);
                         }}>
