@@ -23,15 +23,19 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // V make markers be circles with the icon of the attraction / its category in the middle.
 // (!!) when clicking on a coordinate in the map, allow editing the event from there and then we can change the location.
 // ^ if there are more then 1 events with the same location make sure to update all of them.
-// (!!) show another mini sidebar over the map showing which events are currently displayed in the map. (visible) <- I sent myself example for that on whatsapp
+// V (!!) show another mini sidebar over the map showing which events are currently displayed in the map. (visible) <- I sent myself example for that on whatsapp
 // (!!) filters on map - for example - highlight all unscheduled events. when they are highlighted it'll be easier to see what are they close to and how can we combine them to make them in the schedule.
 // V make marker look better
 // V find a way to show monocity view instead of this view.
 
 // add "navigate" button to the list view that opens google maps to that location
 
+// terminology - change 'event' to something else maybe 'point of interset' נקודות עניין
+// connect to google place details to get places working hours - https://www.youtube.com/watch?v=vAK5o8h8C28
+// sidebar filters - for example based on activity hours. if I have a "whole" in Sunday 10:00-11:00, show me all the events that can fit based on working hours
+
 // fix allevents duplicate items so statistics in the sidebar will be correct.
-// ... changing calendar events category isn't working. maybe its related (maybe its duplicating instead of editing or something)
+// V changing calendar events category isn't working. maybe its related (maybe its duplicating instead of editing or something)
 // refactor SweetAlert from HTML to React
 // ... use IconSelector and LocationPicker
 // Design changes - make it mobile friendly like Dubai site / SecretFlights
