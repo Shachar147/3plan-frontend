@@ -88,6 +88,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             [...Object.values(eventStore.sidebarEvents).flat(), ...eventStore.calendarEvents].forEach((iter) => {
                 const priority = iter.priority || TriplanPriority.unset;
                 eventsByPriority[priority] = eventsByPriority[priority] || [];
+
+                // @ts-ignore
                 eventsByPriority[priority].push(iter);
             });
 
@@ -178,10 +180,45 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 );
         }
 
+        const renderOpeningHoursEventsStatistics = () => {
+            const eventsWithNoHoursArr = eventStore.allEvents
+                .filter((x) => {
+
+                    const eventHaveNoHours = !(x.openingHours || (x.extendedProps && x.extendedProps.openingHours));
+                    const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
+                    const eventIsANote = (x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay)); // in this case location is irrelevant.
+
+                    return eventHaveNoHours && !eventIsANote;
+                });
+
+            const eventsWithNoHours = _.uniq(eventsWithNoHoursArr.map(x => x.id));
+
+            // console.log('events with no location', eventsWithNoLocationArr);
+
+            const eventsWithNoHoursKey = eventStore.showOnlyEventsWithNoOpeningHours ?
+                'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
+
+            return (!!eventsWithNoHours.length) &&
+                (
+                    <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoOpeningHours && 'blue-color')}>
+                        <Button
+                            icon={"fa-exclamation-triangle"}
+                            text={`${eventsWithNoHours.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_OPENING_HOURS')} (${TranslateService.translate(eventStore, eventsWithNoHoursKey)})`}
+                            onClick={() => {
+                                eventStore.toggleShowOnlyEventsWithNoOpeningHours();
+                            }}
+                            flavor={ButtonFlavor['movable-link']}
+                            className={getClasses(eventStore.showOnlyEventsWithNoOpeningHours && 'blue-color')}
+                        />
+                    </div>
+                );
+        }
+
         return (
             <>
                 {renderCalendarSidebarStatistics()}
                 {renderNoLocationEventsStatistics()}
+                {renderOpeningHoursEventsStatistics()}
                 <hr/>
                 <div>
                     {renderPrioritiesStatistics()}

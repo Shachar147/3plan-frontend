@@ -43,6 +43,7 @@ export class EventStore {
     @observable allEventsTripName: string = "";
     @observable customDateRange = getDefaultCustomDateRange();
     @observable showOnlyEventsWithNoLocation: boolean = false;
+    @observable showOnlyEventsWithNoOpeningHours: boolean = false;
     @observable calculatingDistance = 0;
     @observable distanceResults = observable.map<string,DistanceResult>(getDefaultDistanceResults());
     @observable travelMode = GoogleTravelMode.DRIVING;
@@ -65,7 +66,8 @@ export class EventStore {
         return this.getJSCalendarEvents()
             .filter((event) =>
                 (event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) &&
-                (this.showOnlyEventsWithNoLocation ? !(event.location != undefined || (event.extendedProps && event.extendedProps.location != undefined)) : true)
+                (this.showOnlyEventsWithNoLocation ? !(event.location != undefined || (event.extendedProps && event.extendedProps.location != undefined)) : true) &&
+                (this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined || (event.extendedProps && event.extendedProps.openingHours != undefined)) : true)
             );
     }
 
@@ -329,8 +331,18 @@ export class EventStore {
     }
 
     @action
+    toggleShowOnlyEventsWithNoOpeningHours(){
+        this.showOnlyEventsWithNoOpeningHours = !this.showOnlyEventsWithNoOpeningHours;
+    }
+
+    @action
     setShowOnlyEventsWithNoLocation(newVal: boolean) {
         this.showOnlyEventsWithNoLocation = newVal;
+    }
+
+    @action
+    setShowOnlyEventsWithNoOpeningHours(newVal: boolean) {
+        this.showOnlyEventsWithNoOpeningHours = newVal;
     }
 
     @action
@@ -375,6 +387,10 @@ export class EventStore {
             Object.keys(newEvent).includes('location') ? newEvent.location : storedEvent.extendedProps.location ? storedEvent.extendedProps.location : storedEvent.location;
         storedEvent.location = storedEvent.extendedProps.location;
 
+        storedEvent.extendedProps.openingHours =
+            Object.keys(newEvent).includes('openingHours') ? newEvent.openingHours : storedEvent.extendedProps.openingHours ? storedEvent.extendedProps.openingHours : storedEvent.openingHours;
+        storedEvent.openingHours = storedEvent.extendedProps.openingHours;
+
         // @ts-ignore
         const millisecondsDiff = storedEvent.end - storedEvent.start;
         if (millisecondsDiff > 0) {
@@ -391,6 +407,7 @@ export class EventStore {
         storedEvent.preferredTime = newEvent.preferredTime != undefined ? newEvent.preferredTime : storedEvent.preferredTime;
         storedEvent.description = newEvent.description != undefined ? newEvent.description : storedEvent.description;
         storedEvent.location = Object.keys(newEvent).includes("location") ? newEvent.location : storedEvent.location;
+        storedEvent.openingHours = Object.keys(newEvent).includes("openingHours") ? newEvent.openingHours : storedEvent.openingHours;
         if (newEvent.extendedProps){
             Object.keys(newEvent.extendedProps).forEach((key) => {
                 storedEvent.extendedProps![key] = newEvent.extendedProps[key];
@@ -398,6 +415,11 @@ export class EventStore {
 
             if (storedEvent.extendedProps.location){
                 delete storedEvent.extendedProps.location;
+            }
+
+            // ?
+            if (storedEvent.extendedProps.openingHours){
+                delete storedEvent.extendedProps.openingHours;
             }
         }
     }

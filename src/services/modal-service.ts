@@ -1,11 +1,17 @@
 import Alert from "sweetalert2";
 import {EventStore} from "../stores/events-store";
 import {
-    addLineBreaks,
+    addLineBreaks, padTo2Digits,
     ucfirst
 } from "../utils/utils";
 import {EventInput} from "@fullcalendar/react";
-import {CalendarEvent, ImportEventsConfirmInfo, LocationData, SidebarEvent} from "../utils/interfaces";
+import {
+    CalendarEvent,
+    ImportEventsConfirmInfo,
+    LocationData,
+    SidebarEvent,
+    WeeklyOpeningHoursData
+} from "../utils/interfaces";
 import {defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE} from "../utils/defaults";
 import {TriplanEventPreferredTime, TriplanPriority} from "../utils/enums";
 import TranslateService from "./translate-service";
@@ -18,26 +24,21 @@ import {
     validateDuration
 } from "../utils/time-utils";
 
-const ModalService = {
-    _categoriesIcons: (eventStore: EventStore): Record<number, string> => {
-        const hash: Record<number, string> = {};
-        eventStore.categories.forEach(x => hash[x.id] = x.icon);
-        return hash;
-    },
+const ModalServiceRenderHelper = {
     _renderPrioritySelect: (eventStore: EventStore, priority?: TriplanPriority) => {
         const values = Object.keys(TriplanPriority);
         const keys = Object.values(TriplanPriority);
 
         const options = Object.values(TriplanPriority).filter((x) => !Number.isNaN(Number(x))).map((val, index) => {
-                let isSelected = priority && priority.toString() === values[index].toString();
-                if (values[index] === 'unset' && priority == undefined){
-                    isSelected = true;
-                }
-                const isSelectedString = isSelected ? ' selected' : '';
-                return (
-                    '<option value="' + values[index] + '"' + isSelectedString +'>' + ucfirst(TranslateService.translate(eventStore, keys[index].toString())) + '</option>'
-                )
-            });
+            let isSelected = priority && priority.toString() === values[index].toString();
+            if (values[index] === 'unset' && priority == undefined){
+                isSelected = true;
+            }
+            const isSelectedString = isSelected ? ' selected' : '';
+            return (
+                '<option value="' + values[index] + '"' + isSelectedString +'>' + ucfirst(TranslateService.translate(eventStore, keys[index].toString())) + '</option>'
+            )
+        });
 
         return [
             '<select id="new-priority">',
@@ -66,16 +67,184 @@ const ModalService = {
             '</select>'
         ].join("\n");
     },
-    _renderDescriptionInput: (eventStore: EventStore, description?:string) => {
+    _renderDescriptionRow: (eventStore: EventStore, description?:string) => {
         // if (description) {
         //     description = addLineBreaks(description, '&#10;');
         // }
         // console.log(description);
-      return `<tr >
+        return `<tr >
       <td>${TranslateService.translate(eventStore, 'MODALS.DESCRIPTION')}</td>
       <td><strong>
       <textarea rows="6" id="new-description" placeholder="${TranslateService.translate(eventStore, 'MODALS.DESCRIPTION_PLACEHOLDER')}">${(description || "")}</textarea></strong></td>
       </tr>`;
+    },
+    _renderLocationRow: (eventStore: EventStore, location?: LocationData) => {
+
+        // @ts-ignore
+        window.selectedLocation = location || undefined;
+
+        return `
+            <tr key="${location ? location.address : 'no-location'}">
+                <td>` + TranslateService.translate(eventStore, 'MODALS.LOCATION') + `</td>
+                <td>
+                    <strong>
+                        <input type="text" class="location-input" onclick="window.initLocationPicker()" onkeyup="window.setManualLocation()" value="${location ? location.address : ""}" autoComplete="off" placeholder="${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}"/>
+                    </strong>
+                </td>
+            </tr>`;
+    },
+    _renderCategoryRow: (eventStore: EventStore, categoryId?: string) => {
+
+        return `<tr>
+                  <td>${TranslateService.translate(eventStore, "MODALS.CATEGORY")}</td>
+                  <td><strong>
+                  <select id="new-category">
+                    ` + eventStore.categories
+            .sort((a,b) => b.id - a.id)
+            .map((x, index) =>
+                (categoryId ?
+                    categoryId == x.id.toString() :
+                    index == 0) ?
+                    `<option value=${x.id} selected>${x.title}</option>` :
+                    `<option value=${x.id}>${x.title}</option>`
+            ).join("") + ` 
+                  </select>
+                  </strong></td>
+              </tr>`
+    },
+    _renderOpeningHoursRow: (eventStore: EventStore, openingHours?: WeeklyOpeningHoursData) => {
+
+        // @ts-ignore
+        window.openingHours = openingHours || undefined;
+
+        const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+
+        const getSelectOptions = () => {
+            const closed = TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.CLOSED')
+            return `
+            <option value="N/A" selected>N/A</option>
+            <option value="CLOSED" style="display:none;">${closed}</option>
+            ${[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map((hour) => {
+                return [0,15,30,45].map((minute) => {
+                    let value = padTo2Digits(hour) + ':' + padTo2Digits(minute);
+                    return `<option value="${value}">${value}</option>`
+                })
+            })}`;
+        }
+
+        // @ts-ignore
+        const openingHoursText = window.renderOpeningHours();
+
+        return `
+            <tr>
+                <td>` + TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS') + `</td>
+                <td>
+                ${openingHoursText}
+                    <div class="opening-hours-component display-none">
+                        ${days.map((day) => `
+                            <div class="opening-hours-day-row">
+                                <div class="opening-hours-day-name flex-align-items-center">${TranslateService.translate(eventStore, day)}:</div>
+                                 <div class="opening-hours-select-container">
+                                    <select name="opening-hour-selector-${day}" onfocus='this.size=10;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
+                                        ${getSelectOptions()}
+                                    </select>
+                                </div>
+                                <div class="flex-align-items-center">${TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.UNTIL')}</div>
+                                <div class="opening-hours-select-container">
+                                    <select name="closing-hour-selector-${day}" onfocus='this.size=10;' onblur='this.size=1;' onchange='this.size=1; this.blur();'>
+                                        ${getSelectOptions()}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="opening-hours-day-row">
+                                <div class="is-closed">
+                                    <input type="checkbox" name="is-closed-${day}" onchange="window.toggleClosed('${day}')">${TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.IS_CLOSED')}</input>
+                                </div>
+                            </div>
+                        `).join("")}
+                    </div>
+                </td>
+            </tr>`;
+    },
+}
+
+const ModalService = {
+    _categoriesIcons: (eventStore: EventStore): Record<number, string> => {
+        const hash: Record<number, string> = {};
+        eventStore.categories.forEach(x => hash[x.id] = x.icon);
+        return hash;
+    },
+    confirmModal: (eventStore: EventStore, callback: () => void) => {
+        Alert.fire({
+            title: `${TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE')}`,
+            html: TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE.CONTENT'),
+            showCancelButton: true,
+            cancelButtonText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmButtonText: TranslateService.translate(eventStore, 'MODALS.CONTINUE'),
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.value) {
+                callback();
+            }
+        })
+    },
+    _importEventsSteps: (eventStore: EventStore, key: string) => {
+        return `<div class="import-events-steps">
+                ${TranslateService.translate(eventStore, key)}
+                </div>
+            `;
+    },
+    openImportEventsModal: (eventStore: EventStore) => {
+        Alert.fire({
+            title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE'),
+            html: ModalService._importEventsSteps(eventStore, 'IMPORT_EVENTS_STEPS'),
+            showCancelButton: true,
+            cancelButtonText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmButtonText: TranslateService.translate(eventStore, 'MODALS.DOWNLOAD_TEMPLATE'),
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.value) {
+                ImportService._download("TriplanEventsImport.csv", ImportService._buildTemplate(eventStore));
+                ModalService.openImportEventsStepTwoModal(eventStore);
+            }
+        })
+    },
+    openImportEventsStepTwoModal: (eventStore: EventStore) => {
+        Alert.fire({
+            title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE2'),
+            html: ModalService._importEventsSteps(eventStore, 'IMPORT_EVENTS_STEPS2'),
+            input: 'file',
+            inputAttributes: {
+                name: "upload[]",
+                id: "fileToUpload",
+                accept: "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv",
+            },
+            showCancelButton: true,
+            cancelButtonText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmButtonText: TranslateService.translate(eventStore, 'MODALS.UPLOAD'),
+        }).then((result) => {
+            if (result.value) {
+                // @ts-ignore
+                // const file = document.getElementById("fileToUpload").files[0];
+                const file = result.value;
+                if (file) {
+                    const reader = new FileReader();
+                    reader.readAsText(file, "UTF-8");
+                    // await reader.readAsText(file.value, "UTF-8");
+                    // await reader.readAsDataURL(file.value);
+                    console.log(reader.result);
+                    reader.onload = function (evt) {
+                        // @ts-ignore
+                        ImportService.handleUploadedFile(eventStore, evt.target.result);
+                    }
+                    reader.onerror = function (evt) {
+                        console.error("error reading file");
+                        Alert.fire(TranslateService.translate(eventStore, "MODALS.ERROR.TITLE"), TranslateService.translate(eventStore, 'MODALS.IMPORT_EVENTS_ERROR.CONTENT'), "error");
+                        // document.getElementById("fileContents").innerHTML = "error reading file";
+                    }
+                }
+            }
+        })
     },
     openEditCategoryModal: (TriplanCalendarRef: any, eventStore: EventStore, categoryId: number) => {
         const category = eventStore.categories.find((c) => c.id.toString() === categoryId.toString());
@@ -213,6 +382,9 @@ const ModalService = {
                 originalEvent.extendedProps.location.address : undefined;
 
             // @ts-ignore
+            const openingHours = window.openingHours as WeeklyOpeningHoursData;
+
+            // @ts-ignore
             let location: LocationData | undefined = window.selectedLocation as LocationData;
             if (location != undefined && location.address === ''){
                 location = undefined;
@@ -234,6 +406,10 @@ const ModalService = {
             // since window.selectedLocation being reset on each modal open.
             if (locationText != prevLocationText){
                 currentEvent['location'] = location;
+            }
+
+            if (location){
+                currentEvent['openingHours'] = openingHours;
             }
 
             if (originalEvent.extendedProps) {
@@ -279,7 +455,8 @@ const ModalService = {
                 const isLocationChanged = originalEvent.extendedProps && originalEvent.extendedProps.location != currentEvent.location;
                 const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
                 const isCategoryChanged = oldCategory != categoryId;
-                const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || descriptionChanged || isLocationChanged;
+                const isOpeningHoursChanged = currentEvent.openingHours;
+                const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || descriptionChanged || isLocationChanged || isOpeningHoursChanged;
 
                 if (isCategoryChanged){
 
@@ -328,6 +505,7 @@ const ModalService = {
                             preferredTime: currentEvent.preferredTime,
                             description: currentEvent.description,
                             location: currentEvent.location,
+                            openingHours: currentEvent.openingHours,
                             category: categoryId
                         }
                     });
@@ -360,7 +538,7 @@ const ModalService = {
       <td><strong>
       <input id="new-icon" type="text" value="` + icon + `" /></strong></td>
       </tr>
-      ` + ModalService._renderCategoryLine(eventStore, info.event.extendedProps.categoryId) + `
+      ` + ModalServiceRenderHelper._renderCategoryRow(eventStore, info.event.extendedProps.categoryId) + `
       <tr >
       <td>` + TranslateService.translate(eventStore, 'MODALS.TITLE') + `</td>
       <td><strong>
@@ -368,7 +546,7 @@ const ModalService = {
 ` +
                 `</strong></td>
       </tr>
-      ` + ModalService._renderDescriptionInput(eventStore, info.event.extendedProps.description) + `
+      ` + ModalServiceRenderHelper._renderDescriptionRow(eventStore, info.event.extendedProps.description) + `
       <tr style="${info.event.allDay ? 'display:none;' : ''}">
       <td>${TranslateService.translate(eventStore, "MODALS.START_TIME")}</td>
       <td><strong>
@@ -388,16 +566,17 @@ const ModalService = {
       <tr style="${info.event.allDay ? 'display:none;' : ''}">
       <td>${TranslateService.translate(eventStore, "MODALS.PRIORITY")}</td>
       <td><strong>
-      ` + ModalService._renderPrioritySelect(eventStore, info.event.extendedProps.priority) + `
+      ` + ModalServiceRenderHelper._renderPrioritySelect(eventStore, info.event.extendedProps.priority) + `
       </strong></td>
       </tr>
       <tr style="${info.event.allDay ? 'display:none;' : ''}">
       <td>${TranslateService.translate(eventStore, "MODALS.PREFERRED_TIME")}</td>
       <td><strong>
-      ` + ModalService._renderPreferredTime(eventStore, info.event.extendedProps.preferredTime) + `
+      ` + ModalServiceRenderHelper._renderPreferredTime(eventStore, info.event.extendedProps.preferredTime) + `
       </strong></td>
       </tr>
-      ` + ModalService._renderLocationRow(eventStore, info.event.extendedProps.location) + `
+      ` + ModalServiceRenderHelper._renderLocationRow(eventStore, info.event.extendedProps.location) + `
+      ` + ModalServiceRenderHelper._renderOpeningHoursRow(eventStore, info.event.extendedProps.openingHours) + `
       </table>
       </div>`,
             showCancelButton: true,
@@ -420,20 +599,6 @@ const ModalService = {
             if (result.value) {
                 removeEventFromSidebarById(event.id);
                 eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
-            }
-        })
-    },
-    confirmModal: (eventStore: EventStore, callback: () => void) => {
-        Alert.fire({
-            title: `${TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE')}`,
-            html: TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE.CONTENT'),
-            showCancelButton: true,
-            cancelButtonText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
-            confirmButtonText: TranslateService.translate(eventStore, 'MODALS.CONTINUE'),
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.value) {
-                callback();
             }
         })
     },
@@ -538,64 +703,6 @@ const ModalService = {
             }
         })
     },
-    _importEventsSteps: (eventStore: EventStore, key: string) => {
-        return `<div class="import-events-steps">
-                ${TranslateService.translate(eventStore, key)}
-                </div>
-            `;
-    },
-    openImportEventsModal: (eventStore: EventStore) => {
-        Alert.fire({
-            title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE'),
-            html: ModalService._importEventsSteps(eventStore, 'IMPORT_EVENTS_STEPS'),
-            showCancelButton: true,
-            cancelButtonText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
-            confirmButtonText: TranslateService.translate(eventStore, 'MODALS.DOWNLOAD_TEMPLATE'),
-        }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.value) {
-                ImportService._download("TriplanEventsImport.csv", ImportService._buildTemplate(eventStore));
-                ModalService.openImportEventsStepTwoModal(eventStore);
-            }
-        })
-    },
-    openImportEventsStepTwoModal: (eventStore: EventStore) => {
-        Alert.fire({
-            title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE2'),
-            html: ModalService._importEventsSteps(eventStore, 'IMPORT_EVENTS_STEPS2'),
-            input: 'file',
-            inputAttributes: {
-                name: "upload[]",
-                id: "fileToUpload",
-                accept: "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv",
-            },
-            showCancelButton: true,
-            cancelButtonText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
-            confirmButtonText: TranslateService.translate(eventStore, 'MODALS.UPLOAD'),
-        }).then((result) => {
-            if (result.value) {
-                // @ts-ignore
-                // const file = document.getElementById("fileToUpload").files[0];
-                const file = result.value;
-                if (file) {
-                    const reader = new FileReader();
-                    reader.readAsText(file, "UTF-8");
-                    // await reader.readAsText(file.value, "UTF-8");
-                    // await reader.readAsDataURL(file.value);
-                    console.log(reader.result);
-                    reader.onload = function (evt) {
-                        // @ts-ignore
-                        ImportService.handleUploadedFile(eventStore, evt.target.result);
-                    }
-                    reader.onerror = function (evt) {
-                        console.error("error reading file");
-                        Alert.fire(TranslateService.translate(eventStore, "MODALS.ERROR.TITLE"), TranslateService.translate(eventStore, 'MODALS.IMPORT_EVENTS_ERROR.CONTENT'), "error");
-                        // document.getElementById("fileContents").innerHTML = "error reading file";
-                    }
-                }
-            }
-        })
-    },
     openEditSidebarEventModal: (eventStore: EventStore, event: SidebarEvent, removeEventFromSidebarById: (eventId:string) => void, addToEventsToCategories: (value: any) => void) => {
 
         const handleEditSidebarEventResult = (eventStore: EventStore, result:any, removeEventFromSidebarById: (eventId:string) => void, originalEvent: SidebarEvent) => {
@@ -632,6 +739,9 @@ const ModalService = {
             // @ts-ignore
             const location = window.selectedLocation as LocationData;
 
+            // @ts-ignore
+            const openingHours = window.openingHours as WeeklyOpeningHoursData; // todo complete: check what happens if editing and not changing anything, make sure opening hours not removed
+
             let currentEvent: any = {
                 title,
                 id: eventId,
@@ -640,7 +750,8 @@ const ModalService = {
                 priority: priority as TriplanPriority,
                 preferredTime: preferredTime as TriplanEventPreferredTime,
                 description,
-                location
+                location,
+                openingHours
             };
 
             const isDurationValid = validateDuration(duration);
@@ -724,6 +835,7 @@ const ModalService = {
                             priority,
                             description,
                             location,
+                            openingHours,
                             extendedProps: {
                                 categoryId
                             }
@@ -744,7 +856,8 @@ const ModalService = {
                                         priority,
                                         preferredTime,
                                         description,
-                                        location
+                                        location,
+                                        openingHours,
                                     } as SidebarEvent);
                                 }
                                 newSidebarEvents[categoryId].push(_event);
@@ -785,7 +898,7 @@ const ModalService = {
       <input id="new-icon" type="text" value="` + icon + `" /></strong></td>
       </tr>
       </tr>
-      ` + ModalService._renderCategoryLine(eventStore, event.category) + `
+      ` + ModalServiceRenderHelper._renderCategoryRow(eventStore, event.category) + `
       <tr >
       <td>` + TranslateService.translate(eventStore, 'MODALS.TITLE') + `</td>
       <td><strong>
@@ -793,7 +906,7 @@ const ModalService = {
 ` +
                 `</strong></td>
       </tr>
-      ` + ModalService._renderDescriptionInput(eventStore, event.description) + `
+      ` + ModalServiceRenderHelper._renderDescriptionRow(eventStore, event.description) + `
       <tr >
       <td>${TranslateService.translate(eventStore, 'MODALS.DURATION')}</td>
       <td><strong>
@@ -805,16 +918,17 @@ const ModalService = {
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.PRIORITY")}</td>
       <td><strong>
-      ` + ModalService._renderPrioritySelect(eventStore, event.priority) + `
+      ` + ModalServiceRenderHelper._renderPrioritySelect(eventStore, event.priority) + `
       </strong></td>
       </tr>
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.PREFERRED_TIME")}</td>
       <td><strong>
-      ` + ModalService._renderPreferredTime(eventStore, event.preferredTime) + `
+      ` + ModalServiceRenderHelper._renderPreferredTime(eventStore, event.preferredTime) + `
       </strong></td>
       </tr>
-      ` + ModalService._renderLocationRow(eventStore, event.location) + `
+      ` + ModalServiceRenderHelper._renderLocationRow(eventStore, event.location) + `
+      ` + ModalServiceRenderHelper._renderOpeningHoursRow(eventStore, event.openingHours) + `
       </table>
       </div>`,
 
@@ -856,6 +970,9 @@ const ModalService = {
             // @ts-ignore
             const location = window.selectedLocation as LocationData;
 
+            // @ts-ignore
+            const openingHours = window.openingHours as WeeklyOpeningHoursData;
+
             if (!categoryId){
                 return;
             }
@@ -868,7 +985,8 @@ const ModalService = {
                 priority: priority as TriplanPriority,
                 preferredTime: preferredTime as TriplanEventPreferredTime,
                 description,
-                location
+                location,
+                openingHours
             } as SidebarEvent;
 
             const isDurationValid = (
@@ -929,13 +1047,13 @@ const ModalService = {
       <td><strong>
       <input id="new-icon" type="text" value="" /></strong></td>
       </tr>
-      ` + ModalService._renderCategoryLine(eventStore, categoryId && category ? categoryId.toString() : undefined) + `
+      ` + ModalServiceRenderHelper._renderCategoryRow(eventStore, categoryId && category ? categoryId.toString() : undefined) + `
       <tr >
       <td>` + TranslateService.translate(eventStore, 'MODALS.TITLE') + `</td>
       <td><strong>
       <input id="new-name" type="text" value="" /></strong></td>
       </tr>
-      ` + ModalService._renderDescriptionInput(eventStore, "") + `
+      ` + ModalServiceRenderHelper._renderDescriptionRow(eventStore, "") + `
       <tr >
       <td>${TranslateService.translate(eventStore, 'MODALS.DURATION')}</td>
       <td><strong>
@@ -945,16 +1063,17 @@ const ModalService = {
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.PRIORITY")}</td>
       <td><strong>
-      ` + ModalService._renderPrioritySelect(eventStore, TriplanPriority.unset) + `
+      ` + ModalServiceRenderHelper._renderPrioritySelect(eventStore, TriplanPriority.unset) + `
       </strong></td>
       </tr>
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.PREFERRED_TIME")}</td>
       <td><strong>
-      ` + ModalService._renderPreferredTime(eventStore, TriplanEventPreferredTime.unset) + `
+      ` + ModalServiceRenderHelper._renderPreferredTime(eventStore, TriplanEventPreferredTime.unset) + `
       </strong></td>
       </tr>
-      ` + ModalService._renderLocationRow(eventStore, initialData.location) + `
+      ` + ModalServiceRenderHelper._renderLocationRow(eventStore, initialData.location) + `
+      ` + ModalServiceRenderHelper._renderOpeningHoursRow(eventStore, initialData.openingHours) + `
       </table>
       </div>`,
 
@@ -997,6 +1116,9 @@ const ModalService = {
             // @ts-ignore
             const location = window.selectedLocation as LocationData;
 
+            // @ts-ignore
+            const openingHours = window.openingHours as WeeklyOpeningHoursData;
+
             const currentEvent = {
                 id: eventStore.createEventId(),
                 title,
@@ -1010,6 +1132,7 @@ const ModalService = {
                 className: priority? `priority-${priority}` : undefined,
                 allDay: info.allDay,
                 location,
+                openingHours,
                 extendedProps:{
                     title,
                     icon,
@@ -1017,7 +1140,8 @@ const ModalService = {
                     preferredTime: preferredTime as TriplanEventPreferredTime,
                     description,
                     categoryId: categoryId,
-                    location
+                    location,
+                    openingHours
                 }
             } as CalendarEvent;
 
@@ -1059,13 +1183,13 @@ const ModalService = {
       <td><strong>
       <input id="new-icon" type="text" value="" /></strong></td>
       </tr>
-      ` + ModalService._renderCategoryLine(eventStore) + `
+      ` + ModalServiceRenderHelper._renderCategoryRow(eventStore) + `
       <tr >
       <td>` + TranslateService.translate(eventStore, 'MODALS.TITLE') + `</td>
       <td><strong>
       <input id="new-name" type="text" value="" /></strong></td>
       </tr>
-      ` + ModalService._renderDescriptionInput(eventStore, "") + `
+      ` + ModalServiceRenderHelper._renderDescriptionRow(eventStore, "") + `
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.START_TIME")}</td>
       <td><strong>
@@ -1085,16 +1209,17 @@ const ModalService = {
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.PRIORITY")}</td>
       <td><strong>
-      ` + ModalService._renderPrioritySelect(eventStore, TriplanPriority.unset) + `
+      ` + ModalServiceRenderHelper._renderPrioritySelect(eventStore, TriplanPriority.unset) + `
       </strong></td>
       </tr>
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.PREFERRED_TIME")}</td>
       <td><strong>
-      ` + ModalService._renderPreferredTime(eventStore, TriplanEventPreferredTime.unset) + `
+      ` + ModalServiceRenderHelper._renderPreferredTime(eventStore, TriplanEventPreferredTime.unset) + `
       </strong></td>
       </tr>
-      ` + ModalService._renderLocationRow(eventStore) + `
+      ` + ModalServiceRenderHelper._renderLocationRow(eventStore) + `
+      ` + ModalServiceRenderHelper._renderOpeningHoursRow(eventStore) + `
       </table>
       </div>`,
 
@@ -1131,6 +1256,9 @@ const ModalService = {
             // @ts-ignore
             let location: LocationData | undefined = window.selectedLocation as LocationData;
 
+            // @ts-ignore
+            const openingHours = window.openingHours as WeeklyOpeningHoursData;
+
             const currentEvent = {
                 id: eventStore.createEventId(),
                 title,
@@ -1139,7 +1267,8 @@ const ModalService = {
                 priority: priority as TriplanPriority,
                 preferredTime: preferredTime as TriplanEventPreferredTime,
                 description,
-                location
+                location,
+                openingHours
             } as SidebarEvent;
 
             const isDurationValid = (
@@ -1210,7 +1339,7 @@ const ModalService = {
 ` +
                 `</strong></td>
       </tr>
-      ` + ModalService._renderDescriptionInput(eventStore, event.description) + `
+      ` + ModalServiceRenderHelper._renderDescriptionRow(eventStore, event.description) + `
       <tr >
       <td>${TranslateService.translate(eventStore, 'MODALS.DURATION')}</td>
       <td><strong>
@@ -1222,16 +1351,17 @@ const ModalService = {
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.PRIORITY")}</td>
       <td><strong>
-      ` + ModalService._renderPrioritySelect(eventStore, event.priority) + `
+      ` + ModalServiceRenderHelper._renderPrioritySelect(eventStore, event.priority) + `
       </strong></td>
       </tr>
       <tr >
       <td>${TranslateService.translate(eventStore, "MODALS.PREFERRED_TIME")}</td>
       <td><strong>
-      ` + ModalService._renderPreferredTime(eventStore, event.preferredTime) + `
+      ` + ModalServiceRenderHelper._renderPreferredTime(eventStore, event.preferredTime) + `
       </strong></td>
       </tr>
-      ` + ModalService._renderLocationRow(eventStore, event.location) + `
+      ` + ModalServiceRenderHelper._renderLocationRow(eventStore, event.location) + `
+      ` + ModalServiceRenderHelper._renderOpeningHoursRow(eventStore, event.openingHours) + `
       </table>
       </div>`,
 
@@ -1387,40 +1517,6 @@ const ModalService = {
             }
         });
     },
-    _renderLocationRow: (eventStore: EventStore, location?: LocationData) => {
-
-        // @ts-ignore
-        window.selectedLocation = location || undefined;
-
-        return `
-            <tr key="${location ? location.address : 'no-location'}">
-                <td>` + TranslateService.translate(eventStore, 'MODALS.LOCATION') + `</td>
-                <td>
-                    <strong>
-                        <input type="text" class="location-input" onclick="window.initLocationPicker()" onkeyup="window.setManualLocation()" value="${location ? location.address : ""}" autoComplete="off" placeholder="${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}"/>
-                    </strong>
-                </td>
-            </tr>`;
-    },
-    _renderCategoryLine: (eventStore: EventStore, categoryId?: string) => {
-
-        return `<tr>
-                  <td>${TranslateService.translate(eventStore, "MODALS.CATEGORY")}</td>
-                  <td><strong>
-                  <select id="new-category">
-                    ` + eventStore.categories
-                        .sort((a,b) => b.id - a.id)
-                        .map((x, index) =>
-                            (categoryId ?
-                                categoryId == x.id.toString() :
-                                index == 0) ?
-                                `<option value=${x.id} selected>${x.title}</option>` :
-                                `<option value=${x.id}>${x.title}</option>`
-                        ).join("") + ` 
-                  </select>
-                  </strong></td>
-              </tr>`
-    }
 }
 
 export default ModalService;

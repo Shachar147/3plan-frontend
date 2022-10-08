@@ -86,6 +86,11 @@ body {
     flex-shrink: 1;
 }
 
+.flex-align-items-center {
+    display: flex;
+    align-items:center;
+}
+
 .visible {
     visibility: visible;
     opacity: 1;
@@ -152,4 +157,44 @@ body {
 
 .fc-search {
     transition: all 0.3s ease-in-out;
+}
+
+.opening-hours-component {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.opening-hours-component .opening-hours-day-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.opening-hours-component .opening-hours-day-row .opening-hours-day-name{
+    width: 120px;
+}
+
+.opening-hours-component .opening-hours-day-row select {
+    height: fit-content;
+    text-align: center;
+}
+
+.opening-hours-select-container {
+    display: flex;
+    flex-grow: 1;
+}
+
+.opening-hours-component .opening-hours-day-row select option {
+    width: 100%;
+}
+
+.opening-hours-component .is-closed {
+    display: flex;
+    gap: 3px;
+    font-size: 13px;
+}
+
+.display-none {
+    display: none;
 }

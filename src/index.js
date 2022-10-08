@@ -16,7 +16,7 @@ import TranslateService from "./services/translate-service";
 import {eventStoreContext} from "./stores/events-store";
 import ThemeExample from "./layouts/theme-example/theme-example";
 import {runInAction} from "mobx";
-import {getCoordinatesRangeKey} from "./utils/utils";
+import {getCoordinatesRangeKey, padTo2Digits} from "./utils/utils";
 
 // map tasks
 // V add search mode to the map, allowing to search for address + display results markers on the map. clicking on the map should open create event with location and title already filled in.
@@ -29,6 +29,7 @@ import {getCoordinatesRangeKey} from "./utils/utils";
 // V find a way to show monocity view instead of this view.
 
 // add "navigate" button to the list view that opens google maps to that location
+// if it's a note (allDay) - do not show most of the fields (location, priority, hours, etc) <- its irrelevant.
 
 // terminology - change 'event' to something else maybe 'point of interset' נקודות עניין
 // connect to google place details to get places working hours - https://www.youtube.com/watch?v=vAK5o8h8C28
@@ -155,6 +156,80 @@ const RootRouter = () => {
         }
     }
 
+    window.toggleClosed = (day) => {
+
+        const isClosed = $(`input[name=is-closed-${day}]`).prop("checked");
+
+        const start = document.getElementsByName("opening-hour-selector-" + day)[0]
+        const end = document.getElementsByName("closing-hour-selector-" + day)[0]
+
+        if (isClosed){
+            start.value = 'CLOSED';
+            start.disabled = true;
+            end.value = 'CLOSED';
+            end.disabled = true;
+        } else {
+            start.value = 'N/A';
+            start.disabled = false;
+            end.value = 'N/A';
+            end.disabled = false;
+        }
+    }
+
+    window.renderOpeningHours = (openingHours = window.openingHours) => {
+        let content;
+        if (!openingHours) {
+            const noInfo = TranslateService.translate(eventStore, "MODALS.OPENING_HOURS.NO_INFORMATION")
+            const noLocation = TranslateService.translate(eventStore, "MODALS.OPENING_HOURS.NO_INFORMATION.NO_LOCATION")
+            content = noLocation ? `<div>${noInfo}</div><div>${noLocation}</div>` : `<div>${noInfo}</div>`;
+        }
+        else {
+            let is247 = false;
+
+            const hoursToDay = {};
+
+            content = Object.keys(openingHours).map((day) => {
+                if (is247) return "";
+                let when = `${openingHours[day].end} - ${openingHours[day].start}`;
+                if (when === '00:00 - 00:00'){
+                    is247 = true;
+                    return `<div>${TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.24_7')}</div>`
+                }
+                const dayText = TranslateService.translate(eventStore, day);
+                hoursToDay[when] = hoursToDay[when] || [];
+                hoursToDay[when].push(dayText);
+                return `<div>${dayText}: ${when}</div>`
+            }).join("");
+
+            if (!is247 && Object.keys(hoursToDay).length < 5){
+                let dayIndex = 0;
+                const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+                const newResult = [];
+                const temp = {...hoursToDay};
+                while (Object.keys(temp).length > 0 && dayIndex < days.length){
+                    const day = days[dayIndex];
+                    const dayText = TranslateService.translate(eventStore, day);
+                    const when = Object.keys(temp).find((when) => temp[when].indexOf(dayText) !== -1);
+                    if (when){
+                        newResult.push(`<div>${temp[when].join(", ")}: ${when}`);
+                        delete temp[when];
+                    }
+                    dayIndex++;
+                }
+                content = newResult.join("");
+
+                if (Object.keys(hoursToDay).length === 1 && Object.values(hoursToDay).flat().length === 7){
+                    const when = Object.keys(hoursToDay)[0];
+                    content = `<div>${TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.ALL_WEEK')}: ${when}`;
+                }
+            }
+        }
+
+        return `
+                <div class="opening-hours-details">${content}</div>
+            `
+    }
+
     window.initLocationPicker = (className = 'location-input', variableName = 'selectedLocation', placeChangedCallback) => {
         // console.log("hereeeee");
         const autoCompleteRef = document.querySelector(`.${className}`);
@@ -162,6 +237,43 @@ const RootRouter = () => {
 
         google.maps.event.addListener(autocomplete, 'place_changed', function() {
             let place = autocomplete.getPlace();
+            // console.log(place.opening_hours.weekday_text);
+
+            window.openingHours = undefined;
+            let openingHoursData = undefined;
+            if (place.opening_hours && place.opening_hours.periods) {
+                const opening_hours = place.opening_hours.periods;
+                openingHoursData = {};
+
+                const is247 = (opening_hours.length === 1 && !opening_hours[0].close);
+
+                ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"].forEach((day, index) => {
+                    const period = is247 ? undefined : opening_hours[index];
+                    const start = is247 ? '00:00' : padTo2Digits(period.open.hours) + ':' + padTo2Digits(period.open.minutes);
+                    const end = is247 ? '00:00' : padTo2Digits(period.close.hours) + ':' + padTo2Digits(period.close.minutes);
+                    openingHoursData[day] = {
+                        start, end
+                    };
+                });
+                window.openingHours = openingHoursData;
+                // console.log(openingHoursData);
+
+                Object.keys(openingHoursData).forEach((day) => {
+                    const start = document.getElementsByName("opening-hour-selector-" + day)[0]
+                    const end = document.getElementsByName("closing-hour-selector-" + day)[0]
+                    start.value = openingHoursData[day].start;
+                    end.value = openingHoursData[day].end;
+                    start.disabled = false;
+                    end.disabled = false;
+                    $(`input[name=is-closed-${day}]`).prop("checked", false);
+                });
+            }
+
+            const summaryDiv = document.getElementsByClassName("opening-hours-details");
+            if (summaryDiv.length) {
+                summaryDiv[0].innerHTML = window.renderOpeningHours(openingHoursData);
+            }
+
             const latitude = place.geometry.location.lat();
             const longitude = place.geometry.location.lng();
             const address = document.querySelector('.' + className).value;

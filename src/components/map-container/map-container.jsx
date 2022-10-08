@@ -17,12 +17,15 @@ function Marker(props) {
     const eventStore = useContext(eventStoreContext);
     return (
         <div style={{
-            cursor: "pointer"
+            cursor: "pointer",
+            display: "flex",
+            flexDirection: "column",
+            minWidth: "fit-content"
         }} onClick={() => {
             ModalService.openAddSidebarEventModal(eventStore, undefined, { location: locationData, title: searchValue })
         }}>
             <i className="fa fa-map-marker fa-4x text-success"/>
-            {props.text}
+            <div className="fa-marker-text">{props.text}</div>
         </div>
     )
 }
@@ -594,7 +597,7 @@ const MapContainer = () => {
         const priority1 = Number(a.event.priority) === 0 ? 999 : a.event.priority;
         const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
         return priority1 - priority2;
-    }).filter((x) => x.event.title.indexOf(visibleItemsSearchValue) !== -1);
+    }).filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue) !== -1);
 
     return (
         <div className="map-container" style={{height: "CALC(100vh - 200px)", width: "100%", display: "flex", flexDirection: "column", gap: "10px"}}>

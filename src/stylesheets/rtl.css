@@ -142,3 +142,7 @@ body.rtl .map-container .visible-items-pane {
     text-align: right;
     direction: rtl;
 }
+
+body.rtl .opening-hours-component .opening-hours-day-row .opening-hours-day-name{
+    width: 60px;
+}

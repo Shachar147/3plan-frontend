@@ -108,6 +108,15 @@ const renderFilterTags = (eventStore: EventStore) => {
                         }}/>
                 )
             }
+            {
+                eventStore.showOnlyEventsWithNoOpeningHours && (
+                    <TriplanTag
+                        text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_NO_OPENING_HOURS.FILTER_TAG')}
+                        onDelete={() => {
+                            eventStore.setShowOnlyEventsWithNoOpeningHours(false);
+                        }}/>
+                )
+            }
         </div>
     )
 }

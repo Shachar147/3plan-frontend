@@ -13,6 +13,7 @@ export interface CalendarEvent {
     preferredTime?: TriplanEventPreferredTime,
     description?: string
     location?: LocationData
+    openingHours?: WeeklyOpeningHoursData
 }
 
 export interface SidebarEvent {
@@ -28,6 +29,7 @@ export interface SidebarEvent {
     className?: string,
     location?: LocationData,
     allDay?: Boolean;
+    openingHours?: WeeklyOpeningHoursData
 }
 
 export interface TriPlanCategory {
@@ -40,6 +42,20 @@ export interface LocationData {
     address: string;
     latitude?: number;
     longitude?: number;
+}
+
+export interface OpeningHours {
+    start: string;
+    end: string;
+}
+export interface WeeklyOpeningHoursData {
+    sunday: OpeningHours,
+    monday: OpeningHours,
+    tuesday: OpeningHours,
+    wednesday: OpeningHours,
+    thursday: OpeningHours,
+    friday: OpeningHours,
+    saturday: OpeningHours
 }
 
 export interface Coordinate {
