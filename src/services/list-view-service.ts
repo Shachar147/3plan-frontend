@@ -69,6 +69,8 @@ const ListViewService = {
                 }
             });
 
+            debugger;
+
             const changeIndentToOr: Record<string, string[]> = {};
             Object.keys(indentOrGroupKeys).forEach((key) => {
                 let start = 0, end = 0, isOk = true;
@@ -549,6 +551,24 @@ const ListViewService = {
 
         let { summaryPerDay, highlightsPerDay } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
         summaryPerDay = ListViewService._handleOrAndIndentRules(eventStore, summaryPerDay);
+
+        const { searchValue } = eventStore;
+        if (searchValue && searchValue.length > 2){
+
+            const filteredSummaryPerDay: Record<string, string[]> = {};
+            Object.keys(summaryPerDay).filter((dayTitle) => {
+                const matchFilter = summaryPerDay[dayTitle].join("<br/>").toLowerCase().indexOf(searchValue.toLowerCase());
+                if (matchFilter !== -1){
+                    const regex = new RegExp(searchValue,"gi");
+                    const newVal = `
+                        <span style="background-color:#ffff00; color: black; font-weight: bold;">${searchValue}</span>
+                    `
+                    filteredSummaryPerDay[dayTitle] = summaryPerDay[dayTitle].map((x) => x.replaceAll(regex, newVal));
+                }
+            })
+
+            summaryPerDay = filteredSummaryPerDay;
+        }
 
         return `
         <div style="max-width: 990px;">
