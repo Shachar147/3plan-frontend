@@ -319,50 +319,6 @@ const ListViewService = {
 
             let prevLocation: LocationData | undefined;
             let prevLocationBackup: LocationData | undefined
-            for (let i=0; i< events.length; i++){
-                const event = events[i];
-                if (Object.keys(event).length === 0) { continue; }
-
-                // const thisLocation = event.extendedProps.location;
-                // // @ts-ignore
-                // if (thisLocation && prevLocation &&
-                //     prevLocation.longitude && prevLocation.latitude &&
-                //     thisLocation.longitude && thisLocation.latitude &&
-                //     !(thisLocation.longitude === prevLocation.longitude && thisLocation.latitude === prevLocation.latitude)
-                // ){
-                //
-                //     const prevCoordinate = {
-                //         lng: prevLocation.longitude!,
-                //         lat: prevLocation.latitude!
-                //     };
-                //     const thisCoordinate = {
-                //         lng: thisLocation.longitude!,
-                //         lat: thisLocation.latitude!
-                //     };
-                //
-                //     const key = getCoordinatesRangeKey(eventStore.travelMode, prevCoordinate, thisCoordinate);
-                //     eventDistanceKey[event.id] = key;
-                //     if (!eventStore.distanceResults.has(key)){
-                //         runInAction(() => {
-                //             console.log(`checking distance between`,prevLocation?.address,` and `,thisLocation.address, prevCoordinate, thisCoordinate);
-                //             eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
-                //
-                //             // @ts-ignore
-                //             window.calculateMatrixDistance(eventStore, prevCoordinate, thisCoordinate);
-                //         });
-                //     } else {
-                //
-                //         if (event.start.toLocaleDateString() === '12/6/2022') {
-                //             console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address);
-                //         }
-                //     }
-                // }
-                //
-                // // set prev location to this location only if next line is not OR.
-                // if (!(i+1 < events.length && Object.keys(events[i+1]).length === 0)){
-                //     prevLocation = thisLocation;
-                // }
-            }
 
             let highlightEvents = events.filter((x:EventInput) => x.priority && x.priority == TriplanPriority.must).map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
             // @ts-ignore
@@ -597,7 +553,7 @@ const ListViewService = {
                     });
                 } else {
                     if (prevLocation && thisLocation) {
-                        console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address, `(${travelMode.toString()})`);
+                        // console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address, `(${travelMode.toString()})`);
                     }
                 }
                 if (distanceKey === "") distanceKey = key;
@@ -658,7 +614,7 @@ const ListViewService = {
                     parentIsOr = x.or;
                 }
 
-                const thisLocation = x.event.location;
+                const thisLocation = x.event.extendedProps.location;
                 if (prevLocation && prevLocation.address != thisLocation.address){
                     loggerArr.push("~ " + prevTitle + " -> " + x.event.title);
 
