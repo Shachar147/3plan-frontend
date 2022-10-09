@@ -198,3 +198,8 @@ body {
 .display-none {
     display: none;
 }
+
+.filter-tags-container {
+    display: flex;
+    gap: 20px;
+}
