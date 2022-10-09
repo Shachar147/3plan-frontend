@@ -69,8 +69,6 @@ const ListViewService = {
                 }
             });
 
-            debugger;
-
             const changeIndentToOr: Record<string, string[]> = {};
             Object.keys(indentOrGroupKeys).forEach((key) => {
                 let start = 0, end = 0, isOk = true;
@@ -291,6 +289,9 @@ const ListViewService = {
         const { orBackgroundStyle } = ListViewService._initSummaryConfiguration();
         return `<span class="or-row" style="padding-inline-start: 20px; font-weight:bold ${orBackgroundStyle}"><u>${or}</u></span>`;
     },
+    _getSubitemIcon: (eventStore: EventStore) => {
+        return eventStore.getCurrentDirection() === 'rtl' ? '↵' : '↳'
+    },
     _buildSummaryPerDay: (eventStore: EventStore, calendarEventsPerDay:Record<string, EventInput>) => {
 
         const highlightsPerDay: Record<string, string> = {};
@@ -321,45 +322,46 @@ const ListViewService = {
             for (let i=0; i< events.length; i++){
                 const event = events[i];
                 if (Object.keys(event).length === 0) { continue; }
-                const thisLocation = event.extendedProps.location;
-                // @ts-ignore
-                if (thisLocation && prevLocation &&
-                    prevLocation.longitude && prevLocation.latitude &&
-                    thisLocation.longitude && thisLocation.latitude &&
-                    !(thisLocation.longitude === prevLocation.longitude && thisLocation.latitude === prevLocation.latitude)
-                ){
 
-                    const prevCoordinate = {
-                        lng: prevLocation.longitude!,
-                        lat: prevLocation.latitude!
-                    };
-                    const thisCoordinate = {
-                        lng: thisLocation.longitude!,
-                        lat: thisLocation.latitude!
-                    };
-
-                    const key = getCoordinatesRangeKey(eventStore.travelMode, prevCoordinate, thisCoordinate);
-                    eventDistanceKey[event.id] = key;
-                    if (!eventStore.distanceResults.has(key)){
-                        runInAction(() => {
-                            console.log(`checking distance between`,prevLocation?.address,` and `,thisLocation.address, prevCoordinate, thisCoordinate);
-                            eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
-
-                            // @ts-ignore
-                            window.calculateMatrixDistance(eventStore, prevCoordinate, thisCoordinate);
-                        });
-                    } else {
-
-                        if (event.start.toLocaleDateString() === '12/6/2022') {
-                            console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address);
-                        }
-                    }
-                }
-
-                // set prev location to this location only if next line is not OR.
-                if (!(i+1 < events.length && Object.keys(events[i+1]).length === 0)){
-                    prevLocation = thisLocation;
-                }
+                // const thisLocation = event.extendedProps.location;
+                // // @ts-ignore
+                // if (thisLocation && prevLocation &&
+                //     prevLocation.longitude && prevLocation.latitude &&
+                //     thisLocation.longitude && thisLocation.latitude &&
+                //     !(thisLocation.longitude === prevLocation.longitude && thisLocation.latitude === prevLocation.latitude)
+                // ){
+                //
+                //     const prevCoordinate = {
+                //         lng: prevLocation.longitude!,
+                //         lat: prevLocation.latitude!
+                //     };
+                //     const thisCoordinate = {
+                //         lng: thisLocation.longitude!,
+                //         lat: thisLocation.latitude!
+                //     };
+                //
+                //     const key = getCoordinatesRangeKey(eventStore.travelMode, prevCoordinate, thisCoordinate);
+                //     eventDistanceKey[event.id] = key;
+                //     if (!eventStore.distanceResults.has(key)){
+                //         runInAction(() => {
+                //             console.log(`checking distance between`,prevLocation?.address,` and `,thisLocation.address, prevCoordinate, thisCoordinate);
+                //             eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
+                //
+                //             // @ts-ignore
+                //             window.calculateMatrixDistance(eventStore, prevCoordinate, thisCoordinate);
+                //         });
+                //     } else {
+                //
+                //         if (event.start.toLocaleDateString() === '12/6/2022') {
+                //             console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address);
+                //         }
+                //     }
+                // }
+                //
+                // // set prev location to this location only if next line is not OR.
+                // if (!(i+1 < events.length && Object.keys(events[i+1]).length === 0)){
+                //     prevLocation = thisLocation;
+                // }
             }
 
             let highlightEvents = events.filter((x:EventInput) => x.priority && x.priority == TriplanPriority.must).map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
@@ -410,7 +412,7 @@ const ListViewService = {
                 const icon = showIcons ? event.icon || eventStore.categoriesIcons[event.category] || "" : "";
                 const iconIndent = icon ? " " : "";
 
-                const subItemIcon = eventStore.getCurrentDirection() === 'rtl' ? '↵' : '↳';
+                const subItemIcon = ListViewService._getSubitemIcon(eventStore);
                 const previousAndCurrentExactTimes = ( previousEndTime === (event.end! as Date).getTime() && previousStartTime === (event.start! as Date).getTime() );
                 const previousEndTimeAfterCurrentStart = previousEndTime > (event.start! as Date).getTime();
                 const previousEndTimeAfterCurrentEnd = previousEndTime >= (event.end! as Date).getTime();
@@ -540,19 +542,187 @@ const ListViewService = {
 
         return { summaryPerDay, highlightsPerDay};
     },
+    _addReachingNextDestinationInstructions: (eventStore:EventStore, summaryPerDay: Record<string, string[]>): Record<string, string[]> => {
+        const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
 
-    buildHTMLSummary: (eventStore: EventStore) => {
+        // --- functions -----------------------------------------------
+        interface ListViewRowDetail { or: boolean, indent: boolean, differentOrGroup: boolean, index: number, orGroupNum?: string, event: EventInput };
+        const buildRowsDetails = (htmlRows: string[]): ListViewRowDetail[] => {
+            const orGroupsSeparator = TranslateService.translate(eventStore, 'AND_THEN_ONE_OF_THE_FOLLOWING');
+            let differentOrGroup = false;
 
-        const calendarEvents = eventStore.calendarEvents;
-        const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
+            return htmlRows.map((x, index) => {
+                const indentIcon = ListViewService._getSubitemIcon(eventStore);
+                const indent = x.indexOf(indentIcon) !== -1;
 
-        // build calendar events per day
-        const calendarEventsPerDay:Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(eventStore, calendarEvents);
+                const regex = /or-group-(\d*)/g;
+                const results = x.match(regex);
+                const or = !!results && !indent;
+                const orGroupNum = results ? results[0] : undefined;
 
-        let { summaryPerDay, highlightsPerDay } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
-        summaryPerDay = ListViewService._handleOrAndIndentRules(eventStore, summaryPerDay);
+                const event = ListViewService._getEventFromEventRow(eventStore, x);
 
-        // handle search
+                const returnValue = { or, indent, differentOrGroup, index, orGroupNum, event } as ListViewRowDetail;
+
+                differentOrGroup = x.indexOf(orGroupsSeparator) !== -1;
+
+                if (!event) return {} as ListViewRowDetail;
+                return returnValue;
+
+            }).filter((x) => Object.keys(x).length > 0);
+        }
+
+        const calculateDistance = (eventStore: EventStore, prevLocation: LocationData, thisLocation: LocationData) => {
+            const prevCoordinate = {
+                lng: prevLocation.longitude!,
+                lat: prevLocation.latitude!
+            };
+            const thisCoordinate = {
+                lng: thisLocation.longitude!,
+                lat: thisLocation.latitude!
+            };
+
+            const travelModes = [GoogleTravelMode.DRIVING];
+
+            let distanceKey: string = "";
+            travelModes.forEach((travelMode) => {
+                const key = getCoordinatesRangeKey(travelMode, prevCoordinate, thisCoordinate);
+                if (!eventStore.distanceResults.has(key)){
+                    runInAction(() => {
+                        console.log(`checking distance between`,prevLocation?.address,` and `,thisLocation.address, prevCoordinate, thisCoordinate, `(${travelMode.toString()})`);
+                        eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
+
+                        // @ts-ignore
+                        window.calculateMatrixDistance(travelMode, prevCoordinate, thisCoordinate);
+                    });
+                } else {
+                    if (prevLocation && thisLocation) {
+                        console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address, `(${travelMode.toString()})`);
+                    }
+                }
+                if (distanceKey === "") distanceKey = key;
+            })
+
+            let travelMode = GoogleTravelMode.DRIVING;
+            if (distanceKey && eventStore.distanceResults.has(distanceKey) && eventStore.distanceResults.has(distanceKey.replace('DRIVING','WALKING'))) {
+                if (
+                    eventStore.distanceResults.get(distanceKey)!.duration_value! >
+                    eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value!
+                    ||
+                    (eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value! < 10 * 60)
+                ) {
+                    distanceKey = distanceKey.replace('DRIVING', 'WALKING');
+                    travelMode = GoogleTravelMode.WALKING;
+                }
+            }
+
+            let distanceToNextEvent =
+                distanceKey ?
+                    eventStore.distanceResults.has(distanceKey) ?
+                        toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, travelMode) :
+                        TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
+                    : "";
+
+            return distanceToNextEvent;
+        }
+
+        // -------------------------------------------------------------
+        Object.keys(summaryPerDay).map((dayTitle) => {
+
+            // array of strings represents the rows we want to print for the summary fo that day.
+            summaryPerDay[dayTitle] = summaryPerDay[dayTitle].map((x) => x.split('<br/>')).flat();
+
+            // extract details from the array of string rows above.
+            const details = buildRowsDetails(summaryPerDay[dayTitle])
+
+            let previousDetail: any;
+            // @ts-ignore
+            const loggerArr: string[] = [];
+            let prevLocation: LocationData | undefined;
+            let prevTitle: string;
+            let oneOfTheFollowing = false;
+            let parentIsOr = false;
+            details.forEach((x: any,i) => {
+                if (x.differentOrGroup){
+                    if (parentIsOr){
+                        prevLocation = undefined;
+                    }
+                    loggerArr.push("\nAND THEN ONE OF THE FOLLOWING:");
+                    oneOfTheFollowing = true;
+                }
+                else if (previousDetail && !previousDetail.or && x.or){
+                    loggerArr.push("")
+                }
+
+                if (!x.indent){
+                    parentIsOr = x.or;
+                }
+
+                const thisLocation = x.event.location;
+                if (prevLocation && prevLocation.address != thisLocation.address){
+                    loggerArr.push("~ " + prevTitle + " -> " + x.event.title);
+
+                    let distanceToNextEvent = calculateDistance(eventStore, prevLocation, thisLocation); // prevTitle + " -> " + x.event.title;
+
+                    if (distanceToNextEvent !== "") {
+                        const arrow = eventStore.getCurrentDirection() === 'rtl' ? '✈' : '✈'
+                        const distanceColor = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '#ff5252' : 'rgba(55,181,255,0.6)';
+
+                        let rowClass = "";
+                        if (x.orGroupNum) {
+                            if (x.indent) {
+                                rowClass += ` indent-or-group-${x.orGroupNum}`
+                            } else {
+                                rowClass += ` or-group-${x.orGroupNum}`
+                            }
+                        }
+
+                        const backgroundStyle = x.or || (x.indent && parentIsOr) ? orBackgroundStyle : "";
+
+                        rowClass = ` class="${rowClass}"`;
+                        distanceToNextEvent = `<span style="color: ${distanceColor}; ${backgroundStyle}"${rowClass}>
+                                ${arrow}
+                                ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${thisLocation.address.split(' - ')[0]}
+                            </span>`;
+
+                        summaryPerDay[dayTitle][x.index] = `${distanceToNextEvent}<br/>${summaryPerDay[dayTitle][x.index]}`;
+                    }
+                }
+
+                const temp = parentIsOr ? ' (parent is or)' : '';
+                if (x.indent) {
+                    loggerArr.push("... " + x.event.title + temp);
+                } else {
+                    loggerArr.push(x.event.title + temp);
+                }
+
+                // @ts-ignore
+                if (x.or && i+1 < details.length && !details[i+1].differentOrGroup) { loggerArr.push("OR:"); }
+
+                // @ts-ignore
+                if (!x.or) {
+                    prevLocation = thisLocation;
+                    prevTitle = x.event.title;
+                }
+
+                // @ts-ignore
+                if ((x.or || x.indent) && i+1 < details.length && !(details[i+1].or || details[i+1].indent)) {
+                    loggerArr.push("");
+                    // prevLocation = undefined;
+                    if (parentIsOr) {
+                        prevLocation = undefined;
+                    }
+                }
+                previousDetail = x;
+            })
+
+            // debug
+            // console.log(loggerArr.join("\n"));
+        });
+
+        return summaryPerDay;
+    },
+    _handleSearch: (eventStore:EventStore, summaryPerDay:Record<string, string[]>): Record<string, string[]> => {
         const { searchValue } = eventStore;
         if (searchValue && searchValue.length > 2){
             const filteredSummaryPerDay: Record<string, string[]> = {};
@@ -568,6 +738,31 @@ const ListViewService = {
             })
             summaryPerDay = filteredSummaryPerDay;
         }
+        return summaryPerDay;
+    },
+    buildHTMLSummary: (eventStore: EventStore) => {
+
+        let calendarEvents = eventStore.calendarEvents;
+        const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
+
+        // debug
+        // calendarEvents = calendarEvents.filter((x) => (x.start as Date).toLocaleDateString() === '12/6/2022');
+
+        // build calendar events per day
+        const calendarEventsPerDay:Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(eventStore, calendarEvents);
+
+        // build summary per day and highlights
+        // todo complete: move highlights to the end? (since indent rules may change the order)
+        let { summaryPerDay, highlightsPerDay } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
+
+        // handle or and indent rules
+        summaryPerDay = ListViewService._handleOrAndIndentRules(eventStore, summaryPerDay);
+
+        // handle search
+        summaryPerDay = ListViewService._handleSearch(eventStore, summaryPerDay);
+
+        // add distances
+        summaryPerDay = ListViewService._addReachingNextDestinationInstructions(eventStore, summaryPerDay);
 
         return `
         <div style="max-width: 990px;">
