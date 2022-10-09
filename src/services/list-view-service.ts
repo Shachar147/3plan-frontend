@@ -552,9 +552,9 @@ const ListViewService = {
         let { summaryPerDay, highlightsPerDay } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
         summaryPerDay = ListViewService._handleOrAndIndentRules(eventStore, summaryPerDay);
 
+        // handle search
         const { searchValue } = eventStore;
         if (searchValue && searchValue.length > 2){
-
             const filteredSummaryPerDay: Record<string, string[]> = {};
             Object.keys(summaryPerDay).filter((dayTitle) => {
                 const matchFilter = summaryPerDay[dayTitle].join("<br/>").toLowerCase().indexOf(searchValue.toLowerCase());
@@ -566,7 +566,6 @@ const ListViewService = {
                     filteredSummaryPerDay[dayTitle] = summaryPerDay[dayTitle].map((x) => x.replaceAll(regex, newVal));
                 }
             })
-
             summaryPerDay = filteredSummaryPerDay;
         }
 
