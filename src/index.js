@@ -18,6 +18,10 @@ import ThemeExample from "./layouts/theme-example/theme-example";
 import {runInAction} from "mobx";
 import {getCoordinatesRangeKey, padTo2Digits} from "./utils/utils";
 
+// V make sure that if place have closed days like KNOCX it handles it.
+// change font to INTER (plato)
+// add photos and more place info to the window info line and to each event.
+
 // map tasks
 // V add search mode to the map, allowing to search for address + display results markers on the map. clicking on the map should open create event with location and title already filled in.
 // V make markers be circles with the icon of the attraction / its category in the middle.
@@ -30,9 +34,11 @@ import {getCoordinatesRangeKey, padTo2Digits} from "./utils/utils";
 
 // add "navigate" button to the list view that opens google maps to that location
 // if it's a note (allDay) - do not show most of the fields (location, priority, hours, etc) <- its irrelevant.
+// add 'opening hours' to the list view (but only the opening hours of they day this event is scheduled to)
+// add 'opening hours' to map view to window info
 
-// terminology - change 'event' to something else maybe 'point of interset' נקודות עניין
-// connect to google place details to get places working hours - https://www.youtube.com/watch?v=vAK5o8h8C28
+// V terminology - change 'event' to something else maybe 'point of interset' נקודות עניין
+// V connect to google place details to get places working hours - https://www.youtube.com/watch?v=vAK5o8h8C28
 // sidebar filters - for example based on activity hours. if I have a "whole" in Sunday 10:00-11:00, show me all the events that can fit based on working hours
 
 // fix allevents duplicate items so statistics in the sidebar will be correct.
@@ -201,7 +207,17 @@ const RootRouter = () => {
                 return `<div>${dayText}: ${when}</div>`
             }).join("");
 
-            if (!is247 && Object.keys(hoursToDay).length < 5){
+            const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+            const closed = TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.CLOSED')
+            days.forEach((closedDay) => {
+                if (!openingHours[closedDay]){
+                    const dayText = TranslateService.translate(eventStore, closedDay);
+                    hoursToDay[closed] = hoursToDay[closed] || [];
+                    hoursToDay[closed].push(dayText);
+                }
+            });
+
+            if (!is247 && Object.keys(hoursToDay).length < Object.keys(openingHours).length){
                 let dayIndex = 0;
                 const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
                 const newResult = [];
@@ -241,6 +257,7 @@ const RootRouter = () => {
 
             window.openingHours = undefined;
             let openingHoursData = undefined;
+            debugger;
             if (place.opening_hours && place.opening_hours.periods) {
                 const opening_hours = place.opening_hours.periods;
                 openingHoursData = {};
@@ -249,11 +266,13 @@ const RootRouter = () => {
 
                 ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"].forEach((day, index) => {
                     const period = is247 ? undefined : opening_hours[index];
-                    const start = is247 ? '00:00' : padTo2Digits(period.open.hours) + ':' + padTo2Digits(period.open.minutes);
-                    const end = is247 ? '00:00' : padTo2Digits(period.close.hours) + ':' + padTo2Digits(period.close.minutes);
-                    openingHoursData[day] = {
-                        start, end
-                    };
+                    if (period) {
+                        const start = is247 ? '00:00' : padTo2Digits(period.open.hours) + ':' + padTo2Digits(period.open.minutes);
+                        const end = is247 ? '00:00' : padTo2Digits(period.close.hours) + ':' + padTo2Digits(period.close.minutes);
+                        openingHoursData[day] = {
+                            start, end
+                        };
+                    }
                 });
                 window.openingHours = openingHoursData;
                 // console.log(openingHoursData);
@@ -261,16 +280,19 @@ const RootRouter = () => {
                 Object.keys(openingHoursData).forEach((day) => {
                     const start = document.getElementsByName("opening-hour-selector-" + day)[0]
                     const end = document.getElementsByName("closing-hour-selector-" + day)[0]
-                    start.value = openingHoursData[day].start;
-                    end.value = openingHoursData[day].end;
-                    start.disabled = false;
-                    end.disabled = false;
-                    $(`input[name=is-closed-${day}]`).prop("checked", false);
+
+                    if (start && end) {
+                        start.value = openingHoursData[day].start;
+                        end.value = openingHoursData[day].end;
+                        start.disabled = false;
+                        end.disabled = false;
+                        $(`input[name=is-closed-${day}]`).prop("checked", false);
+                    }
                 });
             }
 
             const summaryDiv = document.getElementsByClassName("opening-hours-details");
-            if (summaryDiv.length) {
+            if (summaryDiv && summaryDiv.length > 0) {
                 summaryDiv[0].innerHTML = window.renderOpeningHours(openingHoursData);
             }
 
@@ -281,6 +303,19 @@ const RootRouter = () => {
                 address,
                 latitude,
                 longitude
+            }
+
+            window.placeInfo = {
+                googleMapsUrl: place.url,
+                photos: place.photos,
+                website: place.website,
+                phone: place.international_phone_number,
+                name: place.name,
+                rating: place.rating,
+                user_ratings_total: place.user_ratings_total,
+                reviews: place.reviews, // cool!
+                types: place.types, // could be useful for the map icon determination
+
             }
 
             if (placeChangedCallback) {
