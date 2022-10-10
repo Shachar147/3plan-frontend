@@ -15,6 +15,7 @@ import Button, {ButtonFlavor} from "../common/button/button";
 import * as _ from 'lodash';
 import {priorityToColor} from "../../utils/consts";
 import {EventInput} from "@fullcalendar/react";
+import ListViewService from "../../services/list-view-service";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
@@ -185,30 +186,68 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 ) : null;
         }
 
+        const renderEventsWithTodoCompleteStatistics = () => {
+            const { taskKeywords } = ListViewService._initSummaryConfiguration();
+            let todoCompleteEvents = eventStore.allEvents
+                .filter((x) => {
+                    const { title, allDay, description = '' } = x;
+                    const isTodoComplete = taskKeywords.find((k) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
+                    return isTodoComplete && !allDay;
+                });
+
+            todoCompleteEvents = _.uniq(todoCompleteEvents.map(x => x.id));
+
+            // console.log('events with no location', eventsWithNoLocationArr);
+
+            const todoCompleteEventsKey = eventStore.showOnlyEventsWithTodoComplete ?
+                'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE';
+
+            return (!!todoCompleteEvents.length) ?
+                (
+                    <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithTodoComplete && 'blue-color')}>
+                        <Button
+                            icon={"fa-exclamation-triangle"}
+                            text={`${todoCompleteEvents.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_TODO_COMPLETE')} (${TranslateService.translate(eventStore, todoCompleteEventsKey)})`}
+                            onClick={() => {
+                                eventStore.toggleShowOnlyEventsWithTodoComplete();
+                            }}
+                            flavor={ButtonFlavor['movable-link']}
+                            className={getClasses(eventStore.showOnlyEventsWithTodoComplete && 'blue-color')}
+                        />
+                    </div>
+                ) : null;
+        }
+
         const noLocationWarning = renderNoLocationEventsStatistics();
         const noOpeningHoursWarning = renderNoOpeningHoursEventsStatistics();
+        const eventsWithTodoComplete = renderEventsWithTodoCompleteStatistics();
         const numOfItems = [noLocationWarning, noOpeningHoursWarning].filter((x) => x != null).length;
+        const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.WARNING')
         const warningsBlock = (noLocationWarning || noOpeningHoursWarning) ?
             wrapWithSidebarGroup(<>
                 {noLocationWarning}
                 {noOpeningHoursWarning}
-            </>,'fa-exclamation-triangle', SidebarGroups.WARNINGS, 'שים לב!', numOfItems, 'var(--red)') : null;
+                {eventsWithTodoComplete}
+            </>,'fa-exclamation-triangle', SidebarGroups.WARNINGS, groupTitle, numOfItems, 'var(--red)') : null;
 
         return warningsBlock ? <><hr className={"margin-block-2"}/>{warningsBlock}</> : undefined;
     }
 
     const renderActions = () => {
+        const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS')
         const actionsBlock = wrapWithSidebarGroup(
             <>
                 {eventStore.isCalendarView && renderClearAll()}
                 {renderImportButtons()}
             </>,
-            undefined, SidebarGroups.ACTIONS, 'פעולות',3
+            undefined, SidebarGroups.ACTIONS, groupTitle,3
         );
         return <><hr className={"margin-block-2"}/>{actionsBlock}</>;
     }
 
     const renderCalendarSidebarStatistics = () => {
+        const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS')
+
         const calendarSidebarStatistics = (
             <>
                 <div className={"sidebar-statistics"}>
@@ -222,7 +261,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             </>
         );
 
-        const statsBlock = wrapWithSidebarGroup(calendarSidebarStatistics, undefined, SidebarGroups.CALENDAR_STATISTICS, 'אז כמה פעילויות כבר משובצות?', 2);
+        const statsBlock = wrapWithSidebarGroup(calendarSidebarStatistics, undefined, SidebarGroups.CALENDAR_STATISTICS, groupTitle, 2);
         return <><hr className={"margin-block-2"}/>{statsBlock}</>;
     }
 
@@ -277,7 +316,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             )})
         }
 
-        const prioritiesBlock = wrapWithSidebarGroup(<>{renderPrioritiesStatistics()}</>, undefined, SidebarGroups.PRIORITIES_LEGEND, 'מקרא צבעים וכמויות', Object.keys(TriplanPriority).length);
+        const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND')
+        const prioritiesBlock = wrapWithSidebarGroup(<>{renderPrioritiesStatistics()}</>, undefined, SidebarGroups.PRIORITIES_LEGEND, groupTitle, Object.keys(TriplanPriority).length);
 
         return <><hr className={"margin-block-2"}/>{prioritiesBlock}</>;
     }

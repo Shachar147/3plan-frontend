@@ -138,6 +138,7 @@
   "EVENTS_ON_THE_SIDEBAR": "פעילויות עדיין לא שובצו",
   "EVENTS_WITH_NO_LOCATION": "פעילויות ללא מיקום",
   "EVENTS_WITH_NO_OPENING_HOURS": "פעילויות ללא שעות פתיחה",
+  "EVENTS_WITH_TODO_COMPLETE": "פעילויות עם משימות פתוחות",
   "EXPAND_ALL": "פתח הכל",
   "COLLAPSE_ALL": "סגור הכל",
   "HIDE_EMPTY_CATEGORIES": "הצג קבוצות ריקות",
@@ -157,9 +158,11 @@
   "CATEGORY.LOGISTICS": "לוגיסטיקה",
   "MODALS.LOCATION.PLACEHOLDER": "הזן מיקום...",
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "הצג אילו",
+  "SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE": "הצג אילו",
   "SHOW_ALL_EVENTS": "בטל סינון",
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG": "הצג רק פעילויות ללא מיקום",
   "SHOW_ONLY_EVENTS_WITH_NO_OPENING_HOURS.FILTER_TAG": "הצג רק פעילויות ללא שעות פתיחה",
+  "SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE.FILTER_TAG": "הצג רק פעילויות עם משימות פתוחות",
   "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "אין קטגוריות. אנא צור קטגוריה לפני שאתה מנסה ליצור פעילות",
   "DISTANCE.PREFIX.WALKING": "הליכה של",
   "DISTANCE.PREFIX.DRIVING": "נסיעה של",
@@ -210,5 +213,9 @@
   "MODALS.OPENING_HOURS.NO_INFORMATION": "שעות הפעילות אינן זמינות",
   "MODALS.OPENING_HOURS.NO_INFORMATION.NO_LOCATION": "נסה לציין את מיקום הפעילות, זה עשוי לעזור",
   "MODALS.OPENING_HOURS.24_7": "פתוח 24/7",
-  "MODALS.OPENING_HOURS.ALL_WEEK": "כל השבוע"
+  "MODALS.OPENING_HOURS.ALL_WEEK": "כל השבוע",
+  "SIDEBAR_GROUPS.GROUP_TITLE.WARNING": "שים לב!",
+  "SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS": "פעולות",
+  "SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "אז כמה פעילויות כבר משובצות?",
+  "SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "מקרא צבעים וכמויות"
 }

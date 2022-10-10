@@ -128,6 +128,7 @@
   "EVENTS_ON_THE_SIDEBAR": "Activities not scheduled yet",
   "EVENTS_WITH_NO_LOCATION": "Activities with no location",
   "EVENTS_WITH_NO_OPENING_HOURS": "Activities with no opening hours",
+  "EVENTS_WITH_TODO_COMPLETE": "Activities with open tasks",
   "EXPAND_ALL": "Expend all",
   "COLLAPSE_ALL": "Collapse all",
   "HIDE_EMPTY_CATEGORIES": "Show Empty",
@@ -147,9 +148,11 @@
   "CATEGORY.LOGISTICS": "Logistics",
   "MODALS.LOCATION.PLACEHOLDER": "Enter Location...",
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "show which",
+  "SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE": "Show which",
   "SHOW_ALL_EVENTS": "cancel filter",
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG": "Show only activities with no location",
   "SHOW_ONLY_EVENTS_WITH_NO_OPENING_HOURS.FILTER_TAG": "Show only activities with no opening hours",
+  "SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE.FILTER_TAG": "Show only activities with open tasks",
   "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "There are no categories. please add category before you try to add an activity",
   "DISTANCE.PREFIX.WALKING": "Walking",
   "DISTANCE.PREFIX.DRIVING": "Driving",
@@ -200,5 +203,9 @@
   "MODALS.OPENING_HOURS.NO_INFORMATION": "Opening Hours details not found for this activity.",
   "MODALS.OPENING_HOURS.NO_INFORMATION_NO_LOCATION": "Setting a location might help",
   "MODALS.OPENING_HOURS.24_7": "Opened 24/7",
-  "MODALS.OPENING_HOURS.ALL_WEEK": "All week"
+  "MODALS.OPENING_HOURS.ALL_WEEK": "All week",
+  "SIDEBAR_GROUPS.GROUP_TITLE.WARNING": "Pat Attention!",
+  "SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS": "Actions",
+  "SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "So, how many activities already scheduled?",
+  "SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "Colors legend and summaries"
 }

@@ -117,6 +117,15 @@ const renderFilterTags = (eventStore: EventStore) => {
                         }}/>
                 )
             }
+            {
+                eventStore.showOnlyEventsWithTodoComplete && (
+                    <TriplanTag
+                        text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE.FILTER_TAG')}
+                        onDelete={() => {
+                            eventStore.setShowOnlyEventsWithTodoComplete(false);
+                        }}/>
+                )
+            }
         </div>
     )
 }

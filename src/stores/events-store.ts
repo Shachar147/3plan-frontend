@@ -23,6 +23,7 @@ import {convertMsToHM} from "../utils/time-utils";
 // @ts-ignore
 import _ from "lodash";
 import {containsDuplicates} from "../utils/utils";
+import ListViewService from "../services/list-view-service";
 
 export class EventStore {
     categoryIdBuffer = 0;
@@ -45,6 +46,7 @@ export class EventStore {
     @observable customDateRange = getDefaultCustomDateRange();
     @observable showOnlyEventsWithNoLocation: boolean = false;
     @observable showOnlyEventsWithNoOpeningHours: boolean = false;
+    @observable showOnlyEventsWithTodoComplete: boolean = false;
     @observable calculatingDistance = 0;
     @observable distanceResults = observable.map<string,DistanceResult>(getDefaultDistanceResults());
     @observable travelMode = GoogleTravelMode.DRIVING;
@@ -60,6 +62,13 @@ export class EventStore {
         this.initCustomDatesVisibilityBasedOnViewMode();
     }
 
+    checkIfEventHaveOpenTasks(event: any) {
+        const { title, description } = event;
+        const { taskKeywords } = ListViewService._initSummaryConfiguration();
+        const isTodoComplete = taskKeywords.find((k) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
+        return !!isTodoComplete;
+    }
+
     // --- computed -------------------------------------------------------------
 
     @computed
@@ -68,7 +77,8 @@ export class EventStore {
             .filter((event) =>
                 (event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) &&
                 (this.showOnlyEventsWithNoLocation ? !(event.location != undefined || (event.extendedProps && event.extendedProps.location != undefined)) : true) &&
-                (this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined || (event.extendedProps && event.extendedProps.openingHours != undefined)) : true)
+                (this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined || (event.extendedProps && event.extendedProps.openingHours != undefined)) : true) &&
+                (this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
             );
     }
 
@@ -100,7 +110,11 @@ export class EventStore {
         Object.keys(this.sidebarEvents).forEach((category) => {
             toReturn[parseInt(category)] = this.sidebarEvents[parseInt(category)]
                 .map((x) => toJS(x))
-                .filter((event) => (this.showOnlyEventsWithNoLocation ? !(event.location || (event.extendedProps && event.extendedProps.location)) : true))
+                .filter((event) =>
+                    (this.showOnlyEventsWithNoLocation ? !(event.location || (event.extendedProps && event.extendedProps.location)) : true) &&
+                    (this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined || (event.extendedProps && event.extendedProps.openingHours != undefined)) : true) &&
+                    (this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
+                )
         })
         return toReturn;
     }
@@ -346,18 +360,28 @@ export class EventStore {
     }
 
     @action
-    toggleShowOnlyEventsWithNoOpeningHours(){
-        this.showOnlyEventsWithNoOpeningHours = !this.showOnlyEventsWithNoOpeningHours;
-    }
-
-    @action
     setShowOnlyEventsWithNoLocation(newVal: boolean) {
         this.showOnlyEventsWithNoLocation = newVal;
     }
 
     @action
+    toggleShowOnlyEventsWithNoOpeningHours(){
+        this.showOnlyEventsWithNoOpeningHours = !this.showOnlyEventsWithNoOpeningHours;
+    }
+
+    @action
     setShowOnlyEventsWithNoOpeningHours(newVal: boolean) {
         this.showOnlyEventsWithNoOpeningHours = newVal;
+    }
+
+    @action
+    toggleShowOnlyEventsWithTodoComplete(){
+        this.showOnlyEventsWithTodoComplete = !this.showOnlyEventsWithTodoComplete;
+    }
+
+    @action
+    setShowOnlyEventsWithTodoComplete(newVal: boolean) {
+        this.showOnlyEventsWithTodoComplete = newVal;
     }
 
     @action
