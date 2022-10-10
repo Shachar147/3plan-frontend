@@ -376,6 +376,12 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             )
         }
 
+        const renderNoDisplayedCategoriesPlaceholder = () => {
+            return <div className={"sidebar-statistics"}>
+                {TranslateService.translate(eventStore, 'NO_DISPLAYED_CATEGORIES')}
+            </div>
+        }
+
         const closedStyle = {
             maxHeight: 0, overflowY: "hidden", padding: 0, transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
         };
@@ -390,53 +396,58 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
         const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
         const borderStyle = "1px solid rgba(0, 0, 0, 0.05)";
 
+        let totalDisplayedCategories = 0;
+        const categoriesBlock = eventStore.categories.map((category, index) => {
+                const itemsCount = (eventStore.getSidebarEvents[category.id] || []).filter((e) => e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1).length;
+                if (eventStore.hideEmptyCategories && itemsCount === 0) { return <></> }
+                totalDisplayedCategories++;
+
+                const openStyle = {
+                    maxHeight: (100 * itemsCount) + 90 + 'px', padding: "10px", transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
+                };
+
+                const isOpen = eventStore.openCategories.has(category.id);
+                const eventsStyle = isOpen ? openStyle : closedStyle;
+
+                return (
+                    <div className={"external-events"} key={category.id}>
+                        <div className={"sidebar-statistics"}
+                             style={{
+                                 paddingInlineStart: "10px", cursor: "pointer", backgroundColor: "#e5e9ef80", borderBottom: borderStyle, height: "45px",
+                                 borderTop: index === 0 ? borderStyle : "0"
+                             }}
+                             onClick={() => {
+                                 eventStore.toggleCategory(category.id);
+                             }}
+                        >
+                            <i className={isOpen ? "fa fa-angle-double-down" : "fa fa-angle-double-" + arrowDirection} aria-hidden="true"></i>
+                            <span>{category.icon ? `${category.icon} ` : ''}{category.title}</span>
+                            <div>({itemsCount})</div>
+                            <div style={editIconStyle}>
+                                <i className="fa fa-pencil-square-o" aria-hidden="true" onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onEditCategory(category.id)
+                                }}></i>
+                                <i className="fa fa-trash-o" style={{ position: "relative", top: "-1px"}} aria-hidden="true" onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    ModalService.openDeleteCategoryModal(eventStore, category.id);
+                                }}></i>
+                            </div>
+                        </div>
+                        <div style={eventsStyle as unknown as CSSProperties}>
+                            {renderCategoryEvents(category.id)}
+                            {renderAddSidebarEventButton(category.id)}
+                        </div>
+                    </div>
+                )})
+
         return (
             <>
                 {renderExpandCollapse()}
-                {eventStore.categories.map((category, index) => {
-                    const itemsCount = (eventStore.getSidebarEvents[category.id] || []).filter((e) => e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1).length;
-                    if (eventStore.hideEmptyCategories && itemsCount === 0) { return <></> }
-
-                    const openStyle = {
-                        maxHeight: (100 * itemsCount) + 90 + 'px', padding: "10px", transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
-                    };
-
-                    const isOpen = eventStore.openCategories.has(category.id);
-                    const eventsStyle = isOpen ? openStyle : closedStyle;
-
-                    return (
-                        <div className={"external-events"} key={category.id}>
-                            <div className={"sidebar-statistics"}
-                                 style={{
-                                    paddingInlineStart: "10px", cursor: "pointer", backgroundColor: "#e5e9ef80", borderBottom: borderStyle, height: "45px",
-                                    borderTop: index === 0 ? borderStyle : "0"
-                                }}
-                                 onClick={() => {
-                                    eventStore.toggleCategory(category.id);
-                                }}
-                            >
-                                <i className={isOpen ? "fa fa-angle-double-down" : "fa fa-angle-double-" + arrowDirection} aria-hidden="true"></i>
-                                <span>{category.icon ? `${category.icon} ` : ''}{category.title}</span>
-                                <div>({itemsCount})</div>
-                                <div style={editIconStyle}>
-                                    <i className="fa fa-pencil-square-o" aria-hidden="true" onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        onEditCategory(category.id)
-                                    }}></i>
-                                    <i className="fa fa-trash-o" style={{ position: "relative", top: "-1px"}} aria-hidden="true" onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        ModalService.openDeleteCategoryModal(eventStore, category.id);
-                                    }}></i>
-                                </div>
-                            </div>
-                            <div style={eventsStyle as unknown as CSSProperties}>
-                                {renderCategoryEvents(category.id)}
-                                {renderAddSidebarEventButton(category.id)}
-                            </div>
-                        </div>
-                    )})}
+                {categoriesBlock}
+                {totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
             </>
         )
     }

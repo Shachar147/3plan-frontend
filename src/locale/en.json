@@ -207,5 +207,6 @@
   "SIDEBAR_GROUPS.GROUP_TITLE.WARNING": "Pat Attention!",
   "SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS": "Actions",
   "SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "So, how many activities already scheduled?",
-  "SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "Colors legend and summaries"
+  "SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "Colors legend and summaries",
+  "NO_DISPLAYED_CATEGORIES": "No displayed categories"
 }
