@@ -60,7 +60,7 @@
 
 .fc-event-main.priority-2,
 .fc-event.priority-2 {
-    border-left: 3px solid #ffb752; /* #9c27b0 */
+    border-left: 3px solid var(--triplan-orange);  /* #ffb752; */ /* #9c27b0 */
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
     /*border-color: #9c27b0;*/

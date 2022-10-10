@@ -20,6 +20,15 @@ body {
   gap: 5px;
 }
 
+.flex-gap-5 {
+    display: flex;
+    gap: 5px;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
 .display-none {
   display: none;
 }
@@ -202,4 +211,11 @@ body {
 .filter-tags-container {
     display: flex;
     gap: 20px;
+}
+
+.margin-block-2 {
+    margin-block: 2px;
+}
+.margin-top-40 {
+    margin-top: 40px;
 }

@@ -24,6 +24,13 @@ export interface TriplanSidebarProps {
     TriplanCalendarRef: React.MutableRefObject<HTMLDivElement>,
 }
 
+enum SidebarGroups {
+    CALENDAR_STATISTICS = "CALENDAR_STATISTICS",
+    WARNINGS = "WARNINGS",
+    ACTIONS = "ACTIONS",
+    PRIORITIES_LEGEND = "PRIORITIES_LEGEND"
+}
+
 const TriplanSidebar = (props: TriplanSidebarProps) => {
     const eventStore = useContext(eventStoreContext);
     const {
@@ -80,7 +87,146 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
         )
     }
 
-    const renderStatistics = () => {
+    const wrapWithSidebarGroup = (children: JSX.Element, groupIcon: string | undefined = undefined, groupKey: string, groupTitle: string, itemsCount: number, textColor: string = 'inherit') => {
+        const isOpen = eventStore.openSidebarGroups.has(groupKey);
+        const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
+        const openStyle = {
+            maxHeight: (100 * itemsCount) + 90 + 'px', padding: "10px", transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
+        };
+        const closedStyle = {
+            maxHeight: 0, overflowY: "hidden", padding: 0, transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
+        };
+
+        const eventsStyle = isOpen ? openStyle : closedStyle;
+
+        return (
+            <>
+                <div className={"sidebar-statistics"} style={{ color: textColor, paddingInlineStart: "10px", cursor: "pointer", backgroundColor: "#e5e9ef80", borderBottom: "1px solid #e5e9ef", height: "45px" }}  onClick={() => {
+                    eventStore.toggleSidebarGroups(groupKey);
+                }}>
+                    <i className={isOpen ? "fa fa-angle-double-down" : "fa fa-angle-double-" + arrowDirection} aria-hidden="true"></i>
+                    <span className={"flex-gap-5 align-items-center"}>{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}</span>
+                </div>
+                <div style={eventsStyle as unknown as CSSProperties}>
+                    {children}
+                </div>
+            </>
+        );
+    }
+
+    const renderWarnings = () => {
+
+        const renderNoLocationEventsStatistics = () => {
+            const eventsWithNoLocationArr = eventStore.allEvents
+                .filter((x) => {
+
+                    const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
+                    const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
+                    const eventIsANote = (x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay)); // in this case location is irrelevant.
+
+                    return eventHaveNoLocation && !eventIsANote;
+                });
+
+            const eventsWithNoLocation = _.uniq(eventsWithNoLocationArr.map(x => x.id));
+
+            // console.log('events with no location', eventsWithNoLocationArr);
+
+            const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation ?
+                'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
+
+            return (!!eventsWithNoLocation.length) ?
+                (
+                    <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
+                        <Button
+                            icon={"fa-exclamation-triangle"}
+                            text={`${eventsWithNoLocation.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_LOCATION')} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
+                            onClick={() => {
+                                eventStore.toggleShowOnlyEventsWithNoLocation();
+                            }}
+                            flavor={ButtonFlavor['movable-link']}
+                            className={getClasses(eventStore.showOnlyEventsWithNoLocation && 'blue-color')}
+                        />
+                    </div>
+                ) : null;
+        }
+
+        const renderNoOpeningHoursEventsStatistics = () => {
+            const eventsWithNoHoursArr = eventStore.allEvents
+                .filter((x) => {
+
+                    const eventHaveNoHours = !(x.openingHours || (x.extendedProps && x.extendedProps.openingHours));
+                    const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
+                    const eventIsANote = (x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay)); // in this case location is irrelevant.
+
+                    return eventHaveNoHours && !eventIsANote;
+                });
+
+            const eventsWithNoHours = _.uniq(eventsWithNoHoursArr.map(x => x.id));
+
+            // console.log('events with no location', eventsWithNoLocationArr);
+
+            const eventsWithNoHoursKey = eventStore.showOnlyEventsWithNoOpeningHours ?
+                'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
+
+            return (!!eventsWithNoHours.length) ?
+                (
+                    <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoOpeningHours && 'blue-color')}>
+                        <Button
+                            icon={"fa-exclamation-triangle"}
+                            text={`${eventsWithNoHours.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_OPENING_HOURS')} (${TranslateService.translate(eventStore, eventsWithNoHoursKey)})`}
+                            onClick={() => {
+                                eventStore.toggleShowOnlyEventsWithNoOpeningHours();
+                            }}
+                            flavor={ButtonFlavor['movable-link']}
+                            className={getClasses(eventStore.showOnlyEventsWithNoOpeningHours && 'blue-color')}
+                        />
+                    </div>
+                ) : null;
+        }
+
+        const noLocationWarning = renderNoLocationEventsStatistics();
+        const noOpeningHoursWarning = renderNoOpeningHoursEventsStatistics();
+        const numOfItems = [noLocationWarning, noOpeningHoursWarning].filter((x) => x != null).length;
+        const warningsBlock = (noLocationWarning || noOpeningHoursWarning) ?
+            wrapWithSidebarGroup(<>
+                {noLocationWarning}
+                {noOpeningHoursWarning}
+            </>,'fa-exclamation-triangle', SidebarGroups.WARNINGS, 'שים לב!', numOfItems, 'var(--red)') : null;
+
+        return warningsBlock ? <><hr className={"margin-block-2"}/>{warningsBlock}</> : undefined;
+    }
+
+    const renderActions = () => {
+        const actionsBlock = wrapWithSidebarGroup(
+            <>
+                {eventStore.isCalendarView && renderClearAll()}
+                {renderImportButtons()}
+            </>,
+            undefined, SidebarGroups.ACTIONS, 'פעולות',3
+        );
+        return <><hr className={"margin-block-2"}/>{actionsBlock}</>;
+    }
+
+    const renderCalendarSidebarStatistics = () => {
+        const calendarSidebarStatistics = (
+            <>
+                <div className={"sidebar-statistics"}>
+                    <i className="fa fa-calendar-check-o" aria-hidden="true"></i>
+                    {eventStore.calendarEvents.length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_CALENDAR')}
+                </div>
+                <div className={"sidebar-statistics"}>
+                    <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
+                    {Object.values(eventStore.sidebarEvents).flat().length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_SIDEBAR')}
+                </div>
+            </>
+        );
+
+        const statsBlock = wrapWithSidebarGroup(calendarSidebarStatistics, undefined, SidebarGroups.CALENDAR_STATISTICS, 'אז כמה פעילויות כבר משובצות?', 2);
+        return <><hr className={"margin-block-2"}/>{statsBlock}</>;
+    }
+
+    const renderPrioritiesLegend = () => {
 
         const renderPrioritiesStatistics = () => {
             const eventsByPriority: Record<string, SidebarEvent[] & CalendarEvent[]> = {};
@@ -131,113 +277,51 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             )})
         }
 
-        const renderCalendarSidebarStatistics = () => {
-            return (
-                <>
-                    <div className={"sidebar-statistics"}>
-                        <i className="fa fa-calendar-check-o" aria-hidden="true"></i>
-                        {eventStore.calendarEvents.length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_CALENDAR')}
-                    </div>
-                    <div className={"sidebar-statistics"}>
-                        <i className="fa fa-calendar-times-o" aria-hidden="true"></i>
-                        {Object.values(eventStore.sidebarEvents).flat().length} {TranslateService.translate(eventStore,'EVENTS_ON_THE_SIDEBAR')}
-                    </div>
-                </>
-            );
-        }
+        const prioritiesBlock = wrapWithSidebarGroup(<>{renderPrioritiesStatistics()}</>, undefined, SidebarGroups.PRIORITIES_LEGEND, 'מקרא צבעים וכמויות', Object.keys(TriplanPriority).length);
 
-        const renderNoLocationEventsStatistics = () => {
-            const eventsWithNoLocationArr = eventStore.allEvents
-                .filter((x) => {
-
-                    const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
-                    const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
-                    const eventIsANote = (x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay)); // in this case location is irrelevant.
-
-                    return eventHaveNoLocation && !eventIsANote;
-                });
-
-            const eventsWithNoLocation = _.uniq(eventsWithNoLocationArr.map(x => x.id));
-
-            // console.log('events with no location', eventsWithNoLocationArr);
-
-            const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation ?
-                'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
-
-            return (!!eventsWithNoLocation.length) &&
-                (
-                    <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoLocation && 'blue-color')}>
-                        <Button
-                            icon={"fa-exclamation-triangle"}
-                            text={`${eventsWithNoLocation.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_LOCATION')} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
-                            onClick={() => {
-                                eventStore.toggleShowOnlyEventsWithNoLocation();
-                            }}
-                            flavor={ButtonFlavor['movable-link']}
-                            className={getClasses(eventStore.showOnlyEventsWithNoLocation && 'blue-color')}
-                        />
-                    </div>
-                );
-        }
-
-        const renderOpeningHoursEventsStatistics = () => {
-            const eventsWithNoHoursArr = eventStore.allEvents
-                .filter((x) => {
-
-                    const eventHaveNoHours = !(x.openingHours || (x.extendedProps && x.extendedProps.openingHours));
-                    const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
-                    const eventIsANote = (x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay)); // in this case location is irrelevant.
-
-                    return eventHaveNoHours && !eventIsANote;
-                });
-
-            const eventsWithNoHours = _.uniq(eventsWithNoHoursArr.map(x => x.id));
-
-            // console.log('events with no location', eventsWithNoLocationArr);
-
-            const eventsWithNoHoursKey = eventStore.showOnlyEventsWithNoOpeningHours ?
-                'SHOW_ALL_EVENTS' : 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
-
-            return (!!eventsWithNoHours.length) &&
-                (
-                    <div className={getClasses(["sidebar-statistics padding-inline-0"], eventStore.showOnlyEventsWithNoOpeningHours && 'blue-color')}>
-                        <Button
-                            icon={"fa-exclamation-triangle"}
-                            text={`${eventsWithNoHours.length} ${TranslateService.translate(eventStore,'EVENTS_WITH_NO_OPENING_HOURS')} (${TranslateService.translate(eventStore, eventsWithNoHoursKey)})`}
-                            onClick={() => {
-                                eventStore.toggleShowOnlyEventsWithNoOpeningHours();
-                            }}
-                            flavor={ButtonFlavor['movable-link']}
-                            className={getClasses(eventStore.showOnlyEventsWithNoOpeningHours && 'blue-color')}
-                        />
-                    </div>
-                );
-        }
-
-        return (
-            <>
-                {renderCalendarSidebarStatistics()}
-                {renderNoLocationEventsStatistics()}
-                {renderOpeningHoursEventsStatistics()}
-                <hr/>
-                <div>
-                    {renderPrioritiesStatistics()}
-                </div>
-            </>
-        )
+        return <><hr className={"margin-block-2"}/>{prioritiesBlock}</>;
     }
 
     const renderCategories = () => {
 
         const renderExpandCollapse = () => {
-            const eyeIcon = eventStore.hideEmptyCategories ? 'fa-eye-slash' : 'fa-eye';
+            const eyeIcon = eventStore.hideEmptyCategories ? 'fa-eye' : 'fa-eye-slash';
             const expandMinimizedEnabled =
                 eventStore.hideEmptyCategories ? Object.values(eventStore.getSidebarEvents).flat().length > 0 :
                     eventStore.categories.length > 0;
 
             return (
                 <>
-                    <div style={{ display: "flex", gap: "10px" }}>
+                    {/*<div style={{ display: "flex", gap: "10px" }}>*/}
+                    {/*    <Button*/}
+                    {/*        className={getClasses(["padding-inline-start-10 pointer"], eventStore.hideEmptyCategories && 'blue-color')}*/}
+                    {/*        onClick={() => {*/}
+                    {/*            eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);*/}
+                    {/*        }}*/}
+                    {/*        flavor={ButtonFlavor.link}*/}
+                    {/*        icon={eyeIcon}*/}
+                    {/*        text={TranslateService.translate(eventStore, !eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES')}*/}
+                    {/*    />*/}
+                    {/*</div>*/}
+                    <div style={{ display: "flex", gap: "5px", paddingBlockEnd: "10px" }}>
+                        <Button
+                            disabled={!expandMinimizedEnabled}
+                            flavor={ButtonFlavor.link}
+                            className={"padding-inline-start-10"}
+                            onClick={eventStore.openAllCategories.bind(eventStore)}
+                            icon={"fa-plus-square-o"}
+                            text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
+                        />
+                        <div className={"sidebar-statistics"} style={{ padding: 0 }}> | </div>
+                        <Button
+                            disabled={!expandMinimizedEnabled}
+                            flavor={ButtonFlavor.link}
+                            className={"padding-inline-start-10"}
+                            onClick={eventStore.closeAllCategories.bind(eventStore)}
+                            icon={"fa-minus-square-o"}
+                            text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
+                        />
+                        <div className={"sidebar-statistics"} style={{ padding: 0 }}> | </div>
                         <Button
                             className={getClasses(["padding-inline-start-10 pointer"], eventStore.hideEmptyCategories && 'blue-color')}
                             onClick={() => {
@@ -247,26 +331,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                             icon={eyeIcon}
                             text={TranslateService.translate(eventStore, !eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES')}
                         />
-                    </div>
-                    <div style={{ display: "flex", gap: "10px", paddingBlockEnd: "10px" }}>
-                        <Button
-                            disabled={!expandMinimizedEnabled}
-                            flavor={ButtonFlavor.link}
-                            className={"padding-inline-start-10"}
-                            onClick={eventStore.openAllCategories.bind(eventStore)}
-                            icon={"fa-plus-square-o"}
-                            text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
-                        />
-                        <div className={"sidebar-statistics"}> | </div>
-                        <Button
-                            disabled={!expandMinimizedEnabled}
-                            flavor={ButtonFlavor.link}
-                            className={"padding-inline-start-10"}
-                            onClick={eventStore.closeAllCategories.bind(eventStore)}
-                            icon={"fa-minus-square-o"}
-                            text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
-                        />
-
                     </div>
                 </>
             )
@@ -473,11 +537,12 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             {renderAddEventButton()}
             {renderAddCategoryButton()}
             <div>
-                {!eventStore.isListView && renderClearAll()}
-                {renderImportButtons()}
-                <hr/>
-                {renderStatistics()}
-                <hr/>
+                {renderWarnings()}
+                {renderActions()}
+                {renderCalendarSidebarStatistics()}
+                {renderPrioritiesLegend()}
+                <hr className={"margin-block-2"}/>
+                <div className={"spacer margin-top-40"}/>
                 {renderCategories()}
             </div>
         </div>

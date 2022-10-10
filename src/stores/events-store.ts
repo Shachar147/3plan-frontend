@@ -38,6 +38,7 @@ export class EventStore {
     @observable viewMode = ViewMode.calendar;
     @observable hideCustomDates = this.viewMode == ViewMode.calendar;
     @observable openCategories = observable.map<number,number>({});
+    @observable openSidebarGroups = observable.map<string,number>({});
     @observable hideEmptyCategories: boolean = false;
     @observable tripName: string = "";
     @observable allEventsTripName: string = "";
@@ -283,6 +284,20 @@ export class EventStore {
             this.openCategories.delete(categoryId);
         } else {
             this.openCategory(categoryId);
+        }
+    }
+
+    @action
+    openSidebarGroup(groupKey: string){
+        this.openSidebarGroups.set(groupKey, 1);
+    }
+
+    @action
+    toggleSidebarGroups(groupKey: string){
+        if (this.openSidebarGroups.has(groupKey)){
+            this.openSidebarGroups.delete(groupKey);
+        } else {
+            this.openSidebarGroup(groupKey);
         }
     }
 
