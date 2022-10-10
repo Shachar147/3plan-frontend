@@ -13,7 +13,7 @@ import './map-container.scss';
 import ModalService from "../../services/modal-service";
 
 function Marker(props) {
-    const { text, lng, lat, locationData, searchValue } = props
+    const { text, lng, lat, locationData, openingHours, searchValue } = props
     const eventStore = useContext(eventStoreContext);
     return (
         <div style={{
@@ -22,7 +22,7 @@ function Marker(props) {
             flexDirection: "column",
             minWidth: "fit-content"
         }} onClick={() => {
-            ModalService.openAddSidebarEventModal(eventStore, undefined, { location: locationData, title: searchValue })
+            ModalService.openAddSidebarEventModal(eventStore, undefined, { location: locationData, title: searchValue, openingHours: openingHours })
         }}>
             <i className="fa fa-map-marker fa-4x text-success"/>
             <div className="fa-marker-text">{props.text}</div>
@@ -303,7 +303,8 @@ const MapContainer = () => {
                 const coordinate = {
                     lat: selectedSearchLocation.latitude,
                     lng: selectedSearchLocation.longitude,
-                    address: selectedSearchLocation.address
+                    address: selectedSearchLocation.address,
+                    openingHours: window.openingHours
                 }
                 searchMarkers = [coordinate];
             }
@@ -654,6 +655,7 @@ const MapContainer = () => {
                         lat={place.lat}
                         lng={place.lng}
                         searchValue={searchCoordinatesSearchValue}
+                        openingHours={place.openingHours}
                     />
                 ))}
             </GoogleMapReact>

@@ -307,7 +307,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                         <Button
                             disabled={!expandMinimizedEnabled}
                             flavor={ButtonFlavor.link}
-                            className={"padding-inline-start-10"}
+                            // className={"padding-inline-start-10"}
                             onClick={eventStore.openAllCategories.bind(eventStore)}
                             icon={"fa-plus-square-o"}
                             text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
@@ -323,7 +323,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                         />
                         <div className={"sidebar-statistics"} style={{ padding: 0 }}> | </div>
                         <Button
-                            className={getClasses(["padding-inline-start-10 pointer"], eventStore.hideEmptyCategories && 'blue-color')}
+                            className={getClasses(["padding-inline-start-10 pointer padding-inline-end-10"], eventStore.hideEmptyCategories && 'blue-color')}
                             onClick={() => {
                                 eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);
                             }}
@@ -336,41 +336,45 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             )
         }
 
+        const closedStyle = {
+            maxHeight: 0, overflowY: "hidden", padding: 0, transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
+        };
+        const editIconStyle = {
+            display: "flex",
+            justifyContent: "flex-end",
+            flexGrow: 1,
+            paddingInline: "10px",
+            gap: "10px",
+            color: "var(--gray)"
+        }
+        const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+        const borderStyle = "1px solid rgba(0, 0, 0, 0.05)";
+
         return (
             <>
                 {renderExpandCollapse()}
-                {eventStore.categories.map((category) => {
-
-                    const isOpen = eventStore.openCategories.has(category.id);
-                    const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
-
+                {eventStore.categories.map((category, index) => {
                     const itemsCount = (eventStore.getSidebarEvents[category.id] || []).filter((e) => e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1).length;
-
                     if (eventStore.hideEmptyCategories && itemsCount === 0) { return <></> }
 
                     const openStyle = {
                         maxHeight: (100 * itemsCount) + 90 + 'px', padding: "10px", transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
                     };
-                    const closedStyle = {
-                        maxHeight: 0, overflowY: "hidden", padding: 0, transition: "padding 0.2s ease, max-height 0.3s ease-in-out"
-                    };
 
-                    const editIconStyle = {
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        flexGrow: 1,
-                        paddingInline: "10px",
-                        gap: "5px",
-                        color: "var(--gray)"
-                    }
-
+                    const isOpen = eventStore.openCategories.has(category.id);
                     const eventsStyle = isOpen ? openStyle : closedStyle;
 
                     return (
                         <div className={"external-events"} key={category.id}>
-                            <div className={"sidebar-statistics"} style={{ paddingInlineStart: "10px", cursor: "pointer", backgroundColor: "#e5e9ef80", borderBottom: "1px solid #e5e9ef", height: "45px" }}  onClick={() => {
-                                eventStore.toggleCategory(category.id);
-                            }}>
+                            <div className={"sidebar-statistics"}
+                                 style={{
+                                    paddingInlineStart: "10px", cursor: "pointer", backgroundColor: "#e5e9ef80", borderBottom: borderStyle, height: "45px",
+                                    borderTop: index === 0 ? borderStyle : "0"
+                                }}
+                                 onClick={() => {
+                                    eventStore.toggleCategory(category.id);
+                                }}
+                            >
                                 <i className={isOpen ? "fa fa-angle-double-down" : "fa fa-angle-double-" + arrowDirection} aria-hidden="true"></i>
                                 <span>{category.icon ? `${category.icon} ` : ''}{category.title}</span>
                                 <div>({itemsCount})</div>
@@ -398,21 +402,50 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     }
 
     const renderAddCategoryButton = () => (
-        <Button flavor={ButtonFlavor.secondary} className={"black"} onClick={() => {
-            modalService.openAddCategoryModal(eventStore);
-        }} text={TranslateService.translate(eventStore,'ADD_CATEGORY.BUTTON_TEXT')}/>
+        <div
+            style={{
+                backgroundColor: "#f2f5f8",
+                display: "flex",
+                flex: "1 1 0",
+                maxHeight: "40px"
+            }}
+        >
+            <Button
+                flavor={ButtonFlavor.secondary}
+                className={"black"}
+                onClick={() => {
+                    modalService.openAddCategoryModal(eventStore);
+                }}
+                style={{
+                    width: "100%"
+                }}
+                text={TranslateService.translate(eventStore,'ADD_CATEGORY.BUTTON_TEXT')}
+            />
+        </div>
     )
 
     const renderAddEventButton = () => (
-        <Button
-            flavor={ButtonFlavor.primary}
-            onClick={() => {
-                modalService.openAddSidebarEventModal(eventStore, undefined);
+        <div
+            style={{
+                backgroundColor: "#f2f5f8",
+                display: "flex",
+                flex: "1 1 0",
+                maxHeight: "40px"
             }}
-            text={TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')}
-            disabled={eventStore.categories.length === 0}
-            disabledReason={TranslateService.translate(eventStore, 'DISABLED_REASON.THERE_ARE_NO_CATEGORIES')}
-        />
+        >
+            <Button
+                flavor={ButtonFlavor.primary}
+                onClick={() => {
+                    modalService.openAddSidebarEventModal(eventStore, undefined);
+                }}
+                style={{
+                    width: "100%"
+                }}
+                text={TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')}
+                disabled={eventStore.categories.length === 0}
+                disabledReason={TranslateService.translate(eventStore, 'DISABLED_REASON.THERE_ARE_NO_CATEGORIES')}
+            />
+        </div>
     )
 
     const onEditCategory = (categoryId: number) => {
@@ -534,15 +567,18 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     return (
         <div className={"external-events-container bright-scrollbar"}>
             {renderCustomDates()}
-            {renderAddEventButton()}
-            {renderAddCategoryButton()}
+            <div className={"flex-row gap-10 sticky-0"} style={{ backgroundColor: "#f2f5f8", zIndex: 1, minHeight: 50 }}>
+                {renderAddEventButton()}
+                {renderAddCategoryButton()}
+            </div>
             <div>
                 {renderWarnings()}
                 {renderActions()}
                 {renderCalendarSidebarStatistics()}
                 {renderPrioritiesLegend()}
                 <hr className={"margin-block-2"}/>
-                <div className={"spacer margin-top-40"}/>
+                {/*<div className={"spacer margin-top-40"}/>*/}
+                <hr style={{ marginBlock: "20px 10px" }}/>
                 {renderCategories()}
             </div>
         </div>

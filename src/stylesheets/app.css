@@ -20,27 +20,9 @@ body {
   gap: 5px;
 }
 
-.flex-gap-5 {
-    display: flex;
-    gap: 5px;
-}
-
-.align-items-center {
-    align-items: center;
-}
-
-.display-none {
-  display: none;
-}
-
 .opacity-0 {
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
-}
-
-.position-absolute {
-  position: absolute;
-  left: -2000px;
 }
 
 .fc-scroller::-webkit-scrollbar,
@@ -62,42 +44,8 @@ body {
  width: 6px;
 }
 
-.padding-inline-start-10 {
-    padding-inline-start: 10px;
-}
-
-.padding-inline-0 {
-    padding-inline: 0;
-}
-
 .overflow-hidden {
     overflow: hidden;
-}
-
-.flex-1-1-0 {
-    display: flex;
-    flex: 1 1 0;
-}
-
-.flex-col {
-    display: flex;
-    flex-direction: column;
-}
-
-.flex-row {
-    display: flex;
-    flex-direction: row;
-}
-.flex-grow {
-    flex-grow: 1;
-}
-.flex-shrink {
-    flex-shrink: 1;
-}
-
-.flex-align-items-center {
-    display: flex;
-    align-items:center;
 }
 
 .visible {
@@ -113,18 +61,6 @@ body {
 
 .pointer {
     cursor: pointer;
-}
-
-.gap-5 {
-    gap: 5px;
-}
-
-.gap-10 {
-    gap: 10px;
-}
-
-.gap-15 {
-    gap: 15px;
 }
 
 .font-size-20 {
@@ -204,18 +140,94 @@ body {
     font-size: 13px;
 }
 
-.display-none {
-    display: none;
-}
-
 .filter-tags-container {
     display: flex;
     gap: 20px;
 }
 
+/* padding */
+.padding-inline-start-10 {
+    padding-inline-start: 10px;
+}
+
+.padding-inline-end-10 {
+    padding-inline-end: 10px;
+}
+
+.padding-inline-0 {
+    padding-inline: 0;
+}
+
+/* margin */
 .margin-block-2 {
     margin-block: 2px;
 }
 .margin-top-40 {
     margin-top: 40px;
+}
+
+/* position */
+.sticky-0 {
+    position: sticky;
+    top: 0;
+}
+
+.position-absolute {
+    position: absolute;
+    left: -2000px;
+}
+
+/* display */
+.display-none {
+    display: none;
+}
+
+/* flexbox */
+.flex-1-1-0 {
+    display: flex;
+    flex: 1 1 0;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+.flex-shrink {
+    flex-shrink: 1;
+}
+
+.flex-align-items-center {
+    display: flex;
+    align-items:center;
+}
+
+.gap-5 {
+    gap: 5px;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+.gap-15 {
+    gap: 15px;
+}
+
+.flex-gap-5 {
+    display: flex;
+    gap: 5px;
+}
+
+.align-items-center {
+    align-items: center;
 }
