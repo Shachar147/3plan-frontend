@@ -150,3 +150,13 @@ body.rtl .opening-hours-component .opening-hours-day-row .opening-hours-day-name
 body.rtl .external-events-container {
     max-width: 420px;
 }
+
+body.rtl .table-responsive {
+    text-align: right;
+    direction: rtl;
+}
+
+body.rtl .align-layout-direction {
+    text-align: right;
+    direction: rtl;
+}

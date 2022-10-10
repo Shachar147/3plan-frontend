@@ -16,6 +16,7 @@ import * as _ from 'lodash';
 import {priorityToColor} from "../../utils/consts";
 import {EventInput} from "@fullcalendar/react";
 import ListViewService from "../../services/list-view-service";
+import ReactModalService from "../../services/react-modal-service";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
@@ -465,7 +466,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 flavor={ButtonFlavor.secondary}
                 className={"black"}
                 onClick={() => {
-                    modalService.openAddCategoryModal(eventStore);
+                    const settings = ReactModalService.openAddCategoryModal(eventStore);
+                    eventStore.setModalSettings(settings);
                 }}
                 style={{
                     width: "100%"

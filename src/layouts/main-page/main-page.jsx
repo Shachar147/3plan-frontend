@@ -19,6 +19,7 @@ import TriplanSidebar from "../../components/triplan-sidebar/triplan-sidebar";
 import MapContainer from "../../components/map-container/map-container";
 import _ from "lodash";
 import ListViewService from "../../services/list-view-service";
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 const MainPage = () => {
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)

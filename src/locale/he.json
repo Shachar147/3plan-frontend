@@ -97,8 +97,9 @@
   "ADD_CATEGORY_MODAL.TITLE.ADD_CATEGORY": "הוסף קטגוריה",
   "ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER": "הזן שם קטגוריה...",
   "MODALS.CREATE.TITLE": "נוצר!",
-  "MODALS.CREATE_CATEGORY.CONTENT": "הקסגוריה נוצרה בהצלחה",
+  "MODALS.CREATE_CATEGORY.CONTENT": "הקטגוריה נוצרה בהצלחה",
   "MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST": "קטגוריה עם השם הזה כבר קיימת",
+  "MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY": "שם הקטגוריה לא יכול להיות ריק",
   "MODALS.LOCATION": "מיקום",
   "EVENT_WITH_NAME": "פעילות בשם",
   "ALREADY_EXISTS": "כבר קיים",
@@ -218,5 +219,6 @@
   "SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS": "פעולות",
   "SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "אז כמה פעילויות כבר משובצות?",
   "SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "מקרא צבעים וכמויות",
-  "NO_DISPLAYED_CATEGORIES": "אין קטגוריות מוצגות"
+  "NO_DISPLAYED_CATEGORIES": "אין קטגוריות מוצגות",
+  "SELECT_ICON_PLACEHOLDER": "הקלד כדי לחפש"
 }

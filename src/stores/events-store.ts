@@ -1,4 +1,4 @@
-import {createContext} from "react";
+import {createContext, useContext, useState} from "react";
 import {action, computed, observable, runInAction, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
 import {
@@ -25,6 +25,19 @@ import _ from "lodash";
 import {containsDuplicates} from "../utils/utils";
 import ListViewService from "../services/list-view-service";
 
+const defaultModalSettings = {
+    show: false,
+    title: "",
+    content: undefined,
+    onConfirm: () => {},
+    onCancel: () => {
+        // const eventStore = useContext(eventStoreContext);
+        // runInAction(() => {
+        //     eventStore.modalSettings.show = false;
+        // })
+    }
+}
+
 export class EventStore {
     categoryIdBuffer = 0;
     eventIdBuffer = 0;
@@ -50,6 +63,8 @@ export class EventStore {
     @observable calculatingDistance = 0;
     @observable distanceResults = observable.map<string,DistanceResult>(getDefaultDistanceResults());
     @observable travelMode = GoogleTravelMode.DRIVING;
+    @observable modalSettings = defaultModalSettings;
+    @observable modalValues: any = {};
 
     constructor() {
         this.categories = getDefaultCategories(this);
@@ -390,6 +405,11 @@ export class EventStore {
 
         // update local storage
         setDefaultDistanceResults(this.distanceResults, this.tripName);
+    }
+
+    @action
+    setModalSettings(newModalSettings: any){
+        this.modalSettings = newModalSettings;
     }
 
     // --- private functions ----------------------------------------------------

@@ -89,6 +89,7 @@
   "MODALS.CREATE.TITLE": "Created!",
   "MODALS.CREATE_CATEGORY.CONTENT": "Category have been created",
   "MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST": "a category with that name already exist",
+  "MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY": "category name can't be empty",
   "MODALS.LOCATION": "Location",
   "EVENT_WITH_NAME": "Activity with name",
   "ALREADY_EXISTS": "already exists",
@@ -208,5 +209,6 @@
   "SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS": "Actions",
   "SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "So, how many activities already scheduled?",
   "SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "Colors legend and summaries",
-  "NO_DISPLAYED_CATEGORIES": "No displayed categories"
+  "NO_DISPLAYED_CATEGORIES": "No displayed categories",
+  "SELECT_ICON_PLACEHOLDER": "Type to search"
 }

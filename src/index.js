@@ -17,6 +17,8 @@ import {eventStoreContext} from "./stores/events-store";
 import ThemeExample from "./layouts/theme-example/theme-example";
 import {runInAction} from "mobx";
 import {getCoordinatesRangeKey, padTo2Digits} from "./utils/utils";
+import SweetAlert from "react-bootstrap-sweetalert";
+import { observer, Observer } from 'mobx-react';
 
 // V make sure that if place have closed days like KNOCX it handles it.
 // change font to INTER (plato)
@@ -396,17 +398,30 @@ const RootRouter = () => {
     }
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route exact path="/" element={<LandingPage/>}/>
-                <Route exact path="/getting-started" element={<GettingStartedPage/>}/>
-                <Route exact path="/my-trips" element={<MyTrips/>}/>
-                <Route path="/plan/:tripName/:locale" element={<MainPage/>}/>
-                <Route path="/plan/:tripName/" element={<MainPage/>}/>
-                <Route path="/plan" element={<MainPage/>}/>
-                <Route path="/theme" element={<ThemeExample/>}/>
-            </Routes>
-        </BrowserRouter>
+        <>
+            <BrowserRouter>
+                <Routes>
+                    <Route exact path="/" element={<LandingPage/>}/>
+                    <Route exact path="/getting-started" element={<GettingStartedPage/>}/>
+                    <Route exact path="/my-trips" element={<MyTrips/>}/>
+                    <Route path="/plan/:tripName/:locale" element={<MainPage/>}/>
+                    <Route path="/plan/:tripName/" element={<MainPage/>}/>
+                    <Route path="/plan" element={<MainPage/>}/>
+                    <Route path="/theme" element={<ThemeExample/>}/>
+                </Routes>
+            </BrowserRouter>
+            <Observer>{ () => <SweetAlert
+                // title={"test"}
+                // onConfirm={() => { alert("confirm") }}
+                // onCancel={() => { alert("cancel") }}
+                // show={true}
+                {...eventStore.modalSettings}
+                confirmBtnBsStyle={eventStore.modalSettings.danger ? 'danger' : 'info' }
+                // dependencies={[this.state.firstName, this.state.lastName]}
+            >
+                {eventStore.modalSettings.content}
+            </SweetAlert>}</Observer>
+        </>
     );
 }
 
