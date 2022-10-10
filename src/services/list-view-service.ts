@@ -615,7 +615,7 @@ const ListViewService = {
                 }
 
                 const thisLocation = x.event.extendedProps.location;
-                if (prevLocation && prevLocation.address != thisLocation.address){
+                if (prevLocation && thisLocation && prevLocation.address != thisLocation.address){
                     loggerArr.push("~ " + prevTitle + " -> " + x.event.title);
 
                     let distanceToNextEvent = calculateDistance(eventStore, prevLocation, thisLocation); // prevTitle + " -> " + x.event.title;

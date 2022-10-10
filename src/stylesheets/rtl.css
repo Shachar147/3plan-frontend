@@ -146,3 +146,7 @@ body.rtl .map-container .visible-items-pane {
 body.rtl .opening-hours-component .opening-hours-day-row .opening-hours-day-name{
     width: 60px;
 }
+
+body.rtl .external-events-container {
+    max-width: 420px;
+}
