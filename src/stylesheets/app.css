@@ -276,6 +276,8 @@ body {
 
 .sweet-alert {
     overflow: unset !important;
+    width: fit-content !important;
+    max-width: 800px;
 }
 
 .react-modal {
@@ -314,8 +316,8 @@ body {
     border-bottom: 1px solid #dee2e6;
 }
 
-.input-with-label input.textInput {
-    height: 47px;
+.input-with-label input.textInput,
+.input-with-label textarea.textAreaInput {
     border: 1px solid #d6d6d6;
     border-radius: 4px;
     padding-inline: 8px;
@@ -325,8 +327,12 @@ body {
     font-weight: 300;
 }
 
+.input-with-label input.textInput {
+    height: 37px; /* 47px */
+}
+
 .input-with-label label {
-    min-width: 50px;
+    min-width: 78px;
 }
 
 .sweet-alert .btn {

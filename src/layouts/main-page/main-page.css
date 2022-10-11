@@ -182,9 +182,9 @@ textarea {
     min-height: 33px;
 }
 
-#new-icon {
-    width: 200px !important;
-}
+/*#new-icon {*/
+/*    width: 200px !important;*/
+/*}*/
 
 button:focus {
     outline: none !important;
@@ -335,4 +335,14 @@ table, table tr, table tr td, table th {
 
 .fc-media-screen {
     flex: 1 1 0;
+}
+
+.icon-selector,
+.triplan-selector {
+    display:flex;
+    flex: 1 1 0;
+}
+
+.triplan-selector>div {
+    width: 100%;
 }

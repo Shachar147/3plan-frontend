@@ -4,6 +4,7 @@ import Select from "react-select";
 import {eventStoreContext} from "../../stores/events-store";
 import TranslateService from "../../services/translate-service";
 import './icon-selector.scss';
+import {SELECT_STYLE} from "../../utils/ui-utils";
 
 export interface IconSelectorProps {
     id?: string,
@@ -28,8 +29,6 @@ const IconSelector = (props: IconSelectorProps) => {
         }
     }
 
-    console.log("selected", selectedOption);
-
     return (
         <div className={"icon-selector"}>
             <Select
@@ -41,7 +40,8 @@ const IconSelector = (props: IconSelectorProps) => {
                 placeholder={TranslateService.translate(eventStore, 'SELECT_ICON_PLACEHOLDER')}
                 value={selectedOption}
                 onChange={handleSelect}
-                maxMenuHeight={40 * 3}
+                maxMenuHeight={42 * 3}
+                styles={SELECT_STYLE}
             />
         </div>
     )

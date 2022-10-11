@@ -220,5 +220,8 @@
   "SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "אז כמה פעילויות כבר משובצות?",
   "SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "מקרא צבעים וכמויות",
   "NO_DISPLAYED_CATEGORIES": "אין קטגוריות מוצגות",
-  "SELECT_ICON_PLACEHOLDER": "הקלד כדי לחפש"
+  "SELECT_ICON_PLACEHOLDER": "הקלד כדי לחפש",
+  "SELECT_CATEGORY_PLACEHOLDER": "הקלד כדי לחפש",
+  "MODALS.PLACEHOLDER.PREFIX": "הזן",
+  "TYPE_TO_SEARCH_PLACEHOLDER": "הקלד כדי לחפש"
 }

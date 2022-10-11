@@ -162,6 +162,30 @@ const renderViewSelector = (eventStore: EventStore) => {
     )
 }
 
+export const SELECT_STYLE = {
+    control: (provided: any) => ({
+        ...provided,
+        minHeight: '40px',
+        height: '40px',
+    }),
+    valueContainer: (provided: any) => ({
+        ...provided,
+        height: '40px',
+        padding: '0 6px'
+    }),
+        input: (provided: any) => ({
+        ...provided,
+        margin: '0px',
+    }),
+    indicatorSeparator: () => ({
+        // display: 'none',
+    }),
+    indicatorsContainer: (provided: any) => ({
+        ...provided,
+        height: '40px',
+    }),
+};
+
 export const renderFooterLine = (eventStore: EventStore, classList?: string) => (
     <div className={getClasses(["footer main-font"], classList)}>
         <a><img alt="" src={"/images/landing-page/icons/checklist.png"}/> {TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.LIST')}</a>

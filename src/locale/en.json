@@ -210,5 +210,8 @@
   "SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "So, how many activities already scheduled?",
   "SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "Colors legend and summaries",
   "NO_DISPLAYED_CATEGORIES": "No displayed categories",
-  "SELECT_ICON_PLACEHOLDER": "Type to search"
+  "SELECT_ICON_PLACEHOLDER": "Type to search",
+  "SELECT_CATEGORY_PLACEHOLDER": "Type to search",
+  "MODALS.PLACEHOLDER.PREFIX": "Enter",
+  "TYPE_TO_SEARCH_PLACEHOLDER": "Type to search"
 }

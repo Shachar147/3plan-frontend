@@ -161,12 +161,19 @@ const RootRouter = () => {
     document.title = TranslateService.translate(eventStore, 'APP.TITLE');
 
     window.setManualLocation = (className = 'location-input', variableName = 'selectedLocation') => {
-        const address = document.querySelector(`.${className}`).value;
+        const address = document.querySelector(`.${className}`)?.value;
         window[variableName] = {
             address,
             latitude: undefined,
             longitude: undefined
         }
+
+        window.openingHours = undefined;
+        const summaryDiv = document.getElementsByClassName("opening-hours-details");
+        if (summaryDiv && summaryDiv.length > 0) {
+            summaryDiv[0].innerHTML = window.renderOpeningHours();
+        }
+
     }
 
     window.toggleClosed = (day) => {
@@ -264,7 +271,6 @@ const RootRouter = () => {
 
             window.openingHours = undefined;
             let openingHoursData = undefined;
-            debugger;
             if (place.opening_hours && place.opening_hours.periods) {
                 const opening_hours = place.opening_hours.periods;
                 openingHoursData = {};
@@ -272,7 +278,7 @@ const RootRouter = () => {
                 const is247 = (opening_hours.length === 1 && !opening_hours[0].close);
 
                 ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"].forEach((day, index) => {
-                    const period = is247 ? undefined : opening_hours[index];
+                    const period = opening_hours[index];
                     if (period) {
                         const start = is247 ? '00:00' : padTo2Digits(period.open.hours) + ':' + padTo2Digits(period.open.minutes);
                         const end = is247 ? '00:00' : padTo2Digits(period.close.hours) + ':' + padTo2Digits(period.close.minutes);
