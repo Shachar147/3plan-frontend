@@ -19,6 +19,11 @@ button:disabled {
     color: white;
     box-shadow: 0 5px 8px 0 rgb(41 152 255 / 21%);
     border: 0;
+
+    &.red {
+        background-color: var(--red);
+        box-shadow: none !important;
+    }
 }
 
 .swal2-confirm:not(:disabled):hover,

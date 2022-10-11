@@ -160,3 +160,8 @@ body.rtl .align-layout-direction {
     text-align: right;
     direction: rtl;
 }
+
+body.rtl .triplan-react-modal {
+    direction: rtl;
+    text-align: right;
+}

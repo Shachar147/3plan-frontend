@@ -45,6 +45,14 @@ const getDefaultSettings = (eventStore: EventStore) => {
         confirmBtnCssClass: 'primary-button',
         cancelBtnCssClass: 'link-button',
         dependencies: [eventStore.modalSettings, eventStore.modalValues],
+        customClass: 'triplan-react-modal',
+        reverseButtons: eventStore.getCurrentDirection() === 'rtl',
+        onCancel: () => {
+            runInAction(() =>{
+                eventStore.modalSettings.show = false;
+                eventStore.modalValues = {};
+            });
+        }
     }
 }
 
@@ -53,8 +61,6 @@ const ReactModalService = {
         eventStore.setModalSettings(settings);
     },
     openAddCategoryModal: (eventStore: EventStore) => {
-
-        const title = TranslateService.translate(eventStore, 'ADD_CATEGORY_MODAL.TITLE.ADD_CATEGORY');
 
         const onConfirm = () => {
 
@@ -98,13 +104,6 @@ const ReactModalService = {
             }
         }
 
-        const onCancel = () => {
-            runInAction(() =>{
-                eventStore.modalSettings.show = false;
-                eventStore.modalValues = {};
-            });
-        }
-
         const content = <Observer>{() => (
             <div className={"flex-col gap-20 align-layout-direction react-modal"}>
                 {ReactModalRenderHelper.renderInputWithLabel(
@@ -133,15 +132,13 @@ const ReactModalService = {
             </div>
         )}</Observer>
 
-        const settings = {
+        ReactModalService._openModal(eventStore, {
             ...getDefaultSettings(eventStore),
-            title,
-            onConfirm,
-            onCancel,
-            content,
+            title: TranslateService.translate(eventStore, 'ADD_CATEGORY_MODAL.TITLE.ADD_CATEGORY'),
             type: 'controlled',
-        }
-        ReactModalService._openModal(eventStore, settings);
+            onConfirm,
+            content,
+        });
      },
     openEditTripModal: (eventStore: EventStore, LSTripName: string) => {
         const tripName = LSTripName !== "" ? LSTripName.replaceAll("-"," ") : "";
@@ -201,13 +198,6 @@ const ReactModalService = {
             }
         }
 
-        const onCancel = () => {
-            runInAction(() =>{
-                eventStore.modalSettings.show = false;
-                eventStore.modalValues = {};
-            });
-        }
-
         const content = <Observer>{() => (
             <div className={"flex-col gap-20 align-layout-direction react-modal"}>
                 {ReactModalRenderHelper.renderInputWithLabel(
@@ -226,16 +216,36 @@ const ReactModalService = {
             </div>
         )}</Observer>
 
-        const settings = {
+        ReactModalService._openModal(eventStore, {
             ...getDefaultSettings(eventStore),
             title,
             onConfirm,
-            onCancel,
             content,
             type: 'controlled',
-        };
-        ReactModalService._openModal(eventStore, settings);
-    }
+        });
+    },
+    openDeleteTripModal: (eventStore: EventStore, LSTripName: string) => {
+        const tripName = LSTripName !== "" ? LSTripName.replaceAll("-"," ") : "";
+        ReactModalService._openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${tripName}`,
+            content: (
+                <div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MODALS.DELETE_TRIP.CONTENT') }} />
+            ),
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
+            confirmBtnCssClass: 'primary-button red',
+            onConfirm: () => {
+                const lsKeys = getLocalStorageKeys();
+                const separator = (LSTripName === "") ? "" : "-";
+                Object.values(lsKeys).forEach((localStorageKey) => {
+                    const key = [localStorageKey,LSTripName].join(separator);
+                    localStorage.removeItem(key);
+                });
+                window.location.reload();
+            }
+        })
+    },
 }
 
 export default ReactModalService;

@@ -81,7 +81,7 @@ const MyTrips = () => {
                                         justifyContent: "flex-end",
                                         flexGrow: 1,
                                         paddingInline: "10px",
-                                        gap: "5px",
+                                        gap: "10px",
                                         color: "var(--gray)"
                                     }}>
                                         <i className="fa fa-pencil-square-o" aria-hidden="true"
@@ -100,7 +100,7 @@ const MyTrips = () => {
                                         }} onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            ModalService.openDeleteTripModal(eventStore, LSTripName);
+                                            ReactModalService.openDeleteTripModal(eventStore, LSTripName);
                                         }}></i>
                                 </div>
                             </div>
