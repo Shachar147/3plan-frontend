@@ -60,6 +60,9 @@ const ReactModalService = {
     _openModal: (eventStore: EventStore, settings: any) => {
         eventStore.setModalSettings(settings);
     },
+    _AlertMessage: (eventStore:EventStore, titleKey: string, contentKey: string, type: 'error' | 'success') => {
+        Alert.fire(TranslateService.translate(eventStore, titleKey), TranslateService.translate(eventStore, contentKey), type);
+    },
     openAddCategoryModal: (eventStore: EventStore) => {
 
         const onConfirm = () => {
@@ -75,12 +78,12 @@ const ReactModalService = {
             // validate not already exist
             if (!newName || newName.length === 0) {
                 isOk = false;
-                Alert.fire(TranslateService.translate(eventStore, "MODALS.ERROR.TITLE"), TranslateService.translate(eventStore, "MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY"), "error");
+                ReactModalService._AlertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY", "error")
                 return;
             }
             else if (eventStore.categories.find((c) => c.title === newName)) {
                 isOk = false;
-                Alert.fire(TranslateService.translate(eventStore, "MODALS.ERROR.TITLE"), TranslateService.translate(eventStore, "MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST"), "error");
+                ReactModalService._AlertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST", "error");
                 return;
             }
 
@@ -99,8 +102,7 @@ const ReactModalService = {
                     eventStore.modalSettings.show = false;
                     eventStore.modalValues = {};
                 });
-
-                Alert.fire(TranslateService.translate(eventStore, "MODALS.CREATE.TITLE"), TranslateService.translate(eventStore, "MODALS.CREATE_CATEGORY.CONTENT"), "success");
+                ReactModalService._AlertMessage(eventStore,"MODALS.CREATE.TITLE", "MODALS.CREATE_CATEGORY.CONTENT", "success");
             }
         }
 
@@ -162,7 +164,8 @@ const ReactModalService = {
                         const _tripName = LSTripName !== "" ? LSTripName.replaceAll("-", " ") : "";
                         return _tripName === newName
                     }).length > 0) {
-                    Alert.fire(TranslateService.translate(eventStore, "MODALS.ERROR.TITLE"), TranslateService.translate(eventStore, "MODALS.ERROR.TRIP_NAME_ALREADY_EXIST"), "error");
+
+                    ReactModalService._AlertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.TRIP_NAME_ALREADY_EXIST", "error");
                     isOk = false;
                     return;
                 }
@@ -190,7 +193,7 @@ const ReactModalService = {
                     eventStore.modalValues = {};
                 });
 
-                Alert.fire(TranslateService.translate(eventStore, "MODALS.UPDATED.TITLE"), TranslateService.translate(eventStore, "MODALS.UPDATED_TRIP.CONTENT"), "success");
+                ReactModalService._AlertMessage(eventStore,"MODALS.UPDATED.TITLE", "MODALS.UPDATED_TRIP.CONTENT", "success");
 
                 setTimeout(() => {
                     window.location.reload();
