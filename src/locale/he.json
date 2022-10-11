@@ -96,7 +96,7 @@
   "ADD_CATEGORY.BUTTON_TEXT": "הוסף קטגוריה",
   "ADD_CATEGORY_MODAL.TITLE.ADD_CATEGORY": "הוסף קטגוריה",
   "ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER": "הזן שם קטגוריה...",
-  "MODALS.CREATE.TITLE": "נוצר!",
+  "MODALS.CREATE.TITLE": "ווהו!",
   "MODALS.CREATE_CATEGORY.CONTENT": "הקטגוריה נוצרה בהצלחה",
   "MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST": "קטגוריה עם השם הזה כבר קיימת",
   "MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY": "שם הקטגוריה לא יכול להיות ריק",

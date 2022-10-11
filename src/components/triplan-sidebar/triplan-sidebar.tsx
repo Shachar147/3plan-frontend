@@ -466,8 +466,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 flavor={ButtonFlavor.secondary}
                 className={"black"}
                 onClick={() => {
-                    const settings = ReactModalService.openAddCategoryModal(eventStore);
-                    eventStore.setModalSettings(settings);
+                    ReactModalService.openAddCategoryModal(eventStore);
                 }}
                 style={{
                     width: "100%"

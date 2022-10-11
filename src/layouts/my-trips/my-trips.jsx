@@ -11,6 +11,8 @@ import {
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import ModalService from "../../services/modal-service";
+import ReactModalService from "../../services/react-modal-service";
+import {runInAction} from "mobx";
 
 const MyTrips = () => {
 
@@ -86,7 +88,11 @@ const MyTrips = () => {
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
-                                                ModalService.openEditTripModal(eventStore, LSTripName);
+
+                                                if (Object.keys(eventStore.modalValues).length === 0) {
+                                                    eventStore.modalValues.name = LSTripName !== "" ? LSTripName.replaceAll("-", " ") : "";
+                                                }
+                                                ReactModalService.openEditTripModal(eventStore, LSTripName);
                                         }}></i>
                                         <i className="fa fa-trash-o" aria-hidden="true" style={{
                                             position: "relative",

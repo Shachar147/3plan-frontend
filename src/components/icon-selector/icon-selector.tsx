@@ -28,6 +28,8 @@ const IconSelector = (props: IconSelectorProps) => {
         }
     }
 
+    console.log("selected", selectedOption);
+
     return (
         <div className={"icon-selector"}>
             <Select

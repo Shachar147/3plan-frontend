@@ -20,6 +20,11 @@ import {getCoordinatesRangeKey, padTo2Digits} from "./utils/utils";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { observer, Observer } from 'mobx-react';
 
+// todo complete - see how can we pass initial value to a input and still be able to edit it. currently if I move it I cant change the value of the input.
+// ^ it's in edit trip name
+// WIP - refactor modals to the react version.
+// ... move success, error modals to the regular modals service and use it. use the same function so we can maybe move it too easily.
+
 // V make sure that if place have closed days like KNOCX it handles it.
 // change font to INTER (plato)
 // add photos and more place info to the window info line and to each event.
