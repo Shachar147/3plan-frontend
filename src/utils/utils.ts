@@ -473,8 +473,41 @@ export function toDistanceString(eventStore: EventStore, distanceResult: Distanc
     }
 }
 
+export function isMatching(str: string, options: string[]){
+    let isMatch = false;
+    let idx = 0;
+    while (!isMatch && idx < options.length){
+        isMatch = str.indexOf(options[idx]) !== -1
+        idx++;
+    }
+    return isMatch;
+}
+
 export function containsDuplicates(array: any[]) {
     return array.length !== new Set(array).size;
+}
 
+export function lockOrderedEvents(calendarEvent: EventInput) {
+    // const isOrdered = isEventAlreadyOrdered(calendarEvent);
+    // if (isOrdered) {
+    //     calendarEvent.editable = false;
+    //     calendarEvent.durationEditable = false;
+    //     calendarEvent.disableDragging = true;
+    //     calendarEvent.classNames = calendarEvent.classNames ? `${calendarEvent.classNames.toString().replace(' locked','')} locked` : 'locked';
+    // } else {
+    //     calendarEvent.editable = true;
+    //     calendarEvent.durationEditable = true;
+    //     calendarEvent.disableDragging = false;
+    //     console.log(calendarEvent.classNames)
+    //     // try {
+    //     //     calendarEvent.classNames = calendarEvent.classNames ? calendarEvent.classNames.replaceAll(/\s*locked/ig, '') : undefined;
+    //     // } catch {
+    //     //     debugger;
+    //     // }
+    // }
+    return calendarEvent;
+}
 
+export function isEventAlreadyOrdered(calendarEvent: EventInput) {
+    return calendarEvent?.extendedProps?.description && isMatching(calendarEvent?.extendedProps?.description.toLowerCase(), ["הוזמן", "ordered"]);
 }

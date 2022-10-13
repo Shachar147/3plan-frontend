@@ -22,7 +22,7 @@ import {convertMsToHM} from "../utils/time-utils";
 
 // @ts-ignore
 import _ from "lodash";
-import {containsDuplicates} from "../utils/utils";
+import {containsDuplicates, lockOrderedEvents} from "../utils/utils";
 import ListViewService from "../services/list-view-service";
 
 const defaultModalSettings = {
@@ -65,6 +65,7 @@ export class EventStore {
     @observable travelMode = GoogleTravelMode.DRIVING;
     @observable modalSettings = defaultModalSettings;
     @observable modalValues: any = {};
+    @observable modalValuesRefs: any = {};
 
     constructor() {
         this.categories = getDefaultCategories(this);
@@ -196,6 +197,9 @@ export class EventStore {
     @action
     setCalendarEvents(newCalenderEvents: EventInput[]){
         this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes("start"));
+
+        // lock ordered events
+        this.calendarEvents = this.calendarEvents.map((x: EventInput) => lockOrderedEvents(x));
 
         // update local storage
         if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;

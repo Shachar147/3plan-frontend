@@ -214,5 +214,6 @@
   "SELECT_ICON_PLACEHOLDER": "Type to search",
   "SELECT_CATEGORY_PLACEHOLDER": "Type to search",
   "MODALS.PLACEHOLDER.PREFIX": "Enter",
-  "TYPE_TO_SEARCH_PLACEHOLDER": "Type to search"
+  "TYPE_TO_SEARCH_PLACEHOLDER": "Type to search",
+  "LOCKED_EVENT_TOOLTIP": "This activity already been booked so you can't change it's dates"
 }

@@ -1,7 +1,7 @@
 import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "./interfaces";
 import {EventInput} from "@fullcalendar/react";
-import {padTo2Digits} from "./utils";
+import {lockOrderedEvents, padTo2Digits} from "./utils";
 import {EventStore} from "../stores/events-store";
 import TranslateService from "../services/translate-service";
 import {observable} from "mobx";

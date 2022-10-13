@@ -26,7 +26,7 @@ const ReactModalRenderHelper = {
     renderTextInput: (eventStore: EventStore, modalValueName: string, extra: {
         placeholderKey?: string, placeholder?: string, id?:string ,autoComplete?:string, className?: string,
         onKeyUp?: () => any, onClick?: () => any, value?: string
-    }) => {
+    }, ref?: any) => {
 
         if (extra.value && !eventStore.modalValues[modalValueName]){
             eventStore.modalValues[modalValueName] = extra.value;
@@ -40,6 +40,7 @@ const ReactModalRenderHelper = {
             <input
                 id={extra.id}
                 className={getClasses(["textInput"], extra.className)}
+                ref={ref}
                 type="text"
                 value={eventStore.modalValues[modalValueName]}
                 onClick={extra.onClick && extra.onClick()}
@@ -58,12 +59,13 @@ const ReactModalRenderHelper = {
             />
         );
     },
-    renderTextAreaInput: (eventStore: EventStore, modalValueName: string, extra: { rows?: number, placeholderKey?: string, placeholder?: string, id?:string}) => {
+    renderTextAreaInput: (eventStore: EventStore, modalValueName: string, extra: { rows?: number, placeholderKey?: string, placeholder?: string, id?:string}, ref?: any) => {
         return (
             <textarea
                 rows={extra.rows || 3}
                 id={extra.id}
                 className={"textAreaInput"}
+                ref={ref}
                 onChange={(e) => {
                     runInAction(() => {
                         eventStore.modalValues[modalValueName] = e.target.value;
@@ -79,10 +81,11 @@ const ReactModalRenderHelper = {
             </textarea>
         );
     },
-    renderSelectInput: (eventStore: EventStore, modalValueName: string, extra: { options: any[], placeholderKey?: string, id?: string, name?: string }, wrapperClassName) => {
+    renderSelectInput: (eventStore: EventStore, modalValueName: string, extra: { options: any[], placeholderKey?: string, id?: string, name?: string }, wrapperClassName: string, ref?: any) => {
         return (
             <div className={getClasses('triplan-selector', wrapperClassName)}>
                 <Select
+                    ref={ref}
                     isClearable
                     isSearchable
                     id={extra.id}
@@ -99,7 +102,7 @@ const ReactModalRenderHelper = {
             </div>
         )
     },
-    renderCategorySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value: any }) => {
+    renderCategorySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value: any }, ref?: any) => {
 
         const options = eventStore.categories
             .sort((a,b) => a.id - b.id)
@@ -113,10 +116,10 @@ const ReactModalRenderHelper = {
         }
 
         return (
-            ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER'}, 'category-selector')
+            ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER'}, 'category-selector', ref)
         )
     },
-    renderPrioritySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value: any }) => {
+    renderPrioritySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value: any }, ref?: any) => {
 
         const values = Object.keys(TriplanPriority);
         const keys = Object.values(TriplanPriority);
@@ -132,10 +135,10 @@ const ReactModalRenderHelper = {
         }
 
         return (
-            ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER'}, 'priority-selector')
+            ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER'}, 'priority-selector', ref)
         )
     },
-    renderPreferredTimeSelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value?: any }) => {
+    renderPreferredTimeSelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value?: any }, ref?: any) => {
 
         const values = Object.keys(TriplanEventPreferredTime);
         const keys = Object.values(TriplanEventPreferredTime);
@@ -150,19 +153,19 @@ const ReactModalRenderHelper = {
             eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
         }
 
-        return ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER'}, 'preferred-time-selector');
+        return ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER'}, 'preferred-time-selector', ref);
     },
     renderRow: (eventStore: EventStore, row: { settings: any, textKey: string, className?: string }) => {
         let input;
         switch (row.settings.type){
             case 'text':
                 input = ReactModalRenderHelper.renderTextInput(
-                    eventStore, row.settings.modalValueName, row.settings.extra
+                    eventStore, row.settings.modalValueName, row.settings.extra, row.settings.ref
                 );
                 break;
             case 'textarea':
                 input = ReactModalRenderHelper.renderTextAreaInput(
-                    eventStore, row.settings.modalValueName, row.settings.extra
+                    eventStore, row.settings.modalValueName, row.settings.extra, row.settings.ref
                 );
                 break;
             case 'icon-selector':
@@ -171,28 +174,31 @@ const ReactModalRenderHelper = {
                         id={row.settings?.extra?.id}
                         value={eventStore.modalValues ? eventStore.modalValues[row.settings.modalValueName] : undefined}
                         onChange={(data) => eventStore.modalValues[row.settings.modalValueName] = data }
+                        ref={row.settings.ref}
                     />
                 );
                 break;
             case 'category-selector':
                 input = ReactModalRenderHelper.renderCategorySelector(
-                    eventStore, row.settings.modalValueName, row.settings.extra
+                    eventStore, row.settings.modalValueName, row.settings.extra, row.settings.ref
                 );
                 break;
             case 'priority-selector':
                 input = ReactModalRenderHelper.renderPrioritySelector(
-                    eventStore, row.settings.modalValueName, row.settings.extra
+                    eventStore, row.settings.modalValueName, row.settings.extra, row.settings.ref
                 );
                 break;
             case 'preferred-time-selector':
                 input = ReactModalRenderHelper.renderPreferredTimeSelector(
-                    eventStore, row.settings.modalValueName, row.settings.extra
+                    eventStore, row.settings.modalValueName, row.settings.extra, row.settings.ref
                 );
                 break;
             case 'opening-hours':
                 // @ts-ignore
+                const html = window.renderOpeningHours();
+
                 input = (
-                    <div dangerouslySetInnerHTML={{ __html: window.renderOpeningHours() }} />
+                    <div ref={row.settings.ref} dangerouslySetInnerHTML={{ __html: html }} />
                 )
                 break;
             default:
@@ -435,6 +441,8 @@ const ReactModalService = {
         const handleAddSidebarEventResult = (eventStore: EventStore, categoryId?: number) => {
             if (!eventStore) return;
 
+            debugger;
+
             // @ts-ignore
             let icon = eventStore.modalValues.icon?.value || "";
 
@@ -558,6 +566,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'icon',
+                    ref: eventStore.modalValuesRefs['icon'],
                     type: 'icon-selector',
                     extra: {
                         id: 'new-icon'
@@ -569,6 +578,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'name',
+                    ref: eventStore.modalValuesRefs['name'],
                     type: 'text',
                     extra: {
                         placeholder: `${TranslateService.translate(eventStore, 'MODALS.PLACEHOLDER.PREFIX')} ${TranslateService.translate(eventStore, 'MODALS.TITLE')}`
@@ -580,6 +590,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'category',
+                    ref: eventStore.modalValuesRefs['category'],
                     type: 'category-selector',
                     extra: {
                         placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
@@ -592,6 +603,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'description',
+                    ref: eventStore.modalValuesRefs['description'],
                     type: 'textarea',
                     extra: {
                         placeholderKey: 'MODALS.DESCRIPTION_PLACEHOLDER'
@@ -603,6 +615,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'duration',
+                    ref: eventStore.modalValuesRefs['duration'],
                     type: 'text',
                     extra: {
                         value: defaultTimedEventDuration,
@@ -615,6 +628,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'priority',
+                    ref: eventStore.modalValuesRefs['priority'],
                     type: 'priority-selector',
                     extra: {
                         value: TriplanPriority.unset
@@ -626,6 +640,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'preferred-time',
+                    ref: eventStore.modalValuesRefs['preferred-time'],
                     type: 'preferred-time-selector',
                     extra: {
                         value: TriplanEventPreferredTime.unset
@@ -637,6 +652,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'location',
+                    ref: eventStore.modalValuesRefs['location'],
                     type: 'text',
                     extra: {
                         className: 'location-input',
@@ -653,6 +669,7 @@ const ReactModalService = {
             {
                 settings: {
                     modalValueName: 'opening-hours',
+                    ref: eventStore.modalValuesRefs['opening-hours'],
                     type: 'opening-hours',
                 },
                 textKey: 'MODALS.OPENING_HOURS',

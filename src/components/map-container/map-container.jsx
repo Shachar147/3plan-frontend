@@ -8,7 +8,7 @@ import {priorityToColor, priorityToMapColor} from "../../utils/consts";
 import TranslateService from "../../services/translate-service";
 import {formatDate, formatTime, getDurationString} from "../../utils/time-utils";
 import {TriplanEventPreferredTime} from "../../utils/enums";
-import {getClasses} from "../../utils/utils";
+import {getClasses, isMatching} from "../../utils/utils";
 import './map-container.scss';
 import ModalService from "../../services/modal-service";
 
@@ -141,16 +141,6 @@ const MapContainer = () => {
         infoWindow = new googleRef.InfoWindow();
 
         const getIconUrl = (event) => {
-
-            const isMatching = (category, options) => {
-                let isMatch = false;
-                let idx = 0;
-                while (!isMatch && idx < options.length){
-                    isMatch = category.indexOf(options[idx]) !== -1
-                    idx++;
-                }
-                return isMatch;
-            }
 
             let icon = "";
             let bgColor = priorityToMapColor[event.priority].replace('#', '');

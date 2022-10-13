@@ -7,7 +7,7 @@ import {LocationData} from "../utils/interfaces";
 import {runInAction} from "mobx";
 import {GoogleTravelMode, TriplanPriority} from "../utils/enums";
 import {priorityToColor} from "../utils/consts";
-import {getCoordinatesRangeKey, padTo2Digits, toDistanceString} from "../utils/utils";
+import {getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString} from "../utils/utils";
 import listViewService from "./list-view-service";
 
 const ListViewService = {
@@ -463,6 +463,8 @@ const ListViewService = {
                     summaryPerDay[dayTitle].push(``);
                 }
 
+                // distanceToNextEvent = doNotShowImpossibleToGetThereDistanceErrorOnFlights(distanceToNextEvent, title!, prevEventTitle);
+
                 if (distanceToNextEvent !== "") {
                     summaryPerDay[dayTitle].push(distanceToNextEvent);
                 }
@@ -582,6 +584,22 @@ const ListViewService = {
             return distanceToNextEvent;
         }
 
+        const doNotShowImpossibleToGetThereDistanceErrorOnFlights = (distanceToNextEvent: string, title: string) => {
+            // --------------------------------------------------------------------------
+            // do not show 'impossible to get there by driving' error if its a flight.
+            // --------------------------------------------------------------------------
+            const errorText = TranslateService.translate(eventStore, 'DISTANCE.ERROR.NO_POSSIBLE_WAY');
+            if (distanceToNextEvent.indexOf(errorText) !== -1) {
+                const flightKeywords = [
+                    'flight', 'טיסה', 'airport', "שדה התעופה"
+                ];
+                if (isMatching(title.toLowerCase(), flightKeywords)) {
+                    distanceToNextEvent = "";
+                }
+            }
+            return distanceToNextEvent;
+        }
+
         // -------------------------------------------------------------
         Object.keys(summaryPerDay).map((dayTitle) => {
 
@@ -640,6 +658,8 @@ const ListViewService = {
                                 ${arrow}
                                 ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${thisLocation.address.split(' - ')[0]}
                             </span>`;
+
+                        distanceToNextEvent = doNotShowImpossibleToGetThereDistanceErrorOnFlights(distanceToNextEvent, summaryPerDay[dayTitle][x.index] + prevLocation?.address + thisLocation?.address);
 
                         summaryPerDay[dayTitle][x.index] = `${distanceToNextEvent}<br/>${summaryPerDay[dayTitle][x.index]}`;
                     }

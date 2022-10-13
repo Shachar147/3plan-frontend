@@ -1,7 +1,7 @@
 import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {CalendarEvent, CustomDateRange, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import {observer} from 'mobx-react';
-import FullCalendar, {EventContentArg} from "@fullcalendar/react";
+import FullCalendar, {EventContentArg, EventInput} from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list"
 import interactionPlugin, {Draggable} from "@fullcalendar/interaction";
@@ -12,6 +12,7 @@ import ModalService from "../../services/modal-service";
 import {defaultTimedEventDuration} from "../../utils/defaults";
 import TranslateService from "../../services/translate-service";
 import {addHoursToDate, getDateRangeString, getTimeStringFromDate} from "../../utils/time-utils";
+import {isEventAlreadyOrdered, isMatching} from "../../utils/utils";
 
 export interface TriPlanCalendarProps {
     defaultCalendarEvents?: CalendarEvent[],
@@ -177,8 +178,11 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
         const category = info.categoryId;
         const icon = info.icon || eventStore.categoriesIcons[category];
 
+        // locked
+        const tooltip = isEventAlreadyOrdered(event as EventInput) ? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP') : "";
+
         eventEl.innerHTML = `
-                    <div>${icon} ${event.title}</div>
+                    <div title="${tooltip}">${icon} ${event.title}</div>
                     ${event.allDay ? "" : `<div class="fc-event-time">${event.start ? getTimeStringFromDate(event.start) : ""}${event.end ? "-" + getTimeStringFromDate(event.end) : ""}</div>`}
                 `;
 

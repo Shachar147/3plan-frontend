@@ -362,3 +362,8 @@ body {
 .swal2-container {
     z-index:99999;
 }
+
+.fc-event.locked {
+    filter: grayscale(50%);
+    opacity: 0.8;
+}
