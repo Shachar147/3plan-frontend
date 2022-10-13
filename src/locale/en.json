@@ -23,6 +23,7 @@
   "MODALS.DELETED.CONTENT": "Activity have been deleted.",
   "MODALS.ERROR.TITLE": "Error",
   "MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "Title cannot be empty",
+  "MODALS.ERROR.CATEGORY_CANT_BE_EMPTY": "Category cannot be empty",
   "MODALS.ADDED.TITLE": "Added!",
   "MODALS.ADDED.CONTENT": "Activity have been added.",
   "MODALS.ADD_EVENT_TO_CATEGORY.TITLE": "Add Activity to Category",

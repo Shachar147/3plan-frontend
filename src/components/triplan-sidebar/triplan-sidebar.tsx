@@ -489,7 +489,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 flavor={ButtonFlavor.primary}
                 onClick={() => {
                     ReactModalService.openAddSidebarEventModal(eventStore, undefined);
-                    modalService.openAddSidebarEventModal(eventStore, undefined);
+                    // modalService.openAddSidebarEventModal(eventStore, undefined);
                 }}
                 style={{
                     width: "100%"

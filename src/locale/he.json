@@ -33,6 +33,7 @@
   "MODALS.DELETED.CONTENT": "הפעילות נמחקה בהצלחה",
   "MODALS.ERROR.TITLE": "שגיאה",
   "MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "הכותרת לא יכולה להיות ריקה",
+  "MODALS.ERROR.CATEGORY_CANT_BE_EMPTY": "הקטגוריה לא יכולה להיות ריקה",
   "MODALS.ADDED.TITLE": "נוסף!",
   "MODALS.ADDED.CONTENT": "הפעילות נוספה בהצלחה",
   "MODALS.ADD_EVENT_TO_CATEGORY.TITLE": "הוסף פעילות לקטגוריה",

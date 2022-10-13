@@ -25,8 +25,17 @@ const ReactModalRenderHelper = {
     },
     renderTextInput: (eventStore: EventStore, modalValueName: string, extra: {
         placeholderKey?: string, placeholder?: string, id?:string ,autoComplete?:string, className?: string,
-        onKeyUp?: () => any, onClick?: () => any
+        onKeyUp?: () => any, onClick?: () => any, value?: string
     }) => {
+
+        if (extra.value && !eventStore.modalValues[modalValueName]){
+            eventStore.modalValues[modalValueName] = extra.value;
+        }
+
+        if (modalValueName === 'location'){
+            debugger;
+        }
+
         return (
             <input
                 id={extra.id}
@@ -90,7 +99,7 @@ const ReactModalRenderHelper = {
             </div>
         )
     },
-    renderCategorySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string }) => {
+    renderCategorySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value: any }) => {
 
         const options = eventStore.categories
             .sort((a,b) => a.id - b.id)
@@ -99,11 +108,15 @@ const ReactModalRenderHelper = {
                label: x.icon ? `${x.icon} ${x.title}` : x.title
             }));
 
+        if (!eventStore.modalValues[modalValueName]) {
+            eventStore.modalValues[modalValueName] = extra.value ? options.find((x) => x.value === extra.value) : undefined;
+        }
+
         return (
             ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER'}, 'category-selector')
         )
     },
-    renderPrioritySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string }) => {
+    renderPrioritySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value: any }) => {
 
         const values = Object.keys(TriplanPriority);
         const keys = Object.values(TriplanPriority);
@@ -113,11 +126,16 @@ const ReactModalRenderHelper = {
             label: ucfirst(TranslateService.translate(eventStore, keys[index].toString()))
         }))
 
+        if (!eventStore.modalValues[modalValueName]) {
+            const idx = values.indexOf(extra.value.toString());
+            eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
+        }
+
         return (
             ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER'}, 'priority-selector')
         )
     },
-    renderPrerferredTimeSelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string }) => {
+    renderPreferredTimeSelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value?: any }) => {
 
         const values = Object.keys(TriplanEventPreferredTime);
         const keys = Object.values(TriplanEventPreferredTime);
@@ -126,6 +144,11 @@ const ReactModalRenderHelper = {
             value: values[index],
             label: ucfirst(TranslateService.translate(eventStore, keys[index].toString()))
         }))
+
+        if (!eventStore.modalValues[modalValueName]) {
+            const idx = values.indexOf(extra.value.toString());
+            eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
+        }
 
         return ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER'}, 'preferred-time-selector');
     },
@@ -162,7 +185,7 @@ const ReactModalRenderHelper = {
                 );
                 break;
             case 'preferred-time-selector':
-                input = ReactModalRenderHelper.renderPrerferredTimeSelector(
+                input = ReactModalRenderHelper.renderPreferredTimeSelector(
                     eventStore, row.settings.modalValueName, row.settings.extra
                 );
                 break;
@@ -403,39 +426,53 @@ const ReactModalService = {
     },
     openAddSidebarEventModal: (eventStore: EventStore, categoryId?: number, initialData: any = {}) => {
 
-        const handleAddSidebarEventResult = (eventStore: EventStore, result:any, categoryId?: number) => {
+        // @ts-ignore
+        window.selectedLocation = initialData.location || undefined;
+
+        // @ts-ignore
+        window.openingHours = initialData.openingHours || undefined;
+
+        const handleAddSidebarEventResult = (eventStore: EventStore, categoryId?: number) => {
             if (!eventStore) return;
 
             // @ts-ignore
-            let icon = document.getElementById("new-icon").value || "";
+            let icon = eventStore.modalValues.icon?.value || "";
 
             // @ts-ignore
-            const title = document.getElementById("new-name").value;
+            const title = eventStore.modalValues.name;
 
             // @ts-ignore
-            let duration = document.getElementById("duration").value;
+            let duration = eventStore.modalValues.duration;
 
             // @ts-ignore
-            let priority = document.getElementById("new-priority").value;
+            let priority = eventStore.modalValues.priority?.value || TriplanPriority.unset;
 
             // @ts-ignore
-            let preferredTime = document.getElementById("new-preferred-time").value;
+            let preferredTime = eventStore.modalValues['preferred-time']?.value || TriplanEventPreferredTime.unset;
 
             // @ts-ignore
-            const description = document.getElementById("new-description").value;
+            const description = eventStore.modalValues.description;
 
             if (categoryId == undefined){
+
                 // @ts-ignore
-                categoryId = document.getElementById("new-category").value;
+                categoryId = eventStore.modalValues['category']?.value;
             }
 
             // @ts-ignore
-            const location = window.selectedLocation as LocationData;
+            let location = (window.selectedLocation || eventStore.modalValues['selectedLocation']) as LocationData;
+
+            if (location && location.address == undefined){
+
+                // @ts-ignore
+                location = undefined;
+            }
 
             // @ts-ignore
             const openingHours = window.openingHours as WeeklyOpeningHoursData;
 
             if (!categoryId){
+                ReactModalService._AlertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.CATEGORY_CANT_BE_EMPTY", "error")
                 return;
             }
 
@@ -452,6 +489,7 @@ const ReactModalService = {
             } as SidebarEvent;
 
             const isDurationValid = (
+                duration &&
                 duration.split(':').length == 2
                 && !Number.isNaN(duration.split(':')[0])
                 && !Number.isNaN(duration.split(':')[1])
@@ -470,30 +508,32 @@ const ReactModalService = {
                 currentEvent.duration = duration;
             }
 
-            if (result.value) {
-
-                if (!title){
-                    Alert.fire(TranslateService.translate(eventStore, "MODALS.ERROR.TITLE"), TranslateService.translate(eventStore, "MODALS.ERROR.TITLE_CANNOT_BE_EMPTY"), "error");
-                    return;
-                }
-
-                const existingSidebarEvents = {...eventStore.getSidebarEvents};
-                existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
-                existingSidebarEvents[categoryId].push(currentEvent);
-                eventStore.setSidebarEvents(existingSidebarEvents);
-
-                const allEventsEvent = {
-                    ...currentEvent,
-                    category: categoryId.toString()
-                };
-                eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
-
-                Alert.fire(TranslateService.translate(eventStore, "MODALS.ADDED.TITLE"), TranslateService.translate(eventStore, "MODALS.ADDED.CONTENT"), "success");
+            if (!title){
+                ReactModalService._AlertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.TITLE_CANNOT_BE_EMPTY", "error")
+                return;
             }
+
+            const existingSidebarEvents = {...eventStore.getSidebarEvents};
+            existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
+            existingSidebarEvents[categoryId].push(currentEvent);
+            eventStore.setSidebarEvents(existingSidebarEvents);
+
+            const allEventsEvent = {
+                ...currentEvent,
+                category: categoryId.toString()
+            };
+            eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
+
+            ReactModalService._AlertMessage(eventStore,"MODALS.ADDED.TITLE", "MODALS.ADDED.CONTENT", "success")
+
+            runInAction(() => {
+                eventStore.modalSettings.show = false;
+                eventStore.modalValues = {};
+            });
         }
 
         const onConfirm = () => {
-
+            handleAddSidebarEventResult(eventStore, categoryId);
         }
 
         const category =
@@ -504,11 +544,15 @@ const ReactModalService = {
 
         eventStore.modalValues.duration = eventStore.modalValues.duration || defaultTimedEventDuration;
 
-        // @ts-ignore
-        const initLocation = window.initLocationPicker;
+        const initLocation = () => {
+            // @ts-ignore
+            window.initLocationPicker('location-input', 'selectedLocation', undefined);
+        }
 
-        // @ts-ignore
-        const setManualLocation = window.setManualLocation;
+        const setManualLocation = () => {
+            // @ts-ignore
+            window.setManualLocation('location-input', 'selectedLocation');
+        }
 
         const inputs = [
             {
@@ -539,6 +583,7 @@ const ReactModalService = {
                     type: 'category-selector',
                     extra: {
                         placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+                        value: categoryId
                     }
                 },
                 textKey: 'MODALS.CATEGORY',
@@ -560,6 +605,7 @@ const ReactModalService = {
                     modalValueName: 'duration',
                     type: 'text',
                     extra: {
+                        value: defaultTimedEventDuration,
                         placeholder: `${TranslateService.translate(eventStore, 'MODALS.PLACEHOLDER.PREFIX')} ${TranslateService.translate(eventStore, 'MODALS.DURATION')}`
                     },
                 },
@@ -570,7 +616,9 @@ const ReactModalService = {
                 settings: {
                     modalValueName: 'priority',
                     type: 'priority-selector',
-                    extra: {}
+                    extra: {
+                        value: TriplanPriority.unset
+                    }
                 },
                 textKey: 'MODALS.PRIORITY',
                 className: 'border-top-gray'
@@ -579,7 +627,9 @@ const ReactModalService = {
                 settings: {
                     modalValueName: 'preferred-time',
                     type: 'preferred-time-selector',
-                    extra: {}
+                    extra: {
+                        value: TriplanEventPreferredTime.unset
+                    }
                 },
                 textKey: 'MODALS.PREFERRED_TIME',
                 className: 'border-top-gray'
@@ -590,7 +640,7 @@ const ReactModalService = {
                     type: 'text',
                     extra: {
                         className: 'location-input',
-                        value: initialData.location,
+                        value: eventStore.modalValues['selectedLocation'] || initialData.location || window.selectedLocation?.address || "",
                         onClick: initLocation,
                         onKeyUp: setManualLocation,
                         autoComplete: "off",
@@ -619,30 +669,6 @@ const ReactModalService = {
                 }
             </div>
         )}</Observer>
-
-      // <tr >
-      // <td>${TranslateService.translate(eventStore, "MODALS.PRIORITY")}</td>
-      // <td><strong>
-      // ` + ModalServiceRenderHelper._renderPrioritySelect(eventStore, TriplanPriority.unset) + `
-      // </strong></td>
-      // </tr>
-      // <tr >
-      // <td>${TranslateService.translate(eventStore, "MODALS.PREFERRED_TIME")}</td>
-      // <td><strong>
-      // ` + ModalServiceRenderHelper._renderPreferredTime(eventStore, TriplanEventPreferredTime.unset) + `
-      // </strong></td>
-      // </tr>
-      // ` + ModalServiceRenderHelper._renderLocationRow(eventStore, initialData.location) + `
-      // ` + ModalServiceRenderHelper._renderOpeningHoursRow(eventStore, initialData.openingHours) + `
-      // </table>
-      // </div>`,
-      //
-      //       showCancelButton: true,
-      //       cancelButtonColor: "#d33",
-      //       confirmButtonColor: "#3085d6",
-      //       confirmButtonText: TranslateService.translate(eventStore, 'MODALS.SAVE'),
-      //       cancelButtonText: TranslateService.translate(eventStore, 'MODALS.CANCEL')
-      //   }).then(result => handleAddSidebarEventResult(eventStore, result, categoryId));
 
         ReactModalService._openModal(eventStore, {
             ...getDefaultSettings(eventStore),
