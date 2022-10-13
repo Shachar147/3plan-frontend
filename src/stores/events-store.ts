@@ -79,7 +79,10 @@ export class EventStore {
     }
 
     checkIfEventHaveOpenTasks(event: any) {
-        const { title, description } = event;
+        let { title, description } = event;
+        if (description == undefined && event.extendedProps){
+            description = event.extendedProps.description;
+        }
         const { taskKeywords } = ListViewService._initSummaryConfiguration();
         const isTodoComplete = taskKeywords.find((k) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
         return !!isTodoComplete;
