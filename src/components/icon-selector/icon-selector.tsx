@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useImperativeHandle, useState} from 'react';
 import { icons } from './icons';
 import Select from "react-select";
 import {eventStoreContext} from "../../stores/events-store";
@@ -12,7 +12,7 @@ export interface IconSelectorProps {
     value?: string,
     onChange?: (data: any) => void
 }
-const IconSelector = (props: IconSelectorProps) => {
+const IconSelector = (props: IconSelectorProps, ref: any) => {
     const [selectedOption, setSelectedOptions] = useState(props.value);
     const eventStore = useContext(eventStoreContext);
 
@@ -42,9 +42,10 @@ const IconSelector = (props: IconSelectorProps) => {
                 onChange={handleSelect}
                 maxMenuHeight={42 * 3}
                 styles={SELECT_STYLE}
+                ref={ref}
             />
         </div>
     )
 };
 
-export default IconSelector;
+export default React.forwardRef(IconSelector);

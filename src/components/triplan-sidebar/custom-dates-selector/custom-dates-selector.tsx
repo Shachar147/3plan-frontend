@@ -26,7 +26,6 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
                         start: value,
                         end: customDateRange.end
                     };
-                    console.log(newCustomDateRange);
                     setCustomDateRange(newCustomDateRange);
                     eventStore.setCustomDateRange(newCustomDateRange);
                     setDefaultCustomDateRange(newCustomDateRange, eventStore.tripName);
@@ -38,7 +37,6 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
                         start: customDateRange.start,
                         end: value
                     };
-                    console.log(newCustomDateRange);
                     setCustomDateRange(newCustomDateRange);
                     eventStore.setCustomDateRange(newCustomDateRange);
                     setDefaultCustomDateRange(newCustomDateRange, eventStore.tripName);

@@ -21,7 +21,12 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { observer, Observer } from 'mobx-react';
 
 // WIP - refactor modals to the react version.
-// ... (!!!) add triplan event - location - not working good. try to set locatio nand then set category/priority and it'll reset.
+// V (!!!) add triplan event - location - not working good. try to set locatio nand then set category/priority and it'll reset.
+// V creating event with the new modal use the text of the icon instead of the actual icon.
+// V can't change priority, preferred time on the new modal.
+
+// check dubai allevents - calendarevents - sidebar events, make sure there are no missing.
+
 // V move success, error modals to the regular modals service and use it. use the same function so we can maybe move it too easily.
 // V todo complete - see how can we pass initial value to a input and still be able to edit it. currently if I move it I cant change the value of the input.
 // V ^ it's in edit trip name
@@ -29,6 +34,8 @@ import { observer, Observer } from 'mobx-react';
 // V make sure that if place have closed days like KNOCX it handles it.
 // change font to INTER (plato)
 // add photos and more place info to the window info line and to each event.
+
+// (advanced) add a way to "keep snapshots" of current planning and then visiting them later, compare to current etc.
 
 // map tasks
 // V add search mode to the map, allowing to search for address + display results markers on the map. clicking on the map should open create event with location and title already filled in.
@@ -428,7 +435,7 @@ const RootRouter = () => {
                     );
 
                     eventStore.calculatingDistance = eventStore.calculatingDistance - 1;
-                    console.log("finished", eventStore.calculatingDistance);
+                    // console.log("finished", eventStore.calculatingDistance);
                 });
             }
         }

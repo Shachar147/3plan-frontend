@@ -513,10 +513,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 marginBlock: "10px"
             }}
             onClick={() => {
-                ModalService.openAddSidebarEventModal(eventStore, categoryId)
+                // ModalService.openAddSidebarEventModal(eventStore, categoryId)
+                ReactModalService.openAddSidebarEventModal(eventStore, categoryId)
             }}
             text={TranslateService.translate(eventStore,'ADD_EVENT.BUTTON_TEXT')}
-            />
+        />
     )
 
     const renderCategoryEvents = (categoryId: number) => {

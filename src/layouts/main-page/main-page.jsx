@@ -117,14 +117,14 @@ const MainPage = () => {
     const addEventToSidebar = (event) => {
         const newEvents = {...eventStore.sidebarEvents};
         let category = eventsToCategories[event.id];
-        console.log("category", category);
+        // console.log("category", category);
         if (!category){
             const findEvent = eventStore.allEvents.find((x) => x.id.toString() === event.id.toString());
-            console.log("category find", findEvent);
+            // console.log("category find", findEvent);
             category = findEvent.category;
             if (!category && findEvent && findEvent.extendedProps){
                 category = findEvent.extendedProps.categoryId;
-                console.log("category find 2", category);
+                // console.log("category find 2", category);
             }
         }
 

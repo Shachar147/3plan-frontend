@@ -32,9 +32,9 @@ const ReactModalRenderHelper = {
             eventStore.modalValues[modalValueName] = extra.value;
         }
 
-        if (modalValueName === 'location'){
-            debugger;
-        }
+        // if (modalValueName === 'location'){
+        //     debugger;
+        // }
 
         return (
             <input
@@ -43,12 +43,14 @@ const ReactModalRenderHelper = {
                 ref={ref}
                 type="text"
                 value={eventStore.modalValues[modalValueName]}
-                onClick={extra.onClick && extra.onClick()}
-                onKeyUp={extra.onKeyUp && extra.onKeyUp()}
+                onClick={() => {
+                    extra.onClick && extra.onClick()
+                }}
+                onKeyUp={() => {
+                    extra.onKeyUp && extra.onKeyUp()
+                }}
                 onChange={(e) => {
-                    runInAction(() => {
-                        eventStore.modalValues[modalValueName] = e.target.value;
-                    })
+                    eventStore.modalValues[modalValueName] = e.target.value;
                 }}
                 placeholder={
                     extra.placeholder ? extra.placeholder :
@@ -67,9 +69,7 @@ const ReactModalRenderHelper = {
                 className={"textAreaInput"}
                 ref={ref}
                 onChange={(e) => {
-                    runInAction(() => {
-                        eventStore.modalValues[modalValueName] = e.target.value;
-                    })
+                    eventStore.modalValues[modalValueName] = e.target.value;
                 }}
                 placeholder={
                     extra.placeholder ? extra.placeholder :
@@ -81,13 +81,14 @@ const ReactModalRenderHelper = {
             </textarea>
         );
     },
-    renderSelectInput: (eventStore: EventStore, modalValueName: string, extra: { options: any[], placeholderKey?: string, id?: string, name?: string }, wrapperClassName: string, ref?: any) => {
+    renderSelectInput: (eventStore: EventStore, modalValueName: string, extra: { options: any[], placeholderKey?: string, id?: string, name?: string, readOnly?: boolean }, wrapperClassName: string, ref?: any) => {
         return (
             <div className={getClasses('triplan-selector', wrapperClassName)}>
                 <Select
                     ref={ref}
-                    isClearable
-                    isSearchable
+                    isClearable={!extra.readOnly}
+                    isSearchable={!extra.readOnly}
+                    isDisabled={extra.readOnly}
                     id={extra.id}
                     name={extra.name}
                     options={extra.options}
@@ -115,8 +116,10 @@ const ReactModalRenderHelper = {
             eventStore.modalValues[modalValueName] = extra.value ? options.find((x) => x.value === extra.value) : undefined;
         }
 
+        // console.log("category", eventStore.modalValues[modalValueName])
+
         return (
-            ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER'}, 'category-selector', ref)
+            ReactModalRenderHelper.renderSelectInput(eventStore, modalValueName, {...extra, readOnly: !!extra.value, options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER'}, 'category-selector', ref)
         )
     },
     renderPrioritySelector: (eventStore: EventStore, modalValueName: string, extra: { id?: string, name?: string, value: any }, ref?: any) => {
@@ -130,7 +133,7 @@ const ReactModalRenderHelper = {
         }))
 
         if (!eventStore.modalValues[modalValueName]) {
-            const idx = values.indexOf(extra.value.toString());
+            const idx = values.indexOf(extra.value?.toString());
             eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
         }
 
@@ -149,7 +152,7 @@ const ReactModalRenderHelper = {
         }))
 
         if (!eventStore.modalValues[modalValueName]) {
-            const idx = values.indexOf(extra.value.toString());
+            const idx = values.indexOf(extra.value?.toString());
             eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
         }
 
@@ -441,10 +444,8 @@ const ReactModalService = {
         const handleAddSidebarEventResult = (eventStore: EventStore, categoryId?: number) => {
             if (!eventStore) return;
 
-            debugger;
-
             // @ts-ignore
-            let icon = eventStore.modalValues.icon?.value || "";
+            let icon = eventStore.modalValues.icon?.label || "";
 
             // @ts-ignore
             const title = eventStore.modalValues.name;
@@ -631,7 +632,7 @@ const ReactModalService = {
                     ref: eventStore.modalValuesRefs['priority'],
                     type: 'priority-selector',
                     extra: {
-                        value: TriplanPriority.unset
+                        value: undefined, // TriplanPriority.unset
                     }
                 },
                 textKey: 'MODALS.PRIORITY',
@@ -643,7 +644,7 @@ const ReactModalService = {
                     ref: eventStore.modalValuesRefs['preferred-time'],
                     type: 'preferred-time-selector',
                     extra: {
-                        value: TriplanEventPreferredTime.unset
+                        value: undefined, // TriplanEventPreferredTime.unset
                     }
                 },
                 textKey: 'MODALS.PREFERRED_TIME',
@@ -656,7 +657,7 @@ const ReactModalService = {
                     type: 'text',
                     extra: {
                         className: 'location-input',
-                        value: eventStore.modalValues['selectedLocation'] || initialData.location || window.selectedLocation?.address || "",
+                        value: eventStore.modalValues['selectedLocation'] || initialData.location?.address || window.selectedLocation?.address || "",
                         onClick: initLocation,
                         onKeyUp: setManualLocation,
                         autoComplete: "off",

@@ -64,7 +64,7 @@ export class EventStore {
     @observable distanceResults = observable.map<string,DistanceResult>(getDefaultDistanceResults());
     @observable travelMode = GoogleTravelMode.DRIVING;
     @observable modalSettings = defaultModalSettings;
-    @observable modalValues: any = {};
+    modalValues: any = {};
     @observable modalValuesRefs: any = {};
 
     constructor() {

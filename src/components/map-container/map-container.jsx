@@ -11,6 +11,7 @@ import {TriplanEventPreferredTime} from "../../utils/enums";
 import {getClasses, isMatching} from "../../utils/utils";
 import './map-container.scss';
 import ModalService from "../../services/modal-service";
+import ReactModalService from "../../services/react-modal-service";
 
 function Marker(props) {
     const { text, lng, lat, locationData, openingHours, searchValue } = props
@@ -22,7 +23,8 @@ function Marker(props) {
             flexDirection: "column",
             minWidth: "fit-content"
         }} onClick={() => {
-            ModalService.openAddSidebarEventModal(eventStore, undefined, { location: locationData, title: searchValue, openingHours: openingHours })
+            // ModalService.openAddSidebarEventModal(eventStore, undefined, { location: locationData, title: searchValue, openingHours: openingHours })
+            ReactModalService.openAddSidebarEventModal(eventStore, undefined, { location: locationData, title: searchValue, openingHours: openingHours })
         }}>
             <i className="fa fa-map-marker fa-4x text-success"/>
             <div className="fa-marker-text">{props.text}</div>

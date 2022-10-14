@@ -24,11 +24,9 @@ const MyTrips = () => {
     useEffect(() => {
         setTimeout(() => {
             setApplyPageIntro(true);
-            console.log("here");
 
             setTimeout(() => {
                 setApplyFadeIn(true);
-                console.log("there");
             }, 200)
 
         }, 500)
