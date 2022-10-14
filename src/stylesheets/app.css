@@ -283,6 +283,7 @@ body {
 .react-modal {
     padding: 20px;
 
+    min-height: 220px;
     max-height: 600px;
     overflow: auto;
 }

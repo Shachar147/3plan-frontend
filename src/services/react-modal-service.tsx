@@ -88,7 +88,7 @@ const ReactModalRenderHelper = {
             />
         );
     },
-    renderSelectInput: (eventStore: EventStore, modalValueName: string, extra: { options: any[], placeholderKey?: string, id?: string, name?: string, readOnly?: boolean }, wrapperClassName: string, ref?: any) => {
+    renderSelectInput: (eventStore: EventStore, modalValueName: string, extra: { options: any[], placeholderKey?: string, id?: string, name?: string, readOnly?: boolean, maxMenuHeight?: number }, wrapperClassName: string, ref?: any) => {
         return (
             <SelectInput
                 ref={ref}
@@ -98,7 +98,7 @@ const ReactModalRenderHelper = {
                 options={extra.options}
                 placeholderKey={extra.placeholderKey}
                 modalValueName={modalValueName}
-                maxMenuHeight={45 * 5}
+                maxMenuHeight={extra.maxMenuHeight}
             />
         )
     },
@@ -337,7 +337,8 @@ const ReactModalService = {
                         ref: eventStore.modalValuesRefs['priority'],
                         type: 'priority-selector',
                         extra: {
-                            value: initialData?.priority || initialData?.extendedProps?.priority || TriplanPriority.unset
+                            value: initialData?.priority || initialData?.extendedProps?.priority || TriplanPriority.unset,
+                            maxMenuHeight: 45 * 4,
                         }
                     },
                     textKey: 'MODALS.PRIORITY',
@@ -349,7 +350,8 @@ const ReactModalService = {
                         ref: eventStore.modalValuesRefs['preferred-time'],
                         type: 'preferred-time-selector',
                         extra: {
-                            value: initialData.preferredTime || initialData?.extendedProps?.preferredTime || TriplanEventPreferredTime.unset
+                            value: initialData.preferredTime || initialData?.extendedProps?.preferredTime || TriplanEventPreferredTime.unset,
+                            maxMenuHeight: 45 * 4,
                         }
                     },
                     textKey: 'MODALS.PREFERRED_TIME',
@@ -503,7 +505,8 @@ const ReactModalService = {
                         ref: eventStore.modalValuesRefs['priority'],
                         type: 'priority-selector',
                         extra: {
-                            value: initialData?.priority || initialData?.extendedProps?.priority || TriplanPriority.unset
+                            value: initialData?.priority || initialData?.extendedProps?.priority || TriplanPriority.unset,
+                            maxMenuHeight: 45 * 4,
                         }
                     },
                     textKey: 'MODALS.PRIORITY',
@@ -515,7 +518,8 @@ const ReactModalService = {
                         ref: eventStore.modalValuesRefs['preferred-time'],
                         type: 'preferred-time-selector',
                         extra: {
-                            value: initialData.preferredTime || initialData?.extendedProps?.preferredTime || TriplanEventPreferredTime.unset
+                            value: initialData.preferredTime || initialData?.extendedProps?.preferredTime || TriplanEventPreferredTime.unset,
+                            maxMenuHeight: 45 * 4,
                         }
                     },
                     textKey: 'MODALS.PREFERRED_TIME',
@@ -1306,9 +1310,9 @@ const ReactModalService = {
     },
     openDeleteCategoryModal: (eventStore: EventStore, categoryId: number) => {
 
-        const newCategories = eventStore.categories.filter((c) => c.id !== categoryId);
-        const newCalendarEvents = eventStore.calendarEvents.filter((c) => c.category !== categoryId && (!c.extendedProps || c.extendedProps.categoryId !== categoryId));
-        const newAllEvents = eventStore.allEvents.filter((c) => c.category !== categoryId.toString());
+        const newCategories = eventStore.categories.filter((c) => c.id != categoryId);
+        const newCalendarEvents = eventStore.calendarEvents.filter((c) => c.category != categoryId && (!c.extendedProps || c.extendedProps.categoryId != categoryId));
+        const newAllEvents = eventStore.allEvents.filter((c) => c.category != categoryId.toString());
         const newSidebarEvents = {...eventStore.getSidebarEvents};
         delete newSidebarEvents[categoryId];
 
