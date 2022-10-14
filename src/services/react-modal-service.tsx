@@ -1200,11 +1200,10 @@ const ReactModalService = {
             onConfirm,
         });
     },
-
     openAddCalendarEventModal: (eventStore: EventStore, addToEventsToCategories: (value: any) => void, info: any) => {
 
         const handleAddCalendarEventResult = (eventStore: EventStore) => {
-            if (!eventStore) return;
+            if (!eventStore) return true;
 
             let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate } =
                 ReactModalService.internal.getModalValues(eventStore);
@@ -1241,7 +1240,12 @@ const ReactModalService = {
 
             if (!title){
                 ReactModalService.internal.alertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.TITLE_CANNOT_BE_EMPTY", "error");
-                return;
+                return false;
+            }
+
+            if (!categoryId){
+                ReactModalService.internal.alertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.CATEGORY_CANT_BE_EMPTY", "error")
+                return false;
             }
 
             eventStore.setCalendarEvents([
@@ -1257,6 +1261,8 @@ const ReactModalService = {
             ]);
 
             ReactModalService.internal.alertMessage(eventStore,"MODALS.ADDED.TITLE", "MODALS.ADDED.CONTENT", "success");
+
+            return true;
         }
 
         const initialData = {
@@ -1271,11 +1277,13 @@ const ReactModalService = {
         window.openingHours = initialData.openingHours || undefined;
 
         const onConfirm = () => {
-            handleAddCalendarEventResult(eventStore);
-            runInAction(() => {
-                eventStore.modalSettings.show = false;
-                eventStore.modalValues = {};
-            });
+            const isOk = handleAddCalendarEventResult(eventStore);
+            if (isOk) {
+                runInAction(() => {
+                    eventStore.modalSettings.show = false;
+                    eventStore.modalValues = {};
+                });
+            }
         }
 
         const title = TranslateService.translate(eventStore,"MODALS.ADD_EVENT_TO_CALENDAR.TITLE");
@@ -1294,7 +1302,7 @@ const ReactModalService = {
             title,
             content,
             onConfirm,
-        })
+        });
     },
 }
 

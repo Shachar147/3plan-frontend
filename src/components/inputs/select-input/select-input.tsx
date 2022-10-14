@@ -50,7 +50,7 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
                 placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined}
                 value={value}
                 onChange={(data) => {
-                    // eventStore.modalValues[modalValueName] = data;
+                    eventStore.modalValues[modalValueName] = data;
                     setValue(data);
                 }}
                 maxMenuHeight={maxMenuHeight || 45 * 5}
