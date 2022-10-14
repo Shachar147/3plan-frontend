@@ -911,7 +911,7 @@ const ReactModalService = {
             ...getDefaultSettings(eventStore),
             title,
             content,
-            onConfirm
+            onConfirm,
         })
 
 
