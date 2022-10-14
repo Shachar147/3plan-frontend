@@ -37,7 +37,6 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
     return (
         <div className={getClasses('triplan-textarea-input', wrapperClassName)}>
             <textarea
-                key={`textarea-input-${modalValueName}-${value}`}
                 rows={rows || 3}
                 id={id}
                 name={name}

@@ -14,7 +14,6 @@ import {convertMsToHM, formatDuration, validateDuration} from "../utils/time-uti
 import SelectInput from "../components/inputs/select-input/select-input";
 import TextInput from "../components/inputs/text-input/text-input";
 import TextareaInput from "../components/inputs/textarea-input/textarea-input";
-import ModalService from "./modal-service";
 
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {
@@ -153,14 +152,11 @@ const ReactModalRenderHelper = {
                 );
                 break;
             case 'icon-selector':
-                if (row.settings.extra.value && !eventStore.modalValues[row.settings.modalValueName]){
-                    eventStore.modalValues[row.settings.modalValueName] = row.settings.extra.value;
-                }
-
                 input = (
                     <IconSelector
                         id={row.settings?.extra?.id}
-                        value={eventStore.modalValues[row.settings.modalValueName]}
+                        modalValueName={row.settings.modalValueName}
+                        value={row.settings.extra.value}
                         onChange={(data) => eventStore.modalValues[row.settings.modalValueName] = data }
                         ref={row.settings.ref}
                     />
@@ -913,56 +909,133 @@ const ReactModalService = {
             content,
             onConfirm,
         })
+    },
+
+    openDuplicateSidebarEventModal: (eventStore: EventStore, event: SidebarEvent) => {
+
+        const handleDuplicateSidebarEventResult = (eventStore: EventStore, event: SidebarEvent) => {
+            if (!eventStore) return;
+
+            // @ts-ignore
+            let icon = eventStore.modalValues.icon?.label || "";
+
+            // @ts-ignore
+            const title = eventStore.modalValues.name;
+
+            // @ts-ignore
+            let duration = eventStore.modalValues.duration;
+
+            // @ts-ignore
+            let priority = eventStore.modalValues.priority?.value || TriplanPriority.unset;
+
+            // @ts-ignore
+            let preferredTime = eventStore.modalValues['preferred-time']?.value || TriplanEventPreferredTime.unset;
+
+            // @ts-ignore
+            const description = eventStore.modalValues.description;
+
+            // @ts-ignore
+            const location = window.selectedLocation as LocationData;
+
+            // @ts-ignore
+            const openingHours = window.openingHours as WeeklyOpeningHoursData; // todo complete: check what happens if editing and not changing anything, make sure opening hours not removed
+
+            const currentEvent = {
+                id: eventStore.createEventId(),
+                title,
+                icon,
+                duration,
+                priority: priority as TriplanPriority,
+                preferredTime: preferredTime as TriplanEventPreferredTime,
+                description,
+                location,
+                openingHours
+            } as SidebarEvent;
+
+            const isDurationValid = (
+                duration.split(':').length == 2
+                && !Number.isNaN(duration.split(':')[0])
+                && !Number.isNaN(duration.split(':')[1])
+                && parseInt(duration.split(':')[0]) >= 0
+                && parseInt(duration.split(':')[1]) >= 0
+                && (parseInt(duration.split(':')[0]) + parseInt(duration.split(':')[1])) > 0
+            );
+            if (!isDurationValid){
+                console.error("duration is not valid");
+                currentEvent.duration = defaultTimedEventDuration;
+            } else {
+                const hours = parseInt(duration.split(':')[0]);
+                const minutes = parseInt(duration.split(':')[1]);
+                const milliseconds = (minutes * 60000) + (hours * 3600000);
+                duration = convertMsToHM(milliseconds);
+                currentEvent.duration = duration;
+            }
+
+            if (!title){
+                ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "MODALS.ERROR.TITLE_CANNOT_BE_EMPTY", "error");
+                return;
+            }
+
+            const foundEvent = eventStore.allEvents.find((e) => e.id.toString() === event.id.toString());
+            if (!foundEvent){
+                console.error("event not found");
+                return;
+            }
+            const categoryId = foundEvent.category || eventStore.categories[0].id.toString();
+
+            const existingSidebarEvents = {...eventStore.getSidebarEvents};
+            existingSidebarEvents[parseInt(categoryId)].push(currentEvent);
+            eventStore.setSidebarEvents(existingSidebarEvents);
+
+            const allEventsEvent = {
+                ...currentEvent,
+                category: categoryId.toString()
+            }
+            eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
+
+            ReactModalService.internal.alertMessage(eventStore, "MODALS.ADDED.TITLE", "MODALS.ADDED.CONTENT", "success");
+        }
 
 
+        // on event click - show edit event popup
+        const eventId = event.id;
+        const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
+        if (!initialData) {
+            console.error("event not found")
+            return;
+        }
 
+        // @ts-ignore
+        window.selectedLocation = initialData.location || undefined;
 
-//        <tr >
-//       <td>` + TranslateService.translate(eventStore, 'MODALS.ICON') + `</td>
-//       <td><strong>
-//       <input id="new-icon" type="text" value="` + icon + `" /></strong></td>
-//       </tr>
-//       </tr>
-//       ` + ModalServiceRenderHelper._renderCategoryRow(eventStore, event.category) + `
-//       <tr >
-//       <td>` + TranslateService.translate(eventStore, 'MODALS.TITLE') + `</td>
-//       <td><strong>
-//       <input id="new-name" type="text" value="` + event.title + `" />
-// ` +
-//                 `</strong></td>
-//       </tr>
-//       ` + ModalServiceRenderHelper._renderDescriptionRow(eventStore, event.description) + `
-//       <tr >
-//       <td>${TranslateService.translate(eventStore, 'MODALS.DURATION')}</td>
-//       <td><strong>
-//       <input type="text" id="duration" name="duration" value="` +
-//                 (event.duration || defaultTimedEventDuration) +
-//                 `"/>
-//       </strong></td>
-//       </tr>
-//       <tr >
-//       <td>${TranslateService.translate(eventStore, "MODALS.PRIORITY")}</td>
-//       <td><strong>
-//       ` + ModalServiceRenderHelper._renderPrioritySelect(eventStore, event.priority) + `
-//       </strong></td>
-//       </tr>
-//       <tr >
-//       <td>${TranslateService.translate(eventStore, "MODALS.PREFERRED_TIME")}</td>
-//       <td><strong>
-//       ` + ModalServiceRenderHelper._renderPreferredTime(eventStore, event.preferredTime) + `
-//       </strong></td>
-//       </tr>
-//       ` + ModalServiceRenderHelper._renderLocationRow(eventStore, event.location) + `
-//       ` + ModalServiceRenderHelper._renderOpeningHoursRow(eventStore, event.openingHours) + `
-//       </table>
-//       </div>`,
-//
-//             showCancelButton: true,
-//             confirmButtonColor: "#d33",
-//             cancelButtonColor: "#3085d6",
-//             confirmButtonText: TranslateService.translate(eventStore, 'MODALS.REMOVE_EVENT'),
-//             cancelButtonText: TranslateService.translate(eventStore, 'MODALS.SAVE')
-//         }).then(result => handleEditSidebarEventResult(eventStore, result, removeEventFromSidebarById, event));
+        // @ts-ignore
+        window.openingHours = initialData.openingHours || undefined;
+
+        const onConfirm = () => {
+            handleDuplicateSidebarEventResult(eventStore, event);
+            runInAction(() => {
+                eventStore.modalSettings.show = false;
+                eventStore.modalValues = {};
+            });
+        }
+
+        const title = `${TranslateService.translate(eventStore, "MODALS.DUPLICATE")}: ${event.title}`;
+        const inputs = ReactModalService.internal.getEventInputs(eventStore, initialData);
+
+        const content = <Observer>{() => (
+            <div className={"flex-col gap-20 align-layout-direction react-modal"}>
+                {
+                    inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))
+                }
+            </div>
+        )}</Observer>
+
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title,
+            content,
+            onConfirm,
+        });
     },
 }
 

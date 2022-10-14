@@ -606,7 +606,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                             </span>
                         </span>
                     <div className="fc-duplicate-event" onClick={() => {
-                        ModalService.openDuplicateSidebarEventModal(eventStore, event)
+                        ReactModalService.openDuplicateSidebarEventModal(eventStore, event)
                     }}>
                         <img title={TranslateService.translate(eventStore,'DUPLICATE')} alt={TranslateService.translate(eventStore,'DUPLICATE')} src="/images/duplicate.png"/>
                     </div>

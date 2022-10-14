@@ -1,4 +1,4 @@
-import React, {useContext, useImperativeHandle, useState} from 'react';
+import React, {useContext, useEffect, useImperativeHandle, useState} from 'react';
 import { icons } from './icons';
 import Select from "react-select";
 import {eventStoreContext} from "../../../stores/events-store";
@@ -10,7 +10,8 @@ export interface IconSelectorProps {
     id?: string,
     name?: string,
     value?: string,
-    onChange?: (data: any) => void
+    onChange?: (data: any) => void,
+    modalValueName: string
 }
 const IconSelector = (props: IconSelectorProps, ref: any) => {
     const optionsList = icons.map((icon) => ({
@@ -22,6 +23,10 @@ const IconSelector = (props: IconSelectorProps, ref: any) => {
 
     const [selectedOption, setSelectedOptions] = useState(initialSelectedOption);
     const eventStore = useContext(eventStoreContext);
+
+    useEffect(() => {
+        eventStore.modalValues[props.modalValueName] = selectedOption;
+    }, [selectedOption]);
 
     const handleSelect = (data:any) => {
         setSelectedOptions(data);
