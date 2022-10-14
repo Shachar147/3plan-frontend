@@ -287,6 +287,18 @@ body {
     overflow: auto;
 }
 
+.triplan-react-modal a.btn {
+    padding: 5px !important;
+}
+
+.triplan-react-modal {
+    min-width: 500px;
+}
+
+.triplan-react-modal ul {
+    text-align: left;
+}
+
 .sweet-alert, .sweet-alert h2 {
     font-family: GaretBook, Heebo, Arial;
 }

@@ -30,6 +30,7 @@
   "MODALS.SAVE": "שמור",
   "MODALS.CANCEL": "בטל",
   "MODALS.DELETED.TITLE": "נמחק!",
+  "MODALS.DELETED.CATEGORY.CONTENT": "הקטגוריה נמחקה בהצלחה",
   "MODALS.DELETED.CONTENT": "הפעילות נמחקה בהצלחה",
   "MODALS.ERROR.TITLE": "שגיאה",
   "MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "הכותרת לא יכולה להיות ריקה",

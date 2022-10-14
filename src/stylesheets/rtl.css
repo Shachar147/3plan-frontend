@@ -173,3 +173,7 @@ body.rtl .datePickerInput {
     direction: rtl;
     text-align: right;
 }
+
+body.rtl .triplan-react-modal ul {
+    text-align: right;
+}

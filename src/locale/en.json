@@ -21,6 +21,7 @@
   "MODALS.CANCEL": "Cancel",
   "MODALS.DELETED.TITLE": "Deleted!",
   "MODALS.DELETED.CONTENT": "Activity have been deleted.",
+  "MODALS.DELETED.CATEGORY.CONTENT": "Category have been deleted.",
   "MODALS.ERROR.TITLE": "Error",
   "MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "Title cannot be empty",
   "MODALS.ERROR.CATEGORY_CANT_BE_EMPTY": "Category cannot be empty",

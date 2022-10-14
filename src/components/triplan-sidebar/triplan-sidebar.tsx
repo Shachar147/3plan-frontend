@@ -433,7 +433,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                                 <i className="fa fa-trash-o" style={{ position: "relative", top: "-1px"}} aria-hidden="true" onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    ModalService.openDeleteCategoryModal(eventStore, category.id);
+                                    ReactModalService.openDeleteCategoryModal(eventStore, category.id);
                                 }}></i>
                             </div>
                         </div>

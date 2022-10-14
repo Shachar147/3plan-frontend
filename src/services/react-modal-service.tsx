@@ -1304,6 +1304,65 @@ const ReactModalService = {
             onConfirm,
         });
     },
+    openDeleteCategoryModal: (eventStore: EventStore, categoryId: number) => {
+
+        const newCategories = eventStore.categories.filter((c) => c.id !== categoryId);
+        const newCalendarEvents = eventStore.calendarEvents.filter((c) => c.category !== categoryId && (!c.extendedProps || c.extendedProps.categoryId !== categoryId));
+        const newAllEvents = eventStore.allEvents.filter((c) => c.category !== categoryId.toString());
+        const newSidebarEvents = {...eventStore.getSidebarEvents};
+        delete newSidebarEvents[categoryId];
+
+        const html = [
+            TranslateService.translate(eventStore, 'MODALS.DELETE_CATEGORY.CONTENT'),
+            "",
+            TranslateService.translate(eventStore, 'MODALS.DELETE_CATEGORY.CONTENT.IT_WILL_AFFECT'),
+            "<ul>" + [
+                `<li>${eventStore.calendarEvents.length - newCalendarEvents.length} ${TranslateService.translate(eventStore, 'CALENDAR_EVENTS')}</li>`,
+                `<li>${Object.values(eventStore.getSidebarEvents).flat().length - Object.values(newSidebarEvents).flat().length} ${TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}</li>`,
+                `<li>${eventStore.allEvents.length - newAllEvents.length} ${TranslateService.translate(eventStore, 'TOTAL_EVENTS')}</li>`
+            ].join("") + "</ul>"
+        ].join("<br/>");
+
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title}`,
+            content: (
+                <div dangerouslySetInnerHTML={{ __html: html }} />
+            ),
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
+            confirmBtnCssClass: 'primary-button red',
+            onConfirm: () => {
+                // delete from sidebar
+                eventStore.setSidebarEvents(newSidebarEvents);
+
+                // delete from categories
+                eventStore.setCategories([
+                    ...newCategories
+                ]);
+
+                // delete from calendar
+                if (newCalendarEvents.length === 0){
+                    eventStore.allowRemoveAllCalendarEvents = true;
+                }
+                eventStore.setCalendarEvents([
+                    ...newCalendarEvents
+                ]);
+
+                // delete from all events
+                eventStore.setAllEvents([
+                    ...newAllEvents
+                ]);
+
+                ReactModalService.internal.alertMessage(eventStore,"MODALS.DELETED.TITLE", "MODALS.DELETED.CATEGORY.CONTENT", "success")
+
+                runInAction(() => {
+                    eventStore.modalSettings.show = false;
+                    eventStore.modalValues = {};
+                });
+            }
+        })
+    },
 }
 
 export default ReactModalService;
