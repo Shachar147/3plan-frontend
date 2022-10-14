@@ -178,6 +178,8 @@ const RootRouter = () => {
         'preferred-time',
         'location',
         'opening-hours',
+        'start-time',
+        'end-time'
     ];
     eventStore.modalValuesRefs = {};
     refs.forEach((refKey) => {

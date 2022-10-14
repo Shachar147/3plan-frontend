@@ -282,6 +282,9 @@ body {
 
 .react-modal {
     padding: 20px;
+
+    max-height: 600px;
+    overflow: auto;
 }
 
 .sweet-alert, .sweet-alert h2 {
@@ -317,7 +320,8 @@ body {
 }
 
 .input-with-label input.textInput,
-.input-with-label textarea.textAreaInput {
+.input-with-label textarea.textAreaInput,
+.input-with-label .datePickerInput{
     border: 1px solid #d6d6d6;
     border-radius: 4px;
     padding-inline: 8px;
@@ -325,6 +329,15 @@ body {
     font-family: GaretBook, Heebo, Arial;
     font-size: 18px;
     font-weight: 300;
+}
+
+.textInput,
+.textAreaInput,
+.triplan-selector,
+.datePickerInput {
+    width: 320px;
+    min-width: 320px;
+    max-width: 320px;
 }
 
 .input-with-label input.textInput {

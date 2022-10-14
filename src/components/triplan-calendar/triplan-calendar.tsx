@@ -13,6 +13,7 @@ import {defaultTimedEventDuration} from "../../utils/defaults";
 import TranslateService from "../../services/translate-service";
 import {addHoursToDate, getDateRangeString, getTimeStringFromDate} from "../../utils/time-utils";
 import {isEventAlreadyOrdered, isMatching} from "../../utils/utils";
+import ReactModalService from "../../services/react-modal-service";
 
 export interface TriPlanCalendarProps {
     defaultCalendarEvents?: CalendarEvent[],
@@ -165,7 +166,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
     }
 
     const onCalendarSelect = (selectionInfo: any) => {
-        ModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
+        ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
     }
 
     const renderEventContent = (eventContentArg: EventContentArg) => {
