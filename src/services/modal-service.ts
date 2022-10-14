@@ -506,7 +506,12 @@ const ModalService = {
                             description: currentEvent.description,
                             location: currentEvent.location,
                             openingHours: currentEvent.openingHours,
-                            category: categoryId
+                            category: categoryId,
+                            extendedProps: {
+                                preferredTime: currentEvent.preferredTime,
+                                location: currentEvent.location,
+                                openingHours: currentEvent.openingHours,
+                            }
                         }
                     });
                     if (isUpdated) {

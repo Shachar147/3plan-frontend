@@ -147,7 +147,9 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
     }
 
     const onEventClick = (info: any) => {
-       ModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info)
+       // ModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info)
+        // todo complete: add delete button
+       ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info)
     };
 
     const handleEventChange = (changeInfo: any) => {
