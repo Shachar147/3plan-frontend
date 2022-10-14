@@ -502,7 +502,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     )
 
     const onEditCategory = (categoryId: number) => {
-        ModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
+        ReactModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
     }
 
     const renderAddSidebarEventButton = (categoryId: number) => (

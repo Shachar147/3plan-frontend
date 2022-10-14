@@ -1367,6 +1367,129 @@ const ReactModalService = {
             }
         })
     },
+    openEditCategoryModal: (TriplanCalendarRef: any, eventStore: EventStore, categoryId: number) => {
+        const category = eventStore.categories.find((c) => c.id.toString() === categoryId.toString());
+        if (!category) return;
+        const categoryName = category.title;
+
+        const onConfirm = () => {
+
+            const oldIcon = category.icon;
+            const oldName = categoryName;
+
+            // @ts-ignore
+            const newIcon = eventStore.modalValues.icon?.label;
+
+            // @ts-ignore
+            const newName = eventStore.modalValues.name;
+
+            let isOk = true;
+
+            // validate not already exist
+            if (!newName || newName.length === 0) {
+                isOk = false;
+                ReactModalService.internal.alertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY", "error")
+                return;
+            }
+            else if (eventStore.categories.find((c) => c.title === newName && c.id != categoryId)) {
+                isOk = false;
+                ReactModalService.internal.alertMessage(eventStore,"MODALS.ERROR.TITLE", "MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST", "error");
+                return;
+            }
+
+            const iconChanged = oldIcon !== newIcon;
+            const titleChanged = oldName !== newName;
+            const isChanged = titleChanged || iconChanged;
+
+            if (isChanged) {
+
+                // validate title not already exist
+                if (eventStore.categories.find((c) =>
+                    c.id !== categoryId && c.title === newName
+                )) {
+                    ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST", "error")
+                    return;
+                }
+
+                eventStore.setCategories([
+                    ...eventStore.categories.filter((c) => c.id.toString() !== categoryId.toString()),
+                    {
+                        id: categoryId,
+                        title: newName,
+                        icon: newIcon
+                    },
+                ]);
+
+                // update our store
+                const updatedCalenderEvents = [...eventStore.getJSCalendarEvents()];
+                updatedCalenderEvents.forEach((e) => {
+                    const event = eventStore.allEvents.find((ev) => ev.id.toString() === e.id!.toString());
+                    if (event && event.category && event.category === categoryId.toString()){
+                        if (e.icon === oldIcon){
+                            e.icon = newIcon;
+                        }
+                    }
+                });
+
+                eventStore.setCalendarEvents([...updatedCalenderEvents]);
+
+                // remove from fullcalendar store
+                TriplanCalendarRef.current.refreshSources();
+
+                ReactModalService.internal.alertMessage(eventStore, "MODALS.UPDATED.TITLE", "MODALS.UPDATED_CATEGORY.CONTENT", "success");
+            }
+            if (isOk) {
+                runInAction(() => {
+
+                    eventStore.modalSettings.show = false;
+                    eventStore.modalValues = {};
+                });
+            }
+        }
+
+        const inputs = [
+            {
+                settings: {
+                    modalValueName: 'icon',
+                    type: 'icon-selector',
+                    extra: {
+                        id: 'new-icon',
+                        value: category.icon
+                    }
+                },
+                textKey: 'MODALS.ICON',
+                className: 'border-top-gray'
+            },
+            {
+                settings: {
+                    modalValueName: 'name',
+                    type: 'text',
+                    extra: {
+                        placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+                        id: 'new-name',
+                        value: category.title
+                    }
+                },
+                textKey: 'MODALS.TITLE',
+                className: 'border-top-gray border-bottom-gray padding-bottom-20'
+            }
+        ]
+        const content = <Observer>{() => (
+            <div className={"flex-col gap-20 align-layout-direction react-modal bright-scrollbar"}>
+                {
+                    inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))
+                }
+            </div>
+        )}</Observer>
+
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title: `${TranslateService.translate(eventStore, 'EDIT_CATEGORY_MODAL.TITLE.EDIT_CATEGORY')}: ${categoryName}`,
+            type: 'controlled',
+            onConfirm,
+            content,
+        });
+    },
 }
 
 export default ReactModalService;
