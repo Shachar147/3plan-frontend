@@ -593,7 +593,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     key={event.id}
                 >
                         <span className="sidebar-event-title-container" title={"Edit"} onClick={() => {
-                            ModalService.openEditSidebarEventModal(eventStore, event, removeEventFromSidebarById, addToEventsToCategories)
+                            ReactModalService.openEditSidebarEventModal(eventStore, event, removeEventFromSidebarById, addToEventsToCategories)
                         }}>
                             <span className={"sidebar-event-title-text"}>
                                 <span className={"sidebar-event-icon"}>

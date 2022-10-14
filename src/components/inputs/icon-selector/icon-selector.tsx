@@ -1,10 +1,10 @@
 import React, {useContext, useImperativeHandle, useState} from 'react';
 import { icons } from './icons';
 import Select from "react-select";
-import {eventStoreContext} from "../../stores/events-store";
-import TranslateService from "../../services/translate-service";
+import {eventStoreContext} from "../../../stores/events-store";
+import TranslateService from "../../../services/translate-service";
 import './icon-selector.scss';
-import {SELECT_STYLE} from "../../utils/ui-utils";
+import {SELECT_STYLE} from "../../../utils/ui-utils";
 
 export interface IconSelectorProps {
     id?: string,
@@ -13,13 +13,15 @@ export interface IconSelectorProps {
     onChange?: (data: any) => void
 }
 const IconSelector = (props: IconSelectorProps, ref: any) => {
-    const [selectedOption, setSelectedOptions] = useState(props.value);
-    const eventStore = useContext(eventStoreContext);
-
     const optionsList = icons.map((icon) => ({
         value: icon.text,
         label: icon.icon
     }));
+
+    const initialSelectedOption = props.value ? optionsList.find((x) => x.label === props.value) : undefined;
+
+    const [selectedOption, setSelectedOptions] = useState(initialSelectedOption);
+    const eventStore = useContext(eventStoreContext);
 
     const handleSelect = (data:any) => {
         setSelectedOptions(data);
