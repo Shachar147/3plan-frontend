@@ -1739,7 +1739,7 @@ const ReactModalService = {
             }
         })
     },
-    confirmModal: (eventStore: EventStore, callback: () => void) => {
+    openConfirmModal: (eventStore: EventStore, callback: () => void) => {
 
         ReactModalService.internal.openModal(eventStore, {
             ...getDefaultSettings(eventStore),

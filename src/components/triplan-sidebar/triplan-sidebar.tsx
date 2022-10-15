@@ -61,7 +61,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 icon={"fa-trash"}
                 text={TranslateService.translate(eventStore,'CLEAR_CALENDAR_EVENTS.BUTTON_TEXT')}
                 onClick={() => {
-                    ReactModalService.confirmModal(eventStore,
+                    ReactModalService.openConfirmModal(eventStore,
                         eventStore.clearCalendarEvents.bind(eventStore)
                     );
                 }}
