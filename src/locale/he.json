@@ -226,5 +226,6 @@
   "SELECT_CATEGORY_PLACEHOLDER": "הקלד כדי לחפש",
   "MODALS.PLACEHOLDER.PREFIX": "הזן",
   "TYPE_TO_SEARCH_PLACEHOLDER": "הקלד כדי לחפש",
-  "LOCKED_EVENT_TOOLTIP": "פעילות זו כבר הוזמנה ולכן לא ניתן לשנות לה את הזמנים"
+  "LOCKED_EVENT_TOOLTIP": "פעילות זו כבר הוזמנה ולכן לא ניתן לשנות לה את הזמנים",
+  "MODALS.ACTIONS": "פעולות"
 }
