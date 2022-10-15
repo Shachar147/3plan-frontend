@@ -39,12 +39,12 @@ button:disabled {
     border: 1px solid var(--blue) !important;
 }
 
-button.secondary-button.black {
+.secondary-button.black {
     color: var(--black) !important;
     border: 1px solid var(--gray);
 }
 
-button.secondary-button.black:hover{
+.secondary-button.black:hover{
     /*border: 1px solid var(--black) !important;*/
     border-color: #aaa !important;
 }

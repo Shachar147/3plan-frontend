@@ -76,13 +76,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 <Button
                     icon={"fa-download"}
                     text={TranslateService.translate(eventStore,'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT')}
-                    onClick={() => { modalService.openImportEventsModal(eventStore)}}
+                    onClick={() => { ReactModalService.openImportEventsModal(eventStore)}}
                     flavor={ButtonFlavor["movable-link"]}
                 />
                 <Button
                     icon={"fa-upload"}
                     text={TranslateService.translate(eventStore,'IMPORT_EVENTS.BUTTON_TEXT')}
-                    onClick={() => { modalService.openImportEventsStepTwoModal(eventStore)}}
+                    onClick={() => { ReactModalService.openImportEventsStepTwoModal(eventStore)}}
                     flavor={ButtonFlavor["movable-link"]}
                 />
             </>

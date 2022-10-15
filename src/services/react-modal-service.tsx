@@ -8,7 +8,13 @@ import {getClasses, ucfirst} from "../utils/utils";
 import Alert from "sweetalert2";
 import {defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE} from "../utils/defaults";
 import {Observer} from "mobx-react";
-import {CalendarEvent, LocationData, SidebarEvent, WeeklyOpeningHoursData} from "../utils/interfaces";
+import {
+    CalendarEvent,
+    ImportEventsConfirmInfo,
+    LocationData,
+    SidebarEvent,
+    WeeklyOpeningHoursData
+} from "../utils/interfaces";
 import {TriplanEventPreferredTime, TriplanPriority} from "../utils/enums";
 import {convertMsToHM, formatDuration, getInputDateTimeValue, validateDuration} from "../utils/time-utils";
 import SelectInput from "../components/inputs/select-input/select-input";
@@ -17,6 +23,7 @@ import TextareaInput from "../components/inputs/textarea-input/textarea-input";
 import DatePicker from "../components/inputs/date-picker/date-picker";
 import {EventInput} from "@fullcalendar/react";
 import Button, {ButtonFlavor} from "../components/common/button/button";
+import ImportService from "./import-service";
 
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {
@@ -1740,7 +1747,6 @@ const ReactModalService = {
         })
     },
     openConfirmModal: (eventStore: EventStore, callback: () => void) => {
-
         ReactModalService.internal.openModal(eventStore, {
             ...getDefaultSettings(eventStore),
             title: `${TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE')}`,
@@ -1752,6 +1758,143 @@ const ReactModalService = {
             confirmBtnCssClass: 'primary-button',
             onConfirm: () => {
                 callback();
+
+                ReactModalService.internal.closeModal(eventStore);
+            }
+        })
+    },
+    openImportEventsModal: (eventStore: EventStore) => {
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE'),
+            content: (
+                <div className="import-events-steps" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS') }} />
+            ),
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DOWNLOAD_TEMPLATE'),
+            confirmBtnCssClass: 'primary-button',
+            onConfirm: () => {
+                ImportService._download("TriplanEventsImport.csv", ImportService._buildTemplate(eventStore));
+                ReactModalService.internal.closeModal(eventStore);
+                ReactModalService.openImportEventsStepTwoModal(eventStore);
+            }
+        })
+    },
+    openImportEventsStepTwoModal: (eventStore: EventStore) => {
+        eventStore.modalValues['fileToUpload'] = undefined;
+        // @ts-ignore
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE2'),
+            content: (
+                <Observer>{ () => <>
+                    <div className="import-events-steps" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS2') }} />
+                    <div className={"file-upload-container"}>
+                        <input
+                            type={"file"}
+                            name={"upload[]"}
+                            id={"fileToUpload"}
+                            accept={"application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv"}
+                            className={"display-none"}
+                            onChange={(event) => {
+                                const target = event?.target;
+                                const files = target?.files;
+                                const file = files && files.length > 0 ? files[0] : undefined;
+
+                                runInAction(() => {
+                                    eventStore.modalValues['fileToUpload'] = file;
+                                })
+
+                                // @ts-ignore
+                                document.getElementsByClassName("file-name-label")[0].innerText = file?.name || TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
+                            }}
+                        />
+                        <div className={"file-upload-label-container"}>
+                            <label htmlFor={"fileToUpload"} className={"btn secondary-button pointer black file-button-label"}>
+                                {TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
+                            </label>
+                            <label className={"file-name-label"}>
+                                {eventStore.modalValues['fileToUpload']?.name || TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}
+                            </label>
+                        </div>
+                    </div>
+                </>}</Observer>
+            ),
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmBtnText: TranslateService.translate(eventStore, 'MODALS.UPLOAD'),
+            confirmBtnCssClass: 'primary-button',
+            onConfirm: () => {
+                // @ts-ignore
+                // const file = result.value;
+                const file = eventStore.modalValues["fileToUpload"];
+                debugger;
+                // const file = document.getElementById("fileToUpload");
+                if (file) {
+                    const reader = new FileReader();
+                    reader.readAsText(file, "UTF-8");
+                    reader.onload = function (evt) {
+                        // @ts-ignore
+                        ImportService.handleUploadedFile(eventStore, evt.target.result);
+                    }
+                    reader.onerror = function (evt) {
+                        ReactModalService.internal.alertMessage(eventStore, 'MODALS.ERROR.TITLE', 'MODALS.IMPORT_EVENTS_ERROR.CONTENT', 'error');
+                    }
+                }
+                ReactModalService.internal.closeModal(eventStore);
+            }
+        })
+    },
+    openImportEventsConfirmModal: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
+        let contentArr = [
+            `${info.eventsToAdd.length} ${TranslateService.translate(eventStore, 'IMPORT_EVENTS.CONFIRM.EVENTS_WILL_BE_ADDED')}`,
+            `${info.categoriesToAdd.length} ${TranslateService.translate(eventStore, 'IMPORT_EVENTS.CONFIRM.CATEGORIES_WILL_BE_ADDED')}`,
+            `${info.numOfEventsWithErrors} ${TranslateService.translate(eventStore, 'IMPORT_EVENTS.CONFIRM.EVENTS_HAVE_ERRORS')}`,
+        ];
+
+        if (info.categoriesToAdd.length > 0){
+            contentArr = [...contentArr,
+                "",
+                `<u><b>${TranslateService.translate(eventStore, 'IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_CATEGORIES')}</b></u>`,
+                ['<ul>',...info.categoriesToAdd.map(x => `<li>${x.title}</li>`),'</ul>'].join("")
+            ];
+        }
+
+        if (info.eventsToAdd.length > 0){
+            contentArr = [...contentArr,
+                // "",
+                `<u><b>${TranslateService.translate(eventStore, 'IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_EVENTS')}</b></u>`,
+                ['<ul>',...info.eventsToAdd.map(x => `<li>${x.title}</li>`),'</ul>'].join("")
+            ];
+        }
+
+        if (info.errors.length > 0){
+            contentArr = [...contentArr,
+                // "",
+                `<u><b>${TranslateService.translate(eventStore, 'IMPORT_EVENTS.CONFIRM.ERRORS_DETAILS')}</b></u>`,
+                ['<ul>',...info.errors.map(x => `<li>${x}</li>`),'</ul>'].join("")
+            ];
+        }
+
+        const html = contentArr.join("<br/>");
+
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE3'),
+            content: (
+                <div className={"react-modal bright-scrollbar"} dangerouslySetInnerHTML={{ __html: html }} />
+            ),
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmBtnText: TranslateService.translate(eventStore, info.errors.length > 0 ? 'MODALS.UPLOAD_ANYWAY' : 'MODALS.UPLOAD'),
+            confirmBtnCssClass: 'primary-button',
+            showConfirmButton: info.categoriesToAdd.length > 0 || info.eventsToAdd.length > 0,
+            onConfirm: () => {
+
+                const { categoriesImported, eventsImported } = ImportService.import(eventStore, info);
+                if (categoriesImported || eventsImported) {
+                    ReactModalService.internal.alertMessage(eventStore, 'MODALS.IMPORTED.TITLE', 'MODALS.IMPORTED.CONTENT', 'success');
+                } else {
+                    ReactModalService.internal.alertMessage(eventStore, 'MODALS.ERROR.TITLE', 'OOPS_SOMETHING_WENT_WRONG', 'error');
+                }
 
                 ReactModalService.internal.closeModal(eventStore);
             }

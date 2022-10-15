@@ -401,3 +401,35 @@ body {
     filter: grayscale(50%);
     opacity: 0.8;
 }
+
+.file-upload-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.file-upload-label-container{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.file-button-label {
+    background-color: #efefef !important;;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.file-name-label {
+    height: 38px;
+    min-width: 200px;
+    border: 1px solid var(--gray);
+    border-radius: 20px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    line-height: 38px;
+    color: var(--gray);
+    font-size: 14px;
+}

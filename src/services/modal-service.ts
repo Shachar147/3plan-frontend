@@ -169,6 +169,8 @@ const ModalServiceRenderHelper = {
     },
 }
 
+/********************** deprecated *****************************/
+
 const ModalService = {
     _categoriesIcons: (eventStore: EventStore): Record<number, string> => {
         const hash: Record<number, string> = {};

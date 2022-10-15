@@ -5,6 +5,7 @@ import {ImportEventsConfirmInfo, SidebarEvent, TriPlanCategory} from "../utils/i
 import ModalService from "./modal-service";
 import {defaultTimedEventDuration} from "../utils/defaults";
 import {formatDuration, validateDuration} from "../utils/time-utils";
+import ReactModalService from "./react-modal-service";
 
 const ImportService = {
 
@@ -392,7 +393,7 @@ const ImportService = {
             }
         })
 
-        ModalService.openImportEventsConfirmModal(eventStore, {
+        ReactModalService.openImportEventsConfirmModal(eventStore, {
             eventsToAdd,
             categoriesToAdd,
             errors,

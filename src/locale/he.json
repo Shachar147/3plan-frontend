@@ -227,5 +227,7 @@
   "MODALS.PLACEHOLDER.PREFIX": "הזן",
   "TYPE_TO_SEARCH_PLACEHOLDER": "הקלד כדי לחפש",
   "LOCKED_EVENT_TOOLTIP": "פעילות זו כבר הוזמנה ולכן לא ניתן לשנות לה את הזמנים",
-  "MODALS.ACTIONS": "פעולות"
+  "MODALS.ACTIONS": "פעולות",
+  "CLICK_HERE_TO_UPLOAD": "לחץ כאן כדי להעלות",
+  "NO_FILE_CHOSEN": "אף קובץ לא נבחר"
 }

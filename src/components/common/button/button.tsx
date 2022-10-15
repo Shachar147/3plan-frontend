@@ -18,7 +18,7 @@ export interface ButtonProps {
     style?: object,
 
     icon?: string,
-    image?: string
+    image?: string,
 }
 
 const Button = (props: ButtonProps) => (

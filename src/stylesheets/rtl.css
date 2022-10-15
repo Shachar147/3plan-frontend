@@ -177,3 +177,17 @@ body.rtl .datePickerInput {
 body.rtl .triplan-react-modal ul {
     text-align: right;
 }
+
+body.rtl .file-button-label {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: 20px !important;
+    border-bottom-right-radius: 20px !important;
+}
+
+body.rtl .file-name-label {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}

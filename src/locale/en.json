@@ -217,5 +217,7 @@
   "MODALS.PLACEHOLDER.PREFIX": "Enter",
   "TYPE_TO_SEARCH_PLACEHOLDER": "Type to search",
   "LOCKED_EVENT_TOOLTIP": "This activity already been booked so you can't change it's dates",
-  "MODALS.ACTIONS": "Actions"
+  "MODALS.ACTIONS": "Actions",
+  "CLICK_HERE_TO_UPLOAD": "Click here to upload",
+  "NO_FILE_CHOSEN": "No file chosen"
 }
