@@ -271,10 +271,7 @@ const getDefaultSettings = (eventStore: EventStore) => {
         customClass: 'triplan-react-modal',
         reverseButtons: eventStore.getCurrentDirection() === 'rtl',
         onCancel: () => {
-            runInAction(() =>{
-                eventStore.modalSettings.show = false;
-                eventStore.modalValues = {};
-            });
+            ReactModalService.internal.closeModal(eventStore);
         }
     }
 }
@@ -643,6 +640,12 @@ const ReactModalService = {
                 icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours,
                 startDate, endDate
             };
+        },
+        closeModal: (eventStore: EventStore) => {
+            runInAction(() => {
+                eventStore.modalSettings.show = false;
+                eventStore.modalValues = {};
+            });
         }
     },
 
@@ -682,8 +685,7 @@ const ReactModalService = {
                         },
                     ]);
 
-                    eventStore.modalSettings.show = false;
-                    eventStore.modalValues = {};
+                    ReactModalService.internal.closeModal(eventStore);
                 });
                 ReactModalService.internal.alertMessage(eventStore,"MODALS.CREATE.TITLE", "MODALS.CREATE_CATEGORY.CONTENT", "success");
             }
@@ -777,10 +779,7 @@ const ReactModalService = {
                     }
                 });
 
-                runInAction(() => {
-                    eventStore.modalSettings.show = false;
-                    eventStore.modalValues = {};
-                });
+                ReactModalService.internal.closeModal(eventStore);
 
                 ReactModalService.internal.alertMessage(eventStore,"MODALS.UPDATED.TITLE", "MODALS.UPDATED_TRIP.CONTENT", "success");
 
@@ -911,10 +910,7 @@ const ReactModalService = {
 
             ReactModalService.internal.alertMessage(eventStore,"MODALS.ADDED.TITLE", "MODALS.ADDED.CONTENT", "success")
 
-            runInAction(() => {
-                eventStore.modalSettings.show = false;
-                eventStore.modalValues = {};
-            });
+            ReactModalService.internal.closeModal(eventStore);
         }
 
         const onConfirm = () => {
@@ -1114,10 +1110,7 @@ const ReactModalService = {
 
         const onConfirm = () => {
             handleEditSidebarEventResult(eventStore, event);
-            runInAction(() => {
-                eventStore.modalSettings.show = false;
-                eventStore.modalValues = {};
-            });
+            ReactModalService.internal.closeModal(eventStore);
         }
 
         const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${event.title}`;
@@ -1219,10 +1212,7 @@ const ReactModalService = {
 
         const onConfirm = () => {
             handleDuplicateSidebarEventResult(eventStore, event);
-            runInAction(() => {
-                eventStore.modalSettings.show = false;
-                eventStore.modalValues = {};
-            });
+            ReactModalService.internal.closeModal(eventStore);
         }
 
         const title = `${TranslateService.translate(eventStore, "MODALS.DUPLICATE")}: ${event.title}`;
@@ -1322,10 +1312,7 @@ const ReactModalService = {
         const onConfirm = () => {
             const isOk = handleAddCalendarEventResult(eventStore);
             if (isOk) {
-                runInAction(() => {
-                    eventStore.modalSettings.show = false;
-                    eventStore.modalValues = {};
-                });
+                ReactModalService.internal.closeModal(eventStore);
             }
         }
 
@@ -1399,10 +1386,7 @@ const ReactModalService = {
 
                 ReactModalService.internal.alertMessage(eventStore,"MODALS.DELETED.TITLE", "MODALS.DELETED.CATEGORY.CONTENT", "success")
 
-                runInAction(() => {
-                    eventStore.modalSettings.show = false;
-                    eventStore.modalValues = {};
-                });
+                ReactModalService.internal.closeModal(eventStore);
             }
         })
     },
@@ -1478,11 +1462,7 @@ const ReactModalService = {
                 ReactModalService.internal.alertMessage(eventStore, "MODALS.UPDATED.TITLE", "MODALS.UPDATED_CATEGORY.CONTENT", "success");
             }
             if (isOk) {
-                runInAction(() => {
-
-                    eventStore.modalSettings.show = false;
-                    eventStore.modalValues = {};
-                });
+                ReactModalService.internal.closeModal(eventStore);
             }
         }
 
@@ -1551,10 +1531,7 @@ const ReactModalService = {
 
                 ReactModalService.internal.alertMessage(eventStore, "MODALS.DELETED.TITLE", "MODALS.DELETED.CONTENT", "success");
 
-                runInAction(() => {
-                    eventStore.modalSettings.show = false;
-                    eventStore.modalValues = {};
-                });
+                ReactModalService.internal.closeModal(eventStore);
 
             } else {
                 ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG", "error");
@@ -1692,10 +1669,7 @@ const ReactModalService = {
         const onConfirm = () => {
             const isOk = handleEditEventResult(eventStore, addEventToSidebar, info.event);
             if (isOk) {
-                runInAction(() => {
-                    eventStore.modalSettings.show = false;
-                    eventStore.modalValues = {};
-                });
+                ReactModalService.internal.closeModal(eventStore);
             }
         }
 
@@ -1749,6 +1723,24 @@ const ReactModalService = {
             content,
             onConfirm,
         });
+    },
+    openDeleteSidebarEventModal: (eventStore: EventStore, removeEventFromSidebarById: (eventId: string) => void, event: SidebarEvent) => {
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${event.title}`,
+            content: (
+                <div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MODALS.DELETE_SIDEBAR_EVENT.CONTENT') }} />
+            ),
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
+            confirmBtnCssClass: 'primary-button red',
+            onConfirm: () => {
+                removeEventFromSidebarById(event.id);
+                eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
+
+                ReactModalService.internal.closeModal(eventStore);
+            }
+        })
     },
 }
 
