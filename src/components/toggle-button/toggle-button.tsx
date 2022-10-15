@@ -52,6 +52,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 	const containerRef = useRef() as React.MutableRefObject<HTMLDivElement>;
 	const refs = useMemo<(HTMLDivElement | null)[]>(() => [], []);
 
+	// @ts-ignore
 	useIntervalWhile(initSelectedCircle, 100, 50, [props.value]);
 
 	function initSelectedCircle() {

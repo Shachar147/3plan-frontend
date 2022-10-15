@@ -23,6 +23,7 @@ import {
     getInputDateTimeValue,
     validateDuration
 } from "../utils/time-utils";
+import ReactModalService from "./react-modal-service";
 
 const ModalServiceRenderHelper = {
     _renderPrioritySelect: (eventStore: EventStore, priority?: TriplanPriority) => {
@@ -782,7 +783,7 @@ const ModalService = {
             }
 
             if (result.value) {
-                ModalService.openDeleteSidebarEventModal(eventStore, removeEventFromSidebarById, event)
+                ReactModalService.openDeleteSidebarEventModal(eventStore, removeEventFromSidebarById, event)
             } else {
                 const durationChanged = originalEvent.duration !== currentEvent.duration.toString() && !(originalEvent.duration == undefined && currentEvent.duration == defaultTimedEventDuration);
                 const iconChanged = oldEvent.icon !== currentEvent.icon && !(oldEvent.icon == undefined && currentEvent.icon == "");

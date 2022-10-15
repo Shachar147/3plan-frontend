@@ -95,7 +95,7 @@ const ReactModalRenderHelper = {
             />
         );
     },
-    renderTextAreaInput: (eventStore: EventStore, modalValueName: string, extra: { rows?: number, placeholderKey?: string, placeholder?: string, id?:string}, ref?: any) => {
+    renderTextAreaInput: (eventStore: EventStore, modalValueName: string, extra: { rows?: number, placeholderKey?: string, placeholder?: string, id?:string, value?: string}, ref?: any) => {
         if (extra.value && !eventStore.modalValues[modalValueName]){
             eventStore.modalValues[modalValueName] = extra.value;
         }
@@ -993,9 +993,6 @@ const ReactModalService = {
                 })
             }
 
-            // if (result.value) {
-            //     ModalService.openDeleteSidebarEventModal(eventStore, removeEventFromSidebarById, event)
-            // } else {
             const durationChanged = originalEvent.duration !== currentEvent.duration.toString() && !(originalEvent.duration == undefined && currentEvent.duration == defaultTimedEventDuration);
             const iconChanged = oldEvent.icon !== currentEvent.icon && !(oldEvent.icon == undefined && currentEvent.icon == "");
             const titleChanged = originalEvent.title !== currentEvent.title;
@@ -1737,6 +1734,24 @@ const ReactModalService = {
             onConfirm: () => {
                 removeEventFromSidebarById(event.id);
                 eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
+
+                ReactModalService.internal.closeModal(eventStore);
+            }
+        })
+    },
+    confirmModal: (eventStore: EventStore, callback: () => void) => {
+
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            title: `${TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE')}`,
+            content: (
+                <div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE.CONTENT') }} />
+            ),
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+            confirmBtnText: TranslateService.translate(eventStore, 'MODALS.CONTINUE'),
+            confirmBtnCssClass: 'primary-button',
+            onConfirm: () => {
+                callback();
 
                 ReactModalService.internal.closeModal(eventStore);
             }

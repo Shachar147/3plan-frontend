@@ -277,6 +277,7 @@ export class EventStore {
             if (!sidebarEvent.preferredTime) {
                 sidebarEvent.preferredTime = sidebarEvent.extendedProps ? sidebarEvent.extendedProps.preferredTime : sidebarEvent.preferredTime;
             }
+            newEvents[categoryId] = newEvents[categoryId] || [];
             newEvents[categoryId].push(sidebarEvent);
         })
 

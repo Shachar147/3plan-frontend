@@ -61,7 +61,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 icon={"fa-trash"}
                 text={TranslateService.translate(eventStore,'CLEAR_CALENDAR_EVENTS.BUTTON_TEXT')}
                 onClick={() => {
-                    ModalService.confirmModal(eventStore,
+                    ReactModalService.confirmModal(eventStore,
                         eventStore.clearCalendarEvents.bind(eventStore)
                     );
                 }}
@@ -611,7 +611,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                         <img title={TranslateService.translate(eventStore,'DUPLICATE')} alt={TranslateService.translate(eventStore,'DUPLICATE')} src="/images/duplicate.png"/>
                     </div>
                     <a title={TranslateService.translate(eventStore,'DELETE')} className={"fc-remove-event"} onClick={() => {
-                        ModalService.openDeleteSidebarEventModal(eventStore, removeEventFromSidebarById, event);
+                        ReactModalService.openDeleteSidebarEventModal(eventStore, removeEventFromSidebarById, event);
                     }}>X</a>
                 </div>
             ))}
