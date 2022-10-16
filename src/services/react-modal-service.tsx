@@ -281,7 +281,6 @@ const getDefaultSettings = (eventStore: EventStore) => {
         customClass: 'triplan-react-modal',
         reverseButtons: eventStore.getCurrentDirection() === 'rtl',
         onCancel: () => {
-            debugger;
             ReactModalService.internal.closeModal(eventStore);
         }
     }

@@ -201,8 +201,6 @@ export class EventStore {
     setCalendarEvents(newCalenderEvents: EventInput[]){
         this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes("start"));
 
-        debugger;
-
         // lock ordered events
         this.calendarEvents = this.calendarEvents.map((x: EventInput) => lockOrderedEvents(x));
 

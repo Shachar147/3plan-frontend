@@ -191,3 +191,9 @@ body.rtl .file-name-label {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
 }
+
+body.rtl .triplan-tag-text {
+    padding-inline: 20px;
+    padding-inline-start: 20px !important;
+    padding-inline-end: 30px !important;
+}
