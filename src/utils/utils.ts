@@ -509,5 +509,5 @@ export function lockOrderedEvents(calendarEvent: EventInput) {
 }
 
 export function isEventAlreadyOrdered(calendarEvent: EventInput) {
-    return calendarEvent?.extendedProps?.description && isMatching(calendarEvent?.extendedProps?.description.toLowerCase(), ["הוזמן", "ordered"]);
+    return calendarEvent?.extendedProps?.description && isMatching(calendarEvent?.extendedProps?.description?.toLowerCase(), ["הוזמן", "ordered"]);
 }

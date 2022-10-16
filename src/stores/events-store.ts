@@ -84,7 +84,7 @@ export class EventStore {
             description = event.extendedProps.description;
         }
         const { taskKeywords } = ListViewService._initSummaryConfiguration();
-        const isTodoComplete = taskKeywords.find((k) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
+        const isTodoComplete = taskKeywords.find((k) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(k.toLowerCase()) !== -1)
         return !!isTodoComplete;
     }
 
@@ -200,6 +200,8 @@ export class EventStore {
     @action
     setCalendarEvents(newCalenderEvents: EventInput[]){
         this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes("start"));
+
+        debugger;
 
         // lock ordered events
         this.calendarEvents = this.calendarEvents.map((x: EventInput) => lockOrderedEvents(x));

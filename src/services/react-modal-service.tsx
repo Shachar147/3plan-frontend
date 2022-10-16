@@ -25,6 +25,9 @@ import {EventInput} from "@fullcalendar/react";
 import Button, {ButtonFlavor} from "../components/common/button/button";
 import ImportService from "./import-service";
 
+// @ts-ignore
+import _ from "lodash";
+
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {
         return (
@@ -63,13 +66,13 @@ const ReactModalRenderHelper = {
     },
     renderCustomGroup: (eventStore: EventStore, content: any[]): JSX.Element => {
         return (
-            <>
+            <div className={"flex-row gap-10"}>
                 {
                     content.map((row) => {
                         return ReactModalRenderHelper.getRowInput(eventStore, row);
                     })
                 }
-            </>
+            </div>
         )
     },
     renderButton: (eventStore: EventStore, textKey: string, onClick: () => void, flavor: ButtonFlavor, className?: string, style?: object) => {
@@ -278,6 +281,7 @@ const getDefaultSettings = (eventStore: EventStore) => {
         customClass: 'triplan-react-modal',
         reverseButtons: eventStore.getCurrentDirection() === 'rtl',
         onCancel: () => {
+            debugger;
             ReactModalService.internal.closeModal(eventStore);
         }
     }
@@ -1666,8 +1670,35 @@ const ReactModalService = {
             return true;
         }
 
+        const handleDuplicateEventResult = (eventStore: EventStore, originalEvent: EventInput) => {
+
+            let newEvent = Object.assign({}, originalEvent);
+            newEvent.extendedProps = {...originalEvent.extendedProps}
+            const newId = eventStore.createEventId();
+            newEvent.id = newId;
+            newEvent.extendedProps.id = newId;
+
+            // @ts-ignore
+            newEvent.start = originalEvent.start;
+
+            // console.log("original", JSON.parse(JSON.stringify(originalEvent)), "new", newEvent);
+
+            // update calendar events
+            eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
+
+            // update all events
+            // @ts-ignore
+            eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
+        }
+
         const onDeleteClick = () => {
             handleDeleteEventResult(currentEvent as CalendarEvent, addEventToSidebar);
+        }
+
+        const onDuplicateClick = () => {
+            const calendarEvent = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
+            handleDuplicateEventResult(eventStore, calendarEvent as CalendarEvent);
+            ReactModalService.internal.closeModal(eventStore)
         }
 
         const onConfirm = () => {
@@ -1700,6 +1731,18 @@ const ReactModalService = {
                             },
                             textKey: 'MODALS.REMOVE_EVENT',
                             // className: 'border-top-gray'
+                        },
+                        {
+                            settings: {
+                                type: 'button',
+                                extra: {
+                                    onClick: onDuplicateClick,
+                                    flavor: ButtonFlavor.secondary,
+                                    className: 'black'
+                                }
+                            },
+                            textKey: 'MODALS.DUPLICATE_EVENT',
+                            // className: 'border-top-gray'
                         }
                     ]
                 }
@@ -1713,11 +1756,6 @@ const ReactModalService = {
                 {
                     inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))
                 }
-                {/*<div className={getClasses(["input-with-label flex-row gap-30 align-items-center"], "deleteButtonRow")}>*/}
-                {/*    {*/}
-                {/*        ReactModalRenderHelper.renderButton(eventStore, 'MODALS.REMOVE_EVENT', , ButtonFlavor.primary, 'red')*/}
-                {/*    }*/}
-                {/*</div>*/}
             </div>
         )}</Observer>
 
@@ -1827,7 +1865,7 @@ const ReactModalService = {
                 // @ts-ignore
                 // const file = result.value;
                 const file = eventStore.modalValues["fileToUpload"];
-                debugger;
+
                 // const file = document.getElementById("fileToUpload");
                 if (file) {
                     const reader = new FileReader();

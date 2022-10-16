@@ -45,6 +45,7 @@
   "MODALS.DUPLICATE": "שכפל",
   "MODALS.EDIT_EVENT": "ערוך פעילות",
   "MODALS.REMOVE_EVENT": "מחק פעילות",
+  "MODALS.DUPLICATE_EVENT": "שכפל פעילות",
   "MODALS.DELETE_SIDEBAR_EVENT.CONTENT": "האם אתה בטוח שברצונך למחוק את הפעילות הזאת?<br/>זוהי פעולה בלתי הפיכה",
   "MODALS.UPDATED.TITLE": "עודכן!",
   "MODALS.UPDATED_EVENT.CONTENT": "הפעילות עודכנה בהצלחה",

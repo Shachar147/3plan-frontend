@@ -192,7 +192,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             let todoCompleteEvents = eventStore.allEvents
                 .filter((x) => {
                     const { title, allDay, description = '' } = x;
-                    const isTodoComplete = taskKeywords.find((k) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
+                    const isTodoComplete = taskKeywords.find((k) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(k.toLowerCase()) !== -1)
                     return isTodoComplete && !allDay;
                 });
 

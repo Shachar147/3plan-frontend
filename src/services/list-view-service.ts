@@ -415,7 +415,7 @@ const ListViewService = {
                     }
                 }
 
-                const taskIndication = taskKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
+                const taskIndication = taskKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
                     `<span style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>` : "";
 
                 let distanceKey = Object.keys(eventDistanceKey).includes(event.id!) ?

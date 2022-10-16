@@ -292,7 +292,8 @@ body {
     padding: 5px !important;
 }
 
-.triplan-react-modal button.primary-button {
+.triplan-react-modal button.primary-button,
+.triplan-react-modal button.secondary-button{
     /* for delete button when editing calendar event */
     min-height: 40px;
     padding: 5px;

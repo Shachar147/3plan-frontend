@@ -35,6 +35,7 @@
   "MODALS.DUPLICATE": "Duplicate",
   "MODALS.EDIT_EVENT": "Edit Activity",
   "MODALS.REMOVE_EVENT": "Remove Activity",
+  "MODALS.DUPLICATE_EVENT": "Duplicate Activity",
   "MODALS.DELETE_SIDEBAR_EVENT.CONTENT": "Are you sure you want to delete this activity?<br/>this action is irreversible",
   "MODALS.UPDATED.TITLE": "Updated!",
   "MODALS.UPDATED_EVENT.CONTENT": "Activity have been updated",
