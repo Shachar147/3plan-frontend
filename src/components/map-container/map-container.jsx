@@ -106,7 +106,7 @@ const MapContainer = () => {
         scheduledTo = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-calendar" aria-hidden="true"></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
 
         let category = event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
-        category = eventStore.categories.find((x) => x.id.toString() === category)?.title;
+        category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
         const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
 
         let preferredTime = event.extendedProps && Object.keys(event.extendedProps).includes('preferredTime') ? event.extendedProps.preferredTime : event.preferredTime;
@@ -147,7 +147,7 @@ const MapContainer = () => {
             let icon = "";
             let bgColor = priorityToMapColor[event.priority].replace('#', '');
             let category = event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
-            category = eventStore.categories.find((x) => x.id.toString() === category)?.title;
+            category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 
             category = category ? category.toLowerCase() : "";
             const title = event.title.toLowerCase();
