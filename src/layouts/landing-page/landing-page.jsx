@@ -29,7 +29,7 @@ const LandingPage = () => {
                     <br/>
                     <div className={"trip main-font-heavy"}>{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}</div>
                 </div>
-                <img className="logo-container" src={"/images/landing-page/main-centered.png"} />
+                <img className="logo-container" src={"/images/logo/new-logo.png"} style={{ width: "50%", minWidth: "400px" }} />
                 <div className={"slogan main-font"}>
                     <span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE1')}</span>
                     <span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE2')}</span>

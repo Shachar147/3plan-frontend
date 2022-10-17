@@ -230,5 +230,12 @@
   "LOCKED_EVENT_TOOLTIP": "פעילות זו כבר הוזמנה ולכן לא ניתן לשנות לה את הזמנים",
   "MODALS.ACTIONS": "פעולות",
   "CLICK_HERE_TO_UPLOAD": "לחץ כאן כדי להעלות",
-  "NO_FILE_CHOSEN": "אף קובץ לא נבחר"
+  "NO_FILE_CHOSEN": "אף קובץ לא נבחר",
+  "LOGIN": "התחבר",
+  "REGISTER_PREFIX": "עדיין לא רשום?",
+  "REGISTER": "הירשם עכשיו!",
+  "LOGIN_PAGE.WRONG_CREDENTIALS": "שם משתמש או סיסמא לא נכונים.",
+  "REGISTER_BUTTON": "הירשם",
+  "LOGIN_PREFIX": "נרשמת כבר?",
+  "LOGIN_LINK": "התחבר!"
 }

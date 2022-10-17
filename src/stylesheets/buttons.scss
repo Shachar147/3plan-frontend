@@ -15,8 +15,8 @@ button:disabled {
 }
 
 .primary-button {
-    background-color: var(--blue);
-    color: white;
+    background-color: var(--blue) !important;
+    color: white !important;
     box-shadow: 0 5px 8px 0 rgb(41 152 255 / 21%);
     border: 0;
 
@@ -28,7 +28,7 @@ button:disabled {
 
 .swal2-confirm:not(:disabled):hover,
 .primary-button:not(:disabled):hover {
-    background-color: var(--dark-gray);
+    background-color: var(--dark-gray) !important;
 }
 
 .secondary-button {

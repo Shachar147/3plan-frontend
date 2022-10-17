@@ -19,6 +19,10 @@ import {runInAction} from "mobx";
 import {getCoordinatesRangeKey, padTo2Digits} from "./utils/utils";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { observer, Observer } from 'mobx-react';
+import PrivateRoute from "./PrivateRoute";
+import LoginPage from "./layouts/login-page/login-page";
+import RegisterPage from "./layouts/register-page/register-page";
+import LogoutPage from "./layouts/logout-page/logout-page";
 
 // WIP - refactor modals to the react version.
 // V (!!!) add triplan event - location - not working good. try to set locatio nand then set category/priority and it'll reset.
@@ -447,7 +451,12 @@ const RootRouter = () => {
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route exact path="/" element={<LandingPage/>}/>
+                    <Route exact path='/' element={<PrivateRoute/>}>
+                        <Route exact path='/' element={<LandingPage/>}/>
+                    </Route>
+                    <Route path="/login" element={<LoginPage/>} />
+                    <Route path="/register" element={<RegisterPage/>} />
+                    <Route path="/logout" element={<LogoutPage />} />
                     <Route exact path="/getting-started" element={<GettingStartedPage/>}/>
                     <Route exact path="/my-trips" element={<MyTrips/>}/>
                     <Route path="/plan/:tripName/:locale" element={<MainPage/>}/>

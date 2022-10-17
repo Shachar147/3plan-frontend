@@ -84,13 +84,13 @@ const GettingStartedPage = () => {
     return (
         <div className={"landing-page-layout"}>
             {renderHeaderLine(eventStore)}
-            <div className={getClasses(["main-part"], applyPageIntro && 'overflow-hidden')}>
+            <div className={getClasses(["main-part"])}>
                 <div className={getClasses(["plan-your-trip-header main-font visible"], applyPageIntro && 'hidden')}>
                     {TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}
                     <br/>
                     <div className={"trip main-font-heavy"}>{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}</div>
                 </div>
-                <img className={getClasses(["logo-container pointer"], applyPageIntro && 'up')} src={"/images/landing-page/main-centered.png"} onClick={() => {
+                <img className={getClasses(["logo-container pointer"], applyPageIntro && 'up')} src={"/images/logo/new-logo.png"} style={{ width: "50%", minWidth: "400px" }} onClick={() => {
                     navigate('/');
                 }} />
                 <div className={getClasses(["create-new-trip-form display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>

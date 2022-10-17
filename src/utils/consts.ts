@@ -15,3 +15,5 @@ export const priorityToMapColor: Record<string, string> = {
     [TriplanPriority.unset]: '#b4b4b4',
     [TriplanPriority.least]: '#000000',
 }
+
+export const LOGIN_DELAY: number = 300; // to be able to see the loader

@@ -220,5 +220,12 @@
   "LOCKED_EVENT_TOOLTIP": "This activity already been booked so you can't change it's dates",
   "MODALS.ACTIONS": "Actions",
   "CLICK_HERE_TO_UPLOAD": "Click here to upload",
-  "NO_FILE_CHOSEN": "No file chosen"
+  "NO_FILE_CHOSEN": "No file chosen",
+  "LOGIN": "Login",
+  "REGISTER_PREFIX": "Not a member?",
+  "REGISTER": "register!",
+  "LOGIN_PAGE.WRONG_CREDENTIALS": "Username or Password are incorrect.",
+  "REGISTER_BUTTON": "Register",
+  "LOGIN_PREFIX": "Already a member?",
+  "LOGIN_LINK": "login!"
 }
