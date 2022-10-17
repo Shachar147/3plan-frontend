@@ -197,3 +197,25 @@ body.rtl .triplan-tag-text {
     padding-inline-start: 20px !important;
     padding-inline-end: 30px !important;
 }
+
+.recommended-destinations {
+    flex-direction: row-reverse;
+}
+
+body.ltr .header {
+    flex-direction: row-reverse;
+}
+
+body.rtl #locale-selector div[class$="menu"] {
+    direction: rtl;
+    text-align: right;
+}
+
+body.ltr .ui.icon.input>i.icon{
+    left: 0 !important;
+}
+
+body.ltr .ui.icon.input>input {
+    padding: .67857143em 1em !important;
+    padding-left: 2.67142857em!important;
+}

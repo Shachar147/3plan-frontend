@@ -37,6 +37,7 @@
     gap: 20px;
     /*width: 55%;*/
     padding-inline: 15px;
+    padding-inline-start: 0;
 }
 
 .fc-view-harness {
@@ -163,7 +164,7 @@
     min-width: fit-content !important;
 }
 
-select, input[type=text] {
+select, input[type=text], input[type=password], input[type=number] {
     width: 100%;
     padding: 5px;
     height: 33px;

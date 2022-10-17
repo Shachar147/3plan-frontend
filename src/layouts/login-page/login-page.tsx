@@ -13,6 +13,8 @@ import TextInputWrapper from "../../components/inputs/text-input-wrapper/text-in
 
 // @ts-ignore
 import style from './style';
+import {renderHeaderLine} from "../../utils/ui-utils";
+import {observer, Observer} from "mobx-react";
 
 const defaultErrorField: Record<string, boolean> = {
     username: false,
@@ -44,11 +46,11 @@ const LoginPage = () => {
 
         // validate inputs
         if (username.length === 0){
-            setError("Username can't be empty");
+            setError( 'USERNAME_EMPTY');
             setErrorField({...errorField, username: true });
         }
         else if (password.length === 0){
-            setError("Password can't be empty");
+            setError( 'PASSWORD_EMPTY');
             setErrorField({...errorField, password: true });
         }
         else {
@@ -71,7 +73,7 @@ const LoginPage = () => {
                         axios.defaults.headers.Authorization = `Bearer ${token}`;
 
                         // set success message and redirect flag.
-                        setMessage("Logged in successfully!");
+                        setMessage("LOGGED_IN_SUCCESSFULLY");
                         setTimeout(function(){
                             setRedirect(true);
                         }, LOGIN_DELAY);
@@ -84,7 +86,7 @@ const LoginPage = () => {
                 // catch block
                 function(err: any) {
                     let req_error = err?.response?.data?.message;
-                    if (req_error) setError(TranslateService.translate(eventStore, 'LOGIN_PAGE.WRONG_CREDENTIALS'));
+                    if (req_error) setError( 'LOGIN_PAGE.WRONG_CREDENTIALS');
                     else setError("Network Error");
                 },
                 // finally
@@ -106,7 +108,7 @@ const LoginPage = () => {
         {
             name: 'username',
             type: 'text',
-            placeholder: 'Username',
+            placeholder: TranslateService.translate(eventStore, 'USERNAME'),
             icon: 'user',
             value: username,
             setValue: setUsername
@@ -114,7 +116,7 @@ const LoginPage = () => {
         {
             name: 'password',
             type: 'password',
-            placeholder: 'Password',
+            placeholder: TranslateService.translate(eventStore, 'PASSWORD'),
             icon: 'lock',
             value: password,
             setValue: setPassword,
@@ -123,14 +125,24 @@ const LoginPage = () => {
 
     // building blocks
     const error_block = (error === '') ? "" :
-        (<style.Error className={"field"} data-testid={errorTestId}><div dangerouslySetInnerHTML={{ __html: error }} /></style.Error>);
+        (<style.Error className={"field"} data-testid={errorTestId}><div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore,error) }} /></style.Error>);
     const message_block = (message === '' || error !== '') ? "" :
-        (<style.Message className={"field"} data-testid={messageTestId}><div dangerouslySetInnerHTML={{ __html: message }} /></style.Message>);
+        (<style.Message className={"field"} data-testid={messageTestId}><div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore,message) }} /></style.Message>);
 
     return (redirect) ? (<Navigate to="/" />) : (
+        <div className={"padding-inline-20"}>
+            <div className={"header-container"} style={{ position: "absolute", top: 0 }}>
+                {renderHeaderLine(eventStore, {
+                    withLogo: false,
+                    withSearch: false,
+                    withViewSelector: false,
+                    withRecommended: false,
+                    withFilterTags: false
+                })}
+            </div>
         <style.Container className={"login-page ui header cards centered"} >
             <style.SubContainer>
-                <Logo />
+                <div onClick={() => { window.location.reload(); }}><Logo /></div>
                 <div className={"sub cards header content"}>
                     <div className={"ui segment"}>
                         {message_block}
@@ -178,6 +190,7 @@ const LoginPage = () => {
                 </div>
             </style.SubContainer>
         </style.Container>
+        </div>
     )
 };
-export default LoginPage;
+export default observer(LoginPage);

@@ -227,5 +227,14 @@
   "LOGIN_PAGE.WRONG_CREDENTIALS": "Username or Password are incorrect.",
   "REGISTER_BUTTON": "Register",
   "LOGIN_PREFIX": "Already a member?",
-  "LOGIN_LINK": "login!"
+  "LOGIN_LINK": "login!",
+  "LOGOUT": "Logout",
+  "USERNAME": "Username",
+  "PASSWORD": "Password",
+  "REPEAT_PASSWORD": "Repeat Password",
+  "USERNAME_EMPTY": "Username can't be empty",
+  "PASSWORD_EMPTY": "Password can't be empty",
+  "PASSWORDS_NOT_MATCH": "Passwords do not match",
+  "LOGGED_IN_SUCCESSFULLY": "Logged in successfully!",
+  "REGISTERED_SUCCESSFULLY": "Registered successfully!"
 }

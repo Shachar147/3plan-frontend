@@ -6,7 +6,7 @@ import {SELECT_STYLE} from "../../../utils/ui-utils";
 import {eventStoreContext} from "../../../stores/events-store";
 import {observer} from "mobx-react";
 
-interface SelectInputOption {
+export interface SelectInputOption {
     value: string,
     label: string
 }

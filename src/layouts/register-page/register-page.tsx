@@ -10,6 +10,8 @@ import style from "./style";
 import {getClasses} from "../../utils/utils";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
+import {renderHeaderLine} from "../../utils/ui-utils";
+import {observer} from "mobx-react";
 
 const Logo = () => (
     <img className={getClasses(["logo-container pointer"])} style={{ maxWidth: "400px" }} src={"/images/logo/new-logo.png"} />
@@ -45,15 +47,23 @@ const RegisterPage = () => {
 
         // validate inputs
         if (username.length === 0){
-            setError("Username can't be empty");
+            setError( 'USERNAME_EMPTY');
             setErrorField({...errorField, username: true });
         }
-        else if (password.length === 0){
-            setError("Password can't be empty");
-            setErrorField({...errorField, password: true });
+        else if (password.length === 0 || passwordAgain.length == 0){
+            setError( 'PASSWORD_EMPTY');
+            if (password.length === 0 && passwordAgain.length === 0){
+                setErrorField({...errorField, password: true, passwordAgain: true});
+            }
+            else if (password.length === 0) {
+                setErrorField({...errorField, password: true});
+            }
+            else {
+                setErrorField({...errorField, passwordAgain: true});
+            }
         }
         else if (password !== passwordAgain) {
-            setError("Passwords do not match");
+            setError( 'PASSWORDS_NOT_MATCH');
             setErrorField({...errorField, password: true, passwordAgain: true });
         }
         else {
@@ -72,7 +82,7 @@ const RegisterPage = () => {
                     if (res && res.error) {
                         setError(res.error);
                     } else {
-                        setMessage("Registered successfully!");
+                        setMessage("REGISTERED_SUCCESSFULLY");
                         setTimeout(function (self) { setRedirect(true);}, LOGIN_DELAY, self);
                     }
 
@@ -111,7 +121,7 @@ const RegisterPage = () => {
         {
             name: 'username',
             type: 'text',
-            placeholder: 'Username',
+            placeholder: TranslateService.translate(eventStore, 'USERNAME'),
             icon: 'user',
             value: username,
             setValue: setUsername
@@ -119,7 +129,7 @@ const RegisterPage = () => {
         {
             name: 'password',
             type: 'password',
-            placeholder: 'Password',
+            placeholder: TranslateService.translate(eventStore, 'PASSWORD'),
             icon: 'lock',
             value: password,
             setValue: setPassword,
@@ -127,7 +137,7 @@ const RegisterPage = () => {
         {
             name: 'passwordAgain',
             type: 'password',
-            placeholder: 'Repeat Password',
+            placeholder: TranslateService.translate(eventStore, 'REPEAT_PASSWORD'),
             icon: 'lock',
             value: passwordAgain,
             setValue: setPasswordAgain,
@@ -136,14 +146,24 @@ const RegisterPage = () => {
 
     // building blocks
     const error_block = (error === '') ? "" :
-        (<style.Error className={"field"} data-testid={errorTestId}><div dangerouslySetInnerHTML={{ __html: error }} /></style.Error>);
+        (<style.Error className={"field"} data-testid={errorTestId}><div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore,error) }} /></style.Error>);
     const message_block = (message === '' || error !== '') ? "" :
         (<style.Message className={"field"} data-testid={messageTestId}><div dangerouslySetInnerHTML={{ __html: message }} /></style.Message>);
 
     return (redirect) ? (<Navigate to="/login" />) : (
+        <div className={"padding-inline-20"}>
+            <div className={"header-container"} style={{ position: "absolute", top: 0 }}>
+                {renderHeaderLine(eventStore, {
+                    withLogo: false,
+                    withSearch: false,
+                    withViewSelector: false,
+                    withRecommended: false,
+                    withFilterTags: false
+                })}
+            </div>
         <style.Container className={"register-page ui header cards centered"} >
             <style.SubContainer>
-                <Logo />
+                <div onClick={() => { window.location.reload(); }}><Logo /></div>
                 <div className={"sub cards header content"}>
                     <div className={"ui segment"}>
                         {message_block}
@@ -191,7 +211,8 @@ const RegisterPage = () => {
                 </div>
             </style.SubContainer>
         </style.Container>
+        </div>
     )
 };
 
-export default RegisterPage;
+export default observer(RegisterPage);

@@ -7,16 +7,41 @@ import ToggleButton from "../components/toggle-button/toggle-button";
 import {ViewMode} from "./enums";
 import {getClasses} from "./utils";
 import TriplanTag from "../components/common/triplan-tag/triplan-tag";
+import { getUser } from '../helpers/auth';
+import Select from "react-select";
+import { Observer } from "mobx-react";
 
-const renderLanguageSelector = (eventStore: EventStore) => (
-    <select id="locale-selector" className={"main-font"} onChange={(e) => {
-        // @ts-ignore
-        eventStore.setCalendarLocalCode(e.target.value);
-    }} value={eventStore.calendarLocalCode}>
-        <option value="en">{TranslateService.translate(eventStore, 'ENGLISH')}</option>
-        <option value="he">{TranslateService.translate(eventStore, 'HEBREW')}</option>
-    </select>
-)
+const renderLanguageSelector = (eventStore: EventStore) => {
+
+    const options: any[] = [
+        { label: TranslateService.translate(eventStore, 'ENGLISH').toString(), value: "en" },
+        { label: TranslateService.translate(eventStore, 'HEBREW').toString(), value: "he" }
+    ]
+
+    return (
+        <Observer>{() => <Select
+            key={`locale-selector-${eventStore.calendarLocalCode}`}
+            isClearable={false}
+            isSearchable={false}
+            id={"locale-selector"}
+            name={"locale-selector"}
+            options={options}
+            value={options.find((x) => x.value == eventStore.calendarLocalCode)}
+            onChange={(e: any) => {
+                eventStore.setCalendarLocalCode(e.value);
+            }}
+            maxMenuHeight={45 * 5}
+            styles={SELECT_STYLE}
+        />}</Observer>
+        // <select id="locale-selector" className={"main-font"} onChange={(e) => {
+        //     // @ts-ignore
+        //     eventStore.setCalendarLocalCode(e.target.value);
+        // }} value={eventStore.calendarLocalCode}>
+        //     <option value="en">{TranslateService.translate(eventStore, 'ENGLISH')}</option>
+        //     <option value="he">{TranslateService.translate(eventStore, 'HEBREW')}</option>
+        // </select>
+    );
+}
 
 export interface HeaderLineOptions {
     withLogo?: boolean
@@ -43,7 +68,9 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
             <div className={"start-side"}>
                 <div className={"choose-language main-font"}>
                     <a>
-                        <img alt="" src={"/images/landing-page/icons/choose-lang.png"}/> {TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
+                        {/*<i className="fa fa-globe darkest-blue-color" aria-hidden="true"></i>*/}
+                        <img alt="" src={"/images/landing-page/icons/choose-lang.png"}/>
+                        {TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
                     </a>
                     {renderLanguageSelector(eventStore)}
                 </div>
@@ -61,7 +88,7 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
                         navigate('/');
                     }}
                     style={{ cursor:"pointer", display: "flex", maxHeight: "40px", height: "40px"}}>
-                        <img alt={""} src={"/images/logo/logo-icon.png"}/>
+                        <img alt={""} src={"/images/logo/new-logo.png"}/>
                     </div>
                 }
                 {withRecommended && renderMyTrips(eventStore)}
@@ -79,6 +106,17 @@ const renderMyTrips = (eventStore: EventStore) => (
                 flavor={ButtonFlavor.link}
                 image={"/images/landing-page/icons/map.png"}
                 text={TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
+                onClick={() => {}}
+            />
+        </Link>
+
+        <Link to={"/logout"} style={{
+            textDecoration: "none"
+        }}>
+            <Button
+                flavor={ButtonFlavor.link}
+                icon={"fa-sign-out darkest-blue-color"}
+                text={`${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`}
                 onClick={() => {}}
             />
         </Link>
@@ -177,7 +215,7 @@ export const SELECT_STYLE = {
         margin: '0px',
     }),
     indicatorSeparator: () => ({
-        // display: 'none',
+        display: 'none',
     }),
     indicatorsContainer: (provided: any) => ({
         ...provided,

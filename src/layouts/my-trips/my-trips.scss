@@ -5,8 +5,8 @@ body {
 .my-trips {
     background-color: transparent;
     border: 0;
-    max-height: 350px;
-    min-height: 350px;
+    max-height: 360px;
+    min-height: 360px;
     overflow-y: auto;
     width: 500px;
 }
@@ -171,3 +171,22 @@ body {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
 }
+
+.my-trips .sidebar-statistics {
+    background-color: white !important;
+}
+
+//.my-trips .sidebar-statistics:nth-child(2),
+//.my-trips .sidebar-statistics:nth-child(4),
+//.my-trips .sidebar-statistics:nth-child(6),
+//.my-trips .sidebar-statistics:nth-child(8),
+//.my-trips .sidebar-statistics:nth-child(10),
+//.my-trips .sidebar-statistics:nth-child(12),
+//.my-trips .sidebar-statistics:nth-child(14),
+//.my-trips .sidebar-statistics:nth-child(16),
+//.my-trips .sidebar-statistics:nth-child(18),
+//.my-trips .sidebar-statistics:nth-child(20),
+//.my-trips .sidebar-statistics:nth-child(22)
+//{
+//    background-color: #f3f2f2 !important;
+//}

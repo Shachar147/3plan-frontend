@@ -12,6 +12,18 @@ body {
   padding: 0;
 }
 
+#locale-selector div[class$="control"]{
+    background-color: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+
+#locale-selector div[class$="menu"] {
+    direction: ltr;
+    text-align: left;
+}
+
 .recommended-destinations {
   min-height: 33px;
   display: flex;
@@ -51,12 +63,12 @@ body {
 .visible {
     visibility: visible;
     opacity: 1;
-    transition: visibility 0s 2s, height 2s linear;
+    transition: visibility 0s 2s, height 0.5s linear;
 }
 .hidden {
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s 2s, opacity 2s linear;
+    transition: visibility 0s 2s, opacity 0.5s linear;
 }
 
 .pointer {
@@ -176,6 +188,12 @@ body {
 
 .padding-bottom-50 {
     padding-bottom: 50px;
+}
+.padding-10 {
+    padding: 10px;
+}
+.padding-inline-20 {
+    padding-inline: 20px;
 }
 
 /* margin */
@@ -445,4 +463,9 @@ body {
 .start-now-button,
 .main-buttons {
     min-width: 400px;
+}
+
+.choose-language input {
+    /*display: none !important;*/
+    width: 0 !important;
 }

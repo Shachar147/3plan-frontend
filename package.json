@@ -60,8 +60,8 @@
   "scripts": {
     "start": "npm run build && serve -s build",
     "start:dev:old": "react-scripts start",
-    "start:dev": "SET PORT=3001 && SET REACT_APP_MODE=development && react-scripts start",
-    "start:dev:mac": "PORT=3001 REACT_APP_MODE=development react-scripts start",
+    "start:dev": "SET PORT=3000 && SET REACT_APP_MODE=development && react-scripts start",
+    "start:dev:mac": "PORT=3000 REACT_APP_MODE=development react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

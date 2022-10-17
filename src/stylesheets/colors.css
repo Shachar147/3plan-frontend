@@ -9,6 +9,7 @@
     --blue: #37b5ff;
     --light-blue:#d5eaff;
     --dark-blue: #0066d5;
+    --darkest-blue: #0c2161;
     --red: #ff5252;
     --triplan-orange: #ffb752;
 }
@@ -23,4 +24,8 @@
 
 .red-color {
     color: var(--red);
+}
+
+.darkest-blue-color {
+    color: var(--darkest-blue);
 }

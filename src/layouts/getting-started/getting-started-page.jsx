@@ -130,7 +130,7 @@ const GettingStartedPage = () => {
                 </div>
 
             </div>
-            {renderFooterLine(eventStore, applyPageIntro && 'up2')}
+            {renderFooterLine(eventStore, getClasses('visible', applyPageIntro && 'hidden'))}
         </div>
     )
 }

@@ -10,9 +10,7 @@ import {
 } from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
-import ModalService from "../../services/modal-service";
 import ReactModalService from "../../services/react-modal-service";
-import {runInAction} from "mobx";
 
 const MyTrips = () => {
 
@@ -41,7 +39,7 @@ const MyTrips = () => {
 
     const renderForm = () => {
         return (
-            <div className={getClasses(["my-trips"], eventStore.isListView && 'hidden')}>
+            <div className={getClasses(["my-trips bright-scrollbar"], eventStore.isListView && 'hidden')}>
                 {
                     Object.keys(localStorage).filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1).map((x) => x.replace(LS_CUSTOM_DATE_RANGE + "-","")).map((LSTripName) => {
                         LSTripName = LSTripName === LS_CUSTOM_DATE_RANGE ? "" : LSTripName;
@@ -128,7 +126,7 @@ const MyTrips = () => {
                 </div>
 
             </div>
-            {renderFooterLine(eventStore, applyPageIntro && 'up2')}
+            {renderFooterLine(eventStore, applyPageIntro && 'hidden')}
         </div>
     )
 }

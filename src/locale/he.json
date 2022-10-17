@@ -237,5 +237,14 @@
   "LOGIN_PAGE.WRONG_CREDENTIALS": "שם משתמש או סיסמא לא נכונים.",
   "REGISTER_BUTTON": "הירשם",
   "LOGIN_PREFIX": "נרשמת כבר?",
-  "LOGIN_LINK": "התחבר!"
+  "LOGIN_LINK": "התחבר!",
+  "LOGOUT": "התנתק",
+  "USERNAME": "שם משתמש",
+  "PASSWORD": "סיסמא",
+  "REPEAT_PASSWORD": "סיסמא בשנית",
+  "USERNAME_EMPTY": "שם המשתמש לא יכול להיות ריק",
+  "PASSWORD_EMPTY": "הסיסמא לא יכולה להיות ריקה",
+  "PASSWORDS_NOT_MATCH": "הסיסמאות לא תואמות",
+  "LOGGED_IN_SUCCESSFULLY": "התחברת בהצלחה!",
+  "REGISTERED_SUCCESSFULLY": "נרשמת בהצלחה!"
 }
