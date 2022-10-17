@@ -14,7 +14,7 @@ import TextInputWrapper from "../../components/inputs/text-input-wrapper/text-in
 // @ts-ignore
 import style from './style';
 import {renderHeaderLine} from "../../utils/ui-utils";
-import {observer, Observer} from "mobx-react";
+import {observer} from "mobx-react";
 
 const defaultErrorField: Record<string, boolean> = {
     username: false,
@@ -129,7 +129,11 @@ const LoginPage = () => {
     const message_block = (message === '' || error !== '') ? "" :
         (<style.Message className={"field"} data-testid={messageTestId}><div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore,message) }} /></style.Message>);
 
-    return (redirect) ? (<Navigate to="/" />) : (
+    if (redirect){
+        window.location.href = "/";
+    }
+
+    return (
         <div className={"padding-inline-20"}>
             <div className={"header-container"} style={{ position: "absolute", top: 0 }}>
                 {renderHeaderLine(eventStore, {

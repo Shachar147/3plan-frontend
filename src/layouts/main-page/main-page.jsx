@@ -11,15 +11,14 @@ import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {
     defaultEventsToCategories,
-    getDefaultCalendarEvents, getDefaultCustomDateRange, setAllEvents,
+    getDefaultCalendarEvents, getDefaultCustomDateRange,
 } from "../../utils/defaults";
 import {renderHeaderLine} from "../../utils/ui-utils";
 import {useParams} from "react-router-dom";
 import TriplanSidebar from "../../components/triplan-sidebar/triplan-sidebar";
 import MapContainer from "../../components/map-container/map-container";
-import _ from "lodash";
 import ListViewService from "../../services/list-view-service";
-import SweetAlert from 'react-bootstrap-sweetalert';
+import DBService from "../../services/db-service";
 
 const MainPage = () => {
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)
@@ -29,6 +28,18 @@ const MainPage = () => {
     const eventStore = useContext(eventStoreContext);
     const [customDateRange, setCustomDateRange] = useState(getDefaultCustomDateRange(eventStore.tripName));
     const [allEventsFixed, setAllEventsFixed] = useState(false);
+
+    useEffect(() => {
+
+        if (eventStore.tripName !== "") {
+            DBService.upsertTripByName(eventStore.tripName, eventStore.customDateRange, eventStore, () => {
+                console.log("updated db successfully");
+            }, () => {
+                console.log("failed updating db")
+            });
+        }
+
+    }, [eventStore.allEvents, eventStore.calendarEvents, eventStore.categories, eventStore.sidebarEvents, eventStore.customDateRange, eventStore.calendarLocalCode, eventStore.tripName])
 
     // useEffect(() => {
     //

@@ -27,6 +27,7 @@ import ImportService from "./import-service";
 
 // @ts-ignore
 import _ from "lodash";
+import DBService from "./db-service";
 
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {
@@ -839,6 +840,12 @@ const ReactModalService = {
             onConfirm: () => {
                 const lsKeys = getLocalStorageKeys();
                 const separator = (LSTripName === "") ? "" : "-";
+
+                DBService.deleteTripByName(tripName, () =>{
+                }, () => {
+                    // ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG", "error");
+                });
+
                 Object.values(lsKeys).forEach((localStorageKey) => {
                     const key = [localStorageKey,LSTripName].join(separator);
                     localStorage.removeItem(key);

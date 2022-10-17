@@ -1,4 +1,4 @@
-import React, {useContext, useRef} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 import { render } from "react-dom";
 import MainPage from "./layouts/main-page/main-page";
 import 'bootstrap/dist/css/bootstrap.css';
@@ -23,13 +23,25 @@ import PrivateRoute from "./PrivateRoute";
 import LoginPage from "./layouts/login-page/login-page";
 import RegisterPage from "./layouts/register-page/register-page";
 import LogoutPage from "./layouts/logout-page/logout-page";
+import {getToken} from "./helpers/auth";
+import axios from "axios";
+import DBService from "./services/db-service";
 
-// WIP - refactor modals to the react version.
+// --------------- DB SERVER -------------------------
+// currently there's login&register but no sync/indication which trips are local and which are in the account. need to add sync button.
+// allow local trips if user is not logged in at the moment.
+// add a header line saying you are not logged in so trips will be saved locally on this computer only. register / login to store your trips in your account.
+
+// improve the design of the pages, make it responsive. check idea on Canva, Sichor, Outlook, Dubai.co.il, SecretFlights, etc.
+
+// fix opening hours (when day have multiple hours its not working well. for example 8-15:30, 18:00-22:00)
+
+// V refactor modals to the react version.
 // V (!!!) add triplan event - location - not working good. try to set locatio nand then set category/priority and it'll reset.
 // V creating event with the new modal use the text of the icon instead of the actual icon.
 // V can't change priority, preferred time on the new modal.
 
-// check dubai allevents - calendarevents - sidebar events, make sure there are no missing.
+// V check dubai allevents - calendarevents - sidebar events, make sure there are no missing.
 
 // V move success, error modals to the regular modals service and use it. use the same function so we can maybe move it too easily.
 // V todo complete - see how can we pass initial value to a input and still be able to edit it. currently if I move it I cant change the value of the input.
@@ -446,6 +458,8 @@ const RootRouter = () => {
             }
         }
     }
+
+    axios.defaults.headers.Authorization = `Bearer ${getToken()}`;
 
     return (
         <>
