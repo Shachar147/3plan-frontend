@@ -27,6 +27,9 @@ import {getToken} from "./helpers/auth";
 import axios from "axios";
 import DBService from "./services/db-service";
 
+// heroku alternatives (!!!)
+// route_templates - check where I have it, for easier route generating.
+
 // --------------- DB SERVER -------------------------
 // currently there's login&register but no sync/indication which trips are local and which are in the account. need to add sync button.
 // allow local trips if user is not logged in at the moment.
