@@ -18,132 +18,166 @@ import ThemeExample from "./layouts/theme-example/theme-example";
 import {runInAction} from "mobx";
 import {getCoordinatesRangeKey, padTo2Digits} from "./utils/utils";
 import SweetAlert from "react-bootstrap-sweetalert";
-import { observer, Observer } from 'mobx-react';
+import { Observer } from 'mobx-react';
 import PrivateRoute from "./PrivateRoute";
 import LoginPage from "./layouts/login-page/login-page";
 import RegisterPage from "./layouts/register-page/register-page";
 import LogoutPage from "./layouts/logout-page/logout-page";
 import {getToken} from "./helpers/auth";
 import axios from "axios";
-import DBService from "./services/db-service";
 
-// heroku alternatives (!!!)
-// route_templates - check where I have it, for easier route generating.
+// Dubai
+// Namos / Twiggy?
+// Billionare?
+// add to hotel before Nasr
+// safari - check where, how much money, how much time etc
 
-// --------------- DB SERVER -------------------------
-// currently there's login&register but no sync/indication which trips are local and which are in the account. need to add sync button.
-// allow local trips if user is not logged in at the moment.
-// add a header line saying you are not logged in so trips will be saved locally on this computer only. register / login to store your trips in your account.
+// Maldives
+// ask for pool with flowers - check price
 
-// improve the design of the pages, make it responsive. check idea on Canva, Sichor, Outlook, Dubai.co.il, SecretFlights, etc.
+// Viena
+// eden tips?
+// choose christmas market
 
-// fix opening hours (when day have multiple hours its not working well. for example 8-15:30, 18:00-22:00)
+// >>> start with these
+// must - must do
+// nice! - nice features that will improve it a lot
+
+// --------------- GENERAL ---------------------------
+// 1. heroku alternatives (!!!) todo complete
+// 2. store all my projects on GitHub todo complete
+// 3. route_templates - check where I have it, for easier route generating. todo complete
+// ---------------------------------------------------
+// 3. refactor my css files to be scss todo complete
+// 4. move stuff to components todo complete
+// 5. move all primary-button and secondary-button to their components todo complete
+// 6. create a page with all of my basic components and colors. buttons, etc. todo complete
+// 7. check if lokalise have a free version if so use it todo complete
 
 // V refactor modals to the react version.
-// V (!!!) add triplan event - location - not working good. try to set locatio nand then set category/priority and it'll reset.
-// V creating event with the new modal use the text of the icon instead of the actual icon.
-// V can't change priority, preferred time on the new modal.
-
 // V check dubai allevents - calendarevents - sidebar events, make sure there are no missing.
-
 // V move success, error modals to the regular modals service and use it. use the same function so we can maybe move it too easily.
-// V todo complete - see how can we pass initial value to a input and still be able to edit it. currently if I move it I cant change the value of the input.
+// V see how can we pass initial value to a input and still be able to edit it. currently if I move it I cant change the value of the input.
 // V ^ it's in edit trip name
+// V terminology - change 'event' to something else maybe 'point of interset' נקודות עניין
+// V changing calendar events category isn't working. maybe its related (maybe its duplicating instead of editing or something)
+// V refactor SweetAlert from HTML to React
+// V ... use IconSelector and LocationPicker
+// V (!!) fix "or" calculation when there is 1 event and 2 other events that together are at the same times as the first event.
+// V install NODE SASS
+
+// --------------- DB SERVER -------------------------
+// 1. currently there's login&register but no sync/indication which trips are local and which are in the account. need to add sync button. todo complete
+// 2. allow local trips if user is not logged in at the moment. todo complete
+// 3. add a header line saying you are not logged in so trips will be saved locally on this computer only. register / login to store your trips in your account. todo complete
+
+// --------------- MOBILE ----------------------------
+// 1. make it mobile-responsive - improve the design of the pages, make it responsive. check idea on Canva, Sichor, Outlook, Dubai.co.il, SecretFlights, etc. todo complete
+// 2. mobile view - like outlook todo complete
+
+// --------------- DESIGN ----------------------------
+// 1. change font to INTER (plato) todo complete
+// 2. Design changes - make it mobile friendly like Dubai site / SecretFlights todo complete
+// 3. Design Changes - make desktop version more colorful - maybe like Sichor / Dubai todo complete
+// 4. Move calendar related stuff to the calendar area. (instead of sidebar) todo complete
+// 5. import - move it maybe above (even though import is sidebar related action) todo complete
+// 6. Hebrew text seems a bit weird (Trip?) todo complete
+// 7. improve events styles (make them look more then google calendar / job scheduler) todo complete
+// 8. [MUST!!] JoyRide - add onboarding guide
+
+// V Clean up the colors. decide 1 cta color, set it on the things we want the user to click.
+// V - primary, secondary (white with border), noBackground
+
+// --------------- BUGS ------------------------------
+// 1. fix opening hours (when day have multiple hours its not working well. for example 8-15:30, 18:00-22:00) todo complete
+// 2?. fix allevents duplicate items so statistics in the sidebar will be correct. todo complete
+// 3?. (!!) trying to add new event when there are no categories returns no error and no success. either add popup / add  default category general. todo complete
+// 4?. double clicking on add category creating category without name (!!!) todo complete
+// 5. do not update view when changing dates until clicking on 'custom view' button todo complete
+// 6. check delete logic, when deleting all categories and trying to import it says its already exist todo complete
+// 7?. check delete category logic, when deleting category it says it will delete events from calendar but it isn't. todo complete
+// ! 8.sort categories by fixed thing. (if i change icon its jump to end - avoid that) todo complete
+// 9? fix import? (maybe 'numbers' issue, need to use a different app) todo complete
+
 
 // V make sure that if place have closed days like KNOCX it handles it.
-// change font to INTER (plato)
-// add photos and more place info to the window info line and to each event.
+// V creating event with the new modal use the text of the icon instead of the actual icon.
+// V (!!!) add triplan event - location - not working good. try to set locatio nand then set category/priority and it'll reset.
+// V can't change priority, preferred time on the new modal.
 
-// (advanced) add a way to "keep snapshots" of current planning and then visiting them later, compare to current etc.
+// --------------- FEATURES --------------------------
+// 0. [MUST!!!] think how I arrange the things so it will be ok with the driving times as well (+ think how to show it on the calendar view) todo complete
+// 0. >>> [IMPORTANT] for each event check both driving and walking, choose walking if less then X otherwise driving todo complete
+// 0. add price field for each event todo complete
+// 0. add total price to list view todo complete
+// 0. add events with no price to filters todo complete
+// 0. [IMPORTANT!] google distances calculations - cache only 1 week / 1 month back. not forever todo complete
+// 1. [MAP] add photos and more place info to the window info line and to each event. todo complete
+// 2. [LIST VIEW] if it's a note (allDay) - do not show most of the fields (location, priority, hours, etc) <- its irrelevant. todo complete
+// 3. add 'opening hours' to the list view (but only the opening hours of they day this event is scheduled to) todo complete
+// 4. add 'opening hours' to map view to window info todo complete
+// 5. sidebar filters - for example based on activity hours. if I have a "whole" in Sunday 10:00-11:00, show me all the  events that can fit based on working hours todo complete
+// 6. On which dates are you staying at each hotel settings todo complete
+// ........ create tasks automatically for x in, flight out, checkin, checkout with 'please fill in' text. todo complete
+//          flight: title, description, depart time, land time, start location, end location
+//          hotel: title, description?, check in date&time, check out date&time, location
+// 7. ... + auto create events for these hotels, place them first on each day. make them from different type so it will be  undeletable (?), without start-end dates todo complete
+// 8. ... + allow creating a Hotel event when clicking on the calendar easily, by selecting from the hotels you already added. todo complete
+// 9. create automatically notes category (with default - consider that on Sunday stuff may be closed) todo complete
+// 10. add "order status" select with "not relevant" as default and then "need to order" (that populates 'להזמין' message in  the summary) and "ordered!" that populates ordered (הוזמן) in the summary todo complete
+// 11. [NICE!] add the ability to "swap" dates - move all the activities from 1 day to another and vice versa. todo complete
+// 12?. find a better location to the trip summary. todo complete
+// 13. [MUST!] add 'openning hours' to each event, and mark it in error if you placed something in a day its supposed to be  closed. todo complete
+// 14. [NICE!] add Ordered? setting. if you already booked something, disable dragging it and add lock icon. todo complete
+// 15. [NICE!] option to add 'tasks' for yourself about events for example - check hours, check where to bla bla bla. events  with tasks will have red indication todo complete
+// .... use this field to write yourself tasks refarding this event such as "check activity hours" or "book in advance". any event with tasks will appear with big TODO COMPLETE indication in the list view so you won't forget to handle it before the trip
+// 16. [NICE!] add photos, external links (so we can easily find the posts/sources of the description) todo complete
+// 17. [MUST!] export calendar to detailed hours mail (like what I usually do) todo complete
+// -18. [ADVANCED] [GOOGLE MAPS] automatically suggest near locations from your list. <- suggested days based on 1 breakfast, 1 lunch, 1 evening, attractions etc. inc. driving/walking times  todo complete
+// 19. [ADVANCED] [GOOGLE MAPS] setting of how much time MAX are you willing to walk, otherwise suggest only drive. todo complete
+// 20. [ADVANCED] keep it on db todo complete
+// 21. [MUST] add "tinder"-like suggestion system - you choose a destination and it shows you options from its db. you can swipe right/left. "like" will add it to the sidebar. "no" will ignore it and mark it as ignore. todo complete
+// ... 22. [MUST] add all the things I Saved on the instagram to the db of Triplan as options todo complete
+// 23. add option to add picture, video, link to instagram page etc. todo complete
+// 24. [UI] if there's a problem with event, for examploe missing hours, missing location etc - add some indication. so the user will know easily without filtering there's a problem todo complete
 
-// map tasks
-// V add search mode to the map, allowing to search for address + display results markers on the map. clicking on the map should open create event with location and title already filled in.
-// V make markers be circles with the icon of the attraction / its category in the middle.
-// (!!) when clicking on a coordinate in the map, allow editing the event from there and then we can change the location.
-// ^ if there are more then 1 events with the same location make sure to update all of them.
-// V (!!) show another mini sidebar over the map showing which events are currently displayed in the map. (visible) <- I sent myself example for that on whatsapp
-// (!!) filters on map - for example - highlight all unscheduled events. when they are highlighted it'll be easier to see what are they close to and how can we combine them to make them in the schedule.
+// V create automatically logistic category
+// V create different trips, save it on different local storage settings.
+// V allow duplicate calendar event as well (!)
+// X location picker javascript/html version.
+// V add ascii icons selector.
+// V change modals so escape will be cancel not 'update'.
+// V make sure each of the local storage holds what it should (sidebarevent / calendarevent / eventinput)
+// V localise
+// V [ADVANCED] connect it to google maps - get coordinates on each place you add (location picker)
+// V [ADVANCED] [GOOGLE MAPS] show locations on map based on coordinates.
+// V [ADVANCED] [GOOGLE MAPS] automatically suggest to add driving instructions
+
+// --------------- ADVANCED --------------------------
+// 0. [Must] Automatically build trips / at least build day suggestions. based on 3 meals a day, attractions, etc, based on preferred hours, priority etc. todo complete
+// 1. [BACKUPS] (advanced) add a way to "keep snapshots" of current planning and then visiting them later, compare to current etc. todo complete
+// ... + export to excel (csv), text summary, json (json for backups) todo complete
+// 2. [ADVANCED] Flight finder based on your trip dates. todo complete
+// 3. [ADVANCED] - add location to import/export (location address, location lng, location lat) - need to think how to do it. todo complete
+// 4. allow to resize the sidebar vs calendar space (?) todo complete
+// 5. add the ability to render only part of the calendar hours wise (for example hours 1-2-3-4-5-6.. irrelevant.) todo complete
+// 6. content writing - write articles about stuff, trips summaries, suggested destinations, etc. todo complete
+
+// --------------- MAP TASKS -------------------------
+// 1. (!!) when clicking on a coordinate in the map, allow editing the event from there and then we can change the location. todo complete
+// 2. ^ if there are more then 1 events with the same location make sure to update all of them. todo complete
+// 3. (!!) filters on map - for example - highlight all unscheduled events. when they are highlighted it'll be easier to see what are they close to and how can we combine them to make them in the schedule. todo complete
+// 4. add "navigate" button to the list view that opens google maps to that location todo complete
+
+// V [MAP] add search mode to the map, allowing to search for address + display results markers on the map. clicking on the map should open create event with location and title already filled in.
+// V [MAP] make markers be circles with the icon of the attraction / its category in the middle.
+// V (!!) [MAP] show another mini sidebar over the map showing which events are currently displayed in the map. (visible) <- I sent myself example for that on whatsapp
 // V make marker look better
 // V find a way to show monocity view instead of this view.
-
-// add "navigate" button to the list view that opens google maps to that location
-// if it's a note (allDay) - do not show most of the fields (location, priority, hours, etc) <- its irrelevant.
-// add 'opening hours' to the list view (but only the opening hours of they day this event is scheduled to)
-// add 'opening hours' to map view to window info
-
-// V terminology - change 'event' to something else maybe 'point of interset' נקודות עניין
 // V connect to google place details to get places working hours - https://www.youtube.com/watch?v=vAK5o8h8C28
-// sidebar filters - for example based on activity hours. if I have a "whole" in Sunday 10:00-11:00, show me all the events that can fit based on working hours
 
-// fix allevents duplicate items so statistics in the sidebar will be correct.
-// V changing calendar events category isn't working. maybe its related (maybe its duplicating instead of editing or something)
-// refactor SweetAlert from HTML to React
-// ... use IconSelector and LocationPicker
-// Design changes - make it mobile friendly like Dubai site / SecretFlights
-// On which dates are you staying at each hotel settings
-// ... + auto create events for these hotels, place them first on each day. make them from different type so it will be undeletable (?), without start-end dates
-// Flight finder based on your trip dates.
 
-// V (!!) fix "or" calculation when there is 1 event and 2 other events that together are at the same times as the first event.
-
-// feature requests
-// create tasks automatically for flight in, flight out, checkin, checkout with 'please fill in' text.
-// V create automatically logistic category ^
-// create automatically notes category (with default - consider that on Sunday stuff may be closed)
-// add "order status" select with "not relevat" as default and then "need to order" (that populates 'להזמין' message in the summary) and "ordered!" that populates ordered (הוזמן) in the summary
-// add the ability to "swap" dates - move all the activities from 1 day to another and vice versa.
-
-// refactor my css files to be scss
-// move stuff to components
-// move all primary-button and secondary-button to their components
-// create a page with all of my basic components and colors. buttons, etc.
-// make it mobile-responsive
-// advanced - add location to import/export (location address, location lng, location lat)
-
-// todo complete - fix bugs:
-// (!!) trying to add new event when there are no categories returns no error and no success. either add popup / add default category general.
-// double clicking on add category creating category without name (!!!)
-// do not update view when changing dates until clicking on 'custom view' button
-// check delete logic, when deleting all categories and trying to import it says its already exist
-// check delete category logic, when deleting category it says it will delete events from calendar but it isn't.
-// sort categories by fixed thing. (if i change icon its jump to end - avoid that)
-
-// todo complete - design fixes
-// (!!) Inter font for english
-// - Clean up the colors. decide 1 cta color, set it on the things we want the user to click.
-// ... - primary, secondary (white with border), noBackground
-// - clear all items maybe place in the calendar area since its calendar related action.
-// - import - move it maybe above (even though import is sidebar related action)
-// - Hebrew seems a bit weird (Trip?)
-// - improve events styles (make them look more then google calendar / job scheduler)
-
-// todo complete:
-// - NODE SASS
-// - fix import (maybe 'numbers' issue, need to use a different app)
-// - create different trips, save it on different local storage settings.
-// - allow to resize the sidebar vs calendar space (?)
-
-// - find a better location to the trip summary.
-// - (!!) add 'days & hours' to each event, and mark it in error if you placed something in a day its supposed to be closed.
-// - allow duplicate calendar event as well (!)
-// - export to excel (csv), text summary, json (json for backups)
-// - option to add 'tasks' for yourself about events for example - check hours, check where to bla bla bla. events with tasks will have red indication
-// - add the ability to render only part of the calendar hours wise (for example hours 1-2-3-4-5-6.. irrelevant.)
-// - add description, external links (so we can easily find the posts/sources of the description)
-// - location picker javascript/html version.
-// - add ascii icons selector.
-// - change modals so escape will be cancel not 'update'.
-// - make sure each of the local storage holds what it should (sidebarevent / calendarevent / eventinput)
-// - localise
-// - [ADVANCED] export calendar to detailed hours mail (like what I usually do)
-// - [ADVANCED] connect it to google maps - get coordinates on each place you add (location picker)
-// - [ADVANCED] [GOOGLE MAPS] show locations on map based on coordinates.
-// - [ADVANCED] [GOOGLE MAPS] automatically suggest to add driving instructions
-// - [ADVANCED] [GOOGLE MAPS] automatically suggest near locations from your list. <- suggested days based on 1 breakfast, 1 lunch, 1 evening, attractions etc. inc. driving/walking times
-// - [ADVANCED] [GOOGLE MAPS] setting of how much time MAX are you willing to walk, otherwise suggest only drive.
-// - [ADVANCED] keep it on db
-
-// ----------------------------------------
+// ---------------------------------------------------
 
 // completed tasks:
 // V remove from events sidebar after drop
