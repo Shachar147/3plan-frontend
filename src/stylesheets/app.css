@@ -308,6 +308,7 @@ body {
 
 .triplan-react-modal a.btn {
     padding: 5px !important;
+    padding-inline: 15px !important;
 }
 
 .triplan-react-modal button.primary-button,

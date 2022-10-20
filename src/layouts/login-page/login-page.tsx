@@ -15,6 +15,7 @@ import TextInputWrapper from "../../components/inputs/text-input-wrapper/text-in
 import style from './style';
 import {renderHeaderLine} from "../../utils/ui-utils";
 import {observer} from "mobx-react";
+import ReactModalService from "../../services/react-modal-service";
 
 const defaultErrorField: Record<string, boolean> = {
     username: false,
@@ -133,6 +134,7 @@ const LoginPage = () => {
         window.location.href = "/";
     }
 
+    // @ts-ignore
     return (
         <div className={"padding-inline-20"}>
             <div className={"header-container"} style={{ position: "absolute", top: 0 }}>
@@ -141,7 +143,8 @@ const LoginPage = () => {
                     withSearch: false,
                     withViewSelector: false,
                     withRecommended: false,
-                    withFilterTags: false
+                    withFilterTags: false,
+                    withLoginLogout: false
                 })}
             </div>
         <style.Container className={"login-page ui header cards centered"} >
@@ -177,14 +180,33 @@ const LoginPage = () => {
                                 );
                             })
                         }
-                        <style.Button
-                            validating={validating}
-                            className="ui fluid large button primary-button"
-                            data-testid={"submit"}
-                            onClick={login}
-                        >
-                            {TranslateService.translate(eventStore, 'LOGIN')}
-                        </style.Button>
+                        <div className={"flex-row gap-10"}>
+                            <style.Button
+                                validating={validating}
+                                className="ui fluid large button primary-button"
+                                data-testid={"submit"}
+                                onClick={login}
+                            >
+                                {TranslateService.translate(eventStore, 'LOGIN')}
+                            </style.Button>
+                            <style.Button
+                                validating={validating}
+                                className="ui fluid large button secondary-button black"
+                                data-testid={"guest"}
+                                onClick={() => {
+                                    if (localStorage.getItem("triplan-hide-continue-as-guest-modal")){
+                                        window.location.href = "/home";
+                                    } else {
+                                        ReactModalService.openConfirmModal(eventStore, () => {
+                                            window.location.href = "/home";
+                                        }, 'MODALS.ARE_YOU_SURE', 'CONTINUE_AS_GUEST_MODAL_CONTENT', 'CONTINUE_AS_GUEST')
+                                        localStorage.setItem("triplan-hide-continue-as-guest-modal", true);
+                                    }
+                                }}
+                            >
+                                {TranslateService.translate(eventStore, 'CONTINUE_AS_GUEST')}
+                            </style.Button>
+                        </div>
                     </div>
                     <div className={"register-link-container"} key={"register-link-container"}>
                         <style.RegisterLink>

@@ -2,13 +2,14 @@ import {createContext, useContext, useState} from "react";
 import {action, computed, observable, runInAction, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
 import {
+    defaultLocalCode,
     getAllEvents,
     getDefaultCalendarEvents,
     getDefaultCalendarLocale,
     getDefaultCategories,
     getDefaultCustomDateRange,
     getDefaultDistanceResults,
-    getDefaultEvents,
+    getDefaultEvents, LS_CALENDAR_LOCALE, LS_CUSTOM_DATE_RANGE, LS_SIDEBAR_EVENTS,
     setAllEvents,
     setDefaultCalendarEvents,
     setDefaultCalendarLocale,
@@ -24,6 +25,7 @@ import {convertMsToHM} from "../utils/time-utils";
 import _ from "lodash";
 import {containsDuplicates, lockOrderedEvents} from "../utils/utils";
 import ListViewService from "../services/list-view-service";
+import ReactModalService from "../services/react-modal-service";
 
 const defaultModalSettings = {
     show: false,
@@ -66,6 +68,7 @@ export class EventStore {
     @observable modalSettings = defaultModalSettings;
     modalValues: any = {};
     @observable modalValuesRefs: any = {};
+    @observable createMode: boolean = false;
 
     constructor() {
         this.categories = getDefaultCategories(this);
@@ -356,20 +359,31 @@ export class EventStore {
     }
 
     @action
-    setTripName(name: string, calendarLocale?: 'en' | 'he'){
-        this.tripName = name;
-        this.setCalendarLocalCode(calendarLocale || getDefaultCalendarLocale(name));
-        this.setSidebarEvents(getDefaultEvents(name))
-        this.setCalendarEvents(getDefaultCalendarEvents(name))
-        this.customDateRange = getDefaultCustomDateRange(name);
-        this.allEvents = getAllEvents(this,name);
-        this.categories = getDefaultCategories(this, name);;
-        this.allEventsTripName = name;
+    setTripName(name: string, calendarLocale?: 'en' | 'he', createMode?: boolean){
+        if (!createMode && !localStorage.getItem([LS_CUSTOM_DATE_RANGE,name].join("-"))){
+            ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
+            setTimeout(() => {
+                window.location.href = '/my-trips';
+                localStorage.removeItem([LS_CALENDAR_LOCALE, name].join("-"))
+                localStorage.removeItem([LS_SIDEBAR_EVENTS, name].join("-"))
+            }, 3000)
+        } else {
+            this.tripName = name;
+            this.createMode = !!createMode;
+            this.setCalendarLocalCode(calendarLocale || getDefaultCalendarLocale(name));
+            this.setSidebarEvents(getDefaultEvents(name))
+            this.setCalendarEvents(getDefaultCalendarEvents(name))
+            this.customDateRange = getDefaultCustomDateRange(name);
+            this.allEvents = getAllEvents(this, name);
+            this.categories = getDefaultCategories(this, name);
 
-        runInAction(() => {
-            const newMap = getDefaultDistanceResults(name);
-            this.distanceResults = observable.map(newMap);
-        })
+            this.allEventsTripName = name;
+
+            runInAction(() => {
+                const newMap = getDefaultDistanceResults(name);
+                this.distanceResults = observable.map(newMap);
+            })
+        }
     }
 
     @action

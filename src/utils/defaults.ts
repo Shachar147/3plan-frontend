@@ -2,9 +2,10 @@ import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "./interfaces";
 import {EventInput} from "@fullcalendar/react";
 import {lockOrderedEvents, padTo2Digits} from "./utils";
-import {EventStore} from "../stores/events-store";
+import {EventStore, eventStoreContext} from "../stores/events-store";
 import TranslateService from "../services/translate-service";
 import {observable} from "mobx";
+import {useContext} from "react";
 
 export const defaultLocalCode = "he";
 export const defaultTimedEventDuration = '01:00';
@@ -565,11 +566,11 @@ export const defaultCustomDateRange = () => {
     }
 }
 
-const LS_SIDEBAR_EVENTS = "triplan-sidebar-events";
+export const LS_SIDEBAR_EVENTS = "triplan-sidebar-events";
 const LS_CALENDAR_EVENTS = "triplan-calendar-events";
 const LS_CATEGORIES = "triplan-categories"
 const LS_ALL_EVENTS = "triplan-all-events";
-const LS_CALENDAR_LOCALE = "triplan-calendar-locale"
+export const LS_CALENDAR_LOCALE = "triplan-calendar-locale"
 const LS_DISTANCE_RESULTS = "triplan-distance-results"
 export const LS_CUSTOM_DATE_RANGE = "triplan-custom-date-range"
 
@@ -584,9 +585,12 @@ export function getLocalStorageKeys(){
     };
 }
 
-export function getDefaultEvents(tripName?: string){
+export function getDefaultEvents(tripName?: string, createMode?: boolean){
+    // const eventStore = useContext(eventStoreContext);
+    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
     const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
     if (!localStorage.getItem(key)){
+        if (!eventStore.createMode) return undefined;
         setDefaultEvents(defaultEvents, tripName);
     }
     return JSON.parse(localStorage.getItem(key)!);
@@ -596,9 +600,12 @@ export function setDefaultEvents(sidebarEvents: Record<number,SidebarEvent[]>, t
     localStorage.setItem(key, JSON.stringify(sidebarEvents))
 }
 
-export function getDefaultCalendarEvents(tripName?: string){
+export function getDefaultCalendarEvents(tripName?: string, createMode?: boolean){
+    // const eventStore = useContext(eventStoreContext);
+    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
     const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
     if (!localStorage.getItem(key)){
+        if (!eventStore.createMode) return undefined;
         setDefaultCalendarEvents(defaultCalendarEvents, tripName);
     }
     return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
@@ -608,9 +615,10 @@ export function setDefaultCalendarEvents(calendarEvents: EventInput[], tripName?
     localStorage.setItem(key, JSON.stringify(calendarEvents))
 }
 
-export function getDefaultCategories(eventStore: EventStore, tripName?: string){
+export function getDefaultCategories(eventStore: EventStore, tripName?: string, createMode?: boolean){
     const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
     if (!localStorage.getItem(key)){
+        if (!createMode && !eventStore.createMode) return undefined;
         const defaultCategories: TriPlanCategory[] = [
             {
                 id: 1,
@@ -635,6 +643,7 @@ export function setDefaultCategories(categories: TriPlanCategory[], tripName?: s
 export function getAllEvents(eventStore: EventStore, tripName?: string){
     const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
     if (!localStorage.getItem(key)){
+        if (!eventStore.createMode) return undefined;
 
         const hash: any = {};
         getDefaultCategories(eventStore, tripName).forEach((x:any) => hash[x.id] = x.icon)
@@ -660,9 +669,12 @@ export function setAllEvents(events: SidebarEvent[], tripName?: string){
     localStorage.setItem(key, JSON.stringify(events))
 }
 
-export function getDefaultCalendarLocale(tripName?: string): 'he' | 'en' {
+export function getDefaultCalendarLocale(tripName?: string, createMode?: boolean): 'he' | 'en' {
     const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
+    // const eventStore = useContext(eventStoreContext);
+    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
     if (!localStorage.getItem(key)){
+        if (!eventStore.createMode) return defaultLocalCode;
         setDefaultCalendarLocale(defaultLocalCode, tripName);
     }
     // @ts-ignore
@@ -673,9 +685,12 @@ export function setDefaultCalendarLocale(defaultLocalCode: 'he' | 'en', tripName
     localStorage.setItem(key, defaultLocalCode)
 }
 
-export function getDefaultCustomDateRange(tripName?: string){
+export function getDefaultCustomDateRange(tripName?: string, createMode?: boolean){
     const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
+    // const eventStore = useContext(eventStoreContext);
+    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
     if (!localStorage.getItem(key)){
+        if (!eventStore.createMode) return undefined;
         setDefaultCustomDateRange(defaultCustomDateRange(), tripName);
     }
     return JSON.parse(localStorage.getItem(key)!);
@@ -685,9 +700,12 @@ export function setDefaultCustomDateRange(customDateRange: any, tripName?: strin
     localStorage.setItem(key, JSON.stringify(customDateRange))
 }
 
-export function getDefaultDistanceResults(tripName?: string): Map<string, DistanceResult> {
+export function getDefaultDistanceResults(tripName?: string, createMode?: boolean): Map<string, DistanceResult> {
     const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
+    // const eventStore = useContext(eventStoreContext);
+    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
     if (!localStorage.getItem(key)){
+        if (!eventStore.createMode) return new Map<string, DistanceResult>();
         setDefaultDistanceResults({}, tripName);
     }
     // @ts-ignore

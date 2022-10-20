@@ -23,7 +23,7 @@ import PrivateRoute from "./PrivateRoute";
 import LoginPage from "./layouts/login-page/login-page";
 import RegisterPage from "./layouts/register-page/register-page";
 import LogoutPage from "./layouts/logout-page/logout-page";
-import {getToken} from "./helpers/auth";
+import {getToken, getUser} from "./helpers/auth";
 import axios from "axios";
 
 // Dubai
@@ -43,10 +43,20 @@ import axios from "axios";
 // must - must do
 // nice! - nice features that will improve it a lot
 
+
+// wip status:
+// - trips will be created only if route is plan/create
+// - change it to /create ^
+// - now we can't create trips if not logged in - need to fix. (if not logged in create only on local storage)
+// - need to have a way to know if trip is db or local storage.
+// - need to sync only if clicked on sync button. if synced - it need to be removed from local storage and be stored **only** on db.
+// - verify it good before doing that, and backup dubai and viena first ^^
+
 // --------------- GENERAL ---------------------------
 // 1. heroku alternatives (!!!) todo complete
 // 2. store all my projects on GitHub todo complete
 // 3. route_templates - check where I have it, for easier route generating. todo complete
+// 4. define prettier / linter once you save to fix the lines that are too long etc todo complete
 // ---------------------------------------------------
 // 3. refactor my css files to be scss todo complete
 // 4. move stuff to components todo complete
@@ -502,14 +512,17 @@ const RootRouter = () => {
         <>
             <BrowserRouter>
                 <Routes>
-                    <Route exact path='/' element={<PrivateRoute/>}>
-                        <Route exact path='/' element={<LandingPage/>}/>
-                    </Route>
+                    {/*<Route exact path='/' element={<PrivateRoute/>}>*/}
+                    {/*    <Route exact path='/' element={<LandingPage/>}/>*/}
+                    {/*</Route>*/}
+                    <Route exact path='/' element={(getUser() == undefined) ? <LoginPage /> : <LandingPage/>}/>
+                    <Route exact path='/home' element={<LandingPage/>}/>
                     <Route path="/login" element={<LoginPage/>} />
                     <Route path="/register" element={<RegisterPage/>} />
                     <Route path="/logout" element={<LogoutPage />} />
                     <Route exact path="/getting-started" element={<GettingStartedPage/>}/>
                     <Route exact path="/my-trips" element={<MyTrips/>}/>
+                    <Route path={"/plan/create/:tripName/:locale"} element={<MainPage createMode={true} />}/>
                     <Route path="/plan/:tripName/:locale" element={<MainPage/>}/>
                     <Route path="/plan/:tripName/" element={<MainPage/>}/>
                     <Route path="/plan" element={<MainPage/>}/>

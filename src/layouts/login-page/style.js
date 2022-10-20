@@ -31,6 +31,10 @@ const RegisterLink = styled.div`
 const Button = styled.div`
   opacity: ${props => props.validating ? 0.6 : 1};
   cursor: ${props => props.validating ? 'default' : 'pointer'};
+  font-weight: normal !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default {

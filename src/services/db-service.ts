@@ -1,4 +1,4 @@
-import {apiDelete, apiPost} from "../helpers/api";
+import {apiDelete, apiGet, apiPost} from "../helpers/api";
 import {getAllEvents, getDefaultCalendarEvents, getDefaultCategories, getDefaultEvents} from "../utils/defaults";
 import {EventStore} from "../stores/events-store";
 
@@ -141,6 +141,35 @@ const DBService = {
                 }
             }
         );
+    },
+    getTrips: async (
+        successCallback?: (res: any) => void,
+        errorCallback?: (error: any, error_retry: number) => void,
+        finallyCallback?: () => void
+    ) => {
+        return apiGet(this, '/trip/',
+            async function(res: any) {
+                if (successCallback){
+                    res.data.data.forEach((x: any) => x.name += ' (db)');
+                    successCallback(res);
+                }
+            },
+            function(error: any, error_retry: number) {
+                // console.log(error);
+                // let req_error = error.message;
+                // if (error.message.indexOf("401") !== -1) { req_error = UNAUTHORIZED_ERROR; }
+                // if (error.message.indexOf("400") !== -1) { req_error = `Oops, failed saving this game.` }
+
+                if (errorCallback){
+                    errorCallback(error, error_retry);
+                }
+
+            },
+            function() {
+                if (finallyCallback){
+                    finallyCallback();
+                }
+            });
     }
 };
 

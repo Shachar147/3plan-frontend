@@ -246,5 +246,8 @@
   "PASSWORD_EMPTY": "הסיסמא לא יכולה להיות ריקה",
   "PASSWORDS_NOT_MATCH": "הסיסמאות לא תואמות",
   "LOGGED_IN_SUCCESSFULLY": "התחברת בהצלחה!",
-  "REGISTERED_SUCCESSFULLY": "נרשמת בהצלחה!"
+  "REGISTERED_SUCCESSFULLY": "נרשמת בהצלחה!",
+  "CONTINUE_AS_GUEST": "היכנס ללא משתמש",
+  "CONTINUE_AS_GUEST_MODAL_CONTENT": "במידה ותבחר להיכנס ללא משתמש, הטיולים שתיצור יהיו זמינים אך ורק מהמחשב ממנו התחברת כרגע.<br>במידה ותחליט להירשם בהמשך, תוכל לסנכרן את הטיולים למשתמש שלך ולצפות בהם מכל מכשיר",
+  "MODALS.ERROR.TRIP_NOT_EXIST": "אופס, הטיול שניסית לגשת אליו לא קיים"
 }

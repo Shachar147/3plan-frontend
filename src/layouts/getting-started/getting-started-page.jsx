@@ -98,7 +98,7 @@ const GettingStartedPage = () => {
                     <div className={"trip main-font-heavy"}>{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}</div>
                 </div>
                 <img className={getClasses(["logo-container pointer"], applyPageIntro && 'up')} src={"/images/logo/new-logo.png"} style={{ width: "50%", minWidth: "400px" }} onClick={() => {
-                    navigate('/');
+                    navigate('/home');
                 }} />
                 <div className={getClasses(["create-new-trip-form display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>
 
@@ -127,13 +127,13 @@ const GettingStartedPage = () => {
                                 dateRange: customDateRange,
                                 calendarLocale: eventStore.calendarLocalCode,
                                 allEvents: [],
-                                sidebarEvents: getDefaultEvents(TripName),
-                                calendarEvents: getDefaultCalendarEvents(TripName),
-                                categories: getDefaultCategories(eventStore, TripName)
+                                sidebarEvents: getDefaultEvents(TripName, true),
+                                calendarEvents: getDefaultCalendarEvents(TripName, true),
+                                categories: getDefaultCategories(eventStore, TripName, true)
                             }, () => {
                                 eventStore.setCustomDateRange(customDateRange);
                                 setDefaultCustomDateRange(customDateRange, TripName);
-                                navigate('/plan/' + TripName + '/' + eventStore.calendarLocalCode)
+                                navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode)
                             }, () => {
                                 ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "OOPS_SOMETHING_WENT_WRONG", "error")
                             }, () => {});

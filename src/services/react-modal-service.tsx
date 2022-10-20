@@ -1790,15 +1790,15 @@ const ReactModalService = {
             }
         })
     },
-    openConfirmModal: (eventStore: EventStore, callback: () => void) => {
+    openConfirmModal: (eventStore: EventStore, callback: () => void, titleKey = 'MODALS.ARE_YOU_SURE', contentKey = 'MODALS.ARE_YOU_SURE.CONTENT', continueKey = 'MODALS.CONTINUE') => {
         ReactModalService.internal.openModal(eventStore, {
             ...getDefaultSettings(eventStore),
-            title: `${TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE')}`,
+            title: `${TranslateService.translate(eventStore, titleKey)}`,
             content: (
-                <div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MODALS.ARE_YOU_SURE.CONTENT') }} />
+                <div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, contentKey) }} />
             ),
             cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
-            confirmBtnText: TranslateService.translate(eventStore, 'MODALS.CONTINUE'),
+            confirmBtnText: TranslateService.translate(eventStore, continueKey),
             confirmBtnCssClass: 'primary-button',
             onConfirm: () => {
                 callback();

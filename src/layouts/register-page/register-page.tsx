@@ -158,7 +158,8 @@ const RegisterPage = () => {
                     withSearch: false,
                     withViewSelector: false,
                     withRecommended: false,
-                    withFilterTags: false
+                    withFilterTags: false,
+                    withLoginLogout: false
                 })}
             </div>
         <style.Container className={"register-page ui header cards centered"} >

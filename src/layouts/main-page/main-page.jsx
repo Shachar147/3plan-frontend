@@ -19,8 +19,10 @@ import TriplanSidebar from "../../components/triplan-sidebar/triplan-sidebar";
 import MapContainer from "../../components/map-container/map-container";
 import ListViewService from "../../services/list-view-service";
 import DBService from "../../services/db-service";
+import {getUser} from "../../helpers/auth";
 
-const MainPage = () => {
+const MainPage = (props) => {
+    const { createMode } = props;
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)
     const TriplanCalendarRef = useRef(null)
     let { tripName, locale } = useParams();
@@ -32,11 +34,13 @@ const MainPage = () => {
     useEffect(() => {
 
         if (eventStore.tripName !== "") {
-            DBService.upsertTripByName(eventStore.tripName, eventStore.customDateRange, eventStore, () => {
-                console.log("updated db successfully");
-            }, () => {
-                console.log("failed updating db")
-            });
+            if (getUser()) {
+                DBService.upsertTripByName(eventStore.tripName, eventStore.customDateRange, eventStore, () => {
+                    console.log("updated db successfully");
+                }, () => {
+                    console.log("failed updating db")
+                });
+            }
         }
 
     }, [eventStore.allEvents, eventStore.calendarEvents, eventStore.categories, eventStore.sidebarEvents, eventStore.customDateRange, eventStore.calendarLocalCode, eventStore.tripName])
@@ -92,7 +96,7 @@ const MainPage = () => {
     // }, [eventStore.calendarEvents, eventStore.sidebarEvents, eventStore.allEvents])
 
     useEffect(() => {
-        eventStore.setTripName(tripName, locale);
+        eventStore.setTripName(tripName, locale, createMode);
         setCustomDateRange(getDefaultCustomDateRange(eventStore.tripName));
 
         if (TriplanCalendarRef && TriplanCalendarRef.current) {
@@ -198,7 +202,7 @@ const MainPage = () => {
         <div className={getClasses(["calender-container bright-scrollbar flex-1-1-0"], !eventStore.isCalendarView && 'opacity-0 position-absolute')}>
             <TriplanCalendar
                 ref={TriplanCalendarRef}
-                defaultCalendarEvents={getDefaultCalendarEvents()}
+                defaultCalendarEvents={getDefaultCalendarEvents(eventStore.tripName)}
                 onEventReceive={removeEventFromSidebarById}
                 allEvents={eventStore.allEvents}
                 addEventToSidebar={addEventToSidebar}
@@ -229,6 +233,7 @@ const MainPage = () => {
                     withSearch: true,
                     withViewSelector: true,
                     withRecommended: false,
+                    withLoginLogout: true,
                     withFilterTags: true
                 })}
             </div>

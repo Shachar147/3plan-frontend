@@ -5,12 +5,14 @@ import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {
-    LS_CUSTOM_DATE_RANGE,
-    setDefaultCalendarLocale,
+    LS_CUSTOM_DATE_RANGE, setAllEvents, setDefaultCalendarEvents,
+    setDefaultCalendarLocale, setDefaultCategories, setDefaultCustomDateRange, setDefaultEvents,
 } from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import ReactModalService from "../../services/react-modal-service";
+import DBService from "../../services/db-service";
+import {getUser} from "../../helpers/auth";
 
 const MyTrips = () => {
 
@@ -18,6 +20,8 @@ const MyTrips = () => {
     const [applyFadeIn, setApplyFadeIn] = useState(false);
     const eventStore = useContext(eventStoreContext);
     const navigate = useNavigate();
+
+    // const [dbTrips, setDBTrips] = useState([]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -27,7 +31,14 @@ const MyTrips = () => {
                 setApplyFadeIn(true);
             }, 200)
 
-        }, 500)
+        }, 500);
+
+        // if (getUser()) {
+        //     DBService.getTrips((response) => {
+        //         setDBTrips(response.data.data)
+        //     });
+        // }
+
     }, []);
 
     useEffect(() => {
@@ -38,10 +49,16 @@ const MyTrips = () => {
     }, [eventStore.calendarLocalCode])
 
     const renderForm = () => {
+        const getTripName = (x) => {
+            return x.replace(LS_CUSTOM_DATE_RANGE + "-","");
+        }
+
+        const lsTrips = Object.keys(localStorage).filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1);
+
         return (
             <div className={getClasses(["my-trips bright-scrollbar"], eventStore.isListView && 'hidden')}>
                 {
-                    Object.keys(localStorage).filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1).map((x) => x.replace(LS_CUSTOM_DATE_RANGE + "-","")).map((LSTripName) => {
+                    lsTrips.map((x) => getTripName(x)).map((LSTripName) => {
                         LSTripName = LSTripName === LS_CUSTOM_DATE_RANGE ? "" : LSTripName;
                         const tripName = LSTripName !== "" ? LSTripName.replaceAll("-"," ") : "";
                         const key = tripName.length ? [LS_CUSTOM_DATE_RANGE,LSTripName].join("-") : LS_CUSTOM_DATE_RANGE;
@@ -117,7 +134,7 @@ const MyTrips = () => {
                     <div className={"trip main-font-heavy"}>{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}</div>
                 </div>
                 <img className={getClasses(["logo-container pointer"], applyPageIntro && 'up')} src={"/images/logo/new-logo.png"} style={{ width: "50%", minWidth: "400px" }} onClick={() => {
-                    navigate('/');
+                    navigate('/home');
                 }} />
                 <div className={getClasses(["create-new-trip-form display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>
 

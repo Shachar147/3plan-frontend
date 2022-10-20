@@ -1,7 +1,7 @@
 import TranslateService from "../services/translate-service";
 import React from "react";
 import {EventStore} from "../stores/events-store";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, NavigateFunction, useNavigate} from "react-router-dom";
 import Button, {ButtonFlavor} from "../components/common/button/button";
 import ToggleButton from "../components/toggle-button/toggle-button";
 import {ViewMode} from "./enums";
@@ -48,7 +48,8 @@ export interface HeaderLineOptions {
     withRecommended?: boolean
     withSearch?: boolean
     withViewSelector?: boolean
-    withFilterTags?: boolean
+    withFilterTags?: boolean,
+    withLoginLogout?: boolean
 }
 
 export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOptions = {}) => {
@@ -59,6 +60,7 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
         withSearch = false,
         withFilterTags = false,
         withViewSelector = false,
+        withLoginLogout = true
     } = options;
 
     const navigate = useNavigate();
@@ -82,24 +84,15 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
                 {withFilterTags && renderFilterTags(eventStore)}
                 {withSearch && renderSearch(eventStore)}
                 {withViewSelector && renderViewSelector(eventStore)}
-                {withLogo && <div
-                    className="header-logo"
-                    onClick={() => {
-                        navigate('/');
-                    }}
-                    style={{ cursor:"pointer", display: "flex", maxHeight: "40px", height: "40px"}}>
-                        <img alt={""} src={"/images/logo/new-logo.png"}/>
-                    </div>
-                }
-                {withRecommended && renderMyTrips(eventStore)}
+                {(withRecommended || withLoginLogout || withLogo) && renderMyTrips(eventStore, withRecommended, withLoginLogout, withLogo, navigate)}
             </div>
         </div>
     );
 }
 
-const renderMyTrips = (eventStore: EventStore) => (
+const renderMyTrips = (eventStore: EventStore, withMyTrips: boolean, withLoginLogout:boolean, withLogo: boolean, navigate: NavigateFunction) => (
     <div className={"recommended-destinations main-font"}>
-        <Link to={"/my-trips"} style={{
+        {!withMyTrips ? undefined : <Link to={"/my-trips"} style={{
             textDecoration: "none"
         }}>
             <Button
@@ -108,20 +101,47 @@ const renderMyTrips = (eventStore: EventStore) => (
                 text={TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
                 onClick={() => {}}
             />
-        </Link>
+        </Link>}
 
-        <Link to={"/logout"} style={{
-            textDecoration: "none"
-        }}>
-            <Button
-                flavor={ButtonFlavor.link}
-                icon={"fa-sign-out darkest-blue-color"}
-                text={`${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`}
-                onClick={() => {}}
-            />
-        </Link>
+        {!withLoginLogout ? undefined : (getUser() == undefined) ? renderLogin(eventStore) : renderLogout(eventStore)}
+
+        {withLogo && <div
+            className="header-logo"
+            onClick={() => {
+                navigate('/home');
+            }}
+            style={{ cursor:"pointer", display: "flex", maxHeight: "40px", height: "40px"}}>
+            <img alt={""} src={"/images/logo/new-logo.png"}/>
+        </div>
+        }
     </div>
 );
+
+const renderLogout = (eventStore: EventStore) => (
+    <Link to={"/logout"} style={{
+        textDecoration: "none"
+    }}>
+        <Button
+            flavor={ButtonFlavor.link}
+            icon={"fa-sign-out darkest-blue-color"}
+            text={`${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`}
+            onClick={() => {}}
+        />
+    </Link>
+)
+
+const renderLogin = (eventStore: EventStore) => (
+    <Link to={"/login"} style={{
+        textDecoration: "none"
+    }}>
+        <Button
+            flavor={ButtonFlavor.link}
+            icon={"fa-sign-in darkest-blue-color"}
+            text={`${TranslateService.translate(eventStore, 'LOGIN')}`}
+            onClick={() => {}}
+        />
+    </Link>
+)
 
 const renderSearch = (eventStore: EventStore) => {
     return (
