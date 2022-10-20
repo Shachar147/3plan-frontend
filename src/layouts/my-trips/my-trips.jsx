@@ -137,9 +137,7 @@ const MyTrips = () => {
                     navigate('/home');
                 }} />
                 <div className={getClasses(["create-new-trip-form display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>
-
                     {renderForm()}
-
                 </div>
 
             </div>
