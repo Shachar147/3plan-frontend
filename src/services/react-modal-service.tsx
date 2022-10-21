@@ -28,7 +28,7 @@ import ImportService from "./import-service";
 // @ts-ignore
 import _ from "lodash";
 import DBService from "./db-service";
-import {tripNameToLSTripName} from "./data-handler";
+import {tripNameToLSTripName} from "./data-handlers/data-handler-base";
 
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {

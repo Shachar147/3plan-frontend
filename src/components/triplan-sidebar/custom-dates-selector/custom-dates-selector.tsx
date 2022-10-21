@@ -3,7 +3,7 @@ import TranslateService from "../../../services/translate-service";
 import React, {useContext} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import Button, {ButtonFlavor} from "../../common/button/button";
-import DataServices, {DateRangeFormatted} from "../../../services/data-handler";
+import DataServices, {DateRangeFormatted} from "../../../services/data-handlers/data-handler-base";
 
 export interface CustomDatesSelectorProps {
     customDateRange: DateRangeFormatted,

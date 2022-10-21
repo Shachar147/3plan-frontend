@@ -1,8 +1,7 @@
 import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
-import {DistanceResult, SidebarEvent, TriPlanCategory} from "./interfaces";
-import {EventInput} from "@fullcalendar/react";
+import {SidebarEvent, TriPlanCategory} from "./interfaces";
 import {padTo2Digits} from "./utils";
-import {DateRangeFormatted, LocaleCode} from "../services/data-handler";
+import {DateRangeFormatted} from "../services/data-handlers/data-handler-base";
 
 export const defaultLocalCode = "he";
 export const defaultTimedEventDuration = '01:00';

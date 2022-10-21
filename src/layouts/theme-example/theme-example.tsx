@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Button, {ButtonFlavor} from "../../components/common/button/button";
 import CustomDatesSelector from "../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector";
 import {defaultDateRange} from "../../utils/defaults";
-import {DateRangeFormatted} from "../../services/data-handler";
+import {DateRangeFormatted} from "../../services/data-handlers/data-handler-base";
 
 const ThemeExample = () => {
 

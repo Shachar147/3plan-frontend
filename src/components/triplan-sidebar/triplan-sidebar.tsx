@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 import {priorityToColor} from "../../utils/consts";
 import ListViewService from "../../services/list-view-service";
 import ReactModalService from "../../services/react-modal-service";
-import {DateRangeFormatted} from "../../services/data-handler";
+import {DateRangeFormatted} from "../../services/data-handlers/data-handler-base";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,

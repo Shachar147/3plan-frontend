@@ -1,65 +1,24 @@
-import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
+import {EventStore} from "../../stores/events-store";
 import {
     defaultCalendarEvents, defaultDateRange,
-    defaultEvents, defaultLocalCode, LS_ALL_EVENTS, LS_CALENDAR_EVENTS, LS_CALENDAR_LOCALE,
-    LS_CATEGORIES,
-    LS_CUSTOM_DATE_RANGE, LS_DISTANCE_RESULTS,
-    LS_SIDEBAR_EVENTS,
-} from "../utils/defaults";
-import TranslateService from "./translate-service";
-import {EventStore} from "../stores/events-store";
+    defaultEvents, defaultLocalCode,
+    LS_ALL_EVENTS,
+    LS_CALENDAR_EVENTS, LS_CALENDAR_LOCALE, LS_CATEGORIES,
+    LS_CUSTOM_DATE_RANGE, LS_DISTANCE_RESULTS, LS_SIDEBAR_EVENTS
+} from "../../utils/defaults";
+import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
+import TranslateService from "../translate-service";
+import DataServices, {
+    AllEventsEvent, BaseDataHandler,
+    DateRangeFormatted,
+    LocaleCode,
+    lsTripNameToTripName,
+    Trip
+} from "./data-handler-base";
 
-export type LocaleCode = 'he' | 'en';
+export class LocalStorageService implements BaseDataHandler {
 
-export interface Trip {
-    name: string,
-    dateRange: DateRangeFormatted,
-    categories: TriPlanCategory[],
-    sidebarEvents: Record<number,SidebarEvent[]>,
-    calendarEvents: CalendarEvent[],
-    allEvents: AllEventsEvent[],
-    calendarLocale: LocaleCode
-}
-
-export interface DateRange {
-    start: Date,
-    end: Date
-}
-
-// already formatted for the FullCalendar component
-export interface DateRangeFormatted {
-    start: string,
-    end: string
-}
-
-export interface AllEventsEvent extends SidebarEvent {
-    category: string
-}
-
-interface BaseDataHandler {
-    getTrips: (eventStore: EventStore) => Trip[],
-    setTripName: (name: string) => void,
-    setDateRange: (dateRange: DateRangeFormatted, tripName: string) => void,
-    setCategories: (categories: TriPlanCategory[], tripName: string) => void,
-    setSidebarEvents: (sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) => void,
-    setCalendarEvents: (calendarEvents: CalendarEvent[], tripName: string) => void,
-    setAllEvents: (allEvents: AllEventsEvent[], tripName: string) => void,
-    setCalendarLocale: (calendarLocale: LocaleCode, tripName?: string) => void,
-    setDistanceResults: (distanceResults: Map<String, DistanceResult>, tripName?: string) => void,
-
-    getDateRange: (tripName: string, createMode?: boolean) => DateRangeFormatted,
-    getCategories: (eventStore: EventStore, tripName?: string, createMode?: boolean) => TriPlanCategory[],
-    getSidebarEvents: (tripName?: string, createMode?: boolean) => Record<number,SidebarEvent[]>,
-    getCalendarEvents: (tripName?: string, createMode?: boolean) => CalendarEvent[],
-    getAllEvents: (eventStore: EventStore, tripName?: string, createMode?: boolean) => AllEventsEvent[],
-    getCalendarLocale: (tripName?: string, createMode?: boolean) => LocaleCode,
-    getDistanceResults: (tripName?: string) => Map<string,DistanceResult>
-}
-
-export const tripNameToLSTripName = (tripName: string) => tripName.replaceAll(" ","-") ;
-export const lsTripNameToTripName = (tripName: string) => tripName.replaceAll("-"," ") ;
-
-class LocalStorageService implements BaseDataHandler {
+    CONTINUE_AS_GUEST_MODAL_LS_KEY = "triplan-hide-continue-as-guest-modal";
 
     // --- GET ------------------------------------------------------------------------------
     getTrips(eventStore: EventStore): Trip[] {
@@ -244,8 +203,6 @@ class LocalStorageService implements BaseDataHandler {
     }
 
     // --- LOCAL STORAGE --------------------------------------------------------------------
-    CONTINUE_AS_GUEST_MODAL_LS_KEY = "triplan-hide-continue-as-guest-modal";
-
     shouldShowContinueAsGuest(): boolean {
         const shouldShow = localStorage.getItem(this.CONTINUE_AS_GUEST_MODAL_LS_KEY);
         return !!shouldShow;
@@ -255,8 +212,3 @@ class LocalStorageService implements BaseDataHandler {
         localStorage.setItem(this.CONTINUE_AS_GUEST_MODAL_LS_KEY, "1");
     }
 }
-
-export const DataServices = {
-    LocalStorageService: new LocalStorageService()
-}
-export default DataServices;

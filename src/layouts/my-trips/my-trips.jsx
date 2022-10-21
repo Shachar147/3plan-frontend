@@ -7,7 +7,7 @@ import {observer} from "mobx-react";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import ReactModalService from "../../services/react-modal-service";
-import DataServices, {Trip, tripNameToLSTripName} from "../../services/data-handler";
+import DataServices, {Trip, tripNameToLSTripName} from "../../services/data-handlers/data-handler-base";
 
 const dataService = DataServices.LocalStorageService;
 const MyTrips = () => {

@@ -6,7 +6,7 @@ import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import Button, {ButtonFlavor} from "../../components/common/button/button";
-import DataServices from "../../services/data-handler";
+import DataServices from "../../services/data-handlers/data-handler-base";
 
 const dataService = DataServices.LocalStorageService;
 const LandingPage = () => {

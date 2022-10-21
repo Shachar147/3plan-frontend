@@ -12,7 +12,7 @@ import {getClasses} from "../../utils/utils";
 import Button, {ButtonFlavor} from "../../components/common/button/button";
 import DBService from "../../services/db-service";
 import ReactModalService from "../../services/react-modal-service";
-import DataServices from "../../services/data-handler";
+import DataServices from "../../services/data-handlers/data-handler-base";
 
 const dataService = DataServices.LocalStorageService;
 const GettingStartedPage = () => {

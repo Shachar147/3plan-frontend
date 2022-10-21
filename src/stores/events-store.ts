@@ -13,7 +13,7 @@ import _ from "lodash";
 import {containsDuplicates, lockOrderedEvents} from "../utils/utils";
 import ListViewService from "../services/list-view-service";
 import ReactModalService from "../services/react-modal-service";
-import {AllEventsEvent, DataServices, LocaleCode} from "../services/data-handler";
+import {AllEventsEvent, DataServices, LocaleCode} from "../services/data-handlers/data-handler-base";
 
 const defaultModalSettings = {
     show: false,

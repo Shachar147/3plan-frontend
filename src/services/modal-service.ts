@@ -24,7 +24,7 @@ import {
     validateDuration
 } from "../utils/time-utils";
 import ReactModalService from "./react-modal-service";
-import {tripNameToLSTripName} from "./data-handler";
+import {tripNameToLSTripName} from "./data-handlers/data-handler-base";
 
 const ModalServiceRenderHelper = {
     _renderPrioritySelect: (eventStore: EventStore, priority?: TriplanPriority) => {
