@@ -184,9 +184,16 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
         // locked
         const tooltip = isEventAlreadyOrdered(event as EventInput) ? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP') : "";
 
+        let suggestedTime = "";
+        // @ts-ignore
+        if (event.extendedProps.suggestedEndTime){
+            suggestedTime = `<div class="fc-event-suggested-time">${TranslateService.translate(eventStore, 'LEAVE_AT')} ${getTimeStringFromDate(event.extendedProps.suggestedEndTime)} ${TranslateService.translate(eventStore, 'TO_ARRIVE_ON_TIME')}</div>`
+        }
+
         eventEl.innerHTML = `
                     <div title="${tooltip}">${icon} ${event.title}</div>
                     ${event.allDay ? "" : `<div class="fc-event-time">${event.start ? getTimeStringFromDate(event.start) : ""}${event.end ? "-" + getTimeStringFromDate(event.end) : ""}</div>`}
+                    ${suggestedTime}
                 `;
 
         let arrayOfDomNodes = [ eventEl ]

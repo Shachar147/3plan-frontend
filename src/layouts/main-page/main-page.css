@@ -131,6 +131,7 @@
     flex-direction: column;
 }
 
+.fc-event-suggested-time,
 .fc-event-time {
     /*order: 2;*/
     /*background-color: var(--white) !important;*/

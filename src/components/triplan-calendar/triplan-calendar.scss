@@ -82,6 +82,16 @@
     /*border-color: #0088d1;*/
 }
 
+.fc-event.driving-event {
+    background-color: var(--blue) !important;
+    border: 0 !important;
+
+    .triplan-calendar-event, .fc-event-main, .fc-event-time {
+        background-color: var(--blue) !important;
+        color: white;
+    }
+}
+
 .fc-daygrid-day-events .fc-event {
     border-left: 3px solid var(--blue) !important;
 }

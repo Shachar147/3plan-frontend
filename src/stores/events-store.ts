@@ -4,13 +4,20 @@ import {DateSelectArg, EventInput} from "@fullcalendar/react";
 import {
     LS_CALENDAR_LOCALE, LS_CUSTOM_DATE_RANGE, LS_SIDEBAR_EVENTS,
 } from "../utils/defaults";
-import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
-import {GoogleTravelMode, ViewMode} from "../utils/enums";
+import {
+    CalendarEvent,
+    DistanceResult,
+    LocationData,
+    SidebarEvent,
+    TriPlanCategory,
+    WeeklyOpeningHoursData
+} from "../utils/interfaces";
+import {GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority, ViewMode} from "../utils/enums";
 import {convertMsToHM} from "../utils/time-utils";
 
 // @ts-ignore
 import _ from "lodash";
-import {containsDuplicates, lockOrderedEvents} from "../utils/utils";
+import {containsDuplicates, getCoordinatesRangeKey, lockOrderedEvents} from "../utils/utils";
 import ListViewService from "../services/list-view-service";
 import ReactModalService from "../services/react-modal-service";
 import {
@@ -88,15 +95,157 @@ export class EventStore {
 
     // --- computed -------------------------------------------------------------
 
+    reduceEventsEndDateToFitDistanceResult = (filteredEvents: EventInput[]): EventInput[] => {
+        // only if not in filter mode - add driving instructions
+        if (filteredEvents.length === this.calendarEvents.length) {
+            filteredEvents = filteredEvents.sort((a, b) => (a.start as Date).getTime() - (b.start as Date).getTime())
+
+            const extractDetails = (event:EventInput) => {
+                const location = event.extendedProps?.location?.address;
+                const title = event.title;
+                const startDate = new Date(event.start!.toString());
+                const endDate = new Date(event.end!.toString());
+                const id = event.id!;
+                const coordinate = {
+                    lat: event?.location?.latitude,
+                    lng: event?.location?.longitude
+                }
+
+                return { id, title, location, startDate, endDate, coordinate };
+            }
+
+            const eachEventAndItsDirections: Record<string, any[]> = {};
+
+            filteredEvents.forEach((event, index) => {
+                let currentEvent = extractDetails(event);
+
+                if (currentEvent.location && !event.allDay) {
+                    const nextEvents = filteredEvents.filter((e, idx) => new Date(e.start!.toString()).getTime() >= currentEvent.endDate.getTime() && e.extendedProps?.location && !e.allDay && e.id !== currentEvent.id).sort((e) => {
+                        const details = extractDetails(e);
+                        const diff = details.startDate.getTime() - currentEvent.endDate.getTime();
+                        if (diff < 0) {
+                            return 99999999999;
+                        }
+                        return diff;
+                    });
+
+                    if (nextEvents && nextEvents.length) {
+                        let nextEventStart = nextEvents[0].start;
+                        let i = 0;
+                        while (i < nextEvents.length && new Date(nextEventStart!.toString()).getTime() === new Date(nextEvents[i].start!.toString()).getTime()) {
+                            const details = extractDetails(nextEvents[i]);
+                            if (details.startDate.toLocaleDateString() === currentEvent.endDate.toLocaleDateString() && currentEvent.endDate.toLocaleTimeString() !== "12:00:00 AM") {
+
+                                if (currentEvent?.location !== details?.location) {
+                                    console.log(currentEvent.title, " -> ", details.title);
+
+                                    const key = currentEvent.id!;
+                                    eachEventAndItsDirections[key] = eachEventAndItsDirections[key] || [];
+                                    // eachEventAndItsDirections[key].push(details.title);
+
+                                    const distanceKey = getCoordinatesRangeKey(this.travelMode, currentEvent.coordinate, details.coordinate);
+                                    const distance = this.distanceResults.get(distanceKey)
+                                    console.log(distance);
+                                    eachEventAndItsDirections[key].push({
+                                        target: {
+                                            id: details.id,
+                                            title: details.title,
+                                            arrivalTime: details.startDate
+                                        },
+                                        distanceKey,
+                                        distance
+                                    })
+                                }
+                            } else {
+                                console.log("----------------------")
+                                break;
+                            }
+                            i++;
+                        }
+                    }
+                }
+            })
+            console.info(eachEventAndItsDirections);
+
+            const uuidv4 = () => {
+                // @ts-ignore
+                return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                );
+            }
+
+            const newEvents: EventInput[] = [];
+            filteredEvents.forEach((e) => {
+                // newEvents.push(e);
+                if (eachEventAndItsDirections[e.id!]){
+                    let minStartDate = new Date(new Date().setFullYear(3000));
+                    eachEventAndItsDirections[e.id!].forEach((obj: any) => {
+                        // debugger;
+                        if (obj.distance && obj.distance.duration_value < 60 * 60 * 3) {
+                            // const priority = TriplanPriority.must;
+
+                            const endDate = new Date(obj.target.arrivalTime);
+                            const startDate = new Date(endDate.getTime() - (obj.distance.duration_value * 1000));
+
+                            if (startDate.getTime() < minStartDate.getTime()){
+                                minStartDate = startDate;
+                            }
+
+                            // newEvents.push({
+                            //     // title: `driving from ${e.title} to ${obj!.target!.title}`,
+                            //     title: `${obj.distance.duration} ${this.travelMode}`,
+                            //     start: startDate,
+                            //     end: endDate,
+                            //     id: uuidv4(),
+                            //     allDay: false,
+                            //     icon: '✈',
+                            //     className: `driving-event`,
+                            //     priority, // todo complete
+                            //     // duration: string // todo complete
+                            //     // extendedProps? : any
+                            //     // preferredTime? : TriplanEventPreferredTime,
+                            //     // description? : string
+                            //     // location? : LocationData
+                            //     // openingHours? : WeeklyOpeningHoursData
+                            //     extendedProps: {
+                            //         priority
+                            //     }
+                            // } as CalendarEvent)
+                        }
+                    });
+
+                    if (new Date(e.end!.toString()).getTime() > minStartDate.getTime()){
+                        console.log(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
+                        // e.end = minStartDate;
+                        e.className += ' red-border';
+                        e.extendedProps = e.extendedProps || {};
+                        e.extendedProps.suggestedEndTime = minStartDate;
+                    }
+                }
+
+                newEvents.push(e);
+            })
+
+            return newEvents;
+            // console.log(filteredEvents);
+        }
+
+        return filteredEvents;
+    }
+
     @computed
     get filteredCalendarEvents(): EventInput[] {
-        return this.getJSCalendarEvents()
+        let filteredEvents = this.getJSCalendarEvents()
             .filter((event) =>
                 (event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) &&
                 (this.showOnlyEventsWithNoLocation ? !(event.location != undefined || (event.extendedProps && event.extendedProps.location != undefined)) : true) &&
                 (this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined || (event.extendedProps && event.extendedProps.openingHours != undefined)) : true) &&
                 (this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
             );
+
+        filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
+
+        return filteredEvents;
     }
 
     @computed
