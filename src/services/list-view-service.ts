@@ -161,6 +161,8 @@ const ListViewService = {
     _initTranslateKeys: (eventStore: EventStore) => {
 
         const todoComplete = TranslateService.translate(eventStore, 'TRIP_SUMMARY.TODO_COMPLETE');
+        const ordered = TranslateService.translate(eventStore, 'TRIP_SUMMARY.ORDERED');
+
         const startPrefix = TranslateService.translate(eventStore, 'TRIP_SUMMARY.START_PREFIX');
         const lastPrefix = TranslateService.translate(eventStore, 'TRIP_SUMMARY.LAST_PREFIX');
         const middlePrefixes = [
@@ -179,6 +181,7 @@ const ListViewService = {
 
         return {
             todoComplete,
+            ordered,
             startPrefix,
             lastPrefix,
             middlePrefixes,
@@ -198,19 +201,46 @@ const ListViewService = {
             "need to decide",
             "todo",
             "need to check",
+            "to order",
+            "to book",
+            "to reserve"
         ];
+
+        const noOrderKeywords = [
+            "לברר",
+            "לבדוק",
+            "להשלים",
+            "צריך להחליט",
+            "צריך לנסות",
+            "need to decide",
+            "todo",
+            "need to check",
+        ]
+
+        const orderedKeywords = [
+            "הוזמן",
+            "הזמנתי",
+            "ordered",
+            "booked",
+            "reserved"
+        ]
 
         const notesColor = "#52a4ff"; // "#ff5252";
         const todoCompleteColor = "#ff5252";
         const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
 
+        const orderedColor = "#90d2ff";
+
         const showIcons = true;
 
         return {
             taskKeywords,
+            orderedKeywords,
             notesColor,
             todoCompleteColor,
+            orderedColor,
             showIcons,
+            noOrderKeywords,
             orBackgroundStyle
         }
     },
@@ -298,6 +328,7 @@ const ListViewService = {
 
         const {
             todoComplete,
+            ordered,
             startPrefix,
             lastPrefix,
             middlePrefixes,
@@ -305,8 +336,11 @@ const ListViewService = {
 
         const {
             taskKeywords,
+            orderedKeywords,
+            noOrderKeywords,
             notesColor,
             todoCompleteColor,
+            orderedColor,
             showIcons,
             orBackgroundStyle
         } = ListViewService._initSummaryConfiguration();
@@ -415,8 +449,16 @@ const ListViewService = {
                     }
                 }
 
-                const taskIndication = taskKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
+                let taskIndication = taskKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
                     `<span style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>` : "";
+
+                const orderedIndication = orderedKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(x.toLowerCase()) !== -1) ?
+                    `<span style="font-size: 22px; padding-inline: 5px; color:${orderedColor}; font-weight:bold;">&nbsp;<u>${ordered}</u></span>` : "";
+
+                // if there's task indication (todo complete), and ordered, and if we check if there's a task, but without 'order' keywords there's no results - we do not need to show task indication since it was about 'need to order'
+                if (taskIndication && orderedIndication && !noOrderKeywords.find((x) => title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(x.toLowerCase()) !== -1)) {
+                    taskIndication = "";
+                }
 
                 let distanceKey = Object.keys(eventDistanceKey).includes(event.id!) ?
                     eventDistanceKey[Number(event.id!)] : undefined;
@@ -476,7 +518,7 @@ const ListViewService = {
 
                 summaryPerDay[dayTitle].push(`
                     <span class="eventRow${rowClass}" style="${rowStyle}" data-eventId="${event.id}">
-                        ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}</span>${description}
+                        ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}${orderedIndication}</span>${description}
                     </span>
                 `);
 
