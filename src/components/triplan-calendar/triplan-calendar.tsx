@@ -187,7 +187,8 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
         let suggestedTime = "";
         // @ts-ignore
         if (event.extendedProps.suggestedEndTime){
-            suggestedTime = `<div class="fc-event-suggested-time">${TranslateService.translate(eventStore, 'LEAVE_AT')} ${getTimeStringFromDate(event.extendedProps.suggestedEndTime)} ${TranslateService.translate(eventStore, 'TO_ARRIVE_ON_TIME')}</div>`
+            const dt = new Date(event.extendedProps.suggestedEndTime.toString());
+            suggestedTime = `<div class="fc-event-suggested-time">${TranslateService.translate(eventStore, 'LEAVE_AT')} ${getTimeStringFromDate(dt)} ${TranslateService.translate(eventStore, 'TO_ARRIVE_ON_TIME')}</div>`
         }
 
         eventEl.innerHTML = `
