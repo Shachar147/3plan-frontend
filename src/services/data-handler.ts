@@ -45,7 +45,7 @@ interface BaseDataHandler {
     setCalendarEvents: (calendarEvents: CalendarEvent[], tripName: string) => void,
     setAllEvents: (allEvents: AllEventsEvent[], tripName: string) => void,
     setCalendarLocale: (calendarLocale: LocaleCode, tripName?: string) => void,
-    setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string) => void,
+    setDistanceResults: (distanceResults: Map<String, DistanceResult>, tripName?: string) => void,
 
     getDateRange: (tripName: string, createMode?: boolean) => DateRangeFormatted,
     getCategories: (eventStore: EventStore, tripName?: string, createMode?: boolean) => TriPlanCategory[],
