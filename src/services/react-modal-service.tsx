@@ -28,6 +28,7 @@ import ImportService from "./import-service";
 // @ts-ignore
 import _ from "lodash";
 import DBService from "./db-service";
+import {tripNameToLSTripName} from "./data-handler-interfaces";
 
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {
@@ -775,7 +776,7 @@ const ReactModalService = {
 
             if (isOk) {
 
-                const newLSTripName = newName.replaceAll(" ","-");
+                const newLSTripName = tripNameToLSTripName(newName);
 
                 const lsKeys = getLocalStorageKeys();
                 const separator = (LSTripName === "") ? "" : "-";

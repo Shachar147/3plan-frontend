@@ -5,15 +5,14 @@ import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {
-    LS_CUSTOM_DATE_RANGE, setAllEvents, setDefaultCalendarEvents,
-    setDefaultCalendarLocale, setDefaultCategories, setDefaultCustomDateRange, setDefaultEvents,
+    setDefaultCalendarLocale
 } from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import ReactModalService from "../../services/react-modal-service";
-import DBService from "../../services/db-service";
-import {getUser} from "../../helpers/auth";
+import DataServices, {Trip, tripNameToLSTripName} from "../../services/data-handler-interfaces";
 
+const dataService = DataServices.LocalStorageService;
 const MyTrips = () => {
 
     const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -49,20 +48,27 @@ const MyTrips = () => {
     }, [eventStore.calendarLocalCode])
 
     const renderForm = () => {
-        const getTripName = (x) => {
-            return x.replace(LS_CUSTOM_DATE_RANGE + "-","");
-        }
+        // const getTripName = (x) => {
+        //     return x.replace(LS_CUSTOM_DATE_RANGE + "-","");
+        // }
+        //
+        // const lsTrips = Object.keys(localStorage).filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1);
 
-        const lsTrips = Object.keys(localStorage).filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1);
+        const lsTrips = dataService.getTrips(eventStore);
 
         return (
             <div className={getClasses(["my-trips bright-scrollbar"], eventStore.isListView && 'hidden')}>
                 {
-                    lsTrips.map((x) => getTripName(x)).map((LSTripName) => {
-                        LSTripName = LSTripName === LS_CUSTOM_DATE_RANGE ? "" : LSTripName;
-                        const tripName = LSTripName !== "" ? LSTripName.replaceAll("-"," ") : "";
-                        const key = tripName.length ? [LS_CUSTOM_DATE_RANGE,LSTripName].join("-") : LS_CUSTOM_DATE_RANGE;
-                        const dates = JSON.parse(localStorage.getItem(key));
+                    // lsTrips.map((x) => getTripName(x)).map((LSTripName) => {
+                    lsTrips.map((trip) => {
+                        // LSTripName === LS_CUSTOM_DATE_RANGE ? "" : LSTripName;
+                        // const tripName = LSTripName !== "" ? LSTripName.replaceAll("-"," ") : "";
+                        // const key = tripName.length ? [LS_CUSTOM_DATE_RANGE,LSTripName].join("-") : LS_CUSTOM_DATE_RANGE;
+                        // const dates = JSON.parse(localStorage.getItem(key));
+
+                        const tripName = trip.name;
+                        const LSTripName = tripNameToLSTripName(tripName);
+                        const dates = trip.dateRange;
 
                         const start = `${dates.start.split('-')[2]}.${dates.start.split('-')[1]}`;
                         const end = `${dates.end.split('-')[2]}.${dates.end.split('-')[1]}`;

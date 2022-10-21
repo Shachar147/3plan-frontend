@@ -70,11 +70,6 @@ export interface ImportEventsConfirmInfo {
     errors: string[]
 }
 
-export interface CustomDateRange {
-    start?: string,
-    end?: string
-}
-
 export interface DistanceResult {
     from: string,
     to: string,

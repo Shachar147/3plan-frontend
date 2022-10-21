@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import Button, {ButtonFlavor} from "../../components/common/button/button";
 import CustomDatesSelector from "../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector";
-import {defaultCustomDateRange} from "../../utils/defaults";
-import {CustomDateRange} from "../../utils/interfaces";
+import {defaultDateRange} from "../../utils/defaults";
+import {DateRangeFormatted} from "../../services/data-handler-interfaces";
 
 const ThemeExample = () => {
 
-    const [customDateRange, setCustomDateRange] = useState(defaultCustomDateRange())
+    const [customDateRange, setCustomDateRange] = useState(defaultDateRange())
 
     const renderTitle = (title: string) => {
         return (
@@ -72,7 +72,7 @@ const ThemeExample = () => {
             <div className={"flex-col gap-10"}>
                 <CustomDatesSelector
                     customDateRange={customDateRange}
-                    setCustomDateRange={(newRange: CustomDateRange) => {
+                    setCustomDateRange={(newRange: DateRangeFormatted) => {
                         // @ts-ignore
                         setCustomDateRange(newRange);
                     }}

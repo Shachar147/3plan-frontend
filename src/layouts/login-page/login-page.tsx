@@ -16,6 +16,7 @@ import style from './style';
 import {renderHeaderLine} from "../../utils/ui-utils";
 import {observer} from "mobx-react";
 import ReactModalService from "../../services/react-modal-service";
+import DataServices from "../../services/data-handler-interfaces";
 
 const defaultErrorField: Record<string, boolean> = {
     username: false,
@@ -194,13 +195,13 @@ const LoginPage = () => {
                                 className="ui fluid large button secondary-button black"
                                 data-testid={"guest"}
                                 onClick={() => {
-                                    if (localStorage.getItem("triplan-hide-continue-as-guest-modal")){
+                                    if (!DataServices.LocalStorageService.shouldShowContinueAsGuest()){
                                         window.location.href = "/home";
                                     } else {
                                         ReactModalService.openConfirmModal(eventStore, () => {
                                             window.location.href = "/home";
                                         }, 'MODALS.ARE_YOU_SURE', 'CONTINUE_AS_GUEST_MODAL_CONTENT', 'CONTINUE_AS_GUEST')
-                                        localStorage.setItem("triplan-hide-continue-as-guest-modal", true);
+                                        DataServices.LocalStorageService.doNotShowContinueAsGuest();
                                     }
                                 }}
                             >

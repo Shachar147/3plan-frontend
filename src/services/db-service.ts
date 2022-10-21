@@ -1,6 +1,6 @@
 import {apiDelete, apiGet, apiPost} from "../helpers/api";
-import {getAllEvents, getDefaultCalendarEvents, getDefaultCategories, getDefaultEvents} from "../utils/defaults";
 import {EventStore} from "../stores/events-store";
+import {DataServices, LocaleCode} from "./data-handler-interfaces";
 
 interface upsertTripProps {
     name?: string,
@@ -9,7 +9,7 @@ interface upsertTripProps {
     calendarEvents?: string,
     sidebarEvents?: string,
     allEvents?: string,
-    calendarLocale?: 'he' | 'en'
+    calendarLocale?: LocaleCode
 }
 
 let lastUpsertData = {};
@@ -94,10 +94,10 @@ const DBService = {
             name: tripName,
             dateRange: customDateRange,
             calendarLocale: eventStore.calendarLocalCode,
-            allEvents: getAllEvents(eventStore, tripName),
-            sidebarEvents: getDefaultEvents(tripName),
-            calendarEvents: getDefaultCalendarEvents(tripName),
-            categories: getDefaultCategories(eventStore, tripName)
+            allEvents: DataServices.LocalStorageService.getAllEvents(eventStore, tripName),
+            sidebarEvents: DataServices.LocalStorageService.getSidebarEvents(tripName),
+            calendarEvents: DataServices.LocalStorageService.getCalendarEvents(tripName),
+            categories: DataServices.LocalStorageService.getCategories(eventStore, tripName)
         };
 
         const combinedData = {

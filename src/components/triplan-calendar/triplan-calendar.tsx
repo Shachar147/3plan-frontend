@@ -1,5 +1,5 @@
 import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
-import {CalendarEvent, CustomDateRange, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
+import {CalendarEvent, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import {observer} from 'mobx-react';
 import FullCalendar, {EventContentArg, EventInput} from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -8,12 +8,12 @@ import interactionPlugin, {Draggable} from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import {eventStoreContext} from "../../stores/events-store";
 import './triplan-calendar.scss'
-import ModalService from "../../services/modal-service";
 import {defaultTimedEventDuration} from "../../utils/defaults";
 import TranslateService from "../../services/translate-service";
 import {addHoursToDate, getDateRangeString, getTimeStringFromDate} from "../../utils/time-utils";
-import {isEventAlreadyOrdered, isMatching} from "../../utils/utils";
+import {isEventAlreadyOrdered} from "../../utils/utils";
 import ReactModalService from "../../services/react-modal-service";
+import {DateRangeFormatted} from "../../services/data-handler-interfaces";
 
 export interface TriPlanCalendarProps {
     defaultCalendarEvents?: CalendarEvent[],
@@ -22,7 +22,7 @@ export interface TriPlanCalendarProps {
     allEvents: SidebarEvent[],
     addEventToSidebar: (event: SidebarEvent) => boolean,
     updateAllEventsEvent: (event: SidebarEvent) => void,
-    customDateRange: CustomDateRange,
+    customDateRange: DateRangeFormatted,
     categories: TriPlanCategory[],
     addToEventsToCategories: (newEvent: CalendarEvent) => void,
 }

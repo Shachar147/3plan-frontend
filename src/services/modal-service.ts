@@ -24,6 +24,7 @@ import {
     validateDuration
 } from "../utils/time-utils";
 import ReactModalService from "./react-modal-service";
+import {tripNameToLSTripName} from "./data-handler-interfaces";
 
 const ModalServiceRenderHelper = {
     _renderPrioritySelect: (eventStore: EventStore, priority?: TriplanPriority) => {
@@ -1502,7 +1503,7 @@ const ModalService = {
                         return;
                     }
 
-                    const newLSTripName = newName.replaceAll(" ","-");
+                    const newLSTripName = tripNameToLSTripName(newName);
 
                     const lsKeys = getLocalStorageKeys();
                     const separator = (LSTripName === "") ? "" : "-";

@@ -11,7 +11,6 @@ import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {
     defaultEventsToCategories,
-    getDefaultCalendarEvents, getDefaultCustomDateRange,
 } from "../../utils/defaults";
 import {renderHeaderLine} from "../../utils/ui-utils";
 import {useParams} from "react-router-dom";
@@ -20,6 +19,7 @@ import MapContainer from "../../components/map-container/map-container";
 import ListViewService from "../../services/list-view-service";
 import DBService from "../../services/db-service";
 import {getUser} from "../../helpers/auth";
+import DataServices from "../../services/data-handler-interfaces";
 
 const MainPage = (props) => {
     const { createMode } = props;
@@ -28,8 +28,7 @@ const MainPage = (props) => {
     let { tripName, locale } = useParams();
 
     const eventStore = useContext(eventStoreContext);
-    const [customDateRange, setCustomDateRange] = useState(getDefaultCustomDateRange(eventStore.tripName));
-    const [allEventsFixed, setAllEventsFixed] = useState(false);
+    const [customDateRange, setCustomDateRange] = useState(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
 
     useEffect(() => {
 
@@ -45,59 +44,9 @@ const MainPage = (props) => {
 
     }, [eventStore.allEvents, eventStore.calendarEvents, eventStore.categories, eventStore.sidebarEvents, eventStore.customDateRange, eventStore.calendarLocalCode, eventStore.tripName])
 
-    // useEffect(() => {
-    //
-    //     const newEvents = eventStore.allEvents.filter((x) => eventStore.calendarEvents.map(e => e.id).indexOf(x.id) === -1);
-    //     newEvents.push(
-    //         ...[...eventStore.calendarEvents].map((x) => {
-    //             delete x.start;
-    //             delete x.end;
-    //             return x;
-    //         })
-    //     )
-    //     eventStore.setAllEvents(newEvents);
-    //
-    // },[eventStore.calendarEvents])
-
-    // useEffect(() => {
-    //
-    //     const { allEvents, sidebarEvents, calendarEvents } = eventStore;
-    //
-    //     if (!allEventsFixed && allEvents.length && Object.values(sidebarEvents).flat().length && calendarEvents.length) {
-    //
-    //         setAllEventsFixed(true);
-    //
-    //         debugger;
-    //         const allEventsIds = allEvents.map((x) => x.id);
-    //         const visibleEvents = [...Object.values(sidebarEvents).flat(), ...calendarEvents];
-    //         const visibleIds = visibleEvents.map((x) => x.id);
-    //         const missingEvents = allEvents.filter((x) => visibleIds.indexOf(x.id) === -1 && !visibleEvents.find((y) => y.title === x.title));
-    //
-    //         console.log("missing:", missingEvents.length, allEvents.filter((x) => missingEvents.indexOf(x.id) !== -1))
-    //
-    //         console.log("all events ids", allEventsIds.length);
-    //         console.log("all events ids unified", _.uniq(allEventsIds).length);
-    //         console.log("visible ids", visibleIds.length);
-    //
-    //         if (missingEvents.length === 0){
-    //             const newEvents = visibleEvents.map((x) => {
-    //                 if (!x.category && x.extendedProps && x.extendedProps.categoryId){
-    //                     x.category = x.extendedProps.categoryId;
-    //                 }
-    //                 return x;
-    //             });
-    //             if (containsDuplicates(newEvents)){
-    //                 debugger;
-    //             }
-    //             eventStore.setAllEvents(newEvents)
-    //         }
-    //     }
-    //
-    // }, [eventStore.calendarEvents, eventStore.sidebarEvents, eventStore.allEvents])
-
     useEffect(() => {
         eventStore.setTripName(tripName, locale, createMode);
-        setCustomDateRange(getDefaultCustomDateRange(eventStore.tripName));
+        setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
 
         if (TriplanCalendarRef && TriplanCalendarRef.current) {
             TriplanCalendarRef.current.switchToCustomView();
@@ -202,7 +151,7 @@ const MainPage = (props) => {
         <div className={getClasses(["calender-container bright-scrollbar flex-1-1-0"], !eventStore.isCalendarView && 'opacity-0 position-absolute')}>
             <TriplanCalendar
                 ref={TriplanCalendarRef}
-                defaultCalendarEvents={getDefaultCalendarEvents(eventStore.tripName)}
+                defaultCalendarEvents={DataServices.LocalStorageService.getCalendarEvents(eventStore.tripName)}
                 onEventReceive={removeEventFromSidebarById}
                 allEvents={eventStore.allEvents}
                 addEventToSidebar={addEventToSidebar}

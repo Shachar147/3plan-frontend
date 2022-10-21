@@ -5,17 +5,17 @@ import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {
-    defaultCustomDateRange,
-    getDefaultCalendarEvents, getDefaultCategories, getDefaultEvents,
+    defaultDateRange,
     setDefaultCalendarLocale,
-    setDefaultCustomDateRange
 } from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import Button, {ButtonFlavor} from "../../components/common/button/button";
 import DBService from "../../services/db-service";
 import ReactModalService from "../../services/react-modal-service";
+import DataServices from "../../services/data-handler-interfaces";
 
+const dataService = DataServices.LocalStorageService;
 const GettingStartedPage = () => {
 
     const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -23,7 +23,7 @@ const GettingStartedPage = () => {
     const eventStore = useContext(eventStoreContext);
     const navigate = useNavigate();
 
-    const [customDateRange, setCustomDateRange] = useState(defaultCustomDateRange());
+    const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
     const [tripName, setTripName] = useState(undefined);
 
     useEffect(() => {
@@ -127,12 +127,12 @@ const GettingStartedPage = () => {
                                 dateRange: customDateRange,
                                 calendarLocale: eventStore.calendarLocalCode,
                                 allEvents: [],
-                                sidebarEvents: getDefaultEvents(TripName, true),
-                                calendarEvents: getDefaultCalendarEvents(TripName, true),
-                                categories: getDefaultCategories(eventStore, TripName, true)
+                                sidebarEvents: dataService.getSidebarEvents(TripName, true),
+                                calendarEvents: dataService.getCalendarEvents(TripName, true),
+                                categories: dataService.getCategories(eventStore, TripName, true)
                             }, () => {
                                 eventStore.setCustomDateRange(customDateRange);
-                                setDefaultCustomDateRange(customDateRange, TripName);
+                                dataService.setDateRange(customDateRange, TripName);
                                 navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode)
                             }, () => {
                                 ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "OOPS_SOMETHING_WENT_WRONG", "error")

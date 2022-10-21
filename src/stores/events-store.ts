@@ -1,15 +1,8 @@
-import {createContext, useContext, useState} from "react";
+import {createContext} from "react";
 import {action, computed, observable, runInAction, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
 import {
-    defaultLocalCode,
-    getAllEvents,
-    getDefaultCalendarEvents,
-    getDefaultCalendarLocale,
-    getDefaultCategories,
-    getDefaultCustomDateRange,
-    getDefaultDistanceResults,
-    getDefaultEvents, LS_CALENDAR_LOCALE, LS_CUSTOM_DATE_RANGE, LS_SIDEBAR_EVENTS,
+    LS_CALENDAR_LOCALE, LS_CUSTOM_DATE_RANGE, LS_SIDEBAR_EVENTS,
     setAllEvents,
     setDefaultCalendarEvents,
     setDefaultCalendarLocale,
@@ -26,6 +19,7 @@ import _ from "lodash";
 import {containsDuplicates, lockOrderedEvents} from "../utils/utils";
 import ListViewService from "../services/list-view-service";
 import ReactModalService from "../services/react-modal-service";
+import {DataServices, LocaleCode} from "../services/data-handler-interfaces";
 
 const defaultModalSettings = {
     show: false,
@@ -40,16 +34,18 @@ const defaultModalSettings = {
     }
 }
 
+const dataService = DataServices.LocalStorageService;
+
 export class EventStore {
     categoryIdBuffer = 0;
     eventIdBuffer = 0;
     allowRemoveAllCalendarEvents = false;
     @observable weekendsVisible = true;
     @observable categories: TriPlanCategory[];
-    @observable sidebarEvents: Record<number,SidebarEvent[]> = getDefaultEvents();
-    @observable calendarEvents: EventInput[] = getDefaultCalendarEvents();
+    @observable sidebarEvents: Record<number,SidebarEvent[]> = dataService.getSidebarEvents();
+    @observable calendarEvents: EventInput[] = dataService.getCalendarEvents();
     @observable allEvents: SidebarEvent[];
-    @observable calendarLocalCode: "he" | "en" = getDefaultCalendarLocale();
+    @observable calendarLocalCode: LocaleCode = dataService.getCalendarLocale();
     @observable searchValue = "";
     @observable viewMode = ViewMode.calendar;
     @observable hideCustomDates = this.viewMode == ViewMode.calendar;
@@ -58,12 +54,12 @@ export class EventStore {
     @observable hideEmptyCategories: boolean = false;
     @observable tripName: string = "";
     @observable allEventsTripName: string = "";
-    @observable customDateRange = getDefaultCustomDateRange();
+    @observable customDateRange = dataService.getDateRange();
     @observable showOnlyEventsWithNoLocation: boolean = false;
     @observable showOnlyEventsWithNoOpeningHours: boolean = false;
     @observable showOnlyEventsWithTodoComplete: boolean = false;
     @observable calculatingDistance = 0;
-    @observable distanceResults = observable.map<string,DistanceResult>(getDefaultDistanceResults());
+    @observable distanceResults = observable.map<string,DistanceResult>(dataService.getDistanceResults());
     @observable travelMode = GoogleTravelMode.DRIVING;
     @observable modalSettings = defaultModalSettings;
     modalValues: any = {};
@@ -71,8 +67,8 @@ export class EventStore {
     @observable createMode: boolean = false;
 
     constructor() {
-        this.categories = getDefaultCategories(this);
-        this.allEvents = getAllEvents(this);
+        this.categories = dataService.getCategories(this);
+        this.allEvents = dataService.getAllEvents(this);
         this.init();
     }
 
@@ -290,7 +286,7 @@ export class EventStore {
     }
 
     @action
-    setCalendarLocalCode(newCalendarLocalCode: 'he' | 'en'){
+    setCalendarLocalCode(newCalendarLocalCode: LocaleCode){
         this.calendarLocalCode = newCalendarLocalCode;
 
         // change body class name
@@ -359,7 +355,7 @@ export class EventStore {
     }
 
     @action
-    setTripName(name: string, calendarLocale?: 'en' | 'he', createMode?: boolean){
+    setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean){
         if (!createMode && !localStorage.getItem([LS_CUSTOM_DATE_RANGE,name].join("-"))){
             ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
             setTimeout(() => {
@@ -370,17 +366,17 @@ export class EventStore {
         } else {
             this.tripName = name;
             this.createMode = !!createMode;
-            this.setCalendarLocalCode(calendarLocale || getDefaultCalendarLocale(name));
-            this.setSidebarEvents(getDefaultEvents(name))
-            this.setCalendarEvents(getDefaultCalendarEvents(name))
-            this.customDateRange = getDefaultCustomDateRange(name);
-            this.allEvents = getAllEvents(this, name);
-            this.categories = getDefaultCategories(this, name);
+            this.setCalendarLocalCode(calendarLocale || dataService.getCalendarLocale(name));
+            this.setSidebarEvents(dataService.getSidebarEvents(name))
+            this.setCalendarEvents(dataService.getCalendarEvents(name))
+            this.customDateRange = dataService.getDateRange(name);
+            this.allEvents = dataService.getAllEvents(this, name);
+            this.categories = dataService.getCategories(this, name);
 
             this.allEventsTripName = name;
 
             runInAction(() => {
-                const newMap = getDefaultDistanceResults(name);
+                const newMap = dataService.getDistanceResults(name);
                 this.distanceResults = observable.map(newMap);
             })
         }

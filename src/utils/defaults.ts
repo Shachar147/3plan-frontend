@@ -1,11 +1,8 @@
 import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
-import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "./interfaces";
+import {DistanceResult, SidebarEvent, TriPlanCategory} from "./interfaces";
 import {EventInput} from "@fullcalendar/react";
-import {lockOrderedEvents, padTo2Digits} from "./utils";
-import {EventStore, eventStoreContext} from "../stores/events-store";
-import TranslateService from "../services/translate-service";
-import {observable} from "mobx";
-import {useContext} from "react";
+import {padTo2Digits} from "./utils";
+import {DateRangeFormatted, LocaleCode} from "../services/data-handler-interfaces";
 
 export const defaultLocalCode = "he";
 export const defaultTimedEventDuration = '01:00';
@@ -546,7 +543,7 @@ export const defaultCategoriesOld: TriPlanCategory[] = [
 
 export const defaultEventsToCategories = {}
 
-export const defaultCustomDateRange = () => {
+export const defaultDateRange = (): DateRangeFormatted => {
 
     const date1 = new Date();
     date1.setDate(date1.getDate() + 7);
@@ -567,11 +564,11 @@ export const defaultCustomDateRange = () => {
 }
 
 export const LS_SIDEBAR_EVENTS = "triplan-sidebar-events";
-const LS_CALENDAR_EVENTS = "triplan-calendar-events";
-const LS_CATEGORIES = "triplan-categories"
-const LS_ALL_EVENTS = "triplan-all-events";
+export const LS_CALENDAR_EVENTS = "triplan-calendar-events";
+export const LS_CATEGORIES = "triplan-categories"
+export const LS_ALL_EVENTS = "triplan-all-events";
 export const LS_CALENDAR_LOCALE = "triplan-calendar-locale"
-const LS_DISTANCE_RESULTS = "triplan-distance-results"
+export const LS_DISTANCE_RESULTS = "triplan-distance-results"
 export const LS_CUSTOM_DATE_RANGE = "triplan-custom-date-range"
 
 export function getLocalStorageKeys(){
@@ -585,132 +582,132 @@ export function getLocalStorageKeys(){
     };
 }
 
-export function getDefaultEvents(tripName?: string, createMode?: boolean){
-    // const eventStore = useContext(eventStoreContext);
-    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
-    const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
-    if (!localStorage.getItem(key)){
-        if (!eventStore.createMode) return undefined;
-        setDefaultEvents(defaultEvents, tripName);
-    }
-    return JSON.parse(localStorage.getItem(key)!);
-}
+// export function getDefaultEvents(tripName?: string, createMode?: boolean){
+//     // const eventStore = useContext(eventStoreContext);
+//     const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
+//     const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
+//     if (!localStorage.getItem(key)){
+//         if (!eventStore.createMode) return undefined;
+//         setDefaultEvents(defaultEvents, tripName);
+//     }
+//     return JSON.parse(localStorage.getItem(key)!);
+// }
 export function setDefaultEvents(sidebarEvents: Record<number,SidebarEvent[]>, tripName?: string){
     const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
     localStorage.setItem(key, JSON.stringify(sidebarEvents))
 }
 
-export function getDefaultCalendarEvents(tripName?: string, createMode?: boolean){
-    // const eventStore = useContext(eventStoreContext);
-    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
-    const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
-    if (!localStorage.getItem(key)){
-        if (!eventStore.createMode) return undefined;
-        setDefaultCalendarEvents(defaultCalendarEvents, tripName);
-    }
-    return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
-}
+// export function getDefaultCalendarEvents(tripName?: string, createMode?: boolean){
+//     // const eventStore = useContext(eventStoreContext);
+//     const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
+//     const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
+//     if (!localStorage.getItem(key)){
+//         if (!eventStore.createMode) return undefined;
+//         setDefaultCalendarEvents(defaultCalendarEvents, tripName);
+//     }
+//     return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
+// }
 export function setDefaultCalendarEvents(calendarEvents: EventInput[], tripName?: string){
     const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
     localStorage.setItem(key, JSON.stringify(calendarEvents))
 }
 
-export function getDefaultCategories(eventStore: EventStore, tripName?: string, createMode?: boolean){
-    const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
-    if (!localStorage.getItem(key)){
-        if (!createMode && !eventStore.createMode) return undefined;
-        const defaultCategories: TriPlanCategory[] = [
-            {
-                id: 1,
-                icon: "",
-                title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL')
-            },
-            {
-                id: 2,
-                icon: "",
-                title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS')
-            }
-        ]
-        setDefaultCategories(defaultCategories, tripName);
-    }
-    return JSON.parse(localStorage.getItem(key)!);
-}
+// export function getDefaultCategories(eventStore: EventStore, tripName?: string, createMode?: boolean){
+//     const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
+//     if (!localStorage.getItem(key)){
+//         if (!createMode && !eventStore.createMode) return undefined;
+//         const defaultCategories: TriPlanCategory[] = [
+//             {
+//                 id: 1,
+//                 icon: "",
+//                 title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL')
+//             },
+//             {
+//                 id: 2,
+//                 icon: "",
+//                 title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS')
+//             }
+//         ]
+//         setDefaultCategories(defaultCategories, tripName);
+//     }
+//     return JSON.parse(localStorage.getItem(key)!);
+// }
 export function setDefaultCategories(categories: TriPlanCategory[], tripName?: string){
     const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
     localStorage.setItem(key, JSON.stringify(categories))
 }
 
-export function getAllEvents(eventStore: EventStore, tripName?: string){
-    const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
-    if (!localStorage.getItem(key)){
-        if (!eventStore.createMode) return undefined;
-
-        const hash: any = {};
-        getDefaultCategories(eventStore, tripName).forEach((x:any) => hash[x.id] = x.icon)
-
-        const defaultAllEvents = Object.keys(getDefaultEvents(tripName)).map((category) => {
-            // @ts-ignore
-            const categoryEvents = defaultEvents[category];
-
-            const categoryId = parseInt(category);
-            return categoryEvents.map((event: SidebarEvent) => {
-                event.icon = event.icon || hash[categoryId];
-                event.category = category;
-                return event;
-            })
-        }).flat();
-
-        setAllEvents(defaultAllEvents, tripName);
-    }
-    return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
-}
+// export function getAllEvents(eventStore: EventStore, tripName?: string){
+//     const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
+//     if (!localStorage.getItem(key)){
+//         if (!eventStore.createMode) return undefined;
+//
+//         const hash: any = {};
+//         DataServices.LocalStorageService.getCategories(eventStore, tripName).forEach((x:any) => hash[x.id] = x.icon)
+//
+//         const defaultAllEvents = Object.keys(DataServices.LocalStorageService.getSidebarEvents(tripName)).map((category) => {
+//             // @ts-ignore
+//             const categoryEvents = defaultEvents[category];
+//
+//             const categoryId = parseInt(category);
+//             return categoryEvents.map((event: SidebarEvent) => {
+//                 event.icon = event.icon || hash[categoryId];
+//                 event.category = category;
+//                 return event;
+//             })
+//         }).flat();
+//
+//         setAllEvents(defaultAllEvents, tripName);
+//     }
+//     return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
+// }
 export function setAllEvents(events: SidebarEvent[], tripName?: string){
     const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
     localStorage.setItem(key, JSON.stringify(events))
 }
 
-export function getDefaultCalendarLocale(tripName?: string, createMode?: boolean): 'he' | 'en' {
-    const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
-    // const eventStore = useContext(eventStoreContext);
-    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
-    if (!localStorage.getItem(key)){
-        if (!eventStore.createMode) return defaultLocalCode;
-        setDefaultCalendarLocale(defaultLocalCode, tripName);
-    }
-    // @ts-ignore
-    return localStorage.getItem(key) || defaultLocalCode;
-}
-export function setDefaultCalendarLocale(defaultLocalCode: 'he' | 'en', tripName?: string){
+// export function getDefaultCalendarLocale(tripName?: string, createMode?: boolean): LocaleCode {
+//     const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
+//     // const eventStore = useContext(eventStoreContext);
+//     const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
+//     if (!localStorage.getItem(key)){
+//         if (!eventStore.createMode) return defaultLocalCode;
+//         setDefaultCalendarLocale(defaultLocalCode, tripName);
+//     }
+//     // @ts-ignore
+//     return localStorage.getItem(key) || defaultLocalCode;
+// }
+export function setDefaultCalendarLocale(defaultLocalCode: LocaleCode, tripName?: string){
     const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
     localStorage.setItem(key, defaultLocalCode)
 }
 
-export function getDefaultCustomDateRange(tripName?: string, createMode?: boolean){
-    const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
-    // const eventStore = useContext(eventStoreContext);
-    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
-    if (!localStorage.getItem(key)){
-        if (!eventStore.createMode) return undefined;
-        setDefaultCustomDateRange(defaultCustomDateRange(), tripName);
-    }
-    return JSON.parse(localStorage.getItem(key)!);
-}
-export function setDefaultCustomDateRange(customDateRange: any, tripName?: string){
-    const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
-    localStorage.setItem(key, JSON.stringify(customDateRange))
-}
+// export function getDefaultCustomDateRange(tripName?: string, createMode?: boolean){
+//     const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
+//     // const eventStore = useContext(eventStoreContext);
+//     const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
+//     if (!localStorage.getItem(key)){
+//         if (!eventStore.createMode) return undefined;
+//         setDefaultCustomDateRange(defaultCustomDateRange(), tripName);
+//     }
+//     return JSON.parse(localStorage.getItem(key)!);
+// }
+// export function setDefaultCustomDateRange(customDateRange: any, tripName?: string){
+//     const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
+//     localStorage.setItem(key, JSON.stringify(customDateRange))
+// }
 
-export function getDefaultDistanceResults(tripName?: string, createMode?: boolean): Map<string, DistanceResult> {
-    const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
-    // const eventStore = useContext(eventStoreContext);
-    const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
-    if (!localStorage.getItem(key)){
-        if (!eventStore.createMode) return new Map<string, DistanceResult>();
-        setDefaultDistanceResults({}, tripName);
-    }
-    // @ts-ignore
-    return JSON.parse(localStorage.getItem(key)) || {};
-}
+// export function getDefaultDistanceResults(tripName?: string, createMode?: boolean): Map<string, DistanceResult> {
+//     const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
+//     // const eventStore = useContext(eventStoreContext);
+//     const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
+//     if (!localStorage.getItem(key)){
+//         if (!eventStore.createMode) return new Map<string, DistanceResult>();
+//         setDefaultDistanceResults({}, tripName);
+//     }
+//     // @ts-ignore
+//     return JSON.parse(localStorage.getItem(key)) || {};
+// }
 export function setDefaultDistanceResults(defaultDistanceResults: Map<string, DistanceResult> | object, tripName?: string){
     const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
     localStorage.setItem(key, JSON.stringify(defaultDistanceResults))

@@ -34,7 +34,7 @@
 }
 .custom-dates-line {
     display: flex;
-    gap: 10px;
+    gap: 7.5px;
 }
 .trip-name-line input,
 .custom-dates-line input {
@@ -43,6 +43,7 @@
     padding: 5px;
     flex-grow: 1;
     flex-shrink: 0;
+    padding-inline-start: 10px;
 }
 
 /*.custom-dates-line input {*/

@@ -52,6 +52,10 @@ import axios from "axios";
 // - need to sync only if clicked on sync button. if synced - it need to be removed from local storage and be stored **only** on db.
 // - verify it good before doing that, and backup dubai and viena first ^^
 
+
+// DBService vs LocalStorageService, both implements the same base class/interface
+// Tab view between local trips and account trips
+
 // --------------- GENERAL ---------------------------
 // 1. heroku alternatives (!!!) todo complete
 // 2. store all my projects on GitHub todo complete

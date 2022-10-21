@@ -1,12 +1,10 @@
 import React, {CSSProperties, useContext} from "react";
 import TranslateService from "../../services/translate-service";
-import ModalService from "../../services/modal-service";
-import modalService from "../../services/modal-service";
-import {addLineBreaks, getClasses, padTo2Digits, ucfirst} from "../../utils/utils";
+import {addLineBreaks, getClasses, ucfirst} from "../../utils/utils";
 import {TriplanEventPreferredTime, TriplanPriority} from "../../utils/enums";
 import {getDurationString} from "../../utils/time-utils";
 import {eventStoreContext} from "../../stores/events-store";
-import {CalendarEvent, CustomDateRange, SidebarEvent} from "../../utils/interfaces";
+import {CalendarEvent, SidebarEvent} from "../../utils/interfaces";
 import {observer} from "mobx-react";
 import './triplan-sidebar.css';
 import CustomDatesSelector from "./custom-dates-selector/custom-dates-selector";
@@ -14,15 +12,15 @@ import Button, {ButtonFlavor} from "../common/button/button";
 // @ts-ignore
 import * as _ from 'lodash';
 import {priorityToColor} from "../../utils/consts";
-import {EventInput} from "@fullcalendar/react";
 import ListViewService from "../../services/list-view-service";
 import ReactModalService from "../../services/react-modal-service";
+import {DateRangeFormatted} from "../../services/data-handler-interfaces";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
     addToEventsToCategories: (event: SidebarEvent) => void,
-    customDateRange: CustomDateRange,
-    setCustomDateRange: (newRange: CustomDateRange) => void
+    customDateRange: DateRangeFormatted,
+    setCustomDateRange: (newRange: DateRangeFormatted) => void
     TriplanCalendarRef: React.MutableRefObject<HTMLDivElement>,
 }
 
@@ -555,7 +553,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             // @ts-ignore
             const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
             return (
-                <>
+                <div key={`${categoryId}-${preferredHour}`}>
                     <div className={"preferred-time"}>
                         <div className={"preferred-time-divider"} style={{ maxWidth: "20px" }}></div>
                         <div className={"preferred-time-title"}>{TranslateService.translate(eventStore,'TIME')}: {ucfirst(TranslateService.translate(eventStore,preferredHourString))} ({preferredHoursHash[preferredHour].length})</div>
@@ -564,7 +562,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     <div>
                         {renderPreferredHourEvents(categoryId, preferredHoursHash[preferredHour])}
                     </div>
-                </>
+                </div>
             )
         });
     }

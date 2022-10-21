@@ -18,6 +18,10 @@
     color: var(--black);
 }
 
+.dark-color {
+    color: var(--dark);
+}
+
 .blue-color {
     color: var(--blue);
 }
