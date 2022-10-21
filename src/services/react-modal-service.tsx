@@ -28,7 +28,7 @@ import ImportService from "./import-service";
 // @ts-ignore
 import _ from "lodash";
 import DBService from "./db-service";
-import {tripNameToLSTripName} from "./data-handlers/data-handler-base";
+import {DataServices, lsTripNameToTripName, tripNameToLSTripName} from "./data-handlers/data-handler-base";
 
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {
@@ -746,7 +746,7 @@ const ReactModalService = {
         });
      },
     openEditTripModal: (eventStore: EventStore, LSTripName: string) => {
-        const tripName = LSTripName !== "" ? LSTripName.replaceAll("-"," ") : "";
+        const tripName = LSTripName !== "" ? lsTripNameToTripName(LSTripName) : "";
         const title = `${TranslateService.translate(eventStore, 'EDIT_TRIP_MODAL.TITLE')}: ${tripName}`
 
         const onConfirm = () => {
@@ -776,20 +776,7 @@ const ReactModalService = {
 
             if (isOk) {
 
-                const newLSTripName = tripNameToLSTripName(newName);
-
-                const lsKeys = getLocalStorageKeys();
-                const separator = (LSTripName === "") ? "" : "-";
-                const separator2 = (newLSTripName === "") ? "" : "-";
-                Object.values(lsKeys).forEach((localStorageKey) => {
-                    const key = [localStorageKey,LSTripName].join(separator);
-                    const newKey = [localStorageKey,newLSTripName].join(separator2);
-                    const value = localStorage.getItem(key);
-                    if (value != undefined) {
-                        localStorage.setItem(newKey, value);
-                        localStorage.removeItem(key);
-                    }
-                });
+                DataServices.LocalStorageService.setTripName(tripName, newName)
 
                 ReactModalService.internal.closeModal(eventStore);
 

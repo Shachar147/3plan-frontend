@@ -56,13 +56,7 @@ const MyTrips = () => {
         return (
             <div className={getClasses(["my-trips bright-scrollbar"], eventStore.isListView && 'hidden')}>
                 {
-                    // lsTrips.map((x) => getTripName(x)).map((LSTripName) => {
                     lsTrips.map((trip) => {
-                        // LSTripName === LS_CUSTOM_DATE_RANGE ? "" : LSTripName;
-                        // const tripName = LSTripName !== "" ? LSTripName.replaceAll("-"," ") : "";
-                        // const key = tripName.length ? [LS_CUSTOM_DATE_RANGE,LSTripName].join("-") : LS_CUSTOM_DATE_RANGE;
-                        // const dates = JSON.parse(localStorage.getItem(key));
-
                         const tripName = trip.name;
                         const LSTripName = tripNameToLSTripName(tripName);
                         const dates = trip.dateRange;

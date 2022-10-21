@@ -31,7 +31,7 @@ export interface AllEventsEvent extends SidebarEvent {
 
 export interface BaseDataHandler {
     getTrips: (eventStore: EventStore) => Trip[],
-    setTripName: (name: string) => void,
+    setTripName: (tripName: string, newTripName: string) => void,
     setDateRange: (dateRange: DateRangeFormatted, tripName: string) => void,
     setCategories: (categories: TriPlanCategory[], tripName: string) => void,
     setSidebarEvents: (sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) => void,

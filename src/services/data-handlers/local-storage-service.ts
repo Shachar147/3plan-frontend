@@ -1,7 +1,7 @@
 import {EventStore} from "../../stores/events-store";
 import {
     defaultCalendarEvents, defaultDateRange,
-    defaultEvents, defaultLocalCode,
+    defaultEvents, defaultLocalCode, getLocalStorageKeys,
     LS_ALL_EVENTS,
     LS_CALENDAR_EVENTS, LS_CALENDAR_LOCALE, LS_CATEGORIES,
     LS_CUSTOM_DATE_RANGE, LS_DISTANCE_RESULTS, LS_SIDEBAR_EVENTS
@@ -13,7 +13,7 @@ import DataServices, {
     DateRangeFormatted,
     LocaleCode,
     lsTripNameToTripName,
-    Trip
+    Trip, tripNameToLSTripName
 } from "./data-handler-base";
 
 export class LocalStorageService implements BaseDataHandler {
@@ -193,8 +193,23 @@ export class LocalStorageService implements BaseDataHandler {
         localStorage.setItem(key, JSON.stringify(sidebarEvents));
     }
 
-    setTripName(name: string): void {
-        // todo complete
+    setTripName(tripName: string, newTripName: string): void {
+        const LSTripName = tripNameToLSTripName(tripName);
+        const newLSTripName = tripNameToLSTripName(newTripName);
+
+        const lsKeys = getLocalStorageKeys();
+        const separator = (LSTripName === "") ? "" : "-";
+        const separator2 = (newLSTripName === "") ? "" : "-";
+        Object.values(lsKeys).forEach((localStorageKey) => {
+            const key = [localStorageKey,LSTripName].join(separator);
+            const newKey = [localStorageKey,newLSTripName].join(separator2);
+            const value = localStorage.getItem(key);
+            if (value != undefined) {
+                localStorage.setItem(newKey, value);
+                localStorage.removeItem(key);
+            }
+        });
+
     }
 
     setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string) {

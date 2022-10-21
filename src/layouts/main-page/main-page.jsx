@@ -46,8 +46,7 @@ const MainPage = (props) => {
 
     useEffect(() => {
         eventStore.setTripName(tripName, locale, createMode);
-        setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
-
+        setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName)); // must put it here, otherwise dates are incorrect
         if (TriplanCalendarRef && TriplanCalendarRef.current) {
             TriplanCalendarRef.current.switchToCustomView();
         }

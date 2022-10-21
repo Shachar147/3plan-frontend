@@ -13,7 +13,12 @@ import _ from "lodash";
 import {containsDuplicates, lockOrderedEvents} from "../utils/utils";
 import ListViewService from "../services/list-view-service";
 import ReactModalService from "../services/react-modal-service";
-import {AllEventsEvent, DataServices, LocaleCode} from "../services/data-handlers/data-handler-base";
+import {
+    AllEventsEvent,
+    DataServices,
+    LocaleCode,
+    lsTripNameToTripName
+} from "../services/data-handlers/data-handler-base";
 
 const defaultModalSettings = {
     show: false,
@@ -345,7 +350,7 @@ export class EventStore {
 
     @action
     setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean){
-        if (!createMode && !localStorage.getItem([LS_CUSTOM_DATE_RANGE,name].join("-"))){
+        if (!createMode && !dataService.getTrips(this).find((x) => x.name === name || x.name === lsTripNameToTripName(name))){
             ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
             setTimeout(() => {
                 window.location.href = '/my-trips';
