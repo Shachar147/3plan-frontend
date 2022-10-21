@@ -3,12 +3,6 @@ import {action, computed, observable, runInAction, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
 import {
     LS_CALENDAR_LOCALE, LS_CUSTOM_DATE_RANGE, LS_SIDEBAR_EVENTS,
-    setAllEvents,
-    setDefaultCalendarEvents,
-    setDefaultCalendarLocale,
-    setDefaultCategories,
-    setDefaultDistanceResults,
-    setDefaultEvents
 } from "../utils/defaults";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../utils/interfaces";
 import {GoogleTravelMode, ViewMode} from "../utils/enums";
@@ -19,7 +13,7 @@ import _ from "lodash";
 import {containsDuplicates, lockOrderedEvents} from "../utils/utils";
 import ListViewService from "../services/list-view-service";
 import ReactModalService from "../services/react-modal-service";
-import {DataServices, LocaleCode} from "../services/data-handler-interfaces";
+import {AllEventsEvent, DataServices, LocaleCode} from "../services/data-handler";
 
 const defaultModalSettings = {
     show: false,
@@ -44,7 +38,7 @@ export class EventStore {
     @observable categories: TriPlanCategory[];
     @observable sidebarEvents: Record<number,SidebarEvent[]> = dataService.getSidebarEvents();
     @observable calendarEvents: EventInput[] = dataService.getCalendarEvents();
-    @observable allEvents: SidebarEvent[];
+    @observable allEvents: AllEventsEvent[]; // SidebarEvent[];
     @observable calendarLocalCode: LocaleCode = dataService.getCalendarLocale();
     @observable searchValue = "";
     @observable viewMode = ViewMode.calendar;
@@ -206,24 +200,20 @@ export class EventStore {
         // update local storage
         if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
         this.allowRemoveAllCalendarEvents = false;
-        const defaultEvents = this.getJSCalendarEvents();
-        setDefaultCalendarEvents(defaultEvents, this.tripName);
+        const defaultEvents = this.getJSCalendarEvents() as CalendarEvent[]; // todo: make sure this conversion not fucking things up
+        dataService.setCalendarEvents(defaultEvents, this.tripName);
     }
 
     @action
     setSidebarEvents(newSidebarEvents: Record<number,SidebarEvent[]>){
         this.sidebarEvents = newSidebarEvents;
-
-        // update local storage
-        setDefaultEvents(newSidebarEvents, this.tripName);
+        dataService.setSidebarEvents(newSidebarEvents, this.tripName);
     }
 
     @action
     setCategories(newCategories: TriPlanCategory[]){
         this.categories = newCategories;
-
-        // update local storage
-        setDefaultCategories(this.categories, this.tripName);
+        dataService.setCategories(this.categories, this.tripName);
     }
 
     @action
@@ -245,11 +235,11 @@ export class EventStore {
                 delete x.end;
             }
             return x;
-        });
+        }) as AllEventsEvent[]; // todo check conversion
 
         // update local storage
         if (this.allEventsTripName === this.tripName) {
-            setAllEvents(this.allEvents, this.tripName);
+            dataService.setAllEvents(this.allEvents, this.tripName);
         }
     }
 
@@ -292,8 +282,7 @@ export class EventStore {
         // change body class name
         this.initBodyLocaleClassName();
 
-        // update local storage
-        setDefaultCalendarLocale(this.calendarLocalCode, this.tripName);
+        dataService.setCalendarLocale(this.calendarLocalCode, this.tripName);
     }
 
     @action
@@ -420,9 +409,7 @@ export class EventStore {
     @action
     setDistance(key: string, value: DistanceResult){
         this.distanceResults.set(key, value);
-
-        // update local storage
-        setDefaultDistanceResults(this.distanceResults, this.tripName);
+        dataService.setDistanceResults(this.distanceResults, this.tripName);
     }
 
     @action

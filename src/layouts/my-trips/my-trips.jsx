@@ -4,13 +4,10 @@ import { useNavigate } from "react-router-dom";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
-import {
-    setDefaultCalendarLocale
-} from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import ReactModalService from "../../services/react-modal-service";
-import DataServices, {Trip, tripNameToLSTripName} from "../../services/data-handler-interfaces";
+import DataServices, {Trip, tripNameToLSTripName} from "../../services/data-handler";
 
 const dataService = DataServices.LocalStorageService;
 const MyTrips = () => {
@@ -44,7 +41,7 @@ const MyTrips = () => {
         document.querySelector("body").classList.remove("rtl");
         document.querySelector("body").classList.remove("ltr");
         document.querySelector("body").classList.add(eventStore.getCurrentDirection())
-        setDefaultCalendarLocale(eventStore.calendarLocalCode);
+        dataService.setCalendarLocale(eventStore.calendarLocalCode);
     }, [eventStore.calendarLocalCode])
 
     const renderForm = () => {

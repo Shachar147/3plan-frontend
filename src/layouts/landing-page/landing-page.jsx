@@ -4,10 +4,11 @@ import {useNavigate} from "react-router-dom";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
-import {setDefaultCalendarLocale} from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import Button, {ButtonFlavor} from "../../components/common/button/button";
+import DataServices from "../../services/data-handler";
 
+const dataService = DataServices.LocalStorageService;
 const LandingPage = () => {
 
     const eventStore = useContext(eventStoreContext);
@@ -17,7 +18,7 @@ const LandingPage = () => {
         document.querySelector("body").classList.remove("rtl");
         document.querySelector("body").classList.remove("ltr");
         document.querySelector("body").classList.add(eventStore.getCurrentDirection())
-        setDefaultCalendarLocale(eventStore.calendarLocalCode);
+        dataService.setCalendarLocale(eventStore.calendarLocalCode);
     }, [eventStore.calendarLocalCode])
 
     return (

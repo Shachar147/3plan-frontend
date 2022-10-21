@@ -4,9 +4,7 @@ import {
     defaultEvents, defaultLocalCode, LS_ALL_EVENTS, LS_CALENDAR_EVENTS, LS_CALENDAR_LOCALE,
     LS_CATEGORIES,
     LS_CUSTOM_DATE_RANGE, LS_DISTANCE_RESULTS,
-    LS_SIDEBAR_EVENTS, setAllEvents, setDefaultCalendarEvents, setDefaultCalendarLocale,
-    setDefaultCategories, setDefaultDistanceResults,
-    setDefaultEvents
+    LS_SIDEBAR_EVENTS,
 } from "../utils/defaults";
 import TranslateService from "./translate-service";
 import {EventStore} from "../stores/events-store";
@@ -34,7 +32,7 @@ export interface DateRangeFormatted {
     end: string
 }
 
-interface AllEventsEvent extends SidebarEvent {
+export interface AllEventsEvent extends SidebarEvent {
     category: string
 }
 
@@ -43,10 +41,11 @@ interface BaseDataHandler {
     setTripName: (name: string) => void,
     setDateRange: (dateRange: DateRangeFormatted, tripName: string) => void,
     setCategories: (categories: TriPlanCategory[], tripName: string) => void,
-    setSidebarEvents: (sidebarEvents: SidebarEvent[], tripName: string) => void,
+    setSidebarEvents: (sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) => void,
     setCalendarEvents: (calendarEvents: CalendarEvent[], tripName: string) => void,
     setAllEvents: (allEvents: AllEventsEvent[], tripName: string) => void,
-    setCalendarLocale: (calendarLocale: LocaleCode, tripName: string) => void,
+    setCalendarLocale: (calendarLocale: LocaleCode, tripName?: string) => void,
+    setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string) => void,
 
     getDateRange: (tripName: string, createMode?: boolean) => DateRangeFormatted,
     getCategories: (eventStore: EventStore, tripName?: string, createMode?: boolean) => TriPlanCategory[],
@@ -119,7 +118,7 @@ class LocalStorageService implements BaseDataHandler {
                 })
             }).flat();
 
-            setAllEvents(defaultAllEvents, tripName);
+            if (tripName) this.setAllEvents(defaultAllEvents, tripName);
         }
         return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
     }
@@ -129,7 +128,7 @@ class LocalStorageService implements BaseDataHandler {
         const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
         if (!localStorage.getItem(key)){
             if (!createMode) return [];
-            setDefaultCalendarEvents(defaultCalendarEvents, tripName);
+            if (tripName) this.setCalendarEvents(defaultCalendarEvents, tripName);
         }
         return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
     }
@@ -139,7 +138,7 @@ class LocalStorageService implements BaseDataHandler {
         const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
         if (!localStorage.getItem(key)){
             if (!createMode) return defaultLocalCode;
-            setDefaultCalendarLocale(defaultLocalCode, tripName);
+            this.setCalendarLocale(defaultLocalCode, tripName);
         }
         // @ts-ignore
         return localStorage.getItem(key) || defaultLocalCode;
@@ -163,7 +162,7 @@ class LocalStorageService implements BaseDataHandler {
                     title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS')
                 }
             ]
-            setDefaultCategories(defaultCategories, tripName);
+            if (tripName) this.setCategories(defaultCategories, tripName);
         }
         return JSON.parse(localStorage.getItem(key)!);
     }
@@ -174,7 +173,7 @@ class LocalStorageService implements BaseDataHandler {
         const eventStore = { createMode: createMode || window.location.href.indexOf("/create/") !== -1 }
         if (!localStorage.getItem(key)){
             if (!eventStore.createMode) return defaultDateRange();
-            if (tripName) DataServices.LocalStorageService.setDateRange(defaultDateRange(), tripName);
+            if (tripName) this.setDateRange(defaultDateRange(), tripName);
         }
         return JSON.parse(localStorage.getItem(key)!);
     }
@@ -184,33 +183,9 @@ class LocalStorageService implements BaseDataHandler {
         const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
         if (!localStorage.getItem(key)){
             if (!createMode) return [];
-            setDefaultEvents(defaultEvents, tripName);
+            if (tripName) this.setSidebarEvents(defaultEvents, tripName);
         }
         return JSON.parse(localStorage.getItem(key)!);
-    }
-
-    // --- SET ------------------------------------------------------------------------------
-    setAllEvents(allEvents: AllEventsEvent[], tripName: string): void {
-    }
-
-    setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string): void {
-    }
-
-    setCalendarLocale(calendarLocale: LocaleCode, tripName: string): void {
-    }
-
-    setCategories(categories: TriPlanCategory[], tripName: string): void {
-    }
-
-    setDateRange(dateRange: DateRangeFormatted, tripName: string): void {
-        const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
-        localStorage.setItem(key, JSON.stringify(dateRange))
-    }
-
-    setSidebarEvents(sidebarEvents: SidebarEvent[], tripName: string): void {
-    }
-
-    setTripName(name: string): void {
     }
 
     getDistanceResults(tripName?: string): Map<string, DistanceResult> {
@@ -222,10 +197,50 @@ class LocalStorageService implements BaseDataHandler {
         const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
         if (!localStorage.getItem(key)){
             if (!createMode) return new Map<string, DistanceResult>();
-            setDefaultDistanceResults({}, tripName);
+            this.setDistanceResults({} as Map<string, DistanceResult>, tripName);
         }
         // @ts-ignore
         return JSON.parse(localStorage.getItem(key)) || {};
+    }
+
+    // --- SET ------------------------------------------------------------------------------
+    setAllEvents(allEvents: AllEventsEvent[], tripName: string): void {
+        const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
+        localStorage.setItem(key, JSON.stringify(allEvents))
+    }
+
+    setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string): void {
+        const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
+        localStorage.setItem(key, JSON.stringify(calendarEvents));
+    }
+
+    setCalendarLocale(calendarLocale: LocaleCode, tripName?: string): void {
+        const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
+        localStorage.setItem(key, defaultLocalCode)
+    }
+
+    setCategories(categories: TriPlanCategory[], tripName: string): void {
+        const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
+        localStorage.setItem(key, JSON.stringify(categories))
+    }
+
+    setDateRange(dateRange: DateRangeFormatted, tripName: string): void {
+        const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
+        localStorage.setItem(key, JSON.stringify(dateRange))
+    }
+
+    setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string): void {
+        const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
+        localStorage.setItem(key, JSON.stringify(sidebarEvents));
+    }
+
+    setTripName(name: string): void {
+        // todo complete
+    }
+
+    setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string) {
+        const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
+        localStorage.setItem(key, JSON.stringify(distanceResults))
     }
 
     // --- LOCAL STORAGE --------------------------------------------------------------------

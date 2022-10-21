@@ -13,7 +13,7 @@ import TranslateService from "../../services/translate-service";
 import {addHoursToDate, getDateRangeString, getTimeStringFromDate} from "../../utils/time-utils";
 import {isEventAlreadyOrdered} from "../../utils/utils";
 import ReactModalService from "../../services/react-modal-service";
-import {DateRangeFormatted} from "../../services/data-handler-interfaces";
+import {DateRangeFormatted} from "../../services/data-handler";
 
 export interface TriPlanCalendarProps {
     defaultCalendarEvents?: CalendarEvent[],

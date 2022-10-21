@@ -6,14 +6,13 @@ import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
 import {
     defaultDateRange,
-    setDefaultCalendarLocale,
 } from "../../utils/defaults";
 import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import Button, {ButtonFlavor} from "../../components/common/button/button";
 import DBService from "../../services/db-service";
 import ReactModalService from "../../services/react-modal-service";
-import DataServices from "../../services/data-handler-interfaces";
+import DataServices from "../../services/data-handler";
 
 const dataService = DataServices.LocalStorageService;
 const GettingStartedPage = () => {
@@ -41,7 +40,7 @@ const GettingStartedPage = () => {
         document.querySelector("body").classList.remove("rtl");
         document.querySelector("body").classList.remove("ltr");
         document.querySelector("body").classList.add(eventStore.getCurrentDirection())
-        setDefaultCalendarLocale(eventStore.calendarLocalCode);
+        dataService.setCalendarLocale(eventStore.calendarLocalCode);
     }, [eventStore.calendarLocalCode])
 
     const renderForm = () => {

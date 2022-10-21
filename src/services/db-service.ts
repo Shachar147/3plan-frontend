@@ -1,6 +1,6 @@
 import {apiDelete, apiGet, apiPost} from "../helpers/api";
 import {EventStore} from "../stores/events-store";
-import {DataServices, LocaleCode} from "./data-handler-interfaces";
+import {DataServices, LocaleCode} from "./data-handler";
 
 interface upsertTripProps {
     name?: string,

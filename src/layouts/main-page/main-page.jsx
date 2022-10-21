@@ -19,7 +19,7 @@ import MapContainer from "../../components/map-container/map-container";
 import ListViewService from "../../services/list-view-service";
 import DBService from "../../services/db-service";
 import {getUser} from "../../helpers/auth";
-import DataServices from "../../services/data-handler-interfaces";
+import DataServices from "../../services/data-handler";
 
 const MainPage = (props) => {
     const { createMode } = props;

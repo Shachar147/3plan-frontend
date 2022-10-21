@@ -28,7 +28,7 @@ import ImportService from "./import-service";
 // @ts-ignore
 import _ from "lodash";
 import DBService from "./db-service";
-import {tripNameToLSTripName} from "./data-handler-interfaces";
+import {tripNameToLSTripName} from "./data-handler";
 
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {
@@ -944,7 +944,7 @@ const ReactModalService = {
         // eventStore.modalValues.duration = eventStore.modalValues.duration || defaultTimedEventDuration;
 
         const location = initialData?.location as LocationData;
-        const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, { categoryId, location });
+        const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, { category: categoryId, location });
 
         const content = <Observer>{() => (
             <div className={"flex-col gap-20 align-layout-direction react-modal bright-scrollbar"}>
@@ -1699,7 +1699,7 @@ const ReactModalService = {
         }
 
         const onDeleteClick = () => {
-            handleDeleteEventResult(currentEvent as CalendarEvent, addEventToSidebar);
+            handleDeleteEventResult(currentEvent as unknown as CalendarEvent, addEventToSidebar);
         }
 
         const onDuplicateClick = () => {

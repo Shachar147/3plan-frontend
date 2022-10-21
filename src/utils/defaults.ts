@@ -2,7 +2,7 @@ import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
 import {DistanceResult, SidebarEvent, TriPlanCategory} from "./interfaces";
 import {EventInput} from "@fullcalendar/react";
 import {padTo2Digits} from "./utils";
-import {DateRangeFormatted, LocaleCode} from "../services/data-handler-interfaces";
+import {DateRangeFormatted, LocaleCode} from "../services/data-handler";
 
 export const defaultLocalCode = "he";
 export const defaultTimedEventDuration = '01:00';
@@ -592,10 +592,10 @@ export function getLocalStorageKeys(){
 //     }
 //     return JSON.parse(localStorage.getItem(key)!);
 // }
-export function setDefaultEvents(sidebarEvents: Record<number,SidebarEvent[]>, tripName?: string){
-    const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
-    localStorage.setItem(key, JSON.stringify(sidebarEvents))
-}
+// export function setDefaultEvents(sidebarEvents: Record<number,SidebarEvent[]>, tripName?: string){
+//     const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
+//     localStorage.setItem(key, JSON.stringify(sidebarEvents))
+// }
 
 // export function getDefaultCalendarEvents(tripName?: string, createMode?: boolean){
 //     // const eventStore = useContext(eventStoreContext);
@@ -607,10 +607,10 @@ export function setDefaultEvents(sidebarEvents: Record<number,SidebarEvent[]>, t
 //     }
 //     return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
 // }
-export function setDefaultCalendarEvents(calendarEvents: EventInput[], tripName?: string){
-    const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
-    localStorage.setItem(key, JSON.stringify(calendarEvents))
-}
+// export function setDefaultCalendarEvents(calendarEvents: EventInput[], tripName?: string){
+//     const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
+//     localStorage.setItem(key, JSON.stringify(calendarEvents))
+// }
 
 // export function getDefaultCategories(eventStore: EventStore, tripName?: string, createMode?: boolean){
 //     const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
@@ -632,11 +632,10 @@ export function setDefaultCalendarEvents(calendarEvents: EventInput[], tripName?
 //     }
 //     return JSON.parse(localStorage.getItem(key)!);
 // }
-export function setDefaultCategories(categories: TriPlanCategory[], tripName?: string){
-    const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
-    localStorage.setItem(key, JSON.stringify(categories))
-}
-
+// export function setDefaultCategories(categories: TriPlanCategory[], tripName?: string){
+//     const key = tripName ? [LS_CATEGORIES,tripName].join("-") : LS_CATEGORIES;
+//     localStorage.setItem(key, JSON.stringify(categories))
+// }
 // export function getAllEvents(eventStore: EventStore, tripName?: string){
 //     const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
 //     if (!localStorage.getItem(key)){
@@ -661,11 +660,10 @@ export function setDefaultCategories(categories: TriPlanCategory[], tripName?: s
 //     }
 //     return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
 // }
-export function setAllEvents(events: SidebarEvent[], tripName?: string){
-    const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
-    localStorage.setItem(key, JSON.stringify(events))
-}
-
+// export function setAllEvents(events: SidebarEvent[], tripName?: string){
+//     const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
+//     localStorage.setItem(key, JSON.stringify(events))
+// }
 // export function getDefaultCalendarLocale(tripName?: string, createMode?: boolean): LocaleCode {
 //     const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
 //     // const eventStore = useContext(eventStoreContext);
@@ -677,10 +675,10 @@ export function setAllEvents(events: SidebarEvent[], tripName?: string){
 //     // @ts-ignore
 //     return localStorage.getItem(key) || defaultLocalCode;
 // }
-export function setDefaultCalendarLocale(defaultLocalCode: LocaleCode, tripName?: string){
-    const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
-    localStorage.setItem(key, defaultLocalCode)
-}
+// export function setDefaultCalendarLocale(defaultLocalCode: LocaleCode, tripName?: string){
+//     const key = tripName ? [LS_CALENDAR_LOCALE,tripName].join("-") : LS_CALENDAR_LOCALE;
+//     localStorage.setItem(key, defaultLocalCode)
+// }
 
 // export function getDefaultCustomDateRange(tripName?: string, createMode?: boolean){
 //     const key = tripName ? [LS_CUSTOM_DATE_RANGE,tripName].join("-") : LS_CUSTOM_DATE_RANGE;
@@ -708,7 +706,7 @@ export function setDefaultCalendarLocale(defaultLocalCode: LocaleCode, tripName?
 //     // @ts-ignore
 //     return JSON.parse(localStorage.getItem(key)) || {};
 // }
-export function setDefaultDistanceResults(defaultDistanceResults: Map<string, DistanceResult> | object, tripName?: string){
-    const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
-    localStorage.setItem(key, JSON.stringify(defaultDistanceResults))
-}
+// export function setDefaultDistanceResults(defaultDistanceResults: Map<string, DistanceResult> | object, tripName?: string){
+//     const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
+//     localStorage.setItem(key, JSON.stringify(defaultDistanceResults))
+// }
