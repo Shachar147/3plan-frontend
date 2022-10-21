@@ -39,10 +39,13 @@ import axios from "axios";
 // eden tips?
 // choose christmas market
 
+// ----------------------------------------
+
 // >>> start with these
 // must - must do
 // nice! - nice features that will improve it a lot
 
+// ----------------------------------------
 
 // wip status:
 // - trips will be created only if route is plan/create
@@ -51,6 +54,9 @@ import axios from "axios";
 // - need to have a way to know if trip is db or local storage.
 // - need to sync only if clicked on sync button. if synced - it need to be removed from local storage and be stored **only** on db.
 // - verify it good before doing that, and backup dubai and viena first ^^
+
+
+// - add travels times to calendar view, adjust event time to fit travel.
 
 
 // DBService vs LocalStorageService, both implements the same base class/interface
