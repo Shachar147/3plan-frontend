@@ -216,10 +216,13 @@ export class EventStore {
                         }
                     });
 
-                    if (new Date(e.end!.toString()).getTime() > minStartDate.getTime()){
+                    const warn = (minStartDate.getTime() - new Date(e.end!.toString()).getTime() <= 1000 * 60 * 30);
+                    const problem = new Date(e.end!.toString()).getTime() > minStartDate.getTime();
+
+                    if (problem || warn){
                         console.log(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
                         // e.end = minStartDate;
-                        e.className += ' red-border';
+                        if (problem) e.className += ' red-border';
                         e.extendedProps = e.extendedProps || {};
                         e.extendedProps.suggestedEndTime = minStartDate;
                     }

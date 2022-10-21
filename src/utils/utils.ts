@@ -460,7 +460,7 @@ export function toDistanceString(eventStore: EventStore, distanceResult: Distanc
     switch(travelMode){
         case GoogleTravelMode.TRANSIT:
             prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
-            suffix = TranslateService.translate(eventStore, 'DISTANCE.SUFFIX.TRANSIT');
+            suffix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.TRANSIT.SUFFIX');
             return `${reachingTo}: ${prefix} ${duration} (${distance}) ${suffix}`;
         case GoogleTravelMode.DRIVING:
             prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');

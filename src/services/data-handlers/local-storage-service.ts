@@ -89,7 +89,15 @@ export class LocalStorageService implements BaseDataHandler {
             if (!createMode) return [];
             if (tripName) this.setCalendarEvents(defaultCalendarEvents, tripName);
         }
-        return JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
+        const results = JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => { e.start = new Date(e.start); e.end = new Date(e.end); return e; });
+
+        results.forEach((e: any) => {
+            if (e.extendedProps && e.extendedProps.suggestedEndTime) {
+                delete e.extendedProps.suggestedEndTime
+            }
+        })
+
+        return results;
     }
 
     getCalendarLocale(tripName?: string, createMode?: boolean): LocaleCode {

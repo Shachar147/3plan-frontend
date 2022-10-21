@@ -658,10 +658,23 @@ const ReactModalService = {
                 eventStore.modalSettings.show = false;
                 eventStore.modalValues = {};
             });
+            ReactModalService.internal.resetWindowVariables(eventStore);
+        },
+        resetWindowVariables: (eventStore: EventStore) => {
+            // @ts-ignore
+            window.selectedLocation = undefined;
+
+            // @ts-ignore
+            window.openingHours = undefined;
+
+            eventStore.modalValues['selectedLocation'] = undefined;
+            eventStore.modalValues['openingHours'] = undefined;
         }
     },
 
     openAddCategoryModal: (eventStore: EventStore) => {
+
+        ReactModalService.internal.resetWindowVariables(eventStore);
 
         const onConfirm = () => {
 
@@ -1513,6 +1526,8 @@ const ReactModalService = {
     },
     openEditCalendarEventModal: (eventStore: EventStore, addEventToSidebar: (event: SidebarEvent) => boolean, info: any) => {
 
+        ReactModalService.internal.resetWindowVariables(eventStore);
+
         // on event click - show edit event popup
         const eventId = info.event.id;
         const currentEvent = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
@@ -1705,6 +1720,16 @@ const ReactModalService = {
         const initialData = {
             ...info.event._def, start: info.event.start, end: info.event.end, ...info.event.extendedProps
         };
+
+        // @ts-ignore
+        window.selectedLocation = initialData.location || currentEvent.location || currentEvent?.extendedProps?.location;
+
+        // @ts-ignore
+        window.openingHours = initialData.openingHours || currentEvent.openingHours || currentEvent.extendedProps?.openingHours
+
+        // @ts-ignore
+        eventStore.modalValues['selectedLocation'] = window.selectedLocation?.address;
+        eventStore.modalValues['openingHours'] = currentEvent.openingHours;
         const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
         const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData);
 
