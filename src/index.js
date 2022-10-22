@@ -35,15 +35,6 @@ import axios from "axios";
 // Maldives
 // ask for pool with flowers - check price
 
-// Viena
-// eden tips?
-// choose christmas market
-
-// ----------------------------------------
-
-// >>> start with these
-// must - must do
-// nice! - nice features that will improve it a lot
 
 // ----------------------------------------
 
@@ -55,9 +46,10 @@ import axios from "axios";
 // - need to sync only if clicked on sync button. if synced - it need to be removed from local storage and be stored **only** on db.
 // - verify it good before doing that, and backup dubai and viena first ^^
 
-
-// - add travels times to calendar view, adjust event time to fit travel.
-
+// - make events with timing problems more noticeable (currently red-border)
+// - add filter of show only events with problematic hours (and make sure it'll show them even though we're on filter mode)
+// - add price (!) and total price (!)
+// - add "leave at X to arrive on time" to list view (!!)
 
 // DBService vs LocalStorageService, both implements the same base class/interface
 // Tab view between local trips and account trips

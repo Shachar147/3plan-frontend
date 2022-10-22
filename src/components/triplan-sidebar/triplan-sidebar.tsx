@@ -588,6 +588,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     data-priority={event.priority !== undefined ? event.priority : event.extendedProps ? event.extendedProps.priority : undefined}
                     data-preferred-time={event.preferredTime !== undefined ? event.preferredTime : event.extendedProps ? event.extendedProps.preferredTime : undefined}
                     data-location={Object.keys(event).includes("location") ? JSON.stringify(event.location) : event.extendedProps && event.extendedProps.location ? JSON.stringify(event.extendedProps.location) : undefined}
+                    data-opening-hours={event.openingHours !== undefined ? event.openingHours : event.extendedProps ? event.extendedProps.openingHours : undefined}
                     key={event.id}
                 >
                         <span className="sidebar-event-title-container" title={"Edit"} onClick={() => {
