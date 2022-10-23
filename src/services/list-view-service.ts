@@ -794,10 +794,12 @@ const ListViewService = {
                 const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
                 return `
                     <b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span><br>
-                    ${ListViewService._sortEvents(eventStore.calendarEvents).filter((x) => ListViewService._getEventDayTitle(eventStore, x) === dayTitle && !x.allDay).map((x) =>
-                    `<div class="triplan-calendar-event fc-event ${x.className} max-width-250 flex-column align-items-start margin-bottom-5">
-                        ${getEventDivHtml(eventStore, x)}</div>`
-                ).join("")}
+                    <div class="info-box-summary-container">
+                        ${ListViewService._sortEvents(eventStore.calendarEvents).filter((x) => ListViewService._getEventDayTitle(eventStore, x) === dayTitle && !x.allDay).map((x) =>
+                        `<div class="triplan-calendar-event fc-event ${x.className} max-width-250 flex-column align-items-start margin-bottom-5">
+                            ${getEventDivHtml(eventStore, x)}</div>`
+                    ).join("")}
+                    </div>
                 `
             }).join("<br/><hr/><br/>")}
         `;
