@@ -14,6 +14,7 @@ import {addHoursToDate, getDateRangeString, getTimeStringFromDate} from "../../u
 import {isEventAlreadyOrdered} from "../../utils/utils";
 import ReactModalService from "../../services/react-modal-service";
 import {DateRangeFormatted} from "../../services/data-handlers/data-handler-base";
+import {getEventDivHtml} from "../../utils/ui-utils";
 
 export interface TriPlanCalendarProps {
     defaultCalendarEvents?: CalendarEvent[],
@@ -178,26 +179,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
         eventEl.classList.add("triplan-calendar-event");
 
         const event = eventContentArg.event;
-        const info = event.extendedProps;
-
-        const category = info.categoryId;
-        const icon = info.icon || eventStore.categoriesIcons[category];
-
-        // locked
-        const tooltip = isEventAlreadyOrdered(event as EventInput) ? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP') : "";
-
-        let suggestedTime = "";
-        // @ts-ignore
-        if (event.extendedProps.suggestedEndTime){
-            const dt = new Date(event.extendedProps.suggestedEndTime.toString());
-            suggestedTime = `<div class="fc-event-suggested-time">${TranslateService.translate(eventStore, 'LEAVE_AT')} ${getTimeStringFromDate(dt)} ${TranslateService.translate(eventStore, 'TO_ARRIVE_ON_TIME')}</div>`
-        }
-
-        eventEl.innerHTML = `
-                    <div title="${tooltip}">${icon} ${event.title}</div>
-                    ${event.allDay ? "" : `<div class="fc-event-time">${event.start ? getTimeStringFromDate(event.start) : ""}${event.end ? "-" + getTimeStringFromDate(event.end) : ""}</div>`}
-                    ${suggestedTime}
-                `;
+        eventEl.innerHTML = getEventDivHtml(eventStore, event);
 
         let arrayOfDomNodes = [ eventEl ]
         return { domNodes: arrayOfDomNodes }

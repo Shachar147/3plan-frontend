@@ -20,6 +20,9 @@ import ListViewService from "../../services/list-view-service";
 import DBService from "../../services/db-service";
 import {getUser} from "../../helpers/auth";
 import DataServices from "../../services/data-handlers/data-handler-base";
+import {ListViewSummaryMode, ViewMode} from "../../utils/enums";
+import TranslateService from "../../services/translate-service";
+import ToggleButton from "../../components/toggle-button/toggle-button";
 
 const MainPage = (props) => {
     const { createMode } = props;
@@ -127,7 +130,28 @@ const MainPage = (props) => {
 
     const renderListView = () => (
         <div className={getClasses(["list-container flex-1-1-0"], !eventStore.isListView && 'opacity-0 position-absolute')}>
-            <div className={"trip-summary bright-scrollbar"} dangerouslySetInnerHTML={{__html: eventStore.isListView ? ListViewService.buildHTMLSummary(eventStore) : ""}} />
+            <div className={"list-view-mode-selector"} key={`list-view-summary-mode-${eventStore.calendarLocalCode}`}>
+                <ToggleButton
+                    value={eventStore.listViewSummaryMode}
+                    onChange={(newVal) => eventStore.setListViewSummaryMode(newVal)}
+                    options={[
+                        {
+                            key: ListViewSummaryMode.box,
+                            name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX'),
+                            // icon: (<i className="fa fa-map-o black-color" aria-hidden="true"></i>),
+                            // iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+                        },
+                        {
+                            key: ListViewSummaryMode.full,
+                            name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL'),
+                            // icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
+                            // iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+                        }
+                    ]}
+                    customStyle="white"
+                />
+            </div>
+            <div className={"trip-summary bright-scrollbar padding-top-50"} dangerouslySetInnerHTML={{__html: eventStore.isListView ? ListViewService.buildHTMLSummary(eventStore) : ""}} />
         </div>
     );
 

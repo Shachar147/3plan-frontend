@@ -5,10 +5,10 @@ import {EventInput} from "@fullcalendar/react";
 import {getEventDueDate} from "../utils/time-utils";
 import {LocationData} from "../utils/interfaces";
 import {runInAction} from "mobx";
-import {GoogleTravelMode, TriplanPriority} from "../utils/enums";
+import {GoogleTravelMode, ListViewSummaryMode, TriplanPriority} from "../utils/enums";
 import {priorityToColor} from "../utils/consts";
 import {getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString} from "../utils/utils";
-import listViewService from "./list-view-service";
+import {getEventDivHtml} from "../utils/ui-utils";
 
 const ListViewService = {
     _getDayName: (dateStr: string, locale: string) => {
@@ -151,7 +151,7 @@ const ListViewService = {
                         console.error("error!!!");
                     } else {
                         summaryPerDay[dayTitle][idx] +=
-                            ["",listViewService._renderOrLine(eventStore), ...changeIndentToOr[groupKey]].join("<br/>");
+                            ["",ListViewService._renderOrLine(eventStore), ...changeIndentToOr[groupKey]].join("<br/>");
                     }
                 })
             }
@@ -256,6 +256,13 @@ const ListViewService = {
             return aTime - bTime;
         });
     },
+    _getEventDayTitle: (eventStore:EventStore, event: any) => {
+        const dtStartName = ListViewService._getDayName(event.start!.toString(), eventStore.calendarLocalCode);
+        const parts = (event.start! as Date).toLocaleDateString().replace(/\//ig,'-').split('-')
+        const dtStart = [padTo2Digits(Number(parts[1])), padTo2Digits(Number(parts[0])), parts[2]].join("/")
+        const dayTitle = `${dtStartName} - ${dtStart}`;
+        return dayTitle;
+    },
     _buildCalendarEventsPerDay: (eventStore:EventStore, calendarEvents: EventInput[]) => {
         const calendarEventsPerDay:Record<string, EventInput> = {};
 
@@ -275,10 +282,7 @@ const ListViewService = {
             const clonedEvent = {...event, ...event.extendedProps};
 
             // day title
-            const dtStartName = ListViewService._getDayName(clonedEvent.start!.toString(), eventStore.calendarLocalCode);
-            const parts = (clonedEvent.start! as Date).toLocaleDateString().replace(/\//ig,'-').split('-')
-            const dtStart = [padTo2Digits(Number(parts[1])), padTo2Digits(Number(parts[0])), parts[2]].join("/")
-            const dayTitle = `${dtStartName} - ${dtStart}`;
+            const dayTitle = ListViewService._getEventDayTitle(eventStore, clonedEvent);
 
             // init calendar events per day
             calendarEventsPerDay[dayTitle] = calendarEventsPerDay[dayTitle] || [];
@@ -371,7 +375,7 @@ const ListViewService = {
                 summaryPerDay[dayTitle] = summaryPerDay[dayTitle] || [];
 
                 if (Object.keys(event).length === 0){
-                    summaryPerDay[dayTitle].push(listViewService._renderOrLine(eventStore));
+                    summaryPerDay[dayTitle].push(ListViewService._renderOrLine(eventStore));
                     previousLineWasOr = true;
                     return;
                 }
@@ -782,18 +786,39 @@ const ListViewService = {
         // add distances
         summaryPerDay = ListViewService._addReachingNextDestinationInstructions(eventStore, summaryPerDay);
 
-        return `
+        const InfoBoxSummary = () => {
+            return `
         <div style="max-width: 990px;">
             <h3><b><u>${tripSummaryTitle}</b></u></h3>
             ${Object.keys(summaryPerDay).map((dayTitle) => {
-            const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
+                const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
+                return `
+                    <b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span><br>
+                    ${ListViewService._sortEvents(eventStore.calendarEvents).filter((x) => ListViewService._getEventDayTitle(eventStore, x) === dayTitle && !x.allDay).map((x) =>
+                    `<div class="triplan-calendar-event fc-event ${x.className} max-width-250 flex-column align-items-start margin-bottom-5">
+                        ${getEventDivHtml(eventStore, x)}</div>`
+                ).join("")}
+                `
+            }).join("<br/><hr/><br/>")}
+        `;
+        }
+
+        const FullSummary = () => {
             return `
+        <div style="max-width: 990px;">
+            <h3><b><u>${tripSummaryTitle}</b></u></h3>
+            ${Object.keys(summaryPerDay).map((dayTitle) => {
+                const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
+                return `
                     <b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span><br>
                     ${summaryPerDay[dayTitle].join("<br/>").replaceAll("<br/><br/>", "<br/>")}
                 `
-        }).join("<br/><hr/><br/>")}
+            }).join("<br/><hr/><br/>")}
         </div>
     `
+        }
+
+        return (eventStore.listViewSummaryMode === ListViewSummaryMode.full) ? FullSummary() : InfoBoxSummary();
     }
 }
 

@@ -418,8 +418,8 @@ body {
 }
 
 .fc-event.locked {
-    filter: grayscale(50%);
-    opacity: 0.8;
+    /*filter: grayscale(50%);*/
+    /*opacity: 0.8;*/
 }
 
 .file-upload-container {
@@ -474,4 +474,19 @@ body {
 .red-border {
     border-color: red !important;
     border: 1px solid red;
+}
+.max-width-250 {
+    max-width: 250px;
+}
+
+.align-items-start {
+    align-items: self-start;
+}
+
+.margin-bottom-5 {
+    margin-bottom: 5px;
+}
+
+.padding-top-50 {
+    padding-top: 50px;
 }

@@ -1,7 +1,6 @@
 import React, {useContext, useState} from "react";
 import axios from "axios";
 import {setToken} from "../../helpers/auth";
-import {Navigate} from 'react-router-dom';
 import {Link} from "react-router-dom";
 import {apiPost} from "../../helpers/api";
 import { LOGIN_DELAY } from '../../utils/consts';

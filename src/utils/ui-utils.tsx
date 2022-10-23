@@ -5,11 +5,13 @@ import {Link, NavigateFunction, useNavigate} from "react-router-dom";
 import Button, {ButtonFlavor} from "../components/common/button/button";
 import ToggleButton from "../components/toggle-button/toggle-button";
 import {ViewMode} from "./enums";
-import {getClasses} from "./utils";
+import {getClasses, isEventAlreadyOrdered} from "./utils";
 import TriplanTag from "../components/common/triplan-tag/triplan-tag";
 import { getUser } from '../helpers/auth';
 import Select from "react-select";
 import { Observer } from "mobx-react";
+import {EventInput} from "@fullcalendar/react";
+import {getTimeStringFromDate} from "./time-utils";
 
 const renderLanguageSelector = (eventStore: EventStore) => {
 
@@ -242,6 +244,29 @@ export const SELECT_STYLE = {
         height: '40px',
     }),
 };
+
+export const getEventDivHtml = (eventStore: EventStore, event: EventInput) => {
+    const info = event.extendedProps || {};
+
+    const category = info.categoryId;
+    const icon = info.icon || eventStore.categoriesIcons[category];
+
+    // locked
+    const tooltip = isEventAlreadyOrdered(event as EventInput) ? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP') : "";
+    // event.classNames = event.classNames.join(",").replace('locked','').split(",");
+
+    let suggestedTime = "";
+    // @ts-ignore
+    if (event.extendedProps.suggestedEndTime){
+        const dt = new Date(info.suggestedEndTime.toString());
+        suggestedTime = `<div class="fc-event-suggested-time">${TranslateService.translate(eventStore, 'LEAVE_AT')} ${getTimeStringFromDate(dt)} ${TranslateService.translate(eventStore, 'TO_ARRIVE_ON_TIME')}</div>`
+    }
+
+    return `<div title="${tooltip}">${icon} ${event.title}</div>
+                ${event.allDay ? "" : `<div class="fc-event-time">${event.start ? getTimeStringFromDate(event.start as Date) : ""}${event.end ? "-" + getTimeStringFromDate(event.end! as Date) : ""}</div>`}
+                ${suggestedTime}
+            `;
+}
 
 export const renderFooterLine = (eventStore: EventStore, classList?: string) => (
     <div className={getClasses(["footer main-font"], classList)}>

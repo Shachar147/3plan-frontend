@@ -29,6 +29,28 @@
 .main-page .calendar-container, .main-page .list-container {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
+    position: relative;
+}
+
+.list-container .list-view-mode-selector {
+    position: absolute;
+    margin-top: 10px;
+    right: unset;
+    left: 10px;
+    z-index: 9999;
+}
+
+.info-box-summary-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 600px;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: baseline;
+}
+
+.list-container .list-view-mode-selector .multiple-options-toggle-button.white{
+    height: 33px !important;
 }
 
 .header .end-side {

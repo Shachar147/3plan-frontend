@@ -21,6 +21,11 @@ export enum ViewMode {
     map = "map"
 }
 
+export enum ListViewSummaryMode {
+    full = "full",
+    box = "box"
+}
+
 export enum GoogleTravelMode {
     TRANSIT = "TRANSIT",
     DRIVING = "DRIVING",

@@ -219,3 +219,8 @@ body.ltr .ui.icon.input>input {
     padding: .67857143em 1em !important;
     padding-left: 2.67142857em!important;
 }
+
+body.rtl .list-container .list-view-mode-selector {
+    left: unset;
+    right: 10px;
+}

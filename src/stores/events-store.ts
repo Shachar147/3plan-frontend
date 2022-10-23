@@ -2,23 +2,26 @@ import {createContext} from "react";
 import {action, computed, observable, runInAction, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
 import {
-    LS_CALENDAR_LOCALE, LS_CUSTOM_DATE_RANGE, LS_SIDEBAR_EVENTS,
+    LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS,
 } from "../utils/defaults";
 import {
     CalendarEvent,
     DistanceResult,
-    LocationData,
     SidebarEvent,
     TriPlanCategory,
-    WeeklyOpeningHoursData
 } from "../utils/interfaces";
-import {GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority, ViewMode} from "../utils/enums";
+import {
+    GoogleTravelMode,
+    ListViewSummaryMode,
+    TriplanEventPreferredTime,
+    TriplanPriority,
+    ViewMode
+} from "../utils/enums";
 import {convertMsToHM} from "../utils/time-utils";
 
 // @ts-ignore
 import _ from "lodash";
 import {containsDuplicates, getCoordinatesRangeKey, lockOrderedEvents} from "../utils/utils";
-import ListViewService from "../services/list-view-service";
 import ReactModalService from "../services/react-modal-service";
 import {
     AllEventsEvent,
@@ -26,6 +29,7 @@ import {
     LocaleCode,
     lsTripNameToTripName
 } from "../services/data-handlers/data-handler-base";
+import ListViewService from "../services/list-view-service";
 
 const defaultModalSettings = {
     show: false,
@@ -71,6 +75,7 @@ export class EventStore {
     modalValues: any = {};
     @observable modalValuesRefs: any = {};
     @observable createMode: boolean = false;
+    @observable listViewSummaryMode = ListViewSummaryMode.full;
 
     constructor() {
         this.categories = dataService.getCategories(this);
@@ -89,7 +94,7 @@ export class EventStore {
             description = event.extendedProps.description;
         }
         const { taskKeywords } = ListViewService._initSummaryConfiguration();
-        const isTodoComplete = taskKeywords.find((k) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(k.toLowerCase()) !== -1)
+        const isTodoComplete = taskKeywords.find((k: string) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(k.toLowerCase()) !== -1)
         return !!isTodoComplete;
     }
 
@@ -574,6 +579,11 @@ export class EventStore {
     @action
     setModalSettings(newModalSettings: any){
         this.modalSettings = newModalSettings;
+    }
+
+    @action
+    setListViewSummaryMode(newListViewSummaryMode: string){
+        this.listViewSummaryMode = newListViewSummaryMode as ListViewSummaryMode;
     }
 
     // --- private functions ----------------------------------------------------
