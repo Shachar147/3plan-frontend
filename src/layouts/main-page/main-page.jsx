@@ -33,19 +33,20 @@ const MainPage = (props) => {
     const eventStore = useContext(eventStoreContext);
     const [customDateRange, setCustomDateRange] = useState(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
 
-    useEffect(() => {
-
-        if (eventStore.tripName !== "") {
-            if (getUser()) {
-                DBService.upsertTripByName(eventStore.tripName, eventStore.customDateRange, eventStore, () => {
-                    console.log("updated db successfully");
-                }, () => {
-                    console.log("failed updating db")
-                });
-            }
-        }
-
-    }, [eventStore.allEvents, eventStore.calendarEvents, eventStore.categories, eventStore.sidebarEvents, eventStore.customDateRange, eventStore.calendarLocalCode, eventStore.tripName])
+    // todo complete
+    // useEffect(() => {
+    //
+    //     if (eventStore.tripName !== "") {
+    //         if (getUser()) {
+    //             DBService.upsertTripByName(eventStore.tripName, eventStore.customDateRange, eventStore, () => {
+    //                 console.log("updated db successfully");
+    //             }, () => {
+    //                 console.log("failed updating db")
+    //             });
+    //         }
+    //     }
+    //
+    // }, [eventStore.allEvents, eventStore.calendarEvents, eventStore.categories, eventStore.sidebarEvents, eventStore.customDateRange, eventStore.calendarLocalCode, eventStore.tripName])
 
     useEffect(() => {
         eventStore.setTripName(tripName, locale, createMode);

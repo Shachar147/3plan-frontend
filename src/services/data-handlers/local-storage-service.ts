@@ -21,7 +21,7 @@ export class LocalStorageService implements BaseDataHandler {
     CONTINUE_AS_GUEST_MODAL_LS_KEY = "triplan-hide-continue-as-guest-modal";
 
     // --- GET ------------------------------------------------------------------------------
-    getTrips(eventStore: EventStore): Trip[] {
+    async getTrips(eventStore: EventStore): Promise<Trip[]> {
 
         const trips: Trip[] = [];
 

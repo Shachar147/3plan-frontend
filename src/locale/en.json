@@ -244,5 +244,9 @@
   "LEAVE_AT": "leave at",
   "TO_ARRIVE_ON_TIME": "to arrive on time",
   "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL": "Full summary",
-  "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX": "Headlines only"
+  "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX": "Headlines only",
+  "BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL": "Local Trips",
+  "BUTTON_TEXT.TRIP_DATA_SOURCE.DB": "Account Trips",
+  "NO_TRIPS_PLACEHOLDER.LOCAL": "Seems like you do not have local trips",
+  "NO_TRIPS_PLACEHOLDER.DB": "Seems like you do not have trips associated with your account"
 }

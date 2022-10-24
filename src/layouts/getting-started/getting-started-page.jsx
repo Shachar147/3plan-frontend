@@ -13,6 +13,7 @@ import Button, {ButtonFlavor} from "../../components/common/button/button";
 import DBService from "../../services/db-service";
 import ReactModalService from "../../services/react-modal-service";
 import DataServices from "../../services/data-handlers/data-handler-base";
+import {getUser} from "../../helpers/auth";
 
 const dataService = DataServices.LocalStorageService;
 const GettingStartedPage = () => {
@@ -121,21 +122,30 @@ const GettingStartedPage = () => {
                         onClick={async () => {
                             const TripName = tripName.replace(/\s/ig, "-");
 
-                            await DBService.createTrip({
-                                name: TripName,
-                                dateRange: customDateRange,
-                                calendarLocale: eventStore.calendarLocalCode,
-                                allEvents: [],
-                                sidebarEvents: dataService.getSidebarEvents(TripName, true),
-                                calendarEvents: dataService.getCalendarEvents(TripName, true),
-                                categories: dataService.getCategories(eventStore, TripName, true)
-                            }, () => {
+                            // local mode
+                            if (!getUser()){
+
                                 eventStore.setCustomDateRange(customDateRange);
                                 dataService.setDateRange(customDateRange, TripName);
-                                navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode)
-                            }, () => {
-                                ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "OOPS_SOMETHING_WENT_WRONG", "error")
-                            }, () => {});
+                                navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+
+                            } else {
+                                await DataServices.DBService.createTrip({
+                                    name: TripName,
+                                    dateRange: customDateRange,
+                                    calendarLocale: eventStore.calendarLocalCode,
+                                    allEvents: [],
+                                    sidebarEvents: dataService.getSidebarEvents(TripName, true),
+                                    calendarEvents: dataService.getCalendarEvents(TripName, true),
+                                    categories: dataService.getCategories(eventStore, TripName, true)
+                                }, () => {
+                                    eventStore.setCustomDateRange(customDateRange);
+                                    dataService.setDateRange(customDateRange, TripName);
+                                    navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+                                }, () => {
+                                    ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "OOPS_SOMETHING_WENT_WRONG", "error")
+                                }, () => {});
+                            }
                         }}
                     />
                     <Button

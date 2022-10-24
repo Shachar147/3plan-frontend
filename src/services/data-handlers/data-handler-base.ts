@@ -1,6 +1,8 @@
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import {EventStore} from "../../stores/events-store";
 import {LocalStorageService} from "./local-storage-service";
+import {TripDataSource} from "../../utils/enums";
+import {DBService} from "./db-service";
 
 export type LocaleCode = 'he' | 'en';
 
@@ -30,7 +32,7 @@ export interface AllEventsEvent extends SidebarEvent {
 }
 
 export interface BaseDataHandler {
-    getTrips: (eventStore: EventStore) => Trip[],
+    getTrips: (eventStore: EventStore) => Promise<Trip[]>,
     setTripName: (tripName: string, newTripName: string) => void,
     setDateRange: (dateRange: DateRangeFormatted, tripName: string) => void,
     setCategories: (categories: TriPlanCategory[], tripName: string) => void,
@@ -53,6 +55,14 @@ export const tripNameToLSTripName = (tripName: string) => tripName.replaceAll(" 
 export const lsTripNameToTripName = (tripName: string) => tripName.replaceAll("-"," ") ;
 
 export const DataServices = {
-    LocalStorageService: new LocalStorageService()
+    LocalStorageService: new LocalStorageService(),
+    DBService: new DBService(),
+    getService: (dataSource: TripDataSource) => {
+        if (dataSource === TripDataSource.DB){
+            return DataServices.DBService;
+        } else {
+            return DataServices.LocalStorageService;
+        }
+    }
 }
 export default DataServices;

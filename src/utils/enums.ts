@@ -31,3 +31,8 @@ export enum GoogleTravelMode {
     DRIVING = "DRIVING",
     WALKING = "WALKING"
 }
+
+export enum TripDataSource {
+    LOCAL = "LOCAL",
+    DB = "DB"
+}

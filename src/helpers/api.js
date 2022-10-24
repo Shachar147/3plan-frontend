@@ -2,9 +2,10 @@ import axios from "axios";
 import {getServerAddress} from "../config/config";
 
 export function apiGet(self, url, onSuccess, onError, onFinish){
-    axios.get(getServerAddress() + url)
+    return axios.get(getServerAddress() + url)
         .then(res => {
-            onSuccess(res);
+            onSuccess && onSuccess(res);
+            return res;
         }).catch(function (error) {
         onError(error, () => {
             self.setState({ error: "" });
@@ -14,6 +15,10 @@ export function apiGet(self, url, onSuccess, onError, onFinish){
         .then(function () {
             onFinish();
         });
+}
+
+export function apiGetPromise(self, url){
+    return axios.get(getServerAddress() + url);
 }
 
 export function apiPost(self, url, data, onSuccess, onError, onFinish){

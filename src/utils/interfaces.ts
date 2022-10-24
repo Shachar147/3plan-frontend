@@ -1,4 +1,5 @@
 import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
+import {LocaleCode} from "../services/data-handlers/data-handler-base";
 
 export interface CalendarEvent {
     title: string,

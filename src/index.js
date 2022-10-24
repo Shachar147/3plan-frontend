@@ -51,8 +51,16 @@ import axios from "axios";
 // - add price (!) and total price (!)
 // - add "leave at X to arrive on time" to list view (!!)
 
-// DBService vs LocalStorageService, both implements the same base class/interface
-// Tab view between local trips and account trips
+// DBService vs LocalStorageService, both implements the same base class/interface - wip - todo complete
+// started implementing functions on DBService, need to continue, and
+// ... on every place we used to call local storage service - call db service instead if it's a db trip
+// ... whenevery tripName is set, set also dbSource in event-store.
+// ... make sure to update it whenever trip changes, carefully to avoid mix-match
+// .. add sync button to each trip in the local trips
+// .. add sync all option.
+// if the user does not have local trips and connected, do not show this tab anymore.
+// find a different design to distinguish local and db trips. (not white and gray backgrounds)
+// V Tab view between local trips and account trips
 
 // --------------- GENERAL ---------------------------
 // 1. heroku alternatives (!!!) todo complete

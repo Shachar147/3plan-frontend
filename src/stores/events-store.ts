@@ -508,8 +508,8 @@ export class EventStore {
     }
 
     @action
-    setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean){
-        if (!createMode && !dataService.getTrips(this).find((x) => x.name === name || x.name === lsTripNameToTripName(name))){
+    async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean){
+        if (!createMode && !(await dataService.getTrips(this)).find((x) => x.name === name || x.name === lsTripNameToTripName(name))){
             ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
             setTimeout(() => {
                 window.location.href = '/my-trips';

@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import './my-trips.scss';
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
@@ -8,16 +8,30 @@ import {renderFooterLine, renderHeaderLine} from "../../utils/ui-utils";
 import {getClasses} from "../../utils/utils";
 import ReactModalService from "../../services/react-modal-service";
 import DataServices, {Trip, tripNameToLSTripName} from "../../services/data-handlers/data-handler-base";
+import ToggleButton from "../../components/toggle-button/toggle-button";
+import {TripDataSource} from "../../utils/enums";
+import {getUser} from "../../helpers/auth";
+import Button, {ButtonFlavor} from "../../components/common/button/button";
 
-const dataService = DataServices.LocalStorageService;
 const MyTrips = () => {
 
+    const [dataSource, setDataSource] = useState<TripDataSource>(getUser() ? TripDataSource.DB : TripDataSource.LOCAL);
     const [applyPageIntro, setApplyPageIntro] = useState(false);
     const [applyFadeIn, setApplyFadeIn] = useState(false);
     const eventStore = useContext(eventStoreContext);
     const navigate = useNavigate();
+    const [lsTrips, setLsTrips] = useState<Trip[]>([])
+
+    const dataService = useMemo(() => DataServices.getService(dataSource), [dataSource]);
 
     // const [dbTrips, setDBTrips] = useState([]);
+
+    useEffect(  () => {
+        setLsTrips([]);
+        dataService.getTrips(eventStore).then((trips: Trip[]) => {
+            setLsTrips(trips);
+        })
+    }, [dataService, dataSource])
 
     useEffect(() => {
         setTimeout(() => {
@@ -45,13 +59,27 @@ const MyTrips = () => {
     }, [eventStore.calendarLocalCode])
 
     const renderForm = () => {
-        // const getTripName = (x) => {
-        //     return x.replace(LS_CUSTOM_DATE_RANGE + "-","");
-        // }
-        //
-        // const lsTrips = Object.keys(localStorage).filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1);
 
-        const lsTrips = dataService.getTrips(eventStore);
+        if (lsTrips.length === 0) {
+            return (
+                <div className={getClasses(["my-trips bright-scrollbar min-height-300 flex-column gap-20 no-trips-placeholder"], eventStore.isListView && 'hidden')}>
+                    <img src={"https://cdn-icons-png.flaticon.com/128/5058/5058046.png"} style={{
+                        filter: "opacity(0.1)"
+                    }} />
+                    {TranslateService.translate(eventStore, dataSource === TripDataSource.LOCAL ? 'NO_TRIPS_PLACEHOLDER.LOCAL' : 'NO_TRIPS_PLACEHOLDER.DB')}
+                    <Button
+                        text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
+                        flavor={ButtonFlavor.primary}
+                        style={{
+                            paddingInline: "15px"
+                        }}
+                        onClick={() => {
+                            navigate('/getting-started')
+                        }}
+                    />
+                </div>
+            )
+        }
 
         return (
             <div className={getClasses(["my-trips bright-scrollbar"], eventStore.isListView && 'hidden')}>
@@ -63,19 +91,19 @@ const MyTrips = () => {
 
                         const start = `${dates.start.split('-')[2]}.${dates.start.split('-')[1]}`;
                         const end = `${dates.end.split('-')[2]}.${dates.end.split('-')[1]}`;
-                        const amountOfDays = parseInt(((new Date(dates.end) - new Date(dates.start)) / 86400000).toString()) + 1;
+                        const amountOfDays = parseInt(((new Date(dates.end!).getTime() - new Date(dates.start!).getTime()) / 86400000).toString()) + 1;
 
                         if (tripName === "") return <></>
 
                         return (
-                            <div className="sidebar-statistics main-font"
+                            <div className={getClasses(["sidebar-statistics main-font"], dataSource.toLowerCase(), getUser() && 'logged-in')}
                                  onClick={() => {
                                      navigate("/plan/" + LSTripName);
                                  }}
                                  style={{
                                      paddingInlineStart: "10px",
                                      cursor: "pointer",
-                                     backgroundColor: "rgba(229, 233, 239, 0.5)",
+                                     // backgroundColor: dataSource == TripDataSource.LOCAL ? "rgb(229, 233, 239) !important" : "rgba(229, 233, 239, 0.5)",
                                      borderBottom: "1px solid rgb(229, 233, 239)",
                                      minHeight: "45px"
                                  }}>
@@ -110,7 +138,7 @@ const MyTrips = () => {
                                         }} onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            ReactModalService.openDeleteTripModal(eventStore, LSTripName);
+                                            ReactModalService.openDeleteTripModal(eventStore, LSTripName, dataSource);
                                         }}></i>
                                 </div>
                             </div>
@@ -120,6 +148,26 @@ const MyTrips = () => {
             </div>
         )
     }
+
+    const renderDataSourceSelector = () => (
+        <div className={"my-trips-header"} key={`my-trips-header-${eventStore.calendarLocalCode}`}>
+            <ToggleButton
+                value={dataSource}
+                onChange={(newVal) => setDataSource(newVal as TripDataSource)}
+                options={[
+                    {
+                        key: TripDataSource.LOCAL,
+                        name: TranslateService.translate(eventStore, 'BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL'),
+                    },
+                    {
+                        key: TripDataSource.DB,
+                        name: TranslateService.translate(eventStore, 'BUTTON_TEXT.TRIP_DATA_SOURCE.DB'),
+                    }
+                ]}
+                customStyle="tabs_underline"
+            />
+        </div>
+    );
 
     return (
         <div className={"landing-page-layout"}>
@@ -133,7 +181,8 @@ const MyTrips = () => {
                 <img className={getClasses(["logo-container pointer"], applyPageIntro && 'up')} src={"/images/logo/new-logo.png"} style={{ width: "50%", minWidth: "400px" }} onClick={() => {
                     navigate('/home');
                 }} />
-                <div className={getClasses(["create-new-trip-form display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>
+                <div className={getClasses(["create-new-trip-form flex-column display-none"], applyPageIntro && 'shown', applyFadeIn && 'fadeIn')}>
+                    {getUser() && renderDataSourceSelector()}
                     {renderForm()}
                 </div>
 
