@@ -264,7 +264,7 @@ const ListViewService = {
         return dayTitle;
     },
     _buildCalendarEventsPerDay: (eventStore:EventStore, calendarEvents: EventInput[]) => {
-        const calendarEventsPerDay:Record<string, EventInput> = {};
+        const calendarEventsPerDay:Record<string, EventInput[]> = {};
 
         let lastDayTitle = "";
         let lastStart = 0;
@@ -315,6 +315,15 @@ const ListViewService = {
             lastStart = (event.start as Date).getTime();
             lastEnd = getEventDueDate(event).getTime();
         });
+
+        // remove OR indications if they appear on the end of the day
+        Object.keys(calendarEventsPerDay).forEach((day) => {
+            const eventsInDay = calendarEventsPerDay[day];
+            if (Object.keys(eventsInDay[eventsInDay.length-1]).length === 0){
+                eventsInDay.pop();
+            }
+            calendarEventsPerDay[day] = eventsInDay;
+        })
 
         return calendarEventsPerDay;
     },
