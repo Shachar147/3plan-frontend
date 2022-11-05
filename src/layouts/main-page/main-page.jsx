@@ -31,7 +31,7 @@ const MainPage = (props) => {
     let { tripName, locale } = useParams();
 
     const eventStore = useContext(eventStoreContext);
-    const [customDateRange, setCustomDateRange] = useState(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
+    // const [customDateRange, setCustomDateRange] = useState(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
 
     // todo complete
     // useEffect(() => {
@@ -49,11 +49,14 @@ const MainPage = (props) => {
     // }, [eventStore.allEvents, eventStore.calendarEvents, eventStore.categories, eventStore.sidebarEvents, eventStore.customDateRange, eventStore.calendarLocalCode, eventStore.tripName])
 
     useEffect(() => {
-        eventStore.setTripName(tripName, locale, createMode);
-        setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName)); // must put it here, otherwise dates are incorrect
         if (TriplanCalendarRef && TriplanCalendarRef.current) {
             TriplanCalendarRef.current.switchToCustomView();
         }
+    }, [TriplanCalendarRef, eventStore.customDateRange])
+
+    useEffect(() => {
+        eventStore.setTripName(tripName, locale, createMode);
+        eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName)); // must put it here, otherwise dates are incorrect
     }, [tripName, locale]);
 
     useEffect(() => {
@@ -180,7 +183,7 @@ const MainPage = (props) => {
                 allEvents={eventStore.allEvents}
                 addEventToSidebar={addEventToSidebar}
                 // updateAllEventsEvent={updateAllEventsEvent}
-                customDateRange={customDateRange}
+                customDateRange={eventStore.customDateRange}
                 categories={eventStore.categories}
                 addToEventsToCategories={addToEventsToCategories}
             />
@@ -190,8 +193,8 @@ const MainPage = (props) => {
         <TriplanSidebar
             addToEventsToCategories={addToEventsToCategories}
             removeEventFromSidebarById={removeEventFromSidebarById}
-            customDateRange={customDateRange}
-            setCustomDateRange={setCustomDateRange}
+            customDateRange={eventStore.customDateRange}
+            setCustomDateRange={eventStore.setCustomDateRange.bind(eventStore)}
             TriplanCalendarRef={TriplanCalendarRef}
         />
     )
@@ -199,7 +202,7 @@ const MainPage = (props) => {
     // console.log('date range', customDateRange);
 
     return (
-        <div className={"main-page"} key={JSON.stringify(customDateRange)}>
+        <div className={"main-page"} key={JSON.stringify(eventStore.customDateRange)}>
             <div className={"header-container"}>
                 {renderHeaderLine(eventStore, {
                     withLogo: true,
