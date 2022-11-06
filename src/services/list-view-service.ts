@@ -7,7 +7,7 @@ import {LocationData} from "../utils/interfaces";
 import {runInAction} from "mobx";
 import {GoogleTravelMode, ListViewSummaryMode, TriplanPriority} from "../utils/enums";
 import {priorityToColor} from "../utils/consts";
-import {getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString} from "../utils/utils";
+import {BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString} from "../utils/utils";
 import {getEventDivHtml} from "../utils/ui-utils";
 
 const ListViewService = {
@@ -508,9 +508,13 @@ const ListViewService = {
                     const distanceColor = distanceToNextEvent.indexOf(TranslateService.translate(eventStore,'DISTANCE.ERROR.NO_POSSIBLE_WAY')) !== -1 ? '#ff5252' : 'rgba(55,181,255,0.6)';
                     const firstRowClass = firstRowInGroup ? ` class="first-row-in-group ${rowClass}"` : ` class="${rowClass}"`;
                     const lineBefore = firstRowInGroup ? '<br/>' : '';
+
+                    const url = BuildEventUrl(event.location);
+                    const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${event.location.address.split(' - ')[0]}</a></span>`;
+
                     distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
                                 ${arrow}
-                                ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${event.location.address.split(' - ')[0]}
+                                ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${urlBlock}
                             </span>`;
                 }
 
@@ -708,10 +712,13 @@ const ListViewService = {
 
                         const backgroundStyle = x.or || (x.indent && parentIsOr) ? orBackgroundStyle : "";
 
+                        const url = BuildEventUrl(thisLocation);
+                        const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${thisLocation.address.split(' - ')[0]}</a></span>`;
+
                         rowClass = ` class="${rowClass}"`;
                         distanceToNextEvent = `<span style="color: ${distanceColor}; ${backgroundStyle}"${rowClass}>
                                 ${arrow}
-                                ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${thisLocation.address.split(' - ')[0]}
+                                ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${prevLocation?.address.split(' - ')[0]} ${TranslateService.translate(eventStore, 'TO')}${urlBlock}
                             </span>`;
 
                         distanceToNextEvent = doNotShowImpossibleToGetThereDistanceErrorOnFlights(distanceToNextEvent, summaryPerDay[dayTitle][x.index] + prevLocation?.address + thisLocation?.address);

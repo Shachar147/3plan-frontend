@@ -4,7 +4,7 @@ import moment from "moment";
 import {EventInput} from "@fullcalendar/react";
 import TranslateService from "../services/translate-service";
 import {getEventDueDate} from "./time-utils";
-import {CalendarEvent, Coordinate, DistanceResult, LocationData} from "./interfaces";
+import {CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent} from "./interfaces";
 import {runInAction} from "mobx";
 import {priorityToColor} from "./consts";
 
@@ -514,4 +514,11 @@ export function isEventAlreadyOrdered(calendarEvent: EventInput) {
 
 export function isDefined (value: any){
     return typeof(value) !== 'undefined';
+}
+
+export function BuildEventUrl(location: LocationData) {
+    if (!location || !location.latitude || !location.longitude) return undefined;
+    const lat = location.latitude.toFixed(7);
+    const lng = location.longitude.toFixed(7);
+    return `https://maps.google.com/maps?q=${lat},${lng}`;
 }

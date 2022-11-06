@@ -8,9 +8,8 @@ import {priorityToColor, priorityToMapColor} from "../../utils/consts";
 import TranslateService from "../../services/translate-service";
 import {formatDate, formatTime, getDurationString} from "../../utils/time-utils";
 import {TriplanEventPreferredTime} from "../../utils/enums";
-import {getClasses, isMatching} from "../../utils/utils";
+import {BuildEventUrl, getClasses, isMatching} from "../../utils/utils";
 import './map-container.scss';
-import ModalService from "../../services/modal-service";
 import ReactModalService from "../../services/react-modal-service";
 
 function Marker(props) {
@@ -117,9 +116,10 @@ const MapContainer = () => {
         }
         const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(eventStore, preferredTime)}</span></span>`;
 
-        const lat = event.location.latitude.toFixed(7);
-        const lng = event.location.longitude.toFixed(7);
-        const url = `https://maps.google.com/maps?q=${lat},${lng}`;
+        // const lat = event.location.latitude.toFixed(7);
+        // const lng = event.location.longitude.toFixed(7);
+        // const url = `https://maps.google.com/maps?q=${lat},${lng}`;
+        const url = BuildEventUrl(event.location);
         const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`
 
         return `<div style="display: flex; flex-direction: column; gap: 6px; max-width: 450px; padding: 10px;">
