@@ -23,6 +23,7 @@ export enum ViewMode {
 
 export enum ListViewSummaryMode {
     full = "full",
+    noDescriptions = "noDescriptions",
     box = "box"
 }
 

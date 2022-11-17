@@ -436,7 +436,7 @@ const ListViewService = {
 
                 const prefix = previousLineWasOr || nextLineIsOr || indent ? "" : counter === 0 ? startPrefix : index === events.length -1 ? lastPrefix : `${ListViewService._randomElement(middlePrefixes)} `;
 
-                const description = event.description ? `<br><span style="opacity:0;">${indent}</span><span style="color:#999999">${ListViewService._formatDescription(event.description)}</span>` : "";
+                const description = event.description && eventStore.shouldRenderDescriptionOnListView ? `<br><span style="opacity:0;">${indent}</span><span style="color:#999999">${ListViewService._formatDescription(event.description)}</span>` : "";
 
                 let rowStyle = indent ? "color: #999999" : "color:black";
                 let rowClass = "";
@@ -836,7 +836,7 @@ const ListViewService = {
     `
         }
 
-        return (eventStore.listViewSummaryMode === ListViewSummaryMode.full) ? FullSummary() : InfoBoxSummary();
+        return (eventStore.listViewSummaryMode === ListViewSummaryMode.box) ? InfoBoxSummary() : FullSummary();
     }
 }
 

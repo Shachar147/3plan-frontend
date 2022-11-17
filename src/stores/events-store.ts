@@ -1,22 +1,9 @@
 import {createContext} from "react";
 import {action, computed, observable, runInAction, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
-import {
-    LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS,
-} from "../utils/defaults";
-import {
-    CalendarEvent,
-    DistanceResult,
-    SidebarEvent,
-    TriPlanCategory,
-} from "../utils/interfaces";
-import {
-    GoogleTravelMode,
-    ListViewSummaryMode,
-    TriplanEventPreferredTime,
-    TriplanPriority,
-    ViewMode
-} from "../utils/enums";
+import {LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS,} from "../utils/defaults";
+import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory,} from "../utils/interfaces";
+import {GoogleTravelMode, ListViewSummaryMode, ViewMode} from "../utils/enums";
 import {convertMsToHM} from "../utils/time-utils";
 
 // @ts-ignore
@@ -293,6 +280,11 @@ export class EventStore {
                 )
         })
         return toReturn;
+    }
+
+    @computed
+    get shouldRenderDescriptionOnListView(){
+        return this.listViewSummaryMode !== ListViewSummaryMode.noDescriptions;
     }
 
     // --- actions --------------------------------------------------------------

@@ -146,6 +146,12 @@ const MainPage = (props) => {
                             // iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
                         },
                         {
+                            key: ListViewSummaryMode.noDescriptions,
+                            name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS'),
+                            // icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
+                            // iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+                        },
+                        {
                             key: ListViewSummaryMode.full,
                             name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL'),
                             // icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
@@ -155,7 +161,7 @@ const MainPage = (props) => {
                     customStyle="white"
                 />
             </div>
-            <div className={"trip-summary bright-scrollbar padding-top-50"} dangerouslySetInnerHTML={{__html: eventStore.isListView ? ListViewService.buildHTMLSummary(eventStore) : ""}} />
+            <div className={"trip-summary bright-scrollbar padding-top-60"} dangerouslySetInnerHTML={{__html: eventStore.isListView ? ListViewService.buildHTMLSummary(eventStore) : ""}} />
         </div>
     );
 

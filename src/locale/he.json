@@ -254,6 +254,7 @@
   "LEAVE_AT": "צא ב",
   "TO_ARRIVE_ON_TIME": "כדי להגיע בזמן",
   "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL": "סיכום מלא",
+  "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS": "ללא תיאורים",
   "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX": "כותרות בלבד",
   "BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL": "טיולים לוקאליים",
   "BUTTON_TEXT.TRIP_DATA_SOURCE.DB": "טיולים המשוייכים לחשבון שלך",
