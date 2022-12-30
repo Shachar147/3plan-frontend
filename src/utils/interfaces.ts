@@ -1,5 +1,4 @@
 import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
-import {LocaleCode} from "../services/data-handlers/data-handler-base";
 
 export interface CalendarEvent {
     title: string,
@@ -15,6 +14,7 @@ export interface CalendarEvent {
     description?: string
     location?: LocationData
     openingHours?: WeeklyOpeningHoursData
+    images?: string; // add column 8
 }
 
 export interface SidebarEvent {
@@ -30,7 +30,8 @@ export interface SidebarEvent {
     className?: string,
     location?: LocationData,
     allDay?: Boolean;
-    openingHours?: WeeklyOpeningHoursData
+    openingHours?: WeeklyOpeningHoursData;
+    images?: string; // add column 9
 }
 
 export interface TriPlanCategory {

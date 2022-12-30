@@ -273,5 +273,7 @@
   "PLACES_TINDER.NO_PLACES_TO_SUGGEST": "מצטערים, אין מקומות להמליץ עליהם",
   "PLACES_TINDER.NO_MORE_PLACES_TO_SUGGEST": "מצטערים, אין עוד מקומות להמליץ עליהם",
   "NAVIGATION.BACK": "הקודם",
-  "NAVIGATION.NEXT": "הבא"
+  "NAVIGATION.NEXT": "הבא",
+  "MODALS.IMAGES": "תמונות",
+  "MODALS.IMAGES_PLACEHOLDER": "השתמשו בשדה זה כדי להוסיף תמונות לפעילות זו. תמונה אחת בכל שורה"
 }

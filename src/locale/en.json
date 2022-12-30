@@ -263,5 +263,7 @@
   "PLACES_TINDER.NO_PLACES_TO_SUGGEST": "No places to suggest",
   "PLACES_TINDER.NO_MORE_PLACES_TO_SUGGEST": "Sorry, it seems like there are no more places to suggest",
   "NAVIGATION.BACK": "Back",
-  "NAVIGATION.NEXT": "Next"
+  "NAVIGATION.NEXT": "Next",
+  "MODALS.IMAGES": "Images",
+  "MODALS.IMAGES_PLACEHOLDER": "Use this field to add images for this activity. One picture in a line."
 }

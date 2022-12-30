@@ -86,6 +86,7 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
         let preferredTime = eventEl.getAttribute("data-preferred-time");
         let location = eventEl.getAttribute("data-location");
         let openingHours = eventEl.getAttribute("data-opening-hours");
+        let images = eventEl.getAttribute("data-images"); // add column 1
 
         return {
             title,
@@ -100,7 +101,8 @@ function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarR
                 icon: eventIcon,
                 preferredTime,
                 location: location ? JSON.parse(location) : undefined,
-                openingHours: openingHours
+                openingHours,
+                images // add column 2
             }
         };
     }

@@ -589,6 +589,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     data-preferred-time={event.preferredTime !== undefined ? event.preferredTime : event.extendedProps ? event.extendedProps.preferredTime : undefined}
                     data-location={Object.keys(event).includes("location") ? JSON.stringify(event.location) : event.extendedProps && event.extendedProps.location ? JSON.stringify(event.extendedProps.location) : undefined}
                     data-opening-hours={event.openingHours !== undefined ? event.openingHours : event.extendedProps ? event.extendedProps.openingHours : undefined}
+                    data-images={event.images ?? event.extendedProps?.images} // add column 3
                     key={event.id}
                 >
                         <span className="sidebar-event-title-container" title={"Edit"} onClick={() => {

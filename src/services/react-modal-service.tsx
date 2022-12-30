@@ -357,6 +357,19 @@ const ReactModalService = {
                 },
                 {
                     settings: {
+                        modalValueName: 'images', // add column 4
+                        ref: eventStore.modalValuesRefs['images'],
+                        type: 'textarea',
+                        extra: {
+                            placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
+                            value: initialData.images
+                        },
+                    },
+                    textKey: 'MODALS.IMAGES',
+                    className: 'border-top-gray'
+                },
+                {
+                    settings: {
                         modalValueName: 'description',
                         ref: eventStore.modalValuesRefs['description'],
                         type: 'textarea',
@@ -512,6 +525,19 @@ const ReactModalService = {
                 },
                 {
                     settings: {
+                        modalValueName: 'images', // add column 5
+                        ref: eventStore.modalValuesRefs['images'],
+                        type: 'textarea',
+                        extra: {
+                            placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
+                            value: initialData.images
+                        },
+                    },
+                    textKey: 'MODALS.IMAGES',
+                    className: 'border-top-gray'
+                },
+                {
+                    settings: {
                         modalValueName: 'category',
                         ref: eventStore.modalValuesRefs['category'],
                         type: 'category-selector',
@@ -652,9 +678,12 @@ const ReactModalService = {
             // @ts-ignore
             const endDate = eventStore.modalValues['end-time'];
 
+            // @ts-ignore
+            const images = eventStore.modalValues['images'];
+
             return {
                 icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours,
-                startDate, endDate
+                startDate, endDate, images
             };
         },
         closeModal: (eventStore: EventStore) => {
@@ -880,7 +909,7 @@ const ReactModalService = {
         const handleAddSidebarEventResult = (eventStore: EventStore, initialCategoryId?: number) => {
             if (!eventStore) return;
 
-            let { icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours } =
+            let { icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours, images } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             if (initialCategoryId != undefined){
@@ -901,7 +930,8 @@ const ReactModalService = {
                 preferredTime: preferredTime as TriplanEventPreferredTime,
                 description,
                 location,
-                openingHours
+                openingHours,
+                images
             } as SidebarEvent;
 
             const isDurationValid = (
@@ -988,7 +1018,7 @@ const ReactModalService = {
                 return;
             }
 
-            let { icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours } =
+            let { icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours, images } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             let currentEvent: any = {
@@ -1000,7 +1030,8 @@ const ReactModalService = {
                 preferredTime: preferredTime as TriplanEventPreferredTime,
                 description,
                 location,
-                openingHours
+                openingHours,
+                images
             };
 
             const isDurationValid = validateDuration(duration);
@@ -1034,7 +1065,8 @@ const ReactModalService = {
             const oldCategory = eventStore.allEvents.find((e) => e.id === event.id)!.category;
             const isCategoryChanged = oldCategory != categoryId;
             const isLocationChanged = originalEvent.location != currentEvent.location;
-            const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || isDescriptionChanged || isLocationChanged;
+            const isImagesChanged = originalEvent.images != currentEvent.images;
+            const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || isDescriptionChanged || isLocationChanged || isImagesChanged;
 
             if (isCategoryChanged){
 
@@ -1082,6 +1114,7 @@ const ReactModalService = {
                         description,
                         location,
                         openingHours,
+                        images,
                         extendedProps: {
                             categoryId
                         }
@@ -1104,6 +1137,7 @@ const ReactModalService = {
                                     description,
                                     location,
                                     openingHours,
+                                    images
                                 } as SidebarEvent);
                             }
                             newSidebarEvents[categoryId].push(_event);
@@ -1165,7 +1199,7 @@ const ReactModalService = {
         const handleDuplicateSidebarEventResult = (eventStore: EventStore, event: SidebarEvent) => {
             if (!eventStore) return;
 
-            let { icon, title, duration, priority, preferredTime, description, location, openingHours } =
+            let { icon, title, duration, priority, preferredTime, description, location, openingHours, images } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             const currentEvent = {
@@ -1177,7 +1211,8 @@ const ReactModalService = {
                 preferredTime: preferredTime as TriplanEventPreferredTime,
                 description,
                 location,
-                openingHours
+                openingHours,
+                images
             } as SidebarEvent;
 
             const isDurationValid = (
@@ -1267,7 +1302,7 @@ const ReactModalService = {
         const handleAddCalendarEventResult = (eventStore: EventStore) => {
             if (!eventStore) return true;
 
-            let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate } =
+            let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate, images } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             const currentEvent = {
@@ -1284,6 +1319,7 @@ const ReactModalService = {
                 allDay: info.allDay,
                 location,
                 openingHours,
+                images,
                 extendedProps:{
                     title,
                     icon,
@@ -1581,7 +1617,7 @@ const ReactModalService = {
                 return false;
             }
 
-            let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate } =
+            let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate, images } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             // @ts-ignore
@@ -1599,6 +1635,7 @@ const ReactModalService = {
                 allDay: originalEvent.allDay,
                 preferredTime: preferredTime as TriplanEventPreferredTime,
                 description,
+                images
             };
 
             // written like this since otherwise, editing without changing anything will reset location to nothing
@@ -1639,7 +1676,8 @@ const ReactModalService = {
             const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
             const isCategoryChanged = oldCategory != categoryId;
             const isOpeningHoursChanged = currentEvent.openingHours;
-            const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || descriptionChanged || isLocationChanged || isOpeningHoursChanged;
+            const isImagesChanged = originalEvent.images != currentEvent.images;
+            const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || descriptionChanged || isLocationChanged || isOpeningHoursChanged || isImagesChanged;
 
             if (isCategoryChanged){
 
@@ -1681,7 +1719,8 @@ const ReactModalService = {
                         description: currentEvent.description,
                         location: currentEvent.location,
                         openingHours: currentEvent.openingHours,
-                        category: categoryId
+                        category: categoryId,
+                        images: currentEvent.images,
                     }
                 });
                 if (isUpdated) {
