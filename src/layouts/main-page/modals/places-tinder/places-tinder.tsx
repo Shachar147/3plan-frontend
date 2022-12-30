@@ -46,6 +46,14 @@ function PlacesTinder(props: PlacesTinderProps){
     const [placesList, setPlacesList] = useState<any[]>([]);
     const [dislikedList, setDislikedList] = useState<any[]>([]);
 
+    const existingTitles = useMemo(() => {
+        return eventStore.allEvents.map((p) => p.title);
+    }, [eventStore.allEvents]);
+
+    const existingLocations = useMemo(() => {
+        return eventStore.allEvents.filter((p) => p.location).map((p) => JSON.stringify(p.location));
+    }, [eventStore.allEvents]);
+
     const lsKey = "triplan-places-tinder-disliked-list";
     useEffect(() => {
         if (!localStorage.getItem(lsKey)){
@@ -57,8 +65,9 @@ function PlacesTinder(props: PlacesTinderProps){
     useEffect(() => {
 
         if (destination != null) {
-            const dislikedListNames = dislikedList.map((p) => p.title);
-            const arr = shuffle(placesDataMap[destination]).filter((p) => dislikedListNames.indexOf(p.title) === -1);
+
+            // filter out disliked names
+            const arr = shuffle(placesDataMap[destination]).filter(filterOutDisliked).filter(filterOutAlreadyExisting);
             setPlacesList(arr);
             setCurrIdx(0);
 
@@ -72,6 +81,19 @@ function PlacesTinder(props: PlacesTinderProps){
         if (currIdx <= placesList.length) {
             currentPlace = placesList[currIdx];
         }
+    }
+
+    function filterOutDisliked(p: any){
+        const dislikedListNames = dislikedList.map((p) => p.title);
+        return dislikedListNames.indexOf(p.title) === -1
+    }
+
+    function filterOutAlreadyExisting(p: any) {
+        if (existingTitles.indexOf(p.title) !== -1) return false;
+        if (p.location){
+            if (existingLocations.indexOf(JSON.stringify(p.location)) !== -1) return false;
+        }
+        return true;
     }
 
     function formatDescription(description: string) {
