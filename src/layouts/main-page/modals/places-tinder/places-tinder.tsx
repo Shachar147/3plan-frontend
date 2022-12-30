@@ -8,12 +8,16 @@ import TranslateService from "../../../../services/translate-service";
 // @ts-ignore
 import ImageGallery from 'react-image-gallery';
 import '../../../../stylesheets/react-image-gallery.scss';
+import Button, {ButtonFlavor} from "../../../../components/common/button/button";
+import ReactModalService from "../../../../services/react-modal-service";
+import {TriplanPriority} from "../../../../utils/enums";
 
 interface PlacesTinderProps {
     eventStore: EventStore;
+    destination?: string | null;
 }
 
-function PlacesTinder({ eventStore }: PlacesTinderProps){
+function PlacesTinder(props: PlacesTinderProps){
 
     function shuffle(array: any[]) {
         let currentIndex = array.length,  randomIndex;
@@ -33,8 +37,10 @@ function PlacesTinder({ eventStore }: PlacesTinderProps){
         return array;
     }
 
+    const { eventStore } = props;
+
     const [currIdx, setCurrIdx] = useState(0);
-    const [destination, setDestination] = useState<string|null>(null)
+    const [destination, setDestination] = useState<string|null>(props.destination || null)
     const placesDataMap: Record<string, any[]> = useMemo(() => placesData, []);
     const [placesList, setPlacesList] = useState<any[]>([]);
 
@@ -49,7 +55,7 @@ function PlacesTinder({ eventStore }: PlacesTinderProps){
 
     }, [destination])
 
-    let currentPlace;
+    let currentPlace: any;
     if (destination && placesList.length > 0) {
         currentPlace = placesList[currIdx];
     }
@@ -64,6 +70,38 @@ function PlacesTinder({ eventStore }: PlacesTinderProps){
         // console.log("after", description);
 
         return description;
+    }
+
+    function like(){
+        const existingCategory = eventStore.categories.filter((c) => c.title === currentPlace["category"]);
+
+        currentPlace["priority"] = TriplanPriority.unset;
+
+        let categoryId: number;
+        if (existingCategory.length > 0) {
+            categoryId = existingCategory[0].id;
+        } else {
+            categoryId = eventStore.createCategoryId();
+            eventStore.setCategories([
+                ...eventStore.categories,
+                {
+                    id: categoryId,
+                    title: currentPlace["category"],
+                    icon: ""
+                },
+            ]);
+        }
+
+        ReactModalService.openAddSidebarEventModal(eventStore, categoryId, currentPlace, true);
+        setCurrIdx(currIdx+1)
+    }
+
+    function dislike(){
+        setCurrIdx(currIdx+1)
+    }
+
+    function maybe(){
+        setCurrIdx(currIdx+1)
     }
 
     return (
@@ -91,14 +129,13 @@ function PlacesTinder({ eventStore }: PlacesTinderProps){
                         </div>
                     )}
                     <div />
-                    <div className={"flex-row gap-5 justify-content-center"}>
-                        <a className={"cursor-pointer"} onClick={() => { setCurrIdx(currIdx+1)}}>אהבתי!</a> |
-                        <a className={"cursor-pointer"} onClick={() => { setCurrIdx(currIdx+1)}}>אולי</a> |
-                        <a className={"cursor-pointer"} onClick={() => { setCurrIdx(currIdx+1)}}>לא אהבתי</a>
+                    <div className={"flex-row gap-20 justify-content-center"}>
+                        <Button flavor={ButtonFlavor.primary} text={TranslateService.translate(eventStore, "PLACES_TINDER.LIKE")} onClick={like} />
+                        <Button flavor={ButtonFlavor.secondary} text={TranslateService.translate(eventStore, "PLACES_TINDER.MAYBE")} onClick={maybe} />
+                        <Button flavor={ButtonFlavor.primary} className={"red"} text={TranslateService.translate(eventStore, "PLACES_TINDER.DISLIKE")} onClick={dislike} />
                     </div>
                 </div>
             )}
-            {/*test - {placesData.length}*/}
         </div>
     )
 }

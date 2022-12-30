@@ -59,6 +59,7 @@ export class EventStore {
     @observable distanceResults = observable.map<string,DistanceResult>(dataService.getDistanceResults());
     @observable travelMode = GoogleTravelMode.DRIVING;
     @observable modalSettings = defaultModalSettings;
+    @observable secondModalSettings = defaultModalSettings;
     modalValues: any = {};
     @observable modalValuesRefs: any = {};
     @observable createMode: boolean = false;
@@ -572,6 +573,11 @@ export class EventStore {
     @action
     setModalSettings(newModalSettings: any){
         this.modalSettings = newModalSettings;
+    }
+
+    @action
+    setSecondModalSettings(newModalSettings: any){
+        this.secondModalSettings = newModalSettings;
     }
 
     @action

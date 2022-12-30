@@ -21,7 +21,7 @@ button:disabled {
     border: 0;
 
     &.red {
-        background-color: var(--red);
+        background-color: var(--red) !important;
         box-shadow: none !important;
     }
 }

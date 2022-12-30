@@ -550,6 +550,18 @@ const RootRouter = () => {
             >
                 {eventStore.modalSettings.content}
             </SweetAlert>}</Observer>
+
+            <Observer>{ () => <SweetAlert
+                // title={"test"}
+                // onConfirm={() => { alert("confirm") }}
+                // onCancel={() => { alert("cancel") }}
+                // show={true}
+                {...eventStore.secondModalSettings}
+                confirmBtnBsStyle={eventStore.secondModalSettings.danger ? 'danger' : 'info' }
+                // dependencies={[this.state.firstName, this.state.lastName]}
+            >
+                {eventStore.secondModalSettings.content}
+            </SweetAlert>}</Observer>
         </>
     );
 }

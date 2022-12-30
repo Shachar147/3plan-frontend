@@ -279,7 +279,7 @@ const getDefaultSettings = (eventStore: EventStore) => {
         confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SAVE'),
         confirmBtnCssClass: 'primary-button',
         cancelBtnCssClass: 'link-button',
-        dependencies: [eventStore.modalSettings, eventStore.modalValues],
+        dependencies: [eventStore.modalSettings, eventStore.secondModalSettings, eventStore.modalValues],
         customClass: 'triplan-react-modal',
         reverseButtons: eventStore.getCurrentDirection() === 'rtl',
         onCancel: () => {
@@ -290,8 +290,12 @@ const getDefaultSettings = (eventStore: EventStore) => {
 
 const ReactModalService = {
     internal: {
-        openModal: (eventStore: EventStore, settings: any) => {
-            eventStore.setModalSettings(settings);
+        openModal: (eventStore: EventStore, settings: any, isSecondModal: boolean = false) => {
+            if (isSecondModal) {
+                eventStore.setSecondModalSettings(settings);
+            } else {
+                eventStore.setModalSettings(settings);
+            }
         },
         alertMessage: (eventStore:EventStore, titleKey: string, contentKey: string, type: 'error' | 'success') => {
             Alert.fire(TranslateService.translate(eventStore, titleKey), TranslateService.translate(eventStore, contentKey), type);
@@ -655,7 +659,13 @@ const ReactModalService = {
         },
         closeModal: (eventStore: EventStore) => {
             runInAction(() => {
-                eventStore.modalSettings.show = false;
+                if (eventStore.secondModalSettings?.show){
+                    eventStore.secondModalSettings.show = false;
+                }
+                else {
+                    eventStore.modalSettings.show = false;
+                }
+
                 eventStore.modalValues = {};
             });
             ReactModalService.internal.resetWindowVariables(eventStore);
@@ -859,7 +869,7 @@ const ReactModalService = {
             }
         })
     },
-    openAddSidebarEventModal: (eventStore: EventStore, categoryId?: number, initialData: any = {}) => {
+    openAddSidebarEventModal: (eventStore: EventStore, categoryId?: number, initialData: any = {}, isSecondModal: boolean = false) => {
 
         // @ts-ignore
         window.selectedLocation = initialData.location || undefined;
@@ -948,7 +958,7 @@ const ReactModalService = {
         // eventStore.modalValues.duration = eventStore.modalValues.duration || defaultTimedEventDuration;
 
         const location = initialData?.location as LocationData;
-        const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, { category: categoryId, location });
+        const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, { ...initialData, category: categoryId, location });
 
         const content = <Observer>{() => (
             <div className={"flex-col gap-20 align-layout-direction react-modal bright-scrollbar"}>
@@ -963,7 +973,7 @@ const ReactModalService = {
             title,
             content,
             onConfirm
-        })
+        }, isSecondModal)
     },
     openEditSidebarEventModal: (eventStore: EventStore, event: SidebarEvent, removeEventFromSidebarById: (eventId:string) => void, addToEventsToCategories: (value: any) => void) => {
 
@@ -1962,14 +1972,14 @@ const ReactModalService = {
         })
     },
 
-    openPlacesTinderModal: (eventStore: EventStore) => {
+    openPlacesTinderModal: (eventStore: EventStore, destination: string | null = null) => {
 
         const onConfirm = () => {
             ReactModalService.internal.closeModal(eventStore);
         }
 
         const content = <Observer>{() => (
-            <PlacesTinder eventStore={eventStore} />
+            <PlacesTinder eventStore={eventStore} destination={destination} />
         )}</Observer>
 
         ReactModalService.internal.openModal(eventStore, {

@@ -254,5 +254,8 @@
   "PLACES_TINDER_PLACEHOLDER": "Where are you flying to?",
   "PLACES_TINDER_MODAL.TITLE": "Triplan Places Tinder",
   "Budapest": "Budapest",
-  "MODALS.EXIT": "Exit"
+  "MODALS.EXIT": "Exit",
+  "PLACES_TINDER.LIKE": "Like!",
+  "PLACES_TINDER.DISLIKE": "Dislike",
+  "PLACES_TINDER.MAYBE": "Maybe"
 }
