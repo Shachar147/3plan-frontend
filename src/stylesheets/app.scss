@@ -272,6 +272,7 @@ body {
     flex: 1 1 0;
 }
 
+.flex-column,
 .flex-col {
     display: flex;
     flex-direction: column;
@@ -592,4 +593,46 @@ body {
 a.disabled {
     opacity: 0.5;
     cursor: default;
+}
+
+.images-input {
+    .image-gallery-left-nav,
+    .image-gallery-right-nav {
+        display: none;
+    }
+
+    .image-gallery-thumbnails-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.carousel .slide img {
+    max-width: 400px;
+}
+
+.slick-slider {
+    margin-bottom: 30px;
+    width: 300px;
+}
+.slick-next:before, .slick-prev:before {
+    color: black;
+}
+
+.slick-dots {
+    display: flex !important;
+    justify-content: center;
+}
+
+.slick-slider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .slider-image {
+        max-height: 150px;
+        max-width: 300px;
+        width: auto !important;
+    }
 }

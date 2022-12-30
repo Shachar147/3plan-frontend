@@ -275,5 +275,6 @@
   "NAVIGATION.BACK": "הקודם",
   "NAVIGATION.NEXT": "הבא",
   "MODALS.IMAGES": "תמונות",
-  "MODALS.IMAGES_PLACEHOLDER": "השתמשו בשדה זה כדי להוסיף תמונות לפעילות זו. תמונה אחת בכל שורה"
+  "MODALS.IMAGES_PLACEHOLDER": "השתמשו בשדה זה כדי להוסיף תמונות לפעילות זו. תמונה אחת בכל שורה",
+  "MORE_INFO": "מידע נוסף"
 }

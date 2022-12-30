@@ -265,5 +265,6 @@
   "NAVIGATION.BACK": "Back",
   "NAVIGATION.NEXT": "Next",
   "MODALS.IMAGES": "Images",
-  "MODALS.IMAGES_PLACEHOLDER": "Use this field to add images for this activity. One picture in a line."
+  "MODALS.IMAGES_PLACEHOLDER": "Use this field to add images for this activity. One picture in a line.",
+  "MORE_INFO": "More info"
 }

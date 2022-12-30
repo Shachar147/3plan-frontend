@@ -26,6 +26,12 @@ import Button, {ButtonFlavor} from "../components/common/button/button";
 import ImportService from "./import-service";
 
 // @ts-ignore
+// import ImageGallery from 'react-image-gallery';
+// import { Carousel } from "react-responsive-carousel";
+import Slider from "react-slick";
+
+
+// @ts-ignore
 import _ from "lodash";
 import {DataServices, lsTripNameToTripName} from "./data-handlers/data-handler-base";
 import PlacesTinder from "../layouts/main-page/modals/places-tinder/places-tinder";
@@ -256,6 +262,38 @@ const ReactModalRenderHelper = {
                     <div ref={row.settings.ref} dangerouslySetInnerHTML={{ __html: html }} />
                 )
                 break;
+            case 'images':
+                const images = row.settings.extra.value?.replace(/\n^/,"").replace(/$\n/,"").split("\n") || [];
+                input = ReactModalRenderHelper.renderTextAreaInput(
+                    eventStore, row.settings.modalValueName, row.settings.extra, row.settings.ref
+                );
+
+                const sliderSettings = {
+                    dots: true,
+                    infinite: true,
+                    speed: 500,
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                    width: 300
+                }
+
+                return (
+                    <div className="flex-column gap-10 images-input">
+                        {images &&
+                            <Slider {...sliderSettings}>
+                                {images.map((image: string) => (
+                                    <img className="slider-image" style={{
+                                        width: 300,
+                                        height: 150,
+                                    }}
+                                         alt={""}
+                                         src={image}
+                                    />
+                                    ))}
+                            </Slider>}
+                        {input}
+                    </div>
+                )
             default:
                 break;
         }
@@ -359,7 +397,7 @@ const ReactModalService = {
                     settings: {
                         modalValueName: 'images', // add column 4
                         ref: eventStore.modalValuesRefs['images'],
-                        type: 'textarea',
+                        type: 'images',
                         extra: {
                             placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
                             value: initialData.images
@@ -527,7 +565,7 @@ const ReactModalService = {
                     settings: {
                         modalValueName: 'images', // add column 5
                         ref: eventStore.modalValuesRefs['images'],
-                        type: 'textarea',
+                        type: 'images',
                         extra: {
                             placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
                             value: initialData.images
@@ -667,6 +705,8 @@ const ReactModalService = {
             // @ts-ignore
             const openingHours = window.openingHours as WeeklyOpeningHoursData;
 
+            // @ts-ignore
+            const images = eventStore.modalValues.images; // add column 10
 
             // -------------------------------------------------
             // for calendar events:
@@ -677,9 +717,6 @@ const ReactModalService = {
 
             // @ts-ignore
             const endDate = eventStore.modalValues['end-time'];
-
-            // @ts-ignore
-            const images = eventStore.modalValues['images'];
 
             return {
                 icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours,

@@ -624,7 +624,7 @@ export class EventStore {
         storedEvent.openingHours = storedEvent.extendedProps.openingHours;
 
         // add column 7
-        storedEvent.extendedProps.images = newEvent.images;
+        storedEvent.extendedProps.images = newEvent.images || newEvent.extendedProps.images;
         storedEvent.images = storedEvent.extendedProps.images;
 
         // @ts-ignore

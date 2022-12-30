@@ -6,12 +6,15 @@ import SelectInput, {SelectInputOption} from "../../../../components/inputs/sele
 import './place-tinder.scss';
 import TranslateService from "../../../../services/translate-service";
 // @ts-ignore
-import ImageGallery from 'react-image-gallery';
+// import ImageGallery from 'react-image-gallery';
 import '../../../../stylesheets/react-image-gallery.scss';
 import Button, {ButtonFlavor} from "../../../../components/common/button/button";
 import ReactModalService from "../../../../services/react-modal-service";
 import {TriplanPriority} from "../../../../utils/enums";
 import {getClasses} from "../../../../utils/utils";
+
+// @ts-ignore
+import Slider from "react-slick";
 
 interface PlacesTinderProps {
     eventStore: EventStore;
@@ -128,7 +131,18 @@ function PlacesTinder(props: PlacesTinderProps){
             ]);
         }
 
-        ReactModalService.openAddSidebarEventModal(eventStore, categoryId, currentPlace, true);
+        let description = currentPlace.description;
+        if (currentPlace.tinder.more_info){
+            description += `\n-----\n${TranslateService.translate(eventStore, 'MORE_INFO')}:\n${currentPlace.tinder.more_info}`;
+        }
+
+        const initialData = {
+            ...currentPlace,
+            description,
+            images: currentPlace.tinder.images.join("\n")
+        }
+
+        ReactModalService.openAddSidebarEventModal(eventStore, categoryId, initialData, true);
         setCurrIdx(currIdx+1)
     }
 
@@ -176,6 +190,15 @@ function PlacesTinder(props: PlacesTinderProps){
         }
     }
 
+    const sliderSettings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        width: 300
+    }
+
     return (
         <div className={"places-tinder flex-column gap-10 justify-content-center"}>
             <SelectInput
@@ -189,10 +212,20 @@ function PlacesTinder(props: PlacesTinderProps){
             {renderNavigation()}
             {renderPlaceholders()}
             {currentPlace && (
-                <div className={"flex-col gap-10"} style={{ maxWidth: 500 }}>
+                <div className={"flex-col gap-10 justify-content-center align-items-center"} style={{ maxWidth: 500 }}>
                     {currentPlace.tinder?.images && (
-                        <ImageGallery items={currentPlace.tinder.images.map((x: string) => ({ original: x, thumbnail: x }))} />
-                    )}
+                        <Slider {...sliderSettings}>
+                            {currentPlace.tinder.images.map((image: string) => (
+                                <img className="slider-image" style={{
+                                    width: 300,
+                                    height: 150,
+                                }}
+                                     alt={""}
+                                     src={image}
+                                />
+                            ))}
+                        </Slider>)}
+                        {/*<ImageGallery items={currentPlace.tinder.images.map((x: string) => ({ original: x, thumbnail: x }))} />*/}
                     <b>{currentPlace?.title}</b>
                     {currentPlace.description && (
                         <div style={{ opacity: 0.6 }} dangerouslySetInnerHTML={{ __html: formatDescription(currentPlace.description)}} />

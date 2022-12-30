@@ -3,6 +3,7 @@ import {getClasses} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
 import {observer} from "mobx-react";
+import {runInAction} from "mobx";
 
 interface TextAreaInputProps {
     modalValueName: string
@@ -43,8 +44,10 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
                 className={getClasses(["textAreaInput"], className)}
                 ref={ref}
                 onChange={(e) => {
-                    setValue(e.target.value)
-                    eventStore.modalValues[modalValueName] = e.target.value;
+                    setValue(e.target.value);
+                    runInAction(() => {
+                        eventStore.modalValues[modalValueName] = e.target.value;
+                    })
                 }}
                 placeholder={
                     placeholder ? placeholder :
