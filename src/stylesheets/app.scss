@@ -612,6 +612,10 @@ a.disabled {
     max-width: 400px;
 }
 
+.slick-list {
+    width: 300px;
+    text-align: center;
+}
 .slick-slider {
     margin-bottom: 30px;
     width: 300px;
@@ -625,6 +629,12 @@ a.disabled {
     justify-content: center;
 }
 
+.slick-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .slick-slider {
     display: flex;
     align-items: center;
@@ -635,4 +645,8 @@ a.disabled {
         max-width: 300px;
         width: auto !important;
     }
+}
+
+.max-width-350 {
+    width: 350px !important;
 }

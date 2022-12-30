@@ -15,6 +15,7 @@ export interface CalendarEvent {
     location?: LocationData
     openingHours?: WeeklyOpeningHoursData
     images?: string; // add column 8
+    moreInfo?: string;
 }
 
 export interface SidebarEvent {
@@ -32,6 +33,7 @@ export interface SidebarEvent {
     allDay?: Boolean;
     openingHours?: WeeklyOpeningHoursData;
     images?: string; // add column 9
+    moreInfo?: string;
 }
 
 export interface TriPlanCategory {

@@ -266,7 +266,8 @@
   "Budapest": "בודפשט",
   "Switzerland": "שוויץ",
   "London": "לונדון",
-  "MODALS.EXIT": "צא",
+  "Dubai": "דובאי",
+  "MODALS.EXIT": "לחץ כאן ליציאה",
   "PLACES_TINDER.LIKE": "אהבתי!",
   "PLACES_TINDER.DISLIKE": "לא אהבתי",
   "PLACES_TINDER.MAYBE": "אולי",
@@ -276,5 +277,9 @@
   "NAVIGATION.NEXT": "הבא",
   "MODALS.IMAGES": "תמונות",
   "MODALS.IMAGES_PLACEHOLDER": "השתמשו בשדה זה כדי להוסיף תמונות לפעילות זו. תמונה אחת בכל שורה",
-  "MORE_INFO": "מידע נוסף"
+  "MORE_INFO": "מידע נוסף",
+  "MODALS.MORE_INFO_PLACEHOLDER": "השתמשו בשדה זה כדי להוסיף מידע נוסף על פעילות זו או לינק להזמנה",
+  "MODALS.MORE_INFO": "מידע נוסף",
+  "SHARE_EVENTS_TO_TRIPLAN_TINDER": "שתף את הפעילויות מטיול זה",
+  "SHARE_TO_TINDER.TITLE": "שתף פעילויות מטיול זה"
 }

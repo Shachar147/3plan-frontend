@@ -624,8 +624,11 @@ export class EventStore {
         storedEvent.openingHours = storedEvent.extendedProps.openingHours;
 
         // add column 7
-        storedEvent.extendedProps.images = newEvent.images || newEvent.extendedProps.images;
+        storedEvent.extendedProps.images = newEvent.images || newEvent.extendedProps?.images;
         storedEvent.images = storedEvent.extendedProps.images;
+
+        storedEvent.extendedProps.moreInfo = newEvent.moreInfo || newEvent.extendedProps?.moreInfo;
+        storedEvent.moreInfo = storedEvent.extendedProps.moreInfo;
 
         // @ts-ignore
         const millisecondsDiff = storedEvent.end - storedEvent.start;
@@ -645,6 +648,7 @@ export class EventStore {
         storedEvent.location = Object.keys(newEvent).includes("location") ? newEvent.location : storedEvent.location;
         storedEvent.openingHours = Object.keys(newEvent).includes("openingHours") ? newEvent.openingHours : storedEvent.openingHours;
         storedEvent.images = newEvent.images; // add column 6
+        storedEvent.moreInfo = newEvent.moreInfo;
 
         if (newEvent.extendedProps){
             Object.keys(newEvent.extendedProps).forEach((key) => {

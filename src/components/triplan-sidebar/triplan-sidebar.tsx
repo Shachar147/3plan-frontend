@@ -590,6 +590,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                     data-location={Object.keys(event).includes("location") ? JSON.stringify(event.location) : event.extendedProps && event.extendedProps.location ? JSON.stringify(event.extendedProps.location) : undefined}
                     data-opening-hours={event.openingHours !== undefined ? event.openingHours : event.extendedProps ? event.extendedProps.openingHours : undefined}
                     data-images={event.images ?? event.extendedProps?.images} // add column 3
+                    data-more-info={event.moreInfo ?? event.extendedProps?.moreInfo}
                     key={event.id}
                 >
                         <span className="sidebar-event-title-container" title={"Edit"} onClick={() => {
@@ -628,6 +629,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
             </div>
             <div className={"flex-row justify-content-center cursor-pointer"}>
                 <Button flavor={ButtonFlavor.link} onClick={() => { ReactModalService.openPlacesTinderModal(eventStore)}} text={TranslateService.translate(eventStore, 'PLACES_TINDER_LINK')}/>
+            </div>
+            <div className={"flex-row justify-content-center cursor-pointer"}>
+                <Button flavor={ButtonFlavor.link} onClick={() => { ReactModalService.openShareToTinderModal(eventStore)}} text={TranslateService.translate(eventStore, 'SHARE_EVENTS_TO_TRIPLAN_TINDER')}/>
             </div>
             </div>
             <div>

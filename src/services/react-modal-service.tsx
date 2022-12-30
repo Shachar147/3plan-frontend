@@ -488,7 +488,20 @@ const ReactModalService = {
                     },
                     textKey: 'MODALS.OPENING_HOURS',
                     className: 'border-top-gray'
-                }
+                },
+                {
+                    settings: {
+                        modalValueName: 'more-info',
+                        ref: eventStore.modalValuesRefs['more-info'],
+                        type: 'text',
+                        extra: {
+                            placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
+                            value: initialData.moreInfo
+                        },
+                    },
+                    textKey: 'MODALS.MORE_INFO',
+                    className: 'border-top-gray'
+                },
             ]
             inputs[inputs.length-1].className += ' border-bottom-gray padding-bottom-20';
             return inputs;
@@ -669,7 +682,20 @@ const ReactModalService = {
                     },
                     textKey: 'MODALS.OPENING_HOURS',
                     className: 'border-top-gray'
-                }
+                },
+                {
+                    settings: {
+                        modalValueName: 'more-info',
+                        ref: eventStore.modalValuesRefs['more-info'],
+                        type: 'text',
+                        extra: {
+                            placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
+                            value: initialData.moreInfo
+                        },
+                    },
+                    textKey: 'MODALS.MORE_INFO',
+                    className: 'border-top-gray'
+                },
             ]
             inputs[inputs.length-1].className += ' border-bottom-gray padding-bottom-20';
             return inputs;
@@ -708,6 +734,8 @@ const ReactModalService = {
             // @ts-ignore
             const images = eventStore.modalValues.images; // add column 10
 
+            const moreInfo = eventStore.modalValues.moreInfo || eventStore.modalValues["more-info"];
+
             // -------------------------------------------------
             // for calendar events:
             // -------------------------------------------------
@@ -720,7 +748,7 @@ const ReactModalService = {
 
             return {
                 icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours,
-                startDate, endDate, images
+                startDate, endDate, images, moreInfo
             };
         },
         closeModal: (eventStore: EventStore) => {
@@ -1055,7 +1083,7 @@ const ReactModalService = {
                 return;
             }
 
-            let { icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours, images } =
+            let { icon, title, duration, priority, preferredTime, description, categoryId, location, openingHours, images, moreInfo } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             let currentEvent: any = {
@@ -1102,8 +1130,9 @@ const ReactModalService = {
             const oldCategory = eventStore.allEvents.find((e) => e.id === event.id)!.category;
             const isCategoryChanged = oldCategory != categoryId;
             const isLocationChanged = originalEvent.location != currentEvent.location;
-            const isImagesChanged = originalEvent.images != currentEvent.images;
-            const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || isDescriptionChanged || isLocationChanged || isImagesChanged;
+            const isImagesChanged = originalEvent.images != currentEvent.images; // add column 11
+            const isMoreInfoChanged = originalEvent.moreInfo != currentEvent.moreInfo;
+            const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || isDescriptionChanged || isLocationChanged || isImagesChanged || isMoreInfoChanged;
 
             if (isCategoryChanged){
 
@@ -1151,7 +1180,8 @@ const ReactModalService = {
                         description,
                         location,
                         openingHours,
-                        images,
+                        images, // add column 14
+                        moreInfo,
                         extendedProps: {
                             categoryId
                         }
@@ -1236,7 +1266,7 @@ const ReactModalService = {
         const handleDuplicateSidebarEventResult = (eventStore: EventStore, event: SidebarEvent) => {
             if (!eventStore) return;
 
-            let { icon, title, duration, priority, preferredTime, description, location, openingHours, images } =
+            let { icon, title, duration, priority, preferredTime, description, location, openingHours, images, moreInfo } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             const currentEvent = {
@@ -1249,7 +1279,8 @@ const ReactModalService = {
                 description,
                 location,
                 openingHours,
-                images
+                images, // add column 15
+                moreInfo
             } as SidebarEvent;
 
             const isDurationValid = (
@@ -1339,7 +1370,7 @@ const ReactModalService = {
         const handleAddCalendarEventResult = (eventStore: EventStore) => {
             if (!eventStore) return true;
 
-            let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate, images } =
+            let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate, images, moreInfo } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             const currentEvent = {
@@ -1357,6 +1388,7 @@ const ReactModalService = {
                 location,
                 openingHours,
                 images,
+                moreInfo, // add column 16
                 extendedProps:{
                     title,
                     icon,
@@ -1654,7 +1686,7 @@ const ReactModalService = {
                 return false;
             }
 
-            let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate, images } =
+            let { icon, title, priority, preferredTime, description, categoryId, location, openingHours, startDate, endDate, images, moreInfo } =
                 ReactModalService.internal.getModalValues(eventStore);
 
             // @ts-ignore
@@ -1672,7 +1704,8 @@ const ReactModalService = {
                 allDay: originalEvent.allDay,
                 preferredTime: preferredTime as TriplanEventPreferredTime,
                 description,
-                images
+                images,
+                moreInfo // add column 16
             };
 
             // written like this since otherwise, editing without changing anything will reset location to nothing
@@ -1713,8 +1746,9 @@ const ReactModalService = {
             const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
             const isCategoryChanged = oldCategory != categoryId;
             const isOpeningHoursChanged = currentEvent.openingHours;
-            const isImagesChanged = originalEvent.images != currentEvent.images;
-            const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || descriptionChanged || isLocationChanged || isOpeningHoursChanged || isImagesChanged;
+            const isImagesChanged = originalEvent.images != currentEvent.images; // add column 12
+            const isMoreInfoChanged = originalEvent.moreInfo != currentEvent.moreInfo;
+            const isChanged = titleChanged || durationChanged || iconChanged || priorityChanged || preferredTimeChanged || descriptionChanged || isLocationChanged || isOpeningHoursChanged || isImagesChanged || isMoreInfoChanged;
 
             if (isCategoryChanged){
 
@@ -1757,7 +1791,8 @@ const ReactModalService = {
                         location: currentEvent.location,
                         openingHours: currentEvent.openingHours,
                         category: categoryId,
-                        images: currentEvent.images,
+                        images: currentEvent.images, // add column 13
+                        moreInfo: currentEvent.moreInfo
                     }
                 });
                 if (isUpdated) {
@@ -2069,6 +2104,107 @@ const ReactModalService = {
             content,
         });
     },
+
+    openShareToTinderModal: (eventStore: EventStore) => {
+        const all = [...eventStore.allEvents];
+        const categories = [...eventStore.categories];
+        if (!categories) return;
+
+        function filterOutIrrelevant(place: any){
+            return true;
+            // const excludeKeywords = [
+            //     "hotel",
+            //     "מלון",
+            //     "check-in",
+            //     "checkin",
+            //     "צ׳ק א",
+            //     "שדה התעופה",
+            //     "טיסה "
+            // ]
+            //
+            // let isOk = true;
+            // excludeKeywords.map((keyword) => {
+            //     let { title, description } = place;
+            //     const { title2, description2 } = place?.extendedProps;
+            //
+            //     title = title || title2;
+            //     description = description || description2 || "";
+            //
+            //     if (title.toLowerCase().indexOf(keyword) !== -1 || description?.toLowerCase().indexOf(keyword) !== -1){
+            //         isOk = false;
+            //         return;
+            //     }
+            // })
+            //
+            // if (place.allDay) return false;
+            //
+            // todo complete: remove duplicates
+            // todo complete: remove categoryId
+            // todo complete: remove extendedProps.id
+            // todo complete: remove 'הוזמן לשעה...' from the descirption
+            // todo complete: remove 'הערה:' from the description (for example "use Euro and not Shekels")
+            //
+            // return isOk;
+        }
+
+        all.filter(filterOutIrrelevant).forEach((x:any) => {
+            delete x["id"];
+            x["category"] = categories.find((c) => c.id)?.title;
+            if (x["extendedProps"] && x["extendedProps"]["categoryId"]) {
+                delete x["extendedProps"]["categoryId"]
+            }
+            x["tinder"] = {
+                "images": (x.images || x.extendedProps?.images)?.split("\n"),
+                "more_info": x.moreInfo,
+                "source": "Admin Recommendation"
+            }})
+
+        const newJson = `"${eventStore.tripName}":${JSON.stringify(all)}`;
+
+        const onConfirm = () => {
+            ReactModalService.internal.closeModal(eventStore);
+        }
+
+        function copyText() {
+            // Get the text field
+            // @ts-ignore
+            const copyText: HTMLInputElement = document.getElementById("tripJson")!;
+
+            // Select the text field
+            copyText.select();
+
+            // Copy the text inside the text field
+            navigator.clipboard.writeText(copyText.value);
+
+            // Alert the copied text
+            alert("Copied the text: " + copyText.value);
+        }
+
+        const content = <Observer>{() => (
+            <>
+                <p className="bright-scrollbar" style={{
+                    maxHeight: "200px",
+                    overflowY: "scroll",
+                    padding: "10px",
+                    backgroundColor: "rgba(0,0,0,0.02)",
+                    fontSize: 12
+                }}>{newJson}</p>
+                <input type="hidden" id="tripJson" value={newJson} />
+                {/*<button onClick={copyText}>Copy</button>*/}
+            </>
+        )}</Observer>
+
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            showConfirm: false,
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.EXIT'),
+            title: TranslateService.translate(eventStore, 'SHARE_TO_TINDER.TITLE'),
+            type: 'controlled',
+            customClass: 'triplan-react-modal max-width-350',
+            onConfirm,
+            content,
+        });
+    }
 }
 
 export default ReactModalService;

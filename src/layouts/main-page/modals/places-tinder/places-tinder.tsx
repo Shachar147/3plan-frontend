@@ -228,7 +228,7 @@ function PlacesTinder(props: PlacesTinderProps){
                         {/*<ImageGallery items={currentPlace.tinder.images.map((x: string) => ({ original: x, thumbnail: x }))} />*/}
                     <b>{currentPlace?.title}</b>
                     {currentPlace.description && (
-                        <div style={{ opacity: 0.6 }} dangerouslySetInnerHTML={{ __html: formatDescription(currentPlace.description)}} />
+                        <div style={{ opacity: 0.6, wordBreak: "break-all", maxHeight: "400px", overflowY:"scroll" }} className={"bright-scrollbar"} dangerouslySetInnerHTML={{ __html: formatDescription(currentPlace.description)}} />
                     )}
                     {currentPlace.tinder?.more_info && (
                         <div>
@@ -238,7 +238,7 @@ function PlacesTinder(props: PlacesTinderProps){
                     <div />
                     <div className={"flex-row gap-20 justify-content-center"}>
                         <Button flavor={ButtonFlavor.primary} text={TranslateService.translate(eventStore, "PLACES_TINDER.LIKE")} onClick={like} />
-                        <Button flavor={ButtonFlavor.secondary} text={TranslateService.translate(eventStore, "PLACES_TINDER.MAYBE")} onClick={maybe} />
+                        <Button flavor={ButtonFlavor.link} text={TranslateService.translate(eventStore, "PLACES_TINDER.MAYBE")} onClick={maybe} />
                         <Button flavor={ButtonFlavor.primary} className={"red"} text={TranslateService.translate(eventStore, "PLACES_TINDER.DISLIKE")} onClick={dislike} />
                     </div>
                 </div>
