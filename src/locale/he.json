@@ -271,5 +271,7 @@
   "PLACES_TINDER.DISLIKE": "לא אהבתי",
   "PLACES_TINDER.MAYBE": "אולי",
   "PLACES_TINDER.NO_PLACES_TO_SUGGEST": "מצטערים, אין מקומות להמליץ עליהם",
-  "PLACES_TINDER.NO_MORE_PLACES_TO_SUGGEST": "מצטערים, אין עוד מקומות להמליץ עליהם"
+  "PLACES_TINDER.NO_MORE_PLACES_TO_SUGGEST": "מצטערים, אין עוד מקומות להמליץ עליהם",
+  "NAVIGATION.BACK": "הקודם",
+  "NAVIGATION.NEXT": "הבא"
 }

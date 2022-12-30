@@ -11,6 +11,7 @@ import '../../../../stylesheets/react-image-gallery.scss';
 import Button, {ButtonFlavor} from "../../../../components/common/button/button";
 import ReactModalService from "../../../../services/react-modal-service";
 import {TriplanPriority} from "../../../../utils/enums";
+import {getClasses} from "../../../../utils/utils";
 
 interface PlacesTinderProps {
     eventStore: EventStore;
@@ -129,6 +130,30 @@ function PlacesTinder(props: PlacesTinderProps){
         }
     }
 
+    function goBack(){
+        if (currIdx > 0) {
+            setCurrIdx(currIdx - 1);
+        }
+    }
+
+    function goNext(){
+        if (currIdx + 1 < placesList.length){
+            setCurrIdx(currIdx+1)
+        }
+    }
+
+    function renderNavigation(){
+        if (destination && placesList && placesList.length > 0) {
+            return (
+                <div className="flex-row space-between margin-top-10">
+                    <a onClick={goBack} className={getClasses((currIdx === 0) ? "disabled" : "cursor-pointer")}>{TranslateService.translate(eventStore, 'NAVIGATION.BACK')}</a>
+                    <div>{currIdx + 1 > placesList.length ? "" : `${currIdx+1}/${placesList.length}`}</div>
+                    <a onClick={goNext} className={getClasses((currIdx + 1 >= placesList.length) ? "disabled" : "cursor-pointer")}>{TranslateService.translate(eventStore, 'NAVIGATION.NEXT')}</a>
+                </div>
+            )
+        }
+    }
+
     return (
         <div className={"places-tinder flex-column gap-10 justify-content-center"}>
             <SelectInput
@@ -139,6 +164,7 @@ function PlacesTinder(props: PlacesTinderProps){
                     setDestination(data.value);
                 }}
             />
+            {renderNavigation()}
             {renderPlaceholders()}
             {currentPlace && (
                 <div className={"flex-col gap-10"} style={{ maxWidth: 500 }}>
