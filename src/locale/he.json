@@ -264,8 +264,12 @@
   "PLACES_TINDER_PLACEHOLDER": "לאן אתם טסים?",
   "PLACES_TINDER_MODAL.TITLE": "טינדר המקומות של טריפלאן",
   "Budapest": "בודפשט",
+  "Switzerland": "שוויץ",
+  "London": "לונדון",
   "MODALS.EXIT": "צא",
   "PLACES_TINDER.LIKE": "אהבתי!",
   "PLACES_TINDER.DISLIKE": "לא אהבתי",
-  "PLACES_TINDER.MAYBE": "אולי"
+  "PLACES_TINDER.MAYBE": "אולי",
+  "PLACES_TINDER.NO_PLACES_TO_SUGGEST": "מצטערים, אין מקומות להמליץ עליהם",
+  "PLACES_TINDER.NO_MORE_PLACES_TO_SUGGEST": "מצטערים, אין עוד מקומות להמליץ עליהם"
 }

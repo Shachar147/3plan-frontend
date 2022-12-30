@@ -254,8 +254,12 @@
   "PLACES_TINDER_PLACEHOLDER": "Where are you flying to?",
   "PLACES_TINDER_MODAL.TITLE": "Triplan Places Tinder",
   "Budapest": "Budapest",
+  "Switzerland": "Switzerland",
+  "London": "London",
   "MODALS.EXIT": "Exit",
   "PLACES_TINDER.LIKE": "Like!",
   "PLACES_TINDER.DISLIKE": "Dislike",
-  "PLACES_TINDER.MAYBE": "Maybe"
+  "PLACES_TINDER.MAYBE": "Maybe",
+  "PLACES_TINDER.NO_PLACES_TO_SUGGEST": "No places to suggest",
+  "PLACES_TINDER.NO_MORE_PLACES_TO_SUGGEST": "Sorry, it seems like there are no more places to suggest"
 }

@@ -43,12 +43,23 @@ function PlacesTinder(props: PlacesTinderProps){
     const [destination, setDestination] = useState<string|null>(props.destination || null)
     const placesDataMap: Record<string, any[]> = useMemo(() => placesData, []);
     const [placesList, setPlacesList] = useState<any[]>([]);
+    const [dislikedList, setDislikedList] = useState<any[]>([]);
+
+    const lsKey = "triplan-places-tinder-disliked-list";
+    useEffect(() => {
+        if (!localStorage.getItem(lsKey)){
+            localStorage.setItem(lsKey, '[]');
+        }
+        setDislikedList(JSON.parse(localStorage.getItem(lsKey)!));
+    }, [])
 
     useEffect(() => {
 
         if (destination != null) {
-            const arr = shuffle(placesDataMap[destination]);
+            const dislikedListNames = dislikedList.map((p) => p.title);
+            const arr = shuffle(placesDataMap[destination]).filter((p) => dislikedListNames.indexOf(p.title) === -1);
             setPlacesList(arr);
+            setCurrIdx(0);
 
             document.getElementsByClassName("places-tinder-modal")[0].className += ' selected-destination';
         }
@@ -57,7 +68,9 @@ function PlacesTinder(props: PlacesTinderProps){
 
     let currentPlace: any;
     if (destination && placesList.length > 0) {
-        currentPlace = placesList[currIdx];
+        if (currIdx <= placesList.length) {
+            currentPlace = placesList[currIdx];
+        }
     }
 
     function formatDescription(description: string) {
@@ -97,11 +110,23 @@ function PlacesTinder(props: PlacesTinderProps){
     }
 
     function dislike(){
-        setCurrIdx(currIdx+1)
+        dislikedList.push(currentPlace);
+        setDislikedList(dislikedList);
+        localStorage.setItem(lsKey, JSON.stringify(dislikedList));
+        setCurrIdx(currIdx+1);
     }
 
     function maybe(){
         setCurrIdx(currIdx+1)
+    }
+
+    function renderPlaceholders(){
+        if (destination && placesList.length === 0) {
+            return TranslateService.translate(eventStore, 'PLACES_TINDER.NO_PLACES_TO_SUGGEST');
+        }
+        else if (destination && currIdx >= placesList.length) {
+            return TranslateService.translate(eventStore, 'PLACES_TINDER.NO_MORE_PLACES_TO_SUGGEST')
+        }
     }
 
     return (
@@ -114,6 +139,7 @@ function PlacesTinder(props: PlacesTinderProps){
                     setDestination(data.value);
                 }}
             />
+            {renderPlaceholders()}
             {currentPlace && (
                 <div className={"flex-col gap-10"} style={{ maxWidth: 500 }}>
                     {currentPlace.tinder?.images && (
