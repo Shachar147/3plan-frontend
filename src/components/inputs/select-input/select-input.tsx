@@ -19,7 +19,8 @@ interface SelectInputProps {
     options: SelectInputOption[],
     placeholderKey?: string,
     modalValueName: string,
-    maxMenuHeight?: number
+    maxMenuHeight?: number,
+    onChange?: (value: any) => any;
 }
 export interface SelectInputRef {
     getValue(): SelectInputOption;
@@ -52,6 +53,9 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
                 onChange={(data) => {
                     eventStore.modalValues[modalValueName] = data;
                     setValue(data);
+                    if (props.onChange) {
+                        props.onChange(data);
+                    }
                 }}
                 maxMenuHeight={maxMenuHeight || 45 * 5}
                 styles={SELECT_STYLE}

@@ -38,7 +38,7 @@ export class EventStore {
     eventIdBuffer = 0;
     allowRemoveAllCalendarEvents = false;
     @observable weekendsVisible = true;
-    @observable categories: TriPlanCategory[];
+    @observable categories: TriPlanCategory[] = [];
     @observable sidebarEvents: Record<number,SidebarEvent[]> = dataService.getSidebarEvents();
     @observable calendarEvents: EventInput[] = dataService.getCalendarEvents();
     @observable allEvents: AllEventsEvent[]; // SidebarEvent[];
@@ -157,7 +157,7 @@ export class EventStore {
                     }
                 }
             })
-            console.info(eachEventAndItsDirections);
+            // console.info(eachEventAndItsDirections);
 
             const uuidv4 = () => {
                 // @ts-ignore
@@ -363,6 +363,7 @@ export class EventStore {
     @action
     setSidebarEvents(newSidebarEvents: Record<number,SidebarEvent[]>){
         this.sidebarEvents = newSidebarEvents;
+        // if (!this.showOnlyEventsWithNoOpeningHours && !this.searchValue && !this.showOnlyEventsWithTodoComplete && !this.showOnlyEventsWithTodoComplete)
         dataService.setSidebarEvents(newSidebarEvents, this.tripName);
     }
 

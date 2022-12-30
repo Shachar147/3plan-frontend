@@ -259,5 +259,10 @@
   "BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL": "טיולים לוקאליים",
   "BUTTON_TEXT.TRIP_DATA_SOURCE.DB": "טיולים המשוייכים לחשבון שלך",
   "NO_TRIPS_PLACEHOLDER.LOCAL": "נראה שאין לך טיולים לוקאליים",
-  "NO_TRIPS_PLACEHOLDER.DB": "נראה שאין לך טיולים המקושרים לחשבון שלך"
+  "NO_TRIPS_PLACEHOLDER.DB": "נראה שאין לך טיולים המקושרים לחשבון שלך",
+  "PLACES_TINDER_LINK": "פנק אותי בהמלצות",
+  "PLACES_TINDER_PLACEHOLDER": "לאן אתם טסים?",
+  "PLACES_TINDER_MODAL.TITLE": "טינדר המקומות של טריפלאן",
+  "Budapest": "בודפשט",
+  "MODALS.EXIT": "צא"
 }

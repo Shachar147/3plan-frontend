@@ -828,7 +828,7 @@ const ListViewService = {
             ${Object.keys(summaryPerDay).map((dayTitle) => {
                 const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : "";
                 return `
-                    <b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span><br>
+                    <div class="list-view-day-title position-sticky background-white"><div><b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span></div></div>
                     ${summaryPerDay[dayTitle].join("<br/>").replaceAll("<br/><br/>", "<br/>")}
                 `
             }).join("<br/><hr/><br/>")}

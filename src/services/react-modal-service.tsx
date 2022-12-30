@@ -28,6 +28,7 @@ import ImportService from "./import-service";
 // @ts-ignore
 import _ from "lodash";
 import {DataServices, lsTripNameToTripName} from "./data-handlers/data-handler-base";
+import PlacesTinder from "../layouts/main-page/modals/places-tinder/places-tinder";
 
 const ReactModalRenderHelper = {
     renderInputWithLabel: (eventStore:EventStore, textKey: string, input: JSX.Element, className?: string) => {
@@ -1959,6 +1960,28 @@ const ReactModalService = {
                 ReactModalService.internal.closeModal(eventStore);
             }
         })
+    },
+
+    openPlacesTinderModal: (eventStore: EventStore) => {
+
+        const onConfirm = () => {
+            ReactModalService.internal.closeModal(eventStore);
+        }
+
+        const content = <Observer>{() => (
+            <PlacesTinder eventStore={eventStore} />
+        )}</Observer>
+
+        ReactModalService.internal.openModal(eventStore, {
+            ...getDefaultSettings(eventStore),
+            showConfirm: false,
+            cancelBtnText: TranslateService.translate(eventStore, 'MODALS.EXIT'),
+            title: TranslateService.translate(eventStore, 'PLACES_TINDER_MODAL.TITLE'),
+            type: 'controlled',
+            customClass: 'triplan-react-modal places-tinder-modal',
+            onConfirm,
+            content,
+        });
     },
 }
 

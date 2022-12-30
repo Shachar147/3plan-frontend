@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import "./stylesheets/fonts.css";
 import "./stylesheets/colors.css";
 import "./stylesheets/buttons.scss";
-import "./stylesheets/app.css";
+import "./stylesheets/app.scss";
 import './stylesheets/rtl.css';
 import "./stylesheets/fontawesome/css/font-awesome.css";
 import LandingPage from "./layouts/landing-page/landing-page";

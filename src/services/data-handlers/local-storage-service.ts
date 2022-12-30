@@ -57,6 +57,8 @@ export class LocalStorageService implements BaseDataHandler {
     }
 
     getAllEvents(eventStore: EventStore, tripName?: string, createMode?: boolean): AllEventsEvent[] {
+        if (!tripName) return [];
+
         createMode = createMode ||  window.location.href.indexOf("/create/") !== -1;
         const key = tripName ? [LS_ALL_EVENTS,tripName].join("-") : LS_ALL_EVENTS;
         if (!localStorage.getItem(key)){
@@ -83,6 +85,8 @@ export class LocalStorageService implements BaseDataHandler {
     }
 
     getCalendarEvents(tripName?: string, createMode?: boolean): CalendarEvent[] {
+        if (!tripName) return [];
+
         createMode = createMode ||  window.location.href.indexOf("/create/") !== -1;
         const key = tripName ? [LS_CALENDAR_EVENTS,tripName].join("-") : LS_CALENDAR_EVENTS;
         if (!localStorage.getItem(key)){
@@ -131,7 +135,7 @@ export class LocalStorageService implements BaseDataHandler {
             ]
             if (tripName) this.setCategories(defaultCategories, tripName);
         }
-        return JSON.parse(localStorage.getItem(key)!);
+        return JSON.parse(localStorage.getItem(key)!) || [];
     }
 
     getDateRange(tripName?: string, createMode?: boolean): DateRangeFormatted {
@@ -146,6 +150,8 @@ export class LocalStorageService implements BaseDataHandler {
     }
 
     getSidebarEvents(tripName?: string, createMode?: boolean): Record<number,SidebarEvent[]> {
+        if (!tripName) return [];
+
         createMode = createMode || window.location.href.indexOf("/create/") !== -1;
         const key = tripName ? [LS_SIDEBAR_EVENTS,tripName].join("-") : LS_SIDEBAR_EVENTS;
         if (!localStorage.getItem(key)){

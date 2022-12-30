@@ -249,5 +249,10 @@
   "BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL": "Local Trips",
   "BUTTON_TEXT.TRIP_DATA_SOURCE.DB": "Account Trips",
   "NO_TRIPS_PLACEHOLDER.LOCAL": "Seems like you do not have local trips",
-  "NO_TRIPS_PLACEHOLDER.DB": "Seems like you do not have trips associated with your account"
+  "NO_TRIPS_PLACEHOLDER.DB": "Seems like you do not have trips associated with your account",
+  "PLACES_TINDER_LINK": "Show me recommended places list",
+  "PLACES_TINDER_PLACEHOLDER": "Where are you flying to?",
+  "PLACES_TINDER_MODAL.TITLE": "Triplan Places Tinder",
+  "Budapest": "Budapest",
+  "MODALS.EXIT": "Exit"
 }

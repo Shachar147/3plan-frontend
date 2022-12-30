@@ -28,6 +28,7 @@
     "react": "16.8.6",
     "react-bootstrap-sweetalert": "^5.2.0",
     "react-dom": "16.8.6",
+    "react-image-gallery": "^1.2.11",
     "react-scripts": "^5.0.1",
     "react-select": "^5.4.0",
     "reactstrap": "8.0.0",

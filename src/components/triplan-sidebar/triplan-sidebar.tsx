@@ -620,9 +620,14 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
     return (
         <div className={"external-events-container bright-scrollbar"}>
             {renderCustomDates()}
+            <div>
             <div className={"flex-row gap-10 sticky-0"} style={{ backgroundColor: "#f2f5f8", zIndex: 1, minHeight: 50 }}>
                 {renderAddEventButton()}
                 {renderAddCategoryButton()}
+            </div>
+            <div className={"flex-row justify-content-center cursor-pointer"}>
+                <Button flavor={ButtonFlavor.link} onClick={() => { ReactModalService.openPlacesTinderModal(eventStore)}} text={TranslateService.translate(eventStore, 'PLACES_TINDER_LINK')}/>
+            </div>
             </div>
             <div>
                 {renderWarnings()}
