@@ -4,7 +4,7 @@ import { DateSelectArg, EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
 import { GoogleTravelMode, ListViewSummaryMode, TripDataSource, ViewMode } from '../utils/enums';
-import { convertMsToHM } from '../utils/time-utils';
+import { convertMsToHM, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -152,17 +152,11 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
-	toDate(dt: Date | string | number | number[] | undefined) {
-		const dtDate = typeof dt === 'string' ? new Date(dt) : (dt as Date);
-		// console.log(dt, dtDate);
-		return dtDate;
-	}
-
 	reduceEventsEndDateToFitDistanceResult = (filteredEvents: EventInput[]): EventInput[] => {
 		// only if not in filter mode - add driving instructions
 		if (filteredEvents.length === this.calendarEvents.length) {
 			filteredEvents = filteredEvents.sort((a, b) => {
-				return this.toDate(a.start).getTime() - this.toDate(b.start).getTime();
+				return toDate(a.start).getTime() - toDate(b.start).getTime();
 			});
 
 			const extractDetails = (event: EventInput) => {

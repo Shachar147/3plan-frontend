@@ -2,7 +2,7 @@ import { EventStore } from '../stores/events-store';
 import moment from 'moment/moment';
 import TranslateService from './translate-service';
 import { EventInput } from '@fullcalendar/react';
-import { getEventDueDate } from '../utils/time-utils';
+import { getEventDueDate, toDate } from '../utils/time-utils';
 import { LocationData } from '../utils/interfaces';
 import { runInAction } from 'mobx';
 import { GoogleTravelMode, ListViewSummaryMode, TriplanPriority } from '../utils/enums';
@@ -82,27 +82,27 @@ const ListViewService = {
 					const event = ListViewService._getEventFromEventRow(eventStore, x);
 					if (event) {
 						if (start === 0) {
-							start = (event.start as Date).getTime();
-							end = (event.end as Date).getTime();
+							start = toDate(event.start).getTime();
+							end = toDate(event.end).getTime();
 						} else {
-							const _start = (event.start as Date).getTime();
-							const _end = (event.end as Date).getTime();
+							const _start = toDate(event.start).getTime();
+							const _end = toDate(event.end).getTime();
 							if (_start === end && _end > end) {
 								end = _end;
 							} else {
 								isOk = false;
 							}
 						}
-						// start = Math.min((event!.start as Date).getTime(), start);
-						// end = Math.max((event!.end as Date).getTime(), end);
-						console.log(event.title, event.start as Date, event.end as Date);
+						// start = Math.min(toDate(event!.start).getTime(), start);
+						// end = Math.max(toDate(event!.end).getTime(), end);
+						// console.log(event.title, toDate(event.start), toDate(event.end));
 					}
 				});
 
 				if (isOk) {
 					const parentEvent = ListViewService._getEventFromEventRow(eventStore, parents[key])!;
-					const pStart = (parentEvent.start as Date).getTime();
-					const pEnd = (parentEvent.end as Date).getTime();
+					const pStart = toDate(parentEvent.start).getTime();
+					const pEnd = toDate(parentEvent.end).getTime();
 
 					if (pStart === start && pEnd === end) {
 						const startTime = ListViewService._formatTime(new Date(pStart).toLocaleTimeString());
@@ -257,11 +257,11 @@ const ListViewService = {
 	},
 	_sortEvents: (calendarEvents: EventInput[]) => {
 		return calendarEvents.sort((a, b) => {
-			const aTime = (a.start as Date).getTime();
-			const bTime = (b.start as Date).getTime();
+			const aTime = toDate(a.start).getTime();
+			const bTime = toDate(b.start).getTime();
 			if (aTime === bTime) {
-				const aEndTime = (a.end as Date).getTime();
-				const bEndTime = (b.end as Date).getTime();
+				const aEndTime = toDate(a.end).getTime();
+				const bEndTime = toDate(b.end).getTime();
 				return bEndTime - aEndTime;
 			}
 			return aTime - bTime;
@@ -269,7 +269,7 @@ const ListViewService = {
 	},
 	_getEventDayTitle: (eventStore: EventStore, event: any) => {
 		const dtStartName = ListViewService._getDayName(event.start!.toString(), eventStore.calendarLocalCode);
-		const parts = (event.start! as Date).toLocaleDateString().replace(/\//gi, '-').split('-');
+		const parts = toDate(event.start).toLocaleDateString().replace(/\//gi, '-').split('-');
 		const dtStart = [padTo2Digits(Number(parts[1])), padTo2Digits(Number(parts[0])), parts[2]].join('/');
 		const dayTitle = `${dtStartName} - ${dtStart}`;
 		return dayTitle;
@@ -299,8 +299,8 @@ const ListViewService = {
 
 			// push OR indication if needed
 			const stillSameDay = lastDayTitle === dayTitle;
-			const sameStart = (event.start as Date).getTime() === lastStart;
-			const sameEnd = (event.end as Date).getTime() === lastEnd;
+			const sameStart = toDate(event.start).getTime() === lastStart;
+			const sameEnd = toDate(event.end).getTime() === lastEnd;
 			if (stillSameDay && sameStart && sameEnd) {
 				calendarEventsPerDay[dayTitle].push(OR_ITEM_INDICATION);
 			}
@@ -315,16 +315,16 @@ const ListViewService = {
 			// on that case, we can't do both items and we need to choose. therefore we push the OR indication
 			const isNotLastItem = index + 1 < sortedEvents.length;
 			const currentItemEndsAfterNextItemStarts =
-				isNotLastItem && (event.end as Date).getTime() > (sortedEvents[index + 1].start as Date).getTime();
+				isNotLastItem && toDate(event.end).getTime() > toDate(sortedEvents[index + 1].start).getTime();
 			const currentItemEndsBeforeNextItemEnds =
-				isNotLastItem && (event.end as Date).getTime() < (sortedEvents[index + 1].end as Date).getTime();
+				isNotLastItem && toDate(event.end).getTime() < toDate(sortedEvents[index + 1].end).getTime();
 			if (isNotLastItem && currentItemEndsAfterNextItemStarts && currentItemEndsBeforeNextItemEnds) {
 				calendarEventsPerDay[dayTitle].push(OR_ITEM_INDICATION);
 			}
 
 			// keep current event info to "last" variables.
 			lastDayTitle = dayTitle;
-			lastStart = (event.start as Date).getTime();
+			lastStart = toDate(event.start).getTime();
 			lastEnd = getEventDueDate(event).getTime();
 		});
 
@@ -412,7 +412,7 @@ const ListViewService = {
 					return;
 				}
 
-				const startTime = ListViewService._formatTime((event.start! as Date).toLocaleTimeString());
+				const startTime = ListViewService._formatTime(toDate(event.start!).toLocaleTimeString());
 				const endTime = ListViewService._formatTime(getEventDueDate(event).toLocaleTimeString());
 				const title = event.title;
 
@@ -429,10 +429,10 @@ const ListViewService = {
 
 				const subItemIcon = ListViewService._getSubitemIcon(eventStore);
 				const previousAndCurrentExactTimes =
-					previousEndTime === (event.end! as Date).getTime() &&
-					previousStartTime === (event.start! as Date).getTime();
-				const previousEndTimeAfterCurrentStart = previousEndTime > (event.start! as Date).getTime();
-				const previousEndTimeAfterCurrentEnd = previousEndTime >= (event.end! as Date).getTime();
+					previousEndTime === toDate(event.end).getTime() &&
+					previousStartTime === toDate(event.start).getTime();
+				const previousEndTimeAfterCurrentStart = previousEndTime > toDate(event.start).getTime();
+				const previousEndTimeAfterCurrentEnd = previousEndTime >= toDate(event.end).getTime();
 				const indent =
 					previousEndTimeAfterCurrentStart && previousEndTimeAfterCurrentEnd && !previousAndCurrentExactTimes
 						? subItemIcon + ' '
@@ -447,8 +447,8 @@ const ListViewService = {
 				}
 
 				if (!indent) {
-					previousEndTime = (event.end! as Date).getTime();
-					previousStartTime = (event.start! as Date).getTime();
+					previousEndTime = toDate(event.end!).getTime();
+					previousStartTime = toDate(event.start!).getTime();
 				}
 
 				const prefix =
@@ -891,7 +891,7 @@ const ListViewService = {
 		const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
 
 		// debug
-		// calendarEvents = calendarEvents.filter((x) => (x.start as Date).toLocaleDateString() === '12/6/2022');
+		// calendarEvents = calendarEvents.filter((x) => (toDate(x.start).toLocaleDateString() === '12/6/2022');
 
 		// build calendar events per day
 		const calendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(

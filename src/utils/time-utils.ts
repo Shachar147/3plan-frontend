@@ -90,7 +90,7 @@ export function getInputDateTimeValue(date: Date) {
 
 export function getEventDueDate(event: any) {
 	const hoursToAdd = 1;
-	return event.end ? event.end : addHoursToDate(new Date(event.start), hoursToAdd);
+	return event.end ? toDate(event.end) : addHoursToDate(new Date(toDate(event.start)), hoursToAdd);
 }
 
 export function addHoursToDate(date: Date, hoursToAdd: number) {
@@ -119,4 +119,10 @@ export function getAmountOfDays(startDate: string, endDate: string) {
 export function formatShortDateStringIsrael(date: string) {
 	// 01-22-2022 to 22.01
 	return `${date.split('-')[2]}.${date.split('-')[1]}`;
+}
+
+export function toDate(dt: Date | string | number | number[] | undefined) {
+	const dtDate = typeof dt === 'string' ? new Date(dt) : (dt as Date);
+	// console.log(dt, dtDate);
+	return dtDate;
 }

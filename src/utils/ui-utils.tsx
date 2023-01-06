@@ -11,7 +11,7 @@ import { getUser } from '../helpers/auth';
 import Select from 'react-select';
 import { Observer } from 'mobx-react';
 import { EventInput } from '@fullcalendar/react';
-import { getTimeStringFromDate } from './time-utils';
+import { getTimeStringFromDate, toDate } from './time-utils';
 
 const renderLanguageSelector = (eventStore: EventStore) => {
 	const options: any[] = [
@@ -296,8 +296,8 @@ export const getEventDivHtml = (eventStore: EventStore, event: EventInput) => {
                 ${
 					event.allDay
 						? ''
-						: `<div class="fc-event-time">${event.start ? getTimeStringFromDate(event.start as Date) : ''}${
-								event.end ? '-' + getTimeStringFromDate(event.end! as Date) : ''
+						: `<div class="fc-event-time">${event.start ? getTimeStringFromDate(toDate(event.start)) : ''}${
+								event.end ? '-' + getTimeStringFromDate(toDate(event.end!)) : ''
 						  }</div>`
 				}
                 ${suggestedTime}
