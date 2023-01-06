@@ -943,12 +943,12 @@ const ReactModalService = {
             cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
             confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
             confirmBtnCssClass: 'primary-button red',
-            onConfirm: () => {
+            onConfirm: async () => {
                 const lsKeys = getLocalStorageKeys();
                 const separator = (LSTripName === "") ? "" : "-";
 
                 if (tripDataSource === TripDataSource.DB){
-                    DataServices.DBService.deleteTripByName(tripName, () =>{
+                    await DataServices.DBService.deleteTripByName(tripName, () =>{
                         window.location.reload();
                     }, () => {
                         ReactModalService.internal.alertMessage(eventStore, "MODALS.ERROR.TITLE", "MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG", "error");
