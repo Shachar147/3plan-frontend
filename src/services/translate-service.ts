@@ -17,7 +17,7 @@ const TranslateService = {
 		return Object.keys(translations).includes(key)
 			? translations[key]
 			: Object.keys(translates['en']).includes(key)
-			? translates['en'][key]
+			? (translates['en'] as Record<string, string>)[key]
 			: key; // fallback
 	},
 };
