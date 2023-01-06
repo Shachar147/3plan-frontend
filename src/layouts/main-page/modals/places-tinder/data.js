@@ -1227,6 +1227,104 @@ const placesData = {
 				'ראה את הדנובה ממקור ראשון במהלך שייט זה בן 1.5 שעות על הנהר. תיהנו מארוחת צהריים טעימה וחמימה בזמן שאתם מתפעלים מבודפשט ומהארכיטקטורה שלה מהמים.',
 			category: 'כללי',
 		},
+		{
+			title: 'sugar! shop & confectionary',
+			icon: '',
+			duration: '01:00',
+			priority: '0',
+			preferredTime: '0',
+			tinder: {
+				images: [
+					'https://sugarplumsweetery.ie/wp-content/uploads/2022/08/home-shop-banner-hi-res.jpg',
+					'https://scontent.fhfa1-1.fna.fbcdn.net/v/t1.18169-9/1798496_10151848228481916_2058725356_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=730e14&_nc_ohc=J8L3PQ5PIesAX8SJPA7&_nc_ht=scontent.fhfa1-1.fna&oh=00_AfC9Corw81IL7ClwooN3hRLksRJg7YdWrCUblYQjmuy1vg&oe=63D80CA1',
+					'https://scontent.fhfa1-1.fna.fbcdn.net/v/t1.18169-9/1959797_10151848228811916_601214163_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=730e14&_nc_ohc=zoPKZ4TGk3wAX9Rw0iJ&tn=Rz69qtyhe4C0hdZ4&_nc_ht=scontent.fhfa1-1.fna&oh=00_AfDpE-oWCfSNREQA9-0q_oJ_dp9qbFBLHyjeZPkcevz-Pg&oe=63D7FABC'
+				],
+				source: 'Admin Recommendation',
+				more_info: 'https://www.facebook.com/189337101915/posts/10151848230566916/',
+			},
+			location: {
+				address: 'Budapest, SUGAR!, Paulay Ede Street, Hungary',
+				latitude: 47.5026989,
+				longitude: 19.0607914,
+			},
+			openingHours: {
+				SUNDAY: { start: '11:00', end: '19:00' },
+				MONDAY: { start: '11:00', end: '19:00' },
+				TUESDAY: { start: '11:00', end: '19:00' },
+				WEDNESDAY: { start: '11:00', end: '19:00' },
+				THURSDAY: { start: '11:00', end: '19:00' },
+				FRIDAY: { start: '11:00', end: '19:00' },
+				SATURDAY: { start: '11:00', end: '19:00' },
+			},
+			category: 'כללי',
+			start: null,
+			end: null,
+		},
+		{
+			title: 'טיקי בר',
+			icon: '',
+			duration: '01:00',
+			priority: '0',
+			preferredTime: '0',
+			location: {
+				address: 'Budapest, Tiki Bar, Király Street, Hungary',
+				latitude: 47.49966440000001,
+				longitude: 19.0593702,
+			},
+			openingHours: {
+				SUNDAY: { start: '18:00', end: '02:00' },
+				MONDAY: { start: '18:00', end: '02:00' },
+				TUESDAY: { start: '18:00', end: '02:00' },
+				WEDNESDAY: { start: '18:00', end: '02:00' },
+				THURSDAY: { start: '18:00', end: '02:00' },
+				FRIDAY: { start: '18:00', end: '03:00' },
+				SATURDAY: { start: '18:00', end: '03:00' },
+			},
+			category: 'כללי',
+			start: null,
+			end: null,
+			tinder: {
+				images: [
+					'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/8d/aa/be/getlstd-property-photo.jpg?w=1200&h=-1&s=1',
+					'https://media-cdn.tripadvisor.com/media/photo-s/1a/90/b1/35/rumpus-tiki-bar.jpg',
+					'https://media-cdn.tripadvisor.com/media/photo-s/1a/90/b0/de/rumpus-tiki-bar.jpg'
+				],
+				more_info: 'https://www.tripadvisor.co.il/Attraction_Review-g274887-d19856340-Reviews-Rumpus_Tiki_Bar-Budapest_Central_Hungary.html',
+				source: 'Admin Recommendation'
+			},
+		},
+		{
+			title: 'Vapiano',
+			icon: '',
+			duration: '01:00',
+			priority: '0',
+			preferredTime: '0',
+			description: 'רשת מסעדות איטלקית! טעים ומחירים נוחים!',
+			location: { address: 'Budapest, Vapiano, Váci Road, Hungary', latitude: 47.5136881, longitude: 19.0589833 },
+			openingHours: {
+				SUNDAY: { start: '11:00', end: '21:30' },
+				MONDAY: { start: '11:00', end: '21:30' },
+				TUESDAY: { start: '11:00', end: '21:30' },
+				WEDNESDAY: { start: '11:00', end: '21:30' },
+				THURSDAY: { start: '11:00', end: '21:30' },
+				FRIDAY: { start: '11:00', end: '21:30' },
+				SATURDAY: { start: '11:00', end: '21:30' },
+			},
+			category: 'כללי',
+			start: null,
+			end: null,
+			tinder: {
+				source: 'Admin Recommendation',
+				images: [
+					'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtVURZOQt3uFHizlvmbwe3a3sMR_r2eryTog&usqp=CAU',
+					'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvp8zvd1dWHvC8BCD_kd4ohT_JPH1wS5mgMYWxgdDVu74XOroDg3XQJPiRU5A9NWvAnAU&usqp=CAU',
+					'https://www.visittallinn.ee/static/files/083/tn3_vapiano_solaris.jpg',
+					'https://imageproxy.wolt.com/venue/5e159522c961381fd78248f9/4a1b9787d781887069c8692e468818e4',
+					'https://www.kurtosh.co.il/wp-content/uploads/2019/06/vapiano-budapest-2.jpg',
+					'https://media-cdn.tripadvisor.com/media/photo-s/19/84/a8/96/pizza-con-verduras.jpg'
+				]
+			},
+		}
 	],
 	Switzerland: [
 		{
@@ -1367,8 +1465,6 @@ const placesData = {
 				latitude: 25.2027373,
 				longitude: 55.24069409999999,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1386,8 +1482,6 @@ const placesData = {
 				latitude: 25.1910443,
 				longitude: 55.2755442,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1405,8 +1499,6 @@ const placesData = {
 				latitude: 25.092386,
 				longitude: 55.14551299999999,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1424,8 +1516,6 @@ const placesData = {
 				latitude: 25.1946394,
 				longitude: 55.2765141,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1443,14 +1533,13 @@ const placesData = {
 				longitude: 55.1541648,
 			},
 			className: 'priority-0',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
 			icon: '',
 			title: ' מסעדת zou zou (קניון)',
-			description: "מסעדה מעולה! מסעדה טורקית לבנונית שיש בה פשוט הכל - סלטים, פיצות, סטייקים! אוכל טעים וזול בהשוואה למסעדות אחרות",
+			description:
+				'מסעדה מעולה! מסעדה טורקית לבנונית שיש בה פשוט הכל - סלטים, פיצות, סטייקים! אוכל טעים וזול בהשוואה למסעדות אחרות',
 			duration: '01:00',
 			category: 'Photos',
 			priority: '0',
@@ -1462,8 +1551,6 @@ const placesData = {
 				longitude: 55.23823189999999,
 			},
 			className: 'priority-0',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1513,8 +1600,6 @@ const placesData = {
 				FRIDAY: { start: '18:00', end: '23:00' },
 				SATURDAY: { start: '18:30', end: '23:30' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1532,8 +1617,6 @@ const placesData = {
 				latitude: 25.2168344,
 				longitude: 55.2503397,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1551,8 +1634,6 @@ const placesData = {
 				latitude: 25.1857734,
 				longitude: 55.2386187,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1570,8 +1651,6 @@ const placesData = {
 				latitude: 25.1411914,
 				longitude: 55.18524679999999,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1589,8 +1668,6 @@ const placesData = {
 				longitude: 55.1541648,
 			},
 			className: 'priority-0',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1599,7 +1676,7 @@ const placesData = {
 			priority: '1',
 			allDay: false,
 			preferredTime: '0',
-			description: "ביץ׳ בר עם חוף מלאכותי",
+			description: 'ביץ׳ בר עם חוף מלאכותי',
 			location: {
 				address: 'Twiggy by La Cantine - Dubai Creek Club Street - Dubai - United Arab Emirates',
 				latitude: 25.2423804,
@@ -1610,7 +1687,7 @@ const placesData = {
 			className: 'priority-1',
 			extendedProps: {
 				id: '570',
-				description: "ביץ׳ בר עם חוף מלאכותי",
+				description: 'ביץ׳ בר עם חוף מלאכותי',
 				priority: '1',
 				icon: '',
 				preferredTime: '0',
@@ -1638,8 +1715,6 @@ const placesData = {
 				FRIDAY: { start: '09:00', end: '02:00' },
 				SATURDAY: { start: '09:00', end: '02:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1689,8 +1764,6 @@ const placesData = {
 				FRIDAY: { start: '08:00', end: '01:00' },
 				SATURDAY: { start: '08:00', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1741,8 +1814,6 @@ const placesData = {
 				FRIDAY: { start: '10:00', end: '22:30' },
 				SATURDAY: { start: '10:00', end: '22:30' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1772,8 +1843,6 @@ const placesData = {
 				latitude: 25.198765,
 				longitude: 55.27960530000001,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1806,8 +1875,6 @@ const placesData = {
 				latitude: 25.118107,
 				longitude: 55.200608,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1838,8 +1905,6 @@ const placesData = {
 				latitude: 25.0666895,
 				longitude: 55.4042518,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1886,8 +1951,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '03:00' },
 				SATURDAY: { start: '12:30', end: '03:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1934,8 +1997,6 @@ const placesData = {
 				FRIDAY: { start: '18:00', end: '02:00' },
 				SATURDAY: { start: '18:00', end: '02:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -1985,8 +2046,6 @@ const placesData = {
 				FRIDAY: { start: '08:00', end: '03:00' },
 				SATURDAY: { start: '08:00', end: '03:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2035,8 +2094,6 @@ const placesData = {
 				FRIDAY: { start: '22:30', end: '04:00' },
 				SATURDAY: { start: '22:30', end: '04:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2067,8 +2124,6 @@ const placesData = {
 				longitude: 55.1403426,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2116,8 +2171,6 @@ const placesData = {
 				SATURDAY: { start: '12:30', end: '02:00' },
 			},
 			preferredTime: '2',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2164,8 +2217,6 @@ const placesData = {
 				FRIDAY: { start: '00:00', end: '00:00' },
 				SATURDAY: { start: '00:00', end: '00:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2212,8 +2263,6 @@ const placesData = {
 				latitude: 25.1923463,
 				longitude: 55.2674618,
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2260,8 +2309,6 @@ const placesData = {
 				FRIDAY: { start: '08:00', end: '23:00' },
 				SATURDAY: { start: '08:00', end: '23:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2290,8 +2337,6 @@ const placesData = {
 			},
 			duration: '02:00',
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2340,8 +2385,6 @@ const placesData = {
 				THURSDAY: { start: '11:00', end: '20:00' },
 				FRIDAY: { start: '11:00', end: '20:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2388,8 +2431,6 @@ const placesData = {
 				FRIDAY: { start: '10:00', end: '19:00' },
 				SATURDAY: { start: '10:00', end: '19:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2397,8 +2438,7 @@ const placesData = {
 			className: 'priority-1',
 			extendedProps: {
 				id: '72',
-				description:
-					'שעות פעילות - (19:00 - 03:00) - כל יום חוץ משני ושלישי',
+				description: 'שעות פעילות - (19:00 - 03:00) - כל יום חוץ משני ושלישי',
 				priority: '1',
 				icon: '',
 				preferredTime: '5',
@@ -2418,8 +2458,7 @@ const placesData = {
 			allDay: false,
 			icon: '',
 			priority: '1',
-			description:
-				'שעות פעילות - (19:00 - 03:00) - כל יום חוץ משני ושלישי',
+			description: 'שעות פעילות - (19:00 - 03:00) - כל יום חוץ משני ושלישי',
 			duration: '01:00',
 			location: {
 				address: 'KnoX, Andaz Dubai - Dubai - United Arab Emirates',
@@ -2434,8 +2473,6 @@ const placesData = {
 				WEDNESDAY: { start: '19:00', end: '03:00' },
 				THURSDAY: { start: '19:00', end: '03:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2483,8 +2520,6 @@ const placesData = {
 				SATURDAY: { start: '14:00', end: '23:00' },
 			},
 			preferredTime: '5',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2533,8 +2568,6 @@ const placesData = {
 				FRIDAY: { start: '18:00', end: '22:30' },
 				SATURDAY: { start: '07:00', end: '10:30' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2582,8 +2615,6 @@ const placesData = {
 				SATURDAY: { start: '15:00', end: '03:00' },
 			},
 			preferredTime: '5',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2630,8 +2661,6 @@ const placesData = {
 				FRIDAY: { start: '12:30', end: '01:00' },
 				SATURDAY: { start: '12:30', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2678,8 +2707,6 @@ const placesData = {
 				FRIDAY: { start: '12:30', end: '01:00' },
 				SATURDAY: { start: '12:30', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2726,8 +2753,6 @@ const placesData = {
 				FRIDAY: { start: '09:00', end: '01:00' },
 				SATURDAY: { start: '09:00', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2757,8 +2782,6 @@ const placesData = {
 				longitude: 55.2822088,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2766,8 +2789,7 @@ const placesData = {
 			className: 'priority-1',
 			extendedProps: {
 				id: '22',
-				description:
-					'',
+				description: '',
 				priority: '1',
 				icon: '',
 				preferredTime: '6',
@@ -2782,8 +2804,7 @@ const placesData = {
 			allDay: false,
 			icon: '',
 			priority: '1',
-			description:
-				"",
+			description: '',
 			duration: '00:20',
 			location: {
 				address: 'Museum of The Future - Sheikh Zayed Road - Dubai - United Arab Emirates',
@@ -2791,8 +2812,6 @@ const placesData = {
 				longitude: 55.2819328,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2839,8 +2858,6 @@ const placesData = {
 				FRIDAY: { start: '08:00', end: '03:00' },
 				SATURDAY: { start: '08:00', end: '03:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2871,8 +2888,6 @@ const placesData = {
 			},
 			duration: '02:50',
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2919,8 +2934,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '03:00' },
 				SATURDAY: { start: '12:00', end: '03:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2969,8 +2982,6 @@ const placesData = {
 				FRIDAY: { start: '10:00', end: '22:00' },
 				SATURDAY: { start: '10:00', end: '22:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -2999,8 +3010,6 @@ const placesData = {
 			},
 			duration: '02:00',
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3031,8 +3040,6 @@ const placesData = {
 			},
 			category: 'Photos',
 			openingHours: { SUNDAY: { start: '00:00', end: '00:00' } },
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3079,8 +3086,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '23:00' },
 				SATURDAY: { start: '12:30', end: '16:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3128,8 +3133,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '23:00' },
 				SATURDAY: { start: '12:30', end: '16:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3176,8 +3179,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '23:00' },
 				SATURDAY: { start: '12:00', end: '23:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3206,8 +3207,6 @@ const placesData = {
 			},
 			duration: '01:00',
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3236,8 +3235,6 @@ const placesData = {
 				longitude: 55.2962353,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3285,8 +3282,6 @@ const placesData = {
 				FRIDAY: { start: '20:00', end: '04:00' },
 				SATURDAY: { start: '15:00', end: '04:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3294,8 +3289,7 @@ const placesData = {
 			className: 'priority-2',
 			extendedProps: {
 				id: '51',
-				description:
-					'נפתח ב8 בבוקר - ננסה להגיע בשעה הזאת',
+				description: 'נפתח ב8 בבוקר - ננסה להגיע בשעה הזאת',
 				priority: '2',
 				icon: '',
 				preferredTime: '0',
@@ -3334,8 +3328,6 @@ const placesData = {
 				FRIDAY: { start: '08:00', end: '00:00' },
 				SATURDAY: { start: '08:00', end: '00:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3384,8 +3376,6 @@ const placesData = {
 				FRIDAY: { start: '09:30', end: '18:00' },
 				SATURDAY: { start: '09:30', end: '18:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3393,7 +3383,7 @@ const placesData = {
 			className: 'priority-3',
 			extendedProps: {
 				id: '60',
-				description: "",
+				description: '',
 				priority: '3',
 				icon: '',
 				preferredTime: '2',
@@ -3406,7 +3396,7 @@ const placesData = {
 			allDay: false,
 			icon: '',
 			priority: '3',
-			description: "",
+			description: '',
 			location: {
 				address: 'WHITE Beach Dubai - Dubai - United Arab Emirates',
 				latitude: 25.1284332,
@@ -3414,8 +3404,6 @@ const placesData = {
 			},
 			duration: '03:00',
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3446,8 +3434,6 @@ const placesData = {
 			},
 			category: 'Photos',
 			openingHours: { SUNDAY: { start: '00:00', end: '00:00' } },
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3476,8 +3462,6 @@ const placesData = {
 				longitude: 55.14876909999999,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3526,8 +3510,6 @@ const placesData = {
 				FRIDAY: { start: '13:00', end: '02:00' },
 				SATURDAY: { start: '13:00', end: '02:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3560,8 +3542,6 @@ const placesData = {
 				longitude: 55.1484276,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3592,8 +3572,6 @@ const placesData = {
 				longitude: 55.1309057,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3626,8 +3604,6 @@ const placesData = {
 				longitude: 55.14876909999999,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3674,8 +3650,6 @@ const placesData = {
 				FRIDAY: { start: '10:00', end: '02:00' },
 				SATURDAY: { start: '09:00', end: '02:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3708,8 +3682,6 @@ const placesData = {
 				longitude: 55.1862234,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3738,8 +3710,6 @@ const placesData = {
 			},
 			duration: '01:00',
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3787,8 +3757,6 @@ const placesData = {
 				FRIDAY: { start: '19:00', end: '23:15' },
 				SATURDAY: { start: '12:00', end: '15:45' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3835,8 +3803,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '00:00' },
 				SATURDAY: { start: '12:00', end: '00:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3866,8 +3832,6 @@ const placesData = {
 				longitude: 55.24446469999999,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3875,8 +3839,7 @@ const placesData = {
 			className: 'priority-1',
 			extendedProps: {
 				id: '38',
-				description:
-					'המסעדה של השף המפורסם נאסר (ההוא עם המלח)',
+				description: 'המסעדה של השף המפורסם נאסר (ההוא עם המלח)',
 				priority: '1',
 				icon: '🚨🍴',
 				preferredTime: '5',
@@ -3898,8 +3861,7 @@ const placesData = {
 			allDay: false,
 			icon: '🚨🍴',
 			priority: '1',
-			description:
-				'המסעדה של השף המפורסם נאסר (ההוא עם המלח)',
+			description: 'המסעדה של השף המפורסם נאסר (ההוא עם המלח)',
 			duration: '01:30',
 			location: {
 				address: 'Nusr-Et Steakhouse Dubai - Dubai - United Arab Emirates',
@@ -3916,8 +3878,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '00:00' },
 				SATURDAY: { start: '12:00', end: '00:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -3966,8 +3926,6 @@ const placesData = {
 				FRIDAY: { start: '08:00', end: '01:00' },
 				SATURDAY: { start: '08:00', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4018,8 +3976,6 @@ const placesData = {
 				FRIDAY: { start: '00:00', end: '00:00' },
 				SATURDAY: { start: '00:00', end: '00:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4067,8 +4023,6 @@ const placesData = {
 				FRIDAY: { start: '09:00', end: '23:00' },
 				SATURDAY: { start: '09:00', end: '23:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4117,8 +4071,6 @@ const placesData = {
 				FRIDAY: { start: '00:00', end: '00:00' },
 				SATURDAY: { start: '00:00', end: '00:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4150,8 +4102,6 @@ const placesData = {
 			},
 			category: 'Photos',
 			preferredTime: '0',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4198,8 +4148,6 @@ const placesData = {
 				FRIDAY: { start: '10:00', end: '00:00' },
 				SATURDAY: { start: '10:00', end: '00:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4250,8 +4198,6 @@ const placesData = {
 				FRIDAY: { start: '16:00', end: '01:00' },
 				SATURDAY: { start: '16:00', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4282,8 +4228,6 @@ const placesData = {
 				longitude: 55.29927110000001,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4316,8 +4260,6 @@ const placesData = {
 				disableDragging: false,
 			},
 			duration: '00:50',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4349,8 +4291,6 @@ const placesData = {
 				disableDragging: false,
 			},
 			duration: '01:00',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4358,8 +4298,7 @@ const placesData = {
 			className: 'priority-3',
 			extendedProps: {
 				id: '20',
-				description:
-					'שעות פעילות - (05:00 - 09:30) - כל יום חוץ משלישי רביעי',
+				description: 'שעות פעילות - (05:00 - 09:30) - כל יום חוץ משלישי רביעי',
 				priority: '3',
 				icon: '⭐ 📸',
 				preferredTime: '1',
@@ -4372,8 +4311,7 @@ const placesData = {
 			allDay: false,
 			icon: '⭐ 📸',
 			priority: '3',
-			description:
-				'שעות פעילות - (05:00 - 09:30) - כל יום חוץ משלישי רביעי',
+			description: 'שעות פעילות - (05:00 - 09:30) - כל יום חוץ משלישי רביעי',
 			duration: '01:30',
 			location: {
 				address: 'Skydive Dubai - Al Seyahi Street - Dubai - United Arab Emirates',
@@ -4381,8 +4319,6 @@ const placesData = {
 				longitude: 55.1378533,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4430,8 +4366,6 @@ const placesData = {
 				FRIDAY: { start: '10:00', end: '19:00' },
 				SATURDAY: { start: '10:00', end: '19:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4480,8 +4414,6 @@ const placesData = {
 				FRIDAY: { start: '08:00', end: '20:00' },
 				SATURDAY: { start: '08:00', end: '20:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4500,7 +4432,7 @@ const placesData = {
 			extendedProps: {
 				icon: '',
 				priority: '1',
-				description: "",
+				description: '',
 				location: {
 					address: 'Dubai Frame - Zabeel Park Jogging Track - Dubai - United Arab Emirates',
 					latitude: 25.23556,
@@ -4530,8 +4462,6 @@ const placesData = {
 				FRIDAY: { start: '09:00', end: '21:00' },
 				SATURDAY: { start: '09:00', end: '21:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4559,8 +4489,6 @@ const placesData = {
 			},
 			category: 'Photos',
 			className: 'priority-1',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4569,7 +4497,7 @@ const placesData = {
 			priority: '1',
 			allDay: false,
 			preferredTime: '1',
-			description: "",
+			description: '',
 			location: {
 				address: 'Burj Khalifa - Sheikh Mohammed bin Rashid Boulevard - Dubai - United Arab Emirates',
 				latitude: 25.197197,
@@ -4579,7 +4507,7 @@ const placesData = {
 			extendedProps: {
 				icon: '',
 				priority: '1',
-				description: "",
+				description: '',
 				location: {
 					address: 'Burj Khalifa - Sheikh Mohammed bin Rashid Boulevard - Dubai - United Arab Emirates',
 					latitude: 25.197197,
@@ -4609,8 +4537,6 @@ const placesData = {
 				FRIDAY: { start: '00:00', end: '00:00' },
 				SATURDAY: { start: '00:00', end: '00:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4661,8 +4587,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '01:00' },
 				SATURDAY: { start: '12:00', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4712,8 +4636,6 @@ const placesData = {
 				FRIDAY: { start: '12:00', end: '01:00' },
 				SATURDAY: { start: '10:00', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4729,8 +4651,6 @@ const placesData = {
 				latitude: 25.1973348,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4746,8 +4666,6 @@ const placesData = {
 				latitude: 25.1951457,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4763,8 +4681,6 @@ const placesData = {
 				latitude: 25.196368,
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4811,8 +4727,6 @@ const placesData = {
 			},
 			className: 'priority-1',
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4837,8 +4751,6 @@ const placesData = {
 				SATURDAY: { start: '14:00', end: '02:00' },
 			},
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4886,8 +4798,6 @@ const placesData = {
 				FRIDAY: { start: '14:00', end: '01:00' },
 				SATURDAY: { start: '14:00', end: '01:00' },
 			},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4906,8 +4816,6 @@ const placesData = {
 			openingHours: { SUNDAY: { start: '00:00', end: '00:00' } },
 			category: 'Photos',
 			extendedProps: {},
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -4961,8 +4869,6 @@ const placesData = {
 				disableDragging: false,
 			},
 			className: 'priority-2',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 		{
@@ -5013,8 +4919,6 @@ const placesData = {
 			},
 			className: 'priority-2',
 			category: 'Photos',
-			start: null,
-			end: null,
 			tinder: { source: 'Admin Recommendation' },
 		},
 	],

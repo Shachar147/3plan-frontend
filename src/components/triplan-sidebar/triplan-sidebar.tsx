@@ -28,6 +28,7 @@ enum SidebarGroups {
     CALENDAR_STATISTICS = "CALENDAR_STATISTICS",
     WARNINGS = "WARNINGS",
     ACTIONS = "ACTIONS",
+    RECOMMENDATIONS = "RECOMMENDATIONS",
     PRIORITIES_LEGEND = "PRIORITIES_LEGEND"
 }
 
@@ -619,6 +620,19 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
         </div>
     }
 
+    function renderRecommendations() {
+        const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.RECOMMENDATIONS')
+        const recomendationsBlock = wrapWithSidebarGroup(
+            <>
+                <Button icon="fa-heart" flavor={ButtonFlavor["movable-link"]} onClick={() => { ReactModalService.openPlacesTinderModal(eventStore)}} text={TranslateService.translate(eventStore, 'PLACES_TINDER_LINK')}/>
+                <Button icon="fa-share" flavor={ButtonFlavor["movable-link"]} onClick={() => { ReactModalService.openShareToTinderModal(eventStore)}} text={TranslateService.translate(eventStore, 'SHARE_EVENTS_TO_TRIPLAN_TINDER')}/>
+            </>,
+            undefined, SidebarGroups.RECOMMENDATIONS, groupTitle,3
+        );
+        return <><hr className={"margin-block-2"}/>{recomendationsBlock}</>;
+
+    }
+
     return (
         <div className={"external-events-container bright-scrollbar"}>
             {renderCustomDates()}
@@ -627,16 +641,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 {renderAddEventButton()}
                 {renderAddCategoryButton()}
             </div>
-            <div className={"flex-row justify-content-center cursor-pointer"}>
-                <Button flavor={ButtonFlavor.link} onClick={() => { ReactModalService.openPlacesTinderModal(eventStore)}} text={TranslateService.translate(eventStore, 'PLACES_TINDER_LINK')}/>
-            </div>
-            <div className={"flex-row justify-content-center cursor-pointer"}>
-                <Button flavor={ButtonFlavor.link} onClick={() => { ReactModalService.openShareToTinderModal(eventStore)}} text={TranslateService.translate(eventStore, 'SHARE_EVENTS_TO_TRIPLAN_TINDER')}/>
-            </div>
-            </div>
             <div>
                 {renderWarnings()}
                 {renderActions()}
+                {renderRecommendations()}
                 {renderCalendarSidebarStatistics()}
                 {renderPrioritiesLegend()}
                 <hr className={"margin-block-2"}/>
@@ -644,6 +652,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
                 <hr style={{ marginBlock: "20px 10px" }}/>
                 {renderCategories()}
             </div>
+        </div>
         </div>
     );
 }
