@@ -4,7 +4,7 @@ import {
     defaultEvents, defaultLocalCode, getLocalStorageKeys,
     LS_ALL_EVENTS,
     LS_CALENDAR_EVENTS, LS_CALENDAR_LOCALE, LS_CATEGORIES,
-    LS_CUSTOM_DATE_RANGE, LS_DISTANCE_RESULTS, LS_SIDEBAR_EVENTS
+    LS_CUSTOM_DATE_RANGE, LS_DATA_SOURCE, LS_DISTANCE_RESULTS, LS_SIDEBAR_EVENTS
 } from "../../utils/defaults";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import TranslateService from "../translate-service";
@@ -15,10 +15,15 @@ import DataServices, {
     lsTripNameToTripName,
     Trip, tripNameToLSTripName
 } from "./data-handler-base";
+import {TripDataSource} from "../../utils/enums";
 
 export class LocalStorageService implements BaseDataHandler {
 
     CONTINUE_AS_GUEST_MODAL_LS_KEY = "triplan-hide-continue-as-guest-modal";
+
+    getDataSourceName(){
+        return TripDataSource.LOCAL;
+    }
 
     // --- GET ------------------------------------------------------------------------------
     async getTrips(eventStore: EventStore): Promise<Trip[]> {
@@ -229,6 +234,14 @@ export class LocalStorageService implements BaseDataHandler {
     setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string) {
         const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
         localStorage.setItem(key, JSON.stringify(distanceResults))
+    }
+
+    static getLastDataSource(){
+        return localStorage.getItem(LS_DATA_SOURCE) as TripDataSource;
+    }
+
+    static setLastDataSource(dataSource: TripDataSource){
+        localStorage.setItem(LS_DATA_SOURCE, dataSource)
     }
 
     // --- LOCAL STORAGE --------------------------------------------------------------------

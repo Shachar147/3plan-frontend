@@ -49,6 +49,7 @@ export interface BaseDataHandler {
     getAllEvents: (eventStore: EventStore, tripName?: string, createMode?: boolean) => AllEventsEvent[],
     getCalendarLocale: (tripName?: string, createMode?: boolean) => LocaleCode,
     getDistanceResults: (tripName?: string) => Map<string,DistanceResult>
+    getDataSourceName: () => TripDataSource
 }
 
 export const tripNameToLSTripName = (tripName: string) => tripName.replaceAll(" ","-") ;

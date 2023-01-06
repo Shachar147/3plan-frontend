@@ -569,6 +569,7 @@ export const LS_ALL_EVENTS = "triplan-all-events";
 export const LS_CALENDAR_LOCALE = "triplan-calendar-locale"
 export const LS_DISTANCE_RESULTS = "triplan-distance-results"
 export const LS_CUSTOM_DATE_RANGE = "triplan-custom-date-range"
+export const LS_DATA_SOURCE = "triplan-data-source"
 
 export function getLocalStorageKeys(){
     return {

@@ -3,20 +3,22 @@ import {action, computed, observable, runInAction, toJS} from "mobx";
 import {DateSelectArg, EventInput} from "@fullcalendar/react";
 import {LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS,} from "../utils/defaults";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory,} from "../utils/interfaces";
-import {GoogleTravelMode, ListViewSummaryMode, ViewMode} from "../utils/enums";
+import {GoogleTravelMode, ListViewSummaryMode, TripDataSource, ViewMode} from "../utils/enums";
 import {convertMsToHM} from "../utils/time-utils";
 
 // @ts-ignore
 import _ from "lodash";
-import {containsDuplicates, getCoordinatesRangeKey, lockOrderedEvents} from "../utils/utils";
+import {getCoordinatesRangeKey, lockOrderedEvents} from "../utils/utils";
 import ReactModalService from "../services/react-modal-service";
 import {
-    AllEventsEvent,
+    AllEventsEvent, BaseDataHandler,
     DataServices,
+    DateRangeFormatted,
     LocaleCode,
     lsTripNameToTripName
 } from "../services/data-handlers/data-handler-base";
 import ListViewService from "../services/list-view-service";
+import {LocalStorageService} from "../services/data-handlers/local-storage-service";
 
 const defaultModalSettings = {
     show: false,
@@ -31,18 +33,16 @@ const defaultModalSettings = {
     }
 }
 
-const dataService = DataServices.LocalStorageService;
-
 export class EventStore {
     categoryIdBuffer = 0;
     eventIdBuffer = 0;
     allowRemoveAllCalendarEvents = false;
     @observable weekendsVisible = true;
     @observable categories: TriPlanCategory[] = [];
-    @observable sidebarEvents: Record<number,SidebarEvent[]> = dataService.getSidebarEvents();
-    @observable calendarEvents: EventInput[] = dataService.getCalendarEvents();
+    @observable sidebarEvents: Record<number,SidebarEvent[]>;
+    @observable calendarEvents: EventInput[];
     @observable allEvents: AllEventsEvent[]; // SidebarEvent[];
-    @observable calendarLocalCode: LocaleCode = dataService.getCalendarLocale();
+    @observable calendarLocalCode: LocaleCode;
     @observable searchValue = "";
     @observable viewMode = ViewMode.calendar;
     @observable hideCustomDates = this.viewMode == ViewMode.calendar;
@@ -51,23 +51,35 @@ export class EventStore {
     @observable hideEmptyCategories: boolean = false;
     @observable tripName: string = "";
     @observable allEventsTripName: string = "";
-    @observable customDateRange = dataService.getDateRange();
+    @observable customDateRange: DateRangeFormatted;
     @observable showOnlyEventsWithNoLocation: boolean = false;
     @observable showOnlyEventsWithNoOpeningHours: boolean = false;
     @observable showOnlyEventsWithTodoComplete: boolean = false;
     @observable calculatingDistance = 0;
-    @observable distanceResults = observable.map<string,DistanceResult>(dataService.getDistanceResults());
+    @observable distanceResults = observable.map<string,DistanceResult>();
     @observable travelMode = GoogleTravelMode.DRIVING;
     @observable modalSettings = defaultModalSettings;
     @observable secondModalSettings = defaultModalSettings;
-    modalValues: any = {};
     @observable modalValuesRefs: any = {};
     @observable createMode: boolean = false;
     @observable listViewSummaryMode = ListViewSummaryMode.full;
+    @observable dataService: BaseDataHandler;
+    modalValues: any = {};
 
     constructor() {
-        this.categories = dataService.getCategories(this);
-        this.allEvents = dataService.getAllEvents(this);
+        const dataSourceName = LocalStorageService.getLastDataSource();
+        const defaultDataService = DataServices.LocalStorageService;
+        this.dataService = dataSourceName == TripDataSource.LOCAL ? DataServices.LocalStorageService : TripDataSource.DB ? DataServices.DBService : defaultDataService;
+
+        this.categories = this.dataService.getCategories(this);
+        this.allEvents = this.dataService.getAllEvents(this);
+
+        this.sidebarEvents = this.dataService.getSidebarEvents();
+        this.calendarEvents = this.dataService.getCalendarEvents()
+        this.calendarLocalCode = this.dataService.getCalendarLocale();
+        this.customDateRange = this.dataService.getDateRange(this.tripName, this.createMode);
+        this.distanceResults = observable.map<string,DistanceResult>(this.dataService.getDistanceResults());
+
         this.init();
     }
 
@@ -76,13 +88,15 @@ export class EventStore {
         this.initCustomDatesVisibilityBasedOnViewMode();
     }
 
-    checkIfEventHaveOpenTasks(event: any) {
+    checkIfEventHaveOpenTasks(event: SidebarEvent | CalendarEvent | AllEventsEvent | EventInput): boolean {
         let { title, description } = event;
         if (description == undefined && event.extendedProps){
             description = event.extendedProps.description;
         }
         const { taskKeywords } = ListViewService._initSummaryConfiguration();
-        const isTodoComplete = taskKeywords.find((k: string) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 || description?.toLowerCase().indexOf(k.toLowerCase()) !== -1)
+        const isTodoComplete =
+            taskKeywords.find((k: string) => title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 ||
+            description?.toLowerCase().indexOf(k.toLowerCase()) !== -1)
         return !!isTodoComplete;
     }
 
@@ -358,29 +372,29 @@ export class EventStore {
         if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
         this.allowRemoveAllCalendarEvents = false;
         const defaultEvents = this.getJSCalendarEvents() as CalendarEvent[]; // todo: make sure this conversion not fucking things up
-        dataService.setCalendarEvents(defaultEvents, this.tripName);
+        this.dataService.setCalendarEvents(defaultEvents, this.tripName);
     }
 
     @action
     setSidebarEvents(newSidebarEvents: Record<number,SidebarEvent[]>){
         this.sidebarEvents = newSidebarEvents;
         // if (!this.showOnlyEventsWithNoOpeningHours && !this.searchValue && !this.showOnlyEventsWithTodoComplete && !this.showOnlyEventsWithTodoComplete)
-        dataService.setSidebarEvents(newSidebarEvents, this.tripName);
+        this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
     }
 
     @action
     setCategories(newCategories: TriPlanCategory[]){
         this.categories = newCategories;
-        dataService.setCategories(this.categories, this.tripName);
+        this.dataService.setCategories(this.categories, this.tripName);
     }
 
     @action
     setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]){
 
-        if (containsDuplicates(newAllEvents.map((x) => x.id))){
-            // alert("error! contains duplicates!");
-            // debugger;
-        }
+        // if (containsDuplicates(newAllEvents.map((x: SidebarEvent | CalendarEvent) => x.id))){
+        //     // alert("error! contains duplicates!");
+        //     // debugger;
+        // }
 
         // debugger;
         this.allEvents = [...newAllEvents].map((x) => {
@@ -397,7 +411,7 @@ export class EventStore {
 
         // update local storage
         if (this.allEventsTripName === this.tripName) {
-            dataService.setAllEvents(this.allEvents, this.tripName);
+            this.dataService.setAllEvents(this.allEvents, this.tripName);
         }
     }
 
@@ -440,7 +454,7 @@ export class EventStore {
         // change body class name
         this.initBodyLocaleClassName();
 
-        dataService.setCalendarLocale(this.calendarLocalCode, this.tripName);
+        this.dataService.setCalendarLocale(this.calendarLocalCode, this.tripName);
     }
 
     @action
@@ -503,7 +517,9 @@ export class EventStore {
 
     @action
     async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean){
-        if (!createMode && !(await dataService.getTrips(this)).find((x) => x.name === name || x.name === lsTripNameToTripName(name))){
+        const existingTrips = await this.dataService.getTrips(this);
+
+        if (!createMode && !((existingTrips).find((x) => x.name === name || x.name === lsTripNameToTripName(name)))){
             ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
             setTimeout(() => {
                 window.location.href = '/my-trips';
@@ -511,19 +527,21 @@ export class EventStore {
                 localStorage.removeItem([LS_SIDEBAR_EVENTS, name].join("-"))
             }, 3000)
         } else {
+            LocalStorageService.setLastDataSource(this.dataService.getDataSourceName());
+
             this.tripName = name;
             this.createMode = !!createMode;
-            this.setCalendarLocalCode(calendarLocale || dataService.getCalendarLocale(name));
-            this.setSidebarEvents(dataService.getSidebarEvents(name))
-            this.setCalendarEvents(dataService.getCalendarEvents(name))
-            this.customDateRange = dataService.getDateRange(name);
-            this.allEvents = dataService.getAllEvents(this, name);
-            this.categories = dataService.getCategories(this, name);
+            this.setCalendarLocalCode(calendarLocale || this.dataService.getCalendarLocale(name));
+            this.setSidebarEvents(this.dataService.getSidebarEvents(name))
+            this.setCalendarEvents(this.dataService.getCalendarEvents(name))
+            this.customDateRange = this.dataService.getDateRange(name);
+            this.allEvents = this.dataService.getAllEvents(this, name);
+            this.categories = this.dataService.getCategories(this, name);
 
             this.allEventsTripName = name;
 
             runInAction(() => {
-                const newMap = dataService.getDistanceResults(name);
+                const newMap = this.dataService.getDistanceResults(name);
                 this.distanceResults = observable.map(newMap);
             })
         }
@@ -567,7 +585,7 @@ export class EventStore {
     @action
     setDistance(key: string, value: DistanceResult){
         this.distanceResults.set(key, value);
-        dataService.setDistanceResults(this.distanceResults, this.tripName);
+        this.dataService.setDistanceResults(this.distanceResults, this.tripName);
     }
 
     @action

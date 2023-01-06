@@ -1,36 +1,38 @@
+// @ts-ignore
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {containsDuplicates, getClasses} from '../../utils/utils';
+import {getClasses} from '../../utils/utils';
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import './main-page.css';
+import './main-page.scss';
 
 import TriplanCalendar from "../../components/triplan-calendar/triplan-calendar";
 import {eventStoreContext} from "../../stores/events-store";
 import {observer} from "mobx-react";
-import {
-    defaultEventsToCategories,
-} from "../../utils/defaults";
+import {defaultEventsToCategories} from "../../utils/defaults";
 import {renderHeaderLine} from "../../utils/ui-utils";
 import {useParams} from "react-router-dom";
 import TriplanSidebar from "../../components/triplan-sidebar/triplan-sidebar";
 import MapContainer from "../../components/map-container/map-container";
 import ListViewService from "../../services/list-view-service";
-import DBService from "../../services/db-service";
-import {getUser} from "../../helpers/auth";
 import DataServices from "../../services/data-handlers/data-handler-base";
-import {ListViewSummaryMode, ViewMode} from "../../utils/enums";
+import {ListViewSummaryMode, TripDataSource} from "../../utils/enums";
 import TranslateService from "../../services/translate-service";
 import ToggleButton from "../../components/toggle-button/toggle-button";
+import {CalendarEvent} from "../../utils/interfaces";
+import {LocalStorageService} from "../../services/data-handlers/local-storage-service";
 
-const MainPage = (props) => {
+interface MainPageProps {
+    createMode?: boolean
+}
+
+function MainPage(props: MainPageProps) {
     const { createMode } = props;
     const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories)
     const TriplanCalendarRef = useRef(null)
-    let { tripName, locale } = useParams();
-
     const eventStore = useContext(eventStoreContext);
+    const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
     // const [customDateRange, setCustomDateRange] = useState(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
 
     // todo complete
@@ -56,7 +58,9 @@ const MainPage = (props) => {
 
     useEffect(() => {
         eventStore.setTripName(tripName, locale, createMode);
-        eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName)); // must put it here, otherwise dates are incorrect
+
+        // must put it here, otherwise dates are incorrect
+        eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
     }, [tripName, locale]);
 
     useEffect(() => {
@@ -84,17 +88,14 @@ const MainPage = (props) => {
 
     }, [eventStore.sidebarEvents]);
 
-    const addEventToSidebar = (event) => {
+    function addEventToSidebar(event): boolean {
         const newEvents = {...eventStore.sidebarEvents};
         let category = eventsToCategories[event.id];
-        // console.log("category", category);
         if (!category){
             const findEvent = eventStore.allEvents.find((x) => x.id.toString() === event.id.toString());
-            // console.log("category find", findEvent);
             category = findEvent.category;
             if (!category && findEvent && findEvent.extendedProps){
                 category = findEvent.extendedProps.categoryId;
-                // console.log("category find 2", category);
             }
         }
 
@@ -115,7 +116,7 @@ const MainPage = (props) => {
         }
     }
 
-    const removeEventFromSidebarById = (eventId) => {
+    function removeEventFromSidebarById(eventId){
         const newEvents = {...eventStore.sidebarEvents};
         const newEventsToCategories = {...eventsToCategories};
         Object.keys(newEvents).forEach((c) => {
@@ -124,54 +125,73 @@ const MainPage = (props) => {
                 newEventsToCategories[eventId] = c;
             }
         });
-        eventStore.setCalendarEvents([
+        const newCalendarEvents: CalendarEvent[] = [
             ...eventStore.calendarEvents.filter(e => e.id.toString() !== eventId.toString()),
             eventStore.allEvents.find(e => e.id.toString() === eventId.toString())
-        ]);
+        ] as CalendarEvent[];
+        eventStore.setCalendarEvents(newCalendarEvents);
         setEventsToCategories(newEventsToCategories);
         eventStore.setSidebarEvents(newEvents);
     }
 
-    const renderListView = () => (
-        <div className={getClasses(["list-container flex-1-1-0"], !eventStore.isListView && 'opacity-0 position-absolute')}>
-            <div className={"list-view-mode-selector"} key={`list-view-summary-mode-${eventStore.calendarLocalCode}`}>
-                <ToggleButton
-                    value={eventStore.listViewSummaryMode}
-                    onChange={(newVal) => eventStore.setListViewSummaryMode(newVal)}
-                    options={[
-                        {
-                            key: ListViewSummaryMode.box,
-                            name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX'),
-                            // icon: (<i className="fa fa-map-o black-color" aria-hidden="true"></i>),
-                            // iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
-                        },
-                        {
-                            key: ListViewSummaryMode.noDescriptions,
-                            name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS'),
-                            // icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
-                            // iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
-                        },
-                        {
-                            key: ListViewSummaryMode.full,
-                            name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL'),
-                            // icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
-                            // iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
-                        }
-                    ]}
-                    customStyle="white"
-                />
+    function renderListView() {
+        const options = [
+            {
+                key: ListViewSummaryMode.box,
+                name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX'),
+                // icon: (<i className="fa fa-map-o black-color" aria-hidden="true"></i>),
+                // iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+            },
+            {
+                key: ListViewSummaryMode.noDescriptions,
+                name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS'),
+                // icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
+                // iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+            },
+            {
+                key: ListViewSummaryMode.full,
+                name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL'),
+                // icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
+                // iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+            }
+        ];
+
+        const onChange = (newVal) => eventStore.setListViewSummaryMode(newVal);
+
+        return (
+            <div
+                className={
+                getClasses(
+            ["list-container flex-1-1-0"],
+                    !eventStore.isListView && 'opacity-0 position-absolute'
+                )}
+            >
+                <div
+                    className="list-view-mode-selector"
+                    key={`list-view-summary-mode-${eventStore.calendarLocalCode}`}>
+                    <ToggleButton
+                        value={eventStore.listViewSummaryMode}
+                        onChange={onChange}
+                        options={options}
+                        customStyle="white"
+                    />
+                </div>
+                <div className={"trip-summary bright-scrollbar padding-top-60"}
+                     dangerouslySetInnerHTML={{__html: eventStore.isListView ? ListViewService.buildHTMLSummary(eventStore) : ""}}/>
             </div>
-            <div className={"trip-summary bright-scrollbar padding-top-60"} dangerouslySetInnerHTML={{__html: eventStore.isListView ? ListViewService.buildHTMLSummary(eventStore) : ""}} />
-        </div>
-    );
+        );
+    }
 
-    const renderMapView = () => (
-        <div className={getClasses(["map-container flex-1-1-0"], !eventStore.isMapView && 'opacity-0 position-absolute')}>
-            <MapContainer />
-        </div>
-    );
+    function renderMapView() {
+        return (
+            <div
+                className={getClasses(["map-container flex-1-1-0"], !eventStore.isMapView && 'opacity-0 position-absolute')}>
+                <MapContainer/>
+            </div>
+        );
+    }
 
-    const addToEventsToCategories = (newEvent) => {
+    function addToEventsToCategories (newEvent) {
         setEventsToCategories(
             {
                 ...eventsToCategories,
@@ -180,36 +200,40 @@ const MainPage = (props) => {
         )
     }
 
-    const renderCalendarView = () => (
-        <div className={getClasses(["calender-container bright-scrollbar flex-1-1-0"], !eventStore.isCalendarView && 'opacity-0 position-absolute')}>
-            <TriplanCalendar
-                ref={TriplanCalendarRef}
-                defaultCalendarEvents={DataServices.LocalStorageService.getCalendarEvents(eventStore.tripName)}
-                onEventReceive={removeEventFromSidebarById}
-                allEvents={eventStore.allEvents}
-                addEventToSidebar={addEventToSidebar}
-                // updateAllEventsEvent={updateAllEventsEvent}
-                customDateRange={eventStore.customDateRange}
-                categories={eventStore.categories}
+    function renderCalendarView() {
+        return (
+            <div
+                className={getClasses(["calender-container bright-scrollbar flex-1-1-0"], !eventStore.isCalendarView && 'opacity-0 position-absolute')}>
+                <TriplanCalendar
+                    ref={TriplanCalendarRef}
+                    defaultCalendarEvents={DataServices.LocalStorageService.getCalendarEvents(eventStore.tripName)}
+                    onEventReceive={removeEventFromSidebarById}
+                    allEvents={eventStore.allEvents}
+                    addEventToSidebar={addEventToSidebar}
+                    // updateAllEventsEvent={updateAllEventsEvent}
+                    customDateRange={eventStore.customDateRange}
+                    categories={eventStore.categories}
+                    addToEventsToCategories={addToEventsToCategories}
+                />
+            </div>
+        );
+    }
+
+    function renderSidebar() {
+        return (
+            <TriplanSidebar
                 addToEventsToCategories={addToEventsToCategories}
+                removeEventFromSidebarById={removeEventFromSidebarById}
+                customDateRange={eventStore.customDateRange}
+                setCustomDateRange={eventStore.setCustomDateRange.bind(eventStore)}
+                TriplanCalendarRef={TriplanCalendarRef}
             />
-        </div>)
-
-    const renderSidebar = () => (
-        <TriplanSidebar
-            addToEventsToCategories={addToEventsToCategories}
-            removeEventFromSidebarById={removeEventFromSidebarById}
-            customDateRange={eventStore.customDateRange}
-            setCustomDateRange={eventStore.setCustomDateRange.bind(eventStore)}
-            TriplanCalendarRef={TriplanCalendarRef}
-        />
-    )
-
-    // console.log('date range', customDateRange);
+        );
+    }
 
     return (
-        <div className={"main-page"} key={JSON.stringify(eventStore.customDateRange)}>
-            <div className={"header-container"}>
+        <div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
+            <div className="header-container">
                 {renderHeaderLine(eventStore, {
                     withLogo: true,
                     withSearch: true,

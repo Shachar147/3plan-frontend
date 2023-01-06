@@ -3,6 +3,7 @@ import {defaultDateRange, defaultLocalCode} from "../../utils/defaults";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import {AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, Trip} from "./data-handler-base";
 import {apiDelete, apiGetPromise, apiPost} from "../../helpers/api";
+import {TripDataSource} from "../../utils/enums";
 
 export interface upsertTripProps {
     name?: string,
@@ -15,6 +16,10 @@ export interface upsertTripProps {
 }
 
 export class DBService implements BaseDataHandler {
+
+    getDataSourceName(){
+        return TripDataSource.DB;
+    }
 
     // --- GET ------------------------------------------------------------------------------
     getAllEvents(eventStore: EventStore, tripName?: string, createMode?: boolean): AllEventsEvent[] {
