@@ -46,13 +46,13 @@ export interface BaseDataHandler {
     setCalendarLocale: (calendarLocale: LocaleCode, tripName?: string) => void,
     setDistanceResults: (distanceResults: Map<String, DistanceResult>, tripName?: string) => void,
 
-    getDateRange: (tripName: string, createMode?: boolean) => DateRangeFormatted,
-    getCategories: (eventStore: EventStore, tripName?: string, createMode?: boolean) => TriPlanCategory[],
-    getSidebarEvents: (tripName?: string, createMode?: boolean) => Record<number,SidebarEvent[]>,
-    getCalendarEvents: (tripName?: string, createMode?: boolean) => CalendarEvent[],
-    getAllEvents: (eventStore: EventStore, tripName?: string, createMode?: boolean) => AllEventsEvent[],
-    getCalendarLocale: (tripName?: string, createMode?: boolean) => LocaleCode,
-    getDistanceResults: (tripName?: string) => Map<string,DistanceResult>
+    getDateRange: (tripName: string, createMode?: boolean) => Promise<DateRangeFormatted> | DateRangeFormatted
+    getCategories: (eventStore: EventStore, tripName?: string, createMode?: boolean) => Promise<TriPlanCategory[]> | TriPlanCategory[]
+    getSidebarEvents: (tripName?: string, createMode?: boolean) => Promise<Record<number,SidebarEvent[]>> | Record<number,SidebarEvent[]>
+    getCalendarEvents: (tripName?: string, createMode?: boolean) => Promise<CalendarEvent[]> | CalendarEvent[]
+    getAllEvents: (eventStore: EventStore, tripName?: string, createMode?: boolean) => Promise<AllEventsEvent[]> | AllEventsEvent[],
+    getCalendarLocale: (tripName?: string, createMode?: boolean) => Promise<LocaleCode> | LocaleCode
+    getDistanceResults: (tripName?: string) => Promise<Map<string,DistanceResult>> | Map<string,DistanceResult>
     getDataSourceName: () => TripDataSource
 }
 

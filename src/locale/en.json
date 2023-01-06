@@ -271,5 +271,7 @@
   "MODALS.MORE_INFO_PLACEHOLDER": "Use this field to add more info about this activity / link to order.",
   "MODALS.MORE_INFO": "More Info",
   "SHARE_EVENTS_TO_TRIPLAN_TINDER": "Share this trip activities",
-  "SHARE_TO_TINDER.TITLE": "Share this trip activities"
+  "SHARE_TO_TINDER.TITLE": "Share this trip activities",
+  "LOADING_TRIP_PLACEHOLDER": "Please wait while loading...",
+  "LOADING_PAGE.TITLE": "Loading..."
 }

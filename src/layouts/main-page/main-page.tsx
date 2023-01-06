@@ -1,6 +1,6 @@
 // @ts-ignore
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {getClasses} from '../../utils/utils';
+import {getClasses, Loader, LOADER_DETAILS} from '../../utils/utils';
 import "@fullcalendar/core/main.css";
 import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
@@ -16,12 +16,12 @@ import {useParams} from "react-router-dom";
 import TriplanSidebar from "../../components/triplan-sidebar/triplan-sidebar";
 import MapContainer from "../../components/map-container/map-container";
 import ListViewService from "../../services/list-view-service";
-import DataServices from "../../services/data-handlers/data-handler-base";
+import DataServices, {LocaleCode} from "../../services/data-handlers/data-handler-base";
 import {ListViewSummaryMode, TripDataSource} from "../../utils/enums";
 import TranslateService from "../../services/translate-service";
 import ToggleButton from "../../components/toggle-button/toggle-button";
 import {CalendarEvent} from "../../utils/interfaces";
-import {LocalStorageService} from "../../services/data-handlers/local-storage-service";
+import LoadingComponent from "../../components/loading/loading-component";
 
 interface MainPageProps {
     createMode?: boolean
@@ -33,6 +33,7 @@ function MainPage(props: MainPageProps) {
     const TriplanCalendarRef = useRef(null)
     const eventStore = useContext(eventStoreContext);
     const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
+    const [loaderDetails, setLoaderDetails] = useState<Loader>(LOADER_DETAILS())
     // const [customDateRange, setCustomDateRange] = useState(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
 
     // todo complete
@@ -57,10 +58,12 @@ function MainPage(props: MainPageProps) {
     }, [TriplanCalendarRef, eventStore.customDateRange])
 
     useEffect(() => {
-        eventStore.setTripName(tripName, locale, createMode);
+        eventStore.setTripName(tripName, locale as LocaleCode, createMode);
 
         // must put it here, otherwise dates are incorrect
-        eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
+        if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
+            eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
+        }
     }, [tripName, locale]);
 
     useEffect(() => {
@@ -207,6 +210,7 @@ function MainPage(props: MainPageProps) {
                 <TriplanCalendar
                     ref={TriplanCalendarRef}
                     defaultCalendarEvents={DataServices.LocalStorageService.getCalendarEvents(eventStore.tripName)}
+                    // defaultCalendarEvents={eventStore.dataService.getCalendarEvents(eventStore.tripName)}
                     onEventReceive={removeEventFromSidebarById}
                     allEvents={eventStore.allEvents}
                     addEventToSidebar={addEventToSidebar}
@@ -231,6 +235,16 @@ function MainPage(props: MainPageProps) {
         );
     }
 
+    function renderLoading(){
+        return (
+            <LoadingComponent
+                title={TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE')}
+                message={TranslateService.translate(eventStore, "LOADING_TRIP_PLACEHOLDER")}
+                loaderDetails={loaderDetails}
+            />
+        )
+    }
+
     return (
         <div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
             <div className="header-container">
@@ -245,10 +259,15 @@ function MainPage(props: MainPageProps) {
             </div>
             <div className={"main-layout-container"}>
                 <div className={getClasses("main-layout", eventStore.getCurrentDirection())}>
-                    {renderSidebar()}
-                    {eventStore.isMapView && renderMapView()}
-                    {eventStore.isListView && renderListView()}
-                    {eventStore.isCalendarView && renderCalendarView()}
+                    {eventStore.isLoading ?
+                        renderLoading() :
+                        <>
+                            {renderSidebar()}
+                            {eventStore.isMapView && renderMapView()}
+                            {eventStore.isListView && renderListView()}
+                            {eventStore.isCalendarView && renderCalendarView()}
+                        </>
+                    }
                 </div>
             </div>
         </div>

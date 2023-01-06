@@ -1,5 +1,5 @@
 import {EventStore} from "../../stores/events-store";
-import {defaultDateRange, defaultLocalCode} from "../../utils/defaults";
+import {defaultDateRange, defaultLocalCode, LS_DISTANCE_RESULTS} from "../../utils/defaults";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import {AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, Trip} from "./data-handler-base";
 import {apiDelete, apiGetPromise, apiPost, apiPut} from "../../helpers/api";
@@ -22,39 +22,65 @@ export class DBService implements BaseDataHandler {
     }
 
     // --- GET ------------------------------------------------------------------------------
-    getAllEvents(eventStore: EventStore, tripName?: string, createMode?: boolean): AllEventsEvent[] {
-        return []; // todo complete
+    async getAllEvents(eventStore: EventStore, tripName?: string, createMode?: boolean): Promise<AllEventsEvent[]> {
+        const trip = await this.getTripData(tripName);
+        const { allEvents } = trip;
+        return allEvents;
     }
 
-    getCalendarEvents(tripName?: string, createMode?: boolean): CalendarEvent[] {
-        return []; // todo complete
+    async getCalendarEvents(tripName?: string, createMode?: boolean): Promise<CalendarEvent[]> {
+        const trip = await this.getTripData(tripName);
+        const { calendarEvents } = trip;
+        return calendarEvents;
     }
 
-    getCalendarLocale(tripName?: string, createMode?: boolean): LocaleCode {
-        return defaultLocalCode; // todo complete
+    async getCalendarLocale(tripName?: string, createMode?: boolean): Promise<LocaleCode> {
+        const trip = await this.getTripData(tripName);
+        const { calendarLocale } = trip;
+        return calendarLocale;
     }
 
-    getCategories(eventStore: EventStore, tripName?: string, createMode?: boolean): TriPlanCategory[] {
-        return []; // todo complete
+    async getCategories(eventStore: EventStore, tripName?: string, createMode?: boolean): Promise<TriPlanCategory[]> {
+        const trip = await this.getTripData(tripName);
+        const { categories } = trip;
+        return categories;
     }
 
-    getDateRange(tripName: string, createMode?: boolean): DateRangeFormatted {
-        return defaultDateRange(); // todo complete
+    async getDateRange(tripName: string, createMode?: boolean): Promise<DateRangeFormatted> {
+        const trip = await this.getTripData(tripName);
+        const { dateRange } = trip;
+        return dateRange;
     }
 
-    getDistanceResults(tripName?: string): Map<string, DistanceResult> {
-        return new Map<string,DistanceResult>(); // todo complete
+    async getDistanceResults(tripName?: string): Promise<Map<string, DistanceResult>> {
+        // todo complete - move to dedicated route in the server.
+
+        // return new Map<string,DistanceResult>(); // todo complete
+        const createMode = window.location.href.indexOf("/create/") !== -1;
+        const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
+        if (!localStorage.getItem(key)){
+            if (!createMode) return new Map<string, DistanceResult>();
+            this.setDistanceResults({} as Map<string, DistanceResult>, tripName);
+        }
+        // @ts-ignore
+        return JSON.parse(localStorage.getItem(key)) || {};
     }
 
-    getSidebarEvents(tripName?: string, createMode?: boolean): Record<number, SidebarEvent[]> {
-        return {}; // todo complete
+    async getSidebarEvents(tripName?: string, createMode?: boolean): Promise<Record<number, SidebarEvent[]>> {
+        const trip = await this.getTripData(tripName);
+        const { sidebarEvents } = trip;
+        return sidebarEvents;
+    }
+
+    async getTripData(tripName?: string): Promise<Trip> {
+        const res: any = await apiGetPromise(this, `/trip/name/${tripName}`);
+        return res.data as Trip;
     }
 
     async getTrips(eventStore: EventStore): Promise<Trip[]> {
         const res: any = await apiGetPromise(this, '/trip/');
         const trips: Trip[] = [];
         res.data.data.forEach((x: any) => {
-            // x.name += ' (db)'; // todo remove
             trips.push(x as Trip);
         });
         return trips;

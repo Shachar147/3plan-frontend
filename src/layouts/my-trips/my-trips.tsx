@@ -15,11 +15,12 @@ import {getUser} from '../../helpers/auth';
 import Button, {ButtonFlavor} from '../../components/common/button/button';
 import {formatShortDateStringIsrael, getAmountOfDays} from "../../utils/time-utils";
 import {runInAction} from "mobx";
+import {LocalStorageService} from "../../services/data-handlers/local-storage-service";
 
 const noTripsPlaceholderIcon = "./images/search-placeholder.png";
 
 function MyTrips() {
-	const [dataSource, setDataSource] = useState<TripDataSource>(getUser() ? TripDataSource.DB : TripDataSource.LOCAL);
+	const [dataSource, setDataSource] = useState<TripDataSource>(LocalStorageService.getLastDataSource() ?? (getUser() ? TripDataSource.DB : TripDataSource.LOCAL));
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
 	const [applyFadeIn, setApplyFadeIn] = useState(false);
 	const eventStore = useContext(eventStoreContext);
@@ -170,7 +171,7 @@ function MyTrips() {
 		];
 		const onChange = (newVal) => {
 			const dataService =
-				dataSource === TripDataSource.DB ? DataServices.DBService : DataServices.LocalStorageService;
+				newVal === TripDataSource.DB ? DataServices.DBService : DataServices.LocalStorageService;
 
 			runInAction(() => {
 				eventStore.dataService = dataService;

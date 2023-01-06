@@ -2,6 +2,8 @@ import {TriplanEventPreferredTime, TriplanPriority} from "./enums";
 import {SidebarEvent, TriPlanCategory} from "./interfaces";
 import {padTo2Digits} from "./utils";
 import {DateRangeFormatted} from "../services/data-handlers/data-handler-base";
+import TranslateService from "../services/translate-service";
+import {EventStore} from "../stores/events-store";
 
 export const defaultLocalCode = "he";
 export const defaultTimedEventDuration = '01:00';
@@ -508,6 +510,21 @@ export const defaultEvents2: Record<number, SidebarEvent[]> = {
 };
 
 export const defaultCalendarEvents = [];
+
+export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] => {
+    return [
+        {
+            id: 1,
+            icon: "",
+            title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL')
+        },
+        {
+            id: 2,
+            icon: "",
+            title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS')
+        }
+    ]
+}
 
 export const defaultCategoriesOldold: TriPlanCategory[] = [];
 export const defaultCategoriesHeb: TriPlanCategory[] = [{"id":2,"icon":"","title":"לוגיסטיקה"},{"id":3,"icon":"📸","title":"תמונות"},{"id":4,"icon":"","title":"כללי"},{"id":5,"icon":"⭐","title":"אטרקציות"},{"id":6,"icon":"🍴","title":"אוכל"},{"id":7,"icon":"🚨 🏖","title":"ביץ׳ קלאבס"},{"id":8,"icon":"🍻","title":"ברים"},{"id":9,"icon":"🛒","title":"קניות"},{"id":10,"icon":"","title":"מועדונים"},{"id":12,"title":"הערות","icon":""}] // [];

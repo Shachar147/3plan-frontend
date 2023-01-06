@@ -1,7 +1,7 @@
 import {EventStore} from "../../stores/events-store";
 import {
     defaultCalendarEvents, defaultDateRange,
-    defaultEvents, defaultLocalCode, getLocalStorageKeys,
+    defaultEvents, defaultLocalCode, getDefaultCategories, getLocalStorageKeys,
     LS_ALL_EVENTS,
     LS_CALENDAR_EVENTS, LS_CALENDAR_LOCALE, LS_CATEGORIES,
     LS_CUSTOM_DATE_RANGE, LS_DATA_SOURCE, LS_DISTANCE_RESULTS, LS_SIDEBAR_EVENTS
@@ -45,6 +45,7 @@ export class LocalStorageService implements BaseDataHandler {
                 if (jsonString) {
                     const dates = JSON.parse(jsonString);
 
+                    // @ts-ignore
                     trips.push({
                         name: tripName,
                         dateRange: dates,
@@ -125,20 +126,7 @@ export class LocalStorageService implements BaseDataHandler {
         createMode = createMode || window.location.href.indexOf("/create/") !== -1;
         if (!localStorage.getItem(key)){
             if (!createMode) return [];
-
-            const defaultCategories: TriPlanCategory[] = [
-                {
-                    id: 1,
-                    icon: "",
-                    title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL')
-                },
-                {
-                    id: 2,
-                    icon: "",
-                    title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS')
-                }
-            ]
-            if (tripName) this.setCategories(defaultCategories, tripName);
+            if (tripName) this.setCategories(getDefaultCategories(eventStore), tripName);
         }
         return JSON.parse(localStorage.getItem(key)!) || [];
     }

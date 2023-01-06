@@ -50,13 +50,14 @@ function PlacesTinder(props: PlacesTinderProps){
     const [dislikedList, setDislikedList] = useState<any[]>([]);
 
     const existingTitles = useMemo(() => {
-        return eventStore.allEvents.map((p) => p.title);
-    }, [eventStore.allEvents]);
+        return eventStore.allEvents?.map((p) => p.title) ?? [];
+    }, [eventStore.allEvents, eventStore.isLoading]);
 
     const existingLocations = useMemo(() => {
-        return eventStore.allEvents.filter((p) => p.location).map((p) => JSON.stringify(p.location));
-    }, [eventStore.allEvents]);
+        return eventStore.allEvents?.filter((p) => p.location).map((p) => JSON.stringify(p.location)) ?? [];
+    }, [eventStore.allEvents, eventStore.isLoading]);
 
+    // todo move to server (?)
     const lsKey = "triplan-places-tinder-disliked-list";
     useEffect(() => {
         if (!localStorage.getItem(lsKey)){

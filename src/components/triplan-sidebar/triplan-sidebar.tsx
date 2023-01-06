@@ -15,6 +15,7 @@ import {priorityToColor} from "../../utils/consts";
 import ListViewService from "../../services/list-view-service";
 import ReactModalService from "../../services/react-modal-service";
 import {DateRangeFormatted} from "../../services/data-handlers/data-handler-base";
+import LoadingComponent from "../loading/loading-component";
 
 export interface TriplanSidebarProps {
     removeEventFromSidebarById: (eventId: string) => void,
