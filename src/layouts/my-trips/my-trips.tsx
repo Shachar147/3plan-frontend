@@ -138,6 +138,7 @@ function MyTrips() {
 
 		return (
 			<div
+				key={trip.name}
 				className={classList}
 				onClick={() => {
 					eventStore.setTripName(tripName);

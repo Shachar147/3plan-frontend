@@ -93,7 +93,7 @@ export class EventStore {
             this.distanceResults = observable.map<string, DistanceResult>(DataServices.LocalStorageService.getDistanceResults());
             this.initBodyLocaleClassName();
             this.initCustomDatesVisibilityBasedOnViewMode();
-            console.log("hey2!")
+            // console.log("hey2!")
             this.isLoading = false;
         } else {
             const promises = [
@@ -141,10 +141,18 @@ export class EventStore {
 
     // --- computed -------------------------------------------------------------
 
+    toDate(dt: Date | string | number | number[] | undefined){
+        const dtDate = typeof dt === 'string' ? new Date(dt): dt as Date;
+        // console.log(dt, dtDate);
+        return dtDate;
+    }
+
     reduceEventsEndDateToFitDistanceResult = (filteredEvents: EventInput[]): EventInput[] => {
         // only if not in filter mode - add driving instructions
         if (filteredEvents.length === this.calendarEvents.length) {
-            filteredEvents = filteredEvents.sort((a, b) => (a.start as Date).getTime() - (b.start as Date).getTime())
+            filteredEvents = filteredEvents.sort((a, b) => {
+                return this.toDate(a.start).getTime() - this.toDate(b.start).getTime()
+            })
 
             const extractDetails = (event:EventInput) => {
                 const location = event.extendedProps?.location?.address;
@@ -429,6 +437,8 @@ export class EventStore {
 
     @action
     setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]){
+
+        if (this.tripName == "") return;
 
         // if (containsDuplicates(newAllEvents.map((x: SidebarEvent | CalendarEvent) => x.id))){
         //     // alert("error! contains duplicates!");

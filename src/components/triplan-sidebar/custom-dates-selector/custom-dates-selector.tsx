@@ -11,11 +11,10 @@ export interface CustomDatesSelectorProps {
     TriplanCalendarRef?: React.MutableRefObject<any>,
 }
 
-const dataService = DataServices.LocalStorageService;
-
 const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 
     const eventStore = useContext(eventStoreContext);
+    const dataService = eventStore.dataService;
     const { customDateRange, setCustomDateRange, TriplanCalendarRef } = props;
 
     const arrowIcon = eventStore.getCurrentDirection() === 'rtl' ? 'left' : 'right';

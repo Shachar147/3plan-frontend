@@ -87,32 +87,106 @@ export class DBService implements BaseDataHandler {
     }
 
     // --- SET ------------------------------------------------------------------------------
-    setAllEvents(allEvents: AllEventsEvent[], tripName: string): void {
-        // todo complete
+    async setAllEvents(allEvents: AllEventsEvent[], tripName: string) {
+        await apiPut(this,
+            `/trip/name/${tripName}`,
+            { allEvents },
+            async function(res: any) {
+                // success
+            },
+            function(error: any, error_retry: number) {
+                // error
+            },
+            function() {
+                // finish
+            }
+        );
     }
 
-    setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string): void {
-        // todo complete
+    async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
+        await apiPut(this,
+            `/trip/name/${tripName}`,
+            { calendarEvents },
+            async function(res: any) {
+                // success
+            },
+            function(error: any, error_retry: number) {
+                // error
+            },
+            function() {
+                // finish
+            }
+        );
     }
 
-    setCalendarLocale(calendarLocale: LocaleCode, tripName?: string): void {
-        // todo complete
+    async setCalendarLocale(calendarLocale: LocaleCode, tripName?: string) {
+        await apiPut(this,
+            `/trip/name/${tripName}`,
+            { calendarLocale },
+            async function(res: any) {
+                // success
+            },
+            function(error: any, error_retry: number) {
+                // error
+            },
+            function() {
+                // finish
+            }
+        );
     }
 
-    setCategories(categories: TriPlanCategory[], tripName: string): void {
-        // todo complete
+    async setCategories(categories: TriPlanCategory[], tripName: string) {
+        await apiPut(this,
+            `/trip/name/${tripName}`,
+            { categories },
+            async function(res: any) {
+                // success
+            },
+            function(error: any, error_retry: number) {
+                // error
+            },
+            function() {
+                // finish
+            }
+        );
     }
 
-    setDateRange(dateRange: DateRangeFormatted, tripName: string): void {
-        // todo complete
+    async setDateRange(dateRange: DateRangeFormatted, tripName: string) {
+        await apiPut(this,
+            `/trip/name/${tripName}`,
+            { dateRange },
+            async function(res: any) {
+                // success
+            },
+            function(error: any, error_retry: number) {
+                // error
+            },
+            function() {
+                // finish
+            }
+        );
     }
 
     setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string): void {
         // todo complete
+        const key = tripName ? [LS_DISTANCE_RESULTS,tripName].join("-") : LS_DISTANCE_RESULTS;
+        localStorage.setItem(key, JSON.stringify(distanceResults))
     }
 
-    setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string): void {
-        // todo complete
+    async setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) {
+        await apiPut(this,
+            `/trip/name/${tripName}`,
+            { sidebarEvents },
+            async function(res: any) {
+                // success
+            },
+            function(error: any, error_retry: number) {
+                // error
+            },
+            function() {
+                // finish
+            }
+        );
     }
 
     async setTripName(tripName: string, newTripName: string) {
