@@ -11,7 +11,7 @@ const translates = {
 const TranslateService = {
 	translate: (eventStore: EventStore, key: string) => {
 		const language = eventStore.calendarLocalCode;
-		const translations = translates[language];
+		const translations: Record<string, string> = translates[language];
 
 		// @ts-ignore
 		return Object.keys(translations).includes(key)

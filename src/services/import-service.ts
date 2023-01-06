@@ -195,7 +195,7 @@ const ImportService = {
 		let errors: string[] = [];
 		let numOfEventsWithErrors: Record<number, number> = {};
 
-		const categoryIcons = {};
+		const categoryIcons: any = {};
 
 		for (let i = 1; i < lines.length; i++) {
 			const event = {};
