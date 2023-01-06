@@ -212,7 +212,7 @@ export class LocalStorageService implements BaseDataHandler {
         localStorage.setItem(key, JSON.stringify(sidebarEvents));
     }
 
-    setTripName(tripName: string, newTripName: string): void {
+    async setTripName(tripName: string, newTripName: string) {
         const LSTripName = tripNameToLSTripName(tripName);
         const newLSTripName = tripNameToLSTripName(newTripName);
 

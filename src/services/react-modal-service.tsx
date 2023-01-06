@@ -866,7 +866,7 @@ const ReactModalService = {
         const tripName = LSTripName !== "" ? lsTripNameToTripName(LSTripName) : "";
         const title = `${TranslateService.translate(eventStore, 'EDIT_TRIP_MODAL.TITLE')}: ${tripName}`
 
-        const onConfirm = () => {
+        const onConfirm = async () => {
 
             // @ts-ignore
             const newName = eventStore.modalValues.name;
@@ -893,7 +893,8 @@ const ReactModalService = {
 
             if (isOk) {
 
-                DataServices.LocalStorageService.setTripName(tripName, newName)
+                await eventStore.dataService.setTripName(tripName, newName);
+                // DataServices.LocalStorageService.setTripName(tripName, newName)
 
                 ReactModalService.internal.closeModal(eventStore);
 

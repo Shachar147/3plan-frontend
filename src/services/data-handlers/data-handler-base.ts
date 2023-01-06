@@ -13,7 +13,11 @@ export interface Trip {
     sidebarEvents: Record<number,SidebarEvent[]>,
     calendarEvents: CalendarEvent[],
     allEvents: AllEventsEvent[],
-    calendarLocale: LocaleCode
+    calendarLocale: LocaleCode,
+}
+
+export interface DBTrip extends Trip {
+    id: number
 }
 
 export interface DateRange {
@@ -33,7 +37,7 @@ export interface AllEventsEvent extends SidebarEvent {
 
 export interface BaseDataHandler {
     getTrips: (eventStore: EventStore) => Promise<Trip[]>,
-    setTripName: (tripName: string, newTripName: string) => void,
+    setTripName: (tripName: string, newTripName: string) => Promise<void>,
     setDateRange: (dateRange: DateRangeFormatted, tripName: string) => void,
     setCategories: (categories: TriPlanCategory[], tripName: string) => void,
     setSidebarEvents: (sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) => void,

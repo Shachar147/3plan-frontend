@@ -2,7 +2,7 @@ import {EventStore} from "../../stores/events-store";
 import {defaultDateRange, defaultLocalCode} from "../../utils/defaults";
 import {CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
 import {AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, Trip} from "./data-handler-base";
-import {apiDelete, apiGetPromise, apiPost} from "../../helpers/api";
+import {apiDelete, apiGetPromise, apiPost, apiPut} from "../../helpers/api";
 import {TripDataSource} from "../../utils/enums";
 
 export interface upsertTripProps {
@@ -89,8 +89,20 @@ export class DBService implements BaseDataHandler {
         // todo complete
     }
 
-    setTripName(tripName: string, newTripName: string): void {
-        // todo complete
+    async setTripName(tripName: string, newTripName: string) {
+        await apiPut(this,
+            `/trip/name/${tripName}`,
+            { name: newTripName },
+            async function(res: any) {
+                // success
+            },
+            function(error: any, error_retry: number) {
+                // error
+            },
+            function() {
+                // finish
+            }
+        );
     }
 
     // --------------------------------------------------------------------------------------
@@ -101,7 +113,7 @@ export class DBService implements BaseDataHandler {
         finallyCallback?: () => void
     ){
         await apiDelete(this,
-            '/trip/name/' + tripName,
+            `/trip/name/${tripName}`,
             async function(res: any) {
                 if (successCallback){
                     successCallback(res);

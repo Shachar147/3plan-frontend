@@ -8,7 +8,7 @@ import {observer} from 'mobx-react';
 import {renderFooterLine, renderHeaderLine} from '../../utils/ui-utils';
 import {getClasses} from '../../utils/utils';
 import ReactModalService from '../../services/react-modal-service';
-import DataServices, {Trip, tripNameToLSTripName} from '../../services/data-handlers/data-handler-base';
+import DataServices, {DBTrip, Trip, tripNameToLSTripName} from '../../services/data-handlers/data-handler-base';
 import ToggleButton from '../../components/toggle-button/toggle-button';
 import {TripDataSource} from '../../utils/enums';
 import {getUser} from '../../helpers/auth';
@@ -24,7 +24,7 @@ function MyTrips() {
 	const [applyFadeIn, setApplyFadeIn] = useState(false);
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
-	const [lsTrips, setLsTrips] = useState<Trip[]>([]);
+	const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
 
 	const dataService = useMemo(() => DataServices.getService(dataSource), [dataSource]);
 
@@ -84,6 +84,7 @@ function MyTrips() {
 		if (Object.keys(eventStore.modalValues).length === 0) {
 			eventStore.modalValues.name =
 				LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
+
 		}
 		ReactModalService.openEditTripModal(eventStore, LSTripName);
 	}
@@ -94,7 +95,7 @@ function MyTrips() {
 		ReactModalService.openDeleteTripModal(eventStore, LSTripName, dataSource);
 	}
 
-	function renderTrip(trip: Trip) {
+	function renderTrip(trip: Trip | DBTrip) {
 		const tripName = trip.name;
 		const LSTripName = tripNameToLSTripName(tripName);
 		const dates = trip.dateRange;
@@ -138,11 +139,6 @@ function MyTrips() {
 			<div
 				className={classList}
 				onClick={() => {
-					const dataService =
-						dataSource === TripDataSource.DB ? DataServices.DBService : DataServices.LocalStorageService;
-					runInAction(() => {
-						eventStore.dataService = dataService;
-					})
 					eventStore.setTripName(tripName);
 					navigate('/plan/' + LSTripName, {});
 				}}
@@ -172,7 +168,16 @@ function MyTrips() {
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.TRIP_DATA_SOURCE.DB'),
 			},
 		];
-		const onChange = (newVal) => setDataSource(newVal as TripDataSource);
+		const onChange = (newVal) => {
+			const dataService =
+				dataSource === TripDataSource.DB ? DataServices.DBService : DataServices.LocalStorageService;
+
+			runInAction(() => {
+				eventStore.dataService = dataService;
+			})
+
+			setDataSource(newVal as TripDataSource);
+		}
 
 		return (
 			<div className="my-trips-header" key={`my-trips-header-${eventStore.calendarLocalCode}`}>
