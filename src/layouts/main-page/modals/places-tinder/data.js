@@ -1237,7 +1237,7 @@ const placesData = {
 				images: [
 					'https://sugarplumsweetery.ie/wp-content/uploads/2022/08/home-shop-banner-hi-res.jpg',
 					'https://scontent.fhfa1-1.fna.fbcdn.net/v/t1.18169-9/1798496_10151848228481916_2058725356_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=730e14&_nc_ohc=J8L3PQ5PIesAX8SJPA7&_nc_ht=scontent.fhfa1-1.fna&oh=00_AfC9Corw81IL7ClwooN3hRLksRJg7YdWrCUblYQjmuy1vg&oe=63D80CA1',
-					'https://scontent.fhfa1-1.fna.fbcdn.net/v/t1.18169-9/1959797_10151848228811916_601214163_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=730e14&_nc_ohc=zoPKZ4TGk3wAX9Rw0iJ&tn=Rz69qtyhe4C0hdZ4&_nc_ht=scontent.fhfa1-1.fna&oh=00_AfDpE-oWCfSNREQA9-0q_oJ_dp9qbFBLHyjeZPkcevz-Pg&oe=63D7FABC'
+					'https://scontent.fhfa1-1.fna.fbcdn.net/v/t1.18169-9/1959797_10151848228811916_601214163_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=730e14&_nc_ohc=zoPKZ4TGk3wAX9Rw0iJ&tn=Rz69qtyhe4C0hdZ4&_nc_ht=scontent.fhfa1-1.fna&oh=00_AfDpE-oWCfSNREQA9-0q_oJ_dp9qbFBLHyjeZPkcevz-Pg&oe=63D7FABC',
 				],
 				source: 'Admin Recommendation',
 				more_info: 'https://www.facebook.com/189337101915/posts/10151848230566916/',
@@ -1287,10 +1287,11 @@ const placesData = {
 				images: [
 					'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/8d/aa/be/getlstd-property-photo.jpg?w=1200&h=-1&s=1',
 					'https://media-cdn.tripadvisor.com/media/photo-s/1a/90/b1/35/rumpus-tiki-bar.jpg',
-					'https://media-cdn.tripadvisor.com/media/photo-s/1a/90/b0/de/rumpus-tiki-bar.jpg'
+					'https://media-cdn.tripadvisor.com/media/photo-s/1a/90/b0/de/rumpus-tiki-bar.jpg',
 				],
-				more_info: 'https://www.tripadvisor.co.il/Attraction_Review-g274887-d19856340-Reviews-Rumpus_Tiki_Bar-Budapest_Central_Hungary.html',
-				source: 'Admin Recommendation'
+				more_info:
+					'https://www.tripadvisor.co.il/Attraction_Review-g274887-d19856340-Reviews-Rumpus_Tiki_Bar-Budapest_Central_Hungary.html',
+				source: 'Admin Recommendation',
 			},
 		},
 		{
@@ -1321,10 +1322,10 @@ const placesData = {
 					'https://www.visittallinn.ee/static/files/083/tn3_vapiano_solaris.jpg',
 					'https://imageproxy.wolt.com/venue/5e159522c961381fd78248f9/4a1b9787d781887069c8692e468818e4',
 					'https://www.kurtosh.co.il/wp-content/uploads/2019/06/vapiano-budapest-2.jpg',
-					'https://media-cdn.tripadvisor.com/media/photo-s/19/84/a8/96/pizza-con-verduras.jpg'
-				]
+					'https://media-cdn.tripadvisor.com/media/photo-s/19/84/a8/96/pizza-con-verduras.jpg',
+				],
 			},
-		}
+		},
 	],
 	Switzerland: [
 		{
@@ -1340,8 +1341,7 @@ const placesData = {
 				longitude: 8.4030095,
 			},
 			openingHours: '[object Object]',
-			images:
-				'https://cdn.kiwicollection.com/media/property/PR010217/xl/010217-01-pool-views=Hotel%20Villa%20Honegg.jpg?cb=1592492051\nhttps://www.gambetanews.com/wp-content/uploads/2018/02/villa-honegg-563x353.jpg\nhttps://cf.bstatic.com/xdata/images/hotel/max1280x900/219516418.jpg?k=f9402df4a081af3572517afa1c572e9f093d3983d9b51b07a4eb5e6f917a5f0a&o=&hp=1\nhttps://cf.bstatic.com/xdata/images/hotel/max1280x900/333864534.jpg?k=599ba34c8c653c93438d2eab80b1ff3c91f2e7c3827799035c5b326437e6d626&o=&hp=1\nhttps://cf.bstatic.com/xdata/images/hotel/max1280x900/219520910.jpg?k=a9e550d70d8c7276e747b56445147f1b0465d088eb2ff1f7f83be721e3e4f3e2&o=&hp=1',
+			images: 'https://cdn.kiwicollection.com/media/property/PR010217/xl/010217-01-pool-views=Hotel%20Villa%20Honegg.jpg?cb=1592492051\nhttps://www.gambetanews.com/wp-content/uploads/2018/02/villa-honegg-563x353.jpg\nhttps://cf.bstatic.com/xdata/images/hotel/max1280x900/219516418.jpg?k=f9402df4a081af3572517afa1c572e9f093d3983d9b51b07a4eb5e6f917a5f0a&o=&hp=1\nhttps://cf.bstatic.com/xdata/images/hotel/max1280x900/333864534.jpg?k=599ba34c8c653c93438d2eab80b1ff3c91f2e7c3827799035c5b326437e6d626&o=&hp=1\nhttps://cf.bstatic.com/xdata/images/hotel/max1280x900/219520910.jpg?k=a9e550d70d8c7276e747b56445147f1b0465d088eb2ff1f7f83be721e3e4f3e2&o=&hp=1',
 			category: 'כללי',
 			allDay: false,
 			className: 'priority-0',
@@ -1366,8 +1366,7 @@ const placesData = {
 			description:
 				'* Titlis Engelberg רכבל‏\n* טיטליס - ההר עצמו\n* titlis cliff walk - גשר\n* titlis glacier cave - מערת קרח',
 			location: { address: 'Titlis, Engelberg, Switzerland', latitude: 46.772048, longitude: 8.4377704 },
-			images:
-				'https://www.titlis.ch/website/var/tmp/image-thumbnails/40000/49626/thumb__titlisActivitySlider/Titlis_Gletschergrotte%20-14-.jpeg\nhttps://www.titlis.ch/website/var/tmp/image-thumbnails/20000/22525/thumb__titlisHighlightSmall/Rotair%20-2-.jpeg\nhttps://www.titlis.ch/website/var/tmp/image-thumbnails/20000/22533/thumb__titlisHighlightBig/Cliff%20Walk%20-2-.jpeg\nhttps://www.titlis.ch/website/var/tmp/image-thumbnails/40000/49624/thumb__titlisHighlightSmall/Titlis_Gletschergrotte%20-20-.jpeg\nhttps://cdn.getyourguide.com/img/tour/79b143c1666c514d.jpeg/146.jpg',
+			images: 'https://www.titlis.ch/website/var/tmp/image-thumbnails/40000/49626/thumb__titlisActivitySlider/Titlis_Gletschergrotte%20-14-.jpeg\nhttps://www.titlis.ch/website/var/tmp/image-thumbnails/20000/22525/thumb__titlisHighlightSmall/Rotair%20-2-.jpeg\nhttps://www.titlis.ch/website/var/tmp/image-thumbnails/20000/22533/thumb__titlisHighlightBig/Cliff%20Walk%20-2-.jpeg\nhttps://www.titlis.ch/website/var/tmp/image-thumbnails/40000/49624/thumb__titlisHighlightSmall/Titlis_Gletschergrotte%20-20-.jpeg\nhttps://cdn.getyourguide.com/img/tour/79b143c1666c514d.jpeg/146.jpg',
 			category: 'כללי',
 			extendedProps: {},
 			tinder: {
@@ -1403,8 +1402,7 @@ const placesData = {
 				FRIDAY: { start: '08:00', end: '15:30' },
 				SATURDAY: { start: '08:00', end: '15:30' },
 			},
-			images:
-				'https://myfaultycompass.com/wp-content/uploads/IMG_9612-1024x768.jpg\nhttps://packedagain.com/wp-content/uploads/2022/05/how-to-visit-the-grindelwlad-first-cliff-walk.jpg\nhttps://packedagain.com/wp-content/uploads/2022/05/family-on-first-cliff-walk.jpg\nhttps://packedagain.com/wp-content/uploads/2022/05/Corina-on-the-First-Cliff-walk-bridge-.jpg',
+			images: 'https://myfaultycompass.com/wp-content/uploads/IMG_9612-1024x768.jpg\nhttps://packedagain.com/wp-content/uploads/2022/05/how-to-visit-the-grindelwlad-first-cliff-walk.jpg\nhttps://packedagain.com/wp-content/uploads/2022/05/family-on-first-cliff-walk.jpg\nhttps://packedagain.com/wp-content/uploads/2022/05/Corina-on-the-First-Cliff-walk-bridge-.jpg',
 			category: 'כללי',
 			tinder: {
 				images: [
@@ -1434,8 +1432,7 @@ const placesData = {
 			priority: '0',
 			preferredTime: '0',
 			location: { address: 'Sisikon, Switzerland', latitude: 46.9498719, longitude: 8.6220124 },
-			images:
-				'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/03/51/d6/af/caption.jpg?w=2400&h=-1&s=1\nhttps://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/3a/86/d3/the-walk.jpg?w=1400&h=-1&s=1\nhttps://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/13/c2/38/hotel-restaurant-tellsplatte.jpg?w=1600&h=-1&s=1\nhttps://dynamic-media-cdn.tripadvisor.com/media/photo-o/0c/dc/df/38/caption.jpg?w=1400&h=-1&s=1',
+			images: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/03/51/d6/af/caption.jpg?w=2400&h=-1&s=1\nhttps://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/3a/86/d3/the-walk.jpg?w=1400&h=-1&s=1\nhttps://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/13/c2/38/hotel-restaurant-tellsplatte.jpg?w=1600&h=-1&s=1\nhttps://dynamic-media-cdn.tripadvisor.com/media/photo-o/0c/dc/df/38/caption.jpg?w=1400&h=-1&s=1',
 			category: 'כללי',
 			tinder: {
 				images: [

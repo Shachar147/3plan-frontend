@@ -1,6 +1,6 @@
-import React, {useRef, useState, useMemo, useEffect} from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import './toggle-button.css';
-import {getClasses} from "../../utils/utils";
+import { getClasses } from '../../utils/utils';
 
 export function useIntervalWhile(action: () => boolean, interval: number, maxTries: number, deps?: any[]) {
 	return useEffect(() => {
@@ -64,7 +64,9 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 
 			// take left / right based on current direction (for different languages)
 			const left =
-				direction === 'ltr' ? Math.abs(Math.floor(childRect.left) - Math.floor(containerRect.left) - 1) : undefined;
+				direction === 'ltr'
+					? Math.abs(Math.floor(childRect.left) - Math.floor(containerRect.left) - 1)
+					: undefined;
 			const right =
 				direction === 'rtl'
 					? Math.abs(Math.floor(childRect.right) - Math.floor(containerRect.right) - 1)
@@ -79,25 +81,24 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 				setUpdateCount((old) => old + 1);
 			}
 			return isRendered;
-
-		},1);
+		}, 1);
 	}
 
 	function renderIcon(icon?: string | JSX.Element) {
 		if (!icon) {
 			return undefined;
 		}
-		if (fontAwesomeIcons){
+		if (fontAwesomeIcons) {
 			return icon;
 		}
 		if (typeof icon === 'string') {
 			return (
 				<div className="multiple-options-toggle-button-item-icon-container">
-					<img className="icon-image" src={icon} alt={""}/>
+					<img className="icon-image" src={icon} alt={''} />
 				</div>
 			);
 		}
-		return <></>
+		return <></>;
 	}
 
 	function renderOption(option: OptionToggleButton, index: number) {

@@ -1,26 +1,28 @@
 // @ts-ignore
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import './my-trips.scss';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TranslateService from '../../services/translate-service';
-import {eventStoreContext} from '../../stores/events-store';
-import {observer} from 'mobx-react';
-import {renderFooterLine, renderHeaderLine} from '../../utils/ui-utils';
-import {getClasses} from '../../utils/utils';
+import { eventStoreContext } from '../../stores/events-store';
+import { observer } from 'mobx-react';
+import { renderFooterLine, renderHeaderLine } from '../../utils/ui-utils';
+import { getClasses } from '../../utils/utils';
 import ReactModalService from '../../services/react-modal-service';
-import DataServices, {DBTrip, Trip, tripNameToLSTripName} from '../../services/data-handlers/data-handler-base';
+import DataServices, { DBTrip, Trip, tripNameToLSTripName } from '../../services/data-handlers/data-handler-base';
 import ToggleButton from '../../components/toggle-button/toggle-button';
-import {TripDataSource} from '../../utils/enums';
-import {getUser} from '../../helpers/auth';
-import Button, {ButtonFlavor} from '../../components/common/button/button';
-import {formatShortDateStringIsrael, getAmountOfDays} from "../../utils/time-utils";
-import {runInAction} from "mobx";
-import {LocalStorageService} from "../../services/data-handlers/local-storage-service";
+import { TripDataSource } from '../../utils/enums';
+import { getUser } from '../../helpers/auth';
+import Button, { ButtonFlavor } from '../../components/common/button/button';
+import { formatShortDateStringIsrael, getAmountOfDays } from '../../utils/time-utils';
+import { runInAction } from 'mobx';
+import { LocalStorageService } from '../../services/data-handlers/local-storage-service';
 
-const noTripsPlaceholderIcon = "./images/search-placeholder.png";
+const noTripsPlaceholderIcon = './images/search-placeholder.png';
 
 function MyTrips() {
-	const [dataSource, setDataSource] = useState<TripDataSource>(LocalStorageService.getLastDataSource() ?? (getUser() ? TripDataSource.DB : TripDataSource.LOCAL));
+	const [dataSource, setDataSource] = useState<TripDataSource>(
+		LocalStorageService.getLastDataSource() ?? (getUser() ? TripDataSource.DB : TripDataSource.LOCAL)
+	);
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
 	const [applyFadeIn, setApplyFadeIn] = useState(false);
 	const eventStore = useContext(eventStoreContext);
@@ -72,25 +74,23 @@ function MyTrips() {
 					text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
 					flavor={ButtonFlavor.primary}
 					className="padding-inline-15"
-					onClick={() => navigate('/getting-started') }
+					onClick={() => navigate('/getting-started')}
 				/>
 			</div>
 		);
 	}
 
-	function onEditTrip(e: any, LSTripName: any){
+	function onEditTrip(e: any, LSTripName: any) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		if (Object.keys(eventStore.modalValues).length === 0) {
-			eventStore.modalValues.name =
-				LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
-
+			eventStore.modalValues.name = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
 		}
 		ReactModalService.openEditTripModal(eventStore, LSTripName);
 	}
 
-	function onDeleteTrip(e: any, LSTripName: any){
+	function onDeleteTrip(e: any, LSTripName: any) {
 		e.preventDefault();
 		e.stopPropagation();
 		ReactModalService.openDeleteTripModal(eventStore, LSTripName, dataSource);
@@ -106,20 +106,28 @@ function MyTrips() {
 
 		if (tripName === '') return <></>;
 
-		const classList = getClasses(['sidebar-statistics main-font trips-list-trip'], dataSource.toLowerCase(), getUser() && 'logged-in');
+		const classList = getClasses(
+			['sidebar-statistics main-font trips-list-trip'],
+			dataSource.toLowerCase(),
+			getUser() && 'logged-in'
+		);
 
-		function renderTripInfo(){
+		function renderTripInfo() {
 			return (
 				<>
 					<i className="fa fa-plane" aria-hidden="true"></i>
 					<span style={{ maxWidth: '200px' }}>{tripName}</span>
-					<div>{end} - {start}</div>
-					<div>({amountOfDays} {TranslateService.translate(eventStore, 'DAYS')})</div>
+					<div>
+						{end} - {start}
+					</div>
+					<div>
+						({amountOfDays} {TranslateService.translate(eventStore, 'DAYS')})
+					</div>
 				</>
-			)
+			);
 		}
 
-		function renderTripActions(){
+		function renderTripActions() {
 			return (
 				<div className="trips-list-trip-actions">
 					<i
@@ -176,10 +184,10 @@ function MyTrips() {
 
 			runInAction(() => {
 				eventStore.dataService = dataService;
-			})
+			});
 
 			setDataSource(newVal as TripDataSource);
-		}
+		};
 
 		return (
 			<div className="my-trips-header" key={`my-trips-header-${eventStore.calendarLocalCode}`}>

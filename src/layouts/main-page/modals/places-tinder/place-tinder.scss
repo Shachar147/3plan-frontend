@@ -1,14 +1,14 @@
 .image-gallery {
-  z-index: 0;
+	z-index: 0;
 }
 .places-tinder {
-  display: flex;
-  justify-content: center;
-  margin-top: 16px;
+	display: flex;
+	justify-content: center;
+	margin-top: 16px;
 
-  .triplan-selector {
-    max-width: unset;
-    width: 100%;
-    max-height: 50px;
-  }
+	.triplan-selector {
+		max-width: unset;
+		width: 100%;
+		max-height: 50px;
+	}
 }

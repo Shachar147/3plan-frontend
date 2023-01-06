@@ -1,58 +1,58 @@
-import React, {useContext, useEffect, useImperativeHandle, useState} from 'react';
+import React, { useContext, useEffect, useImperativeHandle, useState } from 'react';
 import { icons } from './icons';
-import Select from "react-select";
-import {eventStoreContext} from "../../../stores/events-store";
-import TranslateService from "../../../services/translate-service";
+import Select from 'react-select';
+import { eventStoreContext } from '../../../stores/events-store';
+import TranslateService from '../../../services/translate-service';
 import './icon-selector.scss';
-import {SELECT_STYLE} from "../../../utils/ui-utils";
+import { SELECT_STYLE } from '../../../utils/ui-utils';
 
 export interface IconSelectorProps {
-    id?: string,
-    name?: string,
-    value?: string,
-    onChange?: (data: any) => void,
-    modalValueName: string
+	id?: string;
+	name?: string;
+	value?: string;
+	onChange?: (data: any) => void;
+	modalValueName: string;
 }
 const IconSelector = (props: IconSelectorProps, ref: any) => {
-    const optionsList = icons.map((icon) => ({
-        value: icon.text,
-        label: icon.icon
-    }));
+	const optionsList = icons.map((icon) => ({
+		value: icon.text,
+		label: icon.icon,
+	}));
 
-    const initialSelectedOption = props.value ? optionsList.find((x) => x.label === props.value) : undefined;
+	const initialSelectedOption = props.value ? optionsList.find((x) => x.label === props.value) : undefined;
 
-    const [selectedOption, setSelectedOptions] = useState(initialSelectedOption);
-    const eventStore = useContext(eventStoreContext);
+	const [selectedOption, setSelectedOptions] = useState(initialSelectedOption);
+	const eventStore = useContext(eventStoreContext);
 
-    useEffect(() => {
-        eventStore.modalValues[props.modalValueName] = selectedOption;
-    }, [selectedOption]);
+	useEffect(() => {
+		eventStore.modalValues[props.modalValueName] = selectedOption;
+	}, [selectedOption]);
 
-    const handleSelect = (data:any) => {
-        setSelectedOptions(data);
+	const handleSelect = (data: any) => {
+		setSelectedOptions(data);
 
-        if (props.onChange){
-            props.onChange(data);
-        }
-    }
+		if (props.onChange) {
+			props.onChange(data);
+		}
+	};
 
-    return (
-        <div className={"icon-selector"}>
-            <Select
-                isClearable
-                isSearchable
-                id={props.id}
-                name={props.name}
-                options={optionsList}
-                placeholder={TranslateService.translate(eventStore, 'SELECT_ICON_PLACEHOLDER')}
-                value={selectedOption}
-                onChange={handleSelect}
-                maxMenuHeight={42 * 3}
-                styles={SELECT_STYLE}
-                ref={ref}
-            />
-        </div>
-    )
+	return (
+		<div className={'icon-selector'}>
+			<Select
+				isClearable
+				isSearchable
+				id={props.id}
+				name={props.name}
+				options={optionsList}
+				placeholder={TranslateService.translate(eventStore, 'SELECT_ICON_PLACEHOLDER')}
+				value={selectedOption}
+				onChange={handleSelect}
+				maxMenuHeight={42 * 3}
+				styles={SELECT_STYLE}
+				ref={ref}
+			/>
+		</div>
+	);
 };
 
 export default React.forwardRef(IconSelector);

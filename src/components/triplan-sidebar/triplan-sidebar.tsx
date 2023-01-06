@@ -140,7 +140,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
 					</span>
 				</div>
-				<div style={(eventsStyle as unknown) as CSSProperties}>{children}</div>
+				<div style={eventsStyle as unknown as CSSProperties}>{children}</div>
 			</>
 		);
 	};
@@ -374,7 +374,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			});
 
 			const getPriorityTotalEvents = (priorityVal: string) => {
-				const priority = (priorityVal as unknown) as TriplanPriority;
+				const priority = priorityVal as unknown as TriplanPriority;
 				return eventsByPriority[priority] ? eventsByPriority[priority].length : 0;
 			};
 
@@ -382,7 +382,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				.filter((x) => !Number.isNaN(Number(x)))
 				.sort((a, b) => getPriorityTotalEvents(b) - getPriorityTotalEvents(a))
 				.map((priorityVal) => {
-					const priority = (priorityVal as unknown) as TriplanPriority;
+					const priority = priorityVal as unknown as TriplanPriority;
 					const priorityText = TriplanPriority[priority];
 
 					const total = getPriorityTotalEvents(priorityVal);
@@ -580,7 +580,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							></i>
 						</div>
 					</div>
-					<div style={(eventsStyle as unknown) as CSSProperties}>
+					<div style={eventsStyle as unknown as CSSProperties}>
 						{renderCategoryEvents(category.id)}
 						{renderAddSidebarEventButton(category.id)}
 					</div>
