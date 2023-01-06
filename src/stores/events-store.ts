@@ -104,7 +104,7 @@ export class EventStore {
 			this.isLoading = false;
 		} else {
 			const promises = [
-				DataServices.DBService.getDistanceResults,
+				DataServices.DBService.getDistanceResults(),
 				// new Promise((resolve, reject) => resolve(DataServices.DBService.getTripData(this.tripName)))
 			];
 			await Promise.all(promises)
