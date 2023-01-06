@@ -50,9 +50,7 @@ const GettingStartedPage = () => {
                 backgroundColor: "transparent",
                 border: 0
             }}>
-                <div className={"main-font"} style={{
-                    fontSize: "20px"
-                }}>
+                <div className="main-font">
                     {TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
                 </div>
                 <div className={"trip-name-line"}>

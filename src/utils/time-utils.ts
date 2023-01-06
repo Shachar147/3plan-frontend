@@ -112,3 +112,16 @@ export function validateDuration(duration: string) {
         && (parseInt(duration.split(':')[0]) + parseInt(duration.split(':')[1])) > 0
     )
 }
+
+export function getAmountOfDays(startDate: string, endDate: string){
+    const endTimestamp = new Date(endDate).getTime();
+    const startTimestamp = new Date(startDate).getTime();
+    const oneDayInMilliseconds = 86400000;
+    return parseInt(((endTimestamp - startTimestamp) / oneDayInMilliseconds).toString()) + 1;
+}
+
+export function formatShortDateStringIsrael(date:string) {
+    // 01-22-2022 to 22.01
+    return `${date.split('-')[2]}.${date.split('-')[1]}`;
+
+}

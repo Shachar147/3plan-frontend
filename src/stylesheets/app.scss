@@ -186,6 +186,10 @@ body {
     padding-inline: 0;
 }
 
+.padding-inline-15 {
+    padding-inline: 15px;
+}
+
 .padding-top-50 {
     padding-top: 50px;
 }
@@ -259,6 +263,10 @@ body {
 .position-absolute {
     position: absolute;
     left: -2000px;
+}
+
+.position-relative {
+    position: relative;
 }
 
 /* display */
@@ -649,4 +657,8 @@ a.disabled {
 
 .max-width-350 {
     width: 350px !important;
+}
+
+.top--1{
+    top: -1px;
 }
