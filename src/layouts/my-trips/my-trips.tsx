@@ -1,3 +1,4 @@
+// @ts-ignore
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import './my-trips.scss';
 import { useNavigate } from 'react-router-dom';
