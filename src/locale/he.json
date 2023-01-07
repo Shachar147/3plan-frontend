@@ -257,7 +257,7 @@
   "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL": "סיכום מלא",
   "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS": "ללא תיאורים",
   "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX": "כותרות בלבד",
-  "BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL": "טיולים לוקאליים",
+  "BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL": "טיולים המשוייכים למחשב שלך",
   "BUTTON_TEXT.TRIP_DATA_SOURCE.DB": "טיולים המשוייכים לחשבון שלך",
   "NO_TRIPS_PLACEHOLDER.LOCAL": "נראה שאין לך טיולים לוקאליים",
   "NO_TRIPS_PLACEHOLDER.DB": "נראה שאין לך טיולים המקושרים לחשבון שלך",

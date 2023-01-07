@@ -239,7 +239,7 @@
   "PASSWORDS_NOT_MATCH": "Passwords do not match",
   "LOGGED_IN_SUCCESSFULLY": "Logged in successfully!",
   "REGISTERED_SUCCESSFULLY": "Registered successfully!",
-  "CONTINUE_AS_GUEST": "Continue as anonymous",
+  "CONTINUE_AS_GUEST": "Continue as guest",
   "CONTINUE_AS_GUEST_MODAL_CONTENT": "If you choose to continue anonymously, all the trips you'll plan will be available from this computer only.<br/>No worries, if you'll decide to register later, you'll be able to sync these trips to your account and access them from any device.",
   "MODALS.ERROR.TRIP_NOT_EXIST": "Oops, the trip you tried to access does not exist",
   "LEAVE_AT": "leave at",
