@@ -34,22 +34,6 @@ function MainPage(props: MainPageProps) {
 	const eventStore = useContext(eventStoreContext);
 	const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
 	const [loaderDetails, setLoaderDetails] = useState<Loader>(LOADER_DETAILS());
-	// const [customDateRange, setCustomDateRange] = useState(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
-
-	// todo complete
-	// useEffect(() => {
-	//
-	//     if (eventStore.tripName !== "") {
-	//         if (getUser()) {
-	//             DBService.upsertTripByName(eventStore.tripName, eventStore.customDateRange, eventStore, () => {
-	//                 console.log("updated db successfully");
-	//             }, () => {
-	//                 console.log("failed updating db")
-	//             });
-	//         }
-	//     }
-	//
-	// }, [eventStore.allEvents, eventStore.calendarEvents, eventStore.categories, eventStore.sidebarEvents, eventStore.customDateRange, eventStore.calendarLocalCode, eventStore.tripName])
 
 	useEffect(() => {
 		if (TriplanCalendarRef && TriplanCalendarRef.current) {
