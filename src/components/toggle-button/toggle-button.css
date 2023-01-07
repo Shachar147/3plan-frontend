@@ -18,14 +18,23 @@
 	cursor: pointer;
 	transition: color 0.1s linear;
 }
-.multiple-options-toggle-button .multiple-options-toggle-button-items-container .multiple-options-toggle-button-item.selected {
+.multiple-options-toggle-button
+	.multiple-options-toggle-button-items-container
+	.multiple-options-toggle-button-item.selected {
 	color: white;
 }
-.multiple-options-toggle-button .multiple-options-toggle-button-items-container .multiple-options-toggle-button-item .multiple-options-toggle-button-item-icon-container {
+.multiple-options-toggle-button
+	.multiple-options-toggle-button-items-container
+	.multiple-options-toggle-button-item
+	.multiple-options-toggle-button-item-icon-container {
 	width: 15px;
 	display: flex;
 }
-.multiple-options-toggle-button .multiple-options-toggle-button-items-container .multiple-options-toggle-button-item .multiple-options-toggle-button-item-icon-container .icon-image {
+.multiple-options-toggle-button
+	.multiple-options-toggle-button-items-container
+	.multiple-options-toggle-button-item
+	.multiple-options-toggle-button-item-icon-container
+	.icon-image {
 	width: 100%;
 }
 .multiple-options-toggle-button .background-circle {
@@ -53,7 +62,9 @@
 .multiple-options-toggle-button.white .multiple-options-toggle-button-item .multiple-options-toggle-button-item-text {
 	font-size: 15px;
 }
-.multiple-options-toggle-button.white .multiple-options-toggle-button-item.selected .multiple-options-toggle-button-item-text {
+.multiple-options-toggle-button.white
+	.multiple-options-toggle-button-item.selected
+	.multiple-options-toggle-button-item-text {
 	color: var(--dark-gray);
 }
 .multiple-options-toggle-button.white .background-circle {

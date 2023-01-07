@@ -1,47 +1,47 @@
 import styled from 'styled-components';
 
 const Container = styled.div`
-  width: 100%; 
-  height: 100vh;
-  background-color: #FAFAFB;
+	width: 100%;
+	height: 100vh;
+	background-color: #fafafb;
 `;
 
 const SubContainer = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%)
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 `;
 
 const Error = styled.div`
-  margin-bottom: 10px; 
-  color: #F10B45;
+	margin-bottom: 10px;
+	color: #f10b45;
 `;
 
 const Message = styled.div`
-    margin-bottom: 10px;
-    color: #0068BB;
+	margin-bottom: 10px;
+	color: #0068bb;
 `;
 
 const RegisterLink = styled.div`
-  font-weight: normal;
-  font-size: 16px;
+	font-weight: normal;
+	font-size: 16px;
 `;
 
 const Button = styled.div`
-  opacity: ${props => props.validating ? 0.6 : 1};
-  cursor: ${props => props.validating ? 'default' : 'pointer'};
-  font-weight: normal !important;
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
+	opacity: ${(props) => (props.validating ? 0.6 : 1)};
+	cursor: ${(props) => (props.validating ? 'default' : 'pointer')};
+	font-weight: normal !important;
+	display: flex !important;
+	justify-content: center;
+	align-items: center;
 `;
 
 export default {
-    Container,
-    SubContainer,
-    Error,
-    Message,
-    RegisterLink,
-    Button,
+	Container,
+	SubContainer,
+	Error,
+	Message,
+	RegisterLink,
+	Button,
 };

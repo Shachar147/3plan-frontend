@@ -1,8 +1,8 @@
 @font-face {
-    font-family: GaretBook;
-    font-weight: 100 900;
-    font-display: block;
-    src: url('./fonts/garet/Garet-Book.woff');
+	font-family: GaretBook;
+	font-weight: 100 900;
+	font-display: block;
+	src: url('./fonts/garet/Garet-Book.woff');
 }
 
 /*@font-face {*/
@@ -20,34 +20,35 @@
 /*}*/
 
 @font-face {
-    font-family: GaretHeavy;
-    font-weight: 100 900;
-    font-display: block;
-    src: url('./fonts/roboto/Roboto-Bold.ttf');
+	font-family: GaretHeavy;
+	font-weight: 100 900;
+	font-display: block;
+	src: url('./fonts/roboto/Roboto-Bold.ttf');
 }
 
 @font-face {
-    font-family: Heebo;
+	font-family: Heebo;
 
-    font-style: normal;
-    font-weight: 100 900;
-    font-display: block;
-    src: url('./fonts/heebo/v21/NGS6v5_NC0k9P9H0TbFhsqMA6aw.woff2') format('woff2');
-    unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
-    /*src: url('./fonts/heebo/Heebo-VariableFont_wght.ttf');*/
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: block;
+	src: url('./fonts/heebo/v21/NGS6v5_NC0k9P9H0TbFhsqMA6aw.woff2') format('woff2');
+	unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+	/*src: url('./fonts/heebo/Heebo-VariableFont_wght.ttf');*/
 }
 
 b {
-    font-family: GaretHeavy, Heebo, Arial;
+	font-family: GaretHeavy, Heebo, Arial;
 }
 
 .main-font {
-    font-family: GaretBook, Heebo, Arial;
+	font-family: GaretBook, Heebo, Arial;
 }
 .main-font-heavy {
-    font-family: GaretHeavy, Heebo, Arial;
+	font-family: GaretHeavy, Heebo, Arial;
 }
 
-.main-page, .swal2-container{
-    font-family: GaretBook, Heebo, Arial;
+.main-page,
+.swal2-container {
+	font-family: GaretBook, Heebo, Arial;
 }

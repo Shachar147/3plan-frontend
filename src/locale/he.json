@@ -258,7 +258,7 @@
   "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS": "ללא תיאורים",
   "BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX": "כותרות בלבד",
   "BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL": "טיולים לוקאליים",
-  "BUTTON_TEXT.TRIP_DATA_SOURCE.DB": "טיולים המשוייכים לחשבון שלך",
+  "BUTTON_TEXT.TRIP_DATA_SOURCE.DB": "טיולים בחשבון",
   "NO_TRIPS_PLACEHOLDER.LOCAL": "נראה שאין לך טיולים לוקאליים",
   "NO_TRIPS_PLACEHOLDER.DB": "נראה שאין לך טיולים המקושרים לחשבון שלך",
   "PLACES_TINDER_LINK": "טינדר המקומות של טריפלאן",
@@ -282,5 +282,7 @@
   "MODALS.MORE_INFO_PLACEHOLDER": "השתמשו בשדה זה כדי להוסיף מידע נוסף על פעילות זו או לינק להזמנה",
   "MODALS.MORE_INFO": "מידע נוסף",
   "SHARE_EVENTS_TO_TRIPLAN_TINDER": "שתף את הפעילויות מטיול זה",
-  "SHARE_TO_TINDER.TITLE": "שתף פעילויות מטיול זה"
+  "SHARE_TO_TINDER.TITLE": "שתף פעילויות מטיול זה",
+  "LOADING_TRIP_PLACEHOLDER": "טוען... אנא המתן",
+  "LOADING_PAGE.TITLE": "העמוד בטעינה"
 }

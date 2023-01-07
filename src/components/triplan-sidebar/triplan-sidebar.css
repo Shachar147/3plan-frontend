@@ -1,49 +1,49 @@
 .external-events-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 
-    max-height: 945px;
-    overflow-y: auto;
-    position: sticky;
+	max-height: 945px;
+	overflow-y: auto;
+	position: sticky;
 
-    padding-inline-end: 10px;
-    width: fit-content;
-    max-width: 490px;
+	padding-inline-end: 10px;
+	width: fit-content;
+	max-width: 490px;
 }
 .custom-dates-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-    background: #eaeff5;
-    border: 1px solid #dde3eb;
-    border-radius: 20px;
-    transition: all 0.3s ease-in-out;
-    opacity: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 10px;
+	background: #eaeff5;
+	border: 1px solid #dde3eb;
+	border-radius: 20px;
+	transition: all 0.3s ease-in-out;
+	opacity: 1;
 }
 .custom-dates-container.hidden {
-    height: 0;
-    overflow: hidden;
-    border: 0;
-    padding: 0;
-    opacity: 0;
-    transition: all 0.3s ease-in-out;
-    position: absolute;
-    top: -2000px;
+	height: 0;
+	overflow: hidden;
+	border: 0;
+	padding: 0;
+	opacity: 0;
+	transition: all 0.3s ease-in-out;
+	position: absolute;
+	top: -2000px;
 }
 .custom-dates-line {
-    display: flex;
-    gap: 7.5px;
+	display: flex;
+	gap: 7.5px;
 }
 .trip-name-line input,
 .custom-dates-line input {
-    border: 1px solid #dde3eb;
-    border-radius: 20px;
-    padding: 5px;
-    flex-grow: 1;
-    flex-shrink: 0;
-    padding-inline-start: 10px;
+	border: 1px solid #dde3eb;
+	border-radius: 20px;
+	padding: 5px;
+	flex-grow: 1;
+	flex-shrink: 0;
+	padding-inline-start: 10px;
 }
 
 /*.custom-dates-line input {*/
@@ -51,77 +51,77 @@
 /*}*/
 
 .trip-name-line {
-    width: 300px;
+	width: 300px;
 }
 
 .external-events .fc-event-main {
-    margin: 1em 0;
-    cursor: move;
-    padding: 2px;
+	margin: 1em 0;
+	cursor: move;
+	padding: 2px;
 }
 
 .custom-dates-submit button {
-    width: 100%;
+	width: 100%;
 }
 
 .preferred-time {
-    /*background-color: #d4dfec;*/
-    font-size: 12px;
-    font-weight: bold;
-    padding-block: 4px;
-    /*border-radius: 10px;*/
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    align-items: center;
+	/*background-color: #d4dfec;*/
+	font-size: 12px;
+	font-weight: bold;
+	padding-block: 4px;
+	/*border-radius: 10px;*/
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+	align-items: center;
 }
 .preferred-time .preferred-time-divider {
-    display:flex;
-    flex: 1 1 0;
-    border-bottom: 1px solid #ccc;
-    height: 1px;
+	display: flex;
+	flex: 1 1 0;
+	border-bottom: 1px solid #ccc;
+	height: 1px;
 }
 
 .preferred-time .preferred-time-title {
-    text-align: start;
-    font-size: 14px;
+	text-align: start;
+	font-size: 14px;
 }
 
 .sidebar-events {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
 }
 
 .sidebar-event-title-container {
-    display: flex;
+	display: flex;
 }
 
 .sidebar-event-title-container .sidebar-event-title-text {
-    margin-inline-end: 3px;
-    flex-basis: content;
-    flex-grow: 0;
-    word-break: break-all;
+	margin-inline-end: 3px;
+	flex-basis: content;
+	flex-grow: 0;
+	word-break: break-all;
 }
 
 .sidebar-event-title-container .sidebar-event-icon {
-    margin-inline-end: 3px;
+	margin-inline-end: 3px;
 }
 
 .sidebar-event-title-container .sidebar-event-duration {
-    min-width: fit-content;
+	min-width: fit-content;
 }
 
 .sidebar-statistics {
-    text-align: right;
-    border: 0;
-    background: transparent;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    transition: all 0.3s ease-in-out;
+	text-align: right;
+	border: 0;
+	background: transparent;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	transition: all 0.3s ease-in-out;
 
-    padding-inline: 6px;
-    gap: 8px;
-    height: 38px;
+	padding-inline: 6px;
+	gap: 8px;
+	height: 38px;
 }

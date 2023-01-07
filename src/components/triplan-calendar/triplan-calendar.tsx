@@ -1,257 +1,265 @@
-import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState} from 'react';
-import {CalendarEvent, SidebarEvent, TriPlanCategory} from "../../utils/interfaces";
-import {observer} from 'mobx-react';
-import FullCalendar, {EventContentArg, EventInput} from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import listPlugin from "@fullcalendar/list"
-import interactionPlugin, {Draggable} from "@fullcalendar/interaction";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import {eventStoreContext} from "../../stores/events-store";
-import './triplan-calendar.scss'
-import {defaultTimedEventDuration} from "../../utils/defaults";
-import TranslateService from "../../services/translate-service";
-import {addHoursToDate, getDateRangeString, getTimeStringFromDate} from "../../utils/time-utils";
-import {isEventAlreadyOrdered} from "../../utils/utils";
-import ReactModalService from "../../services/react-modal-service";
-import {DateRangeFormatted} from "../../services/data-handlers/data-handler-base";
-import {getEventDivHtml} from "../../utils/ui-utils";
+import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
+import { observer } from 'mobx-react';
+import FullCalendar, { EventContentArg, EventInput } from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import listPlugin from '@fullcalendar/list';
+import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import { eventStoreContext } from '../../stores/events-store';
+import './triplan-calendar.scss';
+import { defaultTimedEventDuration } from '../../utils/defaults';
+import TranslateService from '../../services/translate-service';
+import { addHoursToDate, getDateRangeString, getTimeStringFromDate } from '../../utils/time-utils';
+import { isEventAlreadyOrdered } from '../../utils/utils';
+import ReactModalService from '../../services/react-modal-service';
+import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
+import { getEventDivHtml } from '../../utils/ui-utils';
 
 export interface TriPlanCalendarProps {
-    defaultCalendarEvents?: CalendarEvent[],
-    onEventReceive?: (eventId: string) => void,
-    onEventClick?: (info: any) => void
-    allEvents: SidebarEvent[],
-    addEventToSidebar: (event: SidebarEvent) => boolean,
-    updateAllEventsEvent: (event: SidebarEvent) => void,
-    customDateRange: DateRangeFormatted,
-    categories: TriPlanCategory[],
-    addToEventsToCategories: (newEvent: CalendarEvent) => void,
+	defaultCalendarEvents?: CalendarEvent[];
+	onEventReceive?: (eventId: string) => void;
+	onEventClick?: (info: any) => void;
+	allEvents: SidebarEvent[];
+	addEventToSidebar: (event: SidebarEvent) => boolean;
+	updateAllEventsEvent: (event: SidebarEvent) => void;
+	customDateRange: DateRangeFormatted;
+	categories: TriPlanCategory[];
+	addToEventsToCategories: (newEvent: CalendarEvent) => void;
 }
 
 export interface TriPlanCalendarRef {
-    refreshSources(): void;
+	refreshSources(): void;
 }
 
-function TriplanCalendar (props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRef>) {
-    const eventStore = useContext(eventStoreContext);
-    const [draggables, setDraggables] = useState<any[]>([])
-    const calendarComponentRef = useRef<FullCalendar>(null);
-    const { customDateRange } = props;
+function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRef>) {
+	const eventStore = useContext(eventStoreContext);
+	const [draggables, setDraggables] = useState<any[]>([]);
+	const calendarComponentRef = useRef<FullCalendar>(null);
+	const { customDateRange } = props;
 
-    // make our ref know our functions, so we can use them outside.
-    useImperativeHandle(ref, () => ({
-        refreshSources: refreshSources,
-        switchToCustomView: switchToCustomView
-    }));
+	// make our ref know our functions, so we can use them outside.
+	useImperativeHandle(ref, () => ({
+		refreshSources: refreshSources,
+		switchToCustomView: switchToCustomView,
+	}));
 
-    useEffect(() => {
-        // custom dates
-        if (calendarComponentRef && calendarComponentRef.current){
-            if (!switchToCustomView()){
-                // @ts-ignore
-                calendarComponentRef.current.getApi().changeView('timeGridWeek');
-            }
-        }
-    }, [props.customDateRange, calendarComponentRef]);
+	useEffect(() => {
+		// custom dates
+		if (calendarComponentRef && calendarComponentRef.current) {
+			if (!switchToCustomView()) {
+				// @ts-ignore
+				calendarComponentRef.current.getApi().changeView('timeGridWeek');
+			}
+		}
+	}, [props.customDateRange, calendarComponentRef]);
 
-    useEffect(() => {
-        // adding dragable properties to external events through javascript
-        draggables.forEach((d) => d.destroy());
+	useEffect(() => {
+		// adding dragable properties to external events through javascript
+		draggables.forEach((d) => d.destroy());
 
-        const draggablesArr: any[] = [];
-        let elements = document.getElementsByClassName("external-events");
-        Array.from(elements).forEach((draggableEl: any) => {
-            draggablesArr.push(new Draggable(draggableEl, {
-                itemSelector: ".fc-event",
-                eventData: getEventData
-            }));
-        })
+		const draggablesArr: any[] = [];
+		let elements = document.getElementsByClassName('external-events');
+		Array.from(elements).forEach((draggableEl: any) => {
+			draggablesArr.push(
+				new Draggable(draggableEl, {
+					itemSelector: '.fc-event',
+					eventData: getEventData,
+				})
+			);
+		});
 
-        setDraggables(draggablesArr);
+		setDraggables(draggablesArr);
+	}, [props.categories]);
 
-    }, [props.categories]);
+	useEffect(() => {
+		calendarComponentRef.current!.render();
+	}, [eventStore.calendarLocalCode]);
 
-    useEffect(() => {
-        calendarComponentRef.current!.render();
-    }, [eventStore.calendarLocalCode]);
+	const getEventData = (eventEl: any) => {
+		let title = eventEl.getAttribute('title');
+		let id = eventEl.getAttribute('data-id');
+		let duration = eventEl.getAttribute('data-duration');
+		let categoryId = eventEl.getAttribute('data-category');
+		let eventIcon = eventEl.getAttribute('data-icon');
+		let description = eventEl.getAttribute('data-description');
+		let priority = eventEl.getAttribute('data-priority');
+		let preferredTime = eventEl.getAttribute('data-preferred-time');
+		let location = eventEl.getAttribute('data-location');
+		let openingHours = eventEl.getAttribute('data-opening-hours');
+		let images = eventEl.getAttribute('data-images'); // add column 1
+		let moreInfo = eventEl.getAttribute('data-more-info');
 
-    const getEventData = (eventEl: any) => {
-        let title = eventEl.getAttribute("title");
-        let id = eventEl.getAttribute("data-id");
-        let duration = eventEl.getAttribute("data-duration");
-        let categoryId = eventEl.getAttribute("data-category");
-        let eventIcon = eventEl.getAttribute("data-icon");
-        let description = eventEl.getAttribute("data-description");
-        let priority = eventEl.getAttribute("data-priority");
-        let preferredTime = eventEl.getAttribute("data-preferred-time");
-        let location = eventEl.getAttribute("data-location");
-        let openingHours = eventEl.getAttribute("data-opening-hours");
-        let images = eventEl.getAttribute("data-images"); // add column 1
-        let moreInfo = eventEl.getAttribute("data-more-info");
+		return {
+			title,
+			id,
+			duration,
+			className: priority ? `priority-${priority}` : undefined,
+			extendedProps: {
+				id,
+				categoryId,
+				description,
+				priority,
+				icon: eventIcon,
+				preferredTime,
+				location: location ? JSON.parse(location) : undefined,
+				openingHours,
+				images, // add column 2
+				moreInfo,
+			},
+		};
+	};
 
-        return {
-            title,
-            id,
-            duration,
-            className: priority? `priority-${priority}` : undefined,
-            extendedProps:{
-                id,
-                categoryId,
-                description,
-                priority,
-                icon: eventIcon,
-                preferredTime,
-                location: location ? JSON.parse(location) : undefined,
-                openingHours,
-                images, // add column 2
-                moreInfo
-            }
-        };
-    }
+	const switchToCustomView = () => {
+		if (calendarComponentRef && calendarComponentRef.current) {
+			if (customDateRange && customDateRange.start && customDateRange.end) {
+				const dt = addHoursToDate(new Date(customDateRange.end), 24);
+				const year = dt.getFullYear();
+				const month = dt.getMonth() < 9 ? `0${dt.getMonth() + 1}` : dt.getMonth() + 1;
+				const day = dt.getDate();
 
-    const switchToCustomView = () => {
-        if (calendarComponentRef && calendarComponentRef.current) {
+				// @ts-ignore
+				calendarComponentRef.current.getApi().changeView('timeGrid', {
+					start: customDateRange.start,
+					end: [year, month, day].join('-'),
+				});
 
-            if (customDateRange && customDateRange.start && customDateRange.end) {
+				return true;
+			}
+		}
+		return false;
+	};
 
-                const dt = addHoursToDate(new Date(customDateRange.end), 24)
-                const year = dt.getFullYear();
-                const month = dt.getMonth() < 9 ? `0${dt.getMonth() + 1}` : dt.getMonth() + 1;
-                const day = dt.getDate();
+	const onEventReceive = (info: any) => {
+		// on event recieved (dropped) - keep its category and delete it from the sidebar.
+		if (!eventStore) return;
 
-                // @ts-ignore
-                calendarComponentRef.current.getApi().changeView('timeGrid', {
-                    start: customDateRange.start,
-                    end: [year, month, day].join('-')
-                });
+		// callback
+		props.onEventReceive && props.onEventReceive(info.event.id);
 
-                return true;
-            }
-        }
-        return false;
-    }
+		const { start, end, title, id, classNames, extendedProps, allDay } = info.event;
+		const event = {
+			start,
+			end,
+			title,
+			id,
+			className: classNames ? classNames.join(' ') : undefined,
+			extendedProps,
+			allDay,
+		};
 
-    const onEventReceive = (info: any) => {
-        // on event recieved (dropped) - keep its category and delete it from the sidebar.
-        if (!eventStore) return;
+		// remove event from Fullcalendar internal store
+		info.event.remove();
 
-        // callback
-        props.onEventReceive && props.onEventReceive(info.event.id)
+		// add it to our store (so it'll be updated on fullcalendar via calendarEvents prop)
+		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== id), event]);
 
-        const { start, end, title, id, classNames, extendedProps, allDay } = info.event;
-        const event = { start, end, title, id, className: classNames ? classNames.join(" ") : undefined, extendedProps, allDay };
+		refreshSources();
+	};
 
-        // remove event from Fullcalendar internal store
-        info.event.remove();
+	const onEventClick = (info: any) => {
+		// ModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info)
+		// todo complete: add delete button
+		ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info);
+	};
 
-        // add it to our store (so it'll be updated on fullcalendar via calendarEvents prop)
-        eventStore.setCalendarEvents([
-            ...eventStore.calendarEvents.filter((x) => x.id !== id),
-            event
-        ])
+	const handleEventChange = (changeInfo: any) => {
+		eventStore.changeEvent(changeInfo);
+	};
 
-        refreshSources();
-    }
+	const refreshSources = () => {
+		// todo - check if we still need this function. if not - remove
+		if (calendarComponentRef.current) {
+			calendarComponentRef.current
+				.getApi()
+				.getEventSources()
+				.forEach((item) => {
+					item.remove();
+				});
 
-    const onEventClick = (info: any) => {
-       // ModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info)
-        // todo complete: add delete button
-       ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info)
-    };
+			calendarComponentRef.current.getApi().addEventSource(eventStore.calendarEvents);
+		}
+	};
 
-    const handleEventChange = (changeInfo: any) => {
-        eventStore.changeEvent(changeInfo);
-    }
+	const onCalendarSelect = (selectionInfo: any) => {
+		ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
+	};
 
-    const refreshSources = () => {
-        // todo - check if we still need this function. if not - remove
-        if (calendarComponentRef.current) {
-            calendarComponentRef.current.getApi().getEventSources().forEach( (item) => {
-                item.remove();
-            });
+	const renderEventContent = (eventContentArg: EventContentArg) => {
+		let eventEl = document.createElement('div');
+		eventEl.classList.add('triplan-calendar-event');
 
-            calendarComponentRef.current.getApi().addEventSource(eventStore.calendarEvents);
-        }
-    }
+		const event = eventContentArg.event;
+		eventEl.innerHTML = getEventDivHtml(eventStore, event);
 
-    const onCalendarSelect = (selectionInfo: any) => {
-        ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
-    }
+		let arrayOfDomNodes = [eventEl];
+		return { domNodes: arrayOfDomNodes };
+	};
 
-    const renderEventContent = (eventContentArg: EventContentArg) => {
-        let eventEl = document.createElement('div')
-        eventEl.classList.add("triplan-calendar-event");
+	const buttonTexts = {
+		today: TranslateService.translate(eventStore, 'BUTTON_TEXT.TODAY'),
+		month: TranslateService.translate(eventStore, 'BUTTON_TEXT.MONTH'),
+		week: TranslateService.translate(eventStore, 'BUTTON_TEXT.WEEK'),
+		day: TranslateService.translate(eventStore, 'BUTTON_TEXT.DAY'),
+		list: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST'),
+	};
 
-        const event = eventContentArg.event;
-        eventEl.innerHTML = getEventDivHtml(eventStore, event);
+	const headerToolbar = {
+		left: 'prev,next today',
+		center: 'customTitle',
+		right: 'dayGridMonth,timeGridWeek,timeGridDay',
+	};
 
-        let arrayOfDomNodes = [ eventEl ]
-        return { domNodes: arrayOfDomNodes }
-    }
+	const customButtons = {
+		customTitle: {
+			text: `${eventStore.tripName.replaceAll('-', ' ')} (${getDateRangeString(
+				new Date(eventStore.customDateRange.start),
+				new Date(eventStore.customDateRange.end)
+			)})`,
+			click: function () {},
+		},
+	};
 
-    const buttonTexts = {
-        today:    TranslateService.translate(eventStore,'BUTTON_TEXT.TODAY'),
-        month:    TranslateService.translate(eventStore,'BUTTON_TEXT.MONTH'),
-        week:     TranslateService.translate(eventStore,'BUTTON_TEXT.WEEK'),
-        day:      TranslateService.translate(eventStore,'BUTTON_TEXT.DAY'),
-        list:     TranslateService.translate(eventStore,'BUTTON_TEXT.LIST'),
-    };
-
-    const headerToolbar = {
-        left: 'prev,next today',
-        center: 'customTitle',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-    };
-
-    const customButtons = {
-        customTitle: {
-            text: `${eventStore.tripName.replaceAll('-',' ')} (${getDateRangeString(new Date(eventStore.customDateRange.start), new Date(eventStore.customDateRange.end))})`,
-            click: function() {}
-        }
-    };
-
-    return (
-        <FullCalendar
-            initialView={"timeGridWeek"}
-            headerToolbar={headerToolbar}
-            titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
-            customButtons={customButtons}
-            buttonText={buttonTexts}
-            allDayText={TranslateService.translate(eventStore,'ALL_DAY_TEXT')}
-            weekText={TranslateService.translate(eventStore,'WEEK_TEXT')}
-            scrollTime={"07:00"}
-            slotLabelFormat={{
-                hour: '2-digit',
-                minute: '2-digit',
-                omitZeroMinute: true,
-                meridiem: 'short',
-                hour12: false,
-            }}
-            rerenderDelay={10}
-            defaultTimedEventDuration={defaultTimedEventDuration}
-            eventDurationEditable={true}
-            editable={true}
-            droppable={true}
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-            ref={calendarComponentRef}
-            events={eventStore.filteredCalendarEvents}
-            eventReceive={onEventReceive}
-            eventClick={onEventClick}
-            eventChange={handleEventChange}
-            eventResizableFromStart={true}
-            locale={eventStore.calendarLocalCode}
-            direction={eventStore.getCurrentDirection()}
-            buttonIcons={false} // show the prev/next text
-            weekNumbers={true}
-            navLinks={true} // can click day/week names to navigate views
-            dayMaxEvents={true} // allow "more" link when too many events
-            selectable={true}
-            select={onCalendarSelect}
-            eventContent={renderEventContent}
-        />
-    )
+	return (
+		<FullCalendar
+			initialView={'timeGridWeek'}
+			headerToolbar={headerToolbar}
+			titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
+			customButtons={customButtons}
+			buttonText={buttonTexts}
+			allDayText={TranslateService.translate(eventStore, 'ALL_DAY_TEXT')}
+			weekText={TranslateService.translate(eventStore, 'WEEK_TEXT')}
+			scrollTime={'07:00'}
+			slotLabelFormat={{
+				hour: '2-digit',
+				minute: '2-digit',
+				omitZeroMinute: true,
+				meridiem: 'short',
+				hour12: false,
+			}}
+			rerenderDelay={10}
+			defaultTimedEventDuration={defaultTimedEventDuration}
+			eventDurationEditable={true}
+			editable={true}
+			droppable={true}
+			plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+			ref={calendarComponentRef}
+			events={eventStore.filteredCalendarEvents}
+			eventReceive={onEventReceive}
+			eventClick={onEventClick}
+			eventChange={handleEventChange}
+			eventResizableFromStart={true}
+			locale={eventStore.calendarLocalCode}
+			direction={eventStore.getCurrentDirection()}
+			buttonIcons={false} // show the prev/next text
+			weekNumbers={true}
+			navLinks={true} // can click day/week names to navigate views
+			dayMaxEvents={true} // allow "more" link when too many events
+			selectable={true}
+			select={onCalendarSelect}
+			eventContent={renderEventContent}
+		/>
+	);
 }
 
-export default observer(forwardRef<TriPlanCalendarRef, TriPlanCalendarProps>(
-    TriplanCalendar
-));
+export default observer(forwardRef<TriPlanCalendarRef, TriPlanCalendarProps>(TriplanCalendar));

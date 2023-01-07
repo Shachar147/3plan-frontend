@@ -1,37 +1,37 @@
-.register-page{
-  background-color: #eaeff5 !important;
+.register-page {
+	background-color: #eaeff5 !important;
 
-  >div {
-    margin-top: -30px !important;
-  }
+	> div {
+		margin-top: -30px !important;
+	}
 
-  .sub.cards.header.content {
-    .ui.segment {
-      background-color: rgba(255,255,255,0.4);
-      border-color: aliceblue;
-    }
+	.sub.cards.header.content {
+		.ui.segment {
+			background-color: rgba(255, 255, 255, 0.4);
+			border-color: aliceblue;
+		}
 
-    .field {
-      display: flex;
-    }
+		.field {
+			display: flex;
+		}
 
-    .ui.left.input.icon{
-      margin-right:0 !important;
-    }
+		.ui.left.input.icon {
+			margin-right: 0 !important;
+		}
 
-    .button {
-      margin-right: 0 !important;
-    }
-  }
+		.button {
+			margin-right: 0 !important;
+		}
+	}
 
-  .ui.icon.input>input {
-    height: 40px;
-    width: 100%;
-  }
+	.ui.icon.input > input {
+		height: 40px;
+		width: 100%;
+	}
 
-  .login-link-container {
-    line-height: 1.2em;
-    text-align: center;
-    opacity: 0.5;
-  }
+	.login-link-container {
+		line-height: 1.2em;
+		text-align: center;
+		opacity: 0.5;
+	}
 }

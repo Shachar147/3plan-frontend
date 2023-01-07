@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './location-picker.css';
-import {getClasses} from "../../utils/utils";
-import {LocationData} from "../../utils/interfaces";
+import { getClasses } from '../../utils/utils';
+import { LocationData } from '../../utils/interfaces';
 const validIcon = 'images/map-pin.svg';
 
 const invalidIcon = 'images/map-pin-missing.svg';
@@ -21,7 +21,7 @@ const LocationPicker = (props: LocationPickerProps) => {
 	const locationDefaultVal = props.locationData && props.locationData.address && (props.locationData.address || '');
 	const isDisabled = props.isDisabled != undefined ? props.isDisabled : false;
 	const [location, setLocation] = useState<string>(locationDefaultVal); // for display only
-	const [locationData, setLocationDataState] = useState<LocationData|undefined>(props.locationData); // the actual data
+	const [locationData, setLocationDataState] = useState<LocationData | undefined>(props.locationData); // the actual data
 
 	const autoCompleteRef = useRef<HTMLInputElement>(null);
 	let autoCompleteListener: any, autoCompleteObj: any;
@@ -41,7 +41,7 @@ const LocationPicker = (props: LocationPickerProps) => {
 	}, []);
 
 	useEffect(() => {
-		const locationAddress = props.locationData && props.locationData.address && (props.locationData.address || '')
+		const locationAddress = props.locationData && props.locationData.address && (props.locationData.address || '');
 		setLocation(locationAddress);
 		setLocationDataState(props.locationData);
 	}, [props.locationData]);
@@ -57,7 +57,6 @@ const LocationPicker = (props: LocationPickerProps) => {
 	}
 
 	function populateLocationData() {
-
 		let address = locationData ? locationData.address : '',
 			longitude: number | undefined,
 			latitude: number | undefined;
@@ -103,7 +102,7 @@ const LocationPicker = (props: LocationPickerProps) => {
 		const haveLocationCoordinates = locationData && locationData.longitude && locationData.latitude;
 
 		if (haveLocationCoordinates) {
-			return <img src={props.locationIcon || validIcon} alt={""} className="location-indicator"></img>;
+			return <img src={props.locationIcon || validIcon} alt={''} className="location-indicator"></img>;
 		}
 
 		// if (props.supportLinkAsLocation && locationData?.address) {
@@ -117,11 +116,9 @@ const LocationPicker = (props: LocationPickerProps) => {
 		// 	}
 		// }
 
-		const tooltip = "Location Coordinates not available";
+		const tooltip = 'Location Coordinates not available';
 
-		return (
-			<img src={invalidIcon} title={tooltip} alt={tooltip} className="location-indicator" />
-		);
+		return <img src={invalidIcon} title={tooltip} alt={tooltip} className="location-indicator" />;
 	}
 
 	function onInputChange(address: string) {
@@ -175,6 +172,6 @@ const LocationPicker = (props: LocationPickerProps) => {
 			{getLocationIcon()}
 		</div>
 	);
-}
+};
 
 export default LocationPicker;
