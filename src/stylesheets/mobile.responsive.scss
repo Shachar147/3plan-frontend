@@ -1,0 +1,79 @@
+@media only screen and (min-width: 600px) and (max-width: 768px) {
+	/* For tablets: */
+}
+
+@media only screen and (max-width: 600px) {
+	/* For mobiles: */
+
+	body {
+		&.ltr,
+		&.rtl {
+			.header {
+				flex-direction: column-reverse;
+				align-items: center;
+			}
+
+			.main-part {
+				display: flex;
+				flex: 1 1 0;
+				overflow: hidden;
+				width: 100%;
+				min-width: unset;
+
+				.logo-container {
+					min-width: 300px !important;
+				}
+			}
+			.landing-page-layout .main-part .slogan {
+				padding-block: 20px;
+			}
+			.main-buttons,
+			.start-now-button {
+				flex-direction: column;
+				padding-inline: 40px;
+			}
+			.footer {
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding-inline: 0;
+				a {
+					align-items: flex-start;
+				}
+			}
+
+			/* my trips */
+			.create-new-trip-form {
+				width: 100%;
+			}
+		}
+		&.ltr {
+		}
+		&.rtl {
+		}
+	}
+}
+@media only screen and (max-height: 600px) and (orientation: landscape) {
+	/* For mobiles on landspace: */
+	// todo complete
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+}

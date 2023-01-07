@@ -206,6 +206,10 @@ body.rtl .triplan-tag-text {
 
 body.ltr .header {
 	flex-direction: row-reverse;
+
+	.fa-sign-out {
+		transform: scaleX(-1);
+	}
 }
 
 body.rtl #locale-selector div[class$='menu'] {
