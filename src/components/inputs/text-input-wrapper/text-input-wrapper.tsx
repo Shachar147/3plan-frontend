@@ -19,6 +19,7 @@ const TextInputWrapper = (props: any) => {
 		value,
 		autoComplete,
 		key,
+		dataTestId,
 	} = props;
 
 	let { labelStyle } = props;
@@ -63,7 +64,7 @@ const TextInputWrapper = (props: any) => {
 					onChange={onChange}
 					onKeyDown={onKeyDown}
 					onKeyUp={onKeyUp}
-					data-testid={inputTestId}
+					dataTestId={dataTestId ?? inputTestId}
 					onlyInput={true}
 				/>
 			</div>

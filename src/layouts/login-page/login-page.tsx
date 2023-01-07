@@ -112,6 +112,7 @@ const LoginPage = () => {
 			icon: 'user',
 			value: username,
 			setValue: setUsername,
+			dataTestId: 'username',
 		},
 		{
 			name: 'password',
@@ -120,6 +121,7 @@ const LoginPage = () => {
 			icon: 'lock',
 			value: password,
 			setValue: setPassword,
+			dataTestId: 'password',
 		},
 	];
 
@@ -172,7 +174,7 @@ const LoginPage = () => {
 							{message_block}
 							{error_block}
 							{inputs.map((input, idx) => {
-								const { name, type, placeholder, icon, value, setValue } = input;
+								const { name, type, placeholder, icon, value, setValue, dataTestId } = input;
 								return (
 									<div key={`login-${name}-idx`}>
 										<TextInputWrapper
@@ -189,7 +191,7 @@ const LoginPage = () => {
 												setErrorField({ ...errorField, [name]: false });
 											}}
 											onKeyDown={(e: any) => onKeyDown(e.keyCode)}
-											data-testid={name}
+											dataTestId={dataTestId}
 											autoComplete={'off'}
 										/>
 									</div>

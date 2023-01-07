@@ -31,6 +31,7 @@ interface TextInputProps {
 	type?: 'text' | 'password' | 'number';
 	onlyInput?: boolean;
 	key?: string;
+	dataTestId?: string;
 }
 export interface TextInputRef {
 	getValue(): string;
@@ -54,6 +55,7 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		onlyInput,
 		key,
 		autoComplete = 'true',
+		dataTestId,
 	} = props;
 	const initialValue = props.value
 		? props.value
@@ -105,6 +107,7 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 			autoComplete={autoComplete}
 			disabled={disabled}
 			style={style}
+			data-testid={dataTestId}
 		/>
 	);
 

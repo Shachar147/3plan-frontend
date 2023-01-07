@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { apiPost } from '../../helpers/api';
 import TextInputWrapper from '../../components/inputs/text-input-wrapper/text-input-wrapper';
 import { LOGIN_DELAY } from '../../utils/consts';
@@ -39,7 +39,7 @@ const RegisterPage = () => {
 	const [message, setMessage] = useState('');
 	const [errorField, setErrorField] = useState(defaultErrorField);
 	const [validating, setValidating] = useState(false);
-	const [redirect, setRedirect] = useState(false);
+	const navigate = useNavigate();
 
 	const eventStore = useContext(eventStoreContext);
 
@@ -82,7 +82,7 @@ const RegisterPage = () => {
 						setMessage('REGISTERED_SUCCESSFULLY');
 						setTimeout(
 							function (self) {
-								setRedirect(true);
+								navigate('/login');
 							},
 							LOGIN_DELAY,
 							self
@@ -162,9 +162,7 @@ const RegisterPage = () => {
 			</style.Message>
 		);
 
-	return redirect ? (
-		<Navigate to="/login" />
-	) : (
+	return (
 		<div className={'padding-inline-20'}>
 			<div className={'header-container'} style={{ position: 'absolute', top: 0 }}>
 				{renderHeaderLine(eventStore, {

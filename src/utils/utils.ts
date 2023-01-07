@@ -248,3 +248,7 @@ export function BuildEventUrl(location: LocationData) {
 	const lng = location.longitude.toFixed(7);
 	return `https://maps.google.com/maps?q=${lat},${lng}`;
 }
+
+export async function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
