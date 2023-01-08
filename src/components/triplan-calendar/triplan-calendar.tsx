@@ -204,11 +204,17 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		list: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST'),
 	};
 
-	const headerToolbar = {
-		left: 'prev,next today',
-		center: 'customTitle',
-		right: 'dayGridMonth,timeGridWeek,timeGridDay',
-	};
+	const headerToolbar = eventStore.isMobile
+		? {
+				left: 'prev,next today',
+				center: 'customTitle',
+				right: 'dayGridMonth,timeGridThreeDay,timeGridDay',
+		  }
+		: {
+				left: 'prev,next today',
+				center: 'customTitle',
+				right: 'dayGridMonth,timeGridWeek,timeGridDay',
+		  };
 
 	const customButtons = {
 		customTitle: {
@@ -222,10 +228,17 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	return (
 		<FullCalendar
-			initialView={'timeGridWeek'}
+			initialView={eventStore.isMobile ? 'timeGridThreeDay' : 'timeGridWeek'}
 			headerToolbar={headerToolbar}
 			titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
 			customButtons={customButtons}
+			views={{
+				timeGridThreeDay: {
+					type: 'timeGrid',
+					duration: { days: 3 },
+					buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.3_DAYS'),
+				},
+			}}
 			buttonText={buttonTexts}
 			allDayText={TranslateService.translate(eventStore, 'ALL_DAY_TEXT')}
 			weekText={TranslateService.translate(eventStore, 'WEEK_TEXT')}

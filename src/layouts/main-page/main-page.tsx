@@ -11,7 +11,7 @@ import TriplanCalendar from '../../components/triplan-calendar/triplan-calendar'
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
 import { defaultEventsToCategories } from '../../utils/defaults';
-import { renderHeaderLine } from '../../utils/ui-utils';
+import { getViewSelectorOptions, renderHeaderLine } from '../../utils/ui-utils';
 import { useParams } from 'react-router-dom';
 import TriplanSidebar from '../../components/triplan-sidebar/triplan-sidebar';
 import MapContainer from '../../components/map-container/map-container';
@@ -22,6 +22,7 @@ import TranslateService from '../../services/translate-service';
 import ToggleButton from '../../components/toggle-button/toggle-button';
 import { CalendarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
+import useWindowSize from '../../custom-hooks/use-window-size';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -34,6 +35,14 @@ function MainPage(props: MainPageProps) {
 	const eventStore = useContext(eventStoreContext);
 	const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
 	const [loaderDetails, setLoaderDetails] = useState<Loader>(LOADER_DETAILS());
+
+	const windowResolution = useWindowSize();
+
+	useEffect(() => {
+		const { width = 1000, height = 1000 } = windowResolution;
+		const isMobile = width <= 600 || height <= 600;
+		eventStore.setIsMobile(isMobile);
+	}, [windowResolution]);
 
 	useEffect(() => {
 		if (TriplanCalendarRef && TriplanCalendarRef.current) {
@@ -235,6 +244,11 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function renderMobileDivider() {
+		const text = getViewSelectorOptions(eventStore).find((option) => option.key === eventStore.viewMode)!.name;
+		return <h7 className="mobile-divider">{text}</h7>;
+	}
+
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
 			<div className="header-container">
@@ -254,6 +268,7 @@ function MainPage(props: MainPageProps) {
 					) : (
 						<>
 							{renderSidebar()}
+							{renderMobileDivider()}
 							{eventStore.isMapView && renderMapView()}
 							{eventStore.isListView && renderListView()}
 							{eventStore.isCalendarView && renderCalendarView()}

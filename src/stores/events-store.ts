@@ -70,6 +70,7 @@ export class EventStore {
 	@observable dataService: LocalStorageService | DBService;
 	modalValues: any = {};
 	@observable isLoading = false;
+	@observable isMobile = false;
 
 	constructor() {
 		const dataSourceName = LocalStorageService.getLastDataSource();
@@ -719,6 +720,11 @@ export class EventStore {
 	@action
 	setListViewSummaryMode(newListViewSummaryMode: string) {
 		this.listViewSummaryMode = newListViewSummaryMode as ListViewSummaryMode;
+	}
+
+	@action
+	setIsMobile(isMobile: boolean) {
+		this.isMobile = isMobile;
 	}
 
 	// --- private functions ----------------------------------------------------

@@ -354,7 +354,16 @@ body {
 }
 
 /* react modal */
-#react-select-2-listbox {
+/* todo complete - fix - its very ugly solution */
+#react-select-2-listbox,
+#react-select-3-listbox,
+#react-select-4-listbox,
+#react-select-5-listbox,
+#react-select-6-listbox,
+#react-select-7-listbox,
+#react-select-8-listbox,
+#react-select-9-listbox,
+#react-select-10-listbox {
 	z-index: 99999999999;
 }
 
@@ -661,4 +670,8 @@ a.disabled {
 
 .top--1 {
 	top: -1px;
+}
+
+.text-align-center {
+	text-align: center;
 }

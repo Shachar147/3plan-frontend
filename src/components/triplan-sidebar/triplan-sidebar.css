@@ -113,7 +113,7 @@
 }
 
 .sidebar-statistics {
-	text-align: right;
+	text-align: start;
 	border: 0;
 	background: transparent;
 	display: flex;
@@ -124,4 +124,10 @@
 	padding-inline: 6px;
 	gap: 8px;
 	height: 38px;
+}
+
+.category-actions {
+	display: flex;
+	gap: 5px;
+	padding-block-end: 10px;
 }

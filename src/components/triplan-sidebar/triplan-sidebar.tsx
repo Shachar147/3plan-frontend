@@ -444,7 +444,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					{/*        text={TranslateService.translate(eventStore, !eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES')}*/}
 					{/*    />*/}
 					{/*</div>*/}
-					<div style={{ display: 'flex', gap: '5px', paddingBlockEnd: '10px' }}>
+					<div className="category-actions">
 						<Button
 							disabled={!expandMinimizedEnabled}
 							flavor={ButtonFlavor.link}

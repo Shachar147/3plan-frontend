@@ -30,17 +30,9 @@ function LoadingComponent({ title, message, loaderDetails }: LoadingComponentPro
 		>
 			<div
 				className="flex-column align-items-center justify-content-center"
-				style={{ width: '100%', height: '100%', backgroundColor: loaderDetails.backgroundColor }}
+				style={{ width: '100vw', height: '100vh', backgroundColor: loaderDetails.backgroundColor }}
 			>
-				<div
-					style={{
-						position: 'absolute',
-						top: '50%',
-						left: '50%',
-						transform: 'translate(-50%, -50%)',
-						textAlign: 'center',
-					}}
-				>
+				<div className="text-align-center">
 					<div>
 						<img src={loaderDetails.loader} style={{ width: '80%', maxWidth: '800px' }} />
 						<div
@@ -52,12 +44,6 @@ function LoadingComponent({ title, message, loaderDetails }: LoadingComponentPro
 							</div>
 							<p style={textStyle} dangerouslySetInnerHTML={{ __html: message }} />
 						</div>
-						{/*<div className="flex-column" style={{ width:"100%", textAlign: "center", top: loaderDetails.top, fontSize: "20px", fontWeight: "bold", position: "relative"}}>*/}
-						{/*    <div className="header" style={textStyle}>*/}
-						{/*        {title}*/}
-						{/*    </div>*/}
-						{/*    <p style={textStyle} dangerouslySetInnerHTML={{ __html: message }} />*/}
-						{/*</div>*/}
 					</div>
 				</div>
 			</div>

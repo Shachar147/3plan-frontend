@@ -184,9 +184,16 @@ const renderSearch = (eventStore: EventStore) => {
 };
 
 const renderFilterTags = (eventStore: EventStore) => {
+	const { showOnlyEventsWithNoLocation, showOnlyEventsWithNoOpeningHours, showOnlyEventsWithTodoComplete } =
+		eventStore;
+
+	if (!(showOnlyEventsWithNoLocation || showOnlyEventsWithNoOpeningHours || showOnlyEventsWithTodoComplete)) {
+		return null;
+	}
+
 	return (
 		<div className={'filter-tags-container'}>
-			{eventStore.showOnlyEventsWithNoLocation && (
+			{showOnlyEventsWithNoLocation && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG')}
 					onDelete={() => {
@@ -194,7 +201,7 @@ const renderFilterTags = (eventStore: EventStore) => {
 					}}
 				/>
 			)}
-			{eventStore.showOnlyEventsWithNoOpeningHours && (
+			{showOnlyEventsWithNoOpeningHours && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_NO_OPENING_HOURS.FILTER_TAG')}
 					onDelete={() => {
@@ -202,7 +209,7 @@ const renderFilterTags = (eventStore: EventStore) => {
 					}}
 				/>
 			)}
-			{eventStore.showOnlyEventsWithTodoComplete && (
+			{showOnlyEventsWithTodoComplete && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE.FILTER_TAG')}
 					onDelete={() => {
@@ -214,32 +221,36 @@ const renderFilterTags = (eventStore: EventStore) => {
 	);
 };
 
+export const getViewSelectorOptions = (eventStore: EventStore) => {
+	return [
+		{
+			key: ViewMode.calendar,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.CALENDAR_VIEW'),
+			icon: <i className="fa fa-calendar black-color" aria-hidden="true"></i>,
+			// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+		},
+		{
+			key: ViewMode.map,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
+			icon: <i className="fa fa-map-o black-color" aria-hidden="true"></i>,
+			// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+		},
+		{
+			key: ViewMode.list,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
+			icon: <i className="fa fa-list black-color" aria-hidden="true"></i>,
+			// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+		},
+	];
+};
+
 const renderViewSelector = (eventStore: EventStore) => {
 	return (
 		<div className={'view-selector'} key={`view-selector-${eventStore.calendarLocalCode}`}>
 			<ToggleButton
 				value={eventStore.viewMode}
 				onChange={(newVal) => eventStore.setViewMode(newVal as ViewMode)}
-				options={[
-					{
-						key: ViewMode.calendar,
-						name: TranslateService.translate(eventStore, 'BUTTON_TEXT.CALENDAR_VIEW'),
-						icon: <i className="fa fa-calendar black-color" aria-hidden="true"></i>,
-						// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
-					},
-					{
-						key: ViewMode.map,
-						name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
-						icon: <i className="fa fa-map-o black-color" aria-hidden="true"></i>,
-						// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
-					},
-					{
-						key: ViewMode.list,
-						name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
-						icon: <i className="fa fa-list black-color" aria-hidden="true"></i>,
-						// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
-					},
-				]}
+				options={getViewSelectorOptions(eventStore)}
 				customStyle="white"
 			/>
 		</div>
