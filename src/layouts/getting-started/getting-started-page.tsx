@@ -98,10 +98,9 @@ const GettingStartedPage = () => {
 		);
 	};
 
-	return (
-		<div className={'landing-page-layout'}>
-			{renderHeaderLine(eventStore)}
-			<div className={getClasses(['main-part'])}>
+	function renderMainPart() {
+		return (
+			<div className="main-part">
 				<div className={getClasses(['plan-your-trip-header main-font visible'], applyPageIntro && 'hidden')}>
 					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}
 					<br />
@@ -192,6 +191,13 @@ const GettingStartedPage = () => {
 					/>
 				</div>
 			</div>
+		);
+	}
+
+	return (
+		<div className="landing-page-layout">
+			{renderHeaderLine(eventStore)}
+			{renderMainPart()}
 			{renderFooterLine(eventStore, getClasses('visible', applyPageIntro && 'hidden'))}
 		</div>
 	);

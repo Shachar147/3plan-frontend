@@ -70,9 +70,9 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
 	const navigate = useNavigate();
 
 	return (
-		<div className={'header'} style={{ height: 'fit-content' }}>
-			<div className={'start-side'}>
-				<div className={'choose-language main-font'}>
+		<div className="header" style={{ height: 'fit-content' }}>
+			<div className="start-side">
+				<div className="choose-language main-font">
 					<a>
 						{/*<i className="fa fa-globe darkest-blue-color" aria-hidden="true"></i>*/}
 						<img alt="" src={'/images/landing-page/icons/choose-lang.png'} />
@@ -81,10 +81,7 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
 					{renderLanguageSelector(eventStore)}
 				</div>
 			</div>
-			{/*<div className={"middle"}>*/}
-			{/*    */}
-			{/*</div>*/}
-			<div className={'end-side'}>
+			<div className="end-side">
 				{withFilterTags && renderFilterTags(eventStore)}
 				{withSearch && renderSearch(eventStore)}
 				{withViewSelector && renderViewSelector(eventStore)}

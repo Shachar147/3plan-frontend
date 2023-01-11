@@ -149,7 +149,7 @@ const LoginPage = () => {
 
 	// @ts-ignore
 	return (
-		<div className={'padding-inline-20'}>
+		<div className={'login-page padding-inline-20'}>
 			<div className={'header-container'} style={{ position: 'absolute', top: 0 }}>
 				{renderHeaderLine(eventStore, {
 					withLogo: false,
@@ -160,7 +160,7 @@ const LoginPage = () => {
 					withLoginLogout: false,
 				})}
 			</div>
-			<style.Container className={'login-page ui header cards centered'}>
+			<style.Container className={'login-page-content ui header cards centered'}>
 				<style.SubContainer>
 					<div
 						onClick={() => {

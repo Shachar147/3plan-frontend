@@ -134,6 +134,12 @@
 			}
 		}
 	}
+
+	.login-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 }
 @media only screen and (max-height: 600px) and (orientation: landscape) {
 	/* For mobiles on landspace: */

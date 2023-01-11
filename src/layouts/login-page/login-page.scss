@@ -1,8 +1,10 @@
 .login-page {
-	background-color: #eaeff5 !important;
+	.login-page-content {
+		background-color: #eaeff5 !important;
 
-	> div {
-		margin-top: -30px !important;
+		> div {
+			margin-top: -30px !important;
+		}
 	}
 
 	.sub.cards.header.content {
