@@ -121,10 +121,14 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 	}
 
 	const eventStore = useContext(eventStoreContext);
-	const isRtl = eventStore.calendarLocalCode === 'he';
 	return (
 		<div className={getClasses('multiple-options-toggle-button', customStyle && customStyle)} ref={containerRef}>
-			<div className={getClasses('multiple-options-toggle-button-items-container', isRtl && 'flex-row-reverse')}>
+			<div
+				className={getClasses(
+					'multiple-options-toggle-button-items-container',
+					eventStore.isRtl && 'flex-row-reverse'
+				)}
+			>
 				{props.options.map(renderOption)}
 			</div>
 			<div

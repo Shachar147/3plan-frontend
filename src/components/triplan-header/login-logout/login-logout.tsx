@@ -13,14 +13,13 @@ interface LoginLogoutProps {
 
 function LoginLogout({ isLoggedIn = false }: LoginLogoutProps) {
 	const eventStore = useContext(eventStoreContext);
-	const isRtl = eventStore.calendarLocalCode === 'he';
 
 	function renderLogin() {
 		return (
-			<a href={'/login'} style={{ textDecoration: 'none' }}>
+			<a href={'/login'} className="text-decoration-none">
 				<Button
 					flavor={ButtonFlavor.link}
-					icon={getClasses('fa-sign-in darkest-blue-color', isRtl && 'flip-x')}
+					icon={getClasses('fa-sign-in darkest-blue-color', eventStore.isRtl && 'flip-x')}
 					text={`${TranslateService.translate(eventStore, 'LOGIN')}`}
 					onClick={() => {}}
 				/>
@@ -30,15 +29,10 @@ function LoginLogout({ isLoggedIn = false }: LoginLogoutProps) {
 
 	function renderLogout() {
 		return (
-			<a
-				href={'/logout'}
-				style={{
-					textDecoration: 'none',
-				}}
-			>
+			<a href={'/logout'} className="text-decoration-none">
 				<Button
 					flavor={ButtonFlavor.link}
-					icon={getClasses('fa-sign-in darkest-blue-color', !isRtl && 'flip-x')}
+					icon={getClasses('fa-sign-in darkest-blue-color', !eventStore.isRtl && 'flip-x')}
 					text={`${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`}
 					onClick={() => {}}
 				/>
@@ -47,7 +41,7 @@ function LoginLogout({ isLoggedIn = false }: LoginLogoutProps) {
 	}
 
 	const component = isLoggedIn ? renderLogout() : renderLogin();
-	return <div className={isRtl ? 'rtl-direction' : 'flex-row'}>{component}</div>;
+	return <div className={eventStore.isRtl ? 'rtl-direction' : 'flex-row'}>{component}</div>;
 }
 
 export default observer(LoginLogout);

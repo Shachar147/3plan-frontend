@@ -1,0 +1,19 @@
+.search-container {
+	padding-inline: 10px;
+	display: flex;
+	flex-grow: 1;
+	max-width: 300px;
+
+	.triplan-text-input {
+		width: 100%;
+
+		input[type='text'] {
+			padding-inline: 10px;
+			border: 1px solid #dde3eb;
+			border-radius: 20px;
+			height: 40px;
+			min-width: 200px;
+			width: 100%;
+		}
+	}
+}

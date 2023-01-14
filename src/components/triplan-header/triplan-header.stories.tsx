@@ -15,6 +15,9 @@ export default {
 		withLoginLogout: { control: 'boolean', defaultValue: true },
 		onLogoClick: { defaultValue: () => alert('logo clicked!') },
 		onMyTripsClick: { defaultValue: () => alert('my trips clicked!') },
+		showOnlyEventsWithNoLocation: { control: 'boolean', defaultValue: true },
+		showOnlyEventsWithNoOpeningHours: { control: 'boolean', defaultValue: true },
+		showOnlyEventsWithTodoComplete: { control: 'boolean', defaultValue: true },
 	},
 } as ComponentMeta<typeof TriplanHeader>;
 

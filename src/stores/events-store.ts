@@ -395,6 +395,11 @@ export class EventStore {
 		return this.listViewSummaryMode !== ListViewSummaryMode.noDescriptions;
 	}
 
+	@computed
+	get isRtl() {
+		return this.calendarLocalCode === 'he';
+	}
+
 	// --- actions --------------------------------------------------------------
 
 	@action

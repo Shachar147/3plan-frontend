@@ -8,6 +8,8 @@ import LoginLogout from './login-logout/login-logout';
 import TriplanLogo from './logo/triplan-logo';
 import MyTrips from './my-trips/my-trips';
 import TriplanViewSelector from './view-selector/triplan-view-selector';
+import TriplanSearch from './triplan-search/triplan-search';
+import FilterIndications from './filter-indications/filter-indications';
 
 export interface TriplanHeaderProps {
 	withLogo?: boolean;
@@ -18,6 +20,9 @@ export interface TriplanHeaderProps {
 	withLoginLogout?: boolean;
 	onLogoClick?: () => any;
 	onMyTripsClick?: () => any;
+	showOnlyEventsWithNoLocation?: boolean; // shouldn't really pass them, only for storybook
+	showOnlyEventsWithNoOpeningHours?: boolean; // shouldn't really pass them, only for storybook
+	showOnlyEventsWithTodoComplete?: boolean; // shouldn't really pass them, only for storybook
 }
 
 function TriplanHeader(options: TriplanHeaderProps = {}) {
@@ -33,25 +38,21 @@ function TriplanHeader(options: TriplanHeaderProps = {}) {
 	} = options;
 
 	const eventStore = useContext(eventStoreContext);
-	const isRtl = eventStore.calendarLocalCode === 'he';
 	// const navigate = useNavigate();
 
 	return (
-		<div className={getClasses('triplan-header', isRtl ? 'rtl' : 'ltr')}>
+		<div className={getClasses('triplan-header', eventStore.isRtl ? 'rtl' : 'ltr')}>
 			<LanguageSelector />
-			<div className={'triplan-header-actionbar'}>{withViewSelector && <TriplanViewSelector />}</div>
-			<div className={getClasses('triplan-header-starter', !isRtl && 'flex-row-reverse')}>
+			<div className={'triplan-header-actionbar'}>
+				{withFilterTags && <FilterIndications {...options} />}
+				{withSearch && <TriplanSearch />}
+				{withViewSelector && <TriplanViewSelector />}
+			</div>
+			<div className={getClasses('triplan-header-starter', !eventStore.isRtl && 'flex-row-reverse')}>
 				{withMyTrips && <MyTrips onClick={onMyTripsClick} />}
 				{withLoginLogout && <LoginLogout />}
 				{withLogo && <TriplanLogo onClick={onLogoClick} />}
 			</div>
-			{/*<div className="end-side">*/}
-			{/*    {withFilterTags && renderFilterTags(eventStore)}*/}
-			{/*    {withSearch && renderSearch(eventStore)}*/}
-			{/*    {withViewSelector && renderViewSelector(eventStore)}*/}
-			{/*    {(withMyTrips || withLoginLogout || withLogo) &&*/}
-			{/*        renderMyTrips(eventStore, withMyTrips, withLoginLogout, withLogo, navigate)}*/}
-			{/*</div>*/}
 		</div>
 	);
 }

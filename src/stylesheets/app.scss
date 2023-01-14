@@ -692,3 +692,17 @@ a.disabled {
 a.text-decoration-none {
 	text-decoration: none;
 }
+
+input[type='text'] {
+	&:focus {
+		outline: none;
+	}
+}
+
+.direction-rtl {
+	direction: rtl;
+}
+
+.direction-ltr {
+	direction: ltr;
+}
