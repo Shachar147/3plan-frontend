@@ -158,6 +158,7 @@
   "SHOW_ALL_EVENTS": "cancel filter",
   "SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG": "Show only activities with no location",
   "SHOW_ONLY_EVENTS_WITH_NO_OPENING_HOURS.FILTER_TAG": "Show only activities with no opening hours",
+  "FILTER_INDICATIONS.MULTIPLE_FILTERS": "There are {{num}} filters",
   "SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE.FILTER_TAG": "Show only activities with open tasks",
   "DISABLED_REASON.THERE_ARE_NO_CATEGORIES": "There are no categories. please add category before you try to add an activity",
   "DISTANCE.PREFIX.WALKING": "Walking",

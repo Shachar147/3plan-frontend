@@ -286,5 +286,6 @@
   "SHARE_TO_TINDER.TITLE": "שתף פעילויות מטיול זה",
   "LOADING_TRIP_PLACEHOLDER": "טוען... אנא המתן",
   "LOADING_PAGE.TITLE": "העמוד בטעינה",
-  "BUTTON_TEXT.3_DAYS": "3 ימים"
+  "BUTTON_TEXT.3_DAYS": "3 ימים",
+  "FILTER_INDICATIONS.MULTIPLE_FILTERS": "{{num}} פילטרים מוגדרים"
 }
