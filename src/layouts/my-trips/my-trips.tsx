@@ -17,6 +17,7 @@ import { formatShortDateStringIsrael, getAmountOfDays } from '../../utils/time-u
 import { runInAction } from 'mobx';
 import { LocalStorageService } from '../../services/data-handlers/local-storage-service';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
 
@@ -31,6 +32,8 @@ function MyTrips() {
 	const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
 
 	const dataService = useMemo(() => DataServices.getService(dataSource), [dataSource]);
+
+	useHandleWindowResize();
 
 	useEffect(() => {
 		setLsTrips([]);

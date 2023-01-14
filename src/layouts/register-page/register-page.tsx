@@ -12,6 +12,7 @@ import TranslateService from '../../services/translate-service';
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
 const Logo = () => (
 	<img
@@ -42,6 +43,7 @@ const RegisterPage = () => {
 	const navigate = useNavigate();
 
 	const eventStore = useContext(eventStoreContext);
+	useHandleWindowResize();
 
 	const register = () => {
 		// if we're already trying to perform login, do not try again.

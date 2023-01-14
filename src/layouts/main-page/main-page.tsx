@@ -22,7 +22,7 @@ import TranslateService from '../../services/translate-service';
 import ToggleButton from '../../components/toggle-button/toggle-button';
 import { CalendarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
-import useWindowSize from '../../custom-hooks/use-window-size';
+import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 
 interface MainPageProps {
@@ -37,13 +37,7 @@ function MainPage(props: MainPageProps) {
 	const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
 	const [loaderDetails, setLoaderDetails] = useState<Loader>(LOADER_DETAILS());
 
-	const windowResolution = useWindowSize();
-
-	useEffect(() => {
-		const { width = 1000, height = 1000 } = windowResolution;
-		const isMobile = width <= 600 || height <= 600;
-		eventStore.setIsMobile(isMobile);
-	}, [windowResolution]);
+	useHandleWindowResize();
 
 	useEffect(() => {
 		if (TriplanCalendarRef && TriplanCalendarRef.current) {

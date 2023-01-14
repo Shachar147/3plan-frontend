@@ -13,6 +13,7 @@ import DataServices from '../../services/data-handlers/data-handler-base';
 import { getUser } from '../../helpers/auth';
 import { apiGet } from '../../helpers/api';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
 const dataService = DataServices.LocalStorageService;
 const GettingStartedPage = () => {
@@ -20,6 +21,8 @@ const GettingStartedPage = () => {
 	const [applyFadeIn, setApplyFadeIn] = useState(false);
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
+
+	useHandleWindowResize();
 
 	const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
 	const [tripName, setTripName] = useState(undefined);

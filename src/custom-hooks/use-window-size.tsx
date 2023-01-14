@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { eventStoreContext } from '../stores/events-store';
 
 // Hook
 export default function useWindowSize() {
@@ -25,4 +26,14 @@ export default function useWindowSize() {
 		return () => window.removeEventListener('resize', handleResize);
 	}, []); // Empty array ensures that effect is only run on mount
 	return windowSize;
+}
+
+export function useHandleWindowResize() {
+	const eventStore = useContext(eventStoreContext);
+	const windowResolution = useWindowSize();
+	useEffect(() => {
+		const { width = 1000, height = 1000 } = windowResolution;
+		const isMobile = width <= 600 || height <= 600;
+		eventStore.setIsMobile(isMobile);
+	}, [windowResolution]);
 }

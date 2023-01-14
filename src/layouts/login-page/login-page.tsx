@@ -16,6 +16,7 @@ import { observer } from 'mobx-react';
 import ReactModalService from '../../services/react-modal-service';
 import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
 const defaultErrorField: Record<string, boolean> = {
 	username: false,
@@ -40,6 +41,8 @@ const LoginPage = () => {
 	const [errorField, setErrorField] = useState(defaultErrorField);
 	const [validating, setValidating] = useState(false);
 	const [redirect, setRedirect] = useState(false);
+
+	useHandleWindowResize();
 
 	const eventStore = useContext(eventStoreContext);
 

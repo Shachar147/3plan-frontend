@@ -8,11 +8,14 @@ import { renderFooterLine } from '../../utils/ui-utils';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
 const dataService = DataServices.LocalStorageService;
 const LandingPage = () => {
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
+
+	useHandleWindowResize();
 
 	useEffect(() => {
 		document.querySelector('body').classList.remove('rtl');
