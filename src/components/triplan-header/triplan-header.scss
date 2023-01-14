@@ -1,0 +1,25 @@
+.triplan-header {
+	height: fit-content;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row-reverse;
+	gap: 8px;
+
+	.triplan-header-starter,
+	.triplan-header-actionbar {
+		display: flex;
+	}
+
+	.triplan-header-actionbar {
+		flex-grow: 1;
+		justify-content: flex-start;
+	}
+
+	&.rtl {
+		flex-direction: row;
+
+		.triplan-header-actionbar {
+			justify-content: flex-end;
+		}
+	}
+}

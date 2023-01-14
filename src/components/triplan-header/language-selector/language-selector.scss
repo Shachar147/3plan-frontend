@@ -1,0 +1,66 @@
+.language-selector {
+	display: flex;
+	gap: 8px;
+	height: fit-content;
+	align-items: center;
+	flex-shrink: 0;
+
+	a {
+		cursor: default;
+		display: flex;
+
+		&:hover {
+			opacity: 1;
+		}
+
+		img {
+			display: flex;
+			align-self: center;
+			margin-inline: 5px;
+			height: 20px;
+		}
+	}
+
+	select {
+		width: fit-content;
+		background-color: transparent;
+		border: 0;
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.6;
+		}
+	}
+
+	&.rtl {
+		flex-direction: row-reverse;
+
+		a {
+			flex-direction: row-reverse;
+		}
+
+		#locale-selector {
+			div[class$='control'] {
+				flex-direction: row-reverse;
+			}
+		}
+	}
+
+	#locale-selector {
+		div[class$='control'] {
+			background-color: transparent !important;
+			border: 0 !important;
+			box-shadow: none !important;
+			cursor: pointer;
+		}
+
+		div[class$='menu'] {
+			direction: ltr;
+			text-align: left;
+		}
+
+		div[class$='indicatorContainer'] {
+			padding: 0 !important;
+		}
+	}
+}

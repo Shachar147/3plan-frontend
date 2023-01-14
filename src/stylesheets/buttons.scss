@@ -75,6 +75,10 @@ button:disabled {
 	&.blue-color {
 		color: var(--blue);
 	}
+
+	&:focus {
+		outline: none;
+	}
 }
 
 .link-button:not(:disabled):hover {

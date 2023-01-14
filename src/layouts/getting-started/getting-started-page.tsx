@@ -11,6 +11,7 @@ import Button, { ButtonFlavor } from '../../components/common/button/button';
 import ReactModalService from '../../services/react-modal-service';
 import DataServices from '../../services/data-handlers/data-handler-base';
 import { getUser } from '../../helpers/auth';
+import { apiGet } from '../../helpers/api';
 
 const dataService = DataServices.LocalStorageService;
 const GettingStartedPage = () => {
@@ -38,6 +39,25 @@ const GettingStartedPage = () => {
 		document.querySelector('body').classList.add(eventStore.getCurrentDirection());
 		dataService.setCalendarLocale(eventStore.calendarLocalCode);
 	}, [eventStore.calendarLocalCode]);
+
+	useEffect(() => {
+		let self = this;
+		apiGet(
+			this,
+			'https://dubai.co.il/attraction/',
+			// `/player/3pts?names=Kyrie Irving,Stephen Curry,Seth Curry,James Harden,Klay Thompson,Duncan robinson,Joe Harris`,
+			function (res) {
+				debugger;
+			},
+			function (error, error_retry) {
+				console.log(error);
+				debugger;
+			},
+			function () {
+				debugger;
+			}
+		);
+	}, []);
 
 	const renderForm = () => {
 		return (

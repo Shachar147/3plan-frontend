@@ -1,9 +1,9 @@
+// @ts-ignore
 import Cookies from 'js-cookie';
 import { isDefined } from '../utils/utils';
-import { apiPost } from './api';
 import jwtDecode from 'jwt-decode';
 
-export function setToken(token) {
+export function setToken(token: string) {
 	Cookies.set('token', token);
 }
 
@@ -14,7 +14,7 @@ export function getToken() {
 export function getUser() {
 	const token = getToken();
 	if (token) {
-		const decodedPayload = jwtDecode(token);
+		const decodedPayload: { username?: string } = jwtDecode(token);
 		return decodedPayload.username;
 	}
 	return undefined;

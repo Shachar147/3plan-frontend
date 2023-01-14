@@ -290,6 +290,19 @@ body {
 	flex-direction: row;
 }
 
+.flex-row-reverse {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+.rtl-direction {
+	direction: rtl;
+}
+
+.flip-x {
+	transform: scaleX(-1);
+}
+
 .flex-grow {
 	flex-grow: 1;
 }
@@ -674,4 +687,8 @@ a.disabled {
 
 .text-align-center {
 	text-align: center;
+}
+
+a.text-decoration-none {
+	text-decoration: none;
 }

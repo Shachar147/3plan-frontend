@@ -1,6 +1,7 @@
-import React, { useRef, useState, useMemo, useEffect } from 'react';
+import React, { useRef, useState, useMemo, useEffect, useContext } from 'react';
 import './toggle-button.css';
 import { getClasses } from '../../utils/utils';
+import { eventStoreContext } from '../../stores/events-store';
 
 export function useIntervalWhile(action: () => boolean, interval: number, maxTries: number, deps?: any[]) {
 	return useEffect(() => {
@@ -119,9 +120,13 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 		);
 	}
 
+	const eventStore = useContext(eventStoreContext);
+	const isRtl = eventStore.calendarLocalCode === 'he';
 	return (
 		<div className={getClasses('multiple-options-toggle-button', customStyle && customStyle)} ref={containerRef}>
-			<div className="multiple-options-toggle-button-items-container">{props.options.map(renderOption)}</div>
+			<div className={getClasses('multiple-options-toggle-button-items-container', isRtl && 'flex-row-reverse')}>
+				{props.options.map(renderOption)}
+			</div>
 			<div
 				className="background-circle"
 				style={{ left, right, width, transitionDuration: updateCount <= 1 ? '0s' : undefined }}
