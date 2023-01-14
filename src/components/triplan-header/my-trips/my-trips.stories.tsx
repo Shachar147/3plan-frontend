@@ -4,7 +4,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import MyTrips from './my-trips';
 
 export default {
-	title: 'Header/Header Components/MyTrips',
+	title: 'Header/Header Components/My Trips',
 	component: MyTrips,
 	argTypes: {
 		height: { control: 'number' },

@@ -4,7 +4,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import TriplanSearch from './triplan-search';
 
 export default {
-	title: 'Header/Header Components/Triplan Search',
+	title: 'Header/Header Components/Search',
 	component: TriplanSearch,
 	argTypes: {},
 } as ComponentMeta<typeof TriplanSearch>;

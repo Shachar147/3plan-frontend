@@ -5,7 +5,11 @@ import { useNavigate } from 'react-router-dom';
 
 const TriplanHeaderWrapper = (props: TriplanHeaderProps) => {
 	const navigate = useNavigate();
-	return <TriplanHeader onLogoClick={() => navigate('/')} onMyTripsClick={() => navigate('/my-trips')} {...props} />;
+	return (
+		<div className="padding-20">
+			<TriplanHeader onLogoClick={() => navigate('/')} onMyTripsClick={() => navigate('/my-trips')} {...props} />
+		</div>
+	);
 };
 
 export default observer(TriplanHeaderWrapper);

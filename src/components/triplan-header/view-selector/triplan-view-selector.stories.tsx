@@ -4,7 +4,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import TriplanViewSelector from './triplan-view-selector';
 
 export default {
-	title: 'Header/Header Components/Triplan View Selector',
+	title: 'Header/Header Components/View Selector',
 	component: TriplanViewSelector,
 	argTypes: {},
 } as ComponentMeta<typeof TriplanViewSelector>;
