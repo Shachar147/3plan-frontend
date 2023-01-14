@@ -71,6 +71,7 @@ export class EventStore {
 	modalValues: any = {};
 	@observable isLoading = false;
 	@observable isMobile = false;
+	@observable isMenuOpen = false;
 
 	constructor() {
 		const dataSourceName = LocalStorageService.getLastDataSource();
@@ -730,6 +731,11 @@ export class EventStore {
 	@action
 	setIsMobile(isMobile: boolean) {
 		this.isMobile = isMobile;
+	}
+
+	@action
+	setIsMenuOpen(isOpen: boolean) {
+		this.isMenuOpen = isOpen;
 	}
 
 	// --- private functions ----------------------------------------------------
