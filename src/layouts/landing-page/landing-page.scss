@@ -20,65 +20,6 @@ body {
 
 	color: #282b3c;
 
-	.header {
-		padding: 20px;
-		height: 100px;
-		text-align: right;
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		padding-inline: 0;
-
-		a {
-			cursor: pointer;
-
-			&:hover {
-				opacity: 0.6;
-			}
-
-			img {
-				height: 20px;
-			}
-		}
-
-		.choose-language {
-			display: flex;
-			gap: 8px;
-			height: fit-content;
-			align-items: center;
-
-			a {
-				cursor: default;
-				display: flex;
-
-				img {
-					display: flex;
-					align-self: center;
-					margin-inline: 5px;
-				}
-
-				&:hover {
-					opacity: 1;
-				}
-			}
-
-			select {
-				width: fit-content;
-				background-color: transparent;
-				border: 0;
-				cursor: pointer;
-
-				&:hover {
-					opacity: 0.6;
-				}
-			}
-
-			input {
-				display: none;
-			}
-		}
-	}
-
 	.main-part {
 		width: 40%;
 		margin: 0 auto;

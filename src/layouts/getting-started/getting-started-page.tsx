@@ -5,13 +5,14 @@ import TranslateService from '../../services/translate-service';
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
 import { defaultCalendarEvents, defaultDateRange, defaultEvents, getDefaultCategories } from '../../utils/defaults';
-import { renderFooterLine, renderHeaderLine } from '../../utils/ui-utils';
+import { renderFooterLine } from '../../utils/ui-utils';
 import { getClasses } from '../../utils/utils';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import ReactModalService from '../../services/react-modal-service';
 import DataServices from '../../services/data-handlers/data-handler-base';
 import { getUser } from '../../helpers/auth';
 import { apiGet } from '../../helpers/api';
+import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 
 const dataService = DataServices.LocalStorageService;
 const GettingStartedPage = () => {
@@ -216,7 +217,7 @@ const GettingStartedPage = () => {
 
 	return (
 		<div className="landing-page-layout">
-			{renderHeaderLine(eventStore)}
+			<TriplanHeaderWrapper />
 			{renderMainPart()}
 			{renderFooterLine(eventStore, getClasses('visible', applyPageIntro && 'hidden'))}
 		</div>

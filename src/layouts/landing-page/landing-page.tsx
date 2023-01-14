@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import TranslateService from '../../services/translate-service';
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
-import { renderFooterLine, renderHeaderLine } from '../../utils/ui-utils';
+import { renderFooterLine } from '../../utils/ui-utils';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import DataServices from '../../services/data-handlers/data-handler-base';
-import TriplanHeader from '../../components/triplan-header/triplan-header';
+import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 
 const dataService = DataServices.LocalStorageService;
 const LandingPage = () => {
@@ -23,7 +23,7 @@ const LandingPage = () => {
 
 	return (
 		<div className={'landing-page-layout'}>
-			{renderHeaderLine(eventStore)}
+			<TriplanHeaderWrapper />
 			<div className={'main-part'}>
 				<div className={'plan-your-trip-header main-font'}>
 					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}

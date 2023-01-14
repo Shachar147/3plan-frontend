@@ -11,8 +11,9 @@ interface LoginLogoutProps {
 	isLoggedIn?: boolean;
 }
 
-function LoginLogout({ isLoggedIn = false }: LoginLogoutProps) {
+function LoginLogout(props: LoginLogoutProps) {
 	const eventStore = useContext(eventStoreContext);
+	const isLoggedIn = props.isLoggedIn ?? !!getUser();
 
 	function renderLogin() {
 		return (

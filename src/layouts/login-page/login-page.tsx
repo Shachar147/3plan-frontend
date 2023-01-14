@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { setToken } from '../../helpers/auth';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { apiPost } from '../../helpers/api';
 import { LOGIN_DELAY } from '../../utils/consts';
 import './login-page.scss';
@@ -12,10 +12,10 @@ import TextInputWrapper from '../../components/inputs/text-input-wrapper/text-in
 
 // @ts-ignore
 import style from './style';
-import { renderHeaderLine } from '../../utils/ui-utils';
 import { observer } from 'mobx-react';
 import ReactModalService from '../../services/react-modal-service';
 import DataServices from '../../services/data-handlers/data-handler-base';
+import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 
 const defaultErrorField: Record<string, boolean> = {
 	username: false,
@@ -147,24 +147,26 @@ const LoginPage = () => {
 		window.location.href = '/';
 	}
 
+	const headerProps = {
+		withLogo: false,
+		withSearch: false,
+		withViewSelector: false,
+		withMyTrips: false,
+		withFilterTags: false,
+		withLoginLogout: false,
+	};
+
+	const navigate = useNavigate();
+
 	// @ts-ignore
 	return (
-		<div className={'login-page padding-inline-20'}>
-			<div className={'header-container'} style={{ position: 'absolute', top: 0 }}>
-				{renderHeaderLine(eventStore, {
-					withLogo: false,
-					withSearch: false,
-					withViewSelector: false,
-					withRecommended: false,
-					withFilterTags: false,
-					withLoginLogout: false,
-				})}
-			</div>
+		<div className={'login-page padding-inline-30'}>
+			<TriplanHeaderWrapper {...headerProps} />
 			<style.Container className={'login-page-content ui header cards centered'}>
 				<style.SubContainer>
 					<div
 						onClick={() => {
-							window.location.reload();
+							navigate('/home');
 						}}
 					>
 						<Logo />

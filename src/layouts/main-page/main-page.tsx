@@ -11,7 +11,7 @@ import TriplanCalendar from '../../components/triplan-calendar/triplan-calendar'
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
 import { defaultEventsToCategories } from '../../utils/defaults';
-import { getViewSelectorOptions, renderHeaderLine } from '../../utils/ui-utils';
+import { getViewSelectorOptions } from '../../utils/ui-utils';
 import { useParams } from 'react-router-dom';
 import TriplanSidebar from '../../components/triplan-sidebar/triplan-sidebar';
 import MapContainer from '../../components/map-container/map-container';
@@ -23,6 +23,7 @@ import ToggleButton from '../../components/toggle-button/toggle-button';
 import { CalendarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
 import useWindowSize from '../../custom-hooks/use-window-size';
+import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -249,17 +250,19 @@ function MainPage(props: MainPageProps) {
 		return <h7 className="mobile-divider">{text}</h7>;
 	}
 
+	const headerProps = {
+		withLogo: true,
+		withSearch: true,
+		withViewSelector: true,
+		withRecommended: false,
+		withLoginLogout: true,
+		withFilterTags: true,
+	};
+
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
-			<div className="header-container">
-				{renderHeaderLine(eventStore, {
-					withLogo: true,
-					withSearch: true,
-					withViewSelector: true,
-					withRecommended: false,
-					withLoginLogout: true,
-					withFilterTags: true,
-				})}
+			<div className="padding-inline-8">
+				<TriplanHeaderWrapper {...headerProps} />
 			</div>
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>

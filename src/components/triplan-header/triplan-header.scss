@@ -3,22 +3,30 @@
 	display: flex;
 	justify-content: space-between;
 	flex-direction: row-reverse;
-	gap: 8px;
+	gap: 16px;
+	padding: 20px;
 	//width: max-content;
 
 	.triplan-header-starter,
 	.triplan-header-actionbar {
 		display: flex;
+		flex-grow: 1;
+		flex-shrink: 0;
 	}
 
 	.triplan-header-actionbar {
-		flex-grow: 1;
 		justify-content: flex-start;
+	}
+
+	.triplan-header-starter {
+		justify-content: flex-end;
+		max-width: max-content;
 	}
 
 	&.rtl {
 		flex-direction: row;
 
+		.triplan-header-starter,
 		.triplan-header-actionbar {
 			justify-content: flex-end;
 		}

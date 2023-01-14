@@ -16,6 +16,7 @@ import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatShortDateStringIsrael, getAmountOfDays } from '../../utils/time-utils';
 import { runInAction } from 'mobx';
 import { LocalStorageService } from '../../services/data-handlers/local-storage-service';
+import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
 
@@ -211,7 +212,7 @@ function MyTrips() {
 
 	return (
 		<div className="landing-page-layout">
-			{renderHeaderLine(eventStore)}
+			<TriplanHeaderWrapper />
 			<div className="main-part">
 				<div className={getClasses(['plan-your-trip-header main-font visible'], applyPageIntro && 'hidden')}>
 					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}

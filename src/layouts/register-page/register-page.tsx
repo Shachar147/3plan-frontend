@@ -10,8 +10,8 @@ import style from './style';
 import { getClasses } from '../../utils/utils';
 import TranslateService from '../../services/translate-service';
 import { eventStoreContext } from '../../stores/events-store';
-import { renderHeaderLine } from '../../utils/ui-utils';
 import { observer } from 'mobx-react';
+import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 
 const Logo = () => (
 	<img
@@ -162,23 +162,23 @@ const RegisterPage = () => {
 			</style.Message>
 		);
 
+	const headerProps = {
+		withLogo: false,
+		withSearch: false,
+		withViewSelector: false,
+		withMyTrips: false,
+		withFilterTags: false,
+		withLoginLogout: false,
+	};
+
 	return (
-		<div className={'padding-inline-20'}>
-			<div className={'header-container'} style={{ position: 'absolute', top: 0 }}>
-				{renderHeaderLine(eventStore, {
-					withLogo: false,
-					withSearch: false,
-					withViewSelector: false,
-					withRecommended: false,
-					withFilterTags: false,
-					withLoginLogout: false,
-				})}
-			</div>
+		<div className={'padding-inline-30'}>
+			<TriplanHeaderWrapper {...headerProps} />
 			<style.Container className={'register-page ui header cards centered'}>
 				<style.SubContainer>
 					<div
 						onClick={() => {
-							window.location.reload();
+							navigate('/home');
 						}}
 					>
 						<Logo />
