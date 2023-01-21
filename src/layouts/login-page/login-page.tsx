@@ -174,8 +174,8 @@ const LoginPage = () => {
 					>
 						<Logo />
 					</div>
-					<div className={'sub cards header content'}>
-						<div className={'ui segment'}>
+					<div className="login-form-container sub cards header content">
+						<div className="ui segment">
 							{message_block}
 							{error_block}
 							{inputs.map((input, idx) => {

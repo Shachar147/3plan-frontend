@@ -4,10 +4,17 @@
 	height: fit-content;
 	align-items: center;
 	flex-shrink: 0;
+	width: 100%;
 
-	a {
+	.language-selector-label {
 		cursor: default;
 		display: flex;
+		flex-direction: row-reverse;
+
+		.language-selector-choose-language-label {
+			width: max-content;
+			white-space: nowrap;
+		}
 
 		&:hover {
 			opacity: 1;
@@ -61,6 +68,9 @@
 
 		div[class$='indicatorContainer'] {
 			//padding: 0 !important;
+		}
+		div[class$='singleValue'] {
+			margin: 0 !important;
 		}
 	}
 }

@@ -24,7 +24,7 @@ function TriplanHeaderWrapper(props: TriplanHeaderProps) {
 	// }
 
 	return (
-		<div className="triplan-header-spacer padding-20">
+		<div className="triplan-header-spacer padding-20" style={{ width: '100%' }}>
 			<TriplanHeader onLogoClick={() => navigate('/')} onMyTripsClick={() => navigate('/my-trips')} {...props} />
 		</div>
 	);

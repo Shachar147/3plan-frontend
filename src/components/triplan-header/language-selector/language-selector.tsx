@@ -18,10 +18,12 @@ function LanguageSelector() {
 
 	return (
 		<div className={getClasses('language-selector main-font', currentLanguage.direction)}>
-			<a>
+			<div className="language-selector-label">
 				<img alt="" src={'/images/landing-page/icons/choose-lang.png'} />
-				{TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
-			</a>
+				<div className="language-selector-choose-language-label">
+					{TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
+				</div>
+			</div>
 			<Select
 				key={`locale-selector-${eventStore.calendarLocalCode}`}
 				isClearable={false}
