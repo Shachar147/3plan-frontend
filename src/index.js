@@ -21,11 +21,12 @@ import { getCoordinatesRangeKey, padTo2Digits } from './utils/utils';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Observer } from 'mobx-react';
 import PrivateRoute from './PrivateRoute';
-import LoginPage from './layouts/login-page/login-page';
+import LoginPageOld from './layouts/login-page-old/login-page';
 import RegisterPage from './layouts/register-page/register-page';
 import LogoutPage from './layouts/logout-page/logout-page';
 import { getToken, getUser } from './helpers/auth';
 import axios from 'axios';
+import LoginPage from './layouts/login-page/login-page';
 
 // import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -541,7 +542,7 @@ const RootRouter = () => {
 				<Routes>
 					{/*<Route exact path='/' element={<PrivateRoute/>}>*/}
 					{/*    <Route exact path='/' element={<LandingPage/>}/>*/}
-					{/*</Route>*/}
+					{/*<Route exact path="/loginold" element={getUser() == undefined ? <LoginPageOld /> : <LandingPage />} />*/}
 					<Route exact path="/" element={getUser() == undefined ? <LoginPage /> : <LandingPage />} />
 					<Route exact path="/home" element={<LandingPage />} />
 					<Route path="/login" element={<LoginPage />} />

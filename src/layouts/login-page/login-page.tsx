@@ -1,54 +1,81 @@
-import React, { useContext, useState } from 'react';
-import axios from 'axios';
-import { setToken } from '../../helpers/auth';
-import { Link, useNavigate } from 'react-router-dom';
-import { apiPost } from '../../helpers/api';
-import { LOGIN_DELAY } from '../../utils/consts';
-import './login-page.scss';
-import { eventStoreContext } from '../../stores/events-store';
-import TranslateService from '../../services/translate-service';
-import { getClasses } from '../../utils/utils';
-import TextInputWrapper from '../../components/inputs/text-input-wrapper/text-input-wrapper';
-
-// @ts-ignore
-import style from './style';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
-import ReactModalService from '../../services/react-modal-service';
-import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import './login-page.scss';
+import TranslateService from '../../services/translate-service';
+import { eventStoreContext } from '../../stores/events-store';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
+import { getClasses } from '../../utils/utils';
+import { Link, useNavigate } from 'react-router-dom';
+import Button, { ButtonFlavor } from '../../components/common/button/button';
+import DataServices from '../../services/data-handlers/data-handler-base';
+import ReactModalService from '../../services/react-modal-service';
+import { setToken } from '../../helpers/auth';
+import axios from 'axios';
+import { LOGIN_DELAY } from '../../utils/consts';
+import { apiPost } from '../../helpers/api';
 
 const defaultErrorField: Record<string, boolean> = {
 	username: false,
 	password: false,
 };
+
+const headerProps = {
+	withLogo: false,
+	withSearch: false,
+	withViewSelector: false,
+	withMyTrips: false,
+	withFilterTags: false,
+	withLoginLogout: false,
+};
+
 const errorTestId = 'error';
 const messageTestId = 'message';
-const Logo = () => (
-	<img
-		className={getClasses(['logo-container pointer'])}
-		style={{ maxWidth: '400px' }}
-		src={'/images/logo/new-logo.png'}
-	/>
-);
 
-const LoginPage = () => {
-	// define states
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
+function LoginPage() {
+	const eventStore = useContext(eventStoreContext);
+	const navigate = useNavigate();
+	const usernameRef = useRef<HTMLInputElement>(null);
+	const passwordRef = useRef<HTMLInputElement>(null);
+	const [validating, setValidating] = useState(false);
+	const [errorField, setErrorField] = useState(defaultErrorField);
 	const [error, setError] = useState('');
 	const [message, setMessage] = useState('');
-	const [errorField, setErrorField] = useState(defaultErrorField);
-	const [validating, setValidating] = useState(false);
 	const [redirect, setRedirect] = useState(false);
 
 	useHandleWindowResize();
 
-	const eventStore = useContext(eventStoreContext);
+	const TriplanLogo = ({ onClick }: { onClick?: () => void }) => (
+		<img
+			className={getClasses('logo-container', !eventStore.isMobile && 'pointer')}
+			src={'/images/logo/new-logo.png'}
+			onClick={onClick}
+		/>
+	);
+
+	const RegisterBlock = () => (
+		<span className={'register-link-container'} key={'register-link-container'}>
+			<div style={{ direction: eventStore.getCurrentDirection() }}>
+				{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
+				<Link data-testid={'register'} to={'/register'}>
+					{TranslateService.translate(eventStore, 'REGISTER')}
+				</Link>
+			</div>
+		</span>
+	);
+
+	const onKeyDown = (keyCode: number) => {
+		if (keyCode === 13) {
+			login();
+		}
+	};
 
 	const login = () => {
 		// if we're already trying to perform login, do not try again.
 		if (validating) return;
+
+		const username = usernameRef.current?.value ?? '';
+		const password = passwordRef.current?.value ?? '';
 
 		// validate inputs
 		if (username.length === 0) {
@@ -100,154 +127,114 @@ const LoginPage = () => {
 		}
 	};
 
-	const onKeyDown = (keyCode: number) => {
-		if (keyCode === 13) {
-			login();
+	const continueAsGuest = () => {
+		if (!DataServices.LocalStorageService.shouldShowContinueAsGuest()) {
+			// window.location.href = '/home';
+			navigate('/home');
+		} else {
+			ReactModalService.openConfirmModal(
+				eventStore,
+				() => {
+					// window.location.href = '/home';
+					if (!eventStore.isMobile) {
+						navigate('/home');
+					}
+				},
+				'MODALS.ARE_YOU_SURE',
+				'CONTINUE_AS_GUEST_MODAL_CONTENT',
+				'CONTINUE_AS_GUEST'
+			);
+			DataServices.LocalStorageService.doNotShowContinueAsGuest();
 		}
 	};
 
-	// more settings
-	const inputs = [
-		{
-			name: 'username',
-			type: 'text',
-			placeholder: TranslateService.translate(eventStore, 'USERNAME'),
-			icon: 'user',
-			value: username,
-			setValue: setUsername,
-			dataTestId: 'username',
-		},
-		{
-			name: 'password',
-			type: 'password',
-			placeholder: TranslateService.translate(eventStore, 'PASSWORD'),
-			icon: 'lock',
-			value: password,
-			setValue: setPassword,
-			dataTestId: 'password',
-		},
-	];
+	function renderField({ name, placeholder, icon, type = 'text', ref }: any) {
+		return (
+			<div className="field">
+				<i className={getClasses(icon, 'icon')}></i>
+				<input
+					name={name}
+					className="textInput"
+					type={type}
+					placeholder={placeholder}
+					autoComplete="off"
+					data-testid="username"
+					ref={ref}
+					onKeyDown={(e: any) => onKeyDown(e.keyCode)}
+					disabled={validating}
+				/>
+			</div>
+		);
+	}
 
 	// building blocks
 	const error_block =
 		error === '' ? (
 			''
 		) : (
-			<style.Error className={'field'} data-testid={errorTestId}>
+			<div className={'field red'} data-testid={errorTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
-			</style.Error>
+			</div>
 		);
 	const message_block =
 		message === '' || error !== '' ? (
 			''
 		) : (
-			<style.Message className={'field'} data-testid={messageTestId}>
+			<div className={'field blue'} data-testid={messageTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, message) }} />
-			</style.Message>
+			</div>
 		);
 
 	if (redirect) {
-		window.location.href = '/';
+		// window.location.href = '/';
+		navigate('/');
 	}
 
-	const headerProps = {
-		withLogo: false,
-		withSearch: false,
-		withViewSelector: false,
-		withMyTrips: false,
-		withFilterTags: false,
-		withLoginLogout: false,
-	};
-
-	const navigate = useNavigate();
-
-	// @ts-ignore
 	return (
 		<div className="login-page">
-			<TriplanHeaderWrapper {...headerProps} />
-			<style.Container className={'login-page-content ui header cards centered'}>
-				<style.SubContainer>
-					<div
-						onClick={() => {
-							navigate('/home');
-						}}
-					>
-						<Logo />
+			<div className={getClasses('change-language-bar', eventStore.isMobile && 'mobile')}>
+				<TriplanHeaderWrapper {...headerProps} />
+			</div>
+			<div className="login-page-content">
+				<TriplanLogo onClick={() => !eventStore.isMobile && navigate('/home')} />
+				<div className="login-form">
+					{message_block}
+					{error_block}
+					{renderField({
+						name: 'username',
+						placeholder: TranslateService.translate(eventStore, 'USERNAME'),
+						icon: 'user',
+						ref: usernameRef,
+					})}
+					{renderField({
+						name: 'password',
+						placeholder: TranslateService.translate(eventStore, 'PASSWORD'),
+						type: 'password',
+						icon: 'lock',
+						ref: passwordRef,
+					})}
+					<div className="login-form-buttons">
+						<Button
+							text={TranslateService.translate(eventStore, 'CONTINUE_AS_GUEST')}
+							onClick={continueAsGuest}
+							flavor={ButtonFlavor.secondary}
+							disabled={validating}
+							disabledReason={TranslateService.translate(eventStore, 'PLEASE_WAIT_WHILE_SAVING')}
+							className="black"
+						/>
+						<Button
+							text={TranslateService.translate(eventStore, 'LOGIN')}
+							onClick={login}
+							flavor={ButtonFlavor.primary}
+							disabled={validating}
+							disabledReason={TranslateService.translate(eventStore, 'PLEASE_WAIT_WHILE_SAVING')}
+						/>
 					</div>
-					<div className="login-form-container sub cards header content">
-						<div className="ui segment">
-							{message_block}
-							{error_block}
-							{inputs.map((input, idx) => {
-								const { name, type, placeholder, icon, value, setValue, dataTestId } = input;
-								return (
-									<div key={`login-${name}-idx`}>
-										<TextInputWrapper
-											key={`login-${name}-idx`}
-											name={name}
-											icon={icon}
-											type={type}
-											disabled={validating}
-											placeholder={placeholder}
-											error={errorField[name]}
-											value={value}
-											onChange={(e: any) => {
-												setValue(e.target.value);
-												setErrorField({ ...errorField, [name]: false });
-											}}
-											onKeyDown={(e: any) => onKeyDown(e.keyCode)}
-											dataTestId={dataTestId}
-											autoComplete={'off'}
-										/>
-									</div>
-								);
-							})}
-							<div className={'flex-row gap-10'}>
-								<style.Button
-									validating={validating}
-									className="ui fluid large button primary-button"
-									data-testid={'submit'}
-									onClick={login}
-								>
-									{TranslateService.translate(eventStore, 'LOGIN')}
-								</style.Button>
-								<style.Button
-									validating={validating}
-									className="ui fluid large button secondary-button black"
-									data-testid={'guest'}
-									onClick={() => {
-										if (!DataServices.LocalStorageService.shouldShowContinueAsGuest()) {
-											window.location.href = '/home';
-										} else {
-											ReactModalService.openConfirmModal(
-												eventStore,
-												() => {
-													window.location.href = '/home';
-												},
-												'MODALS.ARE_YOU_SURE',
-												'CONTINUE_AS_GUEST_MODAL_CONTENT',
-												'CONTINUE_AS_GUEST'
-											);
-											DataServices.LocalStorageService.doNotShowContinueAsGuest();
-										}
-									}}
-								>
-									{TranslateService.translate(eventStore, 'CONTINUE_AS_GUEST')}
-								</style.Button>
-							</div>
-						</div>
-						<div className={'register-link-container'} key={'register-link-container'}>
-							<style.RegisterLink>
-								{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
-								<Link data-testid={'register'} to={'/register'}>
-									{TranslateService.translate(eventStore, 'REGISTER')}
-								</Link>
-							</style.RegisterLink>
-						</div>
-					</div>
-				</style.SubContainer>
-			</style.Container>
+				</div>
+				<RegisterBlock />
+			</div>
 		</div>
 	);
-};
+}
+
 export default observer(LoginPage);

@@ -46,6 +46,11 @@
 					order: 3;
 				}
 
+				.language-selector {
+					flex-shrink: 0;
+					justify-content: center;
+				}
+
 				.filter-tags-container {
 					margin-top: 8px;
 				}
