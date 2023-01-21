@@ -5,13 +5,50 @@
 @media only screen and (max-width: 600px) {
 	/* For mobiles: */
 
+	.main-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		> .padding-inline-8 {
+			width: 100%;
+		}
+
+		.main-layout-container {
+			padding-inline: 0;
+			width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			.main-layout {
+				width: CALC(100% - 20px);
+			}
+		}
+	}
+
 	body {
 		&.ltr,
 		&.rtl {
 			.triplan-header {
-				flex-direction: column-reverse;
+				flex-direction: column;
 				gap: 0;
 				align-items: center;
+
+				.language-selector {
+					order: 1;
+				}
+				.triplan-header-starter {
+					order: 2;
+				}
+				.triplan-header-actionbar {
+					order: 3;
+				}
+
+				.filter-tags-container {
+					margin-top: 8px;
+				}
 			}
 
 			//.header,
@@ -64,6 +101,7 @@
 				.external-events-container {
 					width: 100%;
 					max-width: unset;
+					padding-inline: 0;
 
 					.custom-dates-line {
 						input[type='date'] {
@@ -86,8 +124,17 @@
 				}
 			}
 
-			.search-container {
-				padding-inline: 15px;
+			.main-page .triplan-header .triplan-header-actionbar {
+				flex-direction: column;
+				align-items: center;
+				gap: 8px;
+				width: 100%;
+
+				.search-container {
+					padding-inline: 0px;
+					margin-top: 8px;
+					width: 100%;
+				}
 			}
 
 			.main-part {
@@ -126,16 +173,6 @@
 			/* my trips */
 			.create-new-trip-form {
 				width: 100%;
-			}
-		}
-		&.ltr {
-			.main-page .header .end-side {
-				flex-direction: column-reverse;
-			}
-		}
-		&.rtl {
-			.main-page .header .end-side {
-				flex-direction: column-reverse;
 			}
 		}
 	}

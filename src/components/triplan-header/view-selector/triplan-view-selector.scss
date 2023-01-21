@@ -1,0 +1,56 @@
+.view-selector {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+
+	button {
+		display: flex;
+		flex: 1 1 0;
+		flex-direction: row;
+		justify-content: center;
+		line-height: 38px;
+
+		align-items: center;
+		gap: 10px;
+	}
+}
+
+.mobile-view-selector {
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 8px;
+
+	.mobile-view-selector-label {
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+	}
+
+	#view-selector {
+		direction: ltr;
+
+		> div[class$='control'] {
+			background-color: transparent;
+			border: 0;
+			color: darkblue;
+			outline: none;
+			box-shadow: none !important;
+		}
+
+		#react-select-1-input,
+		#react-select-2-input,
+		#react-select-3-input {
+			display: none;
+		}
+	}
+}
+
+.rtl {
+	.mobile-view-selector {
+		#view-selector {
+			direction: rtl;
+		}
+	}
+}

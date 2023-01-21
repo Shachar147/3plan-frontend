@@ -19,7 +19,6 @@ function LanguageSelector() {
 	return (
 		<div className={getClasses('language-selector main-font', currentLanguage.direction)}>
 			<a>
-				{/*<i className="fa fa-globe darkest-blue-color" aria-hidden="true"></i>*/}
 				<img alt="" src={'/images/landing-page/icons/choose-lang.png'} />
 				{TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
 			</a>
