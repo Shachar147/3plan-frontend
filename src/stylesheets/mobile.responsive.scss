@@ -8,20 +8,21 @@
 	body {
 		&.ltr,
 		&.rtl {
-			.header {
+			.triplan-header {
 				flex-direction: column-reverse;
+				gap: 0;
 				align-items: center;
 			}
 
-			.header,
-			.start-side,
-			.end-side {
-				display: flex;
-				flex-flow: row wrap;
-
-				justify-content: center;
-				padding-inline: 0;
-			}
+			//.header,
+			//.start-side,
+			//.end-side {
+			//	display: flex;
+			//	flex-flow: row wrap;
+			//
+			//	justify-content: center;
+			//	padding-inline: 0;
+			//}
 
 			.main-page {
 				.mobile-divider {
@@ -92,9 +93,11 @@
 			.main-part {
 				display: flex;
 				flex: 1 1 0;
-				overflow: hidden;
+				//overflow: hidden;
 				width: 100%;
 				min-width: unset;
+				height: 100vh;
+				min-height: max-content;
 
 				.logo-container {
 					min-width: 300px !important;
@@ -102,11 +105,13 @@
 			}
 			.landing-page-layout .main-part .slogan {
 				padding-block: 20px;
+				min-width: 40px !important;
 			}
 			.main-buttons,
 			.start-now-button {
 				flex-direction: column;
 				padding-inline: 40px;
+				min-width: 40px !important;
 			}
 			.footer {
 				flex-direction: column;
@@ -135,10 +140,29 @@
 		}
 	}
 
+	.landing-page-layout {
+		padding-inline: 0 !important;
+
+		.main-part {
+			justify-content: center;
+			flex-grow: 1;
+
+			.slogan {
+				word-break: break-word;
+				padding-inline: 20px;
+			}
+		}
+
+		.footer {
+			display: none !important;
+		}
+	}
+
 	.login-page {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		padding-inline: 0 !important;
 	}
 }
 @media only screen and (max-height: 600px) and (orientation: landscape) {

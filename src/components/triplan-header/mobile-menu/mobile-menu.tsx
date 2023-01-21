@@ -10,10 +10,10 @@ export interface MobileMenuProps {
 
 function MobileMenu({ items }: MobileMenuProps) {
 	return (
-		<>
+		<div className="margin-bottom-10">
 			<div className="mobile-menu">{hamburgerIcon()}</div>
 			<MenuContent items={items} />
-		</>
+		</div>
 	);
 }
 

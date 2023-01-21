@@ -163,7 +163,7 @@ const LoginPage = () => {
 
 	// @ts-ignore
 	return (
-		<div className={'login-page padding-inline-30'}>
+		<div className="login-page">
 			<TriplanHeaderWrapper {...headerProps} />
 			<style.Container className={'login-page-content ui header cards centered'}>
 				<style.SubContainer>
