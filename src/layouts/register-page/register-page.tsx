@@ -1,53 +1,73 @@
-import React, { useContext, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { apiPost } from '../../helpers/api';
-import TextInputWrapper from '../../components/inputs/text-input-wrapper/text-input-wrapper';
-import { LOGIN_DELAY } from '../../utils/consts';
-import './register-page.scss';
-
-// @ts-ignore
-import style from './style';
-import { getClasses } from '../../utils/utils';
-import TranslateService from '../../services/translate-service';
-import { eventStoreContext } from '../../stores/events-store';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import './register-page.scss';
+import TranslateService from '../../services/translate-service';
+import { eventStoreContext } from '../../stores/events-store';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
+import { getClasses } from '../../utils/utils';
+import { Link, useNavigate } from 'react-router-dom';
+import Button, { ButtonFlavor } from '../../components/common/button/button';
+import { LOGIN_DELAY } from '../../utils/consts';
+import { apiPost } from '../../helpers/api';
 
-const Logo = () => (
-	<img
-		className={getClasses(['logo-container pointer'])}
-		style={{ maxWidth: '400px' }}
-		src={'/images/logo/new-logo.png'}
-	/>
-);
-
-// define defaults
-export const defaultErrorField: Record<string, boolean> = {
+const defaultErrorField: Record<string, boolean> = {
 	username: false,
 	password: false,
-	passwordAgain: false,
 };
-export const errorTestId = 'error';
-export const messageTestId = 'message';
 
-const RegisterPage = () => {
-	// define states
-	const [username, setUsername] = useState('');
-	const [password, setPassword] = useState('');
-	const [passwordAgain, setPasswordAgain] = useState('');
+const headerProps = {
+	withLogo: false,
+	withSearch: false,
+	withViewSelector: false,
+	withMyTrips: false,
+	withFilterTags: false,
+	withLoginLogout: false,
+};
+
+const errorTestId = 'error';
+const messageTestId = 'message';
+
+function RegisterPage() {
+	const eventStore = useContext(eventStoreContext);
+	const navigate = useNavigate();
+	const usernameRef = useRef<HTMLInputElement>(null);
+	const passwordRef = useRef<HTMLInputElement>(null);
+	const passwordAgainRef = useRef<HTMLInputElement>(null);
+	const [validating, setValidating] = useState(false);
+	const [errorField, setErrorField] = useState(defaultErrorField);
 	const [error, setError] = useState('');
 	const [message, setMessage] = useState('');
-	const [errorField, setErrorField] = useState(defaultErrorField);
-	const [validating, setValidating] = useState(false);
-	const navigate = useNavigate();
+	const [redirect, setRedirect] = useState(false);
 
-	const eventStore = useContext(eventStoreContext);
 	useHandleWindowResize();
+
+	const TriplanLogo = ({ onClick }: { onClick?: () => void }) => (
+		<img
+			className={getClasses('logo-container', !eventStore.isMobile && 'pointer')}
+			src={'/images/logo/new-logo.png'}
+			onClick={onClick}
+		/>
+	);
+
+	const FooterLinkBlock = () => (
+		<span className={'login-link-container'} key={'login-link-container'}>
+			<div style={{ direction: eventStore.getCurrentDirection() }}>
+				{TranslateService.translate(eventStore, 'LOGIN_PREFIX')}{' '}
+				<Link data-testid={'login'} to={'/login'}>
+					{TranslateService.translate(eventStore, 'LOGIN')}
+				</Link>
+			</div>
+		</span>
+	);
 
 	const register = () => {
 		// if we're already trying to perform login, do not try again.
 		if (validating) return;
+
+		const username = usernameRef.current?.value ?? '';
+		const password = passwordRef.current?.value ?? '';
+		const passwordAgain = passwordAgainRef.current?.value ?? '';
 
 		// validate inputs
 		if (username.length === 0) {
@@ -118,123 +138,92 @@ const RegisterPage = () => {
 		}
 	};
 
-	// more settings
-	const inputs = [
-		{
-			name: 'username',
-			type: 'text',
-			placeholder: TranslateService.translate(eventStore, 'USERNAME'),
-			icon: 'user',
-			value: username,
-			setValue: setUsername,
-		},
-		{
-			name: 'password',
-			type: 'password',
-			placeholder: TranslateService.translate(eventStore, 'PASSWORD'),
-			icon: 'lock',
-			value: password,
-			setValue: setPassword,
-		},
-		{
-			name: 'passwordAgain',
-			type: 'password',
-			placeholder: TranslateService.translate(eventStore, 'REPEAT_PASSWORD'),
-			icon: 'lock',
-			value: passwordAgain,
-			setValue: setPasswordAgain,
-		},
-	];
+	function renderField({ name, placeholder, icon, type = 'text', ref }: any) {
+		return (
+			<div className="field">
+				<i className={getClasses(icon, 'icon')}></i>
+				<input
+					name={name}
+					className="textInput"
+					type={type}
+					placeholder={placeholder}
+					autoComplete="off"
+					data-testid="username"
+					ref={ref}
+					onKeyDown={(e: any) => onKeyDown(e.keyCode)}
+					disabled={validating}
+				/>
+			</div>
+		);
+	}
 
 	// building blocks
 	const error_block =
 		error === '' ? (
 			''
 		) : (
-			<style.Error className={'field'} data-testid={errorTestId}>
+			<div className={'field red'} data-testid={errorTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
-			</style.Error>
+			</div>
 		);
 	const message_block =
 		message === '' || error !== '' ? (
 			''
 		) : (
-			<style.Message className={'field'} data-testid={messageTestId}>
-				<div dangerouslySetInnerHTML={{ __html: message }} />
-			</style.Message>
+			<div className={'field blue'} data-testid={messageTestId}>
+				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, message) }} />
+			</div>
 		);
 
-	const headerProps = {
-		withLogo: false,
-		withSearch: false,
-		withViewSelector: false,
-		withMyTrips: false,
-		withFilterTags: false,
-		withLoginLogout: false,
-	};
+	if (redirect) {
+		window.location.href = '/';
+		// navigate('/');
+	}
 
 	return (
-		<div className={'padding-inline-30'}>
-			<TriplanHeaderWrapper {...headerProps} />
-			<style.Container className={'register-page ui header cards centered'}>
-				<style.SubContainer>
-					<div
-						onClick={() => {
-							navigate('/home');
-						}}
-					>
-						<Logo />
+		<div className="register-page">
+			<div className={getClasses('change-language-bar', eventStore.isMobile && 'mobile')}>
+				<TriplanHeaderWrapper {...headerProps} />
+			</div>
+			<div className="register-page-content">
+				<TriplanLogo onClick={() => !eventStore.isMobile && navigate('/home')} />
+				<div className="login-form">
+					{message_block}
+					{error_block}
+					{renderField({
+						name: 'username',
+						placeholder: TranslateService.translate(eventStore, 'USERNAME'),
+						icon: 'user',
+						ref: usernameRef,
+					})}
+					{renderField({
+						name: 'password',
+						placeholder: TranslateService.translate(eventStore, 'PASSWORD'),
+						type: 'password',
+						icon: 'lock',
+						ref: passwordRef,
+					})}
+					{renderField({
+						name: 'passwordAgain',
+						placeholder: TranslateService.translate(eventStore, 'REPEAT_PASSWORD'),
+						type: 'password',
+						icon: 'lock',
+						ref: passwordAgainRef,
+					})}
+					<div className="login-form-buttons">
+						<Button
+							text={TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
+							onClick={register}
+							flavor={ButtonFlavor.primary}
+							disabled={validating}
+							disabledReason={TranslateService.translate(eventStore, 'PLEASE_WAIT_WHILE_SAVING')}
+						/>
 					</div>
-					<div className={'sub cards header content'}>
-						<div className={'ui segment'}>
-							{message_block}
-							{error_block}
-							{inputs.map((input, idx) => {
-								const { name, type, placeholder, icon, value, setValue } = input;
-								return (
-									<div key={`register-${name}-idx`}>
-										<TextInputWrapper
-											key={`register-${name}-idx`}
-											name={name}
-											type={type}
-											icon={icon}
-											disabled={validating}
-											placeholder={placeholder}
-											error={errorField[name]}
-											value={value}
-											onChange={(e) => {
-												setValue(e.target.value);
-												setErrorField({ ...errorField, [name]: false });
-											}}
-											onKeyDown={(e) => onKeyDown(e.keyCode)}
-											data-testid={name}
-											autoComplete={'off'}
-										/>
-									</div>
-								);
-							})}
-							<style.Button
-								validating={validating}
-								className="ui fluid large button primary-button"
-								data-testid={'submit'}
-								onClick={register}
-							>
-								{TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
-							</style.Button>
-						</div>
-						<div className={'login-link-container'} key={'login-link-container'}>
-							<style.RegisterLink>
-								{TranslateService.translate(eventStore, 'LOGIN_PREFIX')}{' '}
-								<Link data-testid={'login'} to={'/login'}>
-									{TranslateService.translate(eventStore, 'LOGIN_LINK')}
-								</Link>
-							</style.RegisterLink>
-						</div>
-					</div>
-				</style.SubContainer>
-			</style.Container>
+				</div>
+				<FooterLinkBlock />
+			</div>
 		</div>
 	);
-};
+}
 
 export default observer(RegisterPage);

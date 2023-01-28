@@ -21,7 +21,6 @@ import { getCoordinatesRangeKey, padTo2Digits } from './utils/utils';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Observer } from 'mobx-react';
 import PrivateRoute from './PrivateRoute';
-import LoginPageOld from './layouts/login-page-old/login-page';
 import RegisterPage from './layouts/register-page/register-page';
 import LogoutPage from './layouts/logout-page/logout-page';
 import { getToken, getUser } from './helpers/auth';

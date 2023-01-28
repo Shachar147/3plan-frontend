@@ -53,7 +53,7 @@ function LoginPage() {
 		/>
 	);
 
-	const RegisterBlock = () => (
+	const FooterLinkBlock = () => (
 		<span className={'register-link-container'} key={'register-link-container'}>
 			<div style={{ direction: eventStore.getCurrentDirection() }}>
 				{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
@@ -129,15 +129,15 @@ function LoginPage() {
 
 	const continueAsGuest = () => {
 		if (!DataServices.LocalStorageService.shouldShowContinueAsGuest()) {
-			// window.location.href = '/home';
-			navigate('/home');
+			window.location.href = '/home';
+			// navigate('/home');
 		} else {
 			ReactModalService.openConfirmModal(
 				eventStore,
 				() => {
-					// window.location.href = '/home';
 					if (!eventStore.isMobile) {
-						navigate('/home');
+						window.location.href = '/home';
+						// navigate('/home');
 					}
 				},
 				'MODALS.ARE_YOU_SURE',
@@ -186,8 +186,8 @@ function LoginPage() {
 		);
 
 	if (redirect) {
-		// window.location.href = '/';
-		navigate('/');
+		window.location.href = '/';
+		// navigate('/');
 	}
 
 	return (
@@ -231,7 +231,7 @@ function LoginPage() {
 						/>
 					</div>
 				</div>
-				<RegisterBlock />
+				<FooterLinkBlock />
 			</div>
 		</div>
 	);
