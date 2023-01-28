@@ -43,7 +43,6 @@
     "react-select": "^5.4.0",
     "react-slick": "^0.29.0",
     "reactstrap": "8.0.0",
-    "sass-loader": "^7.1.0",
     "styled-components": "^5.3.6",
     "sweetalert2": "8.8.5"
   },
