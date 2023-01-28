@@ -284,6 +284,13 @@
 			max-height: 60vh !important;
 		}
 	}
+
+	.calendar-container {
+		padding-bottom: 30px;
+	}
+	.fc-view-harness {
+		height: 700px !important;
+	}
 }
 @media only screen and (max-height: 600px) and (orientation: landscape) {
 	/* For mobiles on landspace: */

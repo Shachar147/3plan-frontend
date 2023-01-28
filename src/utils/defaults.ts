@@ -767,15 +767,6 @@ export const formatDateString = (dt: Date): string => {
 	return dt.toISOString().split('T')[0];
 };
 
-// @ts-ignore
-const getLanguage = () =>
-	navigator.userLanguage ||
-	(navigator.languages && navigator.languages.length && navigator.languages[0]) ||
-	navigator.language ||
-	navigator.browserLanguage ||
-	navigator.systemLanguage ||
-	'en';
-
 export const LS_SIDEBAR_EVENTS = 'triplan-sidebar-events';
 export const LS_CALENDAR_EVENTS = 'triplan-calendar-events';
 export const LS_CATEGORIES = 'triplan-categories';

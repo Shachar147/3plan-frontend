@@ -29,7 +29,9 @@ export interface TriPlanCalendarProps {
 }
 
 export interface TriPlanCalendarRef {
-	refreshSources(): void;
+	refreshSources: () => void;
+	switchToCustomView: () => boolean;
+	setMobileDefaultView: () => void;
 }
 
 function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRef>) {
@@ -42,6 +44,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	useImperativeHandle(ref, () => ({
 		refreshSources: refreshSources,
 		switchToCustomView: switchToCustomView,
+		setMobileDefaultView: setMobileDefaultView,
 	}));
 
 	useEffect(() => {
@@ -226,9 +229,20 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		},
 	};
 
+	// set view mode as time grid three day on mobile
+	useEffect(() => {
+		if (!calendarComponentRef.current) return;
+		if (!eventStore.isMobile) return;
+		setMobileDefaultView();
+	}, [eventStore.isMobile]);
+
+	const setMobileDefaultView = () => {
+		calendarComponentRef.current?.getApi().changeView('timeGridThreeDay');
+	};
+
 	return (
 		<FullCalendar
-			initialView={eventStore.isMobile ? 'timeGridThreeDay' : 'timeGridWeek'}
+			initialView={'timeGridWeek'}
 			headerToolbar={headerToolbar}
 			titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
 			customButtons={customButtons}
@@ -271,6 +285,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			selectable={true}
 			select={onCalendarSelect}
 			eventContent={renderEventContent}
+			longPressDelay={5}
 		/>
 	);
 }

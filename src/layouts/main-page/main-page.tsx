@@ -7,7 +7,7 @@ import '@fullcalendar/timegrid/main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './main-page.scss';
 
-import TriplanCalendar from '../../components/triplan-calendar/triplan-calendar';
+import TriplanCalendar, { TriPlanCalendarRef } from '../../components/triplan-calendar/triplan-calendar';
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
 import { defaultEventsToCategories } from '../../utils/defaults';
@@ -24,6 +24,8 @@ import { CalendarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import triplanCalendar from '../../components/triplan-calendar/triplan-calendar';
+import FullCalendar from '@fullcalendar/react';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -33,6 +35,7 @@ function MainPage(props: MainPageProps) {
 	const { createMode } = props;
 	const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories);
 	const TriplanCalendarRef = useRef(null);
+	const TriplanCalendarContainerRef = useRef<HTMLDivElement>(null);
 	const eventStore = useContext(eventStoreContext);
 	const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
 	const [loaderDetails, setLoaderDetails] = useState<Loader>(LOADER_DETAILS());
@@ -200,6 +203,7 @@ function MainPage(props: MainPageProps) {
 					['calender-container bright-scrollbar flex-1-1-0'],
 					!eventStore.isCalendarView && 'opacity-0 position-absolute'
 				)}
+				ref={TriplanCalendarContainerRef}
 			>
 				<TriplanCalendar
 					ref={TriplanCalendarRef}
@@ -223,7 +227,14 @@ function MainPage(props: MainPageProps) {
 				addToEventsToCategories={addToEventsToCategories}
 				removeEventFromSidebarById={removeEventFromSidebarById}
 				customDateRange={eventStore.customDateRange}
-				setCustomDateRange={eventStore.setCustomDateRange.bind(eventStore)}
+				setCustomDateRange={() => {
+					eventStore.setCustomDateRange.bind(eventStore);
+
+					if (eventStore.isMobile) {
+						TriplanCalendarContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
+						TriplanCalendarRef.current?.setMobileDefaultView();
+					}
+				}}
 				TriplanCalendarRef={TriplanCalendarRef}
 			/>
 		);
