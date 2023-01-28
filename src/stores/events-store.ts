@@ -33,6 +33,12 @@ const defaultModalSettings = {
 		//     eventStore.modalSettings.show = false;
 		// })
 	},
+	// showClass: {
+	// 	popup: 'animate__animated animate__fadeInDown'
+	// },
+	// hideClass: {
+	// 	popup: 'animate__animated animate__fadeOutUp'
+	// }
 };
 
 const minLoadTimeInSeconds = 1.5;
