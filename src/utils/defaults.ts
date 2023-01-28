@@ -748,17 +748,33 @@ export const defaultDateRange = (): DateRangeFormatted => {
 	const date2 = new Date();
 	date2.setDate(date2.getDate() + 14);
 
-	let parts = date1.toLocaleDateString().split('/');
-	const result1 = [parts[2], padTo2Digits(Number(parts[0])), padTo2Digits(Number(parts[1]))].join('-');
+	// let parts = date1.toLocaleDateString().split('/');
+	// const result1 = [parts[2], padTo2Digits(Number(parts[0])), padTo2Digits(Number(parts[1]))].join('-');
+	//
+	// parts = date2.toLocaleDateString().split('/');
+	// const result2 = [parts[2], padTo2Digits(Number(parts[0])), padTo2Digits(Number(parts[1]))].join('-');
 
-	parts = date2.toLocaleDateString().split('/');
-	const result2 = [parts[2], padTo2Digits(Number(parts[0])), padTo2Digits(Number(parts[1]))].join('-');
+	const result1 = formatDateString(date1);
+	const result2 = formatDateString(date2);
 
 	return {
 		start: result1,
 		end: result2,
 	};
 };
+
+export const formatDateString = (dt: Date): string => {
+	return dt.toISOString().split('T')[0];
+};
+
+// @ts-ignore
+const getLanguage = () =>
+	navigator.userLanguage ||
+	(navigator.languages && navigator.languages.length && navigator.languages[0]) ||
+	navigator.language ||
+	navigator.browserLanguage ||
+	navigator.systemLanguage ||
+	'en';
 
 export const LS_SIDEBAR_EVENTS = 'triplan-sidebar-events';
 export const LS_CALENDAR_EVENTS = 'triplan-calendar-events';

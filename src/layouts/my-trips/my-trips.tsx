@@ -121,10 +121,10 @@ function MyTrips() {
 				<>
 					<i className="fa fa-plane" aria-hidden="true"></i>
 					<span style={{ maxWidth: '200px' }}>{tripName}</span>
-					<div>
+					<div id="when">
 						{end} - {start}
 					</div>
-					<div>
+					<div id="amount-of-days">
 						({amountOfDays} {TranslateService.translate(eventStore, 'DAYS')})
 					</div>
 				</>

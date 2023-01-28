@@ -41,6 +41,15 @@
 				}
 				.triplan-header-starter {
 					order: 2;
+
+					max-width: unset;
+					width: 100%;
+					justify-content: center;
+
+					.link-button {
+						display: flex;
+						white-space: nowrap;
+					}
 				}
 				.triplan-header-actionbar {
 					order: 3;
@@ -199,6 +208,81 @@
 		flex-direction: column;
 		align-items: center;
 		padding-inline: 0 !important;
+
+		.register-page-content,
+		.login-page-content {
+			padding-inline: 0 !important;
+
+			.logo-container {
+				width: 70%;
+			}
+
+			.register-form,
+			.login-form {
+				max-width: unset;
+				padding-block: 20px !important;
+			}
+		}
+
+		//background-image: url('../../images/bg.png');
+		//background-size: auto 80%;
+		//background-position: center;
+		//background-repeat: no-repeat;
+		//background-color: #87d9e9;
+		//
+		//.logo-container {
+		//	background-color: rgba(255,255,255,0.3);
+		//	border-radius: 50%;
+		//	padding: 20px;
+		//	width: 33%;
+		//	opacity: 0;
+		//}
+		//
+		//.login-form {
+		//	background-color: white;
+		//	opacity: 1;
+		//}
+	}
+
+	.my-trips-header,
+	.my-trips,
+	.no-trips-placeholder {
+		max-width: 100%;
+	}
+	.my-trips-header {
+		.multiple-options-toggle-button-items-container {
+			justify-content: center;
+		}
+	}
+	#amount-of-days {
+		display: none;
+	}
+	.create-new-trip-form {
+		padding-inline: 30px;
+	}
+
+	.sweet-alert.triplan-react-modal {
+		min-width: unset !important;
+
+		.slick-slider,
+		.triplan-selector,
+		.triplan-textarea-input,
+		.triplan-text-input,
+		input,
+		textarea {
+			min-width: unset !important;
+			max-width: 100%;
+		}
+
+		.triplan-text-input,
+		.input-with-label > .flex-column,
+		.triplan-textarea-input {
+			min-width: 0 !important;
+		}
+
+		.react-modal.bright-scrollbar {
+			max-height: 60vh !important;
+		}
 	}
 }
 @media only screen and (max-height: 600px) and (orientation: landscape) {

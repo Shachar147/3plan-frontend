@@ -206,7 +206,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 	};
 
 	return (
-		<div className={'places-tinder flex-column gap-10 justify-content-center'}>
+		<div className={'places-tinder flex-column gap-10 justify-content-center bright-scrollbar'}>
 			<SelectInput
 				options={Object.keys(placesDataMap).map(
 					(x: string) => ({ value: x, label: TranslateService.translate(eventStore, x) } as SelectInputOption)
