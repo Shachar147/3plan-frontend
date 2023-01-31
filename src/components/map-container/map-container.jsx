@@ -181,6 +181,17 @@ const MapContainer = () => {
 			if (typeof images === 'string') {
 				images = images.split('\n').map((image) => image.trim());
 			}
+			//
+			// const str = `<div class="js-image-slider">
+			// 	<ul>
+			// 		${images.slice(0, 3).map((image, idx) => `<li><img src="${image}" style="min-height: 80px; width: 150px;"/></li>`).join("")}
+			// 	</ul>
+			// </div>`;
+			//
+			// console.log(str, typeof str);
+			//
+			// return str;
+
 			return ReactDOMServer.renderToString(
 				<div className="js-image-slider">
 					<ul>
@@ -190,7 +201,6 @@ const MapContainer = () => {
 									src={image}
 									style={{ minHeight: '80px', width: '150px' }}
 									alt={`#${idx + 1}/${images.length}`}
-									onerror="if (this.src != 'error.jpg') this.src = 'error.jpg';"
 								/>
 							</li>
 						))}
@@ -203,16 +213,8 @@ const MapContainer = () => {
 		return `<div style="display: flex; flex-direction: column; gap: 6px; max-width: 450px; padding: 10px;">
                                 ${title}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
-                                ${
-									images?.length ? (
-										<>
-											{renderJavascriptImageSlider()}
-											<hr style="height: 1px; width: 100%;margin-block: 3px;" />
-										</>
-									) : (
-										''
-									)
-								}
+                                ${renderJavascriptImageSlider()}
+								<hr style="height: 1px; width: 100%;margin-block: 3px;" />
                                 ${address}
                                 ${categoryBlock}
                                 ${description}
