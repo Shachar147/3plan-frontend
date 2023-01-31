@@ -103,6 +103,10 @@
 			list-style: none;
 			position: relative;
 
+			img {
+				max-height: 100px;
+			}
+
 			img:before {
 				content: ' ';
 				display: block;

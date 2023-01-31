@@ -213,8 +213,8 @@ const MapContainer = () => {
 		return `<div style="display: flex; flex-direction: column; gap: 6px; max-width: 450px; padding: 10px;">
                                 ${title}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
-                                ${renderJavascriptImageSlider()}
-								<hr style="height: 1px; width: 100%;margin-block: 3px;" />
+                                ${images?.length ? renderJavascriptImageSlider() : ''}
+								${images?.length ? <hr style="height: 1px; width: 100%;margin-block: 3px;" /> : ''}
                                 ${address}
                                 ${categoryBlock}
                                 ${description}
