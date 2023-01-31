@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { eventStoreContext } from '../../stores/events-store';
 import { priorityToColor, priorityToMapColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
-import { formatDate, formatTime, getDurationString } from '../../utils/time-utils';
+import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
 import { TriplanEventPreferredTime } from '../../utils/enums';
 import { BuildEventUrl, getClasses, isMatching } from '../../utils/utils';
 import './map-container.scss';
@@ -105,9 +105,9 @@ const MapContainer = () => {
 		const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
 		let scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED');
 		if (calendarEvent) {
-			const dt = formatDate(calendarEvent.start);
-			const startTime = calendarEvent.start.toLocaleTimeString('en-US', { hour12: false });
-			const endTime = calendarEvent.end.toLocaleTimeString('en-US', { hour12: false });
+			const dt = formatDate(toDate(calendarEvent.start));
+			const startTime = calendarEvent.start?.toLocaleTimeString('en-US', { hour12: false });
+			const endTime = calendarEvent.end?.toLocaleTimeString('en-US', { hour12: false });
 			const start = formatTime(startTime);
 			const end = formatTime(endTime);
 
