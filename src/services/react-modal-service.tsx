@@ -17,7 +17,7 @@ import {
 } from '../utils/interfaces';
 import { TripDataSource, TriplanEventPreferredTime, TriplanPriority } from '../utils/enums';
 import { convertMsToHM, formatDuration, getInputDateTimeValue, validateDuration } from '../utils/time-utils';
-import SelectInput from '../components/inputs/select-input/select-input';
+import SelectInput, { SelectInputOption } from '../components/inputs/select-input/select-input';
 import TextInput from '../components/inputs/text-input/text-input';
 import TextareaInput from '../components/inputs/textarea-input/textarea-input';
 import DatePicker from '../components/inputs/date-picker/date-picker';
@@ -31,7 +31,8 @@ import ImportService from './import-service';
 import Slider from 'react-slick';
 
 // @ts-ignore
-import _ from 'lodash';
+// import _ from 'lodash';
+import * as _ from 'lodash';
 import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 
@@ -161,12 +162,13 @@ const ReactModalRenderHelper = {
 		eventStore: EventStore,
 		modalValueName: string,
 		extra: {
-			options: any[];
+			options: any[]; // SelectInputOption[]
 			placeholderKey?: string;
 			id?: string;
 			name?: string;
 			readOnly?: boolean;
 			maxMenuHeight?: number;
+			removeDefaultClass?: boolean;
 		},
 		wrapperClassName: string,
 		ref?: any
@@ -181,6 +183,7 @@ const ReactModalRenderHelper = {
 				placeholderKey={extra.placeholderKey}
 				modalValueName={modalValueName}
 				maxMenuHeight={extra.maxMenuHeight}
+				removeDefaultClass={extra.removeDefaultClass}
 			/>
 		);
 	},
@@ -1657,7 +1660,125 @@ const ReactModalService = {
 			onConfirm,
 		});
 	},
+	openAddCalendarEventFromExistingModal: (
+		eventStore: EventStore,
+		addToEventsToCategories: (value: any) => void,
+		info: any
+	) => {
+		const allSidebarEvents = Object.values(eventStore.sidebarEvents).flat();
+
+		const pleaseChooseActivity = () => {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.PLEASE_SELECT_EVENT',
+				'error'
+			);
+		};
+
+		const onConfirm = () => {
+			const selectedEvent = eventStore.modalValues['sidebar-event-to-add-to-calendar'];
+			const isOk = selectedEvent;
+
+			if (isOk) {
+				const initialData = allSidebarEvents.find((e) => Number(e.id) === Number(selectedEvent.value));
+
+				if (initialData) {
+					ReactModalService.openAddCalendarEventNewModal(
+						eventStore,
+						addToEventsToCategories,
+						info,
+						initialData
+					);
+				} else {
+					pleaseChooseActivity();
+				}
+			} else {
+				pleaseChooseActivity();
+			}
+		};
+
+		const title = TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CALENDAR.TITLE');
+
+		const options: SelectInputOption[] = allSidebarEvents.map((e) => ({ value: e.id, label: e.title }));
+
+		const content = (
+			<Observer>
+				{() => (
+					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+						{ReactModalRenderHelper.renderSelectInput(
+							eventStore,
+							'sidebar-event-to-add-to-calendar',
+							{ options, placeholderKey: 'SELECT_SIDEBAR_EVENT_PLACEHOLDER', removeDefaultClass: true },
+							'add-event-from-sidebar-selector'
+						)}
+					</div>
+				)}
+			</Observer>
+		);
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title,
+			content,
+			onConfirm,
+			onCancel: () => {
+				ReactModalService.openAddCalendarEventModal(eventStore, addToEventsToCategories, info);
+			},
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SELECT'),
+		});
+	},
 	openAddCalendarEventModal: (eventStore: EventStore, addToEventsToCategories: (value: any) => void, info: any) => {
+		const title = TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CALENDAR.TITLE');
+
+		const content = (
+			<Observer>
+				{() => (
+					<div className="flex-row justify-content-center gap-10">
+						<Button
+							flavor={ButtonFlavor.secondary}
+							// className={className}
+							onClick={() =>
+								ReactModalService.openAddCalendarEventFromExistingModal(
+									eventStore,
+									addToEventsToCategories,
+									info
+								)
+							}
+							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_FROM_EXISTING')}
+						/>
+						<Button
+							flavor={ButtonFlavor.secondary}
+							// className={className}
+							onClick={() =>
+								ReactModalService.openAddCalendarEventNewModal(
+									eventStore,
+									addToEventsToCategories,
+									info
+								)
+							}
+							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_NEW')}
+						/>
+					</div>
+				)}
+			</Observer>
+		);
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title,
+			content,
+			// onConfirm,
+			showCancel: false,
+			showConfirm: false,
+		});
+	},
+	openAddCalendarEventNewModal: (
+		eventStore: EventStore,
+		addToEventsToCategories: (value: any) => void,
+		info: any,
+		sidebarEventData?: SidebarEvent
+	) => {
 		const handleAddCalendarEventResult = (eventStore: EventStore) => {
 			if (!eventStore) return true;
 
@@ -1737,6 +1858,16 @@ const ReactModalService = {
 				{ ...currentEvent, category: categoryId },
 			]);
 
+			if (sidebarEventData) {
+				const newSidebarEvents = _.cloneDeep(eventStore.sidebarEvents);
+				Object.keys(newSidebarEvents).forEach((category) => {
+					newSidebarEvents[Number(category)] = newSidebarEvents[Number(category)].filter(
+						(e) => e.id !== initialData.id
+					);
+				});
+				eventStore.setSidebarEvents(newSidebarEvents);
+			}
+
 			ReactModalService.internal.alertMessage(
 				eventStore,
 				'MODALS.ADDED.TITLE',
@@ -1750,6 +1881,7 @@ const ReactModalService = {
 		const initialData = {
 			start: info.start,
 			end: info.end,
+			...sidebarEventData,
 		};
 
 		// @ts-ignore
@@ -1783,6 +1915,9 @@ const ReactModalService = {
 			title,
 			content,
 			onConfirm,
+			onCancel: () => {
+				ReactModalService.openAddCalendarEventModal(eventStore, addToEventsToCategories, info);
+			},
 		});
 	},
 	openDeleteCategoryModal: (eventStore: EventStore, categoryId: number) => {

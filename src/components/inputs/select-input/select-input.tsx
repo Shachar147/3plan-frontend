@@ -21,6 +21,7 @@ interface SelectInputProps {
 	modalValueName: string;
 	maxMenuHeight?: number;
 	onChange?: (value: any) => any;
+	removeDefaultClass?: boolean;
 }
 export interface SelectInputRef {
 	getValue(): SelectInputOption;
@@ -39,7 +40,7 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 	}));
 
 	return (
-		<div className={getClasses('triplan-selector', wrapperClassName)}>
+		<div className={getClasses(!props.removeDefaultClass && 'triplan-selector', wrapperClassName)}>
 			<Select
 				ref={ref}
 				isClearable={!readOnly}

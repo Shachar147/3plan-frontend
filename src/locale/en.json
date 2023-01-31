@@ -277,5 +277,10 @@
   "LOADING_TRIP_PLACEHOLDER": "Please wait while loading...",
   "LOADING_PAGE.TITLE": "Loading...",
   "BUTTON_TEXT.3_DAYS": "3 days",
-  "PLEASE_WAIT_WHILE_SAVING": "Please wait while saving..."
+  "PLEASE_WAIT_WHILE_SAVING": "Please wait while saving...",
+  "SELECT_SIDEBAR_EVENT_PLACEHOLDER": "Select from sidebar activities...",
+  "MODALS.SELECT": "Select",
+  "MODALS.ERROR.PLEASE_SELECT_EVENT": "Please select an activity",
+  "MODALS.ADD_CALENDAR_EVENT.ADD_FROM_EXISTING": "Add from existing",
+  "MODALS.ADD_CALENDAR_EVENT.ADD_NEW": "Add new"
 }

@@ -288,5 +288,10 @@
   "LOADING_PAGE.TITLE": "העמוד בטעינה",
   "BUTTON_TEXT.3_DAYS": "3 ימים",
   "FILTER_INDICATIONS.MULTIPLE_FILTERS": "{{num}} פילטרים מוגדרים",
-  "PLEASE_WAIT_WHILE_SAVING": "אנא המתן בזמן שהנתונים נשמרים..."
+  "PLEASE_WAIT_WHILE_SAVING": "אנא המתן בזמן שהנתונים נשמרים...",
+  "SELECT_SIDEBAR_EVENT_PLACEHOLDER": "בחר מהפעילויות הבאות...",
+  "MODALS.SELECT": "בחר",
+  "MODALS.ERROR.PLEASE_SELECT_EVENT": "אנא בחר פעילות",
+  "MODALS.ADD_CALENDAR_EVENT.ADD_FROM_EXISTING": "הוסף מהפעילויות הקיימות",
+  "MODALS.ADD_CALENDAR_EVENT.ADD_NEW": "הוסף פעילות חדשה"
 }
