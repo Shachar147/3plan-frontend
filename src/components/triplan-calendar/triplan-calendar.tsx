@@ -39,6 +39,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	const [draggables, setDraggables] = useState<any[]>([]);
 	const calendarComponentRef = useRef<FullCalendar>(null);
 	const { customDateRange } = props;
+	const [isDoubleClicked, setIsDoubleClicked] = useState(false);
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({
@@ -185,7 +186,18 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const onCalendarSelect = (selectionInfo: any) => {
-		ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
+		if (!isDoubleClicked) {
+			// console.log("not clicked yet!");
+			setIsDoubleClicked(true);
+			setTimeout(() => {
+				// console.log("oops too long");
+				setIsDoubleClicked(false);
+			}, 1000);
+		} else {
+			// console.log("double clicked!");
+			setIsDoubleClicked(false);
+			ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
+		}
 	};
 
 	const renderEventContent = (eventContentArg: EventContentArg) => {
