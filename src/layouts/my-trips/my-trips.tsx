@@ -164,7 +164,17 @@ function MyTrips() {
 	}
 
 	function renderListOfTrips() {
-		return <div className="my-trips bright-scrollbar">{lsTrips.map(renderTrip)}</div>;
+		return (
+			<div className="flex-column gap-10">
+				<div className="my-trips bright-scrollbar">{lsTrips.map(renderTrip)}</div>
+				<Button
+					text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
+					flavor={ButtonFlavor.primary}
+					className="padding-inline-15"
+					onClick={() => navigate('/getting-started')}
+				/>
+			</div>
+		);
 	}
 
 	function renderForm() {

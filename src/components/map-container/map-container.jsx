@@ -11,6 +11,8 @@ import { TriplanEventPreferredTime } from '../../utils/enums';
 import { BuildEventUrl, getClasses, isMatching } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
+import * as ReactDOMServer from 'react-dom/server';
+import Slider from 'react-slick';
 
 function Marker(props) {
 	const { text, lng, lat, locationData, openingHours, searchValue } = props;
@@ -139,8 +141,65 @@ const MapContainer = () => {
 		const url = BuildEventUrl(event.location);
 		const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`;
 
+		let images = event.extendedProps?.images ?? event.images;
+		const sliderSettings = {
+			dots: true,
+			infinite: true,
+			speed: 500,
+			slidesToShow: 1,
+			slidesToScroll: 1,
+			width: 300,
+		};
+		const ImageSliderBlock = () => {
+			if (!images) return null;
+			if (typeof images === 'string') {
+				images = images.split('\n').map((image) => image.trim());
+			}
+			return (
+				<Slider {...sliderSettings}>
+					{images.map((image) => (
+						<img
+							className="slider-image"
+							style={{
+								width: 300,
+								height: 150,
+							}}
+							alt={''}
+							src={image}
+						/>
+					))}
+				</Slider>
+			);
+		};
+
+		function renderJavascriptImageSlider() {
+			if (!images) return null;
+			if (typeof images === 'string') {
+				images = images.split('\n').map((image) => image.trim());
+			}
+			return ReactDOMServer.renderToString(
+				<div className="js-image-slider">
+					<ul>
+						{images.slice(0, 3).map((image, idx) => (
+							<li>
+								<img
+									src={image}
+									style={{ minHeight: '80px', width: '150px' }}
+									alt={`#${idx + 1}/${images.length}`}
+									onerror="if (this.src != 'error.jpg') this.src = 'error.jpg';"
+								/>
+							</li>
+						))}
+					</ul>
+					{images.length > 3 && <span>+{images.length - 3}</span>}
+				</div>
+			);
+		}
+
 		return `<div style="display: flex; flex-direction: column; gap: 6px; max-width: 450px; padding: 10px;">
                                 ${title}
+                                <hr style="height: 1px; width: 100%;margin-block: 3px;" />
+                                ${renderJavascriptImageSlider()}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
                                 ${address}
                                 ${categoryBlock}
@@ -699,7 +758,7 @@ const MapContainer = () => {
 					/>
 				))}
 			</GoogleMapReact>
-			<div className={'visible-items-pane'}>
+			<div className={getClasses('visible-items-pane', eventStore.isMobile && 'mobile')}>
 				<div className={'visible-items-header'}>
 					<b>{TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.TITLE')}:</b>
 				</div>

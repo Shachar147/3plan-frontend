@@ -26,9 +26,11 @@
 	}
 
 	.visible-items-pane {
-		position: absolute;
+		&:not(.mobile) {
+			position: absolute;
+			left: 15px;
+		}
 		bottom: 23px;
-		left: 15px;
 		z-index: 999;
 		background-color: white;
 		padding-block: 10px;
@@ -83,4 +85,36 @@
 	color: #666666;
 	box-shadow: rgb(0 0 0 / 30%) 0 1px 4px -1px;
 	border-radius: 2px;
+}
+
+.js-image-slider {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+
+	ul {
+		display: flex;
+		flex-direction: row;
+		gap: 8px;
+		padding: 0;
+		margin: 0;
+
+		li {
+			list-style: none;
+			position: relative;
+
+			img:before {
+				content: ' ';
+				display: block;
+				position: absolute;
+				height: 100px;
+				width: 150px;
+				background-image: url('../../../images/no-image-fallback.png');
+				background-size: auto 100%;
+				background-position: center;
+				background-repeat: no-repeat;
+				background-color: #eeeeee;
+			}
+		}
+	}
 }
