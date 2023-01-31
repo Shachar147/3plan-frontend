@@ -105,9 +105,11 @@ const MapContainer = () => {
 		const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
 		let scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED');
 		if (calendarEvent) {
-			const dt = formatDate(toDate(calendarEvent.start));
-			const startTime = calendarEvent.start?.toLocaleTimeString('en-US', { hour12: false });
-			const endTime = calendarEvent.end?.toLocaleTimeString('en-US', { hour12: false });
+			const dtStart = toDate(calendarEvent.start);
+			const dtEnd = toDate(calendarEvent.end);
+			const dt = formatDate(dtStart);
+			const startTime = dtStart?.toLocaleTimeString('en-US', { hour12: false });
+			const endTime = dtEnd?.toLocaleTimeString('en-US', { hour12: false });
 			const start = formatTime(startTime);
 			const end = formatTime(endTime);
 
