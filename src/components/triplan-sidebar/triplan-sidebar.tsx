@@ -330,7 +330,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				</div>
 				<div className={'sidebar-statistics'}>
 					<i className="fa fa-calendar-times-o" aria-hidden="true"></i>
-					{Object.values(eventStore.sidebarEvents).flat().length}{' '}
+					{eventStore.allSidebarEvents.length}{' '}
 					{TranslateService.translate(eventStore, 'EVENTS_ON_THE_SIDEBAR')}
 				</div>
 			</>

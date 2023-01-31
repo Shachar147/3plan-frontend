@@ -407,6 +407,16 @@ export class EventStore {
 		return this.calendarLocalCode === 'he';
 	}
 
+	@computed
+	get allFilteredSidebarEvents() {
+		return Object.values(this.getSidebarEvents).flat();
+	}
+
+	@computed
+	get allSidebarEvents() {
+		return Object.values(this.sidebarEvents).flat();
+	}
+
 	// --- actions --------------------------------------------------------------
 
 	@action

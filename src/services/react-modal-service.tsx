@@ -1665,7 +1665,7 @@ const ReactModalService = {
 		addToEventsToCategories: (value: any) => void,
 		info: any
 	) => {
-		const allSidebarEvents = Object.values(eventStore.sidebarEvents).flat();
+		const allSidebarEvents = eventStore.allSidebarEvents;
 
 		const pleaseChooseActivity = () => {
 			ReactModalService.internal.alertMessage(
@@ -1723,13 +1723,22 @@ const ReactModalService = {
 			content,
 			onConfirm,
 			onCancel: () => {
-				ReactModalService.openAddCalendarEventModal(eventStore, addToEventsToCategories, info);
+				if (eventStore.allSidebarEvents.length === 0) {
+					ReactModalService.openAddCalendarEventModal(eventStore, addToEventsToCategories, info);
+				} else {
+					ReactModalService.internal.closeModal(eventStore);
+				}
 			},
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SELECT'),
 		});
 	},
 	openAddCalendarEventModal: (eventStore: EventStore, addToEventsToCategories: (value: any) => void, info: any) => {
 		const title = TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CALENDAR.TITLE');
+
+		// if there are no sidebar events - open add new calendar modal.
+		if (eventStore.allSidebarEvents.length === 0) {
+			return ReactModalService.openAddCalendarEventNewModal(eventStore, addToEventsToCategories, info);
+		}
 
 		const content = (
 			<Observer>
@@ -1769,7 +1778,7 @@ const ReactModalService = {
 			title,
 			content,
 			// onConfirm,
-			showCancel: false,
+			// showCancel: false,
 			showConfirm: false,
 		});
 	},
@@ -1916,7 +1925,11 @@ const ReactModalService = {
 			content,
 			onConfirm,
 			onCancel: () => {
-				ReactModalService.openAddCalendarEventModal(eventStore, addToEventsToCategories, info);
+				if (eventStore.allSidebarEvents.length !== 0) {
+					ReactModalService.openAddCalendarEventModal(eventStore, addToEventsToCategories, info);
+				} else {
+					ReactModalService.internal.closeModal(eventStore);
+				}
 			},
 		});
 	},
