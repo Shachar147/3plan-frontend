@@ -197,11 +197,7 @@ const MapContainer = () => {
 					<ul>
 						{images.slice(0, 3).map((image, idx) => (
 							<li>
-								<img
-									src={image}
-									style={{ minHeight: '80px', width: '150px' }}
-									alt={`#${idx + 1}/${images.length}`}
-								/>
+								<img src={image} alt={`#${idx + 1}/${images.length}`} />
 							</li>
 						))}
 					</ul>
