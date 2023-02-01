@@ -214,7 +214,7 @@ const MapContainer = () => {
                                 ${title}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
                                 ${images?.length ? renderJavascriptImageSlider() : ''}
-								${images?.length ? <hr style="height: 1px; width: 100%;margin-block: 3px;" /> : ''}
+								${images?.length ? '<hr style="height: 1px; width: 100%;margin-block: 3px;" />' : ''}
                                 ${address}
                                 ${categoryBlock}
                                 ${description}
