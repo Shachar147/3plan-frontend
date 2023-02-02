@@ -29,155 +29,163 @@
 	}
 
 	body {
-		&.ltr,
-		&.rtl {
-			.triplan-header {
-				flex-direction: column;
-				gap: 0;
-				align-items: center;
+		.triplan-header {
+			flex-direction: column !important;
+			gap: 0;
+			align-items: center;
 
-				.language-selector {
-					order: 1;
-				}
-				.triplan-header-starter {
-					order: 2;
-
-					max-width: unset;
-					width: 100%;
-					justify-content: center;
-
-					.link-button {
-						display: flex;
-						white-space: nowrap;
-					}
-				}
-				.triplan-header-actionbar {
-					order: 3;
-				}
-
-				.language-selector {
-					flex-shrink: 0;
-					justify-content: center;
-				}
-
-				.filter-tags-container {
-					margin-top: 8px;
-				}
+			.language-selector {
+				order: 1;
 			}
+			.triplan-header-starter {
+				order: 2;
 
-			.main-page {
-				.mobile-divider {
-					display: flex;
-					border-block: 1px solid rgba(45, 45, 45, 0.1);
-					padding-block: 5px;
-					color: rgba(45, 45, 45, 0.5);
-					text-align: center;
-					justify-content: center;
-				}
-
-				.fc-header-toolbar {
-					font-size: 12px;
-					flex-direction: column;
-
-					.fc-icon-chevron-right,
-					.fc-icon-chevron-left {
-						font-size: 12px;
-					}
-				}
-
-				.calendar-container {
-					min-height: 2625px;
-				}
-
-				/* hide language selector - todo improve */
-				.start-side {
-					//display: none; // header looks better without it
-				}
-
-				.main-layout-container {
-					.main-layout {
-						flex-direction: column;
-						gap: 40px;
-						height: max-content;
-					}
-				}
-
-				.external-events-container {
-					width: 100%;
-					max-width: unset;
-					padding-inline: 0;
-
-					.custom-dates-line {
-						input[type='date'] {
-							display: flex;
-							flex: 1 1 0;
-							min-width: 0;
-						}
-					}
-				}
-
-				.category-actions {
-					font-size: 12px;
-					flex-wrap: wrap;
-					gap: 2px;
-
-					//.link-button {
-					//	flex-grow: 1;
-					//	flex-shrink: 0;
-					//}
-				}
-			}
-
-			.main-page .triplan-header .triplan-header-actionbar {
-				flex-direction: column;
-				align-items: center;
-				gap: 8px;
+				max-width: unset;
 				width: 100%;
-
-				.search-container {
-					padding-inline: 0px;
-					margin-top: 8px;
-					width: 100%;
-				}
-			}
-
-			.main-part {
-				display: flex;
-				flex: 1 1 0;
-				//overflow: hidden;
-				width: 100%;
-				min-width: unset;
-				height: 100vh;
-				min-height: max-content;
-
-				.logo-container {
-					min-width: 300px !important;
-				}
-			}
-			.landing-page-layout .main-part .slogan {
-				padding-block: 20px;
-				min-width: 40px !important;
-			}
-			.main-buttons,
-			.start-now-button {
-				flex-direction: column;
-				padding-inline: 40px;
-				min-width: 40px !important;
-			}
-			.footer {
-				flex-direction: column;
-				align-items: center;
 				justify-content: center;
-				padding-inline: 0;
-				a {
-					align-items: flex-start;
+
+				.link-button {
+					display: flex;
+					white-space: nowrap;
+				}
+			}
+			.triplan-header-actionbar {
+				order: 3;
+			}
+
+			.language-selector {
+				flex-shrink: 0;
+				justify-content: center;
+			}
+
+			.filter-tags-container {
+				margin-top: 8px;
+			}
+		}
+
+		.main-page {
+			// make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
+			.calender-container {
+				min-height: 2625px !important;
+			}
+			.fc-scroller {
+				height: auto !important;
+			}
+			.fc-head .fc-widget-header {
+				margin-right: 0 !important;
+			}
+			.fc-scroller {
+				overflow: visible !important;
+			}
+			// END: make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
+
+			.mobile-divider {
+				display: flex;
+				border-block: 1px solid rgba(45, 45, 45, 0.1);
+				padding-block: 5px;
+				color: rgba(45, 45, 45, 0.5);
+				text-align: center;
+				justify-content: center;
+			}
+
+			.fc-header-toolbar {
+				font-size: 12px;
+				flex-direction: column;
+
+				.fc-icon-chevron-right,
+				.fc-icon-chevron-left {
+					font-size: 12px;
 				}
 			}
 
-			/* my trips */
-			.create-new-trip-form {
+			/* hide language selector - todo improve */
+			.start-side {
+				//display: none; // header looks better without it
+			}
+
+			.main-layout-container {
+				.main-layout {
+					flex-direction: column;
+					gap: 40px;
+					height: max-content;
+				}
+			}
+
+			.external-events-container {
+				width: 100%;
+				max-width: unset;
+				padding-inline: 0;
+
+				.custom-dates-line {
+					input[type='date'] {
+						display: flex;
+						flex: 1 1 0;
+						min-width: 0;
+					}
+				}
+			}
+
+			.category-actions {
+				font-size: 12px;
+				flex-wrap: wrap;
+				gap: 2px;
+
+				//.link-button {
+				//	flex-grow: 1;
+				//	flex-shrink: 0;
+				//}
+			}
+		}
+
+		.main-page .triplan-header .triplan-header-actionbar {
+			flex-direction: column;
+			align-items: center;
+			gap: 8px;
+			width: 100%;
+
+			.search-container {
+				padding-inline: 0px;
+				margin-top: 8px;
 				width: 100%;
 			}
+		}
+
+		.main-part {
+			display: flex;
+			flex: 1 1 0;
+			//overflow: hidden;
+			width: 100%;
+			min-width: unset;
+			height: 100vh;
+			min-height: max-content;
+
+			.logo-container {
+				min-width: 300px !important;
+			}
+		}
+		.landing-page-layout .main-part .slogan {
+			padding-block: 20px;
+			min-width: 40px !important;
+		}
+		.main-buttons,
+		.start-now-button {
+			flex-direction: column;
+			padding-inline: 40px;
+			min-width: 40px !important;
+		}
+		.footer {
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding-inline: 0;
+			a {
+				align-items: flex-start;
+			}
+		}
+
+		/* my trips */
+		.create-new-trip-form {
+			width: 100%;
 		}
 
 		&.rtl {
@@ -298,6 +306,11 @@
 		display: flex;
 		flex: 1 1 0;
 		min-width: 0;
+	}
+
+	.fc-day-grid-container.fc-scroller {
+		//height: auto!important;
+		//overflow-y: auto;
 	}
 }
 @media only screen and (max-height: 600px) and (orientation: landscape) {
