@@ -298,6 +298,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			select={onCalendarSelect}
 			eventContent={renderEventContent}
 			longPressDelay={5}
+			validRange={eventStore.customDateRange}
 		/>
 	);
 }
