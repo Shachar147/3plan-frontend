@@ -86,7 +86,7 @@
 				}
 
 				.calendar-container {
-					min-height: 1200px;
+					min-height: 2625px;
 				}
 
 				/* hide language selector - todo improve */
@@ -223,25 +223,6 @@
 				padding-block: 20px !important;
 			}
 		}
-
-		//background-image: url('../../images/bg.png');
-		//background-size: auto 80%;
-		//background-position: center;
-		//background-repeat: no-repeat;
-		//background-color: #87d9e9;
-		//
-		//.logo-container {
-		//	background-color: rgba(255,255,255,0.3);
-		//	border-radius: 50%;
-		//	padding: 20px;
-		//	width: 33%;
-		//	opacity: 0;
-		//}
-		//
-		//.login-form {
-		//	background-color: white;
-		//	opacity: 1;
-		//}
 	}
 
 	.my-trips-header,
@@ -292,12 +273,8 @@
 		height: 700px !important;
 	}
 
-	//.map-header {
-	//	order: 1;
-	//}
-	//.map-header + div {
-	//	order: 2;
-	//}
+	// place map view "visible items" pane under the map on mobile view, instead of above it, since on mobile
+	// it covers almost the whole map and not very functional when its over the map.
 	.visible-items-pane {
 		&.mobile {
 			position: relative !important;
@@ -311,6 +288,16 @@
 				max-width: unset !important;
 			}
 		}
+	}
+
+	// add/edit calendar event
+	#new-icon {
+		width: 100%;
+	}
+	.triplan-date-picker-input {
+		display: flex;
+		flex: 1 1 0;
+		min-width: 0;
 	}
 }
 @media only screen and (max-height: 600px) and (orientation: landscape) {

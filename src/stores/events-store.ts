@@ -97,12 +97,6 @@ export class EventStore {
 		const startTime = new Date().getTime();
 		this.isLoading = true;
 		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
-			// this.categories = DataServices.LocalStorageService.getCategories(this);
-			// this.allEvents = DataServices.LocalStorageService.getAllEvents(this);
-			// this.sidebarEvents = DataServices.LocalStorageService.getSidebarEvents();
-			// this.calendarEvents = DataServices.LocalStorageService.getCalendarEvents()
-			// this.calendarLocalCode = DataServices.LocalStorageService.getCalendarLocale();
-			// this.customDateRange = DataServices.LocalStorageService.getDateRange(this.tripName, this.createMode);
 			this.distanceResults = observable.map<string, DistanceResult>(
 				DataServices.LocalStorageService.getDistanceResults()
 			);

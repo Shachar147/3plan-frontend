@@ -129,11 +129,10 @@ function PlacesTinder(props: PlacesTinderProps) {
 			]);
 		}
 
-		let description = currentPlace.description;
+		let description = currentPlace.description || '';
 		if (currentPlace.tinder.more_info) {
-			description += `\n-----\n${TranslateService.translate(eventStore, 'MORE_INFO')}:\n${
-				currentPlace.tinder.more_info
-			}`;
+			if (description !== '') description += '\n-----\n';
+			description += `${TranslateService.translate(eventStore, 'MORE_INFO')}:\n${currentPlace.tinder.more_info}`;
 		}
 
 		const initialData = {
