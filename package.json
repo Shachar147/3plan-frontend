@@ -1,115 +1,117 @@
 {
-  "name": "react-fullcalendar-external-events-drag-and-drop",
-  "version": "1.0.0",
-  "description": "",
-  "keywords": [],
-  "main": "src/index.js",
-  "dependencies": {
-    "-": "^0.0.1",
-    "@fullcalendar/core": "4.0.2",
-    "@fullcalendar/daygrid": "^5.11.2",
-    "@fullcalendar/interaction": "^5.11.2",
-    "@fullcalendar/list": "^5.11.3",
-    "@fullcalendar/react": "^5.11.2",
-    "@fullcalendar/timegrid": "^5.11.2",
-    "@googlemaps/markerclustererplus": "^1.2.10",
-    "@testing-library/dom": "^8.11.2",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.1.3",
-    "bootstrap": "4.3.1",
-    "fontawesome-markers": "^4.6.1",
-    "google-map-react": "^2.2.0",
-    "jest": "^27.5.1",
-    "jest-dom": "^4.0.0",
-    "js-cookie": "^3.0.1",
-    "jwt-decode": "^3.1.2",
-    "lint-staged": "^13.0.3",
-    "lodash": "^4.17.21",
-    "mobx": "^5.15.4",
-    "mobx-angularjs": "^1.6.1",
-    "mobx-react": "^6.2.2",
-    "moment": "^2.29.4",
-    "prettier": "^2.8.1",
-    "puppeteer": "^18.1.0",
-    "react": "16.8.6",
-    "react-bootstrap-sweetalert": "^5.2.0",
-    "react-dom": "16.8.6",
-    "react-image-gallery": "^1.2.11",
-    "react-responsive-carousel": "^3.2.23",
-    "react-scripts": "^5.0.1",
-    "react-select": "^5.4.0",
-    "react-slick": "^0.29.0",
-    "reactstrap": "8.0.0",
-    "styled-components": "^5.3.6",
-    "sweetalert2": "8.8.5"
-  },
-  "prettier": {
-    "trailingComma": "es5",
-    "tabWidth": 4,
-    "singleQuote": true,
-    "printWidth": 120,
-    "useTabs": true
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,html,less,scss,css}": "prettier --write"
-  },
-  "devDependencies": {
-    "@storybook/addon-actions": "^6.5.15",
-    "@storybook/addon-essentials": "^6.5.15",
-    "@storybook/addon-interactions": "^6.5.15",
-    "@storybook/addon-links": "^6.5.15",
-    "@storybook/builder-webpack5": "^6.5.15",
-    "@storybook/manager-webpack5": "^6.5.15",
-    "@storybook/node-logger": "^6.5.15",
-    "@storybook/preset-create-react-app": "^4.1.2",
-    "@storybook/react": "^6.5.15",
-    "@storybook/testing-library": "^0.0.13",
-    "@types/react": "^18.0.17",
-    "babel-plugin-named-exports-order": "^0.0.2",
-    "husky": "^4.3.8",
-    "prop-types": "^15.8.1",
-    "react-router-dom": "^6.4.1",
-    "sass": "^1.53.0",
-    "sass-loader": "^10.3.1",
-    "typescript": "^4.8.2",
-    "webpack": "^5.75.0"
-  },
-  "scripts": {
-    "start": "npm run build && serve -s build",
-    "start:dev:old": "react-scripts start",
-    "start:dev": "SET PORT=3000 && SET REACT_APP_MODE=development && react-scripts start",
-    "start:dev:mac": "PORT=3000 REACT_APP_MODE=development react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
-    "prettier-check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
-    "start:storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
-  "eslintConfig": {
-    "overrides": [
-      {
-        "files": [
-          "**/*.stories.*"
-        ],
-        "rules": {
-          "import/no-anonymous-default-export": "off"
-        }
-      }
-    ]
-  }
+	"name": "react-fullcalendar-external-events-drag-and-drop",
+	"version": "1.0.0",
+	"description": "",
+	"keywords": [],
+	"main": "src/index.js",
+	"dependencies": {
+		"-": "^0.0.1",
+		"@fullcalendar/core": "4.0.2",
+		"@fullcalendar/daygrid": "^5.11.2",
+		"@fullcalendar/interaction": "^5.11.2",
+		"@fullcalendar/list": "^5.11.3",
+		"@fullcalendar/react": "^5.11.2",
+		"@fullcalendar/timegrid": "^5.11.2",
+		"@googlemaps/markerclustererplus": "^1.2.10",
+		"@testing-library/dom": "^8.11.2",
+		"@testing-library/jest-dom": "^5.16.5",
+		"@testing-library/react": "^12.1.2",
+		"@testing-library/user-event": "^13.5.0",
+		"axios": "^1.1.3",
+		"bootstrap": "4.3.1",
+		"fontawesome-markers": "^4.6.1",
+		"google-map-react": "^2.2.0",
+		"jest": "^27.5.1",
+		"jest-dom": "^4.0.0",
+		"js-cookie": "^3.0.1",
+		"jwt-decode": "^3.1.2",
+		"lint-staged": "^13.0.3",
+		"lodash": "^4.17.21",
+		"mobx": "^5.15.4",
+		"mobx-angularjs": "^1.6.1",
+		"mobx-react": "^6.2.2",
+		"moment": "^2.29.4",
+		"prettier": "^2.8.1",
+		"puppeteer": "^18.1.0",
+		"react": "16.8.6",
+		"react-bootstrap-sweetalert": "^5.2.0",
+		"react-dom": "16.8.6",
+		"react-image-gallery": "^1.2.11",
+		"react-responsive-carousel": "^3.2.23",
+		"react-scripts": "^5.0.1",
+		"react-select": "^5.4.0",
+		"react-slick": "^0.29.0",
+		"reactstrap": "8.0.0",
+		"styled-components": "^5.3.6",
+		"sweetalert2": "8.8.5"
+	},
+	"prettier": {
+		"trailingComma": "es5",
+		"tabWidth": 4,
+		"singleQuote": true,
+		"printWidth": 120,
+		"useTabs": true
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx,html,less,scss,css}": "prettier --write"
+	},
+	"devDependencies": {
+		"@storybook/addon-actions": "^6.5.15",
+		"@storybook/addon-essentials": "^6.5.15",
+		"@storybook/addon-interactions": "^6.5.15",
+		"@storybook/addon-links": "^6.5.15",
+		"@storybook/builder-webpack5": "^6.5.15",
+		"@storybook/manager-webpack5": "^6.5.15",
+		"@storybook/node-logger": "^6.5.15",
+		"@storybook/preset-create-react-app": "^4.1.2",
+		"@storybook/react": "^6.5.15",
+		"@storybook/testing-library": "^0.0.13",
+		"@types/react": "^18.0.17",
+		"babel-plugin-named-exports-order": "^0.0.2",
+		"husky": "^8.0.0",
+		"pretty-quick": "^3.1.3",
+		"prop-types": "^15.8.1",
+		"react-router-dom": "^6.4.1",
+		"sass": "^1.53.0",
+		"sass-loader": "^10.3.1",
+		"typescript": "^4.8.2",
+		"webpack": "^5.75.0"
+	},
+	"scripts": {
+		"start": "npm run build && serve -s build",
+		"start:dev:old": "react-scripts start",
+		"start:dev": "SET PORT=3000 && SET REACT_APP_MODE=development && react-scripts start",
+		"start:dev:mac": "PORT=3000 REACT_APP_MODE=development react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test --env=jsdom",
+		"eject": "react-scripts eject",
+		"prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
+		"prettier-check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
+		"start:storybook": "start-storybook -p 6006 -s public",
+		"build-storybook": "build-storybook -s public",
+		"prepare": "husky install"
+	},
+	"browserslist": [
+		">0.2%",
+		"not dead",
+		"not ie <= 11",
+		"not op_mini all"
+	],
+	"eslintConfig": {
+		"overrides": [
+			{
+				"files": [
+					"**/*.stories.*"
+				],
+				"rules": {
+					"import/no-anonymous-default-export": "off"
+				}
+			}
+		]
+	}
 }

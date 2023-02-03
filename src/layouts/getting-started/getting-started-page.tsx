@@ -10,12 +10,10 @@ import { getClasses } from '../../utils/utils';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import ReactModalService from '../../services/react-modal-service';
 import DataServices from '../../services/data-handlers/data-handler-base';
-import { getUser } from '../../helpers/auth';
-import { apiGet } from '../../helpers/api';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
+import { TripDataSource } from '../../utils/enums';
 
-const dataService = DataServices.LocalStorageService;
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
 	const [applyFadeIn, setApplyFadeIn] = useState(false);
@@ -41,7 +39,7 @@ const GettingStartedPage = () => {
 		document.querySelector('body').classList.remove('rtl');
 		document.querySelector('body').classList.remove('ltr');
 		document.querySelector('body').classList.add(eventStore.getCurrentDirection());
-		dataService.setCalendarLocale(eventStore.calendarLocalCode);
+		eventStore.dataService.setCalendarLocale(eventStore.calendarLocalCode);
 	}, [eventStore.calendarLocalCode]);
 
 	const renderForm = () => {
@@ -107,9 +105,9 @@ const GettingStartedPage = () => {
 		const TripName = tripName.replace(/\s/gi, '-');
 
 		// local mode
-		if (!getUser()) {
+		if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
 			eventStore.setCustomDateRange(customDateRange);
-			dataService.setDateRange(customDateRange, TripName);
+			eventStore.dataService.setDateRange(customDateRange, TripName);
 			navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 		} else {
 			const tripData = {
@@ -126,7 +124,7 @@ const GettingStartedPage = () => {
 				tripData,
 				() => {
 					eventStore.setCustomDateRange(customDateRange);
-					dataService.setDateRange(customDateRange, TripName);
+					eventStore.dataService.setDateRange(customDateRange, TripName);
 					navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 				},
 				() => {

@@ -7,7 +7,7 @@ import { TripDataSource } from '../../utils/enums';
 
 export interface upsertTripProps {
 	name?: string;
-	dateRange?: string;
+	dateRange?: DateRangeFormatted;
 	categories?: string;
 	calendarEvents?: string;
 	sidebarEvents?: string;

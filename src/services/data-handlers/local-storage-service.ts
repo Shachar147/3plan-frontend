@@ -27,6 +27,7 @@ import DataServices, {
 	tripNameToLSTripName,
 } from './data-handler-base';
 import { TripDataSource } from '../../utils/enums';
+import { getUser } from '../../helpers/auth';
 
 export class LocalStorageService implements BaseDataHandler {
 	CONTINUE_AS_GUEST_MODAL_LS_KEY = 'triplan-hide-continue-as-guest-modal';
@@ -118,6 +119,7 @@ export class LocalStorageService implements BaseDataHandler {
 			if (!createMode) return [];
 			if (tripName) this.setCalendarEvents(defaultCalendarEvents, tripName);
 		}
+
 		const results = JSON.parse(localStorage.getItem(key)!).map((e: CalendarEvent) => {
 			e.start = new Date(e.start);
 			e.end = new Date(e.end);
@@ -155,6 +157,7 @@ export class LocalStorageService implements BaseDataHandler {
 	}
 
 	getDateRange(tripName?: string, createMode?: boolean): DateRangeFormatted {
+		if (!tripName) return defaultDateRange();
 		createMode = createMode || window.location.href.indexOf('/create/') !== -1;
 		const key = tripName ? [LS_CUSTOM_DATE_RANGE, tripName].join('-') : LS_CUSTOM_DATE_RANGE;
 		const eventStore = { createMode: createMode || window.location.href.indexOf('/create/') !== -1 };
@@ -162,7 +165,8 @@ export class LocalStorageService implements BaseDataHandler {
 			if (!eventStore.createMode) return defaultDateRange();
 			if (tripName) this.setDateRange(defaultDateRange(), tripName);
 		}
-		return JSON.parse(localStorage.getItem(key)!);
+		const result = JSON.parse(localStorage.getItem(key)!);
+		return result;
 	}
 
 	getSidebarEvents(tripName?: string, createMode?: boolean): Record<number, SidebarEvent[]> {
@@ -193,11 +197,13 @@ export class LocalStorageService implements BaseDataHandler {
 
 	// --- SET ------------------------------------------------------------------------------
 	setAllEvents(allEvents: AllEventsEvent[], tripName: string): void {
+		debugger;
 		const key = tripName ? [LS_ALL_EVENTS, tripName].join('-') : LS_ALL_EVENTS;
 		localStorage.setItem(key, JSON.stringify(allEvents));
 	}
 
 	setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string): void {
+		debugger;
 		const key = tripName ? [LS_CALENDAR_EVENTS, tripName].join('-') : LS_CALENDAR_EVENTS;
 		localStorage.setItem(key, JSON.stringify(calendarEvents));
 	}
@@ -213,6 +219,7 @@ export class LocalStorageService implements BaseDataHandler {
 	}
 
 	setDateRange(dateRange: DateRangeFormatted, tripName: string): void {
+		debugger;
 		const key = tripName ? [LS_CUSTOM_DATE_RANGE, tripName].join('-') : LS_CUSTOM_DATE_RANGE;
 		localStorage.setItem(key, JSON.stringify(dateRange));
 	}
@@ -234,6 +241,7 @@ export class LocalStorageService implements BaseDataHandler {
 			const newKey = [localStorageKey, newLSTripName].join(separator2);
 			const value = localStorage.getItem(key);
 			if (value != undefined) {
+				debugger;
 				localStorage.setItem(newKey, value);
 				localStorage.removeItem(key);
 			}

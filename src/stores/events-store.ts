@@ -628,7 +628,7 @@ export class EventStore {
 	@action
 	async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean) {
 		const existingTrips = await this.dataService.getTrips(this);
-		console.log('existing', existingTrips, 'type', this.dataService.getDataSourceName());
+		// console.log('existing', existingTrips, 'type', this.dataService.getDataSourceName());
 
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');

@@ -1,5 +1,5 @@
 // @ts-ignore
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { getClasses, Loader, LOADER_DETAILS } from '../../utils/utils';
 import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
@@ -40,6 +40,9 @@ function MainPage(props: MainPageProps) {
 	const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
 	const [loaderDetails, setLoaderDetails] = useState<Loader>(LOADER_DETAILS());
 
+	const [isFetchingData, setIsFetchingData] = useState(false);
+	const [defaultCalendarEvents, setDefaultCalendarEvents] = useState<CalendarEvent[]>([]);
+
 	useHandleWindowResize();
 
 	useEffect(() => {
@@ -48,12 +51,23 @@ function MainPage(props: MainPageProps) {
 		}
 	}, [TriplanCalendarRef, eventStore.customDateRange]);
 
+	const fetchCalendarEvents = useCallback(async () => {
+		const data = await eventStore.dataService.getCalendarEvents(tripName);
+		setDefaultCalendarEvents(data);
+	}, [tripName]);
+
+	useEffect(() => {
+		setIsFetchingData(true);
+		fetchCalendarEvents();
+		setIsFetchingData(false);
+	}, [fetchCalendarEvents]);
+
 	useEffect(() => {
 		eventStore.setTripName(tripName, locale as LocaleCode, createMode);
 
 		// must put it here, otherwise dates are incorrect
 		if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
-			eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(eventStore.tripName));
+			eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(tripName));
 		}
 	}, [tripName, locale]);
 
@@ -207,8 +221,7 @@ function MainPage(props: MainPageProps) {
 			>
 				<TriplanCalendar
 					ref={TriplanCalendarRef}
-					defaultCalendarEvents={DataServices.LocalStorageService.getCalendarEvents(eventStore.tripName)}
-					// defaultCalendarEvents={eventStore.dataService.getCalendarEvents(eventStore.tripName)}
+					defaultCalendarEvents={defaultCalendarEvents}
 					onEventReceive={removeEventFromSidebarById}
 					allEvents={eventStore.allEvents}
 					addEventToSidebar={addEventToSidebar}
@@ -271,7 +284,7 @@ function MainPage(props: MainPageProps) {
 			</div>
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
-					{eventStore.isLoading ? (
+					{eventStore.isLoading || isFetchingData ? (
 						renderLoading()
 					) : (
 						<>
