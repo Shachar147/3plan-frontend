@@ -1103,8 +1103,9 @@ const ReactModalService = {
 			</Observer>
 		);
 
+		const settings = getDefaultSettings(eventStore);
 		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
+			...settings,
 			title,
 			onConfirm,
 			content,
@@ -1291,10 +1292,12 @@ const ReactModalService = {
 			</Observer>
 		);
 
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(
 			eventStore,
 			{
-				...getDefaultSettings(eventStore),
+				...settings,
 				title,
 				content,
 				onConfirm,
@@ -1534,8 +1537,10 @@ const ReactModalService = {
 			</Observer>
 		);
 
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
+			...settings,
 			title,
 			content,
 			onConfirm,
@@ -1657,8 +1662,10 @@ const ReactModalService = {
 			</Observer>
 		);
 
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
+			...settings,
 			title,
 			content,
 			onConfirm,
@@ -1721,8 +1728,10 @@ const ReactModalService = {
 			</Observer>
 		);
 
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
+			...settings,
 			title,
 			content,
 			onConfirm,
@@ -1923,8 +1932,10 @@ const ReactModalService = {
 			</Observer>
 		);
 
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
+			...settings,
 			title,
 			content,
 			onConfirm,
@@ -2478,8 +2489,10 @@ const ReactModalService = {
 			</Observer>
 		);
 
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
+			...settings,
 			title,
 			content,
 			onConfirm,
@@ -2729,8 +2742,10 @@ const ReactModalService = {
 
 		const content = <Observer>{() => <PlacesTinder eventStore={eventStore} destination={destination} />}</Observer>;
 
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
+			...settings,
 			showConfirm: false,
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.EXIT'),
 			title: TranslateService.translate(eventStore, 'PLACES_TINDER_MODAL.TITLE'),

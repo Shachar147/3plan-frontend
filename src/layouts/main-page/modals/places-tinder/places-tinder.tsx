@@ -71,7 +71,8 @@ function PlacesTinder(props: PlacesTinderProps) {
 			setPlacesList(arr);
 			setCurrIdx(0);
 
-			document.getElementsByClassName('places-tinder-modal')[0].className += ' selected-destination';
+			document.getElementsByClassName('places-tinder-modal')[0].className +=
+				' selected-destination fullscreen-modal';
 		}
 	}, [destination]);
 
@@ -252,6 +253,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 								style={{ opacity: 0.6 }}
 								href={currentPlace.tinder.more_info}
 							>
+								{/*todo complete - lokalise*/}
 								למידע נוסף
 							</a>
 						</div>

@@ -69,6 +69,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderImportButtons = () => {
+		if (eventStore.isMobile) return;
 		return (
 			<>
 				<Button

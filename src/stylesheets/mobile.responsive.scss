@@ -270,7 +270,8 @@
 		}
 
 		.react-modal.bright-scrollbar {
-			max-height: 60vh !important;
+			//max-height: 60vh !important;
+			max-height: CALC(90vh - 100px) !important;
 		}
 	}
 
@@ -312,10 +313,24 @@
 		flex-direction: column !important;
 	}
 
-	.sweet-alert {
+	.sweet-alert.fullscreen-modal {
 		position: fixed !important;
 		bottom: 0 !important;
 		min-height: 90vh;
+
+		> div {
+			display: flex;
+			flex: 1 1 0;
+		}
+	}
+
+	.landing-page-layout .main-part {
+		width: 100% !important;
+	}
+
+	.triplan-header.rtl .triplan-header-starter,
+	.triplan-header.rtl .triplan-header-actionbar {
+		justify-content: center;
 	}
 }
 @media only screen and (max-height: 600px) and (orientation: landscape) {

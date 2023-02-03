@@ -2,6 +2,7 @@ import { DEFAULT_EVENT_DURATION } from './consts';
 import { padTo2Digits } from './utils';
 import TranslateService from '../services/translate-service';
 import { EventStore } from '../stores/events-store';
+import { DateRangeFormatted } from '../services/data-handlers/data-handler-base';
 
 export function getDateRangeString(start: Date, end: Date) {
 	const startDay = start.getDate();
@@ -125,4 +126,12 @@ export function toDate(dt: Date | string | number | number[] | undefined) {
 	const dtDate = typeof dt === 'string' ? new Date(dt) : (dt as Date);
 	// console.log(dt, dtDate);
 	return dtDate;
+}
+
+export function isTodayInDateRange(customDateRange: DateRangeFormatted) {
+	const todayTimestamp = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
+	const endTimestamp = new Date(new Date(customDateRange.end).setHours(0, 0, 0, 0)).getTime();
+	const startTimestamp = new Date(new Date(customDateRange.start).setHours(0, 0, 0, 0)).getTime();
+
+	return startTimestamp <= todayTimestamp && todayTimestamp <= endTimestamp;
 }

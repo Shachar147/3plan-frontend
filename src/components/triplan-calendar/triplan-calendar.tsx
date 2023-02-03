@@ -10,8 +10,7 @@ import { eventStoreContext } from '../../stores/events-store';
 import './triplan-calendar.scss';
 import { defaultTimedEventDuration } from '../../utils/defaults';
 import TranslateService from '../../services/translate-service';
-import { addHoursToDate, getDateRangeString, getTimeStringFromDate } from '../../utils/time-utils';
-import { isEventAlreadyOrdered } from '../../utils/utils';
+import { addHoursToDate, getDateRangeString, isTodayInDateRange } from '../../utils/time-utils';
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
@@ -219,15 +218,19 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		list: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST'),
 	};
 
+	// show today button only if today is in the range of this trip
+	const showTodayButton = isTodayInDateRange(customDateRange);
+	const today = showTodayButton ? ' today' : '';
+
 	// on mobile - organize all the calendar navigators on the same line
 	const headerToolbar = eventStore.isMobile
 		? {
 				left: 'customTitle',
 				center: '',
-				right: 'prev,next today dayGridMonth,timeGridThreeDay,timeGridDay',
+				right: `prev,next${today} dayGridMonth,timeGridThreeDay,timeGridDay`,
 		  }
 		: {
-				left: 'prev,next today',
+				left: `prev,next${today}`,
 				center: 'customTitle',
 				right: 'dayGridMonth,timeGridWeek,timeGridDay',
 		  };

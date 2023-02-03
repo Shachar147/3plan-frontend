@@ -905,7 +905,7 @@ export class EventStore {
 
 	async waitIfNeeded(startTime: number) {
 		const gap = minLoadTimeInSeconds * 1000 - (new Date().getTime() - startTime);
-		console.log('gap in milliseconds: ', gap);
+		// console.log('gap in milliseconds: ', gap);
 		if (gap > 0) {
 			await new Promise((r) => setTimeout(r, gap));
 		}
