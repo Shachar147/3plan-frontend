@@ -24,7 +24,9 @@ export function apiGet(self, url, onSuccess, onError, onFinish) {
 }
 
 export function apiGetPromise(self, url) {
-	return axios.get(getServerAddress() + url);
+	return axios.get(getServerAddress() + url).catch((error) => {
+		handleUnauthorizedError(error);
+	});
 }
 
 async function handleUnauthorizedError(error) {
