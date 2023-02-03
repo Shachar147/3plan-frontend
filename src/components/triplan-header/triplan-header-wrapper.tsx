@@ -11,16 +11,21 @@ function TriplanHeaderWrapper(props: TriplanHeaderProps) {
 
 	// console.log("here", eventStore.isMobile)
 	//
-	// if (eventStore.isMobile){
-	//     const mobileMenuOptions = [];
+	// if (eventStore.isMobile) {
+	// 	const mobileMenuOptions = [];
 	//
-	//     return (
-	//         <div style={{ width: "100%" }}>
-	//             <MobileMenu items={[
-	//                 { text: 'Yahav', onClick: () => {} }
-	//             ]} />
-	//         </div>
-	//     );
+	// 	return (
+	// 		<div style={{ width: '100%' }}>
+	// 			<MobileMenu
+	// 				items={[
+	// 					{
+	// 						text: 'Yahav',
+	// 						onClick: () => {},
+	// 					},
+	// 				]}
+	// 			/>
+	// 		</div>
+	// 	);
 	// }
 
 	return (

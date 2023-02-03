@@ -16,11 +16,11 @@ import {
 	DateRangeFormatted,
 	LocaleCode,
 	lsTripNameToTripName,
-	Trip,
 } from '../services/data-handlers/data-handler-base';
 import ListViewService from '../services/list-view-service';
 import { LocalStorageService } from '../services/data-handlers/local-storage-service';
 import { DBService } from '../services/data-handlers/db-service';
+import { getUser } from '../helpers/auth';
 
 const defaultModalSettings = {
 	show: false,
@@ -80,12 +80,18 @@ export class EventStore {
 	@observable isMenuOpen = false;
 
 	constructor() {
-		const dataSourceName = LocalStorageService.getLastDataSource();
+		let dataSourceName = LocalStorageService.getLastDataSource();
+		if (!dataSourceName) {
+			dataSourceName = getUser() ? TripDataSource.DB : TripDataSource.LOCAL;
+		}
+		if (dataSourceName === TripDataSource.DB && !getUser()) {
+			dataSourceName = TripDataSource.LOCAL;
+		}
 		const defaultDataService = DataServices.LocalStorageService;
 		this.dataService =
 			dataSourceName == TripDataSource.LOCAL
 				? DataServices.LocalStorageService
-				: TripDataSource.DB
+				: dataSourceName === TripDataSource.DB
 				? DataServices.DBService
 				: defaultDataService;
 

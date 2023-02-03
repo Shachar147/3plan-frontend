@@ -263,11 +263,6 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
-	function renderMobileDivider() {
-		const text = getViewSelectorOptions(eventStore).find((option) => option.key === eventStore.viewMode)!.name;
-		return <h7 className="mobile-divider">{text}</h7>;
-	}
-
 	const headerProps = {
 		withLogo: true,
 		withSearch: true,
@@ -289,7 +284,6 @@ function MainPage(props: MainPageProps) {
 					) : (
 						<>
 							{renderSidebar()}
-							{renderMobileDivider()}
 							{eventStore.isMapView && renderMapView()}
 							{eventStore.isListView && renderListView()}
 							{eventStore.isCalendarView && renderCalendarView()}

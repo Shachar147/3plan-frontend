@@ -37,6 +37,7 @@
 			.language-selector {
 				order: 1;
 			}
+
 			.triplan-header-starter {
 				order: 2;
 
@@ -49,6 +50,7 @@
 					white-space: nowrap;
 				}
 			}
+
 			.triplan-header-actionbar {
 				order: 3;
 			}
@@ -68,25 +70,20 @@
 			.fc-view-harness {
 				min-height: 2475px !important;
 			}
+
 			.fc-scroller {
 				height: auto !important;
 			}
+
 			.fc-head .fc-widget-header {
 				margin-right: 0 !important;
 			}
+
 			.fc-scroller {
 				overflow: visible !important;
 			}
-			// END: make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
 
-			.mobile-divider {
-				display: flex;
-				border-block: 1px solid rgba(45, 45, 45, 0.1);
-				padding-block: 5px;
-				color: rgba(45, 45, 45, 0.5);
-				text-align: center;
-				justify-content: center;
-			}
+			// END: make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
 
 			.fc-header-toolbar {
 				font-size: 12px;
@@ -163,21 +160,25 @@
 				min-width: 300px !important;
 			}
 		}
+
 		.landing-page-layout .main-part .slogan {
 			padding-block: 20px;
 			min-width: 40px !important;
 		}
+
 		.main-buttons,
 		.start-now-button {
 			flex-direction: column;
 			padding-inline: 40px;
 			min-width: 40px !important;
 		}
+
 		.footer {
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
 			padding-inline: 0;
+
 			a {
 				align-items: flex-start;
 			}
@@ -333,6 +334,7 @@
 		justify-content: center;
 	}
 }
+
 @media only screen and (max-height: 600px) and (orientation: landscape) {
 	/* For mobiles on landspace: */
 	// todo complete

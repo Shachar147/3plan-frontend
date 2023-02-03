@@ -23,7 +23,13 @@ const noTripsPlaceholderIcon = './images/search-placeholder.png';
 
 function MyTrips() {
 	const [dataSource, setDataSource] = useState<TripDataSource>(
-		LocalStorageService.getLastDataSource() ?? (getUser() ? TripDataSource.DB : TripDataSource.LOCAL)
+		LocalStorageService.getLastDataSource() === TripDataSource.DB && getUser()
+			? TripDataSource.DB
+			: LocalStorageService.getLastDataSource() === TripDataSource.LOCAL
+			? TripDataSource.LOCAL
+			: getUser()
+			? TripDataSource.DB
+			: TripDataSource.LOCAL
 	);
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
 	const [applyFadeIn, setApplyFadeIn] = useState(false);
@@ -61,6 +67,12 @@ function MyTrips() {
 		document.querySelector('body').classList.add(eventStore.getCurrentDirection());
 		dataService.setCalendarLocale(eventStore.calendarLocalCode);
 	}, [eventStore.calendarLocalCode]);
+
+	useEffect(() => {
+		if (dataSource === TripDataSource.DB && !getUser()) {
+			setDataSource(TripDataSource.LOCAL);
+		}
+	}, [dataSource, getUser()]);
 
 	function getNoTripPlaceholderText() {
 		const key = dataSource === TripDataSource.LOCAL ? 'NO_TRIPS_PLACEHOLDER.LOCAL' : 'NO_TRIPS_PLACEHOLDER.DB';

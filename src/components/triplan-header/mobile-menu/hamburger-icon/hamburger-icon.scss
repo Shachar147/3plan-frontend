@@ -41,10 +41,13 @@
 	&.open {
 		.hamburger-line-1 {
 			transform: rotate(45deg);
+			margin-left: 3px;
 		}
+
 		.hamburger-line-2 {
 			opacity: 0;
 		}
+
 		.hamburger-line-3 {
 			transform: rotate(-45deg);
 		}

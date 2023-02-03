@@ -1,7 +1,6 @@
 .mobile-menu {
 	display: flex;
 	background-color: #51ade5;
-	opacity: 0.9;
 	color: white;
 	flex-grow: 1;
 	width: 100%;
@@ -9,4 +8,7 @@
 	max-height: 60px;
 	align-items: center;
 	padding-inline: 10px;
+	justify-content: space-between;
+	position: sticky;
+	top: 0;
 }

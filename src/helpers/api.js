@@ -9,9 +9,13 @@ export function apiGet(self, url, onSuccess, onError, onFinish) {
 			return res;
 		})
 		.catch(function (error) {
-			onError(error, () => {
-				self.setState({ error: '' });
-				apiGet(self, url, onSuccess, onError, onFinish);
+			handleUnauthorizedError(error).then((isRedirected) => {
+				if (!isRedirected) {
+					onError(error, () => {
+						self.setState({ error: '' });
+						apiGet(self, url, onSuccess, onError, onFinish);
+					});
+				}
 			});
 		})
 		.then(function () {
@@ -21,6 +25,14 @@ export function apiGet(self, url, onSuccess, onError, onFinish) {
 
 export function apiGetPromise(self, url) {
 	return axios.get(getServerAddress() + url);
+}
+
+async function handleUnauthorizedError(error) {
+	if (error?.response?.status === 401) {
+		window.location.href = '/login';
+		return true;
+	}
+	return false;
 }
 
 export function apiPost(self, url, data, onSuccess, onError, onFinish) {
@@ -34,9 +46,13 @@ export function apiPost(self, url, data, onSuccess, onError, onFinish) {
 			onSuccess(res);
 		})
 		.catch(function (error) {
-			onError(error, () => {
-				self.setState({ error: '' });
-				apiPost(self, url, data, onSuccess, onError, onFinish);
+			handleUnauthorizedError(error).then((isRedirected) => {
+				if (!isRedirected) {
+					onError(error, () => {
+						self.setState({ error: '' });
+						apiPost(self, url, data, onSuccess, onError, onFinish);
+					});
+				}
 			});
 		})
 		.then(function () {
@@ -59,9 +75,13 @@ export function apiPut(self, url, data, onSuccess, onError, onFinish) {
 			onSuccess(res);
 		})
 		.catch(function (error) {
-			onError(error, () => {
-				self.setState({ error: '' });
-				apiPut(self, url, data, onSuccess, onError, onFinish);
+			handleUnauthorizedError(error).then((isRedirected) => {
+				if (!isRedirected) {
+					onError(error, () => {
+						self.setState({ error: '' });
+						apiPut(self, url, data, onSuccess, onError, onFinish);
+					});
+				}
 			});
 		})
 		.then(function () {
@@ -88,9 +108,13 @@ export function apiDelete(self, url, onSuccess, onError, onFinish) {
 			onSuccess(res);
 		})
 		.catch(function (error) {
-			onError(error, () => {
-				self.setState({ error: '' });
-				apiPut(self, url, data, onSuccess, onError, onFinish);
+			handleUnauthorizedError(error).then((isRedirected) => {
+				if (!isRedirected) {
+					onError(error, () => {
+						self.setState({ error: '' });
+						apiPut(self, url, data, onSuccess, onError, onFinish);
+					});
+				}
 			});
 		})
 		.then(function () {
