@@ -82,9 +82,9 @@ const ReactModalRenderHelper = {
 			/>
 		);
 	},
-	renderCustomGroup: (eventStore: EventStore, content: any[]): JSX.Element => {
+	renderCustomGroup: (eventStore: EventStore, content: any[], className?: string): JSX.Element => {
 		return (
-			<div className={'flex-row gap-10'}>
+			<div className={getClasses('custom-group flex-row gap-10', className)}>
 				{content.map((row) => {
 					return ReactModalRenderHelper.getRowInput(eventStore, row);
 				})}
@@ -296,7 +296,11 @@ const ReactModalRenderHelper = {
 				);
 				break;
 			case 'custom-group':
-				input = ReactModalRenderHelper.renderCustomGroup(eventStore, row.settings.extra.content);
+				input = ReactModalRenderHelper.renderCustomGroup(
+					eventStore,
+					row.settings.extra.content,
+					row.settings.extra.customGroupClassName
+				);
 				break;
 			case 'date-picker':
 				input = ReactModalRenderHelper.renderDatePickerInput(
@@ -2431,6 +2435,7 @@ const ReactModalService = {
 				modalValueName: 'irrelevant',
 				type: 'custom-group',
 				extra: {
+					customGroupClassName: 'actions',
 					content: [
 						{
 							settings: {

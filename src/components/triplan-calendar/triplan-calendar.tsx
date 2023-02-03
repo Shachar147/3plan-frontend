@@ -219,11 +219,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		list: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST'),
 	};
 
+	// on mobile - organize all the calendar navigators on the same line
 	const headerToolbar = eventStore.isMobile
 		? {
-				left: 'prev,next today',
-				center: 'customTitle',
-				right: 'dayGridMonth,timeGridThreeDay,timeGridDay',
+				left: 'customTitle',
+				center: '',
+				right: 'prev,next today dayGridMonth,timeGridThreeDay,timeGridDay',
 		  }
 		: {
 				left: 'prev,next today',

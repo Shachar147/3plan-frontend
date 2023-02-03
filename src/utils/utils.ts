@@ -66,10 +66,10 @@ export const LOADERS: Record<string, Partial<Loader>> = {
 		top: '30px',
 		textColor: 'white',
 	},
-	'hotel3.gif': {
-		backgroundColor: '#ffcb3c', // done
-		top: '30px',
-	},
+	// 'hotel3.gif': {
+	// 	backgroundColor: '#ffcb3c', // done
+	// 	top: '30px',
+	// },
 };
 export function shuffle(array: any[]) {
 	let counter = array.length;

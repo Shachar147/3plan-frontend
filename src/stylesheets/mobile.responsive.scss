@@ -65,8 +65,8 @@
 
 		.main-page {
 			// make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
-			.calender-container {
-				min-height: 2625px !important;
+			.fc-view-harness {
+				min-height: 2475px !important;
 			}
 			.fc-scroller {
 				height: auto !important;
@@ -106,7 +106,7 @@
 			.main-layout-container {
 				.main-layout {
 					flex-direction: column;
-					gap: 40px;
+					gap: 20px;
 					height: max-content;
 				}
 			}
@@ -308,9 +308,14 @@
 		min-width: 0;
 	}
 
-	.fc-day-grid-container.fc-scroller {
-		//height: auto!important;
-		//overflow-y: auto;
+	.custom-group.actions {
+		flex-direction: column !important;
+	}
+
+	.sweet-alert {
+		position: fixed !important;
+		bottom: 0 !important;
+		min-height: 90vh;
 	}
 }
 @media only screen and (max-height: 600px) and (orientation: landscape) {

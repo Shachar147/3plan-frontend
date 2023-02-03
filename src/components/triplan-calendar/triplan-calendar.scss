@@ -48,6 +48,13 @@
 	//&:hover {
 	//    margin: 5px;
 	//}
+
+	// to avoid item background from being gray when focusing on it
+	&:focus {
+		&:after {
+			background-color: transparent !important;
+		}
+	}
 }
 
 .fc-event-main.priority-1,
