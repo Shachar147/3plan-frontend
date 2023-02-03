@@ -121,6 +121,7 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async setCalendarLocale(calendarLocale: LocaleCode, tripName?: string) {
+		if (!tripName) return;
 		await apiPut(
 			this,
 			`/trip/name/${tripName}`,

@@ -293,5 +293,6 @@
   "MODALS.SELECT": "בחר",
   "MODALS.ERROR.PLEASE_SELECT_EVENT": "אנא בחר פעילות",
   "MODALS.ADD_CALENDAR_EVENT.ADD_FROM_EXISTING": "הוסף מהפעילויות הקיימות",
-  "MODALS.ADD_CALENDAR_EVENT.ADD_NEW": "הוסף פעילות חדשה"
+  "MODALS.ADD_CALENDAR_EVENT.ADD_NEW": "הוסף פעילות חדשה",
+  "LOADING_TRIPS.TEXT": "אנא המתן בזמן שהמידע נטען..."
 }

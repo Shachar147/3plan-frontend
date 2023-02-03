@@ -30,6 +30,7 @@ function MyTrips() {
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
 	const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
+	const [isLoadingTrips, setIsLoadingTrips] = useState(false);
 
 	const dataService = useMemo(() => DataServices.getService(dataSource), [dataSource]);
 
@@ -37,8 +38,10 @@ function MyTrips() {
 
 	useEffect(() => {
 		setLsTrips([]);
+		setIsLoadingTrips(true);
 		dataService.getTrips(eventStore).then((trips: Trip[]) => {
 			setLsTrips(trips);
+			setIsLoadingTrips(false);
 		});
 	}, [dataService, dataSource]);
 
@@ -80,6 +83,20 @@ function MyTrips() {
 					className="padding-inline-15"
 					onClick={() => navigate('/getting-started')}
 				/>
+			</div>
+		);
+	}
+
+	function renderLoadingTrips() {
+		return (
+			<div
+				className={getClasses(
+					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder'],
+					eventStore.isListView && 'hidden'
+				)}
+			>
+				<img src={noTripsPlaceholderIcon} className="opacity-0-3" />
+				{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}
 			</div>
 		);
 	}
@@ -178,6 +195,7 @@ function MyTrips() {
 	}
 
 	function renderForm() {
+		if (isLoadingTrips) return renderLoadingTrips();
 		return lsTrips.length === 0 ? renderNoTripsPlaceholder() : renderListOfTrips();
 	}
 
@@ -192,7 +210,7 @@ function MyTrips() {
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.TRIP_DATA_SOURCE.DB'),
 			},
 		];
-		const onChange = (newVal) => {
+		const onChange = (newVal: TripDataSource) => {
 			const dataService =
 				newVal === TripDataSource.DB ? DataServices.DBService : DataServices.LocalStorageService;
 
@@ -219,6 +237,7 @@ function MyTrips() {
 				onClick={() => {
 					navigate('/home');
 				}}
+				alt=""
 			/>
 		);
 	}
@@ -246,7 +265,7 @@ function MyTrips() {
 					{renderForm()}
 				</div>
 			</div>
-			{renderFooterLine(eventStore, applyPageIntro && 'hidden')}
+			{renderFooterLine(eventStore, applyPageIntro ? 'hidden' : '')}
 		</div>
 	);
 }
