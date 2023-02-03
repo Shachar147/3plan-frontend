@@ -25,7 +25,7 @@ const GettingStartedPage = () => {
 	useHandleWindowResize();
 
 	const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
-	const [tripName, setTripName] = useState(undefined);
+	const [tripName, setTripName] = useState<string>('');
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -103,6 +103,45 @@ const GettingStartedPage = () => {
 		);
 	};
 
+	async function createNewTrip(tripName: string) {
+		const TripName = tripName.replace(/\s/gi, '-');
+
+		// local mode
+		if (!getUser()) {
+			eventStore.setCustomDateRange(customDateRange);
+			dataService.setDateRange(customDateRange, TripName);
+			navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+		} else {
+			const tripData = {
+				name: TripName,
+				dateRange: customDateRange,
+				calendarLocale: eventStore.calendarLocalCode,
+				allEvents: [],
+				sidebarEvents: defaultEvents,
+				calendarEvents: defaultCalendarEvents,
+				categories: getDefaultCategories(eventStore),
+			};
+			// @ts-ignore
+			await DataServices.DBService.createTrip(
+				tripData,
+				() => {
+					eventStore.setCustomDateRange(customDateRange);
+					dataService.setDateRange(customDateRange, TripName);
+					navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+				},
+				() => {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'OOPS_SOMETHING_WENT_WRONG',
+						'error'
+					);
+				},
+				() => {}
+			);
+		}
+	}
+
 	function renderMainPart() {
 		return (
 			<div className="main-part">
@@ -147,44 +186,12 @@ const GettingStartedPage = () => {
 					<Button
 						text={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}
 						flavor={ButtonFlavor.primary}
-						onClick={async () => {
-							const TripName = tripName.replace(/\s/gi, '-');
-
-							// local mode
-							if (!getUser()) {
-								eventStore.setCustomDateRange(customDateRange);
-								dataService.setDateRange(customDateRange, TripName);
-								navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
-							} else {
-								const tripData = {
-									name: TripName,
-									dateRange: customDateRange,
-									calendarLocale: eventStore.calendarLocalCode,
-									allEvents: [],
-									sidebarEvents: defaultEvents,
-									calendarEvents: defaultCalendarEvents,
-									categories: getDefaultCategories(eventStore),
-								};
-								// @ts-ignore
-								await DataServices.DBService.createTrip(
-									tripData,
-									() => {
-										eventStore.setCustomDateRange(customDateRange);
-										dataService.setDateRange(customDateRange, TripName);
-										navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
-									},
-									() => {
-										ReactModalService.internal.alertMessage(
-											eventStore,
-											'MODALS.ERROR.TITLE',
-											'OOPS_SOMETHING_WENT_WRONG',
-											'error'
-										);
-									},
-									() => {}
-								);
-							}
-						}}
+						disabled={tripName.length === 0}
+						disabledReason={TranslateService.translate(
+							eventStore,
+							'GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST'
+						)}
+						onClick={() => createNewTrip(tripName)}
 					/>
 					<Button
 						text={TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}

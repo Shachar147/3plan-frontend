@@ -784,5 +784,6 @@ export function getLocalStorageKeys() {
 		LS_ALL_EVENTS,
 		LS_CALENDAR_LOCALE,
 		LS_CUSTOM_DATE_RANGE,
+		LS_DISTANCE_RESULTS,
 	};
 }

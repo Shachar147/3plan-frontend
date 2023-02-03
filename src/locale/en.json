@@ -283,5 +283,6 @@
   "MODALS.ERROR.PLEASE_SELECT_EVENT": "Please select an activity",
   "MODALS.ADD_CALENDAR_EVENT.ADD_FROM_EXISTING": "Add from existing",
   "MODALS.ADD_CALENDAR_EVENT.ADD_NEW": "Add new",
-  "LOADING_TRIPS.TEXT": "Loading..."
+  "LOADING_TRIPS.TEXT": "Loading...",
+  "GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST": "Please set trip name before clicking on this button"
 }
