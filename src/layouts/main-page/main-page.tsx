@@ -309,7 +309,7 @@ function MainPage(props: MainPageProps) {
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
 			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
-				<TriplanHeaderWrapper {...headerProps} currentMobileView={currentMobileView} />
+				<TriplanHeaderWrapper {...headerProps} currentMobileView={currentMobileView} showTripName={true} />
 			</div>
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>

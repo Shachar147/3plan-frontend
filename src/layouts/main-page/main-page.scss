@@ -431,7 +431,7 @@ body.rtl {
 	top: 0;
 	//z-index: 9999;
 	background-color: #eaeff5;
-	width: 100%;
+	max-width: CALC(100% - 150px);
 	justify-content: center;
 	align-items: center;
 	padding-inline: 20px;

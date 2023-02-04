@@ -125,10 +125,11 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 							<div className="menu-items-links-container">
 								<div className="menu-regular-items">
 									{SidebarData.map((item, index) => renderItem(item, index))}
+									{renderItem(logoutLink, SidebarData.length)}
 								</div>
-								<div className="menu-logout-item">
-									{logoutLink && renderItem(logoutLink, SidebarData.length)}
-								</div>
+								{/*<div className="menu-logout-item">*/}
+								{/*	{logoutLink && renderItem(logoutLink, SidebarData.length)}*/}
+								{/*</div>*/}
 							</div>
 						</ul>
 					</nav>

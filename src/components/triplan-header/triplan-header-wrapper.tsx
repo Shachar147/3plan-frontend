@@ -5,19 +5,18 @@ import { useNavigate } from 'react-router-dom';
 import { eventStoreContext } from '../../stores/events-store';
 import MobileHeader from '../mobile-header/mobile-header';
 import TriplanSearch from './triplan-search/triplan-search';
-import { getClasses, ucfirst } from '../../utils/utils';
-import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import { ViewMode } from '../../utils/enums';
 import TranslateService from '../../services/translate-service';
 
 interface TriplanHeaderWrapperProps extends TriplanHeaderProps {
 	currentMobileView: ViewMode;
+	showTripName?: boolean;
 }
 
 function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 	const navigate = useNavigate();
 	const eventStore = useContext(eventStoreContext);
-	let { withSearch, currentMobileView } = props;
+	let { withSearch, currentMobileView, showTripName } = props;
 
 	if (eventStore.isMobile) {
 		let showing, from;
@@ -35,13 +34,15 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 
 		return (
 			<>
-				<MobileHeader {...props} withSearch={withSearch} />
-				<div className={getClasses('mobile-trip-name', eventStore.isMenuOpen && 'no-z-index')}>
-					{/*{TranslateService.translate(eventStore, 'YOU_ARE_LOOKING_AT')} {eventStore.tripName}*/}
-					<EllipsisWithTooltip placement="bottom">
-						{ucfirst(eventStore.tripName.replaceAll('-', ' '))}
-					</EllipsisWithTooltip>
-				</div>
+				<MobileHeader {...props} withSearch={withSearch} showTripName={showTripName} />
+				{/*{showTripName && (*/}
+				{/*	<div className={getClasses('mobile-trip-name', eventStore.isMenuOpen && 'no-z-index')}>*/}
+				{/*		/!*{TranslateService.translate(eventStore, 'YOU_ARE_LOOKING_AT')} {eventStore.tripName}*!/*/}
+				{/*		<EllipsisWithTooltip placement="bottom">*/}
+				{/*			{ucfirst(eventStore.tripName.replaceAll('-', ' '))}*/}
+				{/*		</EllipsisWithTooltip>*/}
+				{/*	</div>*/}
+				{/*)}*/}
 				<div className="mobile-header-search-container">
 					{withSearch && <TriplanSearch isHidden={!eventStore.isSearchOpen} />}
 					{showing != null &&

@@ -5,12 +5,17 @@ import { TriplanHeaderProps } from '../triplan-header/triplan-header';
 import { Link } from 'react-router-dom';
 import './mobile-header.scss';
 import { eventStoreContext } from '../../stores/events-store';
+import { getClasses, ucfirst } from '../../utils/utils';
+import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 
-function MobileHeader(options: TriplanHeaderProps) {
-	const { withLogo = false } = options;
+interface MobileHeaderProps extends TriplanHeaderProps {
+	showTripName?: boolean;
+}
+
+function MobileHeader(options: MobileHeaderProps) {
+	const { withLogo = false, showTripName } = options;
 	const eventStore = useContext(eventStoreContext);
 
-	console.log('withSearch', options.withSearch);
 	return (
 		<div className="mobile-header">
 			<div className="mobile-header-row">
@@ -21,6 +26,16 @@ function MobileHeader(options: TriplanHeaderProps) {
 						</Link>
 					)}
 				</div>
+
+				{showTripName && (
+					<div className={getClasses('mobile-trip-name', eventStore.isMenuOpen && 'no-z-index')}>
+						{/*{TranslateService.translate(eventStore, 'YOU_ARE_LOOKING_AT')} {eventStore.tripName}*/}
+						<EllipsisWithTooltip placement="bottom">
+							{ucfirst(eventStore.tripName.replaceAll('-', ' '))}
+						</EllipsisWithTooltip>
+					</div>
+				)}
+
 				<div className="flex-row align-items-center gap-15">
 					<MobileNavbar {...options} isSearchOpen={eventStore.isSearchOpen} />
 				</div>
