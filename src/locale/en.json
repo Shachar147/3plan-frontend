@@ -286,5 +286,6 @@
 	"MODALS.ADD_CALENDAR_EVENT.ADD_NEW": "Add new",
 	"LOADING_TRIPS.TEXT": "Loading...",
 	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST": "Please set trip name before clicking on this button",
-	"MOBILE_NAVBAR.SEARCH": "Search"
+	"MOBILE_NAVBAR.SEARCH": "Search",
+	"YOU_ARE_LOOKING_AT": "You are looking at:"
 }

@@ -225,7 +225,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	// on mobile - organize all the calendar navigators on the same line
 	const headerToolbar = eventStore.isMobile
 		? {
-				left: 'customTitle',
+				left: '',
 				center: '',
 				right: `prev,next${today} dayGridMonth,timeGridThreeDay,timeGridDay`,
 		  }

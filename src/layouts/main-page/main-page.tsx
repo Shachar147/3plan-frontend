@@ -332,6 +332,11 @@ function MainPage(props: MainPageProps) {
 				<TriplanHeaderWrapper {...headerProps} />
 			</div>
 			{/*{eventStore.isMobile && renderMobileHeader()}*/}
+			{eventStore.isMobile && (
+				<div className="mobile-trip-name">
+					{TranslateService.translate(eventStore, 'YOU_ARE_LOOKING_AT')} {eventStore.tripName}
+				</div>
+			)}
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
 					{eventStore.isLoading || isFetchingData ? (

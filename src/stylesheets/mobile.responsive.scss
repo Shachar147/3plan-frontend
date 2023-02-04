@@ -24,6 +24,7 @@
 
 			.main-layout {
 				width: CALC(100% - 20px);
+				padding-top: 12px;
 			}
 		}
 	}
@@ -347,6 +348,22 @@
 		.logo-container {
 			min-width: 280px !important;
 		}
+	}
+
+	.fc-toolbar-chunk {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.map-search-location-input {
+		input {
+			border-radius: 20px;
+			padding-inline: 10px !important;
+		}
+	}
+	.trip-summary {
+		border-radius: 20px;
 	}
 }
 

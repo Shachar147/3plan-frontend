@@ -297,5 +297,6 @@
 	"MODALS.ADD_CALENDAR_EVENT.ADD_NEW": "הוסף פעילות חדשה",
 	"LOADING_TRIPS.TEXT": "אנא המתן בזמן שהמידע נטען...",
 	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST": "בחר שם לטיול לפני לחיצה על כפתור זה",
-	"MOBILE_NAVBAR.SEARCH": "חיפוש"
+	"MOBILE_NAVBAR.SEARCH": "חיפוש",
+	"YOU_ARE_LOOKING_AT": "אתם מסתכלים על:"
 }
