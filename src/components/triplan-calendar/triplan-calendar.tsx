@@ -303,6 +303,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			eventContent={renderEventContent}
 			longPressDelay={5}
 			validRange={eventStore.customDateRange}
+			// slotMinTime={'07:00'}
 		/>
 	);
 }
