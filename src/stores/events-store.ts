@@ -78,6 +78,7 @@ export class EventStore {
 	@observable isLoading = false;
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
+	@observable isSearchOpen = false;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -752,6 +753,11 @@ export class EventStore {
 	@action
 	setIsMenuOpen(isOpen: boolean) {
 		this.isMenuOpen = isOpen;
+	}
+
+	@action
+	setIsSearchOpen(isOpen: boolean) {
+		this.isSearchOpen = isOpen;
 	}
 
 	// --- private functions ----------------------------------------------------

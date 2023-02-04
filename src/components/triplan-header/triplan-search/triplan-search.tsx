@@ -4,11 +4,13 @@ import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import './triplan-search.scss';
 import TextInput from '../../inputs/text-input/text-input';
+import { getClasses } from '../../../utils/utils';
 
-function TriplanSearch() {
+function TriplanSearch(props: { isHidden: boolean}) {
+	const { isHidden = false } = props;
 	const eventStore = useContext(eventStoreContext);
 	return (
-		<div className={'search-container'}>
+		<div className={getClasses('search-container', isHidden && 'hidden')}>
 			<TextInput
 				type={'text'}
 				name={'fc-search'}

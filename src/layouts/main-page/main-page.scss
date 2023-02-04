@@ -424,50 +424,26 @@ body.rtl {
 }
 
 // -----------------------------------------------------------
-
-body.rtl {
-	.mobile-header {
-		direction: rtl;
-	}
-}
-
-.mobile-header {
-	min-height: 60px;
-	height: max-content;
-	position: fixed;
-	top: 0;
-	z-index: 9999;
-	background-color: #eaeff5; // #eeeeee;
-	border-bottom: 1px solid white;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-
-	.mobile-header-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		padding-inline: 30px;
-
-		i {
-			font-size: 20px;
-			font-weight: normal;
-		}
-	}
-}
-
 .mobile-trip-name {
 	display: flex;
 	height: 60px;
 	position: sticky;
 	top: 0;
-	z-index: 9999;
+	//z-index: 9999;
 	background-color: #eaeff5;
 	width: 100%;
 	justify-content: center;
 	align-items: center;
+	padding-inline: 20px;
+	text-align: center;
+	transition: all 1s ease-in-out;
+
+	font-family: 'Arial' !important;
+	font-weight: bold;
+
+	&.no-z-index {
+		z-index: unset;
+	}
 }
 
 body.rtl {

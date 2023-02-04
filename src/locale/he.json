@@ -299,5 +299,6 @@
 	"LOADING_TRIPS.TEXT": "אנא המתן בזמן שהמידע נטען...",
 	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST": "בחר שם לטיול לפני לחיצה על כפתור זה",
 	"MOBILE_NAVBAR.SEARCH": "חיפוש",
-	"YOU_ARE_LOOKING_AT": "אתם מסתכלים על:"
+	"YOU_ARE_LOOKING_AT": "אתם מסתכלים על:",
+	"MOBILE_NAVBAR.CHANGE_LANGUAGE": "שינוי שפה"
 }

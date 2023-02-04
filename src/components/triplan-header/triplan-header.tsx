@@ -23,6 +23,7 @@ export interface TriplanHeaderProps {
 	showOnlyEventsWithNoLocation?: boolean; // shouldn't really pass them, only for storybook
 	showOnlyEventsWithNoOpeningHours?: boolean; // shouldn't really pass them, only for storybook
 	showOnlyEventsWithTodoComplete?: boolean; // shouldn't really pass them, only for storybook
+	withLanguageSelector?: boolean;
 }
 
 function TriplanHeader(options: TriplanHeaderProps = {}) {
@@ -35,17 +36,17 @@ function TriplanHeader(options: TriplanHeaderProps = {}) {
 		withLoginLogout = true,
 		onLogoClick,
 		onMyTripsClick,
+		withLanguageSelector = true,
 	} = options;
 
 	const eventStore = useContext(eventStoreContext);
-	// const navigate = useNavigate();
 
 	return (
 		<div className={getClasses('triplan-header', eventStore.isRtl ? 'rtl' : 'ltr')}>
-			<LanguageSelector />
+			{withLanguageSelector && <LanguageSelector />}
 			<div className={'triplan-header-actionbar'}>
 				{withFilterTags && <FilterIndications {...options} />}
-				{withSearch && <TriplanSearch />}
+				<TriplanSearch isHidden={!withSearch} />
 				{withViewSelector && <TriplanViewSelector />}
 			</div>
 			<div className={getClasses('triplan-header-starter', !eventStore.isRtl && 'flex-row-reverse')}>

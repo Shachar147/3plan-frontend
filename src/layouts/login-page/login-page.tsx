@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
-import './login-page.scss';
 import TranslateService from '../../services/translate-service';
 import { eventStoreContext } from '../../stores/events-store';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
@@ -14,6 +13,7 @@ import { setToken } from '../../helpers/auth';
 import axios from 'axios';
 import { LOGIN_DELAY } from '../../utils/consts';
 import { apiPost } from '../../helpers/api';
+import './login-page.scss';
 
 const defaultErrorField: Record<string, boolean> = {
 	username: false,

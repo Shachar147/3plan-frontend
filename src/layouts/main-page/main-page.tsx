@@ -1,6 +1,6 @@
 // @ts-ignore
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { getClasses, Loader, LOADER_DETAILS } from '../../utils/utils';
+import { getClasses, Loader, LOADER_DETAILS, ucfirst } from '../../utils/utils';
 import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/timegrid/main.css';
@@ -25,7 +25,9 @@ import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import HamburgerIcon from '../../components/triplan-header/mobile-menu/hamburger-icon/hamburger-icon';
-import MobileNavbar from '../../components/mobile-navbar/mobile-navbar';
+import MobileNavbar from '../../components/mobile-header/mobile-navbar/mobile-navbar';
+import MobileHeader from '../../components/mobile-header/mobile-header';
+import EllipsisWithTooltip from 'react-ellipsis-with-tooltip'
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -298,25 +300,6 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
-	function renderMobileHeader() {
-		return (
-			<div className="mobile-header">
-				<div className="mobile-header-row">
-					<div className="flex-row align-items-center">
-						<img src={'/images/logo/new-logo.png'} height={60} />
-					</div>
-					<div className="flex-row align-items-center gap-15">
-						<MobileNavbar />
-						{/*<HamburgerIcon className={'black-background'} />*/}
-						{/*<i className="fa fa-globe" />*/}
-						{/*<i className="fa fa-search" />*/}
-						{/*<i className={getClasses('fa fa-sign-in', !eventStore.isRtl && 'flip-x')} />*/}
-					</div>
-				</div>
-			</div>
-		);
-	}
-
 	const headerProps = {
 		withLogo: true,
 		withSearch: true,
@@ -324,17 +307,18 @@ function MainPage(props: MainPageProps) {
 		withRecommended: false,
 		withLoginLogout: true,
 		withFilterTags: true,
+		withMyTrips: true
 	};
 
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
-			<div className="padding-inline-8">
+			<div className="padding-inline-8 flex-row align-items-center justify-content-center">
 				<TriplanHeaderWrapper {...headerProps} />
 			</div>
-			{/*{eventStore.isMobile && renderMobileHeader()}*/}
 			{eventStore.isMobile && (
-				<div className="mobile-trip-name">
-					{TranslateService.translate(eventStore, 'YOU_ARE_LOOKING_AT')} {eventStore.tripName}
+				<div className={getClasses("mobile-trip-name", eventStore.isMenuOpen && 'no-z-index')}>
+					{/*{TranslateService.translate(eventStore, 'YOU_ARE_LOOKING_AT')} {eventStore.tripName}*/}
+					<EllipsisWithTooltip placement="bottom">{ucfirst(eventStore.tripName.replaceAll("-", " "))}</EllipsisWithTooltip>
 				</div>
 			)}
 			<div className={'main-layout-container'}>

@@ -10,6 +10,7 @@
 		border-bottom-right-radius: 30px;
 		position: fixed;
 		top: 0;
+		z-index: 11;
 
 		&:not(.mobile) {
 			inset-inline-end: 30px;
