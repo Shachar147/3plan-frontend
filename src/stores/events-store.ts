@@ -383,6 +383,7 @@ export class EventStore {
 				.map((x) => toJS(x))
 				.filter(
 					(event) =>
+						event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
 						(this.showOnlyEventsWithNoLocation
 							? !(event.location || (event.extendedProps && event.extendedProps.location))
 							: true) &&

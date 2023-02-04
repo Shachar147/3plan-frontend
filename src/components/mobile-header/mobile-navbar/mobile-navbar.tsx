@@ -64,10 +64,8 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 					cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),
 				},
 			].filter(Boolean),
-		[eventStore.isSearchOpen]
+		[eventStore.isSearchOpen, withSearch]
 	);
-
-	console.log('hereee', SidebarData);
 
 	const logoutLink = withLoginLogout && {
 		title: isLoggedIn ? logoutText : loginText,

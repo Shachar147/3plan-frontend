@@ -9,6 +9,8 @@ import { eventStoreContext } from '../../stores/events-store';
 function MobileHeader(options: TriplanHeaderProps) {
 	const { withLogo = false } = options;
 	const eventStore = useContext(eventStoreContext);
+
+	console.log('withSearch', options.withSearch);
 	return (
 		<div className="mobile-header">
 			<div className="mobile-header-row">

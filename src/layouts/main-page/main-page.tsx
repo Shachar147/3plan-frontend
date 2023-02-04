@@ -1,6 +1,6 @@
 // @ts-ignore
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { getClasses, Loader, LOADER_DETAILS, ucfirst } from '../../utils/utils';
+import { getClasses, Loader, LOADER_DETAILS } from '../../utils/utils';
 import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/timegrid/main.css';
@@ -309,7 +309,7 @@ function MainPage(props: MainPageProps) {
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
 			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
-				<TriplanHeaderWrapper {...headerProps} />
+				<TriplanHeaderWrapper {...headerProps} currentMobileView={currentMobileView} />
 			</div>
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>

@@ -401,6 +401,15 @@
 		position: relative;
 		top: -230px !important;
 	}
+
+	.mobile-header-search-container {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		text-align: center;
+		width: 100%;
+		margin-bottom: 10px;
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {

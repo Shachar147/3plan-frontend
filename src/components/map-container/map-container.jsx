@@ -107,9 +107,7 @@ const MapContainer = () => {
 		if (calendarEvent) {
 			const dtStart = toDate(calendarEvent.start);
 			const dtEnd = toDate(calendarEvent.end);
-			console.log('here', dtStart, dtEnd);
 			const dt = formatDate(dtStart);
-			console.log('there', dt);
 			const startTime = dtStart?.toLocaleTimeString('en-US', { hour12: false });
 			const endTime = dtEnd?.toLocaleTimeString('en-US', { hour12: false });
 			const start = formatTime(startTime);
