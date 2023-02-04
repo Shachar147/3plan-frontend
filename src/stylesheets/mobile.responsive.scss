@@ -246,7 +246,7 @@
 		}
 	}
 	.my-trips-trip-name {
-		max-width: CALC(100% - 170px);
+		max-width: CALC(100% - 170px) !important;
 	}
 	#amount-of-days {
 		display: none;

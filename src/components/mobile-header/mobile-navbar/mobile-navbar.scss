@@ -17,12 +17,16 @@
 	inset-inline-end: -100%;
 	transition: 850ms;
 	box-shadow: rgb(0 0 0 / 20%) 0 1px 20px -1px;
-	z-index:10000;
+	z-index: 10000;
 
 	&.active {
 		inset-inline-end: 0;
 		transition: 350ms;
 	}
+}
+
+.navbar-toggle {
+	border-bottom: 1px solid rgb(229, 233, 239);
 }
 
 .nav-text {
@@ -35,7 +39,7 @@
 	border-bottom: 1px solid rgb(229, 233, 239);
 
 	&.active {
-		background-color: rgba(255,255,255,0.2);
+		background-color: rgba(255, 255, 255, 0.2);
 
 		a {
 			color: var(--blue) !important;
@@ -55,7 +59,7 @@
 	}
 
 	&:hover {
-		background-color: rgba(255,255,255,0.2);
+		background-color: rgba(255, 255, 255, 0.2);
 
 		a {
 			text-decoration: none;

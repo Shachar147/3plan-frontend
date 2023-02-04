@@ -10,11 +10,18 @@ import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
 import { getUser } from '../../../helpers/auth';
 import { getClasses } from '../../../utils/utils';
-import { observer } from 'mobx-react';
+import { observer, Observer } from 'mobx-react';
 import { TriplanHeaderProps } from '../../triplan-header/triplan-header';
+import onClickOutside from 'react-onclickoutside';
 
-function MobileNavbar(options:TriplanHeaderProps) {
+const MobileNavbar = (options: TriplanHeaderProps) => {
 	const eventStore = useContext(eventStoreContext);
+
+	// There are no instances, only the single Menu function, so if we
+	// need "properties" that are externally accessible, we'll need to
+	// set them on the Menu function itself:
+	// @ts-ignore
+	MobileNavbar.handleClickOutside = () => handleClickOutside();
 
 	const {
 		withMyTrips = true,
@@ -47,7 +54,7 @@ function MobileNavbar(options:TriplanHeaderProps) {
 			title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
 			path: '/my-trips',
 			icon: 'fa-street-view',
-			cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active')
+			cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active'),
 		},
 		withLanguageSelector && {
 			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
@@ -59,41 +66,68 @@ function MobileNavbar(options:TriplanHeaderProps) {
 
 	if (SidebarData.length === 0) return;
 
+	function handleClickOutside() {
+		eventStore.setIsMenuOpen(false);
+	}
+
 	return (
-		<>
-			{/* All the icons now are white */}
-			<div className="mobile-navbar">
-				<Link to="#" className="menu-bars">
-					<HamburgerIcon className={'black-background'} />
-				</Link>
-			</div>
-			<nav className={eventStore.isMenuOpen ? 'nav-menu active' : 'nav-menu'}>
-				<ul className="nav-menu-items">
-					<li className="navbar-toggle">
+		<Observer>
+			{() => (
+				<>
+					{/* All the icons now are white */}
+					<div className="mobile-navbar">
 						<Link to="#" className="menu-bars">
-							<HamburgerIcon className={'black-background'} isOpen={true} />
+							<HamburgerIcon className={'black-background'} />
 						</Link>
-					</li>
-
-					{SidebarData.map((item, index) => {
-						const content = (
-							<>
-								{item.icon && <i className={getClasses('fa', item.icon)} />}
-								<span>{item.title}</span>
-							</>
-						);
-						return (
-							<li key={index} className={item.cName} onClick={() => {
-								eventStore.setIsMenuOpen(false);
-							}}>
-								{item.path ? <Link to={item.path}>{content}</Link> : <a onClick={item.onClick}>{content}</a>}
+					</div>
+					<nav className={eventStore.isMenuOpen ? 'nav-menu active' : 'nav-menu'}>
+						<ul className="nav-menu-items">
+							<li className="navbar-toggle">
+								<Link to="#" className="menu-bars">
+									<HamburgerIcon className={'black-background'} isOpen={true} />
+								</Link>
 							</li>
-						);
-					})}
-				</ul>
-			</nav>
-		</>
-	);
-}
 
-export default observer(MobileNavbar);
+							{SidebarData.map((item, index) => {
+								const content = (
+									<>
+										{item.icon && <i className={getClasses('fa', item.icon)} />}
+										<span>{item.title}</span>
+									</>
+								);
+								return (
+									<li
+										key={index}
+										className={item.cName}
+										onClick={() => {
+											eventStore.setIsMenuOpen(false);
+										}}
+									>
+										{item.path ? (
+											<Link to={item.path}>{content}</Link>
+										) : (
+											<a onClick={item.onClick}>{content}</a>
+										)}
+									</li>
+								);
+							})}
+						</ul>
+					</nav>
+				</>
+			)}
+		</Observer>
+	);
+};
+
+var clickOutsideConfig = {
+	handleClickOutside: function (instance: any) {
+		// There aren't any "instances" when dealing with functional
+		// components, so we ignore the instance parameter entirely,
+		//  and just return the handler that we set up for Menu:
+
+		// @ts-ignore
+		return MobileNavbar.handleClickOutside;
+	},
+};
+
+export default onClickOutside(MobileNavbar, clickOutsideConfig);
