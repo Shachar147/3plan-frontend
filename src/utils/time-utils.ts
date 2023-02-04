@@ -128,6 +128,16 @@ export function toDate(dt: Date | string | number | number[] | undefined) {
 	return dtDate;
 }
 
+export function addDays(dt: Date, days: number): Date {
+	dt.setDate(dt.getDate() + days);
+	return dt;
+}
+
+export function fullCalendarFormatDate(dt: Date) {
+	const parts = dt.toLocaleDateString().replace(/\//gi, '-').split('-');
+	return [parts[2], padTo2Digits(Number(parts[0])), padTo2Digits(Number(parts[1]))].join('-');
+}
+
 export function isTodayInDateRange(customDateRange: DateRangeFormatted) {
 	const todayTimestamp = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
 	const endTimestamp = new Date(new Date(customDateRange.end).setHours(0, 0, 0, 0)).getTime();

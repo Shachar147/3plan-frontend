@@ -19,6 +19,8 @@ import { LocalStorageService } from '../../services/data-handlers/local-storage-
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
+import EllipsisWithTooltip from 'react-ellipsis-with-tooltip'
+
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
 
 function MyTrips() {
@@ -149,7 +151,9 @@ function MyTrips() {
 			return (
 				<>
 					<i className="fa fa-plane" aria-hidden="true"></i>
-					<span style={{ maxWidth: '200px' }}>{tripName}</span>
+					<span className="my-trips-trip-name">
+						<EllipsisWithTooltip placement="bottom">{tripName}</EllipsisWithTooltip>
+					</span>
 					<div id="when">
 						{end} - {start}
 					</div>

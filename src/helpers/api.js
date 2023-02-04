@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { getServerAddress } from '../config/config';
 
+const unAuthorizedRoutes = [
+	"signin"
+]
+
 export function apiGet(self, url, onSuccess, onError, onFinish) {
 	return axios
 		.get(getServerAddress() + url)
@@ -9,7 +13,7 @@ export function apiGet(self, url, onSuccess, onError, onFinish) {
 			return res;
 		})
 		.catch(function (error) {
-			handleUnauthorizedError(error).then((isRedirected) => {
+			handleUnauthorizedError(error, url).then((isRedirected) => {
 				if (!isRedirected) {
 					onError(error, () => {
 						self.setState({ error: '' });
@@ -25,14 +29,16 @@ export function apiGet(self, url, onSuccess, onError, onFinish) {
 
 export function apiGetPromise(self, url) {
 	return axios.get(getServerAddress() + url).catch((error) => {
-		handleUnauthorizedError(error);
+		handleUnauthorizedError(error, url);
 	});
 }
 
-async function handleUnauthorizedError(error) {
+async function handleUnauthorizedError(error, url) {
 	if (error?.response?.status === 401) {
-		window.location.href = '/login';
-		return true;
+		if (!unAuthorizedRoutes.find((route) => url.indexOf(route) !== -1)) {
+			window.location.href = '/login';
+			return true;
+		}
 	}
 	return false;
 }
@@ -48,7 +54,7 @@ export function apiPost(self, url, data, onSuccess, onError, onFinish) {
 			onSuccess(res);
 		})
 		.catch(function (error) {
-			handleUnauthorizedError(error).then((isRedirected) => {
+			handleUnauthorizedError(error, url).then((isRedirected) => {
 				if (!isRedirected) {
 					onError(error, () => {
 						self.setState({ error: '' });
@@ -77,7 +83,7 @@ export function apiPut(self, url, data, onSuccess, onError, onFinish) {
 			onSuccess(res);
 		})
 		.catch(function (error) {
-			handleUnauthorizedError(error).then((isRedirected) => {
+			handleUnauthorizedError(error, url).then((isRedirected) => {
 				if (!isRedirected) {
 					onError(error, () => {
 						self.setState({ error: '' });
@@ -110,7 +116,7 @@ export function apiDelete(self, url, onSuccess, onError, onFinish) {
 			onSuccess(res);
 		})
 		.catch(function (error) {
-			handleUnauthorizedError(error).then((isRedirected) => {
+			handleUnauthorizedError(error, url).then((isRedirected) => {
 				if (!isRedirected) {
 					onError(error, () => {
 						self.setState({ error: '' });

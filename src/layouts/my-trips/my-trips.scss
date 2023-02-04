@@ -9,6 +9,13 @@ body {
 	overflow-y: auto;
 	width: 500px;
 
+	.my-trips-trip-name {
+		max-width: CALC(100% - 260px);
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
 	.sidebar-statistics.trips-list-trip {
 		padding-inline-start: 10px;
 		cursor: pointer;

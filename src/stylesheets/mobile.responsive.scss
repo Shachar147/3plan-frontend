@@ -245,6 +245,9 @@
 			justify-content: center;
 		}
 	}
+	.my-trips-trip-name {
+		max-width: CALC(100% - 170px);
+	}
 	#amount-of-days {
 		display: none;
 	}

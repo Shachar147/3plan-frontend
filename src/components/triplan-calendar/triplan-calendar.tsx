@@ -10,7 +10,14 @@ import { eventStoreContext } from '../../stores/events-store';
 import './triplan-calendar.scss';
 import { defaultTimedEventDuration } from '../../utils/defaults';
 import TranslateService from '../../services/translate-service';
-import { addHoursToDate, getDateRangeString, isTodayInDateRange } from '../../utils/time-utils';
+import {
+	addDays,
+	addHoursToDate,
+	fullCalendarFormatDate,
+	getDateRangeString,
+	isTodayInDateRange,
+	toDate,
+} from '../../utils/time-utils';
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
@@ -303,7 +310,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			select={onCalendarSelect}
 			eventContent={renderEventContent}
 			longPressDelay={5}
-			validRange={eventStore.customDateRange}
+			validRange={{
+				start: eventStore.customDateRange.start,
+				end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1))
+			}}
 			slotMinTime={'07:00'}
 		/>
 	);
