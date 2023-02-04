@@ -36,12 +36,6 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 	const logoutText = `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`;
 
 	const SidebarData: any[] = [
-		withLoginLogout && {
-			title: isLoggedIn ? logoutText : loginText,
-			path: isLoggedIn ? '/logout' : '/login',
-			icon: isLoggedIn ? 'fa-sign-out' : 'fa-sign-in',
-			cName: 'nav-text',
-		},
 		withSearch && {
 			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
 			onClick: () => {
@@ -64,10 +58,37 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 		},
 	].filter(Boolean);
 
-	if (SidebarData.length === 0) return;
+	const logoutLink = withLoginLogout && {
+		title: isLoggedIn ? logoutText : loginText,
+		path: isLoggedIn ? '/logout' : '/login',
+		icon: isLoggedIn ? 'fa-sign-out' : 'fa-sign-in',
+		cName: 'nav-text logout-link',
+	};
+
+	if (SidebarData.length === 0 && !logoutLink) return;
 
 	function handleClickOutside() {
 		eventStore.setIsMenuOpen(false);
+	}
+
+	function renderItem(item: any, index: number) {
+		const content = (
+			<>
+				{item.icon && <i className={getClasses('fa', item.icon)} />}
+				<span>{item.title}</span>
+			</>
+		);
+		return (
+			<li
+				key={index}
+				className={item.cName}
+				onClick={() => {
+					eventStore.setIsMenuOpen(false);
+				}}
+			>
+				{item.path ? <Link to={item.path}>{content}</Link> : <a onClick={item.onClick}>{content}</a>}
+			</li>
+		);
 	}
 
 	return (
@@ -88,29 +109,14 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 								</Link>
 							</li>
 
-							{SidebarData.map((item, index) => {
-								const content = (
-									<>
-										{item.icon && <i className={getClasses('fa', item.icon)} />}
-										<span>{item.title}</span>
-									</>
-								);
-								return (
-									<li
-										key={index}
-										className={item.cName}
-										onClick={() => {
-											eventStore.setIsMenuOpen(false);
-										}}
-									>
-										{item.path ? (
-											<Link to={item.path}>{content}</Link>
-										) : (
-											<a onClick={item.onClick}>{content}</a>
-										)}
-									</li>
-								);
-							})}
+							<div className="menu-items-links-container">
+								<div className="menu-regular-items">
+									{SidebarData.map((item, index) => renderItem(item, index))}
+								</div>
+								<div className="menu-logout-item">
+									{logoutLink && renderItem(logoutLink, SidebarData.length)}
+								</div>
+							</div>
 						</ul>
 					</nav>
 				</>
