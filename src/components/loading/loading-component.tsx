@@ -25,7 +25,7 @@ function LoadingComponent({ title, message, loaderDetails }: LoadingComponentPro
 				left: 0,
 				width: '100%',
 				height: '100%',
-				zIndex: 999,
+				zIndex: 99999999999,
 			}}
 		>
 			<div
