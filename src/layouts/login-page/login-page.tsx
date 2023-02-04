@@ -135,10 +135,7 @@ function LoginPage() {
 			ReactModalService.openConfirmModal(
 				eventStore,
 				() => {
-					if (!eventStore.isMobile) {
-						window.location.href = '/home';
-						// navigate('/home');
-					}
+					window.location.href = '/home';
 				},
 				'MODALS.ARE_YOU_SURE',
 				'CONTINUE_AS_GUEST_MODAL_CONTENT',
