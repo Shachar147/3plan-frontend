@@ -589,6 +589,15 @@ const RootRouter = () => {
 					</SweetAlert>
 				)}
 			</Observer>
+
+			<div className="please-rotate-your-phone">
+				<img src="/images/rotate-placeholder.png" />
+				{TranslateService.translate(eventStore, 'PLEASE_ROTATE_YOUR_DEVICE')}
+			</div>
+			<div className="device-is-not-supported">
+				<img src="/images/oops-placeholder.png" />
+				{TranslateService.translate(eventStore, 'DEVICE_IS_NOT_SUPPORTED')}
+			</div>
 		</>
 	);
 };

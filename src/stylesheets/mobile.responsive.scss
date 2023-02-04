@@ -405,7 +405,9 @@
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {
 	/* For mobiles on landspace: */
-	// todo complete
+	.please-rotate-your-phone {
+		display: flex;
+	}
 }
 
 /* Extra small devices (phones, 600px and down) */
@@ -426,4 +428,18 @@
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
+}
+
+@media only screen and (max-width: 400px) and (max-height: 400px) {
+	.please-rotate-your-phone {
+		display: none !important;
+	}
+
+	.device-is-not-supported {
+		display: flex !important;
+
+		img {
+			max-width: 20vh;
+		}
+	}
 }

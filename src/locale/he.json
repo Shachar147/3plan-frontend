@@ -300,5 +300,7 @@
 	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST": "בחר שם לטיול לפני לחיצה על כפתור זה",
 	"MOBILE_NAVBAR.SEARCH": "חיפוש",
 	"YOU_ARE_LOOKING_AT": "אתם מסתכלים על:",
-	"MOBILE_NAVBAR.CHANGE_LANGUAGE": "שינוי שפה"
+	"MOBILE_NAVBAR.CHANGE_LANGUAGE": "שינוי שפה",
+	"PLEASE_ROTATE_YOUR_DEVICE": "אנא סובב את המכשיר שלך",
+	"DEVICE_IS_NOT_SUPPORTED": "המכשיר ממנו התחברת אינו נתמך, אנא נסה להתחבר מטלפון נייד, טאבלט או מחשב"
 }
