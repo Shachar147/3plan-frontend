@@ -157,7 +157,7 @@
 			min-height: max-content;
 
 			.logo-container {
-				min-width: 300px !important;
+				min-width: 200px !important;
 			}
 		}
 
@@ -223,7 +223,7 @@
 			padding-inline: 0 !important;
 
 			.logo-container {
-				width: 70%;
+				width: 60%;
 			}
 
 			.register-form,
@@ -342,7 +342,11 @@
 		margin-bottom: 20px !important;
 	}
 
-	.list-container {
+	.login-page,
+	.register-page {
+		.logo-container {
+			min-width: 280px !important;
+		}
 	}
 }
 

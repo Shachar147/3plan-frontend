@@ -3,16 +3,19 @@ import './hamburger-icon.scss';
 import { getClasses } from '../../../../utils/utils';
 import { eventStoreContext } from '../../../../stores/events-store';
 
-const hamburgerIcon = () => {
+const hamburgerIcon = (props: { className?: string; onClick?: () => any; isOpen?: boolean }) => {
 	const eventStore = useContext(eventStoreContext);
 	return (
 		<div
-			className={getClasses('hamburger-icon', eventStore.isMenuOpen && 'open')}
-			onClick={() => eventStore.setIsMenuOpen(!eventStore.isMenuOpen)}
+			className={getClasses('hamburger-icon', props.isOpen && 'open')}
+			onClick={() => {
+				eventStore.setIsMenuOpen(!eventStore.isMenuOpen);
+				props.onClick?.();
+			}}
 		>
-			<div className="hamburger-line-1" />
-			<div className="hamburger-line-2" />
-			<div className="hamburger-line-3" />
+			<div className={getClasses('hamburger-line-1', props.className)} />
+			<div className={getClasses('hamburger-line-2', props.className)} />
+			<div className={getClasses('hamburger-line-3', props.className)} />
 		</div>
 	);
 };

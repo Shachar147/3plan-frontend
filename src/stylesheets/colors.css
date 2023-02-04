@@ -18,6 +18,10 @@
 	color: var(--black);
 }
 
+.black-background {
+	background: var(--black) !important;
+}
+
 .dark-color {
 	color: var(--dark);
 }

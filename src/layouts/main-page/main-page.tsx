@@ -24,6 +24,8 @@ import { CalendarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import HamburgerIcon from '../../components/triplan-header/mobile-menu/hamburger-icon/hamburger-icon';
+import MobileNavbar from '../../components/mobile-navbar/mobile-navbar';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -296,6 +298,25 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function renderMobileHeader() {
+		return (
+			<div className="mobile-header">
+				<div className="mobile-header-row">
+					<div className="flex-row align-items-center">
+						<img src={'/images/logo/new-logo.png'} height={60} />
+					</div>
+					<div className="flex-row align-items-center gap-15">
+						<MobileNavbar />
+						{/*<HamburgerIcon className={'black-background'} />*/}
+						{/*<i className="fa fa-globe" />*/}
+						{/*<i className="fa fa-search" />*/}
+						{/*<i className={getClasses('fa fa-sign-in', !eventStore.isRtl && 'flip-x')} />*/}
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	const headerProps = {
 		withLogo: true,
 		withSearch: true,
@@ -310,6 +331,7 @@ function MainPage(props: MainPageProps) {
 			<div className="padding-inline-8">
 				<TriplanHeaderWrapper {...headerProps} />
 			</div>
+			{/*{eventStore.isMobile && renderMobileHeader()}*/}
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
 					{eventStore.isLoading || isFetchingData ? (
