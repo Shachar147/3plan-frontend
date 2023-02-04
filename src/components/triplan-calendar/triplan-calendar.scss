@@ -6,26 +6,29 @@
 .fc-timegrid-slots tbody tr {
 	background-color: white;
 }
+
 .fc-timegrid-slots tbody tr:first-child {
 	background-color: white;
 }
 
+// mark all the hours until 07:00 included in darker light to indicate its still early.
 .fc-timegrid-slots tbody tr:first-child td,
-.fc-timegrid-slots tbody tr:nth-child(2) td,
-.fc-timegrid-slots tbody tr:nth-child(3) td,
-.fc-timegrid-slots tbody tr:nth-child(4) td,
-.fc-timegrid-slots tbody tr:nth-child(5) td,
-.fc-timegrid-slots tbody tr:nth-child(6) td,
-.fc-timegrid-slots tbody tr:nth-child(7) td,
-.fc-timegrid-slots tbody tr:nth-child(8) td,
-.fc-timegrid-slots tbody tr:nth-child(9) td,
-.fc-timegrid-slots tbody tr:nth-child(10) td,
-.fc-timegrid-slots tbody tr:nth-child(11) td,
-.fc-timegrid-slots tbody tr:nth-child(12) td,
-.fc-timegrid-slots tbody tr:nth-child(13) td,
-.fc-timegrid-slots tbody tr:nth-child(14) td,
-.fc-timegrid-slots tbody tr:nth-child(15) td,
-.fc-timegrid-slots tbody tr:nth-child(16) td {
+.fc-timegrid-slots tbody tr:nth-child(2) td
+	//, .fc-timegrid-slots tbody tr:nth-child(3) td,
+	//.fc-timegrid-slots tbody tr:nth-child(4) td,
+	//.fc-timegrid-slots tbody tr:nth-child(5) td,
+	//.fc-timegrid-slots tbody tr:nth-child(6) td,
+	//.fc-timegrid-slots tbody tr:nth-child(7) td,
+	//.fc-timegrid-slots tbody tr:nth-child(8) td,
+	//.fc-timegrid-slots tbody tr:nth-child(9) td,
+	//.fc-timegrid-slots tbody tr:nth-child(10) td,
+	//.fc-timegrid-slots tbody tr:nth-child(11) td,
+	//.fc-timegrid-slots tbody tr:nth-child(12) td,
+	//.fc-timegrid-slots tbody tr:nth-child(13) td,
+	//.fc-timegrid-slots tbody tr:nth-child(14) td,
+	//.fc-timegrid-slots tbody tr:nth-child(15) td,
+	//.fc-timegrid-slots tbody tr:nth-child(16) td
+{
 	/*opacity: 0.6;*/
 	/*background-color: rgba(0,0,0,0.05);*/
 	/*background-image: url('/images/dead-hours.png');*/
@@ -67,7 +70,8 @@
 
 .fc-event-main.priority-2,
 .fc-event.priority-2 {
-	border-left: 3px solid var(--triplan-orange); /* #ffb752; */ /* #9c27b0 */
+	border-left: 3px solid var(--triplan-orange); /* #ffb752; */
+	/* #9c27b0 */
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
 	/*border-color: #9c27b0;*/
