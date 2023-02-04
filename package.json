@@ -97,7 +97,10 @@
 		"prettier-check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
 		"start:storybook": "start-storybook -p 6006 -s public",
 		"build-storybook": "build-storybook -s public",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"killbill": "sudo kill -9 $(lsof -ti:3000)",
+		"reinstall": "rm -rf node_modules && npm install && npm run killbill && npm run start:dev:mac",
+		"push-master": "git push origin master && git push heroku master"
 	},
 	"browserslist": [
 		">0.2%",

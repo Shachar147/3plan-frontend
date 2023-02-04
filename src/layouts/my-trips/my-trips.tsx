@@ -19,7 +19,7 @@ import { LocalStorageService } from '../../services/data-handlers/local-storage-
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
-import EllipsisWithTooltip from 'react-ellipsis-with-tooltip'
+import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import MobileHeader from '../../components/mobile-header/mobile-header';
 
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
@@ -262,9 +262,9 @@ function MyTrips() {
 	}
 
 	return (
-		<div className="landing-page-layout">
+		<div className="landing-page-layout my-trips-page">
 			<TriplanHeaderWrapper />
-			<div className={getClasses("main-part", eventStore.isMobile && 'mobile')}>
+			<div className={getClasses('main-part', eventStore.isMobile && 'mobile')}>
 				<div className={getClasses(['plan-your-trip-header main-font visible'], applyPageIntro && 'hidden')}>
 					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}
 					<br />

@@ -387,6 +387,20 @@
 			max-width: unset !important;
 		}
 	}
+
+	.create-new-trip-form {
+		position: relative;
+		top: -220px !important;
+
+		.my-trips.bright-scrollbar {
+			max-height: 300px !important;
+		}
+	}
+
+	.main-part .up {
+		position: relative;
+		top: -230px !important;
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {
