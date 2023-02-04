@@ -61,7 +61,7 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 	const logoutLink = withLoginLogout && {
 		title: isLoggedIn ? logoutText : loginText,
 		path: isLoggedIn ? '/logout' : '/login',
-		icon: isLoggedIn ? 'fa-sign-out' : 'fa-sign-in',
+		icon: isLoggedIn ? 'fa-sign-out' : 'fa-sign-in flip-x',
 		cName: 'nav-text logout-link',
 	};
 
@@ -83,7 +83,9 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 				key={index}
 				className={item.cName}
 				onClick={() => {
-					eventStore.setIsMenuOpen(false);
+					setTimeout(() => {
+						eventStore.setIsMenuOpen(false);
+					}, 500);
 				}}
 			>
 				{item.path ? <Link to={item.path}>{content}</Link> : <a onClick={item.onClick}>{content}</a>}
@@ -119,6 +121,7 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 							</div>
 						</ul>
 					</nav>
+					{eventStore.isMenuOpen && <div className="background-overlay" />}
 				</>
 			)}
 		</Observer>

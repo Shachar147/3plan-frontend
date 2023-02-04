@@ -105,10 +105,25 @@ li {
 		flex-direction: column;
 		justify-content: space-between;
 		flex: 1 !important;
-		padding-bottom: 57px; // due to the footer mobile view navigation
 
 		.logout-link {
 			border-top: 1px solid rgb(229, 233, 239);
 		}
 	}
+}
+
+.main-page {
+	.menu-items-links-container {
+		padding-bottom: 57px; // due to the footer mobile view navigation
+	}
+}
+
+.background-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.6);
+	transition: 0.5s;
 }
