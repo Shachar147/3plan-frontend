@@ -223,6 +223,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	const today = showTodayButton ? ' today' : '';
 
 	// on mobile - organize all the calendar navigators on the same line
+	// also trip name will appear on all tabs in mobile view, so no need to render it here either.
 	const headerToolbar = eventStore.isMobile
 		? {
 				left: '',

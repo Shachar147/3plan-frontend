@@ -300,10 +300,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderActions = () => {
+		// do not render actions block on mobile if there are no calendar events since "clear all" is the only action on mobile view.
+		if (eventStore.isMobile && eventStore.calendarEvents.length === 0) return;
+
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS');
 		const actionsBlock = wrapWithSidebarGroup(
 			<>
-				{eventStore.isCalendarView && renderClearAll()}
+				{(eventStore.isCalendarView || eventStore.isMobile) && renderClearAll()}
 				{renderImportButtons()}
 			</>,
 			undefined,
@@ -320,7 +323,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderCalendarSidebarStatistics = () => {
-		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS');
+		const groupTitleKey = eventStore.isMobile
+			? 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT'
+			: 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS';
+		const groupTitle = TranslateService.translate(eventStore, groupTitleKey);
 
 		const calendarSidebarStatistics = (
 			<>
