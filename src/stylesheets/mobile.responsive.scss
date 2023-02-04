@@ -333,6 +333,16 @@
 	.triplan-header.rtl .triplan-header-actionbar {
 		justify-content: center;
 	}
+
+	// since we have the footer actionbar in the mobile, adding margin bottom to the main content so it won't be stick to the footer actionbar.
+	.external-events-container,
+	.calendar-container,
+	.map-container {
+		margin-bottom: 20px;
+	}
+
+	.list-container {
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {

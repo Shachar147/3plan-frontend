@@ -8,6 +8,7 @@ import TranslateService from '../../../services/translate-service';
 import Select from 'react-select';
 
 import './triplan-view-selector.scss';
+
 function TriplanViewSelector() {
 	const eventStore = useContext(eventStoreContext);
 	if (eventStore.isMobile) {
@@ -45,6 +46,7 @@ function TriplanViewSelector() {
 				value={eventStore.viewMode}
 				onChange={(newVal) => eventStore.setViewMode(newVal as ViewMode)}
 				options={getViewSelectorOptions(eventStore)}
+				useActiveButtons={false}
 				customStyle="white"
 			/>
 		</div>

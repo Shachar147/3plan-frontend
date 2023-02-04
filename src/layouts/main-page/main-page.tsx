@@ -7,7 +7,7 @@ import '@fullcalendar/timegrid/main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './main-page.scss';
 
-import TriplanCalendar, { TriPlanCalendarRef } from '../../components/triplan-calendar/triplan-calendar';
+import TriplanCalendar from '../../components/triplan-calendar/triplan-calendar';
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
 import { defaultEventsToCategories } from '../../utils/defaults';
@@ -17,15 +17,13 @@ import TriplanSidebar from '../../components/triplan-sidebar/triplan-sidebar';
 import MapContainer from '../../components/map-container/map-container';
 import ListViewService from '../../services/list-view-service';
 import DataServices, { LocaleCode } from '../../services/data-handlers/data-handler-base';
-import { ListViewSummaryMode, TripDataSource } from '../../utils/enums';
+import { ListViewSummaryMode, TripDataSource, ViewMode } from '../../utils/enums';
 import TranslateService from '../../services/translate-service';
 import ToggleButton from '../../components/toggle-button/toggle-button';
 import { CalendarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
-import triplanCalendar from '../../components/triplan-calendar/triplan-calendar';
-import FullCalendar from '@fullcalendar/react';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -43,6 +41,9 @@ function MainPage(props: MainPageProps) {
 	const [isFetchingData, setIsFetchingData] = useState(false);
 	const [defaultCalendarEvents, setDefaultCalendarEvents] = useState<CalendarEvent[]>([]);
 
+	// for mobile:
+	const [currentMobileView, setCurrentMobileView] = useState<ViewMode>(ViewMode.sidebar);
+
 	useHandleWindowResize();
 
 	useEffect(() => {
@@ -50,6 +51,13 @@ function MainPage(props: MainPageProps) {
 			TriplanCalendarRef.current.switchToCustomView();
 		}
 	}, [TriplanCalendarRef, eventStore.customDateRange]);
+
+	// handle mobile view mode changes
+	useEffect(() => {
+		if (currentMobileView !== ViewMode.sidebar) {
+			eventStore.setViewMode(currentMobileView as ViewMode);
+		}
+	}, [currentMobileView]);
 
 	const fetchCalendarEvents = useCallback(async () => {
 		const data = await eventStore.dataService.getCalendarEvents(tripName);
@@ -142,6 +150,8 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderListView() {
+		if (eventStore.isMobile && currentMobileView !== ViewMode.list) return null;
+
 		const options = [
 			{
 				key: ListViewSummaryMode.box,
@@ -163,7 +173,7 @@ function MainPage(props: MainPageProps) {
 			},
 		];
 
-		const onChange = (newVal) => eventStore.setListViewSummaryMode(newVal);
+		const onChange = (newVal: string) => eventStore.setListViewSummaryMode(newVal);
 
 		return (
 			<div
@@ -191,6 +201,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderMapView() {
+		if (eventStore.isMobile && currentMobileView !== ViewMode.map) return null;
 		return (
 			<div
 				className={getClasses(
@@ -211,6 +222,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderCalendarView() {
+		if (eventStore.isMobile && currentMobileView !== ViewMode.calendar) return null;
 		return (
 			<div
 				className={getClasses(
@@ -235,6 +247,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderSidebar() {
+		if (eventStore.isMobile && currentMobileView !== ViewMode.sidebar) return null;
 		return (
 			<TriplanSidebar
 				addToEventsToCategories={addToEventsToCategories}
@@ -245,6 +258,7 @@ function MainPage(props: MainPageProps) {
 
 					if (eventStore.isMobile) {
 						TriplanCalendarContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
+						// @ts-ignore
 						TriplanCalendarRef.current?.setMobileDefaultView();
 					}
 				}}
@@ -263,10 +277,29 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function renderMobileFooterNavigator() {
+		const viewOptions = getViewSelectorOptions(eventStore, true);
+		return (
+			<div className="mobile-footer-navigator">
+				{viewOptions.map((viewOption) => (
+					<a title={viewOption.name} onClick={() => setCurrentMobileView(viewOption.key)}>
+						{currentMobileView === viewOption.key ? viewOption.iconActive : viewOption.icon}
+						<span
+							title={viewOption.name}
+							className={getClasses(currentMobileView === viewOption.key && 'selected-color')}
+						>
+							{viewOption.name}
+						</span>
+					</a>
+				))}
+			</div>
+		);
+	}
+
 	const headerProps = {
 		withLogo: true,
 		withSearch: true,
-		withViewSelector: true,
+		withViewSelector: !eventStore.isMobile, // in mobile we will render view selector in the footer.
 		withRecommended: false,
 		withLoginLogout: true,
 		withFilterTags: true,
@@ -291,6 +324,7 @@ function MainPage(props: MainPageProps) {
 					)}
 				</div>
 			</div>
+			{eventStore.isMobile && renderMobileFooterNavigator()}
 		</div>
 	);
 }

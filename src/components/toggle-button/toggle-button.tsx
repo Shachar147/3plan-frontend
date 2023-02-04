@@ -12,8 +12,8 @@ export function useIntervalWhile(action: () => boolean, interval: number, maxTri
 
 function setIntervalWhile(action: () => boolean, interval: number, maxTries: number): any {
 	/*
-		This function gets an action to run and run it as long as it returns false and not reached max tries.
-	 */
+        This function gets an action to run and run it as long as it returns false and not reached max tries.
+     */
 	let triesCounter = 0;
 	let intervalId = setInterval(function () {
 		triesCounter++;
@@ -32,20 +32,31 @@ export interface OptionToggleButton {
 	key: string;
 	name: string;
 	icon?: JSX.Element | string;
-	iconActive?: string;
+	iconActive?: JSX.Element | string;
+	defaultIcon?: JSX.Element | string;
 }
 
 interface MultipleOptionsToggleButtonProps {
 	value: string;
+
 	onChange(value: string): void;
+
 	options: OptionToggleButton[];
 	customStyle?: 'default' | 'white' | 'tabs_underline' | string;
 	direction?: 'rtl' | 'ltr';
 	fontAwesomeIcons?: boolean;
+	useActiveButtons?: boolean;
 }
 
 export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
-	const { value, onChange, customStyle = 'default', direction = 'ltr', fontAwesomeIcons = true } = props;
+	const {
+		value,
+		onChange,
+		customStyle = 'default',
+		direction = 'ltr',
+		fontAwesomeIcons = true,
+		useActiveButtons = true,
+	} = props;
 	const [left, setLeft] = useState<number | undefined>(0);
 	const [right, setRight] = useState<number | undefined>(0);
 	const [width, setWidth] = useState(0);
@@ -103,7 +114,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 	}
 
 	function renderOption(option: OptionToggleButton, index: number) {
-		const { name, icon, iconActive, key } = option;
+		const { name, icon, defaultIcon, iconActive, key } = option;
 		const isSelected = value === key;
 		return (
 			<div
@@ -113,7 +124,9 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 				key={index}
 			>
 				<>
-					{renderIcon(isSelected ? iconActive || icon : icon)}
+					{renderIcon(
+						isSelected && useActiveButtons ? iconActive || defaultIcon || icon : defaultIcon || icon
+					)}
 					<span className={'multiple-options-toggle-button-item-text'}>{name}</span>
 				</>
 			</div>

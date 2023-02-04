@@ -19,6 +19,9 @@ export enum ViewMode {
 	list = 'list',
 	calendar = 'calendar',
 	map = 'map',
+
+	// for mobile:
+	sidebar = 'sidebar',
 }
 
 export enum ListViewSummaryMode {

@@ -76,19 +76,21 @@
 
 .fc-title {
 	font-size: 15px;
-	/*white-space: nowrap;*/
-	/*overflow: hidden;*/
-	/*text-overflow: ellipsis;*/
+	//white-space: nowrap;
+	//overflow: hidden;
+	//text-overflow: ellipsis;
 }
 
 .fc-category {
 	display: flex;
 	text-align: center;
 }
+
 .fc-category span {
 	flex: 1;
 	cursor: pointer;
 }
+
 .fc-category a {
 	cursor: pointer;
 }
@@ -97,6 +99,7 @@
 	display: flex;
 	flex: 1 1 0;
 }
+
 .search-container input[type='text'] {
 	padding-inline: 10px;
 	border: 1px solid #dde3eb;
@@ -122,6 +125,7 @@
 	text-align: left;
 	direction: ltr;
 }
+
 .fc-event-main {
 	overflow: hidden;
 	padding: 0 !important;
@@ -242,6 +246,7 @@ button:focus {
 	height: 44px;
 	cursor: pointer;
 }
+
 .logo img:hover {
 	opacity: 0.6;
 }
@@ -368,3 +373,54 @@ table th {
 .mobile-divider {
 	display: none;
 }
+
+body.rtl {
+	.mobile-footer-navigator {
+		flex-direction: row-reverse;
+	}
+}
+
+// -----------------------------------------------------------
+// mobile footer navigator //
+// -----------------------------------------------------------
+.mobile-footer-navigator {
+	min-height: 60px;
+	height: max-content;
+	position: fixed;
+	bottom: 0;
+	z-index: 9999;
+	background-color: #eeeeee;
+	border-top: 1px solid #dadada;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	width: 100%;
+
+	a {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		max-width: 25%;
+
+		i {
+			transition: all 0.3s ease-in-out;
+
+			&.black-color {
+				color: #2d2d2d;
+			}
+
+			font-size: 18px;
+		}
+
+		span {
+			transition: all 0.3s ease-in-out;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 100%;
+			font-size: 12px;
+		}
+	}
+}
+
+// -----------------------------------------------------------

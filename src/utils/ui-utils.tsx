@@ -218,27 +218,42 @@ const renderFilterTags = (eventStore: EventStore) => {
 	);
 };
 
-export const getViewSelectorOptions = (eventStore: EventStore) => {
-	return [
+export const getViewSelectorOptions = (eventStore: EventStore, withMobileViews: boolean = false) => {
+	const baseArray = [
 		{
 			key: ViewMode.calendar,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.CALENDAR_VIEW'),
-			icon: <i className="fa fa-calendar black-color" aria-hidden="true"></i>,
-			// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+			icon: <i className="fa fa-calendar-o black-color" aria-hidden="true"></i>,
+			defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true"></i>,
+			iconActive: <i className="fa fa-calendar selected-color" aria-hidden="true"></i>,
 		},
 		{
 			key: ViewMode.map,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
 			icon: <i className="fa fa-map-o black-color" aria-hidden="true"></i>,
-			// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+			iconActive: <i className="fa fa-map selected-color" aria-hidden="true"></i>,
 		},
 		{
 			key: ViewMode.list,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
 			icon: <i className="fa fa-list black-color" aria-hidden="true"></i>,
-			// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true"></i>,
 		},
 	];
+
+	if (withMobileViews) {
+		return [
+			{
+				key: ViewMode.sidebar,
+				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.SIDEBAR_VIEW'),
+				icon: <i className="fa fa-star-o black-color" aria-hidden="true"></i>,
+				iconActive: <i className="fa fa-star selected-color" aria-hidden="true"></i>,
+			},
+			...baseArray,
+		];
+	}
+
+	return baseArray;
 };
 
 const renderViewSelector = (eventStore: EventStore) => {
