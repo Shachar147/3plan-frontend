@@ -6,9 +6,10 @@ import './triplan-search.scss';
 import TextInput from '../../inputs/text-input/text-input';
 import { getClasses } from '../../../utils/utils';
 
-function TriplanSearch(props: { isHidden: boolean}) {
+function TriplanSearch(props: { isHidden: boolean }) {
 	const { isHidden = false } = props;
 	const eventStore = useContext(eventStoreContext);
+	console.log(eventStore.isSearchOpen);
 	return (
 		<div className={getClasses('search-container', isHidden && 'hidden')}>
 			<TextInput

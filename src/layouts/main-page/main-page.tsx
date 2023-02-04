@@ -24,10 +24,6 @@ import { CalendarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
-import HamburgerIcon from '../../components/triplan-header/mobile-menu/hamburger-icon/hamburger-icon';
-import MobileNavbar from '../../components/mobile-header/mobile-navbar/mobile-navbar';
-import MobileHeader from '../../components/mobile-header/mobile-header';
-import EllipsisWithTooltip from 'react-ellipsis-with-tooltip'
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -307,20 +303,14 @@ function MainPage(props: MainPageProps) {
 		withRecommended: false,
 		withLoginLogout: true,
 		withFilterTags: true,
-		withMyTrips: true
+		withMyTrips: true,
 	};
 
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
-			<div className="padding-inline-8 flex-row align-items-center justify-content-center">
+			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
 				<TriplanHeaderWrapper {...headerProps} />
 			</div>
-			{eventStore.isMobile && (
-				<div className={getClasses("mobile-trip-name", eventStore.isMenuOpen && 'no-z-index')}>
-					{/*{TranslateService.translate(eventStore, 'YOU_ARE_LOOKING_AT')} {eventStore.tripName}*/}
-					<EllipsisWithTooltip placement="bottom">{ucfirst(eventStore.tripName.replaceAll("-", " "))}</EllipsisWithTooltip>
-				</div>
-			)}
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
 					{eventStore.isLoading || isFetchingData ? (

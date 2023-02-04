@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 
 // ROUTING
 import { Link } from 'react-router-dom';
@@ -35,28 +35,39 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 	const loginText = TranslateService.translate(eventStore, 'LOGIN');
 	const logoutText = `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`;
 
-	const SidebarData: any[] = [
-		withSearch && {
-			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
-			onClick: () => {
-				eventStore.setIsSearchOpen(!eventStore.isSearchOpen);
-			},
-			icon: 'fa-search',
-			cName: getClasses('nav-text', eventStore.isSearchOpen && 'active'),
-		},
-		withMyTrips && {
-			title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
-			path: '/my-trips',
-			icon: 'fa-street-view',
-			cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active'),
-		},
-		withLanguageSelector && {
-			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
-			path: '/language',
-			icon: 'fa-globe',
-			cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),
-		},
-	].filter(Boolean);
+	const SidebarData: any[] = useMemo(
+		() =>
+			[
+				withSearch && {
+					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
+					onClick: () => {
+						const isOpen = !eventStore.isSearchOpen;
+						eventStore.setIsSearchOpen(isOpen);
+						if (!isOpen) {
+							eventStore.setSearchValue('');
+						}
+					},
+					icon: 'fa-search',
+					// @ts-ignore
+					cName: getClasses('nav-text', options.isSearchOpen && 'active'),
+				},
+				withMyTrips && {
+					title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
+					path: '/my-trips',
+					icon: 'fa-street-view',
+					cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active'),
+				},
+				withLanguageSelector && {
+					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
+					path: '/language',
+					icon: 'fa-globe',
+					cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),
+				},
+			].filter(Boolean),
+		[eventStore.isSearchOpen]
+	);
+
+	console.log('hereee', SidebarData);
 
 	const logoutLink = withLoginLogout && {
 		title: isLoggedIn ? logoutText : loginText,
@@ -68,7 +79,9 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 	if (SidebarData.length === 0 && !logoutLink) return;
 
 	function handleClickOutside() {
-		eventStore.setIsMenuOpen(false);
+		setTimeout(() => {
+			eventStore.setIsMenuOpen(false);
+		}, 100);
 	}
 
 	function renderItem(item: any, index: number) {
@@ -139,4 +152,4 @@ var clickOutsideConfig = {
 	},
 };
 
-export default onClickOutside(MobileNavbar, clickOutsideConfig);
+export default observer(onClickOutside(MobileNavbar, clickOutsideConfig));

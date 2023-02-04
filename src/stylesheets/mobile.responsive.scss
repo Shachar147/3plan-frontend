@@ -142,7 +142,7 @@
 			width: 100%;
 
 			.search-container {
-				padding-inline: 0px;
+				padding-inline: 0;
 				margin-top: 8px;
 				width: 100%;
 			}
@@ -374,7 +374,18 @@
 	}
 
 	.main-page {
-		margin-top: 80px !important;
+		margin-top: 60px !important;
+	}
+
+	.search-container {
+		margin-bottom: 10px !important;
+		width: 100%;
+		max-width: unset;
+		text-align: center;
+
+		input {
+			max-width: unset !important;
+		}
 	}
 }
 
