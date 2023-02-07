@@ -7,7 +7,7 @@ import '@fullcalendar/timegrid/main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './main-page.scss';
 
-import TriplanCalendar from '../../components/triplan-calendar/triplan-calendar';
+import TriplanCalendar, { TriPlanCalendarRef } from '../../components/triplan-calendar/triplan-calendar';
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
 import { defaultEventsToCategories } from '../../utils/defaults';
@@ -20,7 +20,7 @@ import DataServices, { LocaleCode } from '../../services/data-handlers/data-hand
 import { ListViewSummaryMode, TripDataSource, ViewMode } from '../../utils/enums';
 import TranslateService from '../../services/translate-service';
 import ToggleButton from '../../components/toggle-button/toggle-button';
-import { CalendarEvent } from '../../utils/interfaces';
+import { CalendarEvent, SidebarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
@@ -31,8 +31,8 @@ interface MainPageProps {
 
 function MainPage(props: MainPageProps) {
 	const { createMode } = props;
-	const [eventsToCategories, setEventsToCategories] = useState(defaultEventsToCategories);
-	const TriplanCalendarRef = useRef(null);
+	const [eventsToCategories, setEventsToCategories] = useState<Record<string, string>>(defaultEventsToCategories);
+	const TriplanCalendarRef = useRef<TriPlanCalendarRef>(null);
 	const TriplanCalendarContainerRef = useRef<HTMLDivElement>(null);
 	const eventStore = useContext(eventStoreContext);
 	const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
@@ -82,15 +82,21 @@ function MainPage(props: MainPageProps) {
 	useEffect(() => {
 		// update idtoevent, idtocategory and allevents array
 		const arr = [...eventStore.allEvents];
-		const idToEvent = {};
-		const idToCategory = {};
-		Object.keys(eventStore.getSidebarEvents).map((category) => {
-			eventStore.getSidebarEvents[category].forEach((event) => {
+		const idToEvent: Record<string, SidebarEvent> = {};
+		const idToCategory: Record<string, number> = {};
+
+		const sidebarEvents:Record<number, SidebarEvent[]> = eventStore.getSidebarEvents;
+
+		Object.keys(sidebarEvents).map((category: string) => {
+			const categoryId = Number(category);
+			const categoryEvents: SidebarEvent[] = sidebarEvents[categoryId];
+			categoryEvents.forEach((event) => {
 				if (event.priority) {
 					event.className = `priority-${event.priority}`;
 				}
-				idToEvent[event.id] = event;
-				idToCategory[event.id] = category;
+				const eventId: string = event.id;
+				idToEvent[eventId] = event;
+				idToCategory[eventId] = categoryId;
 			});
 		});
 
@@ -103,14 +109,16 @@ function MainPage(props: MainPageProps) {
 		eventStore.setAllEvents(arr);
 	}, [eventStore.sidebarEvents]);
 
-	function addEventToSidebar(event): boolean {
-		const newEvents = { ...eventStore.sidebarEvents };
+	function addEventToSidebar(event: any): boolean {
+		const newEvents: Record<string, SidebarEvent[]> = { ...eventStore.sidebarEvents };
 		let category = eventsToCategories[event.id];
 		if (!category) {
 			const findEvent = eventStore.allEvents.find((x) => x.id.toString() === event.id.toString());
-			category = findEvent.category;
-			if (!category && findEvent && findEvent.extendedProps) {
-				category = findEvent.extendedProps.categoryId;
+			if (findEvent) {
+				category = findEvent.category;
+				if (!category && findEvent && findEvent.extendedProps) {
+					category = findEvent.extendedProps.categoryId;
+				}
 			}
 		}
 
