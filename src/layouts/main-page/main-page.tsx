@@ -103,7 +103,7 @@ function MainPage(props: MainPageProps) {
 		const existingIds = eventStore.allEvents.map((e) => e.id.toString());
 		Object.keys(idToEvent).forEach((eventId) => {
 			if (existingIds.indexOf(eventId) === -1) {
-				arr.push({ ...idToEvent[eventId], category: idToCategory[eventId] });
+				arr.push({ ...idToEvent[eventId], category: idToCategory[eventId].toString() });
 			}
 		});
 		eventStore.setAllEvents(arr);
@@ -139,17 +139,18 @@ function MainPage(props: MainPageProps) {
 		}
 	}
 
-	function removeEventFromSidebarById(eventId) {
-		const newEvents = { ...eventStore.sidebarEvents };
+	function removeEventFromSidebarById(eventId: number|string) {
+		const newEvents: Record<number, SidebarEvent[]> = { ...eventStore.sidebarEvents };
 		const newEventsToCategories = { ...eventsToCategories };
-		Object.keys(newEvents).forEach((c) => {
-			newEvents[c] = newEvents[c].filter((e) => e.id !== eventId);
-			if (newEvents[c].length !== eventStore.sidebarEvents[c].length) {
-				newEventsToCategories[eventId] = c;
+		Object.keys(newEvents).forEach((category) => {
+			const categoryId = Number(category);
+			newEvents[categoryId] = newEvents[categoryId].filter((event) => event.id !== eventId);
+			if (newEvents[categoryId].length !== eventStore.sidebarEvents[categoryId].length) {
+				newEventsToCategories[eventId] = category;
 			}
 		});
 		const newCalendarEvents: CalendarEvent[] = [
-			...eventStore.calendarEvents.filter((e) => e.id.toString() !== eventId.toString()),
+			...eventStore.calendarEvents.filter((calendarEvent) => calendarEvent?.id?.toString() !== eventId.toString()),
 			eventStore.allEvents.find((e) => e.id.toString() === eventId.toString()),
 		] as CalendarEvent[];
 		eventStore.setCalendarEvents(newCalendarEvents);
@@ -222,7 +223,7 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
-	function addToEventsToCategories(newEvent) {
+	function addToEventsToCategories(newEvent: any) {
 		setEventsToCategories({
 			...eventsToCategories,
 			[newEvent.id]: newEvent.extendedProps.categoryId,
@@ -266,7 +267,6 @@ function MainPage(props: MainPageProps) {
 
 					if (eventStore.isMobile) {
 						TriplanCalendarContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
-						// @ts-ignore
 						TriplanCalendarRef.current?.setMobileDefaultView();
 					}
 				}}
