@@ -8,3 +8,13 @@ export function getServerAddress() {
 		return 'https://triplan-server.herokuapp.com';
 	}
 }
+
+export function getTinderServerAddress() {
+	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
+	if (mode && mode.trim() === 'development') {
+		return 'http://localhost:5555';
+	} else {
+		// return 'https://triplan-server.herokuapp.com';
+		return 'http://localhost:5555';
+	}
+}

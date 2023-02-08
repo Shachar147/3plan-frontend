@@ -27,6 +27,7 @@ import { getToken, getUser } from './helpers/auth';
 import axios from 'axios';
 import LoginPage from './layouts/login-page/login-page';
 import MobileLanguageSelectorPage from './layouts/language-selector/mobile-language-selector';
+import ManageTinderPlaces from './admin/layouts/manage-triplan-tinder-places';
 
 // import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -556,6 +557,9 @@ const RootRouter = () => {
 					<Route path="/plan" element={<MainPage />} />
 					<Route path="/theme" element={<ThemeExample />} />
 					<Route path="/language" element={<MobileLanguageSelectorPage />} />
+
+					<Route path="/admin" element={<ManageTinderPlaces />} />
+					<Route path="/admin/places-tinder" element={<ManageTinderPlaces />} />
 				</Routes>
 			</BrowserRouter>
 			<Observer>

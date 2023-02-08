@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { getServerAddress } from '../config/config';
 
-const unAuthorizedRoutes = [
-	"signin"
-]
+const unAuthorizedRoutes = ['signin'];
 
 export function apiGet(self, url, onSuccess, onError, onFinish) {
 	return axios
@@ -120,7 +118,7 @@ export function apiDelete(self, url, onSuccess, onError, onFinish) {
 				if (!isRedirected) {
 					onError(error, () => {
 						self.setState({ error: '' });
-						apiPut(self, url, data, onSuccess, onError, onFinish);
+						// apiPut(self, url, data, onSuccess, onError, onFinish);
 					});
 				}
 			});

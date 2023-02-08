@@ -9,7 +9,7 @@ import { ViewMode } from '../../utils/enums';
 import TranslateService from '../../services/translate-service';
 
 interface TriplanHeaderWrapperProps extends TriplanHeaderProps {
-	currentMobileView: ViewMode;
+	currentMobileView?: ViewMode;
 	showTripName?: boolean;
 }
 
@@ -35,14 +35,6 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 		return (
 			<>
 				<MobileHeader {...props} withSearch={withSearch} showTripName={showTripName} />
-				{/*{showTripName && (*/}
-				{/*	<div className={getClasses('mobile-trip-name', eventStore.isMenuOpen && 'no-z-index')}>*/}
-				{/*		/!*{TranslateService.translate(eventStore, 'YOU_ARE_LOOKING_AT')} {eventStore.tripName}*!/*/}
-				{/*		<EllipsisWithTooltip placement="bottom">*/}
-				{/*			{ucfirst(eventStore.tripName.replaceAll('-', ' '))}*/}
-				{/*		</EllipsisWithTooltip>*/}
-				{/*	</div>*/}
-				{/*)}*/}
 				<div className="mobile-header-search-container">
 					{withSearch && <TriplanSearch isHidden={!eventStore.isSearchOpen} />}
 					{showing != null &&
