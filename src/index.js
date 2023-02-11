@@ -466,6 +466,9 @@ const RootRouter = () => {
 
 	// calculate matrix distance
 	window.calculateMatrixDistance = (travelMode, startDestination, endDestination) => {
+		// disable google maps distance calc for now
+		return;
+
 		const googleMatrixService = new google.maps.DistanceMatrixService();
 
 		if (!startDestination || !endDestination) {

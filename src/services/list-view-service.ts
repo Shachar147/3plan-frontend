@@ -18,6 +18,7 @@ const ListViewService = {
 	_formatTime: (timeString: string) => moment(timeString, ['h:mm A']).format('HH:mm'),
 	_randomElement: (array: any[]) => array[Math.floor(Math.random() * array.length)],
 	_formatDescription: (description: string) => {
+		if (!description) return description;
 		return description.replaceAll('&#10;', '<br/>').replaceAll('\n', '<br/>').replaceAll('<br/><br/>', '<br/>');
 	},
 	_getEventFromEventRow: (eventStore: EventStore, eventRow: string) => {
@@ -549,6 +550,9 @@ const ListViewService = {
 						: TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 					: '';
 
+				// disable google maps distance calc for now
+				distanceToNextEvent = '';
+
 				// const from = previousLineWasOr ? `${TranslateService.translate(eventStore, 'FROM')} ${prevEventTitle} ` : "";
 
 				if (!prevLocation) {
@@ -733,6 +737,9 @@ const ListViewService = {
 					: TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 				: '';
 
+			// disable google maps distance calc for now
+			distanceToNextEvent = '';
+
 			return distanceToNextEvent;
 		};
 
@@ -879,7 +886,7 @@ const ListViewService = {
 					const newVal = `
                         <span style="background-color:#ffff00; color: black; font-weight: bold;">${searchValue}</span>
                     `;
-					filteredSummaryPerDay[dayTitle] = summaryPerDay[dayTitle].map((x) => x.replaceAll(regex, newVal));
+					filteredSummaryPerDay[dayTitle] = summaryPerDay[dayTitle].map((x) => x?.replaceAll(regex, newVal));
 				}
 			});
 			summaryPerDay = filteredSummaryPerDay;
