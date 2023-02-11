@@ -192,16 +192,24 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const onCalendarSelect = (selectionInfo: any) => {
-		if (!isDoubleClicked) {
-			// console.log("not clicked yet!");
-			setIsDoubleClicked(true);
-			setTimeout(() => {
-				// console.log("oops too long");
+		let shouldOpen = true;
+		if (eventStore.isMobile) {
+			shouldOpen = false;
+			if (!isDoubleClicked) {
+				// console.log("not clicked yet!");
+				setIsDoubleClicked(true);
+				setTimeout(() => {
+					// console.log("oops too long");
+					setIsDoubleClicked(false);
+				}, 1000);
+			} else {
+				// console.log("double clicked!");
 				setIsDoubleClicked(false);
-			}, 1000);
-		} else {
-			// console.log("double clicked!");
-			setIsDoubleClicked(false);
+				shouldOpen = true;
+			}
+		}
+
+		if (shouldOpen) {
 			ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
 		}
 	};
@@ -312,7 +320,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			longPressDelay={5}
 			validRange={{
 				start: eventStore.customDateRange.start,
-				end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1))
+				end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
 			}}
 			slotMinTime={'07:00'}
 		/>
