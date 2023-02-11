@@ -596,7 +596,7 @@ const ListViewService = {
 
 				// distanceToNextEvent = doNotShowImpossibleToGetThereDistanceErrorOnFlights(distanceToNextEvent, title!, prevEventTitle);
 
-				if (distanceToNextEvent !== '') {
+				if (distanceToNextEvent && distanceToNextEvent !== '') {
 					summaryPerDay[dayTitle].push(distanceToNextEvent);
 				}
 
