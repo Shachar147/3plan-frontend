@@ -379,7 +379,7 @@ const ReactModalRenderHelper = {
 
 				return (
 					<div className="flex-column gap-10 images-input">
-						{images && (
+						{images && images.length > 0 && (
 							<Slider {...sliderSettings}>
 								{images.map((image: string) => (
 									<img
@@ -507,19 +507,6 @@ const ReactModalService = {
 				},
 				{
 					settings: {
-						modalValueName: 'images', // add column 4
-						ref: eventStore.modalValuesRefs['images'],
-						type: 'images',
-						extra: {
-							placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
-							value: initialData.images,
-						},
-					},
-					textKey: 'MODALS.IMAGES',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
 						modalValueName: 'description',
 						ref: eventStore.modalValuesRefs['description'],
 						type: 'textarea',
@@ -617,6 +604,19 @@ const ReactModalService = {
 				},
 				{
 					settings: {
+						modalValueName: 'images', // add column 4
+						ref: eventStore.modalValuesRefs['images'],
+						type: 'images',
+						extra: {
+							placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
+							value: initialData.images,
+						},
+					},
+					textKey: 'MODALS.IMAGES',
+					className: 'border-top-gray',
+				},
+				{
+					settings: {
 						modalValueName: 'more-info',
 						ref: eventStore.modalValuesRefs['more-info'],
 						type: 'text',
@@ -709,19 +709,6 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.END_TIME',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'images', // add column 5
-						ref: eventStore.modalValuesRefs['images'],
-						type: 'images',
-						extra: {
-							placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
-							value: initialData.images,
-						},
-					},
-					textKey: 'MODALS.IMAGES',
 					className: 'border-top-gray',
 				},
 				{
@@ -826,6 +813,19 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.OPENING_HOURS',
+					className: 'border-top-gray',
+				},
+				{
+					settings: {
+						modalValueName: 'images', // add column 5
+						ref: eventStore.modalValuesRefs['images'],
+						type: 'images',
+						extra: {
+							placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
+							value: initialData.images,
+						},
+					},
+					textKey: 'MODALS.IMAGES',
 					className: 'border-top-gray',
 				},
 				{
