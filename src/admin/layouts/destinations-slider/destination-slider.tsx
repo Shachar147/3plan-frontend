@@ -25,37 +25,31 @@ const DestinationSlider = ({ currDestination }: DestinationSliderProps) => {
 		var slideTimer = setInterval(function () {
 			if (direction == 'left') {
 				element.scrollLeft -= step;
-				scrollAmount -= step;
 			} else {
 				element.scrollLeft += step;
-				scrollAmount += step;
 			}
 			scrollAmount += step;
-			console.log(distance, element.scrollLeft);
-			if (Math.abs(element.scrollLeft - distance) <= 9) {
-				element.scrollLeft = distance;
+			if (scrollAmount === distance) {
+				// element.scrollLeft = distance;
 				window.clearInterval(slideTimer);
 			}
 		}, speed);
 	}
 
-	// useEffect(() => {
-	// 	const activeElement = document.getElementsByClassName('active')?.[0];
-	// 	if (activeElement) {
-	// 		console.log(activeElement.offsetLeft);
-	// 		let leftPos = activeElement.offsetLeft;
-	// 		leftPos -= 100;
-	//
-	// 		setInterval(() => {}, 100);
-	//
-	// 		const scrollingElement = document.getElementsByClassName('destination-slider')[0];
-	// 		sideScroll(scrollingElement, 'left', 10, leftPos, 10);
-	// 	}
-	// }, []);
+	const slideBack = () => {
+		const scrollingElement = document.getElementsByClassName('destination-slider')[0];
+		sideScroll(scrollingElement, 'right', 10, 300, 10);
+		// scrollingElement.scrollLeft += 60;
+	};
+	const slideNext = () => {
+		const scrollingElement = document.getElementsByClassName('destination-slider')[0];
+		// scrollingElement.scrollLeft -= 60;
+		sideScroll(scrollingElement, 'left', 10, 300, 10);
+	};
 
 	return (
 		<div className="flex-row align-items-center gap-10">
-			<i className={`fa ${backIcon}`} />
+			<i className={`slider-navigator fa ${backIcon}`} onClick={() => slideBack()} />
 			<div className="destination-slider">
 				<div className="destinations-content">
 					{destinations.map((destination) => {
@@ -73,7 +67,7 @@ const DestinationSlider = ({ currDestination }: DestinationSliderProps) => {
 					})}
 				</div>
 			</div>
-			<i className={`fa ${nextIcon}`} />
+			<i className={`slider-navigator fa ${nextIcon}`} onClick={() => slideNext()} />
 		</div>
 	);
 };
