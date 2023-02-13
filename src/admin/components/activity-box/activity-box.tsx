@@ -3,6 +3,7 @@ import './activity-box.scss';
 import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
 import { TinderItem } from '../../helpers/interfaces';
+import { observer } from 'mobx-react';
 
 interface ActivityBoxProps {
 	activity: TinderItem;
@@ -48,11 +49,8 @@ const ActivityBox = ({ activity }: ActivityBoxProps) => {
 				<img src={isVerified ? '/images/admin/verified.png' : '/images/admin/unverified.png'} />
 				{TranslateService.translate(eventStore, isVerified ? 'VERIFIED' : 'UNVERIFIED')}
 			</div>
-			{/*<div className="activity-box-num-of-items">*/}
-			{/*	{TranslateService.translate(eventStore, 'X_ACTIVITIES').replace('{X}', numOfItems.toString())}*/}
-			{/*</div>*/}
 		</div>
 	);
 };
 
-export default ActivityBox;
+export default observer(ActivityBox);

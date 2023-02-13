@@ -4,6 +4,7 @@ import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
 import { countriesFlags } from './flags';
 import { getClasses } from '../../../utils/utils';
+import { observer } from 'mobx-react';
 
 interface DestinationBoxProps {
 	name: string;
@@ -31,4 +32,4 @@ const DestinationBox = ({ name, numOfItems, onClick, isActive = false }: Destina
 	);
 };
 
-export default DestinationBox;
+export default observer(DestinationBox);

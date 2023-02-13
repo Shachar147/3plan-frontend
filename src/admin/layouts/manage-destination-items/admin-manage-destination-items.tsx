@@ -9,22 +9,20 @@ import './admin-manage-destination-items.scss';
 import { observer } from 'mobx-react';
 import TranslateService from '../../../services/translate-service';
 import { adminStoreContext } from '../../stores/admin-store';
-import DestinationBox from '../../components/destination-box/destination-box';
 import AdminDashboardWrapper from '../admin-dashboard-wrapper/admin-dashboard-wrapper';
 import { eventStoreContext } from '../../../stores/events-store';
-import { useNavigate, useParams } from 'react-router-dom';
-import { countriesFlags } from '../../components/destination-box/flags';
+import { useParams } from 'react-router-dom';
 import ActivityBox from '../../components/activity-box/activity-box';
+import DestinationSlider from '../destinations-slider/destination-slider';
 
-interface AdminManageDestinationItemsProps {
-	createMode?: boolean;
-}
-
-function AdminManageDestinationItems(props: AdminManageDestinationItemsProps) {
+function AdminManageDestinationItems() {
 	const adminStore = useContext(adminStoreContext);
 	const eventStore = useContext(eventStoreContext);
-	const navigate = useNavigate();
-	const { destination: currDestination } = useParams();
+	let { destination: currDestination } = useParams();
+
+	if (currDestination == 'NA') {
+		currDestination = 'N/A';
+	}
 
 	function renderContent() {
 		if (!currDestination) return;
@@ -35,28 +33,11 @@ function AdminManageDestinationItems(props: AdminManageDestinationItemsProps) {
 			);
 		}
 
-		const destinations = Array.from(adminStore.placesByDestination.keys());
 		const activities = adminStore.placesByDestination.get(currDestination) ?? [];
 
 		return (
 			<div className="manage-destination-items bright-scrollbar">
-				<div className="flex-column gap-10">
-					<div className="destinations-content">
-						{destinations.map((destination) => {
-							const places = adminStore.placesByDestination.get(destination)!;
-							return (
-								<DestinationBox
-									name={destination}
-									numOfItems={places.length}
-									onClick={() => {
-										navigate(`/admin/destination/${destination}`);
-									}}
-									isActive={destination === currDestination}
-								/>
-							);
-						})}
-					</div>
-				</div>
+				<DestinationSlider currDestination={currDestination} />
 				<div className="flex-column gap-10">
 					<div className="activities-content">
 						{activities.map((activity) => (

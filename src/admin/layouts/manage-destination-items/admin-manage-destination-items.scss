@@ -7,6 +7,14 @@
   flex: 1 1 0;
   min-width: 0;
 
+  .destinations-content {
+    overflow:auto;
+    height: 210px; // todo change to 100% if we do not want slider
+    flex-flow: row nowrap; // todo change to wrap if we do not want slider
+    width: max-content; // todo change to 100% if we do not want slider
+    padding-inline: 20px;;
+  }
+
   .activities-content,
   .destinations-content {
     display: flex;
