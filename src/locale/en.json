@@ -292,5 +292,7 @@
 	"YOU_ARE_LOOKING_AT": "You are looking at:",
 	"PLEASE_ROTATE_YOUR_DEVICE": "Please rotate your device",
 	"DEVICE_IS_NOT_SUPPORTED": "This device is unsupported, please try to use Mobile Phone, Tablet or PC.",
-	"SHOWING_X_FROM_Y": "Showing {0} results (out of {1})"
+	"SHOWING_X_FROM_Y": "Showing {0} results (out of {1})",
+	"X_ACTIVITIES": "{X} items",
+	"NO_ITEMS": "No items to display"
 }

@@ -17,6 +17,7 @@ import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import TriplanAdminSidebar from '../components/admin-sidebar/admin-sidebar';
 import { adminStoreContext } from '../stores/admin-store';
+import DestinationBox from '../components/destination-box/destination-box';
 
 interface ManageTinderPlacesProps {
 	createMode?: boolean;
@@ -52,24 +53,21 @@ function ManageTinderPlaces(props: ManageTinderPlacesProps) {
 
 	function renderContent() {
 		if (adminStore.placesByDestination.size === 0) {
-			return 'no items';
+			return (
+				<div className="no-destinations-placeholder">{TranslateService.translate(eventStore, 'NO_ITEMS')}</div>
+			);
 		}
 
 		const destinations = Array.from(adminStore.placesByDestination.keys());
 
-		return destinations.map((destination) => {
-			const places = adminStore.placesByDestination.get(destination)!;
-			return (
-				<div className="flex-column gap-5">
-					<b>{destination}</b>
-					<ul>
-						{places.map((event) => (
-							<li>{event.name}</li>
-						))}
-					</ul>
-				</div>
-			);
-		});
+		return (
+			<div className="destinations-content">
+				{destinations.map((destination) => {
+					const places = adminStore.placesByDestination.get(destination)!;
+					return <DestinationBox name={destination} numOfItems={places.length} />;
+				})}
+			</div>
+		);
 	}
 
 	function renderLoading() {
@@ -98,7 +96,7 @@ function ManageTinderPlaces(props: ManageTinderPlacesProps) {
 				<TriplanHeaderWrapper {...headerProps} currentMobileView={undefined} showTripName={false} />
 			</div>
 			<div className={'main-layout-container'}>
-				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
+				<div className={getClasses('main-layout', `direction-${eventStore.getCurrentDirection()}`)}>
 					{eventStore.isLoading || !adminStore.hasInit ? (
 						renderLoading()
 					) : (

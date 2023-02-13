@@ -23,4 +23,7 @@ export interface TinderItem {
 	deletedBy: number;
 	updatedBy: number; // user id
 }
-export type GetPlacesByDestinationResult = Record<string, TinderItem[]>;
+export type GetPlacesByDestinationResult = {
+	totals: Record<string, number>;
+	data: Record<string, TinderItem[]>;
+};

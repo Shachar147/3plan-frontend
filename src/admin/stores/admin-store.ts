@@ -14,7 +14,7 @@ export class AdminStore {
 	init() {
 		TriplanTinderApiService.getPlacesByDestination().then((results) => {
 			runInAction(() => {
-				this.placesByDestination = observable.map<string, TinderItem[]>(results);
+				this.placesByDestination = observable.map<string, TinderItem[]>(results?.data);
 				this.hasInit = true;
 			});
 		});

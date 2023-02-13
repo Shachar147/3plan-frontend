@@ -1,0 +1,30 @@
+.destination-box {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  opacity: 0.5;
+
+  &:hover {
+    width: 210px;
+    height: 210px;
+    opacity: 1;
+  }
+
+  .destination-box-name {
+    font-family: 'Arial';
+    font-weight: bold;
+  }
+}
+
+body.rtl {
+  .destination-box {
+    direction: rtl;
+  }
+}

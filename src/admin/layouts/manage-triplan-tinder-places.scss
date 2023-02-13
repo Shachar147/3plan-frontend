@@ -1,0 +1,23 @@
+.destinations-content {
+  display: flex;
+  align-items:center;
+  justify-content: center;
+  height: 210px;
+  gap: 10px;
+
+  .destination-box-flag {
+    img {
+      max-width: 30px;
+    }
+  }
+}
+
+.no-destinations-placeholder {
+  padding-inline-start: 20px;
+}
+
+body.rtl {
+  .destinations-content {
+    direction: rtl;
+  }
+}
