@@ -294,5 +294,14 @@
 	"DEVICE_IS_NOT_SUPPORTED": "This device is unsupported, please try to use Mobile Phone, Tablet or PC.",
 	"SHOWING_X_FROM_Y": "Showing {0} results (out of {1})",
 	"X_ACTIVITIES": "{X} items",
-	"NO_ITEMS": "No items to display"
+	"NO_ITEMS": "No items to display",
+	"MISSING_ACTIVITY_NAME": "Missing activity name",
+	"THERE_ARE_X_ERRORS": "There are {X} errors",
+	"ALL_GOOD": "All good",
+	"THERE_IS_ONE_PROBLEM": "There is one problem",
+	"MISSING_IMAGES": "Missing images",
+	"MISSING_CATEGORY": "Missing category",
+	"MISSING_DESCRIPTION": "Missing description",
+	"VERIFIED": "Verified",
+	"UNVERIFIED": "Unverified"
 }

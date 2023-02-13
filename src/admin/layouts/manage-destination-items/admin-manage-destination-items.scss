@@ -1,0 +1,45 @@
+.manage-destination-items {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  overflow: auto;
+  gap: 20px;
+  flex: 1 1 0;
+  min-width: 0;
+
+  .activities-content,
+  .destinations-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    display: flex;
+    flex-flow: row wrap;
+
+    .destination-box-flag {
+      img {
+        max-width: 30px;
+      }
+    }
+  }
+
+  .activity-box-status {
+    .activity-box-error {
+      color: var(--red);
+    }
+    .activity-box-all-good {
+      color: var(--green);
+    }
+  }
+}
+
+.no-destinations-placeholder {
+  padding-inline-start: 20px;
+}
+
+body.rtl {
+  .destinations-content {
+    direction: rtl;
+  }
+}

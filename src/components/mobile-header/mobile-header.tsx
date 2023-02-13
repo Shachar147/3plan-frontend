@@ -10,18 +10,21 @@ import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 
 interface MobileHeaderProps extends TriplanHeaderProps {
 	showTripName?: boolean;
+	adminMode?: boolean;
 }
 
 function MobileHeader(options: MobileHeaderProps) {
 	const { withLogo = false, showTripName } = options;
 	const eventStore = useContext(eventStoreContext);
 
+	const homeUrl = options.adminMode ? '/admin' : '/';
+
 	return (
 		<div className="mobile-header">
 			<div className="mobile-header-row">
 				<div className="flex-row align-items-center">
 					{withLogo && (
-						<Link to={'/'}>
+						<Link to={homeUrl}>
 							<img src="/images/logo/new-logo.png" height={60} />
 						</Link>
 					)}

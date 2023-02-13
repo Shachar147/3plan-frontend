@@ -306,5 +306,14 @@
 	"SHOWING_X_FROM_Y": "מציג {0} תוצאות (מתוך {1})",
 	"Username already exists": "שם המשתמש כבר קיים",
 	"X_ACTIVITIES": "{X} פעילויות",
-	"NO_ITEMS": "אין פעילויות להצגה"
+	"NO_ITEMS": "אין פעילויות להצגה",
+	"MISSING_ACTIVITY_NAME": "חסר שם לפעילות",
+	"THERE_ARE_X_ERRORS": "ישנן {X} בעיות",
+	"ALL_GOOD": "הכל מעולה!",
+	"THERE_IS_ONE_PROBLEM": "ישנה בעיה אחת",
+	"MISSING_IMAGES": "חסרות תמונות",
+	"MISSING_CATEGORY": "חסרה קטגוריה",
+	"MISSING_DESCRIPTION": "חסר תיאור",
+	"VERIFIED": "עבר וידוא",
+	"UNVERIFIED": "לא עבר וידוא"
 }

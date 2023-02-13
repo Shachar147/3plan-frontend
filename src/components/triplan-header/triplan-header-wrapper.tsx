@@ -11,6 +11,7 @@ import TranslateService from '../../services/translate-service';
 interface TriplanHeaderWrapperProps extends TriplanHeaderProps {
 	currentMobileView?: ViewMode;
 	showTripName?: boolean;
+	adminMode?: boolean;
 }
 
 function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
@@ -48,9 +49,15 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 		);
 	}
 
+	const homeUrl = props.adminMode ? '/admin' : '/';
+
 	return (
 		<div className="triplan-header-spacer padding-20" style={{ width: '100%' }}>
-			<TriplanHeader onLogoClick={() => navigate('/')} onMyTripsClick={() => navigate('/my-trips')} {...props} />
+			<TriplanHeader
+				onLogoClick={() => navigate(homeUrl)}
+				onMyTripsClick={() => navigate('/my-trips')}
+				{...props}
+			/>
 		</div>
 	);
 }

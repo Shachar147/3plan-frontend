@@ -1,0 +1,22 @@
+.admin-dashboard-wrapper {
+  display: flex;
+
+  .main-layout {
+    width: 100%;
+
+    .external-events-container {
+      min-width: 400px;
+    }
+
+    .destinations-content {
+      //max-height: CALC(100vh - 100px);
+      overflow-y: auto;
+    }
+  }
+}
+
+.destination-box-flag {
+  img {
+    max-width: 30px;
+  }
+}
