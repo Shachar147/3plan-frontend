@@ -10,7 +10,7 @@ interface ActivityBoxProps {
 }
 
 const ActivityBox = ({ activity }: ActivityBoxProps) => {
-	const { name, isVerified, category, images, videos, description, icon } = activity;
+	const { name, isVerified, category, images, videos, description, icon, destination } = activity;
 	const eventStore = useContext(eventStoreContext);
 
 	const errors = [];
@@ -25,6 +25,9 @@ const ActivityBox = ({ activity }: ActivityBoxProps) => {
 	}
 	if (!description) {
 		errors.push(TranslateService.translate(eventStore, 'MISSING_DESCRIPTION'));
+	}
+	if (destination === 'N/A') {
+		errors.push(TranslateService.translate(eventStore, 'MISSING_DESTINATION'));
 	}
 
 	const errorText =

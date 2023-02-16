@@ -302,6 +302,8 @@
 	"MISSING_IMAGES": "Missing images",
 	"MISSING_CATEGORY": "Missing category",
 	"MISSING_DESCRIPTION": "Missing description",
+	"MISSING_DESTINATION": "Missing destination",
 	"VERIFIED": "Verified",
-	"UNVERIFIED": "Unverified"
+	"UNVERIFIED": "Unverified",
+	"THERE_ARE_{X}_ACTIVITIES_FROM_{Y}_DESTINATIONS": "There are {X} activities from {Y} destinations"
 }

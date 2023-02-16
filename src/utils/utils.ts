@@ -51,10 +51,10 @@ export const LOADERS: Record<string, Partial<Loader>> = {
 		backgroundColor: '#c0e2e0', // done
 		top: '30px',
 	},
-	'travel4.gif': {
-		backgroundColor: '#a7f1fb', // done
-		top: '30px',
-	},
+	// 'travel4.gif': {
+	// 	backgroundColor: '#a7f1fb', // done
+	// 	top: '30px',
+	// },
 	'hotel1.gif': {
 		backgroundColor: '#100c33', // done
 		top: '30px',

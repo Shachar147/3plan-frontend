@@ -314,6 +314,8 @@
 	"MISSING_IMAGES": "חסרות תמונות",
 	"MISSING_CATEGORY": "חסרה קטגוריה",
 	"MISSING_DESCRIPTION": "חסר תיאור",
+	"MISSING_DESTINATION": "חסר יעד",
 	"VERIFIED": "עבר וידוא",
-	"UNVERIFIED": "לא עבר וידוא"
+	"UNVERIFIED": "לא עבר וידוא",
+	"THERE_ARE_{X}_ACTIVITIES_FROM_{Y}_DESTINATIONS": "ישנם {X} פעילויות מ{Y} יעדים"
 }

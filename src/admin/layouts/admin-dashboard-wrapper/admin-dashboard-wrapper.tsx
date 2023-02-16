@@ -68,7 +68,7 @@ function AdminDashboardWrapper(props: AdminDashboardWrapperProps) {
 		withRecommended: false,
 		withLoginLogout: true,
 		withFilterTags: false,
-		withMyTrips: true,
+		withMyTrips: false,
 	};
 
 	return (

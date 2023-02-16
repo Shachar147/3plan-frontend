@@ -5,6 +5,8 @@
 	align-items: center;
 	width: 100%;
 
+	max-width: fit-content; // todo check if causing problems
+
 	.language-selector-label {
 		cursor: default;
 		display: flex;

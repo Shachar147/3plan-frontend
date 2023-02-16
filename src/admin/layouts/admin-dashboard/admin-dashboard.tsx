@@ -12,6 +12,7 @@ import { adminStoreContext } from '../../stores/admin-store';
 import AdminDashboardWrapper from '../admin-dashboard-wrapper/admin-dashboard-wrapper';
 import { eventStoreContext } from '../../../stores/events-store';
 import DestinationSlider from '../destinations-slider/destination-slider';
+import TriplanSearch from '../../../components/triplan-header/triplan-search/triplan-search';
 
 function AdminDashboard() {
 	const adminStore = useContext(adminStoreContext);
@@ -24,8 +25,19 @@ function AdminDashboard() {
 			);
 		}
 
+		const itemsAmount = Array.from(adminStore.placesByDestination.values()).flat().length;
+		const destinationsAmount = Array.from(adminStore.placesByDestination.keys()).filter(
+			(des) => des !== 'N/A'
+		).length;
+
 		return (
 			<div className="destinations-content">
+				<div>
+					{TranslateService.translate(eventStore, 'THERE_ARE_{X}_ACTIVITIES_FROM_{Y}_DESTINATIONS')
+						.replace('{X}', itemsAmount.toString())
+						.replace('{Y}', destinationsAmount.toString())}
+					:
+				</div>
 				<DestinationSlider />
 			</div>
 		);

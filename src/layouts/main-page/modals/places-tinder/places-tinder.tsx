@@ -15,6 +15,9 @@ import { getClasses } from '../../../../utils/utils';
 
 // @ts-ignore
 import Slider from 'react-slick';
+import { TriplanTinderApiService } from '../../../../admin/services/triplan-tinder-api-service';
+import { observable, runInAction } from 'mobx';
+import { TinderItem } from '../../../../admin/helpers/interfaces';
 
 interface PlacesTinderProps {
 	eventStore: EventStore;
@@ -43,9 +46,21 @@ function PlacesTinder(props: PlacesTinderProps) {
 
 	const [currIdx, setCurrIdx] = useState(0);
 	const [destination, setDestination] = useState<string | null>(props.destination || null);
-	const placesDataMap: Record<string, any[]> = useMemo(() => placesData, []);
+	// const placesDataMap: Record<string, any[]> = useMemo(() => placesData, []);
+
+	const [hasInit, setHasInit] = useState(false);
+	const [placesDataMap, setPlacesDataMap] = useState<Record<string, any[]>>({});
 	const [placesList, setPlacesList] = useState<any[]>([]);
 	const [dislikedList, setDislikedList] = useState<any[]>([]);
+
+	useEffect(() => {
+		TriplanTinderApiService.getPlacesByDestination().then((results) => {
+			runInAction(() => {
+				setPlacesDataMap(results?.data);
+				setHasInit(true);
+			});
+		});
+	}, []);
 
 	const existingTitles = useMemo(() => {
 		return eventStore.allEvents?.map((p) => p.title) ?? [];
@@ -131,15 +146,17 @@ function PlacesTinder(props: PlacesTinderProps) {
 		}
 
 		let description = currentPlace.description || '';
-		if (currentPlace.tinder.more_info) {
+		if ((currentPlace.tinder || currentPlace).more_info) {
 			if (description !== '') description += '\n-----\n';
-			description += `${TranslateService.translate(eventStore, 'MORE_INFO')}:\n${currentPlace.tinder.more_info}`;
+			description += `${TranslateService.translate(eventStore, 'MORE_INFO')}:\n${
+				(currentPlace.tinder || currentPlace).more_info
+			}`;
 		}
 
 		const initialData = {
 			...currentPlace,
 			description,
-			images: currentPlace.tinder.images.join('\n'),
+			images: (currentPlace.tinder || currentPlace).images.join('\n'),
 		};
 
 		ReactModalService.openAddSidebarEventModal(eventStore, categoryId, initialData, true);
@@ -205,6 +222,12 @@ function PlacesTinder(props: PlacesTinderProps) {
 		width: 300,
 	};
 
+	if (!hasInit) {
+		return <div>{TranslateService.translate(eventStore, 'LOADING_TRIP_PLACEHOLDER')}</div>;
+	}
+
+	const images = (currentPlace?.tinder || currentPlace)?.images;
+
 	return (
 		<div className={'places-tinder flex-column gap-10 justify-content-center bright-scrollbar'}>
 			<SelectInput
@@ -221,9 +244,9 @@ function PlacesTinder(props: PlacesTinderProps) {
 			{renderPlaceholders()}
 			{currentPlace && (
 				<div className={'flex-col gap-10 justify-content-center align-items-center'} style={{ maxWidth: 500 }}>
-					{currentPlace.tinder?.images && (
+					{images && (
 						<Slider {...sliderSettings}>
-							{currentPlace.tinder.images.map((image: string) => (
+							{images.map((image: string) => (
 								<img
 									className="slider-image"
 									style={{
@@ -245,13 +268,13 @@ function PlacesTinder(props: PlacesTinderProps) {
 							dangerouslySetInnerHTML={{ __html: formatDescription(currentPlace.description) }}
 						/>
 					)}
-					{currentPlace.tinder?.more_info && (
+					{(currentPlace.tinder || currentPlace)?.more_info && (
 						<div>
 							<a
 								target={'_blank'}
 								className={'cursor-pointer'}
 								style={{ opacity: 0.6 }}
-								href={currentPlace.tinder.more_info}
+								href={(currentPlace.tinder || currentPlace).more_info}
 							>
 								{/*todo complete - lokalise*/}
 								למידע נוסף
