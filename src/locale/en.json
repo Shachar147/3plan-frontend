@@ -305,5 +305,22 @@
 	"MISSING_DESTINATION": "Missing destination",
 	"VERIFIED": "Verified",
 	"UNVERIFIED": "Unverified",
-	"THERE_ARE_{X}_ACTIVITIES_FROM_{Y}_DESTINATIONS": "There are {X} activities from {Y} destinations"
+	"THERE_ARE_{X}_ACTIVITIES_FROM_{Y}_DESTINATIONS": "There are {X} activities from {Y} destinations",
+	"ITEM_NO_FOUND": "Oops, item not found",
+	"ADMIN_MANAGE_ITEM.ID": "ID",
+	"ADMIN_MANAGE_ITEM.NAME": "Name",
+	"ADMIN_MANAGE_ITEM.DESTINATION": "Destination",
+	"ADMIN_MANAGE_ITEM.DESCRIPTION": "Description",
+	"ADMIN_MANAGE_ITEM.IMAGES": "Images",
+	"ADMIN_MANAGE_ITEM.SOURCE": "Source",
+	"ADMIN_MANAGE_ITEM.MORE_INFO": "More Info",
+	"ADMIN_MANAGE_ITEM.DURATION": "Duration",
+	"ADMIN_MANAGE_ITEM.ICON": "Icon",
+	"ADMIN_MANAGE_ITEM.PRIORITY": "Priority",
+	"ADMIN_MANAGE_ITEM.LOCATION": "Location",
+	"ADMIN_MANAGE_ITEM.OPENINGHOURS": "Opening Hours",
+	"ADMIN_MANAGE_ITEM.RATE": "Rating",
+	"ADMIN_MANAGE_ITEM.VIDEOS": "Videos",
+	"ADMIN_MANAGE_ITEM.ISVERIFIED": "Is Verified",
+	"ADMIN_MANAGE_ITEM.CATEGORY": "Category"
 }

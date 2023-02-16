@@ -5,7 +5,7 @@ import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/timegrid/main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './admin-dashboard-wrapper.scss';
+import './a-dashboard-wrapper.scss';
 
 import { TriPlanCalendarRef } from '../../../components/triplan-calendar/triplan-calendar';
 import { eventStoreContext } from '../../../stores/events-store';
@@ -23,7 +23,7 @@ interface AdminDashboardWrapperProps {
 	children: React.ReactNode;
 }
 
-function AdminDashboardWrapper(props: AdminDashboardWrapperProps) {
+function ADashboardWrapper(props: AdminDashboardWrapperProps) {
 	const TriplanCalendarRef = useRef<TriPlanCalendarRef>(null);
 	const eventStore = useContext(eventStoreContext);
 	const adminStore = useContext(adminStoreContext);
@@ -81,7 +81,7 @@ function AdminDashboardWrapper(props: AdminDashboardWrapperProps) {
 					adminMode={true}
 				/>
 			</div>
-			<div className={'main-layout-container admin-dashboard-wrapper'}>
+			<div className={'main-layout-container a-dashboard-wrapper'}>
 				<div className={getClasses('main-layout', `direction-${eventStore.getCurrentDirection()}`)}>
 					{eventStore.isLoading || !adminStore.hasInit ? (
 						renderLoading()
@@ -98,4 +98,4 @@ function AdminDashboardWrapper(props: AdminDashboardWrapperProps) {
 	);
 }
 
-export default observer(AdminDashboardWrapper);
+export default observer(ADashboardWrapper);

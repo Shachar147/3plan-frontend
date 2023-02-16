@@ -9,9 +9,9 @@ import './admin-dashboard.scss';
 import { observer } from 'mobx-react';
 import TranslateService from '../../../services/translate-service';
 import { adminStoreContext } from '../../stores/admin-store';
-import AdminDashboardWrapper from '../admin-dashboard-wrapper/admin-dashboard-wrapper';
+import AdminDashboardWrapper from '../a-dashboard-wrapper/a-dashboard-wrapper';
 import { eventStoreContext } from '../../../stores/events-store';
-import DestinationSlider from '../destinations-slider/destination-slider';
+import DestinationSlider from '../../components/destinations-slider/destination-slider';
 import TriplanSearch from '../../../components/triplan-header/triplan-search/triplan-search';
 
 function AdminDashboard() {

@@ -27,8 +27,9 @@ import { getToken, getUser } from './helpers/auth';
 import axios from 'axios';
 import LoginPage from './layouts/login-page/login-page';
 import MobileLanguageSelectorPage from './layouts/language-selector/mobile-language-selector';
-import AdminDashboard from './admin/layouts/admin-dashboard/admin-dashboard';
-import AdminManageDestinationItems from './admin/layouts/manage-destination-items/admin-manage-destination-items';
+import AdminDashboard from './admin/layouts/dashboard/admin-dashboard';
+import AdminManageDestinationItems from './admin/layouts/manage-destination/a-manage-destination';
+import AManageItem from './admin/layouts/manage-item/a-mange-item';
 
 // import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -565,6 +566,7 @@ const RootRouter = () => {
 					<Route path="/admin" element={<AdminDashboard />} />
 					<Route path="/admin/places-tinder" element={<AdminDashboard />} />
 					<Route path="/admin/destination/:destination" element={<AdminManageDestinationItems />} />
+					<Route path="/admin/item/:id" element={<AManageItem />} />
 				</Routes>
 			</BrowserRouter>
 			<Observer>

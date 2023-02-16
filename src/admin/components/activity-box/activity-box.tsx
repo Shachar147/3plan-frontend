@@ -7,10 +7,11 @@ import { observer } from 'mobx-react';
 
 interface ActivityBoxProps {
 	activity: TinderItem;
+	onClick: () => void;
 }
 
-const ActivityBox = ({ activity }: ActivityBoxProps) => {
-	const { name, isVerified, category, images, videos, description, icon, destination } = activity;
+const ActivityBox = ({ activity, onClick }: ActivityBoxProps) => {
+	const { name, isVerified, category, images, videos, description, icon, destination, id } = activity;
 	const eventStore = useContext(eventStoreContext);
 
 	const errors = [];
@@ -36,7 +37,7 @@ const ActivityBox = ({ activity }: ActivityBoxProps) => {
 			: TranslateService.translate(eventStore, 'THERE_ARE_X_ERRORS').replace('{X}', errors.length.toString());
 
 	return (
-		<div className="activity-box">
+		<div className="activity-box" onClick={onClick}>
 			{icon}
 			<div className="activity-box-name">{TranslateService.translate(eventStore, name)}</div>
 			<div className="activity-box-status">

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import DestinationBox from '../../components/destination-box/destination-box';
+import DestinationBox from '../destination-box/destination-box';
 import React, { useContext, useEffect } from 'react';
 import { adminStoreContext } from '../../stores/admin-store';
 import { useNavigate } from 'react-router-dom';

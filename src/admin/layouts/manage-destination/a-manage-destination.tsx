@@ -4,21 +4,22 @@ import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/timegrid/main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './admin-manage-destination-items.scss';
+import './a-manage-destination.scss';
 
 import { observer } from 'mobx-react';
 import TranslateService from '../../../services/translate-service';
 import { adminStoreContext } from '../../stores/admin-store';
-import AdminDashboardWrapper from '../admin-dashboard-wrapper/admin-dashboard-wrapper';
+import AdminDashboardWrapper from '../a-dashboard-wrapper/a-dashboard-wrapper';
 import { eventStoreContext } from '../../../stores/events-store';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ActivityBox from '../../components/activity-box/activity-box';
-import DestinationSlider from '../destinations-slider/destination-slider';
+import DestinationSlider from '../../components/destinations-slider/destination-slider';
 
-function AdminManageDestinationItems() {
+function AManageDestination() {
 	const adminStore = useContext(adminStoreContext);
 	const eventStore = useContext(eventStoreContext);
 	let { destination: currDestination } = useParams();
+	const navigate = useNavigate();
 
 	if (currDestination == 'NA') {
 		currDestination = 'N/A';
@@ -41,7 +42,12 @@ function AdminManageDestinationItems() {
 				<div className="flex-column gap-10">
 					<div className="activities-content">
 						{activities.map((activity) => (
-							<ActivityBox activity={activity} />
+							<ActivityBox
+								activity={activity}
+								onClick={() => {
+									navigate(`/admin/item/${activity.id}`);
+								}}
+							/>
 						))}
 					</div>
 				</div>
@@ -52,4 +58,4 @@ function AdminManageDestinationItems() {
 	return <AdminDashboardWrapper>{renderContent()}</AdminDashboardWrapper>;
 }
 
-export default observer(AdminManageDestinationItems);
+export default observer(AManageDestination);

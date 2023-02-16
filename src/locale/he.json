@@ -317,5 +317,22 @@
 	"MISSING_DESTINATION": "חסר יעד",
 	"VERIFIED": "עבר וידוא",
 	"UNVERIFIED": "לא עבר וידוא",
-	"THERE_ARE_{X}_ACTIVITIES_FROM_{Y}_DESTINATIONS": "ישנם {X} פעילויות מ{Y} יעדים"
+	"THERE_ARE_{X}_ACTIVITIES_FROM_{Y}_DESTINATIONS": "ישנם {X} פעילויות מ{Y} יעדים",
+	"ITEM_NO_FOUND": "אופס! נראה שהפעילות שניסיתם לגשת אליה לא קיימת יותר",
+	"ADMIN_MANAGE_ITEM.ID": "מספר מזהה",
+	"ADMIN_MANAGE_ITEM.NAME": "שם",
+	"ADMIN_MANAGE_ITEM.DESTINATION": "יעד",
+	"ADMIN_MANAGE_ITEM.DESCRIPTION": "תיאור",
+	"ADMIN_MANAGE_ITEM.IMAGES": "תמונות",
+	"ADMIN_MANAGE_ITEM.SOURCE": "מקור",
+	"ADMIN_MANAGE_ITEM.MORE_INFO": "מידע נוסף",
+	"ADMIN_MANAGE_ITEM.DURATION": "משך זמן מומלץ",
+	"ADMIN_MANAGE_ITEM.ICON": "אייקון",
+	"ADMIN_MANAGE_ITEM.PRIORITY": "עדיפות",
+	"ADMIN_MANAGE_ITEM.LOCATION": "מיקום",
+	"ADMIN_MANAGE_ITEM.OPENINGHOURS": "שעות פתיחה",
+	"ADMIN_MANAGE_ITEM.RATE": "דירוג",
+	"ADMIN_MANAGE_ITEM.VIDEOS": "סרטונים",
+	"ADMIN_MANAGE_ITEM.ISVERIFIED": "האם מאושר?",
+	"ADMIN_MANAGE_ITEM.CATEGORY": "קטגוריה"
 }

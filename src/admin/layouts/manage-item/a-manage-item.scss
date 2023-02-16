@@ -1,0 +1,52 @@
+.manage-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-inline: 30px;
+  //background-color: red;
+
+  i {
+    //margin-top: 30px;
+    font-size: 50px;
+  }
+
+  .manage-item-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .manage-item-form-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+
+      label {
+        margin: 0;
+        width: 120px;
+        text-align: center;
+        user-select: none;
+      }
+
+      input {
+        padding-inline: 10px;
+        border: 1px solid #dde3eb;
+        border-radius: 20px;
+        height: 40px;
+
+        &[type=text] {
+          min-width: 300px;
+        }
+      }
+    }
+  }
+}
+
+body.rtl {
+  .manage-item-form-row {
+    direction: rtl;
+    text-align: right;
+  }
+}
