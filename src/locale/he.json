@@ -334,5 +334,6 @@
 	"ADMIN_MANAGE_ITEM.RATE": "דירוג",
 	"ADMIN_MANAGE_ITEM.VIDEOS": "סרטונים",
 	"ADMIN_MANAGE_ITEM.ISVERIFIED": "האם מאושר?",
-	"ADMIN_MANAGE_ITEM.CATEGORY": "קטגוריה"
+	"ADMIN_MANAGE_ITEM.CATEGORY": "קטגוריה",
+	"ADMIN_PANEL": "מערכת הניהול"
 }

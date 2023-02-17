@@ -105,52 +105,62 @@ function AManageItem() {
 		];
 
 		return (
-			<div className="manage-item bright-scrollbar">
-				<i className={`slider-navigator no-animation fa ${backIcon}`} onClick={() => slideBack()} />
-				<div className="manage-item-form" key={item.id}>
-					{inputs.map((input) => {
-						const field = Object.keys(input)[0];
-						const label = TranslateService.translate(
-							eventStore,
-							`ADMIN_MANAGE_ITEM.${field.toUpperCase()}`
-						);
-
-						// @ts-ignore
-						const value = item[field] ?? '';
-
-						function renderTextInput(item: TinderItem, type: string) {
-							if (['number', 'text', 'textarea', 'checkbox'].indexOf(type) === -1) {
-								type = 'text';
-							}
-							return (
-								<TextInput
-									type={type}
-									name={field}
-									value={value}
-									onChange={(e) => {
-										setItem({
-											...item,
-											[field]: e.target.value,
-										});
-									}}
-									placeholder={''}
-									modalValueName={field}
-									// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
-								/>
-							);
-						}
-
-						// @ts-ignore
-						const type = Object.values(input)[0];
-						return (
-							<div className="manage-item-form-row">
-								<label className="manage-item-form-row-field">{label}</label>
-								{renderTextInput(item, type)}
-							</div>
-						);
-					})}
+			<div className="flex-column gap-20" style={{ width: '100%', textAlign: 'center' }}>
+				<div className="manage-item-navigation">
+					<a href={'/admin'}>{TranslateService.translate(eventStore, 'ADMIN_PANEL')}</a> {'>'}{' '}
+					<a href={`/admin/destination/${data?.destination}`}>
+						{TranslateService.translate(eventStore, data!.destination)}
+					</a>{' '}
+					{'>'} {item?.name}
 				</div>
-				<i className={`slider-navigator no-animation fa ${nextIcon}`} onClick={() => slideNext()} />
+				<div className="manage-item bright-scrollbar">
+					<i className={`slider-navigator no-animation fa ${backIcon}`} onClick={() => slideBack()} />
+					<div className="manage-item-form" key={item.id}>
+						{inputs.map((input) => {
+							const field = Object.keys(input)[0];
+							const label = TranslateService.translate(
+								eventStore,
+								`ADMIN_MANAGE_ITEM.${field.toUpperCase()}`
+							);
+
+							// @ts-ignore
+							const value = item[field] ?? '';
+
+							function renderTextInput(item: TinderItem, type: string, isReadOnly: boolean) {
+								if (['number', 'text', 'textarea', 'checkbox'].indexOf(type) === -1) {
+									type = 'text';
+								}
+								return (
+									<TextInput
+										type={type}
+										name={field}
+										value={value}
+										onChange={(e) => {
+											setItem({
+												...item,
+												[field]: e.target.value,
+											});
+										}}
+										placeholder={''}
+										modalValueName={field}
+										readOnly={isReadOnly}
+										// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+									/>
+								);
+							}
+
+							// @ts-ignore
+							const type = Object.values(input)[0];
+							return (
+								<div className="manage-item-form-row">
+									<label className="manage-item-form-row-field">{label}</label>
+									{renderTextInput(item, type, type === 'readonly')}
+								</div>
+							);
+						})}
+					</div>
+					<i className={`slider-navigator no-animation fa ${nextIcon}`} onClick={() => slideNext()} />
+				</div>
 			</div>
 		);
 	}

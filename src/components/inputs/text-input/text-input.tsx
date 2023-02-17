@@ -105,7 +105,7 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 					: undefined
 			}
 			autoComplete={autoComplete}
-			disabled={disabled}
+			disabled={disabled || props.readOnly}
 			style={style}
 			data-testid={dataTestId}
 		/>

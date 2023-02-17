@@ -1,3 +1,10 @@
+.manage-item-navigation {
+  background-color: rgba(0,0,0,0.05);
+  padding: 3px;
+  border-radius: 20px;
+  //direction: ltr;
+}
+
 .manage-item {
   display: flex;
   flex-direction: row;
@@ -35,6 +42,7 @@
         border: 1px solid #dde3eb;
         border-radius: 20px;
         height: 40px;
+        width: 600px;
 
         &[type=text] {
           min-width: 300px;
