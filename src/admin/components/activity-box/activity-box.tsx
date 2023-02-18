@@ -11,7 +11,19 @@ interface ActivityBoxProps {
 }
 
 const ActivityBox = ({ activity, onClick }: ActivityBoxProps) => {
-	const { name, isVerified, category, images, videos, description, icon, destination, id } = activity;
+	const {
+		name,
+		isVerified,
+		category,
+		images,
+		videos,
+		description,
+		icon,
+		destination,
+		id,
+		downloadedImages,
+		downloadedVideos,
+	} = activity;
 	const eventStore = useContext(eventStoreContext);
 
 	const errors = [];
@@ -31,6 +43,20 @@ const ActivityBox = ({ activity, onClick }: ActivityBoxProps) => {
 		errors.push(TranslateService.translate(eventStore, 'MISSING_DESTINATION'));
 	}
 
+	// const mediaError =
+	// 	activity.images.length != activity.downloadedImages?.length ||
+	// 	activity.videos.length != activity.downloadedVideos?.length;
+	const mediaError =
+		(images.length > 0 && !downloadedImages?.length) || (videos.length > 0 && !downloadedVideos?.length);
+	// if (images.length != downloadedImages?.length || videos.length != downloadedVideos?.length) {
+	if (mediaError) {
+		errors.push(TranslateService.translate(eventStore, 'MEDIA_NOT_DOWNLOADED'));
+	}
+
+	function renderErrors(errors: string[]) {
+		return <div className="activity-box-errors">{errors.join(', ')}</div>;
+	}
+
 	const errorText =
 		errors.length === 1
 			? TranslateService.translate(eventStore, 'THERE_IS_ONE_PROBLEM')
@@ -43,7 +69,8 @@ const ActivityBox = ({ activity, onClick }: ActivityBoxProps) => {
 			<div className="activity-box-status">
 				{errors.length > 0 ? (
 					<div className="activity-box-error" title={errors.join('\n')}>
-						{errorText}
+						<span>{errorText}</span>
+						{renderErrors(errors)}
 					</div>
 				) : (
 					<div className="activity-box-all-good">{TranslateService.translate(eventStore, 'ALL_GOOD')}</div>

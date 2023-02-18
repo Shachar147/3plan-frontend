@@ -18,6 +18,10 @@ interface TextAreaInputProps {
 
 	className?: string;
 	rows?: number;
+
+	onChange?: (e: any) => void;
+	value?: string;
+	readOnly?: boolean;
 }
 export interface TextAreaInputRef {
 	getValue(): string;
@@ -26,7 +30,7 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
 	const eventStore = useContext(eventStoreContext);
 	const { wrapperClassName, id, name, placeholder, placeholderKey, modalValueName, className, rows } = props;
 	const initialValue = eventStore.modalValues ? eventStore.modalValues[modalValueName] : undefined;
-	const [value, setValue] = useState(initialValue);
+	const [value, setValue] = useState(props.value ?? initialValue);
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({
@@ -48,6 +52,7 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
 					runInAction(() => {
 						eventStore.modalValues[modalValueName] = e.target.value;
 					});
+					props.onChange && props.onChange(e);
 				}}
 				placeholder={
 					placeholder
@@ -56,6 +61,7 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
 						? TranslateService.translate(eventStore, placeholderKey)
 						: undefined
 				}
+				disabled={props.readOnly}
 			>
 				{value}
 			</textarea>

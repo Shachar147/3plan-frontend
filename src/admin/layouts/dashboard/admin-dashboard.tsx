@@ -26,18 +26,35 @@ function AdminDashboard() {
 		}
 
 		const itemsAmount = Array.from(adminStore.placesByDestination.values()).flat().length;
+		const itemsWithoutDownloadedMediaAmount = Array.from(adminStore.placesByDestination.values())
+			.flat()
+			.filter(
+				(i) =>
+					(i.images.length > 0 && !i.downloadedImages?.length) ||
+					(i.videos.length > 0 && !i.downloadedVideos?.length)
+			).length;
 		const destinationsAmount = Array.from(adminStore.placesByDestination.keys()).filter(
 			(des) => des !== 'N/A'
 		).length;
 
 		return (
 			<div className="destinations-content">
-				<div>
+				<div className="sub-title">
 					{TranslateService.translate(eventStore, 'THERE_ARE_{X}_ACTIVITIES_FROM_{Y}_DESTINATIONS')
 						.replace('{X}', itemsAmount.toString())
 						.replace('{Y}', destinationsAmount.toString())}
 					:
 				</div>
+				{!!itemsWithoutDownloadedMediaAmount && (
+					<div className="sub-title red-color">
+						(
+						{TranslateService.translate(
+							eventStore,
+							'THERE_ARE_{X}_ACTIVITIES_WITHOUT_DOWNLOADED_MEDIA'
+						).replace('{X}', itemsWithoutDownloadedMediaAmount.toString())}
+						)
+					</div>
+				)}
 				<DestinationSlider />
 			</div>
 		);

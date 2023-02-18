@@ -9,11 +9,22 @@ import { observer } from 'mobx-react';
 interface DestinationBoxProps {
 	name: string;
 	numOfItems: number;
+	numOfMediaError: number;
+	numOfNameError: number;
+	numOfCategoryError: number;
 	onClick: () => void;
 	isActive?: boolean;
 }
 
-const DestinationBox = ({ name, numOfItems, onClick, isActive = false }: DestinationBoxProps) => {
+const DestinationBox = ({
+	name,
+	numOfItems,
+	onClick,
+	isActive = false,
+	numOfMediaError,
+	numOfNameError,
+	numOfCategoryError,
+}: DestinationBoxProps) => {
 	const eventStore = useContext(eventStoreContext);
 	const flag = countriesFlags[name]?.mini;
 
@@ -27,6 +38,32 @@ const DestinationBox = ({ name, numOfItems, onClick, isActive = false }: Destina
 			<div className="destination-box-name">{TranslateService.translate(eventStore, name)}</div>
 			<div className="destination-box-num-of-items">
 				{TranslateService.translate(eventStore, 'X_ACTIVITIES').replace('{X}', numOfItems.toString())}
+			</div>
+			<div className="destination-box-errors">
+				{!!numOfMediaError && (
+					<span>
+						{TranslateService.translate(eventStore, 'X_MEDIA_ERRORS').replace(
+							'{X}',
+							numOfMediaError.toString()
+						)}
+					</span>
+				)}
+				{!!numOfNameError && (
+					<span>
+						{TranslateService.translate(eventStore, 'X_NAME_ERRORS').replace(
+							'{X}',
+							numOfNameError.toString()
+						)}
+					</span>
+				)}
+				{!!numOfCategoryError && (
+					<span>
+						{TranslateService.translate(eventStore, 'X_CATEGORY_ERRORS').replace(
+							'{X}',
+							numOfCategoryError.toString()
+						)}
+					</span>
+				)}
 			</div>
 		</div>
 	);

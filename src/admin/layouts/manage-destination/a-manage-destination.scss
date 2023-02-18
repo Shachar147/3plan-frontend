@@ -7,6 +7,21 @@
   flex: 1 1 0;
   min-width: 0;
 
+  .manage-destination-navigation {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 3px;
+    border-radius: 20px;
+    width: CALC(100% - 45px);
+    margin-inline-start: 20px;
+    min-height: 40px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    //direction: ltr;
+    gap: 5px;
+  }
+
+
   .destinations-content {
     overflow:auto;
     height: 210px; // todo change to 100% if we do not want slider

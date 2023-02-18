@@ -23,6 +23,9 @@ export interface TinderItem {
 	deletedBy: number;
 	updatedBy: number; // user id
 	isVerified?: boolean;
+
+	downloadedImages?: string[];
+	downloadedVideos?: string[];
 }
 export type GetPlacesByDestinationResult = {
 	totals: Record<string, number>;

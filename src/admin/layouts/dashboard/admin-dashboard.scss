@@ -1,12 +1,17 @@
 .destinations-content {
   display: flex;
+  flex-direction: column;
   align-items:flex-start;
   justify-content: center;
   height: 100%;
   width: 100%;
   gap: 10px;
-
   flex-flow: row wrap;
+
+  .sub-title {
+    width: 100%;
+    text-align:center;
+  }
 
   .destination-slider {
     height: 100%;

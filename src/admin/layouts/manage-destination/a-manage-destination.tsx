@@ -36,19 +36,34 @@ function AManageDestination() {
 
 		const activities = adminStore.placesByDestination.get(currDestination) ?? [];
 
+		function renderNavigation() {
+			return (
+				<div className="manage-destination-navigation">
+					<a href="#" onClick={() => navigate('/admin')}>
+						{TranslateService.translate(eventStore, 'ADMIN_PANEL')}
+					</a>
+					<span className="navigation-spacer">{' > '}</span>
+					{currDestination}
+				</div>
+			);
+		}
+
 		return (
 			<div className="manage-destination-items bright-scrollbar">
+				{renderNavigation()}
 				<DestinationSlider currDestination={currDestination} />
 				<div className="flex-column gap-10">
 					<div className="activities-content">
-						{activities.map((activity) => (
-							<ActivityBox
-								activity={activity}
-								onClick={() => {
-									navigate(`/admin/item/${activity.id}`);
-								}}
-							/>
-						))}
+						{activities
+							.sort((a, b) => b.id - a.id)
+							.map((activity) => (
+								<ActivityBox
+									activity={activity}
+									onClick={() => {
+										navigate(`/admin/item/${activity.id}`);
+									}}
+								/>
+							))}
 					</div>
 				</div>
 			</div>

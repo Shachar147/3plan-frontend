@@ -29,7 +29,7 @@ import LoginPage from './layouts/login-page/login-page';
 import MobileLanguageSelectorPage from './layouts/language-selector/mobile-language-selector';
 import AdminDashboard from './admin/layouts/dashboard/admin-dashboard';
 import AdminManageDestinationItems from './admin/layouts/manage-destination/a-manage-destination';
-import AManageItem from './admin/layouts/manage-item/a-mange-item';
+import AManageItem from './admin/layouts/manage-item/a-manage-item';
 
 // import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -542,6 +542,10 @@ const RootRouter = () => {
 
 	axios.defaults.headers.Authorization = `Bearer ${getToken()}`;
 
+	function isDevMode() {
+		return window.location.href.indexOf('localhost') !== -1 || window.location.href.indexOf('0.0.0.0') !== -1;
+	}
+
 	return (
 		<>
 			<BrowserRouter>
@@ -601,10 +605,12 @@ const RootRouter = () => {
 				)}
 			</Observer>
 
-			<div className="please-rotate-your-phone">
-				<img src="/images/rotate-placeholder.png" />
-				{TranslateService.translate(eventStore, 'PLEASE_ROTATE_YOUR_DEVICE')}
-			</div>
+			{!isDevMode() && (
+				<div className="please-rotate-your-phone">
+					<img src="/images/rotate-placeholder.png" />
+					{TranslateService.translate(eventStore, 'PLEASE_ROTATE_YOUR_DEVICE')}
+				</div>
+			)}
 			<div className="device-is-not-supported">
 				<img src="/images/oops-placeholder.png" />
 				{TranslateService.translate(eventStore, 'DEVICE_IS_NOT_SUPPORTED')}

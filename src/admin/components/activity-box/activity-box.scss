@@ -25,6 +25,15 @@
     font-weight: bold;
   }
 
+  .activity-box-errors {
+    display: flex;
+    flex-direction: column;
+    color: slategray;
+    font-size: 10px;
+    margin-top: 5px;
+    text-align: center;
+  }
+
   .activity-box-is-verified {
     display: flex;
     flex-direction: column;

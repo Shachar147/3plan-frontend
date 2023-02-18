@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import { TriplanTinderApiService } from '../services/triplan-tinder-api-service';
-import { computed, observable, runInAction } from 'mobx';
+import { action, computed, observable, runInAction } from 'mobx';
 import { TinderItem } from '../helpers/interfaces';
 
 export class AdminStore {
@@ -16,6 +16,35 @@ export class AdminStore {
 
 	findItemById(id: number): TinderItem | undefined {
 		return this.allItems.find((i) => i.id === id);
+	}
+
+	@action
+	updateItem(id: number, newItem: TinderItem) {
+		const item = this.findItemById(id);
+		const destination = item?.destination;
+		if (item && destination) {
+			const result = this.placesByDestination.get(destination);
+			if (result) {
+				const existingPlaces = Array.from(result);
+				const newPlaces = [...existingPlaces.filter((i) => i.id !== id), newItem];
+				this.placesByDestination.set(destination, newPlaces);
+			}
+		}
+	}
+
+	@action
+	deleteItem(id: number) {
+		const item = this.findItemById(id);
+		const destination = item?.destination;
+		if (item && destination) {
+			const result = this.placesByDestination.get(destination);
+
+			if (result) {
+				const existingPlaces = Array.from(result);
+				const newPlaces = existingPlaces.filter((i) => i.id !== id);
+				this.placesByDestination.set(destination, newPlaces);
+			}
+		}
 	}
 
 	constructor() {

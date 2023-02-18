@@ -31,42 +31,14 @@ export async function apiPost(url: string, data: any) {
 	return _apiPost(url, data, accessToken);
 }
 
-export function apiPut(url: string, data: any) {
-	const httpClient = axios.create();
-	httpClient.defaults.timeout = 600000;
-
-	httpClient
-		.put(getTinderServerAddress() + url, data, {
-			timeout: 600000,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-			},
-		})
-		.then((res) => {
-			return res;
-		})
-		.catch(function (error) {
-			handleUnauthorizedError(error, url).then((isRedirected) => {});
-		});
+export async function apiPut(url: string, data: any) {
+	const accessToken = await login();
+	return _apiPut(url, data, accessToken);
 }
 
-export function apiDelete(url: string) {
-	const httpClient = axios.create();
-	httpClient.defaults.timeout = 600000;
-
-	httpClient
-		.delete(getTinderServerAddress() + url, {
-			timeout: 600000,
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-			},
-		})
-		.then((res) => {
-			return res;
-		})
-		.catch(function (error) {
-			handleUnauthorizedError(error, url).then((isRedirected) => {});
-		});
+export async function apiDelete(url: string) {
+	const accessToken = await login();
+	return _apiDelete(url, accessToken);
 }
 
 function _apiGet(url: string, accessToken: string) {
@@ -88,6 +60,40 @@ function _apiGet(url: string, accessToken: string) {
 function _apiPost(url: string, data: any, accessToken?: string) {
 	return axios
 		.post(getTinderServerAddress() + url, data, {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
+			},
+		})
+		.then((res) => {
+			return res;
+		})
+		.catch(function (error) {
+			handleUnauthorizedError(error, url).then((isRedirected) => {});
+			return null;
+		});
+}
+
+function _apiPut(url: string, data: any, accessToken?: string) {
+	return axios
+		.put(getTinderServerAddress() + url, data, {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
+			},
+		})
+		.then((res) => {
+			return res;
+		})
+		.catch(function (error) {
+			handleUnauthorizedError(error, url).then((isRedirected) => {});
+			return null;
+		});
+}
+
+function _apiDelete(url: string, accessToken?: string) {
+	return axios
+		.delete(getTinderServerAddress() + url, {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
