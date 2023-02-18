@@ -43,7 +43,7 @@ function AManageDestination() {
 		function renderNavigation() {
 			return (
 				<div className="manage-destination-navigation">
-					<a href="#" onClick={() => navigate('/admin')}>
+					<a href="" onClick={() => navigate('/admin')}>
 						{TranslateService.translate(eventStore, 'ADMIN_PANEL')}
 					</a>
 					<span className="navigation-spacer">{' > '}</span>

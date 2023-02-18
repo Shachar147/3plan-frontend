@@ -199,8 +199,6 @@ function AManageItem() {
 			'success'
 		);
 		if (result) {
-			// setItem(result.data.item);
-			// setOriginalItem(result.data.item);
 			adminStore.deleteItem(item!.id);
 
 			setData({
@@ -231,11 +229,11 @@ function AManageItem() {
 	function renderNavigation() {
 		return (
 			<div className="manage-item-navigation">
-				<a href="#" onClick={() => navigate('/admin')}>
+				<a href="" onClick={() => navigate('/admin')}>
 					{TranslateService.translate(eventStore, 'ADMIN_PANEL')}
 				</a>
 				<span className="navigation-spacer">{' > '}</span>
-				<a href="#" onClick={() => navigate(`/admin/destination/${data?.destination}`)}>
+				<a href="" onClick={() => navigate(`/admin/destination/${data?.destination}`)}>
 					{TranslateService.translate(eventStore, data!.destination)}
 				</a>
 				<span className="navigation-spacer">{' > '}</span>
@@ -516,7 +514,7 @@ function AManageItem() {
 				onChange={(data) => {
 					setItem({
 						...item,
-						[field]: data,
+						[field]: data.label,
 					});
 				}}
 				disabled={isReadOnly}

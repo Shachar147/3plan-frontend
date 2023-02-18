@@ -21,6 +21,11 @@ const DestinationSlider = ({ currDestination }: DestinationSliderProps) => {
 		);
 	});
 
+	useEffect(() => {
+		const scrollingElement = document.getElementsByClassName('destination-slider')[0];
+		scrollingElement.scrollTo(0, 0);
+	}, [currDestination]);
+
 	const navigate = useNavigate();
 
 	const backIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-right' : 'fa-chevron-left';
@@ -53,17 +58,20 @@ const DestinationSlider = ({ currDestination }: DestinationSliderProps) => {
 		sideScroll(scrollingElement, direction, 10, 300, 10);
 	};
 
+	function getScore(destination: string) {
+		if (destination === currDestination) {
+			return Number.MAX_VALUE;
+		}
+		return adminStore.placesByDestination.get(destination)?.length ?? 0;
+	}
+
 	return (
 		<div className="flex-row align-items-center gap-10">
 			<i className={`slider-navigator fa ${backIcon}`} onClick={() => slideBack()} />
 			<div className="destination-slider">
 				<div className="destinations-content">
 					{destinations
-						.sort(
-							(a, b) =>
-								adminStore.placesByDestination.get(b)!.length -
-								adminStore.placesByDestination.get(a)!.length
-						)
+						.sort((a, b) => getScore(b) - getScore(a))
 						.map((destination) => {
 							const places = adminStore.placesByDestination.get(destination)!;
 							const mediaError = places.filter(
