@@ -23,6 +23,7 @@ import Slider from 'react-slick';
 import Button, { ButtonFlavor } from '../../../components/common/button/button';
 import { apiDelete, apiPut } from '../../helpers/api';
 import ReactModalService from '../../../services/react-modal-service';
+import IconSelector from '../../../components/inputs/icon-selector/icon-selector';
 
 interface ManageItemData {
 	items: TinderItem[];
@@ -30,20 +31,22 @@ interface ManageItemData {
 	destination: string;
 }
 
+const isRequired = ['id', 'source', 'destination', 'name', 'category'];
+const isRecommended = ['downloadedImages', 'downloadedVideos', 'images', 'videos', 'location', 'description'];
 const itemInputs = [
 	{ id: 'readonly' },
 	{ source: 'readonly' },
 	{ name: 'text' },
+	{ category: 'text' },
 	{ destination: 'text' },
 	{ description: 'textarea' },
-	// { images: 'images' },
+	{ images: 'images' },
 	{ downloadedImages: 'images' },
-	// { videos: 'videos' },
+	{ videos: 'videos' },
 	{ downloadedVideos: 'videos' },
 	{ more_info: 'text' },
-	{ category: 'text' },
 	{ duration: 'text' }, // time format xx:xx
-	{ icon: 'text' }, // icon selector
+	{ icon: 'icon' },
 	{ priority: 'select' },
 	{ location: 'locationPicker' }, // todo complete
 	{ openingHours: 'openingHoursPicker' }, // todo complete
@@ -196,19 +199,27 @@ function AManageItem() {
 			'success'
 		);
 		if (result) {
-			setItem(result.data.item);
-			setOriginalItem(result.data.item);
+			// setItem(result.data.item);
+			// setOriginalItem(result.data.item);
 			adminStore.deleteItem(item!.id);
+
+			setData({
+				...data!,
+				currIdx: data!.currIdx - 1,
+				items: data!.items.filter((i) => i.id !== item!.id),
+			});
+
 			setIsSaving(false);
+
+			setTimeout(() => {
+				slideNext();
+			}, 2000);
 		}
 	}
 
 	// --- render functions -------------------------------------
 
 	function renderItemNotFoundPlaceholder() {
-		// setTimeout(() => {
-		// 	navigate('/admin');
-		// }, 3000);
 		return (
 			<div className="item-not-found-placeholder">
 				<img src="/images/oops-placeholder.png" />
@@ -266,6 +277,14 @@ function AManageItem() {
 		);
 	}
 
+	function renderAsterik(field: string) {
+		if (isRequired.indexOf(field) !== -1) {
+			return <div className="red-color padding-top-2">*</div>;
+		} else if (isRecommended.indexOf(field) !== -1) {
+			return <div className="gold-color padding-top-2">*</div>;
+		}
+	}
+
 	function renderItemForm() {
 		return (
 			<div className="manage-item-form" key={item?.id}>
@@ -277,7 +296,10 @@ function AManageItem() {
 					const type = Object.values(input)[0];
 					return (
 						<div className="manage-item-form-row">
-							<label className="manage-item-form-row-field">{label}</label>
+							<label className="manage-item-form-row-field">
+								{label}
+								{renderAsterik(field)}
+							</label>
 							{renderInput(item!, type, type === 'readonly' || isSaving, field)}
 						</div>
 					);
@@ -314,6 +336,8 @@ function AManageItem() {
 			return renderMediaInput({ item, type, isReadOnly, field, value, isUnsaved });
 		} else if (type === 'checkbox') {
 			return renderCheckboxInput({ item, type, isReadOnly, field, value, isUnsaved });
+		} else if (type === 'icon') {
+			return renderIconInput({ item, type, isReadOnly, field, value, isUnsaved });
 		}
 		// todo complete
 		return renderTextInput({ item, type: 'text', isReadOnly: true, field, value, isUnsaved });
@@ -377,7 +401,7 @@ function AManageItem() {
 		let imagesBlock = null;
 		let input = null;
 
-		const readOnly = field.indexOf('downloaded') === -1;
+		const readOnly = field.indexOf('downloaded') !== -1;
 
 		if (type === 'images') {
 			let images = value ?? item['images'];
@@ -416,12 +440,12 @@ function AManageItem() {
 					modalValueName={field}
 					className={isUnsaved ? 'unsaved' : undefined}
 					readOnly={isReadOnly || readOnly}
+					rows={isReadOnly || readOnly ? 1 : 3}
 					// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
 				/>
 			);
 		}
 
-		// todo check
 		if (type === 'videos') {
 			let videos = value ?? item['videos'];
 			videos = videos.map((image: string) => buildMediaUrl(image));
@@ -448,7 +472,8 @@ function AManageItem() {
 					placeholder={''}
 					modalValueName={field}
 					className={isUnsaved ? 'unsaved' : undefined}
-					readOnly={isReadOnly}
+					readOnly={isReadOnly || readOnly}
+					rows={isReadOnly || readOnly ? 1 : 3}
 					// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
 				/>
 			);
@@ -477,6 +502,26 @@ function AManageItem() {
 				}}
 				disabled={isReadOnly}
 				className={isUnsaved ? 'unsaved' : undefined}
+			/>
+		);
+	}
+
+	function renderIconInput(props: RenderInputProps) {
+		const { item, type, isReadOnly, field, value, isUnsaved } = props;
+		return (
+			<IconSelector
+				id={item.id.toString()}
+				modalValueName={field}
+				value={value}
+				onChange={(data) => {
+					setItem({
+						...item,
+						[field]: data,
+					});
+				}}
+				disabled={isReadOnly}
+				className={isUnsaved ? 'unsaved' : undefined}
+				// ref={row.settings.ref}
 			/>
 		);
 	}

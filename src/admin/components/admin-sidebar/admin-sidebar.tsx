@@ -11,6 +11,10 @@ import ListViewService from '../../../services/list-view-service';
 import { TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
 import { getDurationString } from '../../../utils/time-utils';
 import { priorityToColor } from '../../../utils/consts';
+import { adminStoreContext } from '../../stores/admin-store';
+import { TriplanTinderApiService } from '../../services/triplan-tinder-api-service';
+import { DownloadMediaResult, FixItemsResult } from '../../helpers/interfaces';
+import { runInAction } from 'mobx';
 
 export interface TriplanAdminSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => void;
@@ -27,40 +31,95 @@ enum SidebarGroups {
 
 const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 	const eventStore = useContext(eventStoreContext);
+	const adminStore = useContext(adminStoreContext);
 	const { removeEventFromSidebarById, addToEventsToCategories } = props;
 
-	const renderClearAll = () => {
-		const isDisabled = eventStore.calendarEvents.length === 0;
-		return (
-			<Button
-				disabled={isDisabled}
-				icon={'fa-trash'}
-				text={TranslateService.translate(eventStore, 'CLEAR_CALENDAR_EVENTS.BUTTON_TEXT')}
-				onClick={() => {
-					ReactModalService.openConfirmModal(eventStore, eventStore.clearCalendarEvents.bind(eventStore));
-				}}
-				flavor={ButtonFlavor['movable-link']}
-			/>
-		);
-	};
-
 	const renderImportButtons = () => {
-		if (eventStore.isMobile) return;
 		return (
 			<>
 				<Button
-					icon={'fa-download'}
-					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT')}
+					icon={adminStore.isDownloading ? 'fa-spinner fa-spin' : 'fa-download'}
+					text={TranslateService.translate(eventStore, 'ADMIN_SIDEBAR.DOWNLOAD_BUTTON_TEXT')}
 					onClick={() => {
-						ReactModalService.openImportEventsModal(eventStore);
+						if (adminStore.isDownloading) return;
+						adminStore.setIsDownloading(true);
+						TriplanTinderApiService.downloadMedia()
+							.then((result: DownloadMediaResult) => {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'SUCCESS',
+									'ADMIN_SIDEBAR.DOWNLOAD_RESULTS_MODAL.CONTENT',
+									'success',
+									{
+										X: result.totalDownloadedImages,
+										Y: result.totalDownloadedVideos,
+										Z: result.totalAffectedItems,
+									}
+								);
+							})
+							.catch(() => {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'MODALS.ERROR.TITLE',
+									'OOPS_SOMETHING_WENT_WRONG',
+									'error'
+								);
+							})
+							.finally(() => {
+								runInAction(() => {
+									adminStore.setIsDownloading(false);
+								});
+							});
 					}}
 					flavor={ButtonFlavor['movable-link']}
 				/>
 				<Button
-					icon={'fa-upload'}
-					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.BUTTON_TEXT')}
+					icon={adminStore.isFixing ? 'fa-spinner fa-spin' : 'fa-gavel'}
+					text={TranslateService.translate(eventStore, 'ADMIN_SIDEBAR.FIX_BUTTON_TEXT')}
 					onClick={() => {
-						ReactModalService.openImportEventsStepTwoModal(eventStore);
+						if (adminStore.isFixing) return;
+						adminStore.setIsFixing(true);
+						TriplanTinderApiService.fixItems()
+							.then((result: FixItemsResult) => {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'SUCCESS',
+									'ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.CONTENT',
+									'success',
+									{
+										X: result.totalAffectedItems,
+										Y:
+											result.updatedDestinations.length > 0
+												? result.updatedDestinations
+														.map((x) =>
+															TranslateService.translate(
+																eventStore,
+																'ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.RESULT',
+																{
+																	X: x.name,
+																	Y: x.destination,
+																	Z: x.newDestination,
+																}
+															)
+														)
+														.join('<br/>')
+												: TranslateService.translate(eventStore, 'NO_DETAILS'),
+									}
+								);
+							})
+							.catch(() => {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'MODALS.ERROR.TITLE',
+									'OOPS_SOMETHING_WENT_WRONG',
+									'error'
+								);
+							})
+							.finally(() => {
+								runInAction(() => {
+									adminStore.setIsFixing(false);
+								});
+							});
 					}}
 					flavor={ButtonFlavor['movable-link']}
 				/>
@@ -282,10 +341,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS');
 		const actionsBlock = wrapWithSidebarGroup(
-			<>
-				{(eventStore.isCalendarView || eventStore.isMobile) && renderClearAll()}
-				{renderImportButtons()}
-			</>,
+			<>{renderImportButtons()}</>,
 			undefined,
 			SidebarGroups.ACTIONS,
 			groupTitle,
@@ -301,21 +357,21 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 	const renderCalendarSidebarStatistics = () => {
 		const groupTitleKey = eventStore.isMobile
-			? 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT'
-			: 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS';
+			? 'ADMIN_SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT'
+			: 'ADMIN_SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS';
 		const groupTitle = TranslateService.translate(eventStore, groupTitleKey);
 
 		const calendarSidebarStatistics = (
 			<>
 				<div className={'sidebar-statistics'}>
 					<i className="fa fa-calendar-check-o" aria-hidden="true"></i>
-					{eventStore.calendarEvents.length}{' '}
-					{TranslateService.translate(eventStore, 'EVENTS_ON_THE_CALENDAR')}
+					{adminStore.verifiedActivities.length}{' '}
+					{TranslateService.translate(eventStore, 'ADMIN_VERIFIED_ACTIVITIES')}
 				</div>
 				<div className={'sidebar-statistics'}>
 					<i className="fa fa-calendar-times-o" aria-hidden="true"></i>
-					{eventStore.allSidebarEvents.length}{' '}
-					{TranslateService.translate(eventStore, 'EVENTS_ON_THE_SIDEBAR')}
+					{adminStore.unverifiedActivities.length}{' '}
+					{TranslateService.translate(eventStore, 'ADMIN_UNVERIFIED_ACTIVITIES')}
 				</div>
 			</>
 		);

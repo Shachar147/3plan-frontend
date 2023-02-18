@@ -204,6 +204,14 @@ body {
 	padding-inline: 15px;
 }
 
+.padding-top-2 {
+	padding-top: 2px;
+}
+
+.padding-top-5 {
+	padding-top: 5px;
+}
+
 .padding-top-30 {
 	padding-top: 30px;
 }
@@ -792,4 +800,8 @@ input[type='text'] {
 .font-weight-bold {
 	font-weight: bold;
 	font-family: 'Arial';
+}
+
+.width-100-percents {
+	width: 100%;
 }

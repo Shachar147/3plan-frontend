@@ -7,6 +7,25 @@ export class AdminStore {
 	@observable hasInit: boolean = false;
 	@observable placesByDestination = observable.map<string, TinderItem[]>({});
 
+	// sidebar actions
+	@observable isDownloading: boolean = false;
+	@observable isFixing: boolean = false;
+
+	constructor() {
+		this.init();
+	}
+
+	// --- init -------------------------------------------------
+	init() {
+		TriplanTinderApiService.getPlacesByDestination().then((results) => {
+			runInAction(() => {
+				this.placesByDestination = observable.map<string, TinderItem[]>(results?.data);
+				this.hasInit = true;
+			});
+		});
+	}
+
+	// --- computed ---------------------------------------------
 	@computed
 	get allItems(): TinderItem[] {
 		return Array.from(this.placesByDestination.values())
@@ -14,10 +33,17 @@ export class AdminStore {
 			.flat();
 	}
 
-	findItemById(id: number): TinderItem | undefined {
-		return this.allItems.find((i) => i.id === id);
+	@computed
+	get verifiedActivities(): TinderItem[] {
+		return this.allItems.filter((i) => i.isVerified);
 	}
 
+	@computed
+	get unverifiedActivities(): TinderItem[] {
+		return this.allItems.filter((i) => !i.isVerified);
+	}
+
+	// --- actions ----------------------------------------------
 	@action
 	updateItem(id: number, newItem: TinderItem) {
 		const item = this.findItemById(id);
@@ -47,17 +73,19 @@ export class AdminStore {
 		}
 	}
 
-	constructor() {
-		this.init();
+	@action
+	setIsDownloading(isDownloading: boolean) {
+		this.isDownloading = isDownloading;
 	}
 
-	init() {
-		TriplanTinderApiService.getPlacesByDestination().then((results) => {
-			runInAction(() => {
-				this.placesByDestination = observable.map<string, TinderItem[]>(results?.data);
-				this.hasInit = true;
-			});
-		});
+	@action
+	setIsFixing(isFixing: boolean) {
+		this.isFixing = isFixing;
+	}
+
+	// ----------------------------------------------------------
+	findItemById(id: number): TinderItem | undefined {
+		return this.allItems.find((i) => i.id === id);
 	}
 }
 export const adminStoreContext = createContext(new AdminStore());

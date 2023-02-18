@@ -31,3 +31,20 @@ export type GetPlacesByDestinationResult = {
 	totals: Record<string, number>;
 	data: Record<string, TinderItem[]>;
 };
+
+export type DownloadMediaResult = {
+	totalDownloaded: number;
+	totalDownloadedImages: number;
+	totalDownloadedVideos: number;
+	totalAffectedItems: number;
+};
+
+export type FixItemsResult = {
+	totalAffectedItems: number;
+	updatedDestinations: {
+		id: number;
+		name: string;
+		destination: 'N/A';
+		newDestination: string;
+	}[];
+};

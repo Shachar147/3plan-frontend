@@ -438,10 +438,16 @@ const ReactModalService = {
 				eventStore.setModalSettings(settings);
 			}
 		},
-		alertMessage: (eventStore: EventStore, titleKey: string, contentKey: string, type: 'error' | 'success') => {
+		alertMessage: (
+			eventStore: EventStore,
+			titleKey: string,
+			contentKey: string,
+			type: 'error' | 'success',
+			contentParams: Record<string, string | number> = {}
+		) => {
 			Alert.fire(
 				TranslateService.translate(eventStore, titleKey),
-				TranslateService.translate(eventStore, contentKey),
+				TranslateService.translate(eventStore, contentKey, contentParams),
 				type
 			);
 		},

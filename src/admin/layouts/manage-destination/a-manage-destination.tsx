@@ -25,6 +25,10 @@ function AManageDestination() {
 		currDestination = 'N/A';
 	}
 
+	useEffect(() => {
+		eventStore.setSearchValue('');
+	}, []);
+
 	function renderContent() {
 		if (!currDestination) return;
 

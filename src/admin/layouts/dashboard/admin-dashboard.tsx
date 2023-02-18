@@ -55,6 +55,9 @@ function AdminDashboard() {
 						)
 					</div>
 				)}
+				<div className="margin-bottom-5 width-100-percents flex-row justify-content-center">
+					<TriplanSearch isHidden={false} />
+				</div>
 				<DestinationSlider />
 			</div>
 		);

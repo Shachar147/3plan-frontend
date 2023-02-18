@@ -5,6 +5,7 @@ import { adminStoreContext } from '../../stores/admin-store';
 import { useNavigate } from 'react-router-dom';
 import './destination-slider.scss';
 import { eventStoreContext } from '../../../stores/events-store';
+import TranslateService from '../../../services/translate-service';
 
 export interface DestinationSliderProps {
 	currDestination?: string;
@@ -13,7 +14,12 @@ export interface DestinationSliderProps {
 const DestinationSlider = ({ currDestination }: DestinationSliderProps) => {
 	const adminStore = useContext(adminStoreContext);
 	const eventStore = useContext(eventStoreContext);
-	const destinations = Array.from(adminStore.placesByDestination.keys());
+	const destinations = Array.from(adminStore.placesByDestination.keys()).filter((x) => {
+		return (
+			x.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1 ||
+			TranslateService.translate(eventStore, x).indexOf(eventStore.searchValue.toLowerCase()) !== -1
+		);
+	});
 
 	const navigate = useNavigate();
 
