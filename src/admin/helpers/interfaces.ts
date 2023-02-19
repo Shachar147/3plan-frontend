@@ -48,3 +48,23 @@ export type FixItemsResult = {
 		newDestination: string;
 	}[];
 };
+
+export type CreateInstagramItemsResult = {
+	totals: {
+		created: number;
+		updated: number;
+		errors: number;
+		downloadedImages: number;
+		downloadedVideos: number;
+	};
+	created: any[];
+	updated: {
+		id: number;
+		name: string;
+	}[];
+	errors: any[];
+	downloaded: {
+		images: number;
+		videos: number;
+	};
+};

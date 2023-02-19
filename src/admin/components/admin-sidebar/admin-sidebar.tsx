@@ -13,7 +13,7 @@ import { getDurationString } from '../../../utils/time-utils';
 import { priorityToColor } from '../../../utils/consts';
 import { adminStoreContext } from '../../stores/admin-store';
 import { TriplanTinderApiService } from '../../services/triplan-tinder-api-service';
-import { DownloadMediaResult, FixItemsResult } from '../../helpers/interfaces';
+import { CreateInstagramItemsResult, DownloadMediaResult, FixItemsResult } from '../../helpers/interfaces';
 import { runInAction } from 'mobx';
 
 export interface TriplanAdminSidebarProps {
@@ -34,7 +34,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 	const adminStore = useContext(adminStoreContext);
 	const { removeEventFromSidebarById, addToEventsToCategories } = props;
 
-	const renderImportButtons = () => {
+	const renderActionButtons = () => {
 		return (
 			<>
 				<Button
@@ -118,6 +118,47 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							.finally(() => {
 								runInAction(() => {
 									adminStore.setIsFixing(false);
+								});
+							});
+					}}
+					flavor={ButtonFlavor['movable-link']}
+				/>
+
+				<Button
+					icon={adminStore.isScraping ? 'fa-spinner fa-spin' : 'fa-instagram'}
+					text={TranslateService.translate(eventStore, 'ADMIN_SIDEBAR.ADD_FROM_INSTAGRAM_BUTTON_TEXT')}
+					onClick={() => {
+						if (adminStore.isScraping) return;
+						adminStore.setIsScraping(true);
+						TriplanTinderApiService.scrapeInstagramProfile(
+							'29859324' // 'https://www.instagram.com/__swiss_travel__/?hl=en'
+						)
+							.then((result: CreateInstagramItemsResult) => {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'SUCCESS',
+									'ADMIN_SIDEBAR.SCRAPE_INSTAGRAM_RESULT_MODAL.CONTENT',
+									'success',
+									{
+										A: result.totals.created,
+										B: result.totals.updated,
+										C: result.totals.downloadedImages,
+										D: result.totals.downloadedVideos,
+										E: result.totals.errors,
+									}
+								);
+							})
+							.catch(() => {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'MODALS.ERROR.TITLE',
+									'OOPS_SOMETHING_WENT_WRONG',
+									'error'
+								);
+							})
+							.finally(() => {
+								runInAction(() => {
+									adminStore.setIsScraping(false);
 								});
 							});
 					}}
@@ -341,7 +382,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS');
 		const actionsBlock = wrapWithSidebarGroup(
-			<>{renderImportButtons()}</>,
+			<>{renderActionButtons()}</>,
 			undefined,
 			SidebarGroups.ACTIONS,
 			groupTitle,

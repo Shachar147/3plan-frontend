@@ -342,5 +342,7 @@
 	"ADMIN_SIDEBAR.FIX_BUTTON_TEXT": "Fix Items",
 	"ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.CONTENT": "Total affected items: {X}<br/></br><b>Details:</b><br/>{Y}",
 	"NO_DETAILS": "No details",
-	"ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.RESULT": "Activity named \"{X}\" was on destination {Y} and now it is on {Z}"
+	"ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.RESULT": "Activity named \"{X}\" was on destination {Y} and now it is on {Z}",
+	"ADMIN_SIDEBAR.ADD_FROM_INSTAGRAM_BUTTON_TEXT": "Add Items from Instagram Profile",
+	"ADMIN_SIDEBAR.SCRAPE_INSTAGRAM_RESULT_MODAL.CONTENT": "- total created: {A}<br/>- total updated: {B}<br/>- total downloaded images: {C}<br/>- total downloaded videos: {D}<br/>- total errors: {E}"
 }

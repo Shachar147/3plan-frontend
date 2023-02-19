@@ -47,7 +47,7 @@ function AManageDestination() {
 						{TranslateService.translate(eventStore, 'ADMIN_PANEL')}
 					</a>
 					<span className="navigation-spacer">{' > '}</span>
-					{currDestination}
+					{TranslateService.translate(eventStore, currDestination!)}
 				</div>
 			);
 		}

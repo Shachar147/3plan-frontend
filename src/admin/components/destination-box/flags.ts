@@ -102,6 +102,11 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/bw.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/bw.png',
 	},
+	// same as brazil
+	'Rio de Janeiro': {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/br.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/br.png',
+	},
 	Brazil: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/br.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/br.png',
@@ -337,9 +342,19 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/in.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/in.png',
 	},
+	// same as Indonesia
+	Bali: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/id.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/id.png',
+	},
 	Indonesia: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/id.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/id.png',
+	},
+	// same as iran
+	Tehran: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/ir.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/ir.png',
 	},
 	Iran: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/ir.png',
@@ -353,9 +368,28 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/ie.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/ie.png',
 	},
+	// same as israel
+	'Tel Aviv': {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/il.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/il.png',
+	},
+	// same as israel
+	Haifa: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/il.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/il.png',
+	},
 	Israel: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/il.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/il.png',
+	},
+	// same as italy
+	Milan: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/it.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/it.png',
+	},
+	Rome: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/it.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/it.png',
 	},
 	Italy: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/it.png',
@@ -608,6 +642,11 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/pl.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/pl.png',
 	},
+	// same as portugal
+	Lisbon: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/pt.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/pt.png',
+	},
 	Portugal: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/pt.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/pt.png',
@@ -724,6 +763,11 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/ss.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/ss.png',
 	},
+	// same as spain
+	Barcelona: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/es.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/es.png',
+	},
 	Spain: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/es.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/es.png',
@@ -791,6 +835,11 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/tn.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/tn.png',
 	},
+	// same as turkey
+	Istanbul: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/tr.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/tr.png',
+	},
 	Turkey: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/tr.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/tr.png',
@@ -811,8 +860,13 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/ua.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/ua.png',
 	},
+	// same as UAE
 	Dubai: {
-		alias: 'United Arab Emirates',
+		mini: 'http://flags.fmcdn.net/data/flags/mini/ae.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/ae.png',
+	},
+	// same as UAE
+	'Abu Dhabi': {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/ae.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/ae.png',
 	},
@@ -820,6 +874,11 @@ export const countriesFlags: Record<string, any> = {
 		alias: 'United Arab Emirates',
 		mini: 'http://flags.fmcdn.net/data/flags/mini/ae.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/ae.png',
+	},
+	// same as UK
+	London: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/gb.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/gb.png',
 	},
 	UK: {
 		alias: 'United Kingdom',

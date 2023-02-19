@@ -1,5 +1,11 @@
-import { DownloadMediaResult, FixItemsResult, GetPlacesByDestinationResult } from '../helpers/interfaces';
-import { apiGet, apiPut } from '../helpers/api';
+import {
+	CreateInstagramItemsResult,
+	DownloadMediaResult,
+	FixItemsResult,
+	GetPlacesByDestinationResult,
+} from '../helpers/interfaces';
+import { apiGet, apiPost, apiPut } from '../helpers/api';
+import { getServerAddress } from '../../config/config';
 
 export const TriplanTinderApiService = {
 	async getPlacesByDestination(): Promise<GetPlacesByDestinationResult> {
@@ -24,5 +30,13 @@ export const TriplanTinderApiService = {
 			return result?.data as FixItemsResult;
 		}
 		return {} as FixItemsResult;
+	},
+
+	async createInstagramItems(json: object): Promise<CreateInstagramItemsResult> {
+		const result = await apiPost('/instagram/json', {}, getServerAddress());
+		if (result) {
+			return result?.data as CreateInstagramItemsResult;
+		}
+		return {} as CreateInstagramItemsResult;
 	},
 };

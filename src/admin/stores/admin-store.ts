@@ -10,6 +10,7 @@ export class AdminStore {
 	// sidebar actions
 	@observable isDownloading: boolean = false;
 	@observable isFixing: boolean = false;
+	@observable isScraping: boolean = false;
 
 	constructor() {
 		this.init();
@@ -81,6 +82,11 @@ export class AdminStore {
 	@action
 	setIsFixing(isFixing: boolean) {
 		this.isFixing = isFixing;
+	}
+
+	@action
+	setIsScraping(isScraping: boolean) {
+		this.isScraping = isScraping;
 	}
 
 	// ----------------------------------------------------------

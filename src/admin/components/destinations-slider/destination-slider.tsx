@@ -14,10 +14,11 @@ export interface DestinationSliderProps {
 const DestinationSlider = ({ currDestination }: DestinationSliderProps) => {
 	const adminStore = useContext(adminStoreContext);
 	const eventStore = useContext(eventStoreContext);
+
 	const destinations = Array.from(adminStore.placesByDestination.keys()).filter((x) => {
 		return (
 			x.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1 ||
-			TranslateService.translate(eventStore, x).indexOf(eventStore.searchValue.toLowerCase()) !== -1
+			TranslateService.translate(eventStore, x).indexOf(eventStore.searchValue.toLowerCase()) !== -1 // todo complete - to be able to search country and get also its cities - maybe try to search also by flag
 		);
 	});
 

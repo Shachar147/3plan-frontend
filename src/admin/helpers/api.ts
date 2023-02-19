@@ -3,11 +3,11 @@ import { getTinderServerAddress } from '../../config/config';
 
 const unAuthorizedRoutes = ['signin'];
 
-async function login() {
+async function login(serverAddress?: string) {
 	const username = 'triplan';
 	const password = 'Aa783c0fc5-e574-bfee';
 
-	const result: any = await _apiPost('/auth/signin', { username, password });
+	const result: any = await _apiPost('/auth/signin', { username, password }, undefined, serverAddress);
 	return result?.data?.accessToken;
 }
 
@@ -26,9 +26,9 @@ async function handleUnauthorizedError(error: any, url: string) {
 	return false;
 }
 
-export async function apiPost(url: string, data: any) {
-	const accessToken = await login();
-	return _apiPost(url, data, accessToken);
+export async function apiPost(url: string, data: any, serverAddress?: string) {
+	const accessToken = await login(serverAddress);
+	return _apiPost(url, data, accessToken, serverAddress);
 }
 
 export async function apiPut(url: string, data: any) {
@@ -57,9 +57,9 @@ function _apiGet(url: string, accessToken: string) {
 		});
 }
 
-function _apiPost(url: string, data: any, accessToken?: string) {
+function _apiPost(url: string, data: any, accessToken?: string, serverAddress: string = getTinderServerAddress()) {
 	return axios
-		.post(getTinderServerAddress() + url, data, {
+		.post(serverAddress + url, data, {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
