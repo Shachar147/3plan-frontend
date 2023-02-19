@@ -405,5 +405,8 @@
 	"ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.CONTENT": "סה\"כ הפריטים שהושפעו מכך: {X}<br/></br><b>פרטים נוספים:</b><br/>{Y}",
 	"NO_DETAILS": "אין",
 	"ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.RESULT": "פעילות בשם \"{X}\" הייתה תחת יעד {Y} ועכשיו היא ב {Z}",
-	"ADMIN_SIDEBAR.ADD_FROM_INSTAGRAM_BUTTON_TEXT": "הוסף פריטים מעמוד אינסטגרם"
+	"ADMIN_SIDEBAR.ADD_FROM_INSTAGRAM_BUTTON_TEXT": "הוסף פריטים מעמוד אינסטגרם",
+	"MOVE_TO_END_OF_LIST": "העבר לסוף הרשימה",
+	"MOVE_TO_END_OF_LIST.TOOLTIP": "לחיצה על כפתור זה תעביר את הפעילות שאתה מסתכל עליה כרגע לסוף הרשימה בעמוד ניהול הפעילויות של יעד זה",
+	"MOVED_LATER_SUCCESSFULLY": "הפעילות הועברה בהצלחה לסוף הרשימה"
 }

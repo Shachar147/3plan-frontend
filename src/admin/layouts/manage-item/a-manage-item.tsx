@@ -24,6 +24,7 @@ import Button, { ButtonFlavor } from '../../../components/common/button/button';
 import { apiDelete, apiPut } from '../../helpers/api';
 import ReactModalService from '../../../services/react-modal-service';
 import IconSelector from '../../../components/inputs/icon-selector/icon-selector';
+import * as _ from 'lodash';
 
 interface ManageItemData {
 	items: TinderItem[];
@@ -36,14 +37,14 @@ const isRecommended = ['downloadedImages', 'downloadedVideos', 'images', 'videos
 const itemInputs = [
 	{ id: 'readonly' },
 	{ source: 'readonly' },
+	{ downloadedVideos: 'videos' },
+	{ downloadedImages: 'images' },
 	{ name: 'text' },
 	{ category: 'text' },
 	{ destination: 'text' },
 	{ description: 'textarea' },
 	{ images: 'images' },
-	{ downloadedImages: 'images' },
 	{ videos: 'videos' },
-	{ downloadedVideos: 'videos' },
 	{ more_info: 'text' },
 	{ duration: 'text' }, // time format xx:xx
 	{ icon: 'icon' },
@@ -271,6 +272,38 @@ function AManageItem() {
 						isSaving ? TranslateService.translate(eventStore, 'PLEASE_WAIT_WHILE_SAVING') : undefined
 					}
 				/>
+				<div title={TranslateService.translate(eventStore, 'MOVE_TO_END_OF_LIST.TOOLTIP')}>
+					<Button
+						flavor={ButtonFlavor.secondary}
+						text={`${TranslateService.translate(eventStore, 'MOVE_TO_END_OF_LIST')}`}
+						onClick={() => {
+							const moveLater = JSON.parse(localStorage.getItem('triplan-move_later') ?? '{}');
+							moveLater[item!.destination] = moveLater[item!.destination] || [];
+							moveLater[item!.destination].push(item!.id);
+							moveLater[item!.destination] = _.uniq(moveLater[item!.destination]);
+							localStorage.setItem('triplan-move_later', JSON.stringify(moveLater));
+
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'SUCCESS',
+								'MOVED_LATER_SUCCESSFULLY',
+								'success'
+							);
+
+							// setTimeout(() => {
+							// 	ReactModalService.internal.closeModal(eventStore);
+							// 	setTimeout(() => {
+							// 		slideNext();
+							// 	}, 1200);
+							// }, 3000);
+						}}
+						className="manage-item-form-later-button"
+						disabled={isSaving}
+						disabledReason={
+							isSaving ? TranslateService.translate(eventStore, 'PLEASE_WAIT_WHILE_SAVING') : undefined
+						}
+					/>
+				</div>
 			</div>
 		);
 	}

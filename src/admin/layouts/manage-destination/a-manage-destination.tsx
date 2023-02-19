@@ -14,6 +14,7 @@ import { eventStoreContext } from '../../../stores/events-store';
 import { useNavigate, useParams } from 'react-router-dom';
 import ActivityBox from '../../components/activity-box/activity-box';
 import DestinationSlider from '../../components/destinations-slider/destination-slider';
+import { TinderItem } from '../../helpers/interfaces';
 
 function AManageDestination() {
 	const adminStore = useContext(adminStoreContext);
@@ -52,6 +53,15 @@ function AManageDestination() {
 			);
 		}
 
+		function getScore(item: TinderItem) {
+			const moveLater = JSON.parse(localStorage.getItem('triplan-move_later') ?? '{}');
+			const arr = moveLater[item.destination] ?? [];
+			if (arr.indexOf(item.id)) {
+				return item.id - arr.indexOf(item.id) * 100000;
+			}
+			return item.id;
+		}
+
 		return (
 			<div className="manage-destination-items bright-scrollbar">
 				{renderNavigation()}
@@ -59,7 +69,7 @@ function AManageDestination() {
 				<div className="flex-column gap-10">
 					<div className="activities-content">
 						{activities
-							.sort((a, b) => b.id - a.id)
+							.sort((a, b) => getScore(b) - getScore(a))
 							.map((activity) => (
 								<ActivityBox
 									activity={activity}

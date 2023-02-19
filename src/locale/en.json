@@ -344,5 +344,8 @@
 	"NO_DETAILS": "No details",
 	"ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.RESULT": "Activity named \"{X}\" was on destination {Y} and now it is on {Z}",
 	"ADMIN_SIDEBAR.ADD_FROM_INSTAGRAM_BUTTON_TEXT": "Add Items from Instagram Profile",
-	"ADMIN_SIDEBAR.SCRAPE_INSTAGRAM_RESULT_MODAL.CONTENT": "- total created: {A}<br/>- total updated: {B}<br/>- total downloaded images: {C}<br/>- total downloaded videos: {D}<br/>- total errors: {E}"
+	"ADMIN_SIDEBAR.SCRAPE_INSTAGRAM_RESULT_MODAL.CONTENT": "- total created: {A}<br/>- total updated: {B}<br/>- total downloaded images: {C}<br/>- total downloaded videos: {D}<br/>- total errors: {E}",
+	"MOVE_TO_END_OF_LIST": "Move to end of list",
+	"MOVE_TO_END_OF_LIST.TOOLTIP": "Clicking on this button will move the activity you are looking at right now to the end of the list in the manage-destination-items page",
+	"MOVED_LATER_SUCCESSFULLY": "Activity successfully moved to the end of the list"
 }

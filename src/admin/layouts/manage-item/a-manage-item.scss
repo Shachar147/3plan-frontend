@@ -95,7 +95,10 @@
           border: 1px solid #dde3eb;
           border-radius: 20px;
           min-width: 800px;
-          height: 200px;
+
+          &:not(:disabled) {
+            height: 200px;
+          }
         }
 
         input, textarea {
@@ -152,6 +155,7 @@
     }
   }
 
+  .manage-item-form-later-button,
   .manage-item-form-save-button,
   .manage-item-form-delete-button {
     width: 200px;
