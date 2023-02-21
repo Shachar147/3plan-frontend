@@ -177,6 +177,13 @@ function AManageItem() {
 	// --- actions ----------------------------------------------
 	async function updateItem() {
 		setIsSaving(true);
+		if (item && item.location) {
+			try {
+				// @ts-ignore
+				const location = JSON.parse(item.location);
+				item.location = location;
+			} catch {}
+		}
 		const result = await apiPut(`/item/${item!.id}`, {
 			...item,
 			downloadedImages: item!.downloadedImages
@@ -410,22 +417,29 @@ function AManageItem() {
 	function renderTextInput(props: RenderInputProps) {
 		const { item, type, isReadOnly, field, value, isUnsaved } = props;
 		return (
-			<TextInput
-				type={type}
-				name={field}
-				value={value}
-				onChange={(e) => {
-					setItem({
-						...item,
-						[field]: e.target.value,
-					});
-				}}
-				placeholder={''}
-				modalValueName={field}
-				readOnly={isReadOnly}
-				className={isUnsaved ? 'unsaved' : undefined}
-				// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
-			/>
+			<>
+				<TextInput
+					type={type}
+					name={field}
+					value={value}
+					onChange={(e) => {
+						setItem({
+							...item,
+							[field]: e.target.value,
+						});
+					}}
+					placeholder={''}
+					modalValueName={field}
+					readOnly={isReadOnly}
+					className={isUnsaved ? 'unsaved' : undefined}
+					// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+				/>
+				{field === 'more_info' ? (
+					<a href={value} target={'_blank'}>
+						<i className="fa fa-external-link" style={{ height: '20px' }} aria-hidden="true" />
+					</a>
+				) : undefined}
+			</>
 		);
 	}
 
@@ -593,22 +607,29 @@ function AManageItem() {
 	function renderLocationInput(props: RenderLocationProps) {
 		const { item, type, isReadOnly, field, value, isUnsaved } = props;
 		return (
-			<TextInput
-				type={type}
-				name={field}
-				value={JSON.stringify(value)}
-				onChange={(e) => {
-					setItem({
-						...item,
-						[field]: e.target.value,
-					});
-				}}
-				placeholder={''}
-				modalValueName={field}
-				readOnly={isReadOnly}
-				className={isUnsaved ? 'unsaved' : undefined}
-				// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
-			/>
+			<>
+				<TextInput
+					type={type}
+					name={field}
+					value={JSON.stringify(value)}
+					onChange={(e) => {
+						setItem({
+							...item,
+							[field]: e.target.value,
+						});
+					}}
+					placeholder={''}
+					modalValueName={field}
+					readOnly={isReadOnly}
+					className={isUnsaved ? 'unsaved' : undefined}
+					// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+				/>
+				{value && value.latitude && value.longitude ? (
+					<a href={`https://maps.google.com/?q=${value.latitude},${value.longitude}`} target={'_blank'}>
+						<i className="fa fa-external-link" style={{ height: '20px' }} aria-hidden="true" />
+					</a>
+				) : undefined}
+			</>
 		);
 	}
 

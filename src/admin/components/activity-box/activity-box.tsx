@@ -39,6 +39,11 @@ const ActivityBox = ({ activity, onClick }: ActivityBoxProps) => {
 	if (!description) {
 		errors.push(TranslateService.translate(eventStore, 'MISSING_DESCRIPTION'));
 	}
+
+	const test: any = activity.location ?? {};
+	if (!(test && test.latitude && test.longitude && test?.address)) {
+		errors.push(TranslateService.translate(eventStore, 'MISSING_LOCATION'));
+	}
 	if (destination === 'N/A') {
 		errors.push(TranslateService.translate(eventStore, 'MISSING_DESTINATION'));
 	}

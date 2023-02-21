@@ -12,6 +12,7 @@ interface DestinationBoxProps {
 	numOfMediaError: number;
 	numOfNameError: number;
 	numOfCategoryError: number;
+	numOfLocationError: number;
 	onClick: () => void;
 	isActive?: boolean;
 }
@@ -24,6 +25,7 @@ const DestinationBox = ({
 	numOfMediaError,
 	numOfNameError,
 	numOfCategoryError,
+	numOfLocationError,
 }: DestinationBoxProps) => {
 	const eventStore = useContext(eventStoreContext);
 	const flag = countriesFlags[name]?.mini;
@@ -53,6 +55,14 @@ const DestinationBox = ({
 						{TranslateService.translate(eventStore, 'X_NAME_ERRORS').replace(
 							'{X}',
 							numOfNameError.toString()
+						)}
+					</span>
+				)}
+				{!!numOfLocationError && (
+					<span>
+						{TranslateService.translate(eventStore, 'X_LOCATION_ERRORS').replace(
+							'{X}',
+							numOfLocationError.toString()
 						)}
 					</span>
 				)}

@@ -52,6 +52,11 @@
       position: sticky;
       top: 100px;
 
+      &.fa-external-link {
+        font-size: 20px;
+        line-height: 40px;
+      }
+
       &.disabled {
         cursor: default;
         opacity: 0.2;

@@ -81,6 +81,12 @@ const DestinationSlider = ({ currDestination }: DestinationSliderProps) => {
 									(i.videos.length > 0 && !i.downloadedVideos?.length)
 							);
 							const nameError = places.filter((i) => i.name.indexOf('http') !== -1);
+							const locationError = places.filter((i) => {
+								const test: any = i.location ?? {};
+
+								// @ts-ignore
+								return !(test && test?.latitude && test?.longitude && test?.address);
+							});
 							const categoryError = places.filter((i) => !i.category.length);
 							return (
 								<DestinationBox
@@ -89,6 +95,7 @@ const DestinationSlider = ({ currDestination }: DestinationSliderProps) => {
 									numOfMediaError={mediaError.length}
 									numOfNameError={nameError.length}
 									numOfCategoryError={categoryError.length}
+									numOfLocationError={locationError.length}
 									onClick={() => {
 										navigate(`/admin/destination/${destination.replace('/', '')}`);
 									}}

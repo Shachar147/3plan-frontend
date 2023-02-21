@@ -312,6 +312,11 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/gr.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/gr.png',
 	},
+	// same as greece
+	Mykonos: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/gr.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/gr.png',
+	},
 	Greece: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/gr.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/gr.png',
@@ -942,6 +947,10 @@ export const countriesFlags: Record<string, any> = {
 	},
 	// same as USA
 	Florida: {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/us.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/us.png',
+	},
+	'Virgin Islands': {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/us.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/us.png',
 	},
