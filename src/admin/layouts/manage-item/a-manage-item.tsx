@@ -25,6 +25,7 @@ import { apiDelete, apiPut } from '../../helpers/api';
 import ReactModalService from '../../../services/react-modal-service';
 import IconSelector from '../../../components/inputs/icon-selector/icon-selector';
 import * as _ from 'lodash';
+import { LocationData } from '../../../utils/interfaces';
 
 interface ManageItemData {
 	items: TinderItem[];
@@ -61,6 +62,15 @@ interface RenderInputProps {
 	isReadOnly: boolean;
 	field: string;
 	value: string;
+	isUnsaved: boolean;
+}
+
+interface RenderLocationProps {
+	item: TinderItem;
+	type: 'text' | 'number' | 'password';
+	isReadOnly: boolean;
+	field: string;
+	value: LocationData;
 	isUnsaved: boolean;
 }
 
@@ -102,8 +112,8 @@ function AManageItem() {
 	const [isLoaded, setIsLoaded] = useState<boolean>(false);
 	const [isSaving, setIsSaving] = useState<boolean>(false);
 
-	const backIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-right' : 'fa-chevron-left';
-	const nextIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-left' : 'fa-chevron-right';
+	const backIcon = eventStore.getCurrentDirection() === 'ltr' ? 'fa-chevron-right' : 'fa-chevron-left';
+	const nextIcon = eventStore.getCurrentDirection() === 'ltr' ? 'fa-chevron-left' : 'fa-chevron-right';
 
 	useEffect(() => {
 		Array.from(adminStore.placesByDestination.keys()).forEach((destination) => {
@@ -233,12 +243,25 @@ function AManageItem() {
 				<a href="" onClick={() => navigate('/admin')}>
 					{TranslateService.translate(eventStore, 'ADMIN_PANEL')}
 				</a>
-				<span className="navigation-spacer">{' > '}</span>
-				<a href="" onClick={() => navigate(`/admin/destination/${data?.destination}`)}>
-					{TranslateService.translate(eventStore, data!.destination)}
-				</a>
-				<span className="navigation-spacer">{' > '}</span>
-				{item?.name}
+				{data ? (
+					<>
+						<span className="navigation-spacer">{' > '}</span>
+						<a href="" onClick={() => navigate(`/admin/destination/${data?.destination}`)}>
+							{TranslateService.translate(eventStore, data!.destination)}
+						</a>
+					</>
+				) : (
+					<>
+						<span className="navigation-spacer">{' > '}</span>
+						{TranslateService.translate(eventStore, 'NOT_FOUND_ITEM')}
+					</>
+				)}
+				{item ? (
+					<>
+						<span className="navigation-spacer">{' > '}</span>
+						{item?.name}
+					</>
+				) : undefined}
 			</div>
 		);
 	}
@@ -340,11 +363,19 @@ function AManageItem() {
 	}
 
 	function renderItemFormAndArrows() {
+		const isBackDisabledClass = data?.currIdx === 0 ? 'disabled' : '';
+		const isNextDisabledClass = !data?.items ? '' : data?.currIdx === data?.items?.length - 1 ? 'disabled' : '';
 		return (
 			<div className="manage-item bright-scrollbar">
-				<i className={`slider-navigator no-animation fa ${backIcon}`} onClick={() => slideBack()} />
+				<i
+					className={`slider-navigator no-animation fa ${backIcon} ${isBackDisabledClass}`}
+					onClick={() => slideBack()}
+				/>
 				{renderItemForm()}
-				<i className={`slider-navigator no-animation fa ${nextIcon}`} onClick={() => slideNext()} />
+				<i
+					className={`slider-navigator no-animation fa ${nextIcon} ${isNextDisabledClass}`}
+					onClick={() => slideNext()}
+				/>
 			</div>
 		);
 	}
@@ -369,6 +400,8 @@ function AManageItem() {
 			return renderCheckboxInput({ item, type, isReadOnly, field, value, isUnsaved });
 		} else if (type === 'icon') {
 			return renderIconInput({ item, type, isReadOnly, field, value, isUnsaved });
+		} else if (type === 'locationPicker') {
+			return renderLocationInput({ item, type, isReadOnly, field, value, isUnsaved });
 		}
 		// todo complete
 		return renderTextInput({ item, type: 'text', isReadOnly: true, field, value, isUnsaved });
@@ -557,16 +590,44 @@ function AManageItem() {
 		);
 	}
 
+	function renderLocationInput(props: RenderLocationProps) {
+		const { item, type, isReadOnly, field, value, isUnsaved } = props;
+		return (
+			<TextInput
+				type={type}
+				name={field}
+				value={JSON.stringify(value)}
+				onChange={(e) => {
+					setItem({
+						...item,
+						[field]: e.target.value,
+					});
+				}}
+				placeholder={''}
+				modalValueName={field}
+				readOnly={isReadOnly}
+				className={isUnsaved ? 'unsaved' : undefined}
+				// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+			/>
+		);
+	}
+
 	function renderContent() {
 		if (!id) return;
 		if (!isLoaded) return 'loading...';
-		if (!item) return renderItemNotFoundPlaceholder();
+		// if (!item) return renderItemNotFoundPlaceholder();
 
 		return (
 			<div className="manage-item-page">
 				{renderNavigation()}
-				{renderItemFormAndArrows()}
-				{renderButtons()}
+				{!item ? (
+					renderItemNotFoundPlaceholder()
+				) : (
+					<>
+						{renderItemFormAndArrows()}
+						{renderButtons()}
+					</>
+				)}
 			</div>
 		);
 	}

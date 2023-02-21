@@ -36,7 +36,8 @@
 
   .manage-item {
     display: flex;
-    flex-direction: row;
+    //flex-direction: row;
+    flex-direction: row-reverse;
     align-items: center;
     justify-content: space-between;
     width: 100%;
@@ -50,6 +51,11 @@
       font-size: 50px;
       position: sticky;
       top: 100px;
+
+      &.disabled {
+        cursor: default;
+        opacity: 0.2;
+      }
     }
 
     .manage-item-form {
@@ -163,8 +169,11 @@
 }
 
 body.rtl {
-  .manage-item-form-row {
-    direction: rtl;
-    text-align: right;
+  .manage-item {
+    //flex-direction: row-reverse;
+    .manage-item-form-row {
+      direction: rtl;
+      text-align: right;
+    }
   }
 }

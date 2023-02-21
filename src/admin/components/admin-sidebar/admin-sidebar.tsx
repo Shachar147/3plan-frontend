@@ -81,31 +81,35 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						adminStore.setIsFixing(true);
 						TriplanTinderApiService.fixItems()
 							.then((result: FixItemsResult) => {
-								ReactModalService.internal.alertMessage(
-									eventStore,
-									'SUCCESS',
-									'ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.CONTENT',
-									'success',
-									{
-										X: result.totalAffectedItems,
-										Y:
-											result.updatedDestinations.length > 0
-												? result.updatedDestinations
-														.map((x) =>
-															TranslateService.translate(
-																eventStore,
-																'ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.RESULT',
-																{
-																	X: x.name,
-																	Y: x.destination,
-																	Z: x.newDestination,
-																}
+								ReactModalService.internal
+									.alertMessage(
+										eventStore,
+										'SUCCESS',
+										'ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.CONTENT',
+										'success',
+										{
+											X: result.totalAffectedItems,
+											Y:
+												result.updatedDestinations.length > 0
+													? result.updatedDestinations
+															.map((x) =>
+																TranslateService.translate(
+																	eventStore,
+																	'ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.RESULT',
+																	{
+																		X: x.name,
+																		Y: x.destination,
+																		Z: x.newDestination,
+																	}
+																)
 															)
-														)
-														.join('<br/>')
-												: TranslateService.translate(eventStore, 'NO_DETAILS'),
-									}
-								);
+															.join('<br/>')
+													: TranslateService.translate(eventStore, 'NO_DETAILS'),
+										}
+									)
+									.then(() => {
+										window.location.reload();
+									});
 							})
 							.catch(() => {
 								ReactModalService.internal.alertMessage(
@@ -131,7 +135,8 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						if (adminStore.isScraping) return;
 						adminStore.setIsScraping(true);
 						TriplanTinderApiService.scrapeInstagramProfile(
-							'29859324' // 'https://www.instagram.com/__swiss_travel__/?hl=en'
+							// '29859324' // 'https://www.instagram.com/__swiss_travel__/?hl=en'
+							'22767954' // jeremy austin
 						)
 							.then((result: CreateInstagramItemsResult) => {
 								ReactModalService.internal.alertMessage(

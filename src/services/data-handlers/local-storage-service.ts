@@ -210,7 +210,8 @@ export class LocalStorageService implements BaseDataHandler {
 
 	setCalendarLocale(calendarLocale: LocaleCode, tripName?: string): void {
 		const key = tripName ? [LS_CALENDAR_LOCALE, tripName].join('-') : LS_CALENDAR_LOCALE;
-		localStorage.setItem(key, defaultLocalCode);
+		// localStorage.setItem(key, defaultLocalCode);
+		localStorage.setItem(key, calendarLocale);
 	}
 
 	setCategories(categories: TriPlanCategory[], tripName: string): void {

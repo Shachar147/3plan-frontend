@@ -1,11 +1,11 @@
-.admin-dashboard-wrapper {
+.a-dashboard-wrapper {
   display: flex;
 
   .main-layout {
     width: 100%;
 
     .external-events-container {
-      min-width: 400px;
+      min-width: 400px !important;
     }
 
     .destinations-content {

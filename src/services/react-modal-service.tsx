@@ -445,7 +445,7 @@ const ReactModalService = {
 			type: 'error' | 'success',
 			contentParams: Record<string, string | number> = {}
 		) => {
-			Alert.fire(
+			return Alert.fire(
 				TranslateService.translate(eventStore, titleKey),
 				TranslateService.translate(eventStore, contentKey, contentParams),
 				type

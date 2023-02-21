@@ -18,6 +18,7 @@ import Slider from 'react-slick';
 import { TriplanTinderApiService } from '../../../../admin/services/triplan-tinder-api-service';
 import { observable, runInAction } from 'mobx';
 import { TinderItem } from '../../../../admin/helpers/interfaces';
+import { getTinderServerAddress } from '../../../../config/config';
 
 interface PlacesTinderProps {
 	eventStore: EventStore;
@@ -194,6 +195,16 @@ function PlacesTinder(props: PlacesTinderProps) {
 		}
 	}
 
+	function buildMediaUrl(media: string) {
+		if (media.indexOf('http') !== -1) {
+			return media;
+		}
+		if (!media.startsWith('/')) {
+			media = '/' + media;
+		}
+		return `${getTinderServerAddress()}${media}`;
+	}
+
 	function renderNavigation() {
 		if (destination && placesList && placesList.length > 0) {
 			return (
@@ -226,7 +237,14 @@ function PlacesTinder(props: PlacesTinderProps) {
 		return <div>{TranslateService.translate(eventStore, 'LOADING_TRIP_PLACEHOLDER')}</div>;
 	}
 
-	const images = (currentPlace?.tinder || currentPlace)?.images;
+	const videos =
+		(currentPlace?.tinder || currentPlace)?.downloadedVideos ??
+		(currentPlace?.tinder || currentPlace)?.videos ??
+		[];
+	const images =
+		(currentPlace?.tinder || currentPlace)?.downloadedImages ??
+		(currentPlace?.tinder || currentPlace)?.images ??
+		[];
 
 	return (
 		<div className={'places-tinder flex-column gap-10 justify-content-center bright-scrollbar'}>
@@ -244,8 +262,13 @@ function PlacesTinder(props: PlacesTinderProps) {
 			{renderPlaceholders()}
 			{currentPlace && (
 				<div className={'flex-col gap-10 justify-content-center align-items-center'} style={{ maxWidth: 500 }}>
-					{images && (
+					{(images.length || videos.length) && (
 						<Slider {...sliderSettings}>
+							{videos.map((video: string) => (
+								<video width="320" height="240" controls>
+									<source src={buildMediaUrl(video)} type="video/mp4" />
+								</video>
+							))}
 							{images.map((image: string) => (
 								<img
 									className="slider-image"
@@ -254,7 +277,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 										height: 150,
 									}}
 									alt={''}
-									src={image}
+									src={buildMediaUrl(image)}
 								/>
 							))}
 						</Slider>

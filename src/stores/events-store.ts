@@ -96,6 +96,10 @@ export class EventStore {
 				? DataServices.DBService
 				: defaultDataService;
 
+		// todo check if its not causing issues.
+		// for the admin view
+		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
+
 		this.init();
 	}
 
