@@ -245,6 +245,10 @@ function AManageItem() {
 	}
 
 	function renderNavigation() {
+		let destination = data?.destination;
+		if (destination === 'N/A') {
+			destination = 'NA';
+		}
 		return (
 			<div className="manage-item-navigation">
 				<a href="" onClick={() => navigate('/admin')}>
@@ -253,7 +257,7 @@ function AManageItem() {
 				{data ? (
 					<>
 						<span className="navigation-spacer">{' > '}</span>
-						<a href="" onClick={() => navigate(`/admin/destination/${data?.destination}`)}>
+						<a href="" onClick={() => navigate(`/admin/destination/${destination}`)}>
 							{TranslateService.translate(eventStore, data!.destination)}
 						</a>
 					</>

@@ -131,6 +131,20 @@ function PlacesTinder(props: PlacesTinderProps) {
 
 		currentPlace['priority'] = TriplanPriority.unset;
 
+		const videos =
+			(currentPlace?.tinder || currentPlace)?.downloadedVideos ??
+			(currentPlace?.tinder || currentPlace)?.videos ??
+			[];
+		const images =
+			(currentPlace?.tinder || currentPlace)?.downloadedImages ??
+			(currentPlace?.tinder || currentPlace)?.images ??
+			[];
+		currentPlace['videos'] = videos;
+		currentPlace['images'] = images;
+		if (!currentPlace['category'] || currentPlace['category'] == '') {
+			currentPlace['category'] = TranslateService.translate(eventStore, 'GENERAL_CATEGORY.TITLE');
+		}
+
 		let categoryId: number;
 		if (existingCategory.length > 0) {
 			categoryId = existingCategory[0].id;
