@@ -16,6 +16,15 @@ import ActivityBox from '../../components/activity-box/activity-box';
 import DestinationSlider from '../../components/destinations-slider/destination-slider';
 import { TinderItem } from '../../helpers/interfaces';
 
+import MapContainer from '../../../components/map-container/map-container';
+import { AllEventsEvent } from '../../../services/data-handlers/data-handler-base';
+import { AdminViewMode, TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
+import { LocationData, WeeklyOpeningHoursData } from '../../../utils/interfaces';
+import _ from 'lodash';
+import { getTinderServerAddress } from '../../../config/config';
+import TriplanViewSelector from '../../../components/triplan-header/view-selector/triplan-view-selector';
+import { getAdminViewSelectorOptions } from '../../../utils/ui-utils';
+
 function AManageDestination() {
 	const adminStore = useContext(adminStoreContext);
 	const eventStore = useContext(eventStoreContext);
@@ -62,24 +71,81 @@ function AManageDestination() {
 			return item.id;
 		}
 
+		function buildMediaUrl(media: string) {
+			if (media.indexOf('http') !== -1) {
+				return media;
+			}
+			if (!media.startsWith('/')) {
+				media = '/' + media;
+			}
+			return `${getTinderServerAddress()}${media}`;
+		}
+
 		return (
 			<div className="manage-destination-items bright-scrollbar">
 				{renderNavigation()}
 				<DestinationSlider currDestination={currDestination} />
-				<div className="flex-column gap-10">
-					<div className="activities-content">
-						{activities
-							.sort((a, b) => getScore(b) - getScore(a))
-							.map((activity) => (
-								<ActivityBox
-									activity={activity}
-									onClick={() => {
-										navigate(`/admin/item/${activity.id}`);
-									}}
-								/>
-							))}
-					</div>
+				<div className="flex-row justify-content-center width-100-percents direction-ltr">
+					<TriplanViewSelector
+						value={adminStore.viewMode}
+						setViewMode={(value) => adminStore.setViewMode(value)}
+						options={getAdminViewSelectorOptions(eventStore)}
+					/>
 				</div>
+				{adminStore.viewMode === AdminViewMode.map && (
+					<div className="manage-destination-items-map-container" key={currDestination}>
+						<MapContainer
+							allEvents={Array.from(adminStore.placesByDestination.get(currDestination)!)
+								.filter((x) => x.location)
+								.map((x) => {
+									return {
+										...x,
+										id: x.id,
+										title: x.name,
+										duration: x.duration,
+										icon: x.icon,
+										category:
+											x.category || TranslateService.translate(eventStore, 'MISSING_CATEGORY'),
+										description: x.description,
+										priority: _.isUndefined(x.priority)
+											? TriplanPriority.unset
+											: (x.priority as unknown as TriplanPriority) ?? TriplanPriority.unset,
+										preferredTime: TriplanEventPreferredTime.unset, // todo complete
+										extendedProps: {},
+										// className: ,
+										location: x.location as LocationData,
+										allDay: false,
+										openingHours: _.isUndefined(x.openingHours)
+											? undefined
+											: (x.openingHours as WeeklyOpeningHoursData),
+										images: x.downloadedImages
+											? x.downloadedImages.map((y) => buildMediaUrl(y))
+											: x.images, // string?
+										moreInfo: x.more_info,
+									} as unknown as AllEventsEvent;
+								})}
+							getNameLink={(event: AllEventsEvent) => {
+								return `/admin/item/${event.id}`;
+							}}
+						/>
+					</div>
+				)}
+				{adminStore.viewMode === AdminViewMode.list && (
+					<div className="flex-column gap-10">
+						<div className="activities-content">
+							{activities
+								.sort((a, b) => getScore(b) - getScore(a))
+								.map((activity) => (
+									<ActivityBox
+										activity={activity}
+										onClick={() => {
+											navigate(`/admin/item/${activity.id}`);
+										}}
+									/>
+								))}
+						</div>
+					</div>
+				)}
 			</div>
 		);
 	}

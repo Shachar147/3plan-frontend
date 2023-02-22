@@ -3,8 +3,8 @@ import React from 'react';
 import { EventStore } from '../stores/events-store';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import Button, { ButtonFlavor } from '../components/common/button/button';
-import ToggleButton from '../components/toggle-button/toggle-button';
-import { ViewMode } from './enums';
+import ToggleButton, { OptionToggleButton } from '../components/toggle-button/toggle-button';
+import { AdminViewMode, ViewMode } from './enums';
 import { getClasses, isEventAlreadyOrdered } from './utils';
 import TriplanTag from '../components/common/triplan-tag/triplan-tag';
 import { getUser } from '../helpers/auth';
@@ -218,7 +218,10 @@ const renderFilterTags = (eventStore: EventStore) => {
 	);
 };
 
-export const getViewSelectorOptions = (eventStore: EventStore, withMobileViews: boolean = false) => {
+export const getViewSelectorOptions = (
+	eventStore: EventStore,
+	withMobileViews: boolean = false
+): OptionToggleButton[] => {
 	const baseArray = [
 		{
 			key: ViewMode.calendar,
@@ -252,6 +255,28 @@ export const getViewSelectorOptions = (eventStore: EventStore, withMobileViews: 
 			...baseArray,
 		];
 	}
+
+	return baseArray;
+};
+
+export const getAdminViewSelectorOptions = (
+	eventStore: EventStore,
+	withMobileViews: boolean = false
+): OptionToggleButton[] => {
+	const baseArray = [
+		{
+			key: ViewMode.list,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
+			icon: <i className="fa fa-list black-color" aria-hidden="true"></i>,
+			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true"></i>,
+		},
+		{
+			key: ViewMode.map,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
+			icon: <i className="fa fa-map-o black-color" aria-hidden="true"></i>,
+			iconActive: <i className="fa fa-map selected-color" aria-hidden="true"></i>,
+		},
+	];
 
 	return baseArray;
 };

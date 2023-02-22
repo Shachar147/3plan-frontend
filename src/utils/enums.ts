@@ -24,6 +24,11 @@ export enum ViewMode {
 	sidebar = 'sidebar',
 }
 
+export enum AdminViewMode {
+	list = 'list',
+	map = 'map',
+}
+
 export enum ListViewSummaryMode {
 	full = 'full',
 	noDescriptions = 'noDescriptions',

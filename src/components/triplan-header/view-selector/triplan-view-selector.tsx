@@ -1,6 +1,6 @@
 import ToggleButton from '../../toggle-button/toggle-button';
-import { ViewMode } from '../../../utils/enums';
-import { getViewSelectorOptions, SELECT_STYLE } from '../../../utils/ui-utils';
+import { AdminViewMode, ViewMode } from '../../../utils/enums';
+import { getViewSelectorOptions, SELECT_STYLE, ViewOption } from '../../../utils/ui-utils';
 import React, { useContext } from 'react';
 import { eventStoreContext } from '../../../stores/events-store';
 import { observer } from 'mobx-react';
@@ -9,7 +9,13 @@ import Select from 'react-select';
 
 import './triplan-view-selector.scss';
 
-function TriplanViewSelector() {
+interface TriplanViewSelectorProps {
+	value?: AdminViewMode;
+	setViewMode?: (viewMode: AdminViewMode) => void;
+	options?: ViewOption[];
+}
+
+function TriplanViewSelector(props?: TriplanViewSelectorProps) {
 	const eventStore = useContext(eventStoreContext);
 	if (eventStore.isMobile) {
 		const options: any[] = getViewSelectorOptions(eventStore).map((option) => ({
@@ -29,10 +35,14 @@ function TriplanViewSelector() {
 					isSearchable={false}
 					id={'view-selector'}
 					name={'view-selector'}
-					options={options}
-					value={selectedViewModeOption}
+					options={props?.options ?? options}
+					value={props?.value ?? selectedViewModeOption}
 					onChange={(e: any) => {
-						eventStore.setViewMode(e.value);
+						if (props?.setViewMode) {
+							props.setViewMode(e.value);
+						} else {
+							eventStore.setViewMode(e.value);
+						}
 					}}
 					maxMenuHeight={45 * 5}
 					styles={SELECT_STYLE}
@@ -43,9 +53,13 @@ function TriplanViewSelector() {
 	return (
 		<div className="view-selector" key={`view-selector-${eventStore.calendarLocalCode}`}>
 			<ToggleButton
-				value={eventStore.viewMode}
-				onChange={(newVal) => eventStore.setViewMode(newVal as ViewMode)}
-				options={getViewSelectorOptions(eventStore)}
+				value={props?.value ?? eventStore.viewMode}
+				onChange={(newVal) =>
+					props?.setViewMode
+						? props.setViewMode(newVal as ViewMode)
+						: eventStore.setViewMode(newVal as ViewMode)
+				}
+				options={props?.options ?? getViewSelectorOptions(eventStore)}
 				useActiveButtons={false}
 				customStyle="white"
 			/>

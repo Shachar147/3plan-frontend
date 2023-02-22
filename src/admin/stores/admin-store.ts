@@ -2,10 +2,13 @@ import { createContext } from 'react';
 import { TriplanTinderApiService } from '../services/triplan-tinder-api-service';
 import { action, computed, observable, runInAction } from 'mobx';
 import { TinderItem } from '../helpers/interfaces';
+import { AdminViewMode, ViewMode } from '../../utils/enums';
 
 export class AdminStore {
 	@observable hasInit: boolean = false;
 	@observable placesByDestination = observable.map<string, TinderItem[]>({});
+
+	@observable viewMode = AdminViewMode.list;
 
 	// sidebar actions
 	@observable isDownloading: boolean = false;
@@ -87,6 +90,11 @@ export class AdminStore {
 	@action
 	setIsScraping(isScraping: boolean) {
 		this.isScraping = isScraping;
+	}
+
+	@action
+	setViewMode(newVideMode: AdminViewMode) {
+		this.viewMode = newVideMode;
 	}
 
 	// ----------------------------------------------------------

@@ -1,5 +1,6 @@
-import React from 'react';
-import { Component, useContext, useEffect, useMemo, useState } from 'react';
+import React, { ReactElement } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
+// @ts-ignore
 import GoogleMapReact from 'google-map-react';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
 import * as _ from 'lodash';
@@ -12,9 +13,21 @@ import { BuildEventUrl, getClasses, isMatching } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
 import * as ReactDOMServer from 'react-dom/server';
+// @ts-ignore
 import Slider from 'react-slick';
+import { AllEventsEvent } from '../../services/data-handlers/data-handler-base';
+import { Coordinate, LocationData } from '../../utils/interfaces';
 
-function Marker(props) {
+interface MarkerProps {
+	text?: string;
+	lng?: number;
+	lat?: number;
+	locationData: LocationData;
+	openingHours: any;
+	searchValue: string;
+}
+
+function Marker(props: MarkerProps): ReactElement {
 	const { text, lng, lat, locationData, openingHours, searchValue } = props;
 	const eventStore = useContext(eventStoreContext);
 	return (
@@ -40,40 +53,50 @@ function Marker(props) {
 	);
 }
 
-const MapContainer = () => {
+interface MapContainerProps {
+	allEvents?: AllEventsEvent[];
+	getNameLink?: (x: AllEventsEvent) => string;
+}
+
+const MapContainer = (props: MapContainerProps) => {
 	const [searchValue, setSearchValue] = useState('');
 	const [searchCoordinatesSearchValue, setSearchCoordinatesSearchValue] = useState(''); // keeps searchValue that matches current search coordinates
 	const [searchCoordinates, setSearchCoordinates] = useState([]);
-	const [visibleItems, setVisibleItems] = useState([]);
+	const [visibleItems, setVisibleItems] = useState<any[]>([]);
 	const [visibleItemsSearchValue, setVisibleItemsSearchValue] = useState('');
 	const [center, setCenter] = useState(undefined);
 	const eventStore = useContext(eventStoreContext);
 
 	const coordinatesToEvents = {};
-	const texts = {};
-	let googleRef, googleMapRef, infoWindow;
-	let searchMarkers = [];
+	const texts: Record<string, string> = {};
+	let googleRef: any, googleMapRef: any, infoWindow: any;
+	let searchMarkers: ReactElement[] = [];
 	let markerCluster;
-	let markers = [];
+	let markers: any[] = [];
 
-	const getKey = (x) => x.lat + ',' + x.lng;
-	const locations = eventStore.allEvents
+	const getKey = (x: Coordinate) => x.lat + ',' + x.lng;
+	// modify to props
+	const locations = (props.allEvents ?? eventStore.allEvents)
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
 			event: x,
 			label: x.title,
-			lat: x.location.latitude,
-			lng: x.location.longitude,
+			lat: x.location?.latitude,
+			lng: x.location?.longitude,
 		}));
 	locations.forEach((x) => {
+		// @ts-ignore
 		texts[getKey(x)] = x.label;
+		// @ts-ignore
 		coordinatesToEvents[getKey(x)] = x.event;
 	});
+	// @ts-ignore
 	const coordinates = _.uniq(locations.map((x) => getKey(x))).map((x) => ({
 		lat: Number(x.split(',')[0]),
 		lng: Number(x.split(',')[1]),
 	}));
 
+	// @ts-ignore
 	window.selectedSearchLocation = undefined;
 
 	// --- side effects -----------------------------------------------------------------
@@ -94,7 +117,7 @@ const MapContainer = () => {
 	const iStyle = 'min-width: 13px; text-align: center;';
 	const rowContainerStyle = 'display: flex; flex-direction: row; align-items: center; gap: 10px;';
 
-	const buildInfoWindowContent = (event) => {
+	const buildInfoWindowContent = (event: any) => {
 		const title = `<div style="font-size:20px; margin-inline-end: 5px;"><b><u>${event.title}</u></b></div>`;
 		const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${event.location.address}</span></span>`;
 
@@ -102,25 +125,34 @@ const MapContainer = () => {
 			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${event.description}</span></span>`
 			: '';
 
-		const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
-		let scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED');
-		if (calendarEvent) {
-			const dtStart = toDate(calendarEvent.start);
-			const dtEnd = toDate(calendarEvent.end);
-			const dt = formatDate(dtStart);
-			const startTime = dtStart?.toLocaleTimeString('en-US', { hour12: false });
-			const endTime = dtEnd?.toLocaleTimeString('en-US', { hour12: false });
-			const start = formatTime(startTime);
-			const end = formatTime(endTime);
+		let scheduledTo = '';
+		if (!props) {
+			const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
 
-			scheduledTo = `${dt} ${end}-${start} (${getDurationString(eventStore, calendarEvent.duration)})`;
+			scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED');
+			if (calendarEvent) {
+				const dtStart = toDate(calendarEvent.start);
+				const dtEnd = toDate(calendarEvent.end);
+				const dt = formatDate(dtStart);
+				const startTime = dtStart?.toLocaleTimeString('en-US', { hour12: false });
+				const endTime = dtEnd?.toLocaleTimeString('en-US', { hour12: false });
+				const start = formatTime(startTime);
+				const end = formatTime(endTime);
+
+				scheduledTo = `${dt} ${end}-${start} (${getDurationString(eventStore, calendarEvent.duration)})`;
+			}
+
+			scheduledTo = `<span style='${rowContainerStyle}'><i style='${iStyle}' class='fa fa-calendar' aria-hidden='true'></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
 		}
 
-		scheduledTo = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-calendar" aria-hidden="true"></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
-
-		let category =
-			event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
-		category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
+		let category = props
+			? event.category
+			: event.extendedProps && event.extendedProps.categoryId
+			? event.extendedProps.categoryId
+			: event.category;
+		if (!props) {
+			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
+		}
 		const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
 
 		let preferredTime =
@@ -159,7 +191,7 @@ const MapContainer = () => {
 			}
 			return (
 				<Slider {...sliderSettings}>
-					{images.map((image) => (
+					{images.map((image: string) => (
 						<img
 							className="slider-image"
 							style={{
@@ -193,7 +225,7 @@ const MapContainer = () => {
 			return ReactDOMServer.renderToString(
 				<div className="js-image-slider">
 					<ul>
-						{images.slice(0, 3).map((image, idx) => (
+						{images.slice(0, 3).map((image: string, idx: number) => (
 							<li>
 								<img src={image} alt={`#${idx + 1}/${images.length}`} />
 							</li>
@@ -204,8 +236,11 @@ const MapContainer = () => {
 			);
 		}
 
+		const nameLink = props.getNameLink ? props.getNameLink(event) : undefined;
+		const titleBlock = nameLink ? `<a href="${nameLink}" target='_blank'>${title}</a>` : title;
+
 		return `<div style="display: flex; flex-direction: column; gap: 6px; max-width: 450px; padding: 10px;">
-                                ${title}
+                                ${titleBlock}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
                                 ${images?.length ? renderJavascriptImageSlider() : ''}
 								${images?.length ? '<hr style="height: 1px; width: 100%;margin-block: 3px;" />' : ''}
@@ -220,18 +255,21 @@ const MapContainer = () => {
                              </div>`;
 	};
 
-	const setGoogleMapRef = (map, maps) => {
+	const setGoogleMapRef = (map: any, maps: any) => {
 		googleMapRef = map;
 		googleRef = maps;
 
 		infoWindow = new googleRef.InfoWindow();
 
-		const getIconUrl = (event) => {
+		const getIconUrl = (event: any) => {
 			let icon = '';
 			let bgColor = priorityToMapColor[event.priority].replace('#', '');
 			let category =
 				event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
-			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
+
+			category = props.allEvents
+				? event.category
+				: eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 
 			category = category ? category.toLowerCase() : '';
 			const title = event.title.toLowerCase();
@@ -285,8 +323,9 @@ const MapContainer = () => {
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
 		};
 
-		const initMarkerFromCoordinate = (coordinate) => {
+		const initMarkerFromCoordinate = (coordinate: Coordinate) => {
 			const key = getKey(coordinate);
+			// @ts-ignore
 			const event = coordinatesToEvents[key];
 
 			// marker + marker when hovering
@@ -363,7 +402,7 @@ const MapContainer = () => {
 
 		markers = coordinates && coordinates.map((coordinate) => initMarkerFromCoordinate(coordinate));
 
-		googleRef.event.addListener(map, 'click', function (event) {
+		googleRef.event.addListener(map, 'click', function (_event: any) {
 			infoWindow.close();
 		});
 
@@ -658,7 +697,9 @@ const MapContainer = () => {
 		for (var i = 0; i < markers.length; i++) {
 			const marker = markers[i];
 			if (bounds.contains(marker.getPosition()) === true) {
-				const event = eventStore.allEvents.find((x) => x.id.toString() === marker.eventId.toString());
+				const event = (props.allEvents ?? eventStore.allEvents).find(
+					(x) => x.id.toString() === marker.eventId.toString()
+				);
 				visibleItems.push({ event, marker });
 				count++;
 			}

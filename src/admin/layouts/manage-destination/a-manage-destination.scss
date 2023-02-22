@@ -7,6 +7,12 @@
   flex: 1 1 0;
   min-width: 0;
 
+  .manage-destination-items-map-container {
+    padding-inline: 90px;
+    background-color: #ebebeb;
+    padding-block: 20px;
+  }
+
   .manage-destination-navigation {
     background-color: rgba(0, 0, 0, 0.05);
     padding: 3px;
