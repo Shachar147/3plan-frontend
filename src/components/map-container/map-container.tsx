@@ -177,7 +177,7 @@ const MapContainer = (props: MapContainerProps) => {
 		const url = BuildEventUrl(event.location);
 		const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`;
 
-		const moreInfoUrl = event.moreInfo ?? event.extendedProps.moreInfo;
+		const moreInfoUrl = event.moreInfo ?? event.extendedProps?.moreInfo;
 		const moreInfoBlock = moreInfoUrl
 			? `<span><a href="${moreInfoUrl}" target="_blank">${TranslateService.translate(
 					eventStore,
@@ -779,7 +779,7 @@ const MapContainer = (props: MapContainerProps) => {
 			const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
 			return priority1 - priority2;
 		})
-		.filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue) !== -1);
+		.filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
 
 	return (
 		<div
