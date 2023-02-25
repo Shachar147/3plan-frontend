@@ -105,13 +105,30 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 															)
 															.join('<br/>')
 													: TranslateService.translate(eventStore, 'NO_DETAILS'),
+											Z:
+												result.updatedCategories.length > 0
+													? result.updatedCategories
+															.map((x) =>
+																TranslateService.translate(
+																	eventStore,
+																	'ADMIN_SIDEBAR.FIX_ITEMS_RESULTS_MODAL.RESULT2',
+																	{
+																		X: x.name,
+																		Y: x.category,
+																		Z: x.newCategory,
+																	}
+																)
+															)
+															.join('<br/>')
+													: TranslateService.translate(eventStore, 'NO_DETAILS'),
 										}
 									)
 									.then(() => {
 										window.location.reload();
 									});
 							})
-							.catch(() => {
+							.catch((error) => {
+								debugger;
 								ReactModalService.internal.alertMessage(
 									eventStore,
 									'MODALS.ERROR.TITLE',

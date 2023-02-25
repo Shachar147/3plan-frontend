@@ -2445,6 +2445,11 @@ const ReactModalService = {
 		eventStore.modalValues['selectedLocation'] = window.selectedLocation?.address;
 		eventStore.modalValues['openingHours'] = currentEvent.openingHours;
 		const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
+
+		// // hack
+		// if (initialData.categoryId || initialData.extra?.categoryId) {
+		// 	initialData.category = initialData.categoryId || initialData.extra?.categoryId;
+		// }
 		const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData);
 
 		inputs.push({

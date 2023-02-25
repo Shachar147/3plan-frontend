@@ -24,6 +24,7 @@ import _ from 'lodash';
 import { getTinderServerAddress } from '../../../config/config';
 import TriplanViewSelector from '../../../components/triplan-header/view-selector/triplan-view-selector';
 import { getAdminViewSelectorOptions } from '../../../utils/ui-utils';
+import TriplanSearch from '../../../components/triplan-header/triplan-search/triplan-search';
 
 function AManageDestination() {
 	const adminStore = useContext(adminStoreContext);
@@ -48,7 +49,21 @@ function AManageDestination() {
 			);
 		}
 
-		const activities = adminStore.placesByDestination.get(currDestination) ?? [];
+		const activities =
+			adminStore.placesByDestination.get(currDestination)!.filter((a) => {
+				const searchValue = adminStore.searchValue;
+				if (searchValue === '') return true;
+				else {
+					return (
+						a.name.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+						a.description.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 ||
+						((a.location as any)?.address ?? '').toLowerCase().indexOf(searchValue.toLowerCase()) !== -1
+					);
+				}
+			}) ?? [];
+
+		const searchValue = adminStore.searchValue;
+		console.log('searchValue', searchValue, activities.length);
 
 		function renderNavigation() {
 			return (
@@ -85,6 +100,13 @@ function AManageDestination() {
 			<div className="manage-destination-items bright-scrollbar">
 				{renderNavigation()}
 				<DestinationSlider currDestination={currDestination} />
+				<div className="margin-bottom-5 width-100-percents flex-row justify-content-center">
+					<TriplanSearch
+						isHidden={false}
+						value={adminStore.searchValue}
+						onChange={(val) => adminStore.setSearchValue(val)}
+					/>
+				</div>
 				<div className="flex-row justify-content-center width-100-percents direction-ltr">
 					<TriplanViewSelector
 						value={adminStore.viewMode}
@@ -95,7 +117,7 @@ function AManageDestination() {
 				{adminStore.viewMode === AdminViewMode.map && (
 					<div className="manage-destination-items-map-container" key={currDestination}>
 						<MapContainer
-							allEvents={Array.from(adminStore.placesByDestination.get(currDestination)!)
+							allEvents={activities
 								.filter((x) => x.location)
 								.map((x) => {
 									return {

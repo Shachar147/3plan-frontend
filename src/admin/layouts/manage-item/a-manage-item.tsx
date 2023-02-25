@@ -26,6 +26,9 @@ import ReactModalService from '../../../services/react-modal-service';
 import IconSelector from '../../../components/inputs/icon-selector/icon-selector';
 import * as _ from 'lodash';
 import { LocationData } from '../../../utils/interfaces';
+import SelectInput from '../../../components/inputs/select-input/select-input';
+import { TriplanPriority } from '../../../utils/enums';
+import { ucfirst } from '../../../utils/utils';
 
 interface ManageItemData {
 	items: TinderItem[];
@@ -49,7 +52,7 @@ const itemInputs = [
 	{ more_info: 'text' },
 	{ duration: 'text' }, // time format xx:xx
 	{ icon: 'icon' },
-	{ priority: 'select' },
+	{ priority: 'priority' },
 	{ location: 'locationPicker' }, // todo complete
 	{ openingHours: 'openingHoursPicker' }, // todo complete
 	{ rate: 'text' },
@@ -413,6 +416,8 @@ function AManageItem() {
 			return renderIconInput({ item, type, isReadOnly, field, value, isUnsaved });
 		} else if (type === 'locationPicker') {
 			return renderLocationInput({ item, type, isReadOnly, field, value, isUnsaved });
+		} else if (type === 'priority') {
+			return renderPriorityInput({ item, type, isReadOnly, field, value, isUnsaved });
 		}
 		// todo complete
 		return renderTextInput({ item, type: 'text', isReadOnly: true, field, value, isUnsaved });
@@ -634,6 +639,41 @@ function AManageItem() {
 					</a>
 				) : undefined}
 			</>
+		);
+	}
+
+	function renderPriorityInput(props: RenderInputProps) {
+		const { item, type, isReadOnly, field, value, isUnsaved } = props;
+
+		const values = Object.keys(TriplanPriority);
+		const keys = Object.values(TriplanPriority);
+
+		const options = Object.values(TriplanPriority)
+			.filter((x) => !Number.isNaN(Number(x)))
+			.map((val, index) => ({
+				value: values[index],
+				label: ucfirst(TranslateService.translate(eventStore, keys[index].toString())),
+			}));
+
+		return (
+			<SelectInput
+				// ref={ref}
+				readOnly={isReadOnly}
+				id={field}
+				name={field}
+				options={options}
+				value={item[field] ? options.find((i) => i.value === item[field]) : undefined}
+				placeholderKey={'TYPE_TO_SEARCH_PLACEHOLDER'}
+				modalValueName={field}
+				// maxMenuHeight={extra.maxMenuHeight}
+				// removeDefaultClass={extra.removeDefaultClass}
+				onChange={(data) => {
+					setItem({
+						...item,
+						[field]: data.value,
+					});
+				}}
+			/>
 		);
 	}
 

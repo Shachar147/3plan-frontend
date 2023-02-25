@@ -22,6 +22,7 @@ interface SelectInputProps {
 	maxMenuHeight?: number;
 	onChange?: (value: any) => any;
 	removeDefaultClass?: boolean;
+	value?: any;
 }
 export interface SelectInputRef {
 	getValue(): SelectInputOption;
@@ -29,7 +30,7 @@ export interface SelectInputRef {
 function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 	const eventStore = useContext(eventStoreContext);
 	const { wrapperClassName, readOnly, id, name, options, placeholderKey, modalValueName, maxMenuHeight } = props;
-	const initialValue = eventStore.modalValues ? eventStore.modalValues[modalValueName] : undefined;
+	const initialValue = props.value ?? (eventStore.modalValues ? eventStore.modalValues[modalValueName] : undefined);
 	const [value, setValue] = useState(initialValue);
 
 	// make our ref know our functions, so we can use them outside.

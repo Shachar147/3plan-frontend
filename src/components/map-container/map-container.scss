@@ -105,6 +105,10 @@
 
 			img {
 				height: 100px;
+				width: 150px;
+				min-height: 100px;
+				max-height: 100px;
+				min-width: 150px;
 				max-width: 150px;
 			}
 
@@ -122,4 +126,10 @@
 			}
 		}
 	}
+}
+
+.marker-label {
+	position: relative;
+	top: 20px;
+	text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 }

@@ -10,6 +10,8 @@ export class AdminStore {
 
 	@observable viewMode = AdminViewMode.list;
 
+	@observable searchValue: string = '';
+
 	// sidebar actions
 	@observable isDownloading: boolean = false;
 	@observable isFixing: boolean = false;
@@ -95,6 +97,11 @@ export class AdminStore {
 	@action
 	setViewMode(newVideMode: AdminViewMode) {
 		this.viewMode = newVideMode;
+	}
+
+	@action
+	setSearchValue(serachvalue: string) {
+		this.searchValue = serachvalue;
 	}
 
 	// ----------------------------------------------------------

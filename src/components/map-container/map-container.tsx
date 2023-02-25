@@ -145,12 +145,13 @@ const MapContainer = (props: MapContainerProps) => {
 			scheduledTo = `<span style='${rowContainerStyle}'><i style='${iStyle}' class='fa fa-calendar' aria-hidden='true'></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
 		}
 
-		let category = props
-			? event.category
-			: event.extendedProps && event.extendedProps.categoryId
-			? event.extendedProps.categoryId
-			: event.category;
-		if (!props) {
+		let category =
+			Object.keys(props).length > 0
+				? event.category
+				: event.extendedProps && event.extendedProps.categoryId
+				? event.extendedProps.categoryId
+				: event.category;
+		if (!props || !Object.keys(props).length) {
 			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 		}
 		const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
@@ -159,7 +160,8 @@ const MapContainer = (props: MapContainerProps) => {
 			event.extendedProps && Object.keys(event.extendedProps).includes('preferredTime')
 				? event.extendedProps.preferredTime
 				: event.preferredTime;
-		if (preferredTime != undefined) {
+
+		if (preferredTime) {
 			preferredTime = TriplanEventPreferredTime[preferredTime];
 		} else {
 			preferredTime = TriplanEventPreferredTime.unset;
@@ -174,6 +176,14 @@ const MapContainer = (props: MapContainerProps) => {
 		// const url = `https://maps.google.com/maps?q=${lat},${lng}`;
 		const url = BuildEventUrl(event.location);
 		const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`;
+
+		const moreInfoUrl = event.moreInfo ?? event.extendedProps.moreInfo;
+		const moreInfoBlock = moreInfoUrl
+			? `<span><a href="${moreInfoUrl}" target="_blank">${TranslateService.translate(
+					eventStore,
+					'MORE_INFO'
+			  )}</a></span>`
+			: '';
 
 		let images = event.extendedProps?.images ?? event.images;
 		const sliderSettings = {
@@ -209,7 +219,10 @@ const MapContainer = (props: MapContainerProps) => {
 		function renderJavascriptImageSlider() {
 			if (!images) return null;
 			if (typeof images === 'string') {
-				images = images.split('\n').map((image) => image.trim());
+				images = images
+					.split('\n')
+					.map((image) => image.trim())
+					.filter((image) => image !== '');
 			}
 			//
 			// const str = `<div class="js-image-slider">
@@ -221,6 +234,10 @@ const MapContainer = (props: MapContainerProps) => {
 			// console.log(str, typeof str);
 			//
 			// return str;
+
+			if (!images.length) {
+				return null;
+			}
 
 			return ReactDOMServer.renderToString(
 				<div className="js-image-slider">
@@ -252,6 +269,7 @@ const MapContainer = (props: MapContainerProps) => {
                                 ${preferredHoursBlock}
                                 <hr style="height: 1px; width: 100%;margin-block: 3px;" />
                                 ${urlBlock}
+                                ${moreInfoBlock}
                              </div>`;
 	};
 
@@ -286,6 +304,10 @@ const MapContainer = (props: MapContainerProps) => {
 				tourism: 'icons/onion/1715-tower_4x.png',
 				flowers: 'icons/onion/1582-garden-flower_4x.png',
 				desserts: 'icons/onion/1607-ice-cream_4x.png',
+				cities: 'icons/onion/1546-city-buildings_4x.png',
+				mountains: 'icons/onion/1634-mountain_4x.png',
+				lakes: 'icons/onion/1697-spa_4x.png',
+				trains: 'icons/onion/1716-train_4x.png',
 			};
 
 			if (isMatching(title, ['basketball', 'כדורסל'])) {
@@ -304,9 +326,11 @@ const MapContainer = (props: MapContainerProps) => {
 				isMatching(title, ['nature', 'flower', 'garden', 'גן ה', 'גני ה', 'פרח', 'טבע'])
 			) {
 				icon = iconsMap['flowers'];
-			} else if (isMatching(category, ['attraction', 'אטרקציות', 'פעילויות'])) {
+			} else if (isMatching(category, ['attraction', 'attractions', 'אטרקציות', 'פעילויות'])) {
 				icon = iconsMap['attractions'];
-			} else if (isMatching(category, ['beach', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])) {
+			} else if (
+				isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
+			) {
 				icon = iconsMap['beach'];
 			} else if (isMatching(category, ['club', 'cocktail', 'beer', 'bar', 'מועדונים', 'ברים', 'מסיבות'])) {
 				icon = iconsMap['nightlife'];
@@ -317,6 +341,26 @@ const MapContainer = (props: MapContainerProps) => {
 				icon = iconsMap['shopping'];
 			} else if (isMatching(category, ['tourism', 'תיירות', 'אתרים'])) {
 				icon = iconsMap['tourism'];
+			} else if (
+				isMatching(title, ['city', 'עיירה']) ||
+				isMatching(category, ['cities', 'עיירות', 'כפרים', 'village', 'ערים'])
+			) {
+				icon = iconsMap['cities'];
+			} else if (
+				isMatching(title, ['mountain', 'cliff', ' הר ', 'פסגת']) ||
+				isMatching(category, ['mountains', 'הרים'])
+			) {
+				icon = iconsMap['mountains'];
+			} else if (
+				isMatching(title, ['lake', 'lakes', ' נהר ', 'אגם']) ||
+				isMatching(category, ['lakes', 'נהרות', 'אגמים'])
+			) {
+				icon = iconsMap['lakes'];
+			} else if (
+				isMatching(title, ['rollercoaster', 'roller coaster', 'רכבת']) ||
+				isMatching(category, ['trains', 'roller coasters', 'רכבות'])
+			) {
+				icon = iconsMap['trains'];
 			} else if (icon === '') {
 				return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
 			}
@@ -341,7 +385,20 @@ const MapContainer = (props: MapContainerProps) => {
 			// set marker
 			const refMarker = new googleRef.Marker({
 				position: { lat: coordinate.lat, lng: coordinate.lng },
+
 				// label: texts[key],
+				// labelContent: 'A',
+				// labelAnchor: new google.maps.Point(3, 30),
+				// labelClass: 'labels', // the CSS class for the label
+				// labelInBackground: false,
+				label: {
+					text: texts[key],
+					color: '#c0bbbb',
+					fontSize: '10px',
+					fontWeight: 'bold',
+					className: 'marker-label',
+				},
+
 				title: texts[key],
 				icon: markerIcon,
 				// label: event.icon
@@ -507,6 +564,12 @@ const MapContainer = (props: MapContainerProps) => {
 	const getOptions = () => {
 		const noDefaultMarkers = {
 			featureType: 'poi',
+			elementType: 'labels',
+			stylers: [{ visibility: 'off' }],
+		};
+
+		const moMountainMarkers = {
+			featureType: 'landscape',
 			elementType: 'labels',
 			stylers: [{ visibility: 'off' }],
 		};
@@ -683,6 +746,7 @@ const MapContainer = (props: MapContainerProps) => {
 			styles: [
 				...lightModeStyles,
 				// ...darkModeStyles,
+				moMountainMarkers,
 				noDefaultMarkers,
 				noRoadLabels,
 			],

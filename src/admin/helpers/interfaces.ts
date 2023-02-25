@@ -47,6 +47,12 @@ export type FixItemsResult = {
 		destination: 'N/A';
 		newDestination: string;
 	}[];
+	updatedCategories: {
+		id: number;
+		name: string;
+		category: 'N/A';
+		newCategory: string;
+	}[];
 };
 
 export type CreateInstagramItemsResult = {
