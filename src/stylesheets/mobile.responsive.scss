@@ -348,6 +348,21 @@
 
 	.map-container {
 		height: 100vh;
+
+		.map-info-window-title {
+			font-size: 14px !important;
+		}
+
+		.js-image-slider {
+			img {
+				height: 50px;
+				width: 75px;
+				min-height: 50px;
+				max-height: 50px;
+				min-width: 75px;
+				max-width: 75px;
+			}
+		}
 	}
 
 	.login-page,
