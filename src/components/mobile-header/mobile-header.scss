@@ -11,7 +11,8 @@ body.rtl {
   top: 0;
   left: 0;
   z-index: 99999;
-  background-color: #eaeff5; // #eeeeee;
+  //background-color: #eaeff5; // #eeeeee;
+
   border-bottom: 1px solid white;
   display: flex;
   justify-content: space-between;
@@ -31,4 +32,10 @@ body.rtl {
       font-weight: normal;
     }
   }
+}
+
+.mobile-header,
+.mobile-header .mobile-navbar,
+.mobile-header .mobile-trip-name{
+  background-color: #e1e7ed !important;
 }

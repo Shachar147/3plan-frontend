@@ -79,7 +79,7 @@ export class EventStore {
 	@observable isLoading = false;
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
-	@observable isSearchOpen = false;
+	@observable isSearchOpen = true;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();

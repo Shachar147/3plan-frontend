@@ -24,6 +24,7 @@ import { CalendarEvent, SidebarEvent } from '../../utils/interfaces';
 import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
+import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -164,12 +165,12 @@ function MainPage(props: MainPageProps) {
 		if (eventStore.isMobile && currentMobileView !== ViewMode.list) return null;
 
 		const options = [
-			{
-				key: ListViewSummaryMode.box,
-				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX'),
-				// icon: (<i className="fa fa-map-o black-color" aria-hidden="true"></i>),
-				// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
-			},
+			// {
+			// 	key: ListViewSummaryMode.box,
+			// 	name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX'),
+			// 	// icon: (<i className="fa fa-map-o black-color" aria-hidden="true"></i>),
+			// 	// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+			// },
 			{
 				key: ListViewSummaryMode.noDescriptions,
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS'),
@@ -234,25 +235,39 @@ function MainPage(props: MainPageProps) {
 
 	function renderCalendarView() {
 		if (eventStore.isMobile && currentMobileView !== ViewMode.calendar) return null;
-		return (
-			<div
-				className={getClasses(
-					['calender-container bright-scrollbar flex-1-1-0'],
-					!eventStore.isCalendarView && 'opacity-0 position-absolute'
-				)}
-				ref={TriplanCalendarContainerRef}
-			>
-				<TriplanCalendar
-					ref={TriplanCalendarRef}
-					defaultCalendarEvents={defaultCalendarEvents}
-					onEventReceive={removeEventFromSidebarById}
-					allEvents={eventStore.allEvents}
-					addEventToSidebar={addEventToSidebar}
-					// updateAllEventsEvent={updateAllEventsEvent}
+		const renderCustomDates = () => {
+			if (!TriplanCalendarRef) return;
+			return (
+				<CustomDatesSelector
+					TriplanCalendarRef={TriplanCalendarRef}
 					customDateRange={eventStore.customDateRange}
-					categories={eventStore.categories}
-					addToEventsToCategories={addToEventsToCategories}
+					setCustomDateRange={(val) => eventStore.setCustomDateRange(val)}
 				/>
+			);
+		};
+
+		return (
+			<div className="main-page-calendar-view flex-column gap-20">
+				{eventStore.isMobile && renderCustomDates()}
+				<div
+					className={getClasses(
+						['calender-container bright-scrollbar flex-1-1-0'],
+						!eventStore.isCalendarView && 'opacity-0 position-absolute'
+					)}
+					ref={TriplanCalendarContainerRef}
+				>
+					<TriplanCalendar
+						ref={TriplanCalendarRef}
+						defaultCalendarEvents={defaultCalendarEvents}
+						onEventReceive={removeEventFromSidebarById}
+						allEvents={eventStore.allEvents}
+						addEventToSidebar={addEventToSidebar}
+						// updateAllEventsEvent={updateAllEventsEvent}
+						customDateRange={eventStore.customDateRange}
+						categories={eventStore.categories}
+						addToEventsToCategories={addToEventsToCategories}
+					/>
+				</div>
 			</div>
 		);
 	}
