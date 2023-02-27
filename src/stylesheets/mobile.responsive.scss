@@ -443,6 +443,13 @@
 		}
 	}
 
+	.custom-dates-line {
+		input[type='date'] {
+			background-color: white !important;
+			color: #2d2d2d !important;
+		}
+	}
+
 	body.rtl {
 		.main-page {
 			.main-page-calendar-view {
