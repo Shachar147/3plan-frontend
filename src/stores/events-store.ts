@@ -39,6 +39,7 @@ const defaultModalSettings = {
 	// hideClass: {
 	// 	popup: 'animate__animated animate__fadeOutUp'
 	// }
+	customOverlayClass: 'z-index-99999999',
 };
 
 const minLoadTimeInSeconds = 1.5;

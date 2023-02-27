@@ -85,7 +85,7 @@ function MainPage(props: MainPageProps) {
 		const idToEvent: Record<string, SidebarEvent> = {};
 		const idToCategory: Record<string, number> = {};
 
-		const sidebarEvents:Record<number, SidebarEvent[]> = eventStore.getSidebarEvents;
+		const sidebarEvents: Record<number, SidebarEvent[]> = eventStore.getSidebarEvents;
 
 		Object.keys(sidebarEvents).map((category: string) => {
 			const categoryId = Number(category);
@@ -139,7 +139,7 @@ function MainPage(props: MainPageProps) {
 		}
 	}
 
-	function removeEventFromSidebarById(eventId: number|string) {
+	function removeEventFromSidebarById(eventId: number | string) {
 		const newEvents: Record<number, SidebarEvent[]> = { ...eventStore.sidebarEvents };
 		const newEventsToCategories = { ...eventsToCategories };
 		Object.keys(newEvents).forEach((category) => {
@@ -150,7 +150,9 @@ function MainPage(props: MainPageProps) {
 			}
 		});
 		const newCalendarEvents: CalendarEvent[] = [
-			...eventStore.calendarEvents.filter((calendarEvent) => calendarEvent?.id?.toString() !== eventId.toString()),
+			...eventStore.calendarEvents.filter(
+				(calendarEvent) => calendarEvent?.id?.toString() !== eventId.toString()
+			),
 			eventStore.allEvents.find((e) => e.id.toString() === eventId.toString()),
 		] as CalendarEvent[];
 		eventStore.setCalendarEvents(newCalendarEvents);
@@ -287,8 +289,9 @@ function MainPage(props: MainPageProps) {
 
 	function renderMobileFooterNavigator() {
 		const viewOptions = getViewSelectorOptions(eventStore, true);
+		const isModalOpened = eventStore.modalSettings.show || eventStore.secondModalSettings.show;
 		return (
-			<div className="mobile-footer-navigator">
+			<div className={getClasses('mobile-footer-navigator', isModalOpened && 'z-index-1000')}>
 				{viewOptions.map((viewOption) => (
 					<a title={viewOption.name} onClick={() => setCurrentMobileView(viewOption.key)}>
 						{currentMobileView === viewOption.key ? viewOption.iconActive : viewOption.icon}

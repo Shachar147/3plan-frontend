@@ -19,8 +19,10 @@ function MobileHeader(options: MobileHeaderProps) {
 
 	const homeUrl = options.adminMode ? '/admin' : '/';
 
+	const isModalOpened = eventStore.modalSettings.show || eventStore.secondModalSettings.show;
+
 	return (
-		<div className="mobile-header">
+		<div className={getClasses('mobile-header', isModalOpened && 'z-index-1000')}>
 			<div className="mobile-header-row">
 				<div className="flex-row align-items-center">
 					{withLogo && (

@@ -351,5 +351,8 @@
 	"MOVE_TO_END_OF_LIST": "Move to end of list",
 	"MOVE_TO_END_OF_LIST.TOOLTIP": "Clicking on this button will move the activity you are looking at right now to the end of the list in the manage-destination-items page",
 	"MOVED_LATER_SUCCESSFULLY": "Activity successfully moved to the end of the list",
-	"NOT_FOUND_ITEM": "Item not found"
+	"NOT_FOUND_ITEM": "Item not found",
+	"DUPLICATE_TRIP_MODAL.TITLE": "Duplicate trip",
+	"MODALS.DUPLICATED.TITLE": "Duplicated!",
+	"MODALS.DUPLICATED_TRIP.CONTENT": "Trip have been duplicated"
 }

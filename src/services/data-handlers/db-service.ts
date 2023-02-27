@@ -278,4 +278,18 @@ export class DBService implements BaseDataHandler {
 			}
 		);
 	}
+
+	async duplicateTrip(_eventStore: EventStore, tripName: string, newTripName: string) {
+		await apiPost(
+			this,
+			`/trip/duplicate`,
+			{ name: tripName, newName: newTripName },
+			async function (res: any) {},
+			function (error: any, error_retry: number) {
+				// console.log(error);
+				// let req_error = error.message;
+			},
+			function () {}
+		);
+	}
 }

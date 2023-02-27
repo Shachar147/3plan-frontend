@@ -1,5 +1,15 @@
 .map-container {
 	position: relative;
+	height: calc(100vh - 10px);
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	.search-container {
+		display: flex;
+		flex-grow: 0;
+	}
 
 	.map-search-location-input {
 		position: relative;
@@ -38,6 +48,10 @@
 		/* border-radius: 20px; */
 		color: #666666;
 		border: #e6e6e6;
+
+		max-height: 200px;
+		height: 200px;
+		min-height: 200px;
 
 		//background-color: whitesmoke;
 

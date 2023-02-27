@@ -428,5 +428,8 @@
 	"MOVE_TO_END_OF_LIST": "העבר לסוף הרשימה",
 	"MOVE_TO_END_OF_LIST.TOOLTIP": "לחיצה על כפתור זה תעביר את הפעילות שאתה מסתכל עליה כרגע לסוף הרשימה בעמוד ניהול הפעילויות של יעד זה",
 	"MOVED_LATER_SUCCESSFULLY": "הפעילות הועברה בהצלחה לסוף הרשימה",
-	"NOT_FOUND_ITEM": "פעילות לא קיימת"
+	"NOT_FOUND_ITEM": "פעילות לא קיימת",
+	"DUPLICATE_TRIP_MODAL.TITLE": "שכפל טיול",
+	"MODALS.DUPLICATED.TITLE": "שוכפל!",
+	"MODALS.DUPLICATED_TRIP.CONTENT": "הטיול שוכפל בהצלחה"
 }

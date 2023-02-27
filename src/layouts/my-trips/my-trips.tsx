@@ -126,6 +126,16 @@ function MyTrips() {
 		ReactModalService.openEditTripModal(eventStore, LSTripName);
 	}
 
+	function onDuplicateTrip(e: any, LSTripName: any) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (Object.keys(eventStore.modalValues).length === 0) {
+			eventStore.modalValues.name = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
+		}
+		ReactModalService.openDuplicateTripModal(eventStore, LSTripName);
+	}
+
 	function onDeleteTrip(e: any, LSTripName: any) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -172,12 +182,13 @@ function MyTrips() {
 						className="fa fa-pencil-square-o"
 						aria-hidden="true"
 						onClick={(e) => onEditTrip(e, LSTripName)}
-					></i>
+					/>
+					<i className="fa fa-files-o" aria-hidden="true" onClick={(e) => onDuplicateTrip(e, LSTripName)} />
 					<i
 						className="fa fa-trash-o position-relative top--1"
 						aria-hidden="true"
 						onClick={(e) => onDeleteTrip(e, LSTripName)}
-					></i>
+					/>
 				</div>
 			);
 		}

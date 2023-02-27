@@ -782,16 +782,7 @@ const MapContainer = (props: MapContainerProps) => {
 		.filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
 
 	return (
-		<div
-			className="map-container"
-			style={{
-				height: 'CALC(100vh - 200px)',
-				width: '100%',
-				display: 'flex',
-				flexDirection: 'column',
-				gap: '10px',
-			}}
-		>
+		<div className="map-container">
 			<div className={'map-header'}>
 				<div className={'map-search-location-input'}>
 					<input
@@ -871,7 +862,7 @@ const MapContainer = (props: MapContainerProps) => {
 					/>
 				))}
 			</GoogleMapReact>
-			<div className={getClasses('visible-items-pane', eventStore.isMobile && 'mobile')}>
+			<div className={getClasses('visible-items-pane', 'bright-scrollbar', eventStore.isMobile && 'mobile')}>
 				<div className={'visible-items-header'}>
 					<b>{TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.TITLE')}:</b>
 				</div>

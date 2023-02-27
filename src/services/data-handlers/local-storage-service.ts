@@ -262,6 +262,27 @@ export class LocalStorageService implements BaseDataHandler {
 		localStorage.setItem(LS_DATA_SOURCE, dataSource);
 	}
 
+	duplicateTrip(eventStore: EventStore, tripName: string, dupTripName: string): Trip {
+		const data = {
+			allEvents: this.getAllEvents(eventStore, tripName),
+			calendarEvents: this.getCalendarEvents(tripName),
+			calendarLocale: this.getCalendarLocale(tripName),
+			categories: this.getCategories(eventStore, tripName),
+			dateRange: this.getDateRange(tripName),
+			name: dupTripName,
+			sidebarEvents: this.getSidebarEvents(tripName),
+		};
+
+		this.setAllEvents(data.allEvents, dupTripName);
+		this.setCalendarEvents(data.calendarEvents, dupTripName);
+		this.setCalendarLocale(data.calendarLocale, dupTripName);
+		this.setCategories(data.categories, dupTripName);
+		this.setDateRange(data.dateRange, dupTripName);
+		this.setSidebarEvents(data.sidebarEvents, dupTripName);
+
+		return data;
+	}
+
 	// --- LOCAL STORAGE --------------------------------------------------------------------
 	shouldShowContinueAsGuest(): boolean {
 		const shouldShow = localStorage.getItem(this.CONTINUE_AS_GUEST_MODAL_LS_KEY);

@@ -422,6 +422,7 @@ const getDefaultSettings = (eventStore: EventStore) => {
 		cancelBtnCssClass: 'link-button',
 		dependencies: [eventStore.modalSettings, eventStore.secondModalSettings, eventStore.modalValues],
 		customClass: 'triplan-react-modal',
+		customContainerClass: 'display-none',
 		reverseButtons: eventStore.getCurrentDirection() === 'rtl',
 		onCancel: () => {
 			ReactModalService.internal.closeModal(eventStore);
@@ -1082,6 +1083,85 @@ const ReactModalService = {
 					eventStore,
 					'MODALS.UPDATED.TITLE',
 					'MODALS.UPDATED_TRIP.CONTENT',
+					'success'
+				);
+
+				setTimeout(() => {
+					window.location.reload();
+				}, 2000);
+			}
+		};
+
+		const content = (
+			<Observer>
+				{() => (
+					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+						{ReactModalRenderHelper.renderInputWithLabel(
+							eventStore,
+							'MODALS.TITLE',
+							ReactModalRenderHelper.renderTextInput(eventStore, 'name', {
+								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+								id: 'new-name',
+							}),
+							'border-top-gray border-bottom-gray padding-bottom-20'
+						)}
+					</div>
+				)}
+			</Observer>
+		);
+
+		const settings = getDefaultSettings(eventStore);
+		ReactModalService.internal.openModal(eventStore, {
+			...settings,
+			title,
+			onConfirm,
+			content,
+			type: 'controlled',
+		});
+	},
+	openDuplicateTripModal: (eventStore: EventStore, LSTripName: string) => {
+		const tripName = LSTripName !== '' ? lsTripNameToTripName(LSTripName) : '';
+		const title = `${TranslateService.translate(eventStore, 'DUPLICATE_TRIP_MODAL.TITLE')}: ${tripName}`;
+
+		const onConfirm = async () => {
+			// @ts-ignore
+			const newName = eventStore.modalValues.name;
+
+			let isOk = true;
+
+			const oldName = tripName;
+			if (oldName !== newName) {
+				// validate title not already exist
+				if (
+					Object.keys(localStorage)
+						.filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1)
+						.map((x) => x.replace(LS_CUSTOM_DATE_RANGE + '-', ''))
+						.filter((LSTripName) => {
+							LSTripName = LSTripName === LS_CUSTOM_DATE_RANGE ? '' : LSTripName;
+							const _tripName = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
+							return _tripName === newName;
+						}).length > 0
+				) {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'MODALS.ERROR.TRIP_NAME_ALREADY_EXIST',
+						'error'
+					);
+					isOk = false;
+					return;
+				}
+			}
+
+			if (isOk) {
+				await eventStore.dataService.duplicateTrip(eventStore, tripName, newName);
+
+				ReactModalService.internal.closeModal(eventStore);
+
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'MODALS.DUPLICATED.TITLE',
+					'MODALS.DUPLICATED_TRIP.CONTENT',
 					'success'
 				);
 

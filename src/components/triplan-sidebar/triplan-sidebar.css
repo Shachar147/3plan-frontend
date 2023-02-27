@@ -3,7 +3,7 @@
 	flex-direction: column;
 	gap: 20px;
 
-	max-height: 945px;
+	/*max-height: 945px;*/ /* causing weird double scroll behavior */
 	overflow-y: auto;
 	position: sticky;
 
