@@ -437,7 +437,10 @@ body.rtl {
 	}
 }
 
-
+div[class$='-control'] {
+	box-shadow: unset !important;
+	border-color: #d6d6d6 !important;
+}
 
 .input-with-label {
 	font-size: 18px;
