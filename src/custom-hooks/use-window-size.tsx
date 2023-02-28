@@ -38,10 +38,10 @@ export function useHandleWindowResize() {
 		const isMobile = width <= 600 || height <= 600;
 
 		runInAction(() => {
-			eventStore.setIsMobile(isMobile);
-			if (isMobile) {
+			if (!eventStore.isMobile && isMobile) {
 				eventStore.setMobileViewMode(DataServices.LocalStorageService.getLastViewMode(eventStore));
 			}
+			eventStore.setIsMobile(isMobile);
 		});
 	}, [windowResolution]);
 }
