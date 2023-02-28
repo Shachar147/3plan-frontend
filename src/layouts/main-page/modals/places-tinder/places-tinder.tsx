@@ -57,7 +57,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 	useEffect(() => {
 		TriplanTinderApiService.getPlacesByDestination().then((results) => {
 			runInAction(() => {
-				setPlacesDataMap(results?.data);
+				setPlacesDataMap(results?.data ?? {});
 				setHasInit(true);
 			});
 		});

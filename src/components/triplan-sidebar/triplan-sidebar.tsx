@@ -440,17 +440,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			return (
 				<>
-					{/*<div style={{ display: "flex", gap: "10px" }}>*/}
-					{/*    <Button*/}
-					{/*        className={getClasses(["padding-inline-start-10 pointer"], eventStore.hideEmptyCategories && 'blue-color')}*/}
-					{/*        onClick={() => {*/}
-					{/*            eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);*/}
-					{/*        }}*/}
-					{/*        flavor={ButtonFlavor.link}*/}
-					{/*        icon={eyeIcon}*/}
-					{/*        text={TranslateService.translate(eventStore, !eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES')}*/}
-					{/*    />*/}
-					{/*</div>*/}
 					<div className="category-actions">
 						<Button
 							disabled={!expandMinimizedEnabled}
@@ -523,16 +512,32 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		let totalDisplayedCategories = 0;
 		const categoriesBlock = eventStore.categories.map((category, index) => {
-			const itemsCount = (eventStore.getSidebarEvents[category.id] || []).filter(
+			const sidebarItemsCount = (eventStore.getSidebarEvents[category.id] || []).filter(
 				(e) => e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1
 			).length;
-			if (eventStore.hideEmptyCategories && itemsCount === 0) {
+
+			const calendarItemsCount = eventStore.calendarEvents.filter((e) => {
+				return (
+					(e.category ?? e.extendedProps?.category) === category.id &&
+					e.title?.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1
+				);
+			}).length;
+
+			const itemsCount = sidebarItemsCount + calendarItemsCount;
+			const totalItemsCountTooltip =
+				calendarItemsCount > 0
+					? TranslateService.translate(eventStore, 'TOTAL_ITEMS_COUNT.TOOLTIP')
+							.replace('{X}', calendarItemsCount.toString())
+							.replace('{Y}', sidebarItemsCount.toString())
+					: undefined;
+
+			if (eventStore.hideEmptyCategories && sidebarItemsCount === 0) {
 				return <></>;
 			}
 			totalDisplayedCategories++;
 
 			const openStyle = {
-				maxHeight: 100 * itemsCount + 90 + 'px',
+				maxHeight: 100 * sidebarItemsCount + 90 + 'px',
 				padding: '10px',
 				transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
 			};
@@ -564,7 +569,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							{category.icon ? `${category.icon} ` : ''}
 							{category.title}
 						</span>
-						<div>({itemsCount})</div>
+						<div title={totalItemsCountTooltip}>
+							({sidebarItemsCount}/{itemsCount})
+						</div>
 						<div style={editIconStyle}>
 							<i
 								className="fa fa-pencil-square-o"

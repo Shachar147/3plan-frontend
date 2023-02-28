@@ -320,7 +320,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			longPressDelay={5}
 			validRange={{
 				start: eventStore.customDateRange.start,
-				end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
+				// end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
+				end: addDays(toDate(eventStore.customDateRange.end), 1),
 			}}
 			slotMinTime={'07:00'}
 		/>

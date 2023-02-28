@@ -424,6 +424,7 @@ const getDefaultSettings = (eventStore: EventStore) => {
 		customClass: 'triplan-react-modal',
 		customContainerClass: 'display-none',
 		reverseButtons: eventStore.getCurrentDirection() === 'rtl',
+		slideUp: true, // default animation - slide up.
 		onCancel: () => {
 			ReactModalService.internal.closeModal(eventStore);
 		},
@@ -433,10 +434,34 @@ const getDefaultSettings = (eventStore: EventStore) => {
 const ReactModalService = {
 	internal: {
 		openModal: (eventStore: EventStore, settings: any, isSecondModal: boolean = false) => {
+			const shouldSlideUp = eventStore.isMobile && settings.slideUp;
+
+			if (shouldSlideUp) {
+				settings.customClass += ' slide-up';
+			}
+
 			if (isSecondModal) {
 				eventStore.setSecondModalSettings(settings);
+
+				if (shouldSlideUp) {
+					setTimeout(() => {
+						eventStore.setSecondModalSettings({
+							...settings,
+							customClass: settings.customClass + ' slided-up',
+						});
+					}, 1);
+				}
 			} else {
 				eventStore.setModalSettings(settings);
+
+				if (shouldSlideUp) {
+					setTimeout(() => {
+						eventStore.setModalSettings({
+							...settings,
+							customClass: settings.customClass + ' slided-up',
+						});
+					}, 1);
+				}
 			}
 		},
 		alertMessage: (
@@ -1379,7 +1404,7 @@ const ReactModalService = {
 		);
 
 		const settings = getDefaultSettings(eventStore);
-		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
+		// if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(
 			eventStore,
 			{
@@ -1842,7 +1867,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className="flex-row justify-content-center gap-10">
+					<div className="add-calendar-event-modal-choose-where">
 						<Button
 							flavor={ButtonFlavor.secondary}
 							// className={className}
@@ -1872,8 +1897,12 @@ const ReactModalService = {
 			</Observer>
 		);
 
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) {
+			settings.customClass += ' slide-up';
+		}
 		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
+			...settings,
 			title,
 			content,
 			// onConfirm,

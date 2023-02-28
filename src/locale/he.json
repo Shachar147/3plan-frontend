@@ -431,5 +431,6 @@
 	"NOT_FOUND_ITEM": "פעילות לא קיימת",
 	"DUPLICATE_TRIP_MODAL.TITLE": "שכפל טיול",
 	"MODALS.DUPLICATED.TITLE": "שוכפל!",
-	"MODALS.DUPLICATED_TRIP.CONTENT": "הטיול שוכפל בהצלחה"
+	"MODALS.DUPLICATED_TRIP.CONTENT": "הטיול שוכפל בהצלחה",
+	"TOTAL_ITEMS_COUNT.TOOLTIP": "{X} פעילויות בלוח השנה, {Y} פעילויות בתפריט."
 }

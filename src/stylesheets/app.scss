@@ -437,61 +437,7 @@ body.rtl {
 	}
 }
 
-/* react modal */
-.sweet-alert {
-	overflow: unset !important;
-	width: fit-content !important;
-	max-width: 800px;
-}
 
-.react-modal {
-	padding: 20px;
-
-	min-height: 220px;
-	max-height: 600px;
-	overflow: auto;
-}
-
-.triplan-react-modal a.btn {
-	padding: 5px !important;
-	padding-inline: 15px !important;
-}
-
-.triplan-react-modal button.primary-button,
-.triplan-react-modal button.secondary-button {
-	/* for delete button when editing calendar event */
-	min-height: 40px;
-	padding: 5px;
-	min-width: 120px;
-	padding-inline: 20px;
-}
-
-.triplan-react-modal {
-	min-width: 500px;
-}
-
-.triplan-react-modal ul {
-	text-align: left;
-}
-
-.sweet-alert,
-.sweet-alert h2 {
-	font-family: GaretBook, Heebo, Arial;
-}
-
-.sweet-alert h2 {
-	position: relative;
-	max-width: 100%;
-	margin: 0 0 0.4em;
-	padding: 0;
-	color: #595959;
-	font-size: 1.875em;
-	font-weight: 600;
-	text-align: center;
-	text-transform: none;
-	word-wrap: break-word;
-	margin-top: 12px;
-}
 
 .input-with-label {
 	font-size: 18px;

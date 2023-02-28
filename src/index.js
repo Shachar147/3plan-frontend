@@ -8,6 +8,7 @@ import './stylesheets/buttons.scss';
 import './stylesheets/app.scss';
 import './stylesheets/rtl.scss';
 import './stylesheets/fontawesome/css/font-awesome.css';
+import './stylesheets/modals.scss';
 import './stylesheets/mobile.responsive.scss';
 import LandingPage from './layouts/landing-page/landing-page';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';

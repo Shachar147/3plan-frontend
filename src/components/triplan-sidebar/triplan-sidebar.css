@@ -46,6 +46,11 @@
 	padding-inline-start: 10px;
 }
 
+.custom-dates-line input[type="date"] {
+	/* dates are always ltr since they are in english */
+	direction: ltr;
+}
+
 /*.custom-dates-line input {*/
 /*    max-width: 150px !important;*/
 /*}*/

@@ -444,9 +444,11 @@
 	}
 
 	.custom-dates-line {
+		text-align: right;
 		input[type='date'] {
 			background-color: white !important;
 			color: #2d2d2d !important;
+			height: 33px;
 		}
 	}
 
@@ -461,6 +463,54 @@
 					}
 				}
 			}
+		}
+	}
+
+	// modals
+	.slide-up {
+		position: fixed !important;
+		bottom: -100% !important;
+		transition: all 1s ease-in-out;
+	}
+	.slided-up {
+		transition: all 1s ease-in-out;
+		bottom: 0 !important;
+	}
+	.triplan-react-modal {
+		animation: unset !important;
+		width: 100% !important;
+
+		// more circular border for nicer look
+		border-top-left-radius: 30px !important;
+		border-top-right-radius: 30px !important;
+		box-shadow: 0 0 10px 0 #777 !important;
+	}
+
+	.add-calendar-event-modal-choose-where{
+		flex-direction: column;
+	}
+
+	.input-with-label {
+		label {
+			font-size: 13px;
+			min-width: 50px;
+			max-width: 50px;
+		}
+	}
+	.triplan-react-modal {
+		//animation: 300ms ease 0s 1 normal none !important;
+
+		input {
+			height: 37px !important;
+		}
+		div[class$="ValueContainer"],
+		.opening-hours-details,
+		input, select, textarea{
+			font-size: 13px !important;
+		}
+		input, select, textarea {
+			width: 245px;
+			line-height: 37px;
 		}
 	}
 }

@@ -246,30 +246,40 @@ function MainPage(props: MainPageProps) {
 			);
 		};
 
-		return (
-			<div className="main-page-calendar-view flex-column gap-20">
-				{eventStore.isMobile && renderCustomDates()}
-				<div
-					className={getClasses(
-						['calender-container bright-scrollbar flex-1-1-0'],
-						!eventStore.isCalendarView && 'opacity-0 position-absolute'
-					)}
-					ref={TriplanCalendarContainerRef}
-				>
-					<TriplanCalendar
-						ref={TriplanCalendarRef}
-						defaultCalendarEvents={defaultCalendarEvents}
-						onEventReceive={removeEventFromSidebarById}
-						allEvents={eventStore.allEvents}
-						addEventToSidebar={addEventToSidebar}
-						// updateAllEventsEvent={updateAllEventsEvent}
-						customDateRange={eventStore.customDateRange}
-						categories={eventStore.categories}
-						addToEventsToCategories={addToEventsToCategories}
-					/>
-				</div>
+		const content = (
+			<div
+				className={getClasses(
+					['calender-container bright-scrollbar flex-1-1-0'],
+					!eventStore.isCalendarView && 'opacity-0 position-absolute'
+				)}
+				ref={TriplanCalendarContainerRef}
+			>
+				<TriplanCalendar
+					ref={TriplanCalendarRef}
+					defaultCalendarEvents={defaultCalendarEvents}
+					onEventReceive={removeEventFromSidebarById}
+					allEvents={eventStore.allEvents}
+					addEventToSidebar={addEventToSidebar}
+					// updateAllEventsEvent={updateAllEventsEvent}
+					customDateRange={eventStore.customDateRange}
+					categories={eventStore.categories}
+					addToEventsToCategories={addToEventsToCategories}
+				/>
 			</div>
 		);
+
+		// mobile
+		if (eventStore.isMobile) {
+			return (
+				<div className="main-page-calendar-view flex-column gap-20">
+					{renderCustomDates()}
+					{content}
+				</div>
+			);
+		}
+
+		// pc
+		return content;
 	}
 
 	function renderSidebar() {
