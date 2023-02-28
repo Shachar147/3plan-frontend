@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext, useState } from 'react';
 import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { DateSelectArg, EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
@@ -56,6 +56,7 @@ export class EventStore {
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
 	@observable viewMode = ViewMode.calendar;
+	@observable mobileViewMode = ViewMode.sidebar;
 	@observable hideCustomDates = this.viewMode == ViewMode.calendar;
 	@observable openCategories = observable.map<number, number>({});
 	@observable openSidebarGroups = observable.map<string, number>({});
@@ -591,6 +592,11 @@ export class EventStore {
 
 		// show hide custom dates based on view
 		this.initCustomDatesVisibilityBasedOnViewMode();
+	}
+
+	@action
+	setMobileViewMode(viewMode: ViewMode) {
+		this.mobileViewMode = viewMode;
 	}
 
 	@action

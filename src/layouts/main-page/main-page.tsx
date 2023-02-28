@@ -42,9 +42,6 @@ function MainPage(props: MainPageProps) {
 	const [isFetchingData, setIsFetchingData] = useState(false);
 	const [defaultCalendarEvents, setDefaultCalendarEvents] = useState<CalendarEvent[]>([]);
 
-	// for mobile:
-	const [currentMobileView, setCurrentMobileView] = useState<ViewMode>(ViewMode.sidebar);
-
 	useHandleWindowResize();
 
 	useEffect(() => {
@@ -55,10 +52,11 @@ function MainPage(props: MainPageProps) {
 
 	// handle mobile view mode changes
 	useEffect(() => {
-		if (currentMobileView !== ViewMode.sidebar) {
-			eventStore.setViewMode(currentMobileView as ViewMode);
+		if (eventStore.mobileViewMode !== ViewMode.sidebar) {
+			eventStore.setViewMode(eventStore.mobileViewMode as ViewMode);
+			DataServices.LocalStorageService.setLastViewMode(eventStore);
 		}
-	}, [currentMobileView]);
+	}, [eventStore.mobileViewMode]);
 
 	const fetchCalendarEvents = useCallback(async () => {
 		const data = await eventStore.dataService.getCalendarEvents(tripName);
@@ -162,7 +160,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderListView() {
-		if (eventStore.isMobile && currentMobileView !== ViewMode.list) return null;
+		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.list) return null;
 
 		const options = [
 			// {
@@ -213,7 +211,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderMapView() {
-		if (eventStore.isMobile && currentMobileView !== ViewMode.map) return null;
+		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.map) return null;
 		return (
 			<div
 				className={getClasses(
@@ -234,7 +232,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderCalendarView() {
-		if (eventStore.isMobile && currentMobileView !== ViewMode.calendar) return null;
+		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.calendar) return null;
 		const renderCustomDates = () => {
 			if (!TriplanCalendarRef) return;
 			return (
@@ -283,7 +281,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderSidebar() {
-		if (eventStore.isMobile && currentMobileView !== ViewMode.sidebar) return null;
+		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.sidebar) return null;
 		return (
 			<TriplanSidebar
 				addToEventsToCategories={addToEventsToCategories}
@@ -318,11 +316,11 @@ function MainPage(props: MainPageProps) {
 		return (
 			<div className={getClasses('mobile-footer-navigator', isModalOpened && 'z-index-1000')}>
 				{viewOptions.map((viewOption) => (
-					<a title={viewOption.name} onClick={() => setCurrentMobileView(viewOption.key)}>
-						{currentMobileView === viewOption.key ? viewOption.iconActive : viewOption.icon}
+					<a title={viewOption.name} onClick={() => eventStore.setMobileViewMode(viewOption.key as ViewMode)}>
+						{eventStore.mobileViewMode === viewOption.key ? viewOption.iconActive : viewOption.icon}
 						<span
 							title={viewOption.name}
-							className={getClasses(currentMobileView === viewOption.key && 'selected-color')}
+							className={getClasses(eventStore.mobileViewMode === viewOption.key && 'selected-color')}
 						>
 							{viewOption.name}
 						</span>
@@ -345,7 +343,11 @@ function MainPage(props: MainPageProps) {
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
 			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
-				<TriplanHeaderWrapper {...headerProps} currentMobileView={currentMobileView} showTripName={true} />
+				<TriplanHeaderWrapper
+					{...headerProps}
+					currentMobileView={eventStore.mobileViewMode}
+					showTripName={true}
+				/>
 			</div>
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>

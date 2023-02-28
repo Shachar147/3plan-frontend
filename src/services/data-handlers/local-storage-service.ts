@@ -26,11 +26,12 @@ import DataServices, {
 	Trip,
 	tripNameToLSTripName,
 } from './data-handler-base';
-import { TripDataSource } from '../../utils/enums';
+import { TripDataSource, ViewMode } from '../../utils/enums';
 import { getUser } from '../../helpers/auth';
 
 export class LocalStorageService implements BaseDataHandler {
 	CONTINUE_AS_GUEST_MODAL_LS_KEY = 'triplan-hide-continue-as-guest-modal';
+	LAST_MOBILE_VIEW_MODE = 'triplan-last-mobile-view-mode';
 
 	getDataSourceName() {
 		return TripDataSource.LOCAL;
@@ -291,5 +292,17 @@ export class LocalStorageService implements BaseDataHandler {
 
 	doNotShowContinueAsGuest(): void {
 		localStorage.setItem(this.CONTINUE_AS_GUEST_MODAL_LS_KEY, '1');
+	}
+
+	// --- Mobile ---------------------------------------------------------------------------
+	setLastViewMode(eventStore: EventStore) {
+		localStorage.setItem(this.LAST_MOBILE_VIEW_MODE, eventStore.viewMode);
+	}
+
+	getLastViewMode(eventStore: EventStore): ViewMode {
+		if (!localStorage.getItem(this.LAST_MOBILE_VIEW_MODE)) {
+			this.setLastViewMode(eventStore);
+		}
+		return localStorage.getItem(this.LAST_MOBILE_VIEW_MODE) as ViewMode;
 	}
 }

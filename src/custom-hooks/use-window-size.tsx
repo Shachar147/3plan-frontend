@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { eventStoreContext } from '../stores/events-store';
+import { DataServices } from '../services/data-handlers/data-handler-base';
+import { runInAction } from 'mobx';
 
 // Hook
 export default function useWindowSize() {
@@ -34,6 +36,12 @@ export function useHandleWindowResize() {
 	useEffect(() => {
 		const { width = 1000, height = 1000 } = windowResolution;
 		const isMobile = width <= 600 || height <= 600;
-		eventStore.setIsMobile(isMobile);
+
+		runInAction(() => {
+			eventStore.setIsMobile(isMobile);
+			if (isMobile) {
+				eventStore.setMobileViewMode(DataServices.LocalStorageService.getLastViewMode(eventStore));
+			}
+		});
 	}, [windowResolution]);
 }
