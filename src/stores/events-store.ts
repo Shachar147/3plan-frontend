@@ -778,6 +778,11 @@ export class EventStore {
 		return toJS(this.calendarEvents);
 	}
 
+	getJSSidebarEvents(): Record<number, SidebarEvent[]> {
+		return _.cloneDeep(this.sidebarEvents);
+		// return toJS(this.sidebarEvents);
+	}
+
 	updateEvent(storedEvent: SidebarEvent | EventInput | any, newEvent: SidebarEvent | EventInput | any) {
 		storedEvent.title = newEvent.title;
 		storedEvent.allDay = newEvent.allDay;

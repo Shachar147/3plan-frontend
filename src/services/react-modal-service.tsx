@@ -64,10 +64,6 @@ const ReactModalRenderHelper = {
 			eventStore.modalValues[modalValueName] = extra.value;
 		}
 
-		// if (modalValueName === 'location'){
-		//     debugger;
-		// }
-
 		return (
 			<TextInput
 				id={extra.id}
@@ -1351,7 +1347,7 @@ const ReactModalService = {
 				return;
 			}
 
-			const existingSidebarEvents = { ...eventStore.getSidebarEvents };
+			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
 			existingSidebarEvents[categoryId].push(currentEvent);
 			eventStore.setSidebarEvents(existingSidebarEvents);
@@ -1532,7 +1528,7 @@ const ReactModalService = {
 				// @ts-ignore
 				currentEvent['className'] = currentEvent.priority ? `priority-${currentEvent.priority}` : undefined;
 
-				const sidebarEvents = eventStore.sidebarEvents;
+				const sidebarEvents = eventStore.getJSSidebarEvents(); //eventStore.sidebarEvents;
 
 				sidebarEvents[parseInt(categoryId)] = sidebarEvents[parseInt(categoryId)] || [];
 				sidebarEvents[parseInt(categoryId)].push(currentEvent);
@@ -1571,7 +1567,7 @@ const ReactModalService = {
 					eventStore.setAllEvents(eventStore.allEvents);
 
 					const newSidebarEvents: Record<number, SidebarEvent[]> = {};
-					const existingSidebarEvents = eventStore.getSidebarEvents;
+					const existingSidebarEvents = eventStore.getJSSidebarEvents(); // eventStore.getSidebarEvents;
 					Object.keys(existingSidebarEvents).forEach((category) => {
 						const categoryId = parseInt(category);
 						newSidebarEvents[categoryId] = newSidebarEvents[categoryId] || [];
@@ -1723,7 +1719,7 @@ const ReactModalService = {
 			}
 			const categoryId = foundEvent.category || eventStore.categories[0].id.toString();
 
-			const existingSidebarEvents = { ...eventStore.getSidebarEvents };
+			const existingSidebarEvents = eventStore.getJSSidebarEvents(); // { ...eventStore.getSidebarEvents };
 			existingSidebarEvents[parseInt(categoryId)].push(currentEvent);
 			eventStore.setSidebarEvents(existingSidebarEvents);
 
@@ -1996,7 +1992,7 @@ const ReactModalService = {
 			]);
 
 			if (sidebarEventData) {
-				const newSidebarEvents = _.cloneDeep(eventStore.sidebarEvents);
+				const newSidebarEvents = eventStore.getJSSidebarEvents();
 				Object.keys(newSidebarEvents).forEach((category) => {
 					newSidebarEvents[Number(category)] = newSidebarEvents[Number(category)].filter(
 						(e) => e.id !== initialData.id
@@ -2069,7 +2065,7 @@ const ReactModalService = {
 			(c) => c.category != categoryId && (!c.extendedProps || c.extendedProps.categoryId != categoryId)
 		);
 		const newAllEvents = eventStore.allEvents.filter((c) => c.category != categoryId.toString());
-		const newSidebarEvents = { ...eventStore.getSidebarEvents };
+		const newSidebarEvents = eventStore.getJSSidebarEvents(); // { ...eventStore.getSidebarEvents };
 		delete newSidebarEvents[categoryId];
 
 		const html = [
