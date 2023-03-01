@@ -2079,7 +2079,7 @@ const ReactModalService = {
 						'CALENDAR_EVENTS'
 					)}</li>`,
 					`<li>${
-						Object.values(eventStore.getSidebarEvents).flat().length -
+						Object.values(eventStore.getJSSidebarEvents()).flat().length -
 						Object.values(newSidebarEvents).flat().length
 					} ${TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}</li>`,
 					`<li>${eventStore.allEvents.length - newAllEvents.length} ${TranslateService.translate(
