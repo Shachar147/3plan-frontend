@@ -320,6 +320,9 @@ const MapContainer = (props: MapContainerProps) => {
 				isMatching(title, ['desserts', 'קינוחים', 'גלידה'])
 			) {
 				icon = iconsMap['desserts'];
+			} else if (isMatching(category, ['hotel', 'מלון']) || isMatching(title, ['hotel', 'מלון'])) {
+				icon = iconsMap['hotel'];
+				bgColor = '7cb342';
 			} else if (
 				isMatching(category, ['food', 'restaurant', 'אוכל', 'מסעדות', 'cafe', 'קפה']) ||
 				isMatching(title, ['food', 'restaurant', 'אוכל', 'מסעדת', 'cafe', 'קפה'])
@@ -343,9 +346,6 @@ const MapContainer = (props: MapContainerProps) => {
 			} else if (isMatching(title, ['flight', 'טיסה'])) {
 				icon = iconsMap['flights'];
 				bgColor = 'dc5757';
-			} else if (isMatching(category, ['hotel', 'מלון']) || isMatching(title, ['hotel', 'מלון'])) {
-				icon = iconsMap['hotel'];
-				bgColor = '7cb342';
 			} else if (isMatching(category, ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'])) {
 				icon = iconsMap['shopping'];
 			} else if (isMatching(category, ['tourism', 'תיירות', 'אתרים'])) {
