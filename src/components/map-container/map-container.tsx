@@ -310,6 +310,7 @@ const MapContainer = (props: MapContainerProps) => {
 				lakes: 'icons/onion/1697-spa_4x.png',
 				trains: 'icons/onion/1716-train_4x.png',
 				musicals: 'icons/onion/1637-music-note_4x.png',
+				flights: 'icons/onion/1504-airport-plane_4x.png',
 			};
 
 			if (isMatching(title, ['basketball', 'כדורסל'])) {
@@ -339,6 +340,9 @@ const MapContainer = (props: MapContainerProps) => {
 				icon = iconsMap['beach'];
 			} else if (isMatching(category, ['club', 'cocktail', 'beer', 'bar', 'מועדונים', 'ברים', 'מסיבות'])) {
 				icon = iconsMap['nightlife'];
+			} else if (isMatching(title, ['flight', 'טיסה'])) {
+				icon = iconsMap['flights'];
+				bgColor = 'dc5757';
 			} else if (isMatching(category, ['hotel', 'מלון']) || isMatching(title, ['hotel', 'מלון'])) {
 				icon = iconsMap['hotel'];
 				bgColor = '7cb342';
@@ -567,6 +571,10 @@ const MapContainer = (props: MapContainerProps) => {
 
 				infoWindow.setContent(buildInfoWindowContent(event));
 				infoWindow.open(googleMapRef, marker);
+
+				infoWindow.onClose(() => {
+					alert('on close!');
+				});
 			}
 		};
 	}, [googleMapRef, infoWindow]);
