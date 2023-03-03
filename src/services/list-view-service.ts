@@ -375,7 +375,10 @@ const ListViewService = {
 			let prevLocationBackup: LocationData | undefined;
 
 			let highlightEvents = events
-				.filter((x: EventInput) => x.priority && x.priority == TriplanPriority.must)
+				.filter(
+					(x: EventInput) =>
+						x.priority && (x.priority == TriplanPriority.must || x.priority == TriplanPriority.high)
+				)
 				.map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
 			// @ts-ignore
 			highlightEvents = [...new Set(highlightEvents)];
@@ -419,8 +422,11 @@ const ListViewService = {
 
 				const priority = event.priority;
 				const color =
-					[TriplanPriority.must.toString(), TriplanPriority.maybe.toString()].indexOf(priority) !== -1 &&
-					Object.keys(priorityToColor).includes(priority)
+					[
+						TriplanPriority.must.toString(),
+						TriplanPriority.high.toString(),
+						TriplanPriority.maybe.toString(),
+					].indexOf(priority) !== -1 && Object.keys(priorityToColor).includes(priority)
 						? priorityToColor[priority]
 						: 'inherit';
 				const fontWeight = color !== 'inherit' ? 'bold' : 'normal';

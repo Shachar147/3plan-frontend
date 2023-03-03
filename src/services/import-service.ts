@@ -236,6 +236,7 @@ const ImportService = {
 								[TranslateService.translate(eventStore, 'maybe')]: TriplanPriority.maybe,
 								[TranslateService.translate(eventStore, 'least')]: TriplanPriority.least,
 								[TranslateService.translate(eventStore, 'unset')]: TriplanPriority.unset,
+								[TranslateService.translate(eventStore, 'high')]: TriplanPriority.high,
 							};
 
 							if (!Object.keys(convert).includes(val)) {

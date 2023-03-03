@@ -93,6 +93,14 @@
 	/*border-color: #0088d1;*/
 }
 
+.fc-event-main.priority-10,
+.fc-event.priority-10 {
+	border-left: 3px solid #a52714; /* #f57c01 */;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	/*border-color: #f57c01*/
+}
+
 .fc-event.driving-event {
 	background-color: var(--blue) !important;
 	border: 0 !important;

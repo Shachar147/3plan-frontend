@@ -16,7 +16,6 @@ import {
 	LS_SIDEBAR_EVENTS,
 } from '../../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
-import TranslateService from '../translate-service';
 import DataServices, {
 	AllEventsEvent,
 	BaseDataHandler,
@@ -27,7 +26,6 @@ import DataServices, {
 	tripNameToLSTripName,
 } from './data-handler-base';
 import { TripDataSource, ViewMode } from '../../utils/enums';
-import { getUser } from '../../helpers/auth';
 
 export class LocalStorageService implements BaseDataHandler {
 	CONTINUE_AS_GUEST_MODAL_LS_KEY = 'triplan-hide-continue-as-guest-modal';

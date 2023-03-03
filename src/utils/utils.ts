@@ -1,12 +1,8 @@
 import { GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority } from './enums';
 import { EventStore } from '../stores/events-store';
-import moment from 'moment';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
-import { getEventDueDate } from './time-utils';
-import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
-import { runInAction } from 'mobx';
-import { priorityToColor } from './consts';
+import { Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');

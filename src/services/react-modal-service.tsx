@@ -32,7 +32,6 @@ import Slider from 'react-slick';
 
 // @ts-ignore
 // import _ from 'lodash';
-import * as _ from 'lodash';
 import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 
@@ -222,16 +221,46 @@ const ReactModalRenderHelper = {
 		const values = Object.keys(TriplanPriority);
 		const keys = Object.values(TriplanPriority);
 
+		const order = [
+			TriplanPriority.unset,
+			TriplanPriority.must,
+			TriplanPriority.high,
+			TriplanPriority.maybe,
+			TriplanPriority.least,
+		];
+
 		const options = Object.values(TriplanPriority)
 			.filter((x) => !Number.isNaN(Number(x)))
 			.map((val, index) => ({
 				value: values[index],
 				label: ucfirst(TranslateService.translate(eventStore, keys[index].toString())),
-			}));
+			}))
+			.sort((a, b) => {
+				let A = order.indexOf(Number(a.value) as unknown as TriplanPriority);
+				let B = order.indexOf(Number(b.value) as unknown as TriplanPriority);
+
+				if (A === -1) {
+					A = 999;
+				}
+				if (B === -1) {
+					B = 999;
+				}
+
+				if (A > B) {
+					return 1;
+				} else if (A < B) {
+					return -1;
+				}
+				return 0;
+			});
 
 		if (!eventStore.modalValues[modalValueName]) {
-			const idx = values.indexOf(extra.value?.toString());
-			eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
+			// const idx = values.indexOf(extra.value?.toString());
+			// debugger;
+			// eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
+
+			const selectedOption = options.find((option) => option.value == extra.value?.toString());
+			eventStore.modalValues[modalValueName] = selectedOption;
 		}
 
 		return ReactModalRenderHelper.renderSelectInput(

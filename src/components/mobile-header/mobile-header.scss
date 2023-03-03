@@ -48,7 +48,9 @@ body.rtl {
   font-size: 10px;
   position: fixed;
   top: 61px;
-  z-index: 99998;
+  //z-index: 99998;
+  z-index:5400;
+  padding-block: 2.5px;
 }
 
 body.rtl {

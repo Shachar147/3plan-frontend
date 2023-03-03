@@ -103,7 +103,7 @@ export const icons = [
 	{ icon: '🛤', text: 'travel places - railway track' },
 	{ icon: '🛢', text: 'travel places - oil drum' },
 	{ icon: '⛽', text: 'travel places - fuel pump' },
-	{ icon: '🚨', text: 'travel places - police car light' },
+	{ icon: '🚨', text: 'travel places - police car light important hot start must most' },
 	{ icon: '🚥', text: 'travel places - horizontal traffic light' },
 	{ icon: '🚦', text: 'travel places - vertical traffic light' },
 	{ icon: '🛑', text: 'travel places - stop sign' },

@@ -22,6 +22,7 @@
 	"must": "חובה",
 	"maybe": "אולי",
 	"least": "עדיפות אחרונה",
+	"high": "עדיפות גבוהה",
 	"ADD_EVENT.BUTTON_TEXT": "הוסף פעילות",
 	"DUPLICATE": "שכפל",
 	"DELETE": "מחק",
@@ -448,5 +449,9 @@
 	"CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION": "הוסף ברים, מועדונים ופעילויות המתאימות לחיי הלילה לקטגוריה זו",
 	"CATEGORY.SHOPPING.DESCRIPTION": "הוסף קניונים, חנויות ומרכזי קניות לקטגוריה זו",
 	"CATEGORY.ATTRACTIONS.DESCRIPTION": "הוסף אטרקציות לקטגוריה זו",
-	"CATEGORY.GIMMICKS.DESCRIPTION": "הוסף אטרקציות מיוחדות וגימיקיות לקטגוריה זו. לדוגמא: ברים סודיים"
+	"CATEGORY.GIMMICKS.DESCRIPTION": "הוסף אטרקציות מיוחדות וגימיקיות לקטגוריה זו. לדוגמא: ברים סודיים",
+	"CATEGORY.NATURE": "טבע",
+	"CATEGORY.NATURE.DESCRIPTION": "הוסף נהרות ואגמים, יערות, גנים ופעילויות טבע נוספות לקטגוריה זו",
+	"CATEGORY.TOURISM": "תיירות",
+	"CATEGORY.TOURISM.DESCRIPTION": "הוסף נקודות עניין תיירותיות לקטגוריה זו. לדוגמא: פסל החירות"
 }

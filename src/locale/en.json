@@ -371,5 +371,10 @@
 	"CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION": "Add bars, clubs and nightlife activities to this category",
 	"CATEGORY.SHOPPING.DESCRIPTION": "Add malls, stores and shopping centers to this category",
 	"CATEGORY.ATTRACTIONS.DESCRIPTION": "Add attractions to this category",
-	"CATEGORY.GIMMICKS.DESCRIPTION": "Add special gimmick attractions to this category. for example: secret bars"
+	"CATEGORY.GIMMICKS.DESCRIPTION": "Add special gimmick attractions to this category. for example: secret bars",
+	"CATEGORY.NATURE": "Nature",
+	"CATEGORY.NATURE.DESCRIPTION": "Add lakes, forests, gardens any other nature activities here",
+	"CATEGORY.TOURISM": "Tourism",
+	"CATEGORY.TOURISM.DESCRIPTION": "Add tourism spots here. for example: statue of liberty",
+	"high": "high priority"
 }

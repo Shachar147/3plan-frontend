@@ -15,7 +15,6 @@ import { priorityToColor } from '../../utils/consts';
 import ListViewService from '../../services/list-view-service';
 import ReactModalService from '../../services/react-modal-service';
 import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
-import LoadingComponent from '../loading/loading-component';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => void;
@@ -766,10 +765,37 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderPreferredHourEvents = (categoryId: number, events: SidebarEvent[]) => {
-		events = events.map((event) => {
-			event.category = categoryId.toString();
-			return event;
-		});
+		const order = [
+			TriplanPriority.unset,
+			TriplanPriority.must,
+			TriplanPriority.high,
+			TriplanPriority.maybe,
+			TriplanPriority.least,
+		];
+
+		events = events
+			.map((event) => {
+				event.category = categoryId.toString();
+				return event;
+			})
+			.sort((a, b) => {
+				let A = order.indexOf(Number(a.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+				let B = order.indexOf(Number(b.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+
+				if (A === -1) {
+					A = 999;
+				}
+				if (B === -1) {
+					B = 999;
+				}
+
+				if (A > B) {
+					return 1;
+				} else if (A < B) {
+					return -1;
+				}
+				return 0;
+			});
 		return (
 			<div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
 				{events.map((event) => (

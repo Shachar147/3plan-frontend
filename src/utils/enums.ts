@@ -1,8 +1,9 @@
 export enum TriplanPriority {
 	must = 1, // pink
-	maybe = 2, // purple
+	high = 10, // purple?
+	maybe = 2, // orange (used to be purple in google maps)
 	least = 3, // black
-	unset = 0,
+	unset = 0, // gray
 }
 
 export enum TriplanEventPreferredTime {

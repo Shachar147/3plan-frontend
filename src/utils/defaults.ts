@@ -1,8 +1,6 @@
 import { TriplanEventPreferredTime, TriplanPriority } from './enums';
 import { SidebarEvent, TriPlanCategory } from './interfaces';
-import { padTo2Digits } from './utils';
 import { DateRangeFormatted } from '../services/data-handlers/data-handler-base';
-import TranslateService from '../services/translate-service';
 import { EventStore } from '../stores/events-store';
 
 export const defaultLocalCode = 'he';
@@ -727,6 +725,20 @@ export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] 
 			icon: '👻',
 			title: 'CATEGORY.GIMMICKS',
 			description: 'CATEGORY.GIMMICKS.DESCRIPTION',
+			translateTitle: true,
+		},
+		{
+			id: 9,
+			icon: '🌺',
+			title: 'CATEGORY.NATURE',
+			description: 'CATEGORY.NATURE.DESCRIPTION',
+			translateTitle: true,
+		},
+		{
+			id: 10,
+			icon: '🗽',
+			title: 'CATEGORY.TOURISM',
+			description: 'CATEGORY.TOURISM.DESCRIPTION',
 			translateTitle: true,
 		},
 	];

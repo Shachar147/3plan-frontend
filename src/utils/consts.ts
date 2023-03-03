@@ -7,6 +7,7 @@ export const priorityToColor: Record<string, string> = {
 	[TriplanPriority.maybe]: '#ffb752', // '#8E7CC3FF'
 	[TriplanPriority.unset]: 'var(--gray)',
 	[TriplanPriority.least]: 'var(--black)',
+	[TriplanPriority.high]: '#a52714', // '#f57c01',
 };
 
 export const priorityToMapColor: Record<string, string> = {
@@ -14,6 +15,7 @@ export const priorityToMapColor: Record<string, string> = {
 	[TriplanPriority.maybe]: '#ffb752', // '#8E7CC3FF'
 	[TriplanPriority.unset]: '#b4b4b4',
 	[TriplanPriority.least]: '#000000',
+	[TriplanPriority.high]: '#a52714', //'#f57c01',
 };
 
 export const LOGIN_DELAY: number = 300; // to be able to see the loader
