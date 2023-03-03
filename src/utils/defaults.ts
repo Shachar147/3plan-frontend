@@ -675,13 +675,43 @@ export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] 
 	return [
 		{
 			id: 1,
-			icon: '',
+			icon: '🧞‍♂️',
 			title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL'),
 		},
 		{
 			id: 2,
-			icon: '',
+			icon: '🏩',
 			title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS'),
+		},
+		{
+			id: 3,
+			icon: '🍕',
+			title: TranslateService.translate(eventStore, 'CATEGORY.FOOD'),
+		},
+		{
+			id: 4,
+			icon: '🍦',
+			title: TranslateService.translate(eventStore, 'CATEGORY.DESSERTS'),
+		},
+		{
+			id: 5,
+			icon: '🍹',
+			title: TranslateService.translate(eventStore, 'CATEGORY.BARS_AND_NIGHTLIFE'),
+		},
+		{
+			id: 6,
+			icon: '🛒',
+			title: TranslateService.translate(eventStore, 'CATEGORY.SHOPPING'),
+		},
+		{
+			id: 7,
+			icon: '⭐',
+			title: TranslateService.translate(eventStore, 'CATEGORY.ATTRACTIONS'),
+		},
+		{
+			id: 8,
+			icon: '👻',
+			title: TranslateService.translate(eventStore, 'CATEGORY.GIMMICKS'),
 		},
 	];
 };

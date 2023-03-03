@@ -432,5 +432,11 @@
 	"DUPLICATE_TRIP_MODAL.TITLE": "שכפל טיול",
 	"MODALS.DUPLICATED.TITLE": "שוכפל!",
 	"MODALS.DUPLICATED_TRIP.CONTENT": "הטיול שוכפל בהצלחה",
-	"TOTAL_ITEMS_COUNT.TOOLTIP": "{X} פעילויות בלוח השנה, {Y} פעילויות בתפריט."
+	"TOTAL_ITEMS_COUNT.TOOLTIP": "{X} פעילויות בלוח השנה, {Y} פעילויות בתפריט.",
+	"CATEGORY.FOOD": "אוכל",
+	"CATEGORY.DESSERTS": "קינוחים",
+	"CATEGORY.BARS_AND_NIGHTLIFE":"ברים וחיי לילה",
+	"CATEGORY.SHOPPING": "קניות",
+	"CATEGORY.ATTRACTIONS":"אטרקציות",
+	"CATEGORY.GIMMICKS": "גימיקים"
 }

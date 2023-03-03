@@ -210,16 +210,31 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
-	function renderMapView() {
-		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.map) return null;
+	function renderMapView(isCombined: boolean = false) {
+		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.map) {
+			return null;
+		}
+
+		const shouldDisplay = isCombined ? eventStore.isMapView || eventStore.isCalendarView : eventStore.isMapView;
+
 		return (
 			<div
-				className={getClasses(
-					['map-container flex-1-1-0'],
-					!eventStore.isMapView && 'opacity-0 position-absolute'
-				)}
+				className={getClasses(['map-container flex-1-1-0'], !shouldDisplay && 'opacity-0 position-absolute')}
+				style={{
+					maxHeight: isCombined ? '250px' : undefined,
+				}}
+				key={JSON.stringify(eventStore.allEvents)}
 			>
-				<MapContainer />
+				<MapContainer hideVisiblePane={isCombined} />
+			</div>
+		);
+	}
+
+	function renderCombinedView() {
+		return (
+			<div className="content-container width-100-percents flex-col gap-20">
+				{renderMapView(true)}
+				{renderCalendarView()}
 			</div>
 		);
 	}
@@ -358,7 +373,8 @@ function MainPage(props: MainPageProps) {
 							{renderSidebar()}
 							{eventStore.isMapView && renderMapView()}
 							{eventStore.isListView && renderListView()}
-							{eventStore.isCalendarView && renderCalendarView()}
+							{/*{eventStore.isCalendarView && renderCalendarView()}*/}
+							{eventStore.isCalendarView && renderCombinedView()}
 						</>
 					)}
 				</div>

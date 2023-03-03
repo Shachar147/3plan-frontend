@@ -355,5 +355,11 @@
 	"DUPLICATE_TRIP_MODAL.TITLE": "Duplicate trip",
 	"MODALS.DUPLICATED.TITLE": "Duplicated!",
 	"MODALS.DUPLICATED_TRIP.CONTENT": "Trip have been duplicated",
-	"TOTAL_ITEMS_COUNT.TOOLTIP": "{X} calendar events, {Y} sidebar events."
+	"TOTAL_ITEMS_COUNT.TOOLTIP": "{X} calendar events, {Y} sidebar events.",
+	"CATEGORY.FOOD": "Food",
+	"CATEGORY.DESSERTS": "Desserts",
+	"CATEGORY.BARS_AND_NIGHTLIFE":"Bars and Nightlife",
+	"CATEGORY.SHOPPING": "Shopping",
+	"CATEGORY.ATTRACTIONS":"Attractions",
+	"CATEGORY.GIMMICKS": "Gimmicks"
 }
