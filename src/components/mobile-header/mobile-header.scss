@@ -39,3 +39,20 @@ body.rtl {
 .mobile-header .mobile-trip-name{
   background-color: #e1e7ed !important;
 }
+
+.mobile-header-trip-name {
+  background-color: #eaeff4;
+  border-bottom:1px solid white;
+  text-align: center;
+  width: 100vw;
+  font-size: 10px;
+  position: fixed;
+  top: 61px;
+  z-index: 99998;
+}
+
+body.rtl {
+  .mobile-header-trip-name {
+    direction: rtl;
+  }
+}

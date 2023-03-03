@@ -11,6 +11,13 @@
 		flex-grow: 0;
 	}
 
+	/* make the map container background to have color even when there aren't any places yet */
+	.map-header + div {
+		 &:not(.visible-items-pane) {
+			background-color: #f0eded;
+		}
+	}
+
 	.map-search-location-input {
 		position: relative;
 

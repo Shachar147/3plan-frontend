@@ -801,7 +801,7 @@ const MapContainer = (props: MapContainerProps) => {
 
 	return (
 		<div className={getClasses('map-container', props.isCombined && 'combined')}>
-			<div className={'map-header'}>
+			<div className="map-header">
 				<div className={'map-search-location-input'}>
 					<input
 						type="text"

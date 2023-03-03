@@ -393,7 +393,7 @@ function MainPage(props: MainPageProps) {
 			</div>
 			<div className={'main-layout-container'}>
 				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
-					{eventStore.isLoading || isFetchingData ? (
+					{eventStore.isLoading || isFetchingData || !eventStore.tripName?.length ? (
 						renderLoading()
 					) : (
 						<>
