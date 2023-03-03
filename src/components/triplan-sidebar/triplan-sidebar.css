@@ -10,6 +10,7 @@
 	padding-inline-end: 10px;
 	width: fit-content;
 	max-width: 490px;
+	min-width: 400px;
 }
 .custom-dates-container {
 	display: flex;

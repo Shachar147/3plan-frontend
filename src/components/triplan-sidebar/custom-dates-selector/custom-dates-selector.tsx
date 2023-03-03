@@ -19,7 +19,12 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 	const arrowIcon = eventStore.getCurrentDirection() === 'rtl' ? 'left' : 'right';
 
 	return (
-		<div className={getClasses(['custom-dates-container'], !eventStore.isCalendarView && 'hidden')}>
+		<div
+			className={getClasses(
+				['custom-dates-container'],
+				!(eventStore.isCalendarView || eventStore.isCombinedView) && 'hidden'
+			)}
+		>
 			<div className={'custom-dates-line'}>
 				<input
 					type={'date'}
