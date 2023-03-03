@@ -224,6 +224,14 @@ export const getViewSelectorOptions = (
 ): OptionToggleButton[] => {
 	const baseArray = [
 		{
+			key: ViewMode.combined,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.COMBINED_VIEW'),
+			icon: <i className="fa fa-compress black-color" aria-hidden="true"></i>,
+			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true"></i>,
+			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true"></i>,
+			desktopOnly: true,
+		},
+		{
 			key: ViewMode.calendar,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.CALENDAR_VIEW'),
 			icon: <i className="fa fa-calendar-o black-color" aria-hidden="true"></i>,
@@ -252,7 +260,7 @@ export const getViewSelectorOptions = (
 				icon: <i className="fa fa-star-o black-color" aria-hidden="true"></i>,
 				iconActive: <i className="fa fa-star selected-color" aria-hidden="true"></i>,
 			},
-			...baseArray,
+			...baseArray.filter((x) => !x.desktopOnly),
 		];
 	}
 

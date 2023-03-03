@@ -55,7 +55,7 @@ export class EventStore {
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
-	@observable viewMode = ViewMode.calendar;
+	@observable viewMode = ViewMode.combined;
 	@observable mobileViewMode = ViewMode.sidebar;
 	@observable hideCustomDates = this.viewMode == ViewMode.calendar;
 	@observable openCategories = observable.map<number, number>({});
@@ -379,6 +379,11 @@ export class EventStore {
 	@computed
 	get isCalendarView() {
 		return this.viewMode === ViewMode.calendar;
+	}
+
+	@computed
+	get isCombinedView() {
+		return this.viewMode === ViewMode.combined;
 	}
 
 	@computed

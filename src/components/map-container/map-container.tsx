@@ -56,7 +56,7 @@ function Marker(props: MarkerProps): ReactElement {
 interface MapContainerProps {
 	allEvents?: AllEventsEvent[];
 	getNameLink?: (x: AllEventsEvent) => string;
-	hideVisiblePane?: boolean;
+	isCombined?: boolean;
 }
 
 const MapContainer = (props: MapContainerProps) => {
@@ -800,7 +800,7 @@ const MapContainer = (props: MapContainerProps) => {
 		.filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
 
 	return (
-		<div className="map-container">
+		<div className={getClasses('map-container', props.isCombined && 'combined')}>
 			<div className={'map-header'}>
 				<div className={'map-search-location-input'}>
 					<input
@@ -880,41 +880,45 @@ const MapContainer = (props: MapContainerProps) => {
 					/>
 				))}
 			</GoogleMapReact>
-			{!props.hideVisiblePane && (
-				<div className={getClasses('visible-items-pane', 'bright-scrollbar', eventStore.isMobile && 'mobile')}>
-					<div className={'visible-items-header'}>
-						<b>{TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.TITLE')}:</b>
-					</div>
-					<div className={'search-container'}>
-						<input
-							type={'text'}
-							name={'fc-search'}
-							value={visibleItemsSearchValue}
-							onChange={(e) => {
-								setVisibleItemsSearchValue(e.target.value);
-							}}
-							placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
-						/>
-					</div>
-					<div className={'visible-items-fc-events'}>
-						{visibleItems.length === 0 &&
-							TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
-						{visibleItems.length > 0 &&
-							filteredVisibleItems.length === 0 &&
-							TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
-						{filteredVisibleItems.map((x) => (
-							<div
-								className={`fc-event priority-${x.event.priority}`}
-								onClick={() => {
-									onVisibleItemClick(x.event, x.marker);
-								}}
-							>
-								{x.event.title}
-							</div>
-						))}
-					</div>
+			<div
+				className={getClasses(
+					'visible-items-pane',
+					'bright-scrollbar',
+					eventStore.isMobile && 'mobile',
+					props.isCombined && 'combined'
+				)}
+			>
+				<div className="visible-items-header">
+					<b>{TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.TITLE')}:</b>
 				</div>
-			)}
+				<div className={'search-container'}>
+					<input
+						type={'text'}
+						name={'fc-search'}
+						value={visibleItemsSearchValue}
+						onChange={(e) => {
+							setVisibleItemsSearchValue(e.target.value);
+						}}
+						placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+					/>
+				</div>
+				<div className={'visible-items-fc-events bright-scrollbar'}>
+					{visibleItems.length === 0 && TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
+					{visibleItems.length > 0 &&
+						filteredVisibleItems.length === 0 &&
+						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
+					{filteredVisibleItems.map((x) => (
+						<div
+							className={`fc-event priority-${x.event.priority}`}
+							onClick={() => {
+								onVisibleItemClick(x.event, x.marker);
+							}}
+						>
+							{x.event.title}
+						</div>
+					))}
+				</div>
+			</div>
 		</div>
 	);
 };

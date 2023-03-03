@@ -210,22 +210,40 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
-	function renderMapView(isCombined: boolean = false) {
+	function renderMapView() {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.map) {
 			return null;
 		}
 
-		const shouldDisplay = isCombined ? eventStore.isMapView || eventStore.isCalendarView : eventStore.isMapView;
+		if (eventStore.viewMode === ViewMode.combined) {
+			return (
+				<div
+					className={getClasses(
+						['map-container'],
+						!eventStore.isCombinedView && 'opacity-0 position-absolute'
+					)}
+					style={{
+						height: '250px',
+						minHeight: '250px',
+						resize: 'vertical',
+						overflow: 'auto',
+					}}
+					key={JSON.stringify(eventStore.allEvents)}
+				>
+					<MapContainer isCombined />
+				</div>
+			);
+		}
 
 		return (
 			<div
-				className={getClasses(['map-container flex-1-1-0'], !shouldDisplay && 'opacity-0 position-absolute')}
-				style={{
-					maxHeight: isCombined ? '250px' : undefined,
-				}}
+				className={getClasses(
+					['map-container flex-1-1-0'],
+					!eventStore.isMapView && 'opacity-0 position-absolute'
+				)}
 				key={JSON.stringify(eventStore.allEvents)}
 			>
-				<MapContainer hideVisiblePane={isCombined} />
+				<MapContainer />
 			</div>
 		);
 	}
@@ -233,7 +251,7 @@ function MainPage(props: MainPageProps) {
 	function renderCombinedView() {
 		return (
 			<div className="content-container width-100-percents flex-col gap-20">
-				{renderMapView(true)}
+				{renderMapView()}
 				{renderCalendarView()}
 			</div>
 		);
@@ -248,6 +266,7 @@ function MainPage(props: MainPageProps) {
 
 	function renderCalendarView() {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.calendar) return null;
+
 		const renderCustomDates = () => {
 			if (!TriplanCalendarRef) return;
 			return (
@@ -259,11 +278,13 @@ function MainPage(props: MainPageProps) {
 			);
 		};
 
+		const shouldDisplay = eventStore.isCalendarView || eventStore.isCombinedView;
+
 		const content = (
 			<div
 				className={getClasses(
 					['calender-container bright-scrollbar flex-1-1-0'],
-					!eventStore.isCalendarView && 'opacity-0 position-absolute'
+					!shouldDisplay && 'opacity-0 position-absolute'
 				)}
 				ref={TriplanCalendarContainerRef}
 			>
@@ -373,8 +394,8 @@ function MainPage(props: MainPageProps) {
 							{renderSidebar()}
 							{eventStore.isMapView && renderMapView()}
 							{eventStore.isListView && renderListView()}
-							{/*{eventStore.isCalendarView && renderCalendarView()}*/}
-							{eventStore.isCalendarView && renderCombinedView()}
+							{eventStore.isCalendarView && renderCalendarView()}
+							{eventStore.isCombinedView && renderCombinedView()}
 						</>
 					)}
 				</div>

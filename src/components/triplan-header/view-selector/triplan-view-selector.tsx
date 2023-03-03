@@ -56,7 +56,7 @@ function TriplanViewSelector(props?: TriplanViewSelectorProps) {
 				value={props?.value ?? eventStore.viewMode}
 				onChange={(newVal) =>
 					props?.setViewMode
-						? props.setViewMode(newVal as ViewMode)
+						? props.setViewMode(newVal as unknown as ViewMode)
 						: eventStore.setViewMode(newVal as ViewMode)
 				}
 				options={props?.options ?? getViewSelectorOptions(eventStore)}

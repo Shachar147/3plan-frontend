@@ -16,6 +16,7 @@ export enum TriplanEventPreferredTime {
 }
 
 export enum ViewMode {
+	combined = 'combined', // calendar + map <- only desktop
 	list = 'list',
 	calendar = 'calendar',
 	map = 'map',
