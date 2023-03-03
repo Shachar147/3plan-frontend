@@ -470,10 +470,13 @@
 				.custom-dates-line {
 					flex-direction: row-reverse;
 
-					input[type='date'] {
-						padding-inline-end: 10px;
-					}
+					//input[type='date'] {
+					//	padding-inline-end: 10px;
+					//}
 				}
+			}
+			input[type='date'] {
+				padding-inline-end: 10px;
 			}
 		}
 	}

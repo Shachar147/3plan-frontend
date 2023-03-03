@@ -133,6 +133,7 @@
 	"ADD_EVENT_MODAL.TITLE": "Add Activity",
 	"MODALS.CATEGORY": "Category",
 	"EVENTS_ON_THE_CALENDAR": "Activities scheduled on the calendar",
+	"TOTAL_EVENTS_ON_THE_SIDEBAR": "Total Activities",
 	"EVENTS_ON_THE_SIDEBAR": "Activities not scheduled yet",
 	"EVENTS_WITH_NO_LOCATION": "Activities with no location",
 	"EVENTS_WITH_NO_OPENING_HOURS": "Activities with no opening hours",
