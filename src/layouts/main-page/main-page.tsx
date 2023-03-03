@@ -54,8 +54,8 @@ function MainPage(props: MainPageProps) {
 	useEffect(() => {
 		if (eventStore.mobileViewMode !== ViewMode.sidebar) {
 			eventStore.setViewMode(eventStore.mobileViewMode as ViewMode);
-			DataServices.LocalStorageService.setLastViewMode(eventStore);
 		}
+		DataServices.LocalStorageService.setLastViewMode(eventStore.mobileViewMode);
 	}, [eventStore.mobileViewMode]);
 
 	const fetchCalendarEvents = useCallback(async () => {

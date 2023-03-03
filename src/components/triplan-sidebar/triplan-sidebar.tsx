@@ -406,12 +406,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 					const color = priorityToColor[priority];
 
+					const translatedPriority = TranslateService.translate(eventStore, priorityText).replace(
+						'עדיפות ',
+						''
+					);
+
 					return (
 						<div className={'sidebar-statistics'} key={`sidebar-statistics-for-${priorityText}`}>
-							<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }}></i>
+							<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }} />
 							<div>
 								{`${total} ${prefix} `}
-								<span>{TranslateService.translate(eventStore, priorityText)}</span>
+								<span>{translatedPriority}</span>
 								{` (${total - totalInCalendar} ${notInCalendar})`}
 							</div>
 						</div>

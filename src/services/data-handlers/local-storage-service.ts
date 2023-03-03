@@ -295,13 +295,13 @@ export class LocalStorageService implements BaseDataHandler {
 	}
 
 	// --- Mobile ---------------------------------------------------------------------------
-	setLastViewMode(eventStore: EventStore) {
-		localStorage.setItem(this.LAST_MOBILE_VIEW_MODE, eventStore.viewMode);
+	setLastViewMode(defaultView: ViewMode) {
+		localStorage.setItem(this.LAST_MOBILE_VIEW_MODE, defaultView);
 	}
 
-	getLastViewMode(eventStore: EventStore): ViewMode {
+	getLastViewMode(defaultView: ViewMode): ViewMode {
 		if (!localStorage.getItem(this.LAST_MOBILE_VIEW_MODE)) {
-			this.setLastViewMode(eventStore);
+			this.setLastViewMode(defaultView);
 		}
 		return localStorage.getItem(this.LAST_MOBILE_VIEW_MODE) as ViewMode;
 	}
