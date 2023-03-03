@@ -497,7 +497,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			if (!category.description) return null;
 			return (
 				<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
-					{category.description}
+					{TranslateService.translate(eventStore, category.description)}
 				</div>
 			);
 		};
@@ -573,10 +573,12 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						<i
 							className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
 							aria-hidden="true"
-						></i>
+						/>
 						<span>
 							{category.icon ? `${category.icon} ` : ''}
-							{category.title}
+							{category.translateTitle
+								? TranslateService.translate(eventStore, category.title)
+								: category.title}
 						</span>
 						<div title={totalItemsCountTooltip}>
 							({sidebarItemsCount}/{itemsCount})
@@ -590,7 +592,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 									e.stopPropagation();
 									onEditCategory(category.id);
 								}}
-							></i>
+							/>
 							<i
 								className="fa fa-trash-o"
 								style={{ position: 'relative', top: '-1px' }}
@@ -600,7 +602,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 									e.stopPropagation();
 									ReactModalService.openDeleteCategoryModal(eventStore, category.id);
 								}}
-							></i>
+							/>
 						</div>
 					</div>
 					<div style={eventsStyle as unknown as CSSProperties}>
@@ -733,13 +735,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				return (
 					<div key={`${categoryId}-${preferredHour}`}>
 						<div className={'preferred-time'}>
-							<div className={'preferred-time-divider'} style={{ maxWidth: '20px' }}></div>
+							<div className={'preferred-time-divider'} style={{ maxWidth: '20px' }} />
 							<div className={'preferred-time-title'}>
 								{TranslateService.translate(eventStore, 'TIME')}:{' '}
 								{ucfirst(TranslateService.translate(eventStore, preferredHourString))} (
 								{preferredHoursHash[preferredHour].length})
 							</div>
-							<div className={'preferred-time-divider'}></div>
+							<div className={'preferred-time-divider'} />
 						</div>
 						<div>{renderPreferredHourEvents(categoryId, preferredHoursHash[preferredHour])}</div>
 					</div>
