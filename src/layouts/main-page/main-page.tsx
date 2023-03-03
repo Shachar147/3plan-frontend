@@ -33,7 +33,7 @@ interface MainPageProps {
 function MainPage(props: MainPageProps) {
 	const { createMode } = props;
 	const [eventsToCategories, setEventsToCategories] = useState<Record<string, string>>(defaultEventsToCategories);
-	const TriplanCalendarRef = useRef<TriPlanCalendarRef>(null);
+	const TriplanCalendarRef = useRef<any>(null);
 	const TriplanCalendarContainerRef = useRef<HTMLDivElement>(null);
 	const eventStore = useContext(eventStoreContext);
 	const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();

@@ -14,7 +14,7 @@ import * as _ from 'lodash';
 import { priorityToColor } from '../../utils/consts';
 import ListViewService from '../../services/list-view-service';
 import ReactModalService from '../../services/react-modal-service';
-import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
+import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import LoadingComponent from '../loading/loading-component';
 
 export interface TriplanSidebarProps {
@@ -229,7 +229,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		const renderEventsWithTodoCompleteStatistics = () => {
 			const { taskKeywords } = ListViewService._initSummaryConfiguration();
-			let todoCompleteEvents = eventStore.allEvents.filter((x) => {
+			let todoCompleteEvents: AllEventsEvent[] | string[] = eventStore.allEvents.filter((x) => {
 				const { title, allDay, description = '' } = x;
 				const isTodoComplete = taskKeywords.find(
 					(k) =>

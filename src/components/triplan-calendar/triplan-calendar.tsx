@@ -28,7 +28,7 @@ export interface TriPlanCalendarProps {
 	onEventClick?: (info: any) => void;
 	allEvents: SidebarEvent[];
 	addEventToSidebar: (event: SidebarEvent) => boolean;
-	updateAllEventsEvent: (event: SidebarEvent) => void;
+	updateAllEventsEvent?: (event: SidebarEvent) => void;
 	customDateRange: DateRangeFormatted;
 	categories: TriPlanCategory[];
 	addToEventsToCategories: (newEvent: CalendarEvent) => void;
@@ -218,7 +218,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		let eventEl = document.createElement('div');
 		eventEl.classList.add('triplan-calendar-event');
 
-		const event = eventContentArg.event;
+		const event = eventContentArg.event as EventInput;
 		eventEl.innerHTML = getEventDivHtml(eventStore, event);
 
 		let arrayOfDomNodes = [eventEl];
