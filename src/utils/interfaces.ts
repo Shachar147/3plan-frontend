@@ -40,6 +40,7 @@ export interface TriPlanCategory {
 	id: number;
 	title: string;
 	icon: string;
+	description?: string;
 }
 
 export interface LocationData {

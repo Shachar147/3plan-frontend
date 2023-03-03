@@ -439,5 +439,13 @@
 	"CATEGORY.BARS_AND_NIGHTLIFE":"ברים וחיי לילה",
 	"CATEGORY.SHOPPING": "קניות",
 	"CATEGORY.ATTRACTIONS":"אטרקציות",
-	"CATEGORY.GIMMICKS": "גימיקים"
+	"CATEGORY.GIMMICKS": "גימיקים",
+	"CATEGORY.GENERAL.DESCRIPTION": "הוסף פעילויות כלליות לקטגוריה זו",
+	"CATEGORY.LOGISTICS.DESCRIPTION": "הוסף טיסות ובתי מלון לקטגוריה זו",
+	"CATEGORY.FOOD.DESCRIPTION": "הוסף מסעדות ובתי קפה לקטגוריה זו",
+	"CATEGORY.DESSERTS.DESCRIPTION": "הוסף חנויות ממתקים, גלידות וקינוחים לקטגוריה זו",
+	"CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION": "הוסף ברים, מועדונים ופעילויות המתאימות לחיי הלילה לקטגוריה זו",
+	"CATEGORY.SHOPPING.DESCRIPTION": "הוסף קניונים, חנויות ומרכזי קניות לקטגוריה זו",
+	"CATEGORY.ATTRACTIONS.DESCRIPTION": "הוסף אטרקציות לקטגוריה זו",
+	"CATEGORY.GIMMICKS.DESCRIPTION": "הוסף אטרקציות מיוחדות וגימיקיות לקטגוריה זו. לדוגמא: ברים סודיים"
 }

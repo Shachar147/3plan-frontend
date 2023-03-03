@@ -4,7 +4,7 @@ import { addLineBreaks, getClasses, ucfirst } from '../../utils/utils';
 import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
-import { CalendarEvent, SidebarEvent } from '../../utils/interfaces';
+import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
 import './triplan-sidebar.css';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
@@ -493,6 +493,15 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			);
 		};
 
+		const renderNoItemsInCategoryPlaceholder = (category: TriPlanCategory) => {
+			if (!category.description) return null;
+			return (
+				<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
+					{category.description}
+				</div>
+			);
+		};
+
 		const closedStyle = {
 			maxHeight: 0,
 			overflowY: 'hidden',
@@ -537,7 +546,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			totalDisplayedCategories++;
 
 			const openStyle = {
-				maxHeight: 100 * sidebarItemsCount + 90 + 'px',
+				// maxHeight: 100 * sidebarItemsCount + 90 + 'px',
 				padding: '10px',
 				transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
 			};
@@ -596,6 +605,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					</div>
 					<div style={eventsStyle as unknown as CSSProperties}>
 						{renderCategoryEvents(category.id)}
+						{renderNoItemsInCategoryPlaceholder(category)}
 						{renderAddSidebarEventButton(category.id)}
 					</div>
 				</div>

@@ -677,41 +677,49 @@ export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] 
 			id: 1,
 			icon: '🧞‍♂️',
 			title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL'),
+			description: TranslateService.translate(eventStore, 'CATEGORY.GENERAL.DESCRIPTION'),
 		},
 		{
 			id: 2,
 			icon: '🏩',
 			title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS'),
+			description: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS.DESCRIPTION'),
 		},
 		{
 			id: 3,
 			icon: '🍕',
 			title: TranslateService.translate(eventStore, 'CATEGORY.FOOD'),
+			description: TranslateService.translate(eventStore, 'CATEGORY.FOOD.DESCRIPTION'),
 		},
 		{
 			id: 4,
 			icon: '🍦',
 			title: TranslateService.translate(eventStore, 'CATEGORY.DESSERTS'),
+			description: TranslateService.translate(eventStore, 'CATEGORY.DESSERTS.DESCRIPTION'),
 		},
 		{
 			id: 5,
 			icon: '🍹',
 			title: TranslateService.translate(eventStore, 'CATEGORY.BARS_AND_NIGHTLIFE'),
+			description: TranslateService.translate(eventStore, 'CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION'),
 		},
 		{
 			id: 6,
 			icon: '🛒',
 			title: TranslateService.translate(eventStore, 'CATEGORY.SHOPPING'),
+			description: TranslateService.translate(eventStore, 'CATEGORY.SHOPPING.DESCRIPTION'),
 		},
 		{
 			id: 7,
 			icon: '⭐',
 			title: TranslateService.translate(eventStore, 'CATEGORY.ATTRACTIONS'),
+			description: TranslateService.translate(eventStore, 'CATEGORY.ATTRACTIONS.DESCRIPTION'),
 		},
 		{
 			id: 8,
 			icon: '👻',
 			title: TranslateService.translate(eventStore, 'CATEGORY.GIMMICKS'),
+			description: TranslateService.translate(eventStore, 'CATEGORY.GIMMICKS.DESCRIPTION'),
 		},
 	];
 };

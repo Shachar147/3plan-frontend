@@ -362,5 +362,13 @@
 	"CATEGORY.BARS_AND_NIGHTLIFE":"Bars and Nightlife",
 	"CATEGORY.SHOPPING": "Shopping",
 	"CATEGORY.ATTRACTIONS":"Attractions",
-	"CATEGORY.GIMMICKS": "Gimmicks"
+	"CATEGORY.GIMMICKS": "Gimmicks",
+	"CATEGORY.GENERAL.DESCRIPTION": "Add general activities to this category",
+	"CATEGORY.LOGISTICS.DESCRIPTION": "Add flights and hotels to this category",
+	"CATEGORY.FOOD.DESCRIPTION": "Add resturants and coffee shops to this category",
+	"CATEGORY.DESSERTS.DESCRIPTION": "Add candy shops, ice creams and desserts to this category",
+	"CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION": "Add bars, clubs and nightlife activities to this category",
+	"CATEGORY.SHOPPING.DESCRIPTION": "Add malls, stores and shopping centers to this category",
+	"CATEGORY.ATTRACTIONS.DESCRIPTION": "Add attractions to this category",
+	"CATEGORY.GIMMICKS.DESCRIPTION": "Add special gimmick attractions to this category. for example: secret bars"
 }
