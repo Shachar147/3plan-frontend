@@ -6,10 +6,6 @@
 	gap: 10px;
 	height: calc(100% - 10px);
 
-	&:not(.combined){
-		height: calc(100vh - 10px);
-	}
-
 	.search-container {
 		display: flex;
 		flex-grow: 0;

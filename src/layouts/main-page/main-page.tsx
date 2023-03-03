@@ -241,6 +241,12 @@ function MainPage(props: MainPageProps) {
 					['map-container flex-1-1-0'],
 					!eventStore.isMapView && 'opacity-0 position-absolute'
 				)}
+				style={{
+					height: '100vh',
+					minHeight: '250px',
+					resize: 'vertical',
+					overflow: 'auto',
+				}}
 				key={JSON.stringify(eventStore.allEvents)}
 			>
 				<MapContainer />
