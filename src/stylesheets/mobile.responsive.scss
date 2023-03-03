@@ -532,6 +532,10 @@
 			line-height: 37px;
 		}
 	}
+
+	.external-events-container {
+		min-width: unset !important;
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {

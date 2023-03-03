@@ -42,7 +42,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 						TriplanCalendarRef?.current?.switchToCustomView();
 					}}
 				/>
-				<i className={`fa fa-arrow-${arrowIcon} flex-row align-items-center dark-color`} aria-hidden="true"></i>
+				<i className={`fa fa-arrow-${arrowIcon} flex-row align-items-center dark-color`} aria-hidden="true" />
 				<input
 					type={'date'}
 					key={`date-range-selector-${customDateRange.end}`}

@@ -31,7 +31,7 @@ const Button = (props: ButtonProps) => (
 		title={props.disabled && props.disabledReason ? props.disabledReason : undefined}
 	>
 		{props.image && <img alt={''} src={props.image} height={props.imageHeight} />}
-		{props.icon && <i className={`fa ${props.icon}`} aria-hidden="true"></i>}
+		{props.icon && <i className={`fa ${props.icon}`} aria-hidden="true" />}
 		{props.text}
 	</button>
 );

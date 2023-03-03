@@ -74,7 +74,7 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
 			<div className="start-side">
 				<div className="choose-language main-font">
 					<a>
-						{/*<i className="fa fa-globe darkest-blue-color" aria-hidden="true"></i>*/}
+						{/*<i className="fa fa-globe darkest-blue-color" aria-hidden="true" />*/}
 						<img alt="" src={'/images/landing-page/icons/choose-lang.png'} />
 						{TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
 					</a>
@@ -226,29 +226,29 @@ export const getViewSelectorOptions = (
 		{
 			key: ViewMode.combined,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.COMBINED_VIEW'),
-			icon: <i className="fa fa-compress black-color" aria-hidden="true"></i>,
-			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true"></i>,
-			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true"></i>,
+			icon: <i className="fa fa-compress black-color" aria-hidden="true" />,
+			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true" />,
 			desktopOnly: true,
 		},
 		{
 			key: ViewMode.calendar,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.CALENDAR_VIEW'),
-			icon: <i className="fa fa-calendar-o black-color" aria-hidden="true"></i>,
-			defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true"></i>,
-			iconActive: <i className="fa fa-calendar selected-color" aria-hidden="true"></i>,
+			icon: <i className="fa fa-calendar-o black-color" aria-hidden="true" />,
+			defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-calendar selected-color" aria-hidden="true" />,
 		},
 		{
 			key: ViewMode.map,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
-			icon: <i className="fa fa-map-o black-color" aria-hidden="true"></i>,
-			iconActive: <i className="fa fa-map selected-color" aria-hidden="true"></i>,
+			icon: <i className="fa fa-map-o black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-map selected-color" aria-hidden="true" />,
 		},
 		{
 			key: ViewMode.list,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
-			icon: <i className="fa fa-list black-color" aria-hidden="true"></i>,
-			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true"></i>,
+			icon: <i className="fa fa-list black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true" />,
 		},
 	];
 
@@ -257,8 +257,8 @@ export const getViewSelectorOptions = (
 			{
 				key: ViewMode.sidebar,
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.SIDEBAR_VIEW'),
-				icon: <i className="fa fa-star-o black-color" aria-hidden="true"></i>,
-				iconActive: <i className="fa fa-star selected-color" aria-hidden="true"></i>,
+				icon: <i className="fa fa-star-o black-color" aria-hidden="true" />,
+				iconActive: <i className="fa fa-star selected-color" aria-hidden="true" />,
 			},
 			...baseArray.filter((x) => !x.desktopOnly),
 		];
@@ -275,14 +275,14 @@ export const getAdminViewSelectorOptions = (
 		{
 			key: ViewMode.list,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
-			icon: <i className="fa fa-list black-color" aria-hidden="true"></i>,
-			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true"></i>,
+			icon: <i className="fa fa-list black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true" />,
 		},
 		{
 			key: ViewMode.map,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
-			icon: <i className="fa fa-map-o black-color" aria-hidden="true"></i>,
-			iconActive: <i className="fa fa-map selected-color" aria-hidden="true"></i>,
+			icon: <i className="fa fa-map-o black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-map selected-color" aria-hidden="true" />,
 		},
 	];
 

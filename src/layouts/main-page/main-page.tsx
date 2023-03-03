@@ -166,20 +166,20 @@ function MainPage(props: MainPageProps) {
 			// {
 			// 	key: ListViewSummaryMode.box,
 			// 	name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX'),
-			// 	// icon: (<i className="fa fa-map-o black-color" aria-hidden="true"></i>),
-			// 	// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true"></i>)
+			// 	// icon: (<i className="fa fa-map-o black-color" aria-hidden="true" />),
+			// 	// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true" />)
 			// },
 			{
 				key: ListViewSummaryMode.noDescriptions,
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS'),
-				// icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
-				// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+				// icon: (<i className="fa fa-calendar black-color" aria-hidden="true" />),
+				// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true" />)
 			},
 			{
 				key: ListViewSummaryMode.full,
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL'),
-				// icon: (<i className="fa fa-calendar black-color" aria-hidden="true"></i>),
-				// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true"></i>)
+				// icon: (<i className="fa fa-calendar black-color" aria-hidden="true" />),
+				// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true" />)
 			},
 		];
 
@@ -242,7 +242,7 @@ function MainPage(props: MainPageProps) {
 					!eventStore.isMapView && 'opacity-0 position-absolute'
 				)}
 				style={{
-					height: '100vh',
+					height: 'CALC(100vh - 120px)',
 					minHeight: '250px',
 					resize: 'vertical',
 					overflow: 'auto',
@@ -311,7 +311,7 @@ function MainPage(props: MainPageProps) {
 		// mobile
 		if (eventStore.isMobile) {
 			return (
-				<div className="main-page-calendar-view flex-column gap-20">
+				<div className="main-page-calendar-view flex-column gap-20 flex-1-1-0 width-100-percents">
 					{renderCustomDates()}
 					{content}
 				</div>

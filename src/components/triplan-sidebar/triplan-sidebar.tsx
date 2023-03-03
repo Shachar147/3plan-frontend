@@ -331,12 +331,12 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const calendarSidebarStatistics = (
 			<>
 				<div className={'sidebar-statistics'}>
-					<i className="fa fa-calendar-check-o" aria-hidden="true"></i>
+					<i className="fa fa-calendar-check-o" aria-hidden="true" />
 					{eventStore.calendarEvents.length}{' '}
 					{TranslateService.translate(eventStore, 'EVENTS_ON_THE_CALENDAR')}
 				</div>
 				<div className={'sidebar-statistics'}>
-					<i className="fa fa-calendar-times-o" aria-hidden="true"></i>
+					<i className="fa fa-calendar-times-o" aria-hidden="true" />
 					{eventStore.allSidebarEvents.length}{' '}
 					{TranslateService.translate(eventStore, 'EVENTS_ON_THE_SIDEBAR')}
 				</div>

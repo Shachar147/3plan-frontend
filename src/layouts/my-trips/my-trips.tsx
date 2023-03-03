@@ -161,7 +161,7 @@ function MyTrips() {
 		function renderTripInfo() {
 			return (
 				<>
-					<i className="fa fa-plane" aria-hidden="true"></i>
+					<i className="fa fa-plane" aria-hidden="true" />
 					<span className="my-trips-trip-name">
 						<EllipsisWithTooltip placement="bottom">{tripName}</EllipsisWithTooltip>
 					</span>

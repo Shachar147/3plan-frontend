@@ -427,12 +427,12 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		const calendarSidebarStatistics = (
 			<>
 				<div className={'sidebar-statistics'}>
-					<i className="fa fa-calendar-check-o" aria-hidden="true"></i>
+					<i className="fa fa-calendar-check-o" aria-hidden="true" />
 					{adminStore.verifiedActivities.length}{' '}
 					{TranslateService.translate(eventStore, 'ADMIN_VERIFIED_ACTIVITIES')}
 				</div>
 				<div className={'sidebar-statistics'}>
-					<i className="fa fa-calendar-times-o" aria-hidden="true"></i>
+					<i className="fa fa-calendar-times-o" aria-hidden="true" />
 					{adminStore.unverifiedActivities.length}{' '}
 					{TranslateService.translate(eventStore, 'ADMIN_UNVERIFIED_ACTIVITIES')}
 				</div>
