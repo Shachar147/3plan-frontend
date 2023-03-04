@@ -376,5 +376,6 @@
 	"CATEGORY.NATURE.DESCRIPTION": "Add lakes, forests, gardens any other nature activities here",
 	"CATEGORY.TOURISM": "Tourism",
 	"CATEGORY.TOURISM.DESCRIPTION": "Add tourism spots here. for example: statue of liberty",
-	"high": "high priority"
+	"high": "high priority",
+	"HOTELS": "Hotels"
 }

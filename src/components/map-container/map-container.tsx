@@ -5,11 +5,11 @@ import GoogleMapReact from 'google-map-react';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
 import * as _ from 'lodash';
 import { eventStoreContext } from '../../stores/events-store';
-import { priorityToColor, priorityToMapColor } from '../../utils/consts';
+import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
 import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
 import { TriplanEventPreferredTime } from '../../utils/enums';
-import { BuildEventUrl, getClasses, isMatching } from '../../utils/utils';
+import { BuildEventUrl, getClasses, isBasketball, isDessert, isFlight, isHotel, isMatching } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
 import * as ReactDOMServer from 'react-dom/server';
@@ -313,16 +313,16 @@ const MapContainer = (props: MapContainerProps) => {
 				flights: 'icons/onion/1504-airport-plane_4x.png',
 			};
 
-			if (isMatching(title, ['basketball', 'כדורסל'])) {
+			if (isBasketball(category, title)) {
 				icon = iconsMap['basketball'];
-			} else if (
-				isMatching(category, ['desserts', 'קינוחים']) ||
-				isMatching(title, ['desserts', 'קינוחים', 'גלידה'])
-			) {
+			} else if (isDessert(category, title)) {
 				icon = iconsMap['desserts'];
-			} else if (isMatching(category, ['hotel', 'מלון']) || isMatching(title, ['hotel', 'מלון'])) {
+			} else if (isFlight(title)) {
+				icon = iconsMap['flights'];
+				bgColor = flightColor;
+			} else if (isHotel(category, title)) {
 				icon = iconsMap['hotel'];
-				bgColor = '7cb342';
+				bgColor = hotelColor;
 			} else if (
 				isMatching(category, ['food', 'restaurant', 'אוכל', 'מסעדות', 'cafe', 'קפה']) ||
 				isMatching(title, ['food', 'restaurant', 'אוכל', 'מסעדת', 'cafe', 'קפה'])
@@ -343,9 +343,6 @@ const MapContainer = (props: MapContainerProps) => {
 				icon = iconsMap['beach'];
 			} else if (isMatching(category, ['club', 'cocktail', 'beer', 'bar', 'מועדונים', 'ברים', 'מסיבות'])) {
 				icon = iconsMap['nightlife'];
-			} else if (isMatching(title, ['flight', 'טיסה'])) {
-				icon = iconsMap['flights'];
-				bgColor = 'dc5757';
 			} else if (isMatching(category, ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'])) {
 				icon = iconsMap['shopping'];
 			} else if (isMatching(category, ['tourism', 'תיירות', 'אתרים'])) {

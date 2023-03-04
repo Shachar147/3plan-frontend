@@ -18,4 +18,7 @@ export const priorityToMapColor: Record<string, string> = {
 	[TriplanPriority.high]: '#a52714', //'#f57c01',
 };
 
+export const flightColor = 'dc5757';
+export const hotelColor = '7cb342';
+
 export const LOGIN_DELAY: number = 300; // to be able to see the loader

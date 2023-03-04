@@ -1,6 +1,6 @@
 import React, { CSSProperties, useContext } from 'react';
 import TranslateService from '../../services/translate-service';
-import { addLineBreaks, getClasses, ucfirst } from '../../utils/utils';
+import { addLineBreaks, getClasses, isBasketball, isDessert, isFlight, isHotel, ucfirst } from '../../utils/utils';
 import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
@@ -11,7 +11,7 @@ import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import Button, { ButtonFlavor } from '../common/button/button';
 // @ts-ignore
 import * as _ from 'lodash';
-import { priorityToColor } from '../../utils/consts';
+import { hotelColor, priorityToColor } from '../../utils/consts';
 import ListViewService from '../../services/list-view-service';
 import ReactModalService from '../../services/react-modal-service';
 import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
@@ -365,8 +365,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const renderPrioritiesLegend = () => {
 		const renderPrioritiesStatistics = () => {
 			const eventsByPriority: Record<string, SidebarEvent[] & CalendarEvent[]> = {};
+			const allEvents = [...Object.values(eventStore.sidebarEvents).flat(), ...eventStore.calendarEvents];
 			// eventStore.allEvents.forEach((iter) => {
-			[...Object.values(eventStore.sidebarEvents).flat(), ...eventStore.calendarEvents].forEach((iter) => {
+			allEvents.forEach((iter) => {
 				const priority = iter.priority || TriplanPriority.unset;
 				eventsByPriority[priority] = eventsByPriority[priority] || [];
 
@@ -389,7 +390,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				return eventsByPriority[priority] ? eventsByPriority[priority].length : 0;
 			};
 
-			return Object.keys(TriplanPriority)
+			const priorities = Object.keys(TriplanPriority)
 				.filter((x) => !Number.isNaN(Number(x)))
 				.sort((a, b) => getPriorityTotalEvents(b) - getPriorityTotalEvents(a))
 				.map((priorityVal) => {
@@ -421,6 +422,66 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						</div>
 					);
 				});
+
+			let totalHotelsInCalendar = 0;
+			const notInCalendar = TranslateService.translate(eventStore, 'NOT_IN_CALENDAR');
+			const totalHotels = allEvents.filter((x) => {
+				const categoryId = x.category ?? x.extendedProps?.category;
+				let category = categoryId;
+				if (!Number.isNaN(category)) {
+					const categoryObject = eventStore.categories.find((x) => x.id == categoryId);
+					if (categoryObject) {
+						if (categoryObject.translateTitle) {
+							category = TranslateService.translate(eventStore, categoryObject.title);
+						} else {
+							category = categoryObject.title;
+						}
+					}
+				}
+
+				if (category == undefined) {
+					x.category = eventStore.categories[0];
+					const categoryObject = eventStore.categories[0];
+					if (categoryObject) {
+						if (categoryObject.translateTitle) {
+							category = TranslateService.translate(eventStore, categoryObject.title);
+						} else {
+							category = categoryObject.title;
+						}
+					}
+				}
+
+				category = category?.toString();
+				const isMatching =
+					!(isDessert(category, x.title!) || isBasketball(category, x.title!) || isFlight(x.title!)) &&
+					isHotel(category, x.title!);
+
+				const calendarEvent = eventStore.calendarEvents.find((c) => c.id == x.id);
+				if (isMatching && calendarEvent) {
+					totalHotelsInCalendar++;
+				}
+				return isMatching;
+			}).length;
+			const translatedHotels = TranslateService.translate(eventStore, 'HOTELS');
+			const custom = (
+				<>
+					<div className={'sidebar-statistics'} key={`sidebar-statistics-for-hotels`}>
+						<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: `#${hotelColor}` }} />
+						<div>
+							{`${totalHotels} `}
+							<span>{translatedHotels}</span>
+							{` (${totalHotels - totalHotelsInCalendar} ${notInCalendar})`}
+						</div>
+					</div>
+				</>
+			);
+
+			return (
+				<>
+					{priorities}
+					{custom}
+				</>
+			);
 		};
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND');

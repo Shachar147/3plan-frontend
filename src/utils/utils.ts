@@ -202,6 +202,22 @@ export function isMatching(str: string, options: string[]) {
 	return isMatch;
 }
 
+export function isFlight(title: string) {
+	return isMatching(title, ['flight', 'טיסה']);
+}
+
+export function isDessert(category: string, title: string) {
+	return isMatching(category, ['desserts', 'קינוחים']) || isMatching(title, ['desserts', 'קינוחים', 'גלידה']);
+}
+
+export function isBasketball(category: string, title: string) {
+	return isMatching(title, ['basketball', 'כדורסל']);
+}
+
+export function isHotel(category: string, title: string) {
+	return isMatching(category, ['hotel', 'מלון']) || isMatching(title, ['hotel', 'מלון']);
+}
+
 export function containsDuplicates(array: any[]) {
 	return array.length !== new Set(array).size;
 }
