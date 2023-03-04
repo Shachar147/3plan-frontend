@@ -1,7 +1,7 @@
 import React, { CSSProperties, useContext } from 'react';
 import { observer } from 'mobx-react';
 import * as _ from 'lodash';
-import { EventStore, eventStoreContext } from '../../../stores/events-store';
+import { eventStoreContext } from '../../../stores/events-store';
 import { CalendarEvent, SidebarEvent } from '../../../utils/interfaces';
 import Button, { ButtonFlavor } from '../../../components/common/button/button';
 import TranslateService from '../../../services/translate-service';

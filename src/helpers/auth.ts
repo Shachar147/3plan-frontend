@@ -30,18 +30,15 @@ export function isLoggedOn() {
 	//         function(res) {
 	//         },
 	//         function(error) {
-	//             console.log(error);
 	//             // if (error.message.indexOf("401") !== -1) {
 	//             //     isLoggedOn = false;
 	//             // }
-	//             debugger;
 	//             isLoggedOn = false;
 	//         },
 	//         function() {
 	//         }
 	//     );
 	//
-	//     debugger;
 	//     return isLoggedOn;
 	// }
 	//

@@ -302,7 +302,7 @@ const MapContainer = (props: MapContainerProps) => {
 				nightlife: 'icons/onion/1517-bar-cocktail_4x.png',
 				hotel: 'icons/onion/1602-hotel-bed_4x.png',
 				shopping: 'icons/onion/1684-shopping-bag_4x.png',
-				tourism: 'icons/onion/1715-tower_4x.png',
+				tourism: 'icons/onion/1548-civic_4x.png', // 'icons/onion/1715-tower_4x.png',
 				flowers: 'icons/onion/1582-garden-flower_4x.png',
 				desserts: 'icons/onion/1607-ice-cream_4x.png',
 				cities: 'icons/onion/1546-city-buildings_4x.png',
@@ -311,6 +311,7 @@ const MapContainer = (props: MapContainerProps) => {
 				trains: 'icons/onion/1716-train_4x.png',
 				musicals: 'icons/onion/1637-music-note_4x.png',
 				flights: 'icons/onion/1504-airport-plane_4x.png',
+				coffee_shops: 'icons/onion/1868-smoking_4x.png',
 			};
 
 			if (isBasketball(category, title)) {
@@ -337,6 +338,11 @@ const MapContainer = (props: MapContainerProps) => {
 				icon = iconsMap['flowers'];
 			} else if (isMatching(category, ['attraction', 'attractions', 'אטרקציות', 'פעילויות'])) {
 				icon = iconsMap['attractions'];
+			} else if (
+				isMatching(category, ['coffee shops', 'coffee shop', 'קופישופס']) ||
+				isMatching(title, ['coffee shops', 'coffee shop', 'קופישופס'])
+			) {
+				icon = iconsMap['coffee_shops'];
 			} else if (
 				isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
 			) {
