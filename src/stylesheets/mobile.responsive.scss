@@ -501,7 +501,7 @@
 		box-shadow: 0 0 10px 0 #777 !important;
 	}
 
-	.add-calendar-event-modal-choose-where{
+	.add-calendar-event-modal-choose-where {
 		flex-direction: column;
 	}
 
@@ -518,19 +518,23 @@
 		input {
 			height: 37px !important;
 		}
-		div[class$="ValueContainer"],
+		div[class$='ValueContainer'],
 		.opening-hours-details,
-		input, select, textarea{
+		input,
+		select,
+		textarea {
 			font-size: 14px !important;
 		}
-		div[id^="react-select-"],
-		div[class$="singleValue"] {
+		div[id^='react-select-'],
+		div[class$='singleValue'] {
 			font-size: 12px;
 		}
 		textarea {
 			line-height: 26px !important;
 		}
-		input, select, textarea {
+		input,
+		select,
+		textarea {
 			width: 245px;
 			line-height: 37px;
 		}
@@ -538,6 +542,20 @@
 
 	.external-events-container {
 		min-width: unset !important;
+	}
+
+	.places-tinder-modal {
+		max-height: 90vh;
+
+		.slick-slider,
+		.slick-list,
+		.slick-tarck {
+			max-height: 150px;
+		}
+
+		.bright-scrollbar {
+			max-height: 50px;
+		}
 	}
 }
 
