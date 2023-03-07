@@ -10,6 +10,7 @@ interface TriplanSearchProps {
 	isHidden?: boolean;
 	value?: string;
 	onChange?: (e: string) => void;
+	placeholder?: string;
 }
 
 function TriplanSearch(props: TriplanSearchProps) {
@@ -28,7 +29,7 @@ function TriplanSearch(props: TriplanSearchProps) {
 						eventStore.setSearchValue(e.target.value);
 					}
 				}}
-				placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+				placeholder={props.placeholder ?? TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
 			/>
 		</div>
 	);

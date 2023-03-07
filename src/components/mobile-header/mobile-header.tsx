@@ -5,8 +5,7 @@ import { TriplanHeaderProps } from '../triplan-header/triplan-header';
 import { Link } from 'react-router-dom';
 import './mobile-header.scss';
 import { eventStoreContext } from '../../stores/events-store';
-import { getClasses, ucfirst } from '../../utils/utils';
-import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
+import { getClasses } from '../../utils/utils';
 import TranslateService from '../../services/translate-service';
 
 interface MobileHeaderProps extends TriplanHeaderProps {

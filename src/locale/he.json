@@ -455,5 +455,6 @@
 	"CATEGORY.TOURISM": "תיירות",
 	"CATEGORY.TOURISM.DESCRIPTION": "הוסף נקודות עניין תיירותיות לקטגוריה זו. לדוגמא: פסל החירות",
 	"HOTELS": "בתי מלון",
-	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "במצב חיפוש או סינון, קטגוריות ריקות מוסתרות אוטומטית"
+	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "במצב חיפוש או סינון, קטגוריות ריקות מוסתרות אוטומטית",
+	"GENERAL_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש כללי"
 }

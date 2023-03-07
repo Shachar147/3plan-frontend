@@ -378,5 +378,6 @@
 	"CATEGORY.TOURISM.DESCRIPTION": "Add tourism spots here. for example: statue of liberty",
 	"high": "high priority",
 	"HOTELS": "Hotels",
-	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "When filtering, empty categories are automatically hidden."
+	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "When filtering, empty categories are automatically hidden.",
+	"GENERAL_SEARCH_PLACEHOLDER": "Search everywhere"
 }

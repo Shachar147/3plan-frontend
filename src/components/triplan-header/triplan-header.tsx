@@ -10,6 +10,7 @@ import MyTrips from './my-trips/my-trips';
 import TriplanViewSelector from './view-selector/triplan-view-selector';
 import TriplanSearch from './triplan-search/triplan-search';
 import FilterIndications from './filter-indications/filter-indications';
+import TranslateService from '../../services/translate-service';
 
 export interface TriplanHeaderProps {
 	withLogo?: boolean;
@@ -46,7 +47,10 @@ function TriplanHeader(options: TriplanHeaderProps = {}) {
 			{withLanguageSelector && <LanguageSelector />}
 			<div className={'triplan-header-actionbar'}>
 				{withFilterTags && <FilterIndications {...options} />}
-				<TriplanSearch isHidden={!withSearch} />
+				<TriplanSearch
+					isHidden={!withSearch}
+					placeholder={TranslateService.translate(eventStore, 'GENERAL_SEARCH_PLACEHOLDER')}
+				/>
 				{withViewSelector && <TriplanViewSelector />}
 			</div>
 			<div className={getClasses('triplan-header-starter', !eventStore.isRtl && 'flex-row-reverse')}>

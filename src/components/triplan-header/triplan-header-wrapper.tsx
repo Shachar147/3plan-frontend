@@ -37,7 +37,12 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 			<>
 				<MobileHeader {...props} withSearch={withSearch} showTripName={showTripName} />
 				<div className="mobile-header-search-container">
-					{withSearch && <TriplanSearch isHidden={!eventStore.isSearchOpen} />}
+					{withSearch && (
+						<TriplanSearch
+							isHidden={!eventStore.isSearchOpen}
+							placeholder={TranslateService.translate(eventStore, 'GENERAL_SEARCH_PLACEHOLDER')}
+						/>
+					)}
 					{showing != null &&
 						from != null &&
 						eventStore.searchValue &&
