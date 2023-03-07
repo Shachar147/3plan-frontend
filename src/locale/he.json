@@ -151,7 +151,7 @@
 	"EVENTS_WITH_TODO_COMPLETE": "פעילויות עם משימות פתוחות",
 	"EXPAND_ALL": "פתח הכל",
 	"COLLAPSE_ALL": "סגור הכל",
-	"HIDE_EMPTY_CATEGORIES": "הצג קבוצות ריקות",
+	"HIDE_EMPTY_CATEGORIES": "הצג קטגוריות ריקות",
 	"SHOW_EMPTY_CATEGORIES": "הסתר קטגוריות ריקות",
 	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP": "צור טיול חדש",
 	"GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP": "מתי הטיול שלכם?",
@@ -454,5 +454,6 @@
 	"CATEGORY.NATURE.DESCRIPTION": "הוסף נהרות ואגמים, יערות, גנים ופעילויות טבע נוספות לקטגוריה זו",
 	"CATEGORY.TOURISM": "תיירות",
 	"CATEGORY.TOURISM.DESCRIPTION": "הוסף נקודות עניין תיירותיות לקטגוריה זו. לדוגמא: פסל החירות",
-	"HOTELS": "בתי מלון"
+	"HOTELS": "בתי מלון",
+	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "במצב חיפוש או סינון, קטגוריות ריקות מוסתרות אוטומטית"
 }

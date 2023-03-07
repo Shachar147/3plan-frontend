@@ -430,6 +430,16 @@ export class EventStore {
 		return Object.values(this.sidebarEvents).flat();
 	}
 
+	@computed
+	get isFiltered(): boolean {
+		return (
+			!!this.searchValue?.length ||
+			this.showOnlyEventsWithNoLocation ||
+			this.showOnlyEventsWithNoOpeningHours ||
+			this.showOnlyEventsWithTodoComplete
+		);
+	}
+
 	// --- actions --------------------------------------------------------------
 
 	@action

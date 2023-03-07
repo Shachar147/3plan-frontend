@@ -24,8 +24,14 @@ export interface ButtonProps {
 
 const Button = (props: ButtonProps) => (
 	<button
-		className={getClasses([`${props.flavor}-button main-font`], props.className)}
-		onClick={props.onClick}
+		className={getClasses(
+			[`${props.flavor}-button main-font`],
+			props.className,
+			props.disabled && 'cursor-default'
+		)}
+		onClick={() => {
+			!props.disabled && props.onClick();
+		}}
 		disabled={props.disabled}
 		style={props.style}
 		title={props.disabled && props.disabledReason ? props.disabledReason : undefined}

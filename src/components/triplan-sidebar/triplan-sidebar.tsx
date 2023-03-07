@@ -503,10 +503,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 	const renderCategories = () => {
 		const renderExpandCollapse = () => {
-			const eyeIcon = eventStore.hideEmptyCategories ? 'fa-eye' : 'fa-eye-slash';
-			const expandMinimizedEnabled = eventStore.hideEmptyCategories
-				? Object.values(eventStore.getSidebarEvents).flat().length > 0
-				: eventStore.categories.length > 0;
+			const eyeIcon = eventStore.hideEmptyCategories || eventStore.isFiltered ? 'fa-eye' : 'fa-eye-slash';
+			const expandMinimizedEnabled =
+				eventStore.hideEmptyCategories || eventStore.isFiltered
+					? Object.values(eventStore.getSidebarEvents).flat().length > 0
+					: eventStore.categories.length > 0;
 
 			return (
 				<>
@@ -538,11 +539,16 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						<Button
 							className={getClasses(
 								['padding-inline-start-10 pointer padding-inline-end-10'],
-								eventStore.hideEmptyCategories && 'blue-color'
+								(eventStore.hideEmptyCategories || eventStore.isFiltered) && 'blue-color'
 							)}
 							onClick={() => {
 								eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories);
 							}}
+							disabled={eventStore.isFiltered}
+							disabledReason={TranslateService.translate(
+								eventStore,
+								'ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN'
+							)}
 							flavor={ButtonFlavor.link}
 							icon={eyeIcon}
 							text={TranslateService.translate(
@@ -612,7 +618,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							.replace('{Y}', sidebarItemsCount.toString())
 					: undefined;
 
-			if (eventStore.hideEmptyCategories && sidebarItemsCount === 0) {
+			if ((eventStore.hideEmptyCategories || eventStore.isFiltered) && sidebarItemsCount === 0) {
 				return <></>;
 			}
 			totalDisplayedCategories++;
