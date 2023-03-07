@@ -1,5 +1,5 @@
 import { EventStore } from '../stores/events-store';
-import TranslateService from './translate-service';
+import TranslateService, { TranslationParams } from './translate-service';
 import React from 'react';
 import { runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
@@ -2303,41 +2303,57 @@ const ReactModalService = {
 
 		// on event click - show edit event popup
 		const eventId = info.event.id;
-		const currentEvent = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
-		if (!currentEvent) {
+		const found = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
+		if (!found) {
 			console.error('event not found');
 			return;
 		}
+
+		const currentEvent = { ...found };
+
+		const categoryName =
+			eventStore.categories.find((x) => x.id == currentEvent?.extendedProps?.categoryId)?.title ?? 'N/A';
 
 		const handleDeleteEventResult = (
 			currentEvent: CalendarEvent,
 			addEventToSidebar: (event: SidebarEvent) => boolean
 		) => {
-			// add back to sidebar
-			if (addEventToSidebar(currentEvent)) {
-				// remove from calendar
-				eventStore.allowRemoveAllCalendarEvents = true;
-				eventStore.deleteEvent(eventId);
+			ReactModalService.openConfirmModal(
+				eventStore,
+				() => {
+					// add back to sidebar
+					if (addEventToSidebar(currentEvent)) {
+						// remove from calendar
+						eventStore.allowRemoveAllCalendarEvents = true;
+						eventStore.deleteEvent(eventId);
 
-				// refreshSources();
+						// refreshSources();
 
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.DELETED.TITLE',
-					'MODALS.DELETED.CONTENT',
-					'success'
-				);
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.REMOVED_FROM_CALENDAR.TITLE',
+							'MODALS.REMOVED_FROM_CALENDAR.CONTENT',
+							'success'
+						);
 
-				ReactModalService.internal.closeModal(eventStore);
-			} else {
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.ERROR.TITLE',
-					'MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG',
-					'error'
-				);
-				return;
-			}
+						ReactModalService.internal.closeModal(eventStore);
+					} else {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG',
+							'error'
+						);
+						return;
+					}
+				},
+				'MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE',
+				'MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT',
+				undefined,
+				{
+					X: categoryName,
+				}
+			);
 		};
 
 		const handleEditEventResult = (
@@ -2602,7 +2618,7 @@ const ReactModalService = {
 									className: 'red',
 								},
 							},
-							textKey: 'MODALS.REMOVE_EVENT',
+							textKey: 'MODALS.REMOVE_EVENT_FROM_CALENDAR',
 							// className: 'border-top-gray'
 						},
 						{
@@ -2674,12 +2690,19 @@ const ReactModalService = {
 		callback: () => void,
 		titleKey = 'MODALS.ARE_YOU_SURE',
 		contentKey = 'MODALS.ARE_YOU_SURE.CONTENT',
-		continueKey = 'MODALS.CONTINUE'
+		continueKey = 'MODALS.CONTINUE',
+		contentParams?: TranslationParams
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: `${TranslateService.translate(eventStore, titleKey)}`,
-			content: <div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, contentKey) }} />,
+			content: (
+				<div
+					dangerouslySetInnerHTML={{
+						__html: TranslateService.translate(eventStore, contentKey, contentParams),
+					}}
+				/>
+			),
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, continueKey),
 			confirmBtnCssClass: 'primary-button',

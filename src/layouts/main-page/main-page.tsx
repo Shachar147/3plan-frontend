@@ -105,7 +105,10 @@ function MainPage(props: MainPageProps) {
 				arr.push({ ...idToEvent[eventId], category: idToCategory[eventId].toString() });
 			}
 		});
-		eventStore.setAllEvents(arr);
+
+		setTimeout(() => {
+			eventStore.setAllEvents(arr);
+		}, 500);
 	}, [eventStore.sidebarEvents]);
 
 	function addEventToSidebar(event: any): boolean {
@@ -117,6 +120,15 @@ function MainPage(props: MainPageProps) {
 				category = findEvent.category;
 				if (!category && findEvent && findEvent.extendedProps) {
 					category = findEvent.extendedProps.categoryId;
+					// const found = eventStore.categories.find((x) => x.id == findEvent.extendedProps.categoryId);
+					// if (!found) {
+					// 	category = eventStore.categories[0].id.toString();
+					// 	console.log(
+					// 		`error! couldn't find the category of this event, adding to ${eventStore.categories[0].title}`
+					// 	);
+					// } else {
+					// 	category = found.id.toString();
+					// }
 				}
 			}
 		}
@@ -156,7 +168,9 @@ function MainPage(props: MainPageProps) {
 		] as CalendarEvent[];
 		eventStore.setCalendarEvents(newCalendarEvents);
 		setEventsToCategories(newEventsToCategories);
-		eventStore.setSidebarEvents(newEvents);
+		setTimeout(() => {
+			eventStore.setSidebarEvents(newEvents);
+		}, 500);
 	}
 
 	function renderListView() {

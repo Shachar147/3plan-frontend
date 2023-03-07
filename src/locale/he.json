@@ -32,8 +32,10 @@
 	"MODALS.SAVE": "שמור",
 	"MODALS.CANCEL": "בטל",
 	"MODALS.DELETED.TITLE": "נמחק!",
-	"MODALS.DELETED.CATEGORY.CONTENT": "הקטגוריה נמחקה בהצלחה",
 	"MODALS.DELETED.CONTENT": "הפעילות נמחקה בהצלחה",
+	"MODALS.REMOVED_FROM_CALENDAR.TITLE": "הוסרה בהצלחה!",
+	"MODALS.REMOVED_FROM_CALENDAR.CONTENT": "הפעילות הוסרה בהצלחה מלוח השנה.",
+	"MODALS.DELETED.CATEGORY.CONTENT": "הקטגוריה נמחקה בהצלחה",
 	"MODALS.ERROR.TITLE": "שגיאה",
 	"MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "הכותרת לא יכולה להיות ריקה",
 	"MODALS.ERROR.CATEGORY_CANT_BE_EMPTY": "הקטגוריה לא יכולה להיות ריקה",
@@ -47,6 +49,7 @@
 	"MODALS.DUPLICATE": "שכפל",
 	"MODALS.EDIT_EVENT": "ערוך פעילות",
 	"MODALS.REMOVE_EVENT": "מחק פעילות",
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR": "הסר פעילות מלוח השנה",
 	"MODALS.DUPLICATE_EVENT": "שכפל פעילות",
 	"MODALS.DELETE_SIDEBAR_EVENT.CONTENT": "האם אתה בטוח שברצונך למחוק את הפעילות הזאת?<br/>זוהי פעולה בלתי הפיכה",
 	"MODALS.UPDATED.TITLE": "עודכן!",
@@ -456,5 +459,7 @@
 	"CATEGORY.TOURISM.DESCRIPTION": "הוסף נקודות עניין תיירותיות לקטגוריה זו. לדוגמא: פסל החירות",
 	"HOTELS": "בתי מלון",
 	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "במצב חיפוש או סינון, קטגוריות ריקות מוסתרות אוטומטית",
-	"GENERAL_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש כללי"
+	"GENERAL_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש כללי",
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT": "הסרת הפעילות מלוח השנה תחזיר אותה לקטגוריה <b>{X}</b> בתפריט הצד",
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "הסרת פעילות מלוח השנה"
 }
