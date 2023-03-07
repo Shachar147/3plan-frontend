@@ -151,6 +151,8 @@ function MainPage(props: MainPageProps) {
 				newEventsToCategories[eventId] = category;
 			}
 		});
+
+		// why removing from sidebar moves to calendar ?!
 		const newCalendarEvents: CalendarEvent[] = [
 			...eventStore.calendarEvents.filter(
 				(calendarEvent) => calendarEvent?.id?.toString() !== eventId.toString()
@@ -158,6 +160,7 @@ function MainPage(props: MainPageProps) {
 			eventStore.allEvents.find((e) => e.id.toString() === eventId.toString()),
 		] as CalendarEvent[];
 		eventStore.setCalendarEvents(newCalendarEvents);
+
 		setEventsToCategories(newEventsToCategories);
 		setTimeout(() => {
 			eventStore.setSidebarEvents(newEvents);
