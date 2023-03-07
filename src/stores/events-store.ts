@@ -528,8 +528,6 @@ export class EventStore {
 	setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]) {
 		if (this.tripName == '') return;
 
-		debugger;
-
 		// if (containsDuplicates(newAllEvents.map((x: SidebarEvent | CalendarEvent) => x.id))){
 		//     // alert("error! contains duplicates!");
 		//     // debugger;

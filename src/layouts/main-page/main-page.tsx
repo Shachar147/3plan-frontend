@@ -120,15 +120,6 @@ function MainPage(props: MainPageProps) {
 				category = findEvent.category;
 				if (!category && findEvent && findEvent.extendedProps) {
 					category = findEvent.extendedProps.categoryId;
-					// const found = eventStore.categories.find((x) => x.id == findEvent.extendedProps.categoryId);
-					// if (!found) {
-					// 	category = eventStore.categories[0].id.toString();
-					// 	console.log(
-					// 		`error! couldn't find the category of this event, adding to ${eventStore.categories[0].title}`
-					// 	);
-					// } else {
-					// 	category = found.id.toString();
-					// }
 				}
 			}
 		}
