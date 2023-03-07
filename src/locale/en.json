@@ -22,6 +22,8 @@
 	"MODALS.CANCEL": "Cancel",
 	"MODALS.DELETED.TITLE": "Deleted!",
 	"MODALS.DELETED.CONTENT": "Activity have been deleted.",
+	"MODALS.REMOVED_FROM_CALENDAR.TITLE": "Removed!",
+	"MODALS.REMOVED_FROM_CALENDAR.CONTENT": "Activity have been removed from calendar.",
 	"MODALS.DELETED.CATEGORY.CONTENT": "Category have been deleted.",
 	"MODALS.ERROR.TITLE": "Error",
 	"MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "Title cannot be empty",
@@ -36,6 +38,7 @@
 	"MODALS.DUPLICATE": "Duplicate",
 	"MODALS.EDIT_EVENT": "Edit Activity",
 	"MODALS.REMOVE_EVENT": "Remove Activity",
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR": "Remove activity from Calendar",
 	"MODALS.DUPLICATE_EVENT": "Duplicate Activity",
 	"MODALS.DELETE_SIDEBAR_EVENT.CONTENT": "Are you sure you want to delete this activity?<br/>this action is irreversible",
 	"MODALS.UPDATED.TITLE": "Updated!",
@@ -379,5 +382,7 @@
 	"high": "high priority",
 	"HOTELS": "Hotels",
 	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "When filtering, empty categories are automatically hidden.",
-	"GENERAL_SEARCH_PLACEHOLDER": "Search everywhere"
+	"GENERAL_SEARCH_PLACEHOLDER": "Search everywhere",
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT": "Removing this event from the calendar will move it back to category <b>{X}</b> in the sidebar",
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "Remove event from calendar"
 }

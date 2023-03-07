@@ -431,11 +431,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				if (!Number.isNaN(category)) {
 					const categoryObject = eventStore.categories.find((x) => x.id == categoryId);
 					if (categoryObject) {
-						if (categoryObject.translateTitle) {
-							category = TranslateService.translate(eventStore, categoryObject.title);
-						} else {
-							category = categoryObject.title;
-						}
+						category = categoryObject.title;
 					}
 				}
 
@@ -443,11 +439,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					x.category = eventStore.categories[0];
 					const categoryObject = eventStore.categories[0];
 					if (categoryObject) {
-						if (categoryObject.translateTitle) {
-							category = TranslateService.translate(eventStore, categoryObject.title);
-						} else {
-							category = categoryObject.title;
-						}
+						category = categoryObject.title;
 					}
 				}
 
@@ -654,9 +646,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						/>
 						<span>
 							{category.icon ? `${category.icon} ` : ''}
-							{category.translateTitle
-								? TranslateService.translate(eventStore, category.title)
-								: category.title}
+							{category.title}
 						</span>
 						<div title={totalItemsCountTooltip}>
 							({sidebarItemsCount}/{itemsCount})

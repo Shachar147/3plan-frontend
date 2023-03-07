@@ -105,7 +105,10 @@ function MainPage(props: MainPageProps) {
 				arr.push({ ...idToEvent[eventId], category: idToCategory[eventId].toString() });
 			}
 		});
-		eventStore.setAllEvents(arr);
+
+		setTimeout(() => {
+			eventStore.setAllEvents(arr);
+		}, 500);
 	}, [eventStore.sidebarEvents]);
 
 	function addEventToSidebar(event: any): boolean {
@@ -148,6 +151,8 @@ function MainPage(props: MainPageProps) {
 				newEventsToCategories[eventId] = category;
 			}
 		});
+
+		// why removing from sidebar moves to calendar ?!
 		const newCalendarEvents: CalendarEvent[] = [
 			...eventStore.calendarEvents.filter(
 				(calendarEvent) => calendarEvent?.id?.toString() !== eventId.toString()
@@ -155,8 +160,11 @@ function MainPage(props: MainPageProps) {
 			eventStore.allEvents.find((e) => e.id.toString() === eventId.toString()),
 		] as CalendarEvent[];
 		eventStore.setCalendarEvents(newCalendarEvents);
+
 		setEventsToCategories(newEventsToCategories);
-		eventStore.setSidebarEvents(newEvents);
+		setTimeout(() => {
+			eventStore.setSidebarEvents(newEvents);
+		}, 500);
 	}
 
 	function renderListView() {

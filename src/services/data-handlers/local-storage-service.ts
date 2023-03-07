@@ -241,7 +241,6 @@ export class LocalStorageService implements BaseDataHandler {
 			const newKey = [localStorageKey, newLSTripName].join(separator2);
 			const value = localStorage.getItem(key);
 			if (value != undefined) {
-				debugger;
 				localStorage.setItem(newKey, value);
 				localStorage.removeItem(key);
 			}
