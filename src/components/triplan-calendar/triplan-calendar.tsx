@@ -168,8 +168,6 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const onEventClick = (info: any) => {
-		// ModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info)
-		// todo complete: add delete button
 		ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info);
 	};
 
@@ -193,21 +191,21 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	const onCalendarSelect = (selectionInfo: any) => {
 		let shouldOpen = true;
-		if (eventStore.isMobile) {
-			shouldOpen = false;
-			if (!isDoubleClicked) {
-				// console.log("not clicked yet!");
-				setIsDoubleClicked(true);
-				setTimeout(() => {
-					// console.log("oops too long");
-					setIsDoubleClicked(false);
-				}, 1000);
-			} else {
-				// console.log("double clicked!");
+		// if (eventStore.isMobile) {
+		shouldOpen = false;
+		if (!isDoubleClicked) {
+			// console.log("not clicked yet!");
+			setIsDoubleClicked(true);
+			setTimeout(() => {
+				// console.log("oops too long");
 				setIsDoubleClicked(false);
-				shouldOpen = true;
-			}
+			}, 1000);
+		} else {
+			// console.log("double clicked!");
+			setIsDoubleClicked(false);
+			shouldOpen = true;
 		}
+		// }
 
 		if (shouldOpen) {
 			ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
