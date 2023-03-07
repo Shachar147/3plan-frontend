@@ -2,6 +2,7 @@ import { TriplanEventPreferredTime, TriplanPriority } from './enums';
 import { SidebarEvent, TriPlanCategory } from './interfaces';
 import { DateRangeFormatted } from '../services/data-handlers/data-handler-base';
 import { EventStore } from '../stores/events-store';
+import TranslateService from '../services/translate-service';
 
 export const defaultLocalCode = 'he';
 export const defaultTimedEventDuration = '01:00';
@@ -674,72 +675,62 @@ export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] 
 		{
 			id: 1,
 			icon: '🧞‍♂️',
-			title: 'CATEGORY.GENERAL',
+			title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL'),
 			description: 'CATEGORY.GENERAL.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 2,
 			icon: '🏩',
-			title: 'CATEGORY.LOGISTICS',
+			title: TranslateService.translate(eventStore, 'CATEGORY.LOGISTICS'),
 			description: 'CATEGORY.LOGISTICS.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 3,
 			icon: '🍕',
-			title: 'CATEGORY.FOOD',
+			title: TranslateService.translate(eventStore, 'CATEGORY.FOOD'),
 			description: 'CATEGORY.FOOD.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 4,
 			icon: '🍦',
-			title: 'CATEGORY.DESSERTS',
+			title: TranslateService.translate(eventStore, 'CATEGORY.DESSERTS'),
 			description: 'CATEGORY.DESSERTS.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 5,
 			icon: '🍹',
-			title: 'CATEGORY.BARS_AND_NIGHTLIFE',
+			title: TranslateService.translate(eventStore, 'CATEGORY.BARS_AND_NIGHTLIFE'),
 			description: 'CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 6,
 			icon: '🛒',
-			title: 'CATEGORY.SHOPPING',
+			title: TranslateService.translate(eventStore, 'CATEGORY.SHOPPING'),
 			description: 'CATEGORY.SHOPPING.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 7,
 			icon: '⭐',
-			title: 'CATEGORY.ATTRACTIONS',
+			title: TranslateService.translate(eventStore, 'CATEGORY.ATTRACTIONS'),
 			description: 'CATEGORY.ATTRACTIONS.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 8,
 			icon: '👻',
-			title: 'CATEGORY.GIMMICKS',
+			title: TranslateService.translate(eventStore, 'CATEGORY.GIMMICKS'),
 			description: 'CATEGORY.GIMMICKS.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 9,
 			icon: '🌺',
-			title: 'CATEGORY.NATURE',
+			title: TranslateService.translate(eventStore, 'CATEGORY.NATURE'),
 			description: 'CATEGORY.NATURE.DESCRIPTION',
-			translateTitle: true,
 		},
 		{
 			id: 10,
 			icon: '🗽',
-			title: 'CATEGORY.TOURISM',
+			title: TranslateService.translate(eventStore, 'CATEGORY.TOURISM'),
 			description: 'CATEGORY.TOURISM.DESCRIPTION',
-			translateTitle: true,
 		},
 	];
 };
