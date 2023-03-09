@@ -233,7 +233,7 @@
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "אז כמה פעילויות כבר משובצות?",
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT": "סטטיסטיקות",
 	"SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "מקרא צבעים וכמויות",
-	"NO_DISPLAYED_CATEGORIES": "אין קטגוריות מוצגות",
+	"NO_DISPLAYED_CATEGORIES": "אין קטגוריות להציג",
 	"SELECT_ICON_PLACEHOLDER": "הקלד כדי לחפש",
 	"SELECT_CATEGORY_PLACEHOLDER": "הקלד כדי לחפש",
 	"MODALS.PLACEHOLDER.PREFIX": "הזן",
@@ -461,5 +461,7 @@
 	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "במצב חיפוש או סינון, קטגוריות ריקות מוסתרות אוטומטית",
 	"GENERAL_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש כללי",
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT": "הסרת הפעילות מלוח השנה תחזיר אותה לקטגוריה <b>{X}</b> בתפריט הצד",
-	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "הסרת פעילות מלוח השנה"
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "הסרת פעילות מלוח השנה",
+	"SIDEBAR.SHOWING_X_OF_Y": "מציג {X} מתוך {Y} פעילויות. לביטול החיפוש והצגת כל התוצאות",
+	"GENERAL.CLICK_HERE": "לחץ כאן"
 }

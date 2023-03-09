@@ -22,32 +22,36 @@
 	border-radius: 20px;
 	transition: all 0.3s ease-in-out;
 	opacity: 1;
+
+	.hidden {
+		height: 0;
+		overflow: hidden;
+		border: 0;
+		padding: 0;
+		opacity: 0;
+		transition: all 0.3s ease-in-out;
+		position: absolute;
+		top: -2000px;
+	}
 }
-.custom-dates-container.hidden {
-	height: 0;
-	overflow: hidden;
-	border: 0;
-	padding: 0;
-	opacity: 0;
-	transition: all 0.3s ease-in-out;
-	position: absolute;
-	top: -2000px;
-}
+
 .custom-dates-line {
 	display: flex;
 	gap: 7.5px;
 }
-.trip-name-line input,
-.custom-dates-line input {
-	border: 1px solid #dde3eb;
-	border-radius: 20px;
-	padding: 5px;
-	flex-grow: 1;
-	flex-shrink: 0;
-	padding-inline-start: 10px;
+.trip-name-line,
+.custom-dates-line {
+	input {
+		border: 1px solid #dde3eb;
+		border-radius: 20px;
+		padding: 5px;
+		flex-grow: 1;
+		flex-shrink: 0;
+		padding-inline-start: 10px;
+	}
 }
 
-.custom-dates-line input[type="date"] {
+.custom-dates-line input[type='date'] {
 	/* dates are always ltr since they are in english */
 	direction: ltr;
 }
@@ -136,4 +140,38 @@
 	display: flex;
 	gap: 5px;
 	padding-block-end: 10px;
+}
+
+.triplan-sidebar-filtered-text {
+	font-size: 11px;
+	width: 100%;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	margin-bottom: 10px;
+
+	background-color: rgba(0,0,0,0.03);
+	padding: 2.5px;
+	border-radius: 20px;
+
+	span {
+		//display: flex;
+		//flex-shrink: 1;
+		//flex-grow: 1;
+		//min-width: 0;
+	}
+
+	a {
+		color: var(--blue) !important;
+		cursor: pointer;
+		//display: flex;
+		//flex-grow: 1;
+		//flex-shrink: 0;
+
+		&:hover {
+			opacity: 0.6;
+		}
+	}
 }

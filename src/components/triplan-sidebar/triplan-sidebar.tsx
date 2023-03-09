@@ -6,7 +6,7 @@ import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
-import './triplan-sidebar.css';
+import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import Button, { ButtonFlavor } from '../common/button/button';
 // @ts-ignore
@@ -15,6 +15,7 @@ import { hotelColor, priorityToColor } from '../../utils/consts';
 import ListViewService from '../../services/list-view-service';
 import ReactModalService from '../../services/react-modal-service';
 import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
+import { runInAction } from 'mobx';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => void;
@@ -555,7 +556,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		const renderNoDisplayedCategoriesPlaceholder = () => {
 			return (
-				<div className={'sidebar-statistics'}>
+				<div className="sidebar-statistics">
 					{TranslateService.translate(eventStore, 'NO_DISPLAYED_CATEGORIES')}
 				</div>
 			);
@@ -682,9 +683,39 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			);
 		});
 
+		const renderShowingXOutOfY = () => {
+			if (!eventStore.isFiltered) return;
+
+			const filteredText = TranslateService.translate(eventStore, 'SIDEBAR.SHOWING_X_OF_Y', {
+				X: eventStore.allFilteredSidebarEvents.length,
+				Y: eventStore.allSidebarEvents.length,
+			});
+			const clickHereText = TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE');
+
+			return (
+				<div className="triplan-sidebar-filtered-text">
+					<span>{filteredText}</span>
+					<a
+						onClick={() => {
+							runInAction(() => {
+								eventStore.setSearchValue('');
+								eventStore.setShowOnlyEventsWithNoLocation(false);
+								eventStore.setShowOnlyEventsWithNoOpeningHours(false);
+								eventStore.setShowOnlyEventsWithTodoComplete(false);
+								window.location.reload(); // to reload the search component
+							});
+						}}
+					>
+						{clickHereText}
+					</a>
+				</div>
+			);
+		};
+
 		return (
 			<>
 				{renderExpandCollapse()}
+				{totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
 				{categoriesBlock}
 				{totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
 			</>

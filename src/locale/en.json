@@ -384,5 +384,7 @@
 	"ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN": "When filtering, empty categories are automatically hidden.",
 	"GENERAL_SEARCH_PLACEHOLDER": "Search everywhere",
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT": "Removing this event from the calendar will move it back to category <b>{X}</b> in the sidebar",
-	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "Remove event from calendar"
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "Remove event from calendar",
+	"SIDEBAR.SHOWING_X_OF_Y": "Showing {X} out of {Y} activities. to cancel show all, ",
+	"GENERAL.CLICK_HERE": "click here"
 }

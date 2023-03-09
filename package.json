@@ -75,6 +75,7 @@
 		"@storybook/testing-library": "^0.0.13",
 		"@types/react": "^18.0.17",
 		"babel-plugin-named-exports-order": "^0.0.2",
+		"concurrently": "^7.6.0",
 		"husky": "^8.0.0",
 		"pretty-quick": "^3.1.3",
 		"prop-types": "^15.8.1",
@@ -98,9 +99,11 @@
 		"start:storybook": "start-storybook -p 6006 -s public",
 		"build-storybook": "build-storybook -s public",
 		"prepare": "husky install",
-		"killbill": "sudo kill -9 $(lsof -ti:3000)",
+		"killbill": "npx kill-port 3000",
 		"reinstall": "rm -rf node_modules && npm install && npm run killbill && npm run start:dev:mac",
-		"push-master": "git push origin master && git push heroku master"
+		"push-master": "git push origin master && git push heroku master",
+		"start:background": "npm run killbill && npm run start:dev:mac > /dev/null 2>&1 &",
+		"start:all": "concurrently \"npm run start:background\" \"cd ../3plan-server && npm run start:background\""
 	},
 	"browserslist": [
 		">0.2%",
