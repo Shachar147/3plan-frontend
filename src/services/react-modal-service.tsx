@@ -1451,7 +1451,8 @@ const ReactModalService = {
 			const eventId = originalEvent.id!;
 			if (!eventStore) return;
 
-			const oldEvent = eventStore.allEvents.find((e) => e.id === eventId);
+			// const oldEvent = eventStore.allEvents.find((e) => e.id === eventId);
+			const oldEvent = eventStore.allSidebarEvents.find((e) => e.id === eventId);
 			if (!oldEvent) {
 				console.error('old event not found');
 				return;
@@ -1524,7 +1525,8 @@ const ReactModalService = {
 				originalEvent.preferredTime != undefined &&
 				originalEvent.preferredTime.toString() !== currentEvent.preferredTime.toString();
 			const isDescriptionChanged = originalEvent.description !== currentEvent.description;
-			const oldCategory = eventStore.allEvents.find((e) => e.id === event.id)!.category;
+			// const oldCategory = eventStore.allEvents.find((e) => e.id === event.id)!.category;
+			const oldCategory = eventStore.allSidebarEvents.find((e) => e.id === event.id)!.category;
 			const isCategoryChanged = oldCategory != categoryId;
 			const isLocationChanged = originalEvent.location != currentEvent.location;
 			const isImagesChanged = originalEvent.images != currentEvent.images; // add column 11
@@ -1577,7 +1579,8 @@ const ReactModalService = {
 					'success'
 				);
 			} else if (isChanged) {
-				const eventFound = eventStore.allEvents.find((e) => e.id === event.id);
+				// const eventFound = eventStore.allEvents.find((e) => e.id === event.id);
+				const eventFound = eventStore.allSidebarEvents.find((e) => e.id === event.id);
 				if (eventFound) {
 					eventStore.updateSidebarEvent(eventFound, {
 						title,
@@ -1643,7 +1646,8 @@ const ReactModalService = {
 
 		// on event click - show edit event popup
 		const eventId = event.id;
-		const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
+		// const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
+		const initialData = eventStore.allSidebarEvents.find((e: any) => e.id.toString() === eventId.toString());
 		if (!initialData) {
 			console.error('event not found');
 			return;
@@ -1741,7 +1745,8 @@ const ReactModalService = {
 				return;
 			}
 
-			const foundEvent = eventStore.allEvents.find((e) => e.id.toString() === event.id.toString());
+			// const foundEvent = eventStore.allEvents.find((e) => e.id.toString() === event.id.toString());
+			const foundEvent = eventStore.allSidebarEvents.find((e) => e.id.toString() === event.id.toString());
 			if (!foundEvent) {
 				console.error('event not found');
 				return;
@@ -1768,7 +1773,8 @@ const ReactModalService = {
 
 		// on event click - show edit event popup
 		const eventId = event.id;
-		const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
+		// const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
+		const initialData = eventStore.allSidebarEvents.find((e: any) => e.id.toString() === eventId.toString());
 		if (!initialData) {
 			console.error('event not found');
 			return;
@@ -2221,7 +2227,8 @@ const ReactModalService = {
 				// update our store
 				const updatedCalenderEvents = [...eventStore.getJSCalendarEvents()];
 				updatedCalenderEvents.forEach((e) => {
-					const event = eventStore.allEvents.find((ev) => ev.id.toString() === e.id!.toString());
+					// const event = eventStore.allEvents.find((ev) => ev.id.toString() === e.id!.toString());
+					const event = eventStore.calendarEvents.find((ev) => ev.id!.toString() === e.id!.toString());
 					if (event && event.category && event.category === categoryId.toString()) {
 						if (e.icon === oldIcon) {
 							e.icon = newIcon;
@@ -2364,7 +2371,8 @@ const ReactModalService = {
 			const eventId = originalEvent.id!;
 			if (!eventStore) return;
 
-			const oldEvent = eventStore.allEvents.find((e) => e.id.toString() === eventId.toString());
+			// const oldEvent = eventStore.allEvents.find((e) => e.id.toString() === eventId.toString());
+			const oldEvent = eventStore.allSidebarEvents.find((e) => e.id.toString() === eventId.toString());
 			if (!oldEvent) {
 				console.error('old event not found');
 				return false;
@@ -2452,7 +2460,8 @@ const ReactModalService = {
 				originalEvent.extendedProps && originalEvent.extendedProps.description !== currentEvent.description;
 			const isLocationChanged =
 				originalEvent.extendedProps && originalEvent.extendedProps.location != currentEvent.location;
-			const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
+			// const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
+			const oldCategory = eventStore.calendarEvents.find((e) => e.id === eventId)!.category;
 			const isCategoryChanged = oldCategory != categoryId;
 			const isOpeningHoursChanged = currentEvent.openingHours;
 			const isImagesChanged = originalEvent.images != currentEvent.images; // add column 12
