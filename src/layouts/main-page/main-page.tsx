@@ -126,11 +126,7 @@ function MainPage(props: MainPageProps) {
 				(x) => x.id!.toString() === event.id.toString()
 			);
 			if (findEvent) {
-				// @ts-ignore
-				category = findEvent?.categoryId ?? findEvent.category;
-				if (!category && findEvent && findEvent.extendedProps) {
-					category = findEvent.extendedProps.categoryId;
-				}
+				category = findEvent.category;
 			}
 		}
 
@@ -139,11 +135,6 @@ function MainPage(props: MainPageProps) {
 		if (category != undefined) {
 			delete event.start;
 			delete event.end;
-
-			if (event.extendedProps) {
-				event.preferredTime = event.extendedProps.preferredTime;
-			}
-
 			newEvents[category] = newEvents[category] || [];
 			newEvents[category].push(event);
 			eventStore.setSidebarEvents(newEvents);
@@ -286,7 +277,7 @@ function MainPage(props: MainPageProps) {
 	function addToEventsToCategories(newEvent: any) {
 		setEventsToCategories({
 			...eventsToCategories,
-			[newEvent.id]: newEvent.extendedProps.categoryId,
+			[newEvent.id]: newEvent.category,
 		});
 	}
 

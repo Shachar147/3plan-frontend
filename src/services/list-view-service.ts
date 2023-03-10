@@ -9,6 +9,7 @@ import { GoogleTravelMode, ListViewSummaryMode, TriplanPriority } from '../utils
 import { priorityToColor } from '../utils/consts';
 import { BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString } from '../utils/utils';
 import { getEventDivHtml } from '../utils/ui-utils';
+import _ from 'lodash';
 
 const ListViewService = {
 	_getDayName: (dateStr: string, locale: string) => {
@@ -289,8 +290,7 @@ const ListViewService = {
 		const sortedEvents = ListViewService._sortEvents(calendarEvents);
 		sortedEvents.forEach((event, index) => {
 			// clone event
-			event.extendedProps = event.extendedProps || {};
-			const clonedEvent = { ...event, ...event.extendedProps };
+			const clonedEvent = _.cloneDeep(event);
 
 			// day title
 			const dayTitle = ListViewService._getEventDayTitle(eventStore, clonedEvent);
@@ -793,7 +793,7 @@ const ListViewService = {
 					parentIsOr = x.or;
 				}
 
-				const thisLocation = x.event.extendedProps.location;
+				const thisLocation = x.event.location;
 				if (prevLocation && thisLocation && prevLocation.address != thisLocation.address) {
 					loggerArr.push('~ ' + prevTitle + ' -> ' + x.event.title);
 

@@ -433,7 +433,6 @@ export const defaultEvents2: Record<number, SidebarEvent[]> = {
 			preferredTime: 5,
 			icon: '🌠',
 			duration: '01:00',
-			extendedProps: {},
 			description: '',
 		},
 	],

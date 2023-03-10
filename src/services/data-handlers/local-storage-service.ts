@@ -126,8 +126,8 @@ export class LocalStorageService implements BaseDataHandler {
 		});
 
 		results.forEach((e: any) => {
-			if (e.extendedProps && e.extendedProps.suggestedEndTime) {
-				delete e.extendedProps.suggestedEndTime;
+			if (e.suggestedEndTime) {
+				delete e.suggestedEndTime;
 			}
 		});
 

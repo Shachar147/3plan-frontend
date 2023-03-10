@@ -3,7 +3,14 @@ import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { DateSelectArg, EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
-import { GoogleTravelMode, ListViewSummaryMode, TripDataSource, ViewMode } from '../utils/enums';
+import {
+	GoogleTravelMode,
+	ListViewSummaryMode,
+	TripDataSource,
+	TriplanEventPreferredTime,
+	TriplanPriority,
+	ViewMode,
+} from '../utils/enums';
 import { convertMsToHM, toDate } from '../utils/time-utils';
 
 // @ts-ignore
@@ -153,9 +160,6 @@ export class EventStore {
 
 	checkIfEventHaveOpenTasks(event: SidebarEvent | CalendarEvent | AllEventsEvent | EventInput): boolean {
 		let { title, description } = event;
-		if (description == undefined && event.extendedProps) {
-			description = event.extendedProps.description;
-		}
 		const { taskKeywords } = ListViewService._initSummaryConfiguration();
 		const isTodoComplete = taskKeywords.find(
 			(k: string) =>
@@ -175,7 +179,7 @@ export class EventStore {
 			});
 
 			const extractDetails = (event: EventInput) => {
-				const location = event.extendedProps?.location?.address;
+				const location = event.location?.address;
 				const title = event.title;
 				const startDate = new Date(event.start!.toString());
 				const endDate = new Date(event.end!.toString());
@@ -198,7 +202,7 @@ export class EventStore {
 						.filter(
 							(e, idx) =>
 								new Date(e.start!.toString()).getTime() >= currentEvent.endDate.getTime() &&
-								e.extendedProps?.location &&
+								e.location &&
 								!e.allDay &&
 								e.id !== currentEvent.id
 						)
@@ -289,26 +293,7 @@ export class EventStore {
 								minStartDate = startDate;
 							}
 
-							// newEvents.push({
-							//     // title: `driving from ${e.title} to ${obj!.target!.title}`,
-							//     title: `${obj.distance.duration} ${this.travelMode}`,
-							//     start: startDate,
-							//     end: endDate,
-							//     id: uuidv4(),
-							//     allDay: false,
-							//     icon: '✈',
-							//     className: `driving-event`,
-							//     priority, // todo complete
-							//     // duration: string // todo complete
-							//     // extendedProps? : any
-							//     // preferredTime? : TriplanEventPreferredTime,
-							//     // description? : string
-							//     // location? : LocationData
-							//     // openingHours? : WeeklyOpeningHoursData
-							//     extendedProps: {
-							//         priority
-							//     }
-							// } as CalendarEvent)
+							// todo complete - add a locked driving event here?
 						}
 					});
 
@@ -319,8 +304,7 @@ export class EventStore {
 						console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
 						// e.end = minStartDate;
 						if (problem) e.className += ' red-border';
-						e.extendedProps = e.extendedProps || {};
-						e.extendedProps.suggestedEndTime = minStartDate;
+						e.suggestedEndTime = minStartDate;
 					}
 				}
 
@@ -339,18 +323,8 @@ export class EventStore {
 		let filteredEvents = this.getJSCalendarEvents().filter(
 			(event) =>
 				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
-				(this.showOnlyEventsWithNoLocation
-					? !(
-							event.location != undefined ||
-							(event.extendedProps && event.extendedProps.location != undefined)
-					  )
-					: true) &&
-				(this.showOnlyEventsWithNoOpeningHours
-					? !(
-							event.openingHours != undefined ||
-							(event.extendedProps && event.extendedProps.openingHours != undefined)
-					  )
-					: true) &&
+				(this.showOnlyEventsWithNoLocation ? !(event.location != undefined) : true) &&
+				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
 		);
 
@@ -395,15 +369,8 @@ export class EventStore {
 				.filter(
 					(event) =>
 						event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
-						(this.showOnlyEventsWithNoLocation
-							? !(event.location || (event.extendedProps && event.extendedProps.location))
-							: true) &&
-						(this.showOnlyEventsWithNoOpeningHours
-							? !(
-									event.openingHours != undefined ||
-									(event.extendedProps && event.extendedProps.openingHours != undefined)
-							  )
-							: true) &&
+						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
+						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
 				);
 		});
@@ -564,7 +531,7 @@ export class EventStore {
 		const eventToCategory: any = {};
 		const eventIdToEvent: any = {};
 		this.allEvents.forEach((e) => {
-			eventToCategory[e.id] = e.category ? e.category : e.extendedProps ? e.extendedProps.categoryId : undefined;
+			eventToCategory[e.id] = e.category;
 			eventIdToEvent[e.id] = e;
 		});
 
@@ -574,14 +541,10 @@ export class EventStore {
 			const sidebarEvent = eventIdToEvent[eventId];
 			delete sidebarEvent.start;
 			delete sidebarEvent.end;
-			if (sidebarEvent.extendedProps) {
-				sidebarEvent.priority = sidebarEvent.extendedProps.priority;
-			}
-			if (!sidebarEvent.preferredTime) {
-				sidebarEvent.preferredTime = sidebarEvent.extendedProps
-					? sidebarEvent.extendedProps.preferredTime
-					: sidebarEvent.preferredTime;
-			}
+
+			sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
+			sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
+
 			newEvents[categoryId] = newEvents[categoryId] || [];
 			newEvents[categoryId].push(sidebarEvent);
 		});
@@ -806,61 +769,24 @@ export class EventStore {
 	updateEvent(storedEvent: SidebarEvent | EventInput | any, newEvent: SidebarEvent | EventInput | any) {
 		storedEvent.title = newEvent.title;
 		storedEvent.allDay = newEvent.allDay;
-		storedEvent.start = newEvent.start || storedEvent.start;
-		storedEvent.end = newEvent.end || storedEvent.end;
-		storedEvent.icon =
-			newEvent.icon != undefined
-				? newEvent.icon
-				: newEvent.extendedProps
-				? newEvent.extendedProps.icon
-				: storedEvent.extendedProps
-				? storedEvent.extendedProps.icon
-				: storedEvent.icon;
-		storedEvent.priority =
-			newEvent.priority != undefined
-				? newEvent.priority
-				: newEvent.extendedProps
-				? newEvent.extendedProps.priority
-				: storedEvent.priority;
-		storedEvent.description =
-			newEvent.description != undefined
-				? newEvent.description
-				: newEvent.extendedProps
-				? newEvent.extendedProps.description
-				: storedEvent.description;
+		storedEvent.start = newEvent.start ?? storedEvent.start;
+		storedEvent.end = newEvent.end ?? storedEvent.end;
+		storedEvent.icon = newEvent.icon ?? storedEvent.icon;
+		storedEvent.priority = newEvent.priority ?? storedEvent.priority;
+		storedEvent.description = newEvent.description ?? storedEvent.description;
 		storedEvent.className = `priority-${storedEvent.priority}`;
 		// storedEvent.className = newEvent.className || storedEvent.className;
 
-		storedEvent.extendedProps = storedEvent.extendedProps || {};
-		if (newEvent.extendedProps) {
-			Object.keys(newEvent.extendedProps).forEach((key) => {
-				storedEvent.extendedProps![key] = newEvent.extendedProps[key];
-			});
-		}
-		storedEvent.extendedProps.icon = storedEvent.icon;
-		storedEvent.extendedProps.priority = storedEvent.priority;
-		storedEvent.extendedProps.description = storedEvent.description;
+		storedEvent.location = Object.keys(newEvent).includes('location') ? newEvent.location : storedEvent.location;
 
-		storedEvent.extendedProps.location = Object.keys(newEvent).includes('location')
-			? newEvent.location
-			: storedEvent.extendedProps.location
-			? storedEvent.extendedProps.location
-			: storedEvent.location;
-		storedEvent.location = storedEvent.extendedProps.location;
-
-		storedEvent.extendedProps.openingHours = Object.keys(newEvent).includes('openingHours')
+		storedEvent.openingHours = Object.keys(newEvent).includes('openingHours')
 			? newEvent.openingHours
-			: storedEvent.extendedProps.openingHours
-			? storedEvent.extendedProps.openingHours
 			: storedEvent.openingHours;
-		storedEvent.openingHours = storedEvent.extendedProps.openingHours;
 
 		// add column 7
-		storedEvent.extendedProps.images = newEvent.images || newEvent.extendedProps?.images;
-		storedEvent.images = storedEvent.extendedProps.images;
+		storedEvent.images = newEvent.images || storedEvent.images;
 
-		storedEvent.extendedProps.moreInfo = newEvent.moreInfo || newEvent.extendedProps?.moreInfo;
-		storedEvent.moreInfo = storedEvent.extendedProps.moreInfo;
+		storedEvent.moreInfo = newEvent.moreInfo ?? storedEvent.moreInfo;
 
 		// @ts-ignore
 		const millisecondsDiff = storedEvent.end - storedEvent.start;
@@ -871,39 +797,17 @@ export class EventStore {
 
 	updateSidebarEvent(storedEvent: SidebarEvent, newEvent: SidebarEvent) {
 		storedEvent.title = newEvent.title;
-		storedEvent.icon = newEvent.icon != undefined ? newEvent.icon : storedEvent.icon;
-		storedEvent.duration = newEvent.duration || storedEvent.duration;
-		storedEvent.extendedProps =
-			newEvent.extendedProps != undefined
-				? newEvent.extendedProps
-				: storedEvent.extendedProps
-				? storedEvent.extendedProps
-				: {};
-		storedEvent.priority = newEvent.priority != undefined ? newEvent.priority : storedEvent.priority;
-		storedEvent.preferredTime =
-			newEvent.preferredTime != undefined ? newEvent.preferredTime : storedEvent.preferredTime;
-		storedEvent.description = newEvent.description != undefined ? newEvent.description : storedEvent.description;
+		storedEvent.icon = newEvent.icon ?? storedEvent.icon;
+		storedEvent.duration = newEvent.duration ?? storedEvent.duration;
+		storedEvent.priority = newEvent.priority ?? storedEvent.priority;
+		storedEvent.preferredTime = newEvent.preferredTime ?? storedEvent.preferredTime;
+		storedEvent.description = newEvent.description ?? storedEvent.description;
 		storedEvent.location = Object.keys(newEvent).includes('location') ? newEvent.location : storedEvent.location;
 		storedEvent.openingHours = Object.keys(newEvent).includes('openingHours')
 			? newEvent.openingHours
 			: storedEvent.openingHours;
 		storedEvent.images = newEvent.images; // add column 6
 		storedEvent.moreInfo = newEvent.moreInfo;
-
-		if (newEvent.extendedProps) {
-			Object.keys(newEvent.extendedProps).forEach((key) => {
-				storedEvent.extendedProps![key] = newEvent.extendedProps[key];
-			});
-
-			if (storedEvent.extendedProps.location) {
-				delete storedEvent.extendedProps.location;
-			}
-
-			// ?
-			if (storedEvent.extendedProps.openingHours) {
-				delete storedEvent.extendedProps.openingHours;
-			}
-		}
 	}
 
 	getCurrentDirection() {

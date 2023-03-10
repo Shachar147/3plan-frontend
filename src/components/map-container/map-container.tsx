@@ -146,21 +146,13 @@ const MapContainer = (props: MapContainerProps) => {
 			scheduledTo = `<span style='${rowContainerStyle}'><i style='${iStyle}' class='fa fa-calendar' aria-hidden='true'></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
 		}
 
-		let category =
-			Object.keys(props).length > 0
-				? event.category
-				: event.extendedProps && event.extendedProps.categoryId
-				? event.extendedProps.categoryId
-				: event.category;
+		let category = event.category;
 		if (!props || !Object.keys(props).length) {
 			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 		}
 		const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
 
-		let preferredTime =
-			event.extendedProps && Object.keys(event.extendedProps).includes('preferredTime')
-				? event.extendedProps.preferredTime
-				: event.preferredTime;
+		let preferredTime = event.preferredTime;
 
 		if (preferredTime) {
 			preferredTime = TriplanEventPreferredTime[preferredTime];
@@ -178,7 +170,7 @@ const MapContainer = (props: MapContainerProps) => {
 		const url = BuildEventUrl(event.location);
 		const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`;
 
-		const moreInfoUrl = event.moreInfo ?? event.extendedProps?.moreInfo;
+		const moreInfoUrl = event.moreInfo;
 		const moreInfoBlock = moreInfoUrl
 			? `<span><a href="${moreInfoUrl}" target="_blank">${TranslateService.translate(
 					eventStore,
@@ -186,7 +178,7 @@ const MapContainer = (props: MapContainerProps) => {
 			  )}</a></span>`
 			: '';
 
-		let images = event.extendedProps?.images ?? event.images;
+		let images = event.images;
 		const sliderSettings = {
 			dots: true,
 			infinite: true,
@@ -283,8 +275,7 @@ const MapContainer = (props: MapContainerProps) => {
 		const getIconUrl = (event: any) => {
 			let icon = '';
 			let bgColor = priorityToMapColor[event.priority].replace('#', '');
-			let category =
-				event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
+			let category = event.category;
 
 			category = props.allEvents
 				? event.category

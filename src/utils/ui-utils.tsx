@@ -327,10 +327,8 @@ export const SELECT_STYLE = {
 };
 
 export const getEventDivHtml = (eventStore: EventStore, event: EventInput) => {
-	const info = event.extendedProps || {};
-
-	const category = info.categoryId;
-	const icon = info.icon || eventStore.categoriesIcons[category];
+	const category = event.categoryId;
+	const icon = event.icon || eventStore.categoriesIcons[category];
 
 	// locked
 	const tooltip = isEventAlreadyOrdered(event as EventInput)
@@ -340,8 +338,8 @@ export const getEventDivHtml = (eventStore: EventStore, event: EventInput) => {
 
 	let suggestedTime = '';
 	// @ts-ignore
-	if (event.extendedProps.suggestedEndTime) {
-		const dt = new Date(info.suggestedEndTime.toString());
+	if (event.suggestedEndTime) {
+		const dt = new Date(event.suggestedEndTime.toString());
 		suggestedTime = `<div class="fc-event-suggested-time">${TranslateService.translate(
 			eventStore,
 			'LEAVE_AT'

@@ -149,7 +149,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const renderWarnings = () => {
 		const renderNoLocationEventsStatistics = () => {
 			const eventsWithNoLocationArr = eventStore.allEvents.filter((x) => {
-				const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
+				const eventHaveNoLocation = !x.location;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
 
@@ -189,7 +189,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		const renderNoOpeningHoursEventsStatistics = () => {
 			const eventsWithNoHoursArr = eventStore.allEvents.filter((x) => {
-				const eventHaveNoHours = !(x.openingHours || (x.extendedProps && x.extendedProps.openingHours));
+				const eventHaveNoHours = !x.openingHours;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
 
@@ -378,10 +378,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			const calendarEventsByPriority: Record<string, SidebarEvent[]> = {};
 			eventStore.calendarEvents.forEach((iter) => {
-				const priority =
-					iter.extendedProps && iter.extendedProps.priority
-						? iter.extendedProps.priority
-						: iter.priority || TriplanPriority.unset;
+				const priority = iter.priority || TriplanPriority.unset;
 				calendarEventsByPriority[priority] = calendarEventsByPriority[priority] || [];
 				calendarEventsByPriority[priority].push(iter as SidebarEvent);
 			});
@@ -427,7 +424,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			let totalHotelsInCalendar = 0;
 			const notInCalendar = TranslateService.translate(eventStore, 'NOT_IN_CALENDAR');
 			const totalHotels = allEvents.filter((x) => {
-				const categoryId = x.category ?? x.extendedProps?.category;
+				const categoryId = x.category;
 				let category = categoryId;
 				if (!Number.isNaN(category)) {
 					const categoryObject = eventStore.categories.find((x) => x.id == categoryId);
@@ -598,7 +595,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			const calendarItemsCount = eventStore.calendarEvents.filter((e) => {
 				return (
-					(e.category ?? e.extendedProps?.category) === category.id &&
+					e.category === category.id &&
 					e.title?.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1
 				);
 			}).length;
@@ -897,36 +894,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						data-category={categoryId}
 						data-icon={event.icon}
 						data-description={event.description}
-						data-priority={
-							event.priority !== undefined
-								? event.priority
-								: event.extendedProps
-								? event.extendedProps.priority
-								: undefined
-						}
-						data-preferred-time={
-							event.preferredTime !== undefined
-								? event.preferredTime
-								: event.extendedProps
-								? event.extendedProps.preferredTime
-								: undefined
-						}
+						data-priority={event.priority}
+						data-preferred-time={event.preferredTime}
 						data-location={
-							Object.keys(event).includes('location')
-								? JSON.stringify(event.location)
-								: event.extendedProps && event.extendedProps.location
-								? JSON.stringify(event.extendedProps.location)
-								: undefined
+							Object.keys(event).includes('location') ? JSON.stringify(event.location) : undefined
 						}
 						data-opening-hours={
-							event.openingHours !== undefined
-								? event.openingHours
-								: event.extendedProps
-								? event.extendedProps.openingHours
-								: undefined
+							// used to be simply event.openingHours
+							Object.keys(event).includes('openingHours') ? JSON.stringify(event.openingHours) : undefined
 						}
-						data-images={event.images ?? event.extendedProps?.images} // add column 3
-						data-more-info={event.moreInfo ?? event.extendedProps?.moreInfo}
+						data-images={event.images} // add column 3
+						data-more-info={event.moreInfo}
 						key={event.id}
 					>
 						<span

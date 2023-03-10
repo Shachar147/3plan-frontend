@@ -527,7 +527,7 @@ const ReactModalService = {
 						type: 'icon-selector',
 						extra: {
 							id: 'new-icon',
-							value: initialData?.icon || initialData?.extendedProps?.icon,
+							value: initialData?.icon,
 						},
 					},
 					textKey: 'MODALS.ICON',
@@ -556,7 +556,7 @@ const ReactModalService = {
 						type: 'category-selector',
 						extra: {
 							placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
-							value: initialData?.category || initialData?.extendedProps?.categoryId,
+							value: initialData?.category,
 						},
 					},
 					textKey: 'MODALS.CATEGORY',
@@ -587,10 +587,7 @@ const ReactModalService = {
 								'MODALS.PLACEHOLDER.PREFIX'
 							)} ${TranslateService.translate(eventStore, 'MODALS.DURATION')}`,
 							// placeholder: defaultTimedEventDuration,
-							value:
-								initialData?.duration ||
-								initialData?.extendedProps?.duration ||
-								defaultTimedEventDuration,
+							value: initialData?.duration ?? defaultTimedEventDuration,
 						},
 					},
 					textKey: 'MODALS.DURATION',
@@ -602,8 +599,7 @@ const ReactModalService = {
 						ref: eventStore.modalValuesRefs['priority'],
 						type: 'priority-selector',
 						extra: {
-							value:
-								initialData?.priority || initialData?.extendedProps?.priority || TriplanPriority.unset,
+							value: initialData?.priority ?? TriplanPriority.unset,
 							maxMenuHeight: 45 * 4,
 						},
 					},
@@ -616,10 +612,7 @@ const ReactModalService = {
 						ref: eventStore.modalValuesRefs['preferred-time'],
 						type: 'preferred-time-selector',
 						extra: {
-							value:
-								initialData.preferredTime ||
-								initialData?.extendedProps?.preferredTime ||
-								TriplanEventPreferredTime.unset,
+							value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
 							maxMenuHeight: 45 * 4,
 						},
 					},
@@ -653,7 +646,7 @@ const ReactModalService = {
 						ref: eventStore.modalValuesRefs['opening-hours'],
 						type: 'opening-hours',
 						extra: {
-							value: initialData.openingHours || initialData?.extendedProps?.openingHours,
+							value: initialData.openingHours,
 						},
 					},
 					textKey: 'MODALS.OPENING_HOURS',
@@ -714,7 +707,7 @@ const ReactModalService = {
 						type: 'icon-selector',
 						extra: {
 							id: 'new-icon',
-							value: initialData?.icon || initialData?.extendedProps?.icon,
+							value: initialData?.icon,
 						},
 					},
 					textKey: 'MODALS.ICON',
@@ -775,7 +768,7 @@ const ReactModalService = {
 						type: 'category-selector',
 						extra: {
 							placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
-							value: initialData?.category || initialData?.extendedProps?.categoryId,
+							value: initialData?.category,
 						},
 					},
 					textKey: 'MODALS.CATEGORY',
@@ -794,29 +787,13 @@ const ReactModalService = {
 					textKey: 'MODALS.DESCRIPTION',
 					className: 'border-top-gray',
 				},
-				// {
-				//     settings: {
-				//         modalValueName: 'duration',
-				//         ref: eventStore.modalValuesRefs['duration'],
-				//         type: 'text',
-				//         extra: {
-				//             // value: defaultTimedEventDuration,
-				//             placeholder: `${TranslateService.translate(eventStore, 'MODALS.PLACEHOLDER.PREFIX')} ${TranslateService.translate(eventStore, 'MODALS.DURATION')}`,
-				//             // placeholder: defaultTimedEventDuration,
-				//             value: initialData?.duration || initialData?.extendedProps?.duration || defaultTimedEventDuration
-				//         },
-				//     },
-				//     textKey: 'MODALS.DURATION',
-				//     className: 'border-top-gray'
-				// },
 				{
 					settings: {
 						modalValueName: 'priority',
 						ref: eventStore.modalValuesRefs['priority'],
 						type: 'priority-selector',
 						extra: {
-							value:
-								initialData?.priority || initialData?.extendedProps?.priority || TriplanPriority.unset,
+							value: initialData?.priority ?? TriplanPriority.unset,
 							maxMenuHeight: 45 * 4,
 						},
 					},
@@ -829,10 +806,7 @@ const ReactModalService = {
 						ref: eventStore.modalValuesRefs['preferred-time'],
 						type: 'preferred-time-selector',
 						extra: {
-							value:
-								initialData.preferredTime ||
-								initialData?.extendedProps?.preferredTime ||
-								TriplanEventPreferredTime.unset,
+							value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
 							maxMenuHeight: 45 * 4,
 						},
 					},
@@ -866,7 +840,7 @@ const ReactModalService = {
 						ref: eventStore.modalValuesRefs['opening-hours'],
 						type: 'opening-hours',
 						extra: {
-							value: initialData.openingHours || initialData?.extendedProps?.openingHours,
+							value: initialData.openingHours,
 						},
 					},
 					textKey: 'MODALS.OPENING_HOURS',
@@ -1503,15 +1477,6 @@ const ReactModalService = {
 				return;
 			}
 
-			if (originalEvent.extendedProps) {
-				Object.keys(originalEvent.extendedProps).forEach((key) => {
-					if (!Object.keys(currentEvent).includes(key)) {
-						// @ts-ignore
-						currentEvent[key] = originalEvent.extendedProps[key];
-					}
-				});
-			}
-
 			const durationChanged =
 				originalEvent.duration !== currentEvent.duration.toString() &&
 				!(originalEvent.duration == undefined && currentEvent.duration == defaultTimedEventDuration);
@@ -1551,9 +1516,7 @@ const ReactModalService = {
 				currentEvent = {
 					...currentEvent,
 					id: eventStore.createEventId(),
-					extendedProps: {
-						categoryId,
-					},
+					category: categoryId,
 				};
 
 				// @ts-ignore
@@ -1592,9 +1555,7 @@ const ReactModalService = {
 						openingHours,
 						images, // add column 14
 						moreInfo,
-						extendedProps: {
-							categoryId,
-						},
+						category: categoryId,
 					} as SidebarEvent);
 					eventStore.setAllEvents(eventStore.allEvents);
 
@@ -1981,16 +1942,6 @@ const ReactModalService = {
 				openingHours,
 				images,
 				moreInfo, // add column 16
-				extendedProps: {
-					title,
-					icon,
-					priority: priority as TriplanPriority,
-					preferredTime: preferredTime as TriplanEventPreferredTime,
-					description,
-					categoryId: categoryId,
-					location,
-					openingHours,
-				},
 			} as CalendarEvent;
 
 			// @ts-ignore
@@ -2096,9 +2047,7 @@ const ReactModalService = {
 	},
 	openDeleteCategoryModal: (eventStore: EventStore, categoryId: number) => {
 		const newCategories = eventStore.categories.filter((c) => c.id != categoryId);
-		const newCalendarEvents = eventStore.calendarEvents.filter(
-			(c) => c.category != categoryId && (!c.extendedProps || c.extendedProps.categoryId != categoryId)
-		);
+		const newCalendarEvents = eventStore.calendarEvents.filter((c) => c.category != categoryId);
 		const newAllEvents = eventStore.allEvents.filter((c) => c.category != categoryId.toString());
 		const newSidebarEvents = eventStore.getJSSidebarEvents(); // { ...eventStore.getSidebarEvents };
 		delete newSidebarEvents[categoryId];
@@ -2318,8 +2267,8 @@ const ReactModalService = {
 
 		const currentEvent = { ...found };
 
-		const categoryName =
-			eventStore.categories.find((x) => x.id == currentEvent?.extendedProps?.categoryId)?.title ?? 'N/A';
+		// for handle delete - to be able to say to which category this activity will return to
+		const categoryName = eventStore.categories.find((x) => x.id == currentEvent?.category)?.title ?? 'N/A';
 
 		const handleDeleteEventResult = (
 			currentEvent: CalendarEvent,
@@ -2396,10 +2345,7 @@ const ReactModalService = {
 
 			// @ts-ignore
 			const locationText = location?.address;
-			const prevLocationText =
-				originalEvent.extendedProps && originalEvent.extendedProps.location
-					? originalEvent.extendedProps.location.address
-					: undefined;
+			const prevLocationText = originalEvent.location?.address;
 
 			let currentEvent: CalendarEvent = {
 				title,
@@ -2425,15 +2371,6 @@ const ReactModalService = {
 				currentEvent['openingHours'] = openingHours;
 			}
 
-			if (originalEvent.extendedProps) {
-				Object.keys(originalEvent.extendedProps).forEach((key) => {
-					if (!Object.keys(currentEvent).includes(key)) {
-						// @ts-ignore
-						currentEvent[key] = originalEvent.extendedProps[key];
-					}
-				});
-			}
-
 			// @ts-ignore
 			const millisecondsDiff = currentEvent.end - currentEvent.start;
 			currentEvent.duration = convertMsToHM(millisecondsDiff);
@@ -2453,14 +2390,10 @@ const ReactModalService = {
 				(originalEvent.end && originalEvent.end.toString() !== currentEvent.end.toString());
 			const iconChanged = oldEvent.icon !== currentEvent.icon;
 			const titleChanged = originalEvent.title !== currentEvent.title;
-			const priorityChanged =
-				originalEvent.extendedProps && originalEvent.extendedProps.priority !== currentEvent.priority;
-			const preferredTimeChanged =
-				originalEvent.extendedProps && originalEvent.extendedProps.preferredTime !== currentEvent.preferredTime;
-			const descriptionChanged =
-				originalEvent.extendedProps && originalEvent.extendedProps.description !== currentEvent.description;
-			const isLocationChanged =
-				originalEvent.extendedProps && originalEvent.extendedProps.location != currentEvent.location;
+			const priorityChanged = originalEvent.priority !== currentEvent.priority;
+			const preferredTimeChanged = originalEvent.preferredTime !== currentEvent.preferredTime;
+			const descriptionChanged = originalEvent.description !== currentEvent.description;
+			const isLocationChanged = originalEvent.location != currentEvent.location;
 			// const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
 			const oldCategory = eventStore.calendarEvents.find((e) => e.id === eventId)!.category;
 			const isCategoryChanged = oldCategory != categoryId;
@@ -2485,10 +2418,8 @@ const ReactModalService = {
 				currentEvent = {
 					...currentEvent,
 					id: eventStore.createEventId(),
-					extendedProps: {
-						categoryId,
-					},
-				};
+					category: categoryId,
+				} as unknown;
 
 				// @ts-ignore
 				currentEvent['categoryId'] = categoryId;
@@ -2551,10 +2482,8 @@ const ReactModalService = {
 
 		const handleDuplicateEventResult = (eventStore: EventStore, originalEvent: EventInput) => {
 			let newEvent = Object.assign({}, originalEvent);
-			newEvent.extendedProps = { ...originalEvent.extendedProps };
 			const newId = eventStore.createEventId();
 			newEvent.id = newId;
-			newEvent.extendedProps.id = newId;
 
 			// @ts-ignore
 			newEvent.start = originalEvent.start;
@@ -2590,18 +2519,15 @@ const ReactModalService = {
 			...info.event._def,
 			start: info.event.start,
 			end: info.event.end,
-			...info.event.extendedProps,
 		};
 
 		debugger;
 
 		// @ts-ignore
-		window.selectedLocation =
-			initialData.location || currentEvent.location || currentEvent?.extendedProps?.location;
+		window.selectedLocation = initialData.location ?? currentEvent.location;
 
 		// @ts-ignore
-		window.openingHours =
-			initialData.openingHours || currentEvent.openingHours || currentEvent.extendedProps?.openingHours;
+		window.openingHours = initialData.openingHours ?? currentEvent.openingHours;
 
 		// @ts-ignore
 		eventStore.modalValues['selectedLocation'] = window.selectedLocation?.address;
@@ -2956,10 +2882,6 @@ const ReactModalService = {
 			// let isOk = true;
 			// excludeKeywords.map((keyword) => {
 			//     let { title, description } = place;
-			//     const { title2, description2 } = place?.extendedProps;
-			//
-			//     title = title || title2;
-			//     description = description || description2 || "";
 			//
 			//     if (title.toLowerCase().indexOf(keyword) !== -1 || description?.toLowerCase().indexOf(keyword) !== -1){
 			//         isOk = false;
@@ -2971,7 +2893,7 @@ const ReactModalService = {
 			//
 			// todo complete: remove duplicates
 			// todo complete: remove categoryId
-			// todo complete: remove extendedProps.id
+			// todo complete: remove event.id
 			// todo complete: remove 'הוזמן לשעה...' from the descirption
 			// todo complete: remove 'הערה:' from the description (for example "use Euro and not Shekels")
 			//
@@ -2981,11 +2903,8 @@ const ReactModalService = {
 		all.filter(filterOutIrrelevant).forEach((x: any) => {
 			delete x['id'];
 			x['category'] = categories.find((c) => c.id)?.title;
-			if (x['extendedProps'] && x['extendedProps']['categoryId']) {
-				delete x['extendedProps']['categoryId'];
-			}
 			x['tinder'] = {
-				images: (x.images || x.extendedProps?.images)?.split('\n'),
+				images: x.images?.split('\n'),
 				more_info: x.moreInfo,
 				source: 'Admin Recommendation',
 			};

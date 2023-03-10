@@ -9,7 +9,6 @@ export interface CalendarEvent {
 	icon?: string;
 	priority?: TriplanPriority;
 	duration?: string;
-	extendedProps?: any;
 	preferredTime?: TriplanEventPreferredTime;
 	description?: string;
 	location?: LocationData;
@@ -27,7 +26,6 @@ export interface SidebarEvent {
 	description?: string;
 	priority?: TriplanPriority;
 	preferredTime?: TriplanEventPreferredTime;
-	extendedProps?: any;
 	className?: string;
 	location?: LocationData;
 	allDay?: Boolean;

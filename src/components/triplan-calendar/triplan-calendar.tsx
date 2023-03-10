@@ -105,18 +105,15 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			id,
 			duration,
 			className: priority ? `priority-${priority}` : undefined,
-			extendedProps: {
-				id,
-				categoryId,
-				description,
-				priority,
-				icon: eventIcon,
-				preferredTime,
-				location: location ? JSON.parse(location) : undefined,
-				openingHours,
-				images, // add column 2
-				moreInfo,
-			},
+			category: categoryId,
+			description,
+			priority,
+			icon: eventIcon,
+			preferredTime,
+			location: location ? JSON.parse(location) : undefined,
+			openingHours: openingHours ? JSON.parse(openingHours) : undefined,
+			images, // add column 2
+			moreInfo,
 		};
 	};
 
@@ -147,15 +144,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// callback
 		props.onEventReceive && props.onEventReceive(info.event.id);
 
-		const { start, end, title, id, classNames, extendedProps, allDay } = info.event;
+		const { id, classNames } = info.event;
 		const event = {
-			start,
-			end,
-			title,
-			id,
+			...info.event,
 			className: classNames ? classNames.join(' ') : undefined,
-			extendedProps,
-			allDay,
 		};
 
 		// remove event from Fullcalendar internal store

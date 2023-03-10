@@ -133,7 +133,6 @@ function AManageDestination() {
 											? TriplanPriority.unset
 											: (x.priority as unknown as TriplanPriority) ?? TriplanPriority.unset,
 										preferredTime: TriplanEventPreferredTime.unset, // todo complete
-										extendedProps: {},
 										// className: ,
 										location: x.location as LocationData,
 										allDay: false,
