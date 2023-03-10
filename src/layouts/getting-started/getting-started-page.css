@@ -144,7 +144,7 @@ body {
 .create-new-trip-form.shown {
 	position: relative;
 	top: -130px;
-	display: flex;
+	display: flex !important;
 	transition: opacity 0.3s ease-in-out;
 }
 
