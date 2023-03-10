@@ -127,7 +127,7 @@ const MapContainer = (props: MapContainerProps) => {
 			: '';
 
 		let scheduledTo = '';
-		if (!props) {
+		if (!props.allEvents) {
 			const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
 
 			scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED');
@@ -147,7 +147,7 @@ const MapContainer = (props: MapContainerProps) => {
 		}
 
 		let category = event.category;
-		if (!props || !Object.keys(props).length) {
+		if (!props.allEvents) {
 			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 		}
 		const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
@@ -275,11 +275,9 @@ const MapContainer = (props: MapContainerProps) => {
 		const getIconUrl = (event: any) => {
 			let icon = '';
 			let bgColor = priorityToMapColor[event.priority].replace('#', '');
-			let category = event.category;
-
-			category = props.allEvents
+			let category: string = props.allEvents
 				? event.category
-				: eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
+				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
 
 			category = category ? category.toLowerCase() : '';
 			const title = event.title.toLowerCase();
