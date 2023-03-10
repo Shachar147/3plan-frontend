@@ -431,6 +431,11 @@ export class EventStore {
 	}
 
 	@computed
+	get allEventsComputed() {
+		return [...this.allSidebarEvents, ...this.getJSCalendarEvents()];
+	}
+
+	@computed
 	get isFiltered(): boolean {
 		return (
 			!!this.searchValue?.length ||

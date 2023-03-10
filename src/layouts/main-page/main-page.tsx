@@ -25,6 +25,7 @@ import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector';
+import _ from 'lodash';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -114,17 +115,26 @@ function MainPage(props: MainPageProps) {
 	}, [eventStore.sidebarEvents]);
 
 	function addEventToSidebar(event: any): boolean {
-		const newEvents: Record<string, SidebarEvent[]> = { ...eventStore.sidebarEvents };
-		let category = eventsToCategories[event.id];
+		const newEvents: Record<string, SidebarEvent[]> = _.cloneDeep(eventStore.sidebarEvents);
+		// let category = eventsToCategories[event.id];
+		// debugger;
+
+		let category = eventStore.categories.find((id) => id === (event.categoryId ?? event.category))?.id;
+
 		if (!category) {
-			const findEvent = eventStore.allEvents.find((x) => x.id.toString() === event.id.toString());
+			const findEvent = [...eventStore.allSidebarEvents, ...eventStore.calendarEvents].find(
+				(x) => x.id!.toString() === event.id.toString()
+			);
 			if (findEvent) {
-				category = findEvent.category;
+				// @ts-ignore
+				category = findEvent?.categoryId ?? findEvent.category;
 				if (!category && findEvent && findEvent.extendedProps) {
 					category = findEvent.extendedProps.categoryId;
 				}
 			}
 		}
+
+		debugger;
 
 		if (category != undefined) {
 			delete event.start;

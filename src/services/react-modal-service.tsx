@@ -2369,10 +2369,11 @@ const ReactModalService = {
 			originalEvent: EventInput
 		) => {
 			const eventId = originalEvent.id!;
+			debugger;
 			if (!eventStore) return;
 
 			// const oldEvent = eventStore.allEvents.find((e) => e.id.toString() === eventId.toString());
-			const oldEvent = eventStore.allSidebarEvents.find((e) => e.id.toString() === eventId.toString());
+			const oldEvent = eventStore.allEventsComputed.find((e) => e.id!.toString() === eventId.toString());
 			if (!oldEvent) {
 				console.error('old event not found');
 				return false;
@@ -2591,6 +2592,8 @@ const ReactModalService = {
 			end: info.event.end,
 			...info.event.extendedProps,
 		};
+
+		debugger;
 
 		// @ts-ignore
 		window.selectedLocation =
