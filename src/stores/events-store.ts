@@ -11,7 +11,7 @@ import {
 	TriplanPriority,
 	ViewMode,
 } from '../utils/enums';
-import { convertMsToHM, toDate } from '../utils/time-utils';
+import { addDays, convertMsToHM, getInputDateTimeValue, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -182,7 +182,9 @@ export class EventStore {
 				const location = event.location?.address;
 				const title = event.title;
 				const startDate = new Date(event.start!.toString());
-				const endDate = new Date(event.end!.toString());
+				const endDate = event.allDay
+					? addDays(new Date(event.start!.toString()), 1)
+					: new Date(event.end!.toString());
 				const id = event.id!;
 				const coordinate = {
 					lat: event?.location?.latitude,
@@ -262,13 +264,6 @@ export class EventStore {
 				}
 			});
 			// console.info(eachEventAndItsDirections);
-
-			const uuidv4 = () => {
-				// @ts-ignore
-				return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-					(c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
-				);
-			};
 
 			const newEvents: EventInput[] = [];
 			filteredEvents.forEach((e) => {
@@ -419,7 +414,17 @@ export class EventStore {
 
 	@action
 	changeEvent(changeInfo: any) {
-		const newEvent = changeInfo.event;
+		// todo fix: there's a bug when moving allDay event to be regular event, end is undefined.
+		const newEvent = {
+			...changeInfo.event._def,
+			...changeInfo.event,
+			...changeInfo.event.extendedProps,
+			allDay: changeInfo.event.allDay,
+			start: changeInfo.event.start,
+			end: changeInfo.event.end,
+			hasEnd: true,
+		};
+
 		const eventId = changeInfo.event.id;
 		const storedEvent = this.calendarEvents.find((e) => e.id == eventId);
 		if (storedEvent) {
@@ -770,6 +775,7 @@ export class EventStore {
 	updateEvent(storedEvent: SidebarEvent | EventInput | any, newEvent: SidebarEvent | EventInput | any) {
 		storedEvent.title = newEvent.title;
 		storedEvent.allDay = newEvent.allDay;
+		debugger;
 		storedEvent.start = newEvent.start ?? storedEvent.start;
 		storedEvent.end = newEvent.end ?? storedEvent.end;
 		storedEvent.icon = newEvent.icon ?? storedEvent.icon;

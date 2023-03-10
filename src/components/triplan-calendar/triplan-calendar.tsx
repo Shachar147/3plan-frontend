@@ -157,12 +157,6 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		};
 
 		const calendarEvent = buildCalendarEvent(event);
-		console.log('hereeeee', {
-			event,
-			infoEvent: info.event,
-			info,
-			calendarEvent,
-		});
 
 		// remove event from Fullcalendar internal store
 		info.event.remove();
@@ -178,6 +172,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const handleEventChange = (changeInfo: any) => {
+		debugger;
 		eventStore.changeEvent(changeInfo);
 	};
 

@@ -324,11 +324,6 @@ body {
 	position: relative;
 }
 
-/* display */
-.display-none {
-	display: none;
-}
-
 /* flexbox */
 .flex-1-1-0 {
 	display: flex;
@@ -765,4 +760,9 @@ input[type='text'] {
 
 .cursor-default {
 	cursor: default;
+}
+
+/* display */
+.display-none {
+	display: none !important;
 }

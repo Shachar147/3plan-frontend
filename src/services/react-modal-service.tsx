@@ -741,11 +741,10 @@ const ReactModalService = {
 									'MODALS.PLACEHOLDER.PREFIX'
 								)} ${TranslateService.translate(eventStore, 'MODALS.START_TIME')}`,
 								value: getInputDateTimeValue(initialData?.start),
-								// disabled: initialData.allDay,
 							},
 						},
 						textKey: 'MODALS.START_TIME',
-						className: 'border-top-gray',
+						className: getClasses('border-top-gray', initialData.allDay && 'display-none'),
 					},
 					{
 						settings: {
@@ -758,11 +757,10 @@ const ReactModalService = {
 									'MODALS.PLACEHOLDER.PREFIX'
 								)} ${TranslateService.translate(eventStore, 'MODALS.END_TIME')}`,
 								value: getInputDateTimeValue(initialData?.end),
-								// disabled: initialData.allDay,
 							},
 						},
 						textKey: 'MODALS.END_TIME',
-						className: 'border-top-gray',
+						className: getClasses('border-top-gray', initialData.allDay && 'display-none'),
 					},
 				]
 			);
@@ -2268,6 +2266,8 @@ const ReactModalService = {
 			console.error('event not found');
 			return;
 		}
+
+		debugger;
 
 		const currentEvent = { ...found };
 
