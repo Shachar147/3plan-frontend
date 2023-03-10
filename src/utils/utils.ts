@@ -237,7 +237,7 @@ export function lockOrderedEvents(calendarEvent: EventInput) {
 	//     // try {
 	//     //     calendarEvent.classNames = calendarEvent.classNames ? calendarEvent.classNames.replaceAll(/\s*locked/ig, '') : undefined;
 	//     // } catch {
-	//     //     debugger;
+	//     //     console.error("error");
 	//     // }
 	// }
 	return calendarEvent;

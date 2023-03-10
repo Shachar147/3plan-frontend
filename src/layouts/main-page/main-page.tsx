@@ -116,11 +116,8 @@ function MainPage(props: MainPageProps) {
 
 	function addEventToSidebar(event: any): boolean {
 		const newEvents: Record<string, SidebarEvent[]> = _.cloneDeep(eventStore.sidebarEvents);
-		// let category = eventsToCategories[event.id];
-		// debugger;
 
 		let category = eventStore.categories.find((id) => id === event.category)?.id;
-
 		if (!category) {
 			const findEvent = [...eventStore.allSidebarEvents, ...eventStore.calendarEvents].find(
 				(x) => x.id!.toString() === event.id.toString()
@@ -129,8 +126,6 @@ function MainPage(props: MainPageProps) {
 				category = findEvent.category;
 			}
 		}
-
-		debugger;
 
 		if (category != undefined) {
 			delete event.start;

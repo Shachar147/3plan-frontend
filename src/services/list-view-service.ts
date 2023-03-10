@@ -71,7 +71,7 @@ const ListViewService = {
 					indentOrGroupKeys[orGroupKey].push(indentText);
 				} else {
 					error = true;
-					debugger;
+					console.error('error! or-group regex failed!');
 				}
 			});
 

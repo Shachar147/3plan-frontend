@@ -276,16 +276,12 @@ export class EventStore {
 				if (eachEventAndItsDirections[e.id!]) {
 					let minStartDate = new Date(new Date().setFullYear(3000));
 					eachEventAndItsDirections[e.id!].forEach((obj: any) => {
-						// debugger;
-
 						// duration is not longer then 3 hours (probably flight) and more then 5 minutes
 						if (
 							obj.distance &&
 							obj.distance.duration_value < 60 * 60 * 3 &&
 							obj.distance.duration_value > 60 * 5
 						) {
-							// const priority = TriplanPriority.must;
-
 							const endDate = new Date(obj.target.arrivalTime);
 							const startDate = new Date(endDate.getTime() - obj.distance.duration_value * 1000);
 
@@ -509,10 +505,8 @@ export class EventStore {
 
 		// if (containsDuplicates(newAllEvents.map((x: SidebarEvent | CalendarEvent) => x.id))){
 		//     // alert("error! contains duplicates!");
-		//     // debugger;
 		// }
 
-		// debugger;
 		this.allEvents = [...newAllEvents].map((x) => {
 			if ('start' in x) {
 				// @ts-ignore

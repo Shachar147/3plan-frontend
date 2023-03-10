@@ -128,7 +128,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 									});
 							})
 							.catch((error) => {
-								debugger;
 								ReactModalService.internal.alertMessage(
 									eventStore,
 									'MODALS.ERROR.TITLE',
@@ -787,9 +786,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						(x) => x.preferredTime != undefined && x.preferredTime.toString() === preferredHour.toString()
 					)
 					.filter((e) => {
-						if (e.title == undefined) {
-							// debugger;
-						}
 						return e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1;
 					})
 					.sort(sortByPriority);
