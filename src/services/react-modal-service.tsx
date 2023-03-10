@@ -1731,7 +1731,6 @@ const ReactModalService = {
 			existingSidebarEvents[parseInt(category)].push(currentEvent);
 			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			debugger;
 			await eventStore.setAllEvents([
 				...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
 				currentEvent,
