@@ -2069,9 +2069,43 @@ const ReactModalService = {
 		const newCalendarEvents = eventStore.calendarEvents.filter(
 			(c) => c.category.toString() !== categoryId.toString()
 		);
-		const newAllEvents = eventStore.allEvents.filter((c) => c.category != categoryId.toString());
+		const newAllEvents = eventStore.allEventsComputed.filter((c) => c.category != categoryId.toString());
 		const newSidebarEvents = eventStore.getJSSidebarEvents();
 		delete newSidebarEvents[categoryId];
+
+		const onConfirm = () => {
+			// delete from sidebar
+			eventStore.setSidebarEvents(newSidebarEvents);
+
+			// delete from categories
+			eventStore.setCategories([...newCategories]);
+
+			// delete from calendar
+			if (newCalendarEvents.length === 0) {
+				eventStore.allowRemoveAllCalendarEvents = true;
+			}
+			eventStore.setCalendarEvents([...newCalendarEvents]);
+
+			// delete from all events
+			eventStore.setAllEvents([...newAllEvents]);
+
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.DELETED.TITLE',
+				'MODALS.DELETED.CATEGORY.CONTENT',
+				'success'
+			);
+
+			ReactModalService.internal.closeModal(eventStore);
+		};
+
+		const totalAffectedSidebar =
+			Object.values(eventStore.getJSSidebarEvents()).flat().length -
+			Object.values(newSidebarEvents).flat().length;
+
+		const totalAffectedCalendar = eventStore.calendarEvents.length - newCalendarEvents.length;
+
+		const totalAffected = eventStore.allEventsComputed.length - newAllEvents.length;
 
 		const html = [
 			TranslateService.translate(eventStore, 'MODALS.DELETE_CATEGORY.CONTENT'),
@@ -2079,57 +2113,28 @@ const ReactModalService = {
 			TranslateService.translate(eventStore, 'MODALS.DELETE_CATEGORY.CONTENT.IT_WILL_AFFECT'),
 			'<ul>' +
 				[
-					`<li>${eventStore.calendarEvents.length - newCalendarEvents.length} ${TranslateService.translate(
-						eventStore,
-						'CALENDAR_EVENTS'
-					)}</li>`,
-					`<li>${
-						Object.values(eventStore.getJSSidebarEvents()).flat().length -
-						Object.values(newSidebarEvents).flat().length
-					} ${TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}</li>`,
-					`<li>${eventStore.allEvents.length - newAllEvents.length} ${TranslateService.translate(
-						eventStore,
-						'TOTAL_EVENTS'
-					)}</li>`,
+					`<li>${totalAffectedCalendar} ${TranslateService.translate(eventStore, 'CALENDAR_EVENTS')}</li>`,
+					`<li>${totalAffectedSidebar} ${TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}</li>`,
+					`<li>${totalAffected} ${TranslateService.translate(eventStore, 'TOTAL_EVENTS')}</li>`,
 				].join('') +
 				'</ul>',
 		].join('<br/>');
 
-		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
-			title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${
-				eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title
-			}`,
-			content: <div dangerouslySetInnerHTML={{ __html: html }} />,
-			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
-			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
-			confirmBtnCssClass: 'primary-button red',
-			onConfirm: () => {
-				// delete from sidebar
-				eventStore.setSidebarEvents(newSidebarEvents);
-
-				// delete from categories
-				eventStore.setCategories([...newCategories]);
-
-				// delete from calendar
-				if (newCalendarEvents.length === 0) {
-					eventStore.allowRemoveAllCalendarEvents = true;
-				}
-				eventStore.setCalendarEvents([...newCalendarEvents]);
-
-				// delete from all events
-				eventStore.setAllEvents([...newAllEvents]);
-
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.DELETED.TITLE',
-					'MODALS.DELETED.CATEGORY.CONTENT',
-					'success'
-				);
-
-				ReactModalService.internal.closeModal(eventStore);
-			},
-		});
+		if (totalAffected == 0) {
+			onConfirm();
+		} else {
+			ReactModalService.internal.openModal(eventStore, {
+				...getDefaultSettings(eventStore),
+				title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${
+					eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title
+				}`,
+				content: <div dangerouslySetInnerHTML={{ __html: html }} />,
+				cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+				confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
+				confirmBtnCssClass: 'primary-button red',
+				onConfirm,
+			});
+		}
 	},
 	openEditCategoryModal: (TriplanCalendarRef: any, eventStore: EventStore, categoryId: number) => {
 		const category = eventStore.categories.find((c) => c.id.toString() === categoryId.toString());
