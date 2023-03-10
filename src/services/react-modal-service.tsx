@@ -1430,10 +1430,10 @@ const ReactModalService = {
 	openEditSidebarEventModal: (
 		eventStore: EventStore,
 		event: SidebarEvent,
-		removeEventFromSidebarById: (eventId: string) => Record<number, SidebarEvent[]>,
+		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
 		addToEventsToCategories: (value: any) => void
 	) => {
-		const handleEditSidebarEventResult = (eventStore: EventStore, originalEvent: SidebarEvent) => {
+		const handleEditSidebarEventResult = async (eventStore: EventStore, originalEvent: SidebarEvent) => {
 			const eventId = originalEvent.id!;
 			if (!eventStore) return;
 
@@ -1520,7 +1520,7 @@ const ReactModalService = {
 
 			if (isCategoryChanged) {
 				// remove it from the old category
-				const sidebarEvents = removeEventFromSidebarById(event.id);
+				const sidebarEvents = await removeEventFromSidebarById(event.id);
 
 				// add it to the new category
 				// @ts-ignore
@@ -2604,7 +2604,7 @@ const ReactModalService = {
 	},
 	openDeleteSidebarEventModal: (
 		eventStore: EventStore,
-		removeEventFromSidebarById: (eventId: string) => Record<number, SidebarEvent[]>,
+		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
 		event: SidebarEvent
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
@@ -2620,9 +2620,9 @@ const ReactModalService = {
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
 			confirmBtnCssClass: 'primary-button red',
-			onConfirm: () => {
-				removeEventFromSidebarById(event.id);
-				eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
+			onConfirm: async () => {
+				await removeEventFromSidebarById(event.id);
+				await eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
 
 				ReactModalService.internal.closeModal(eventStore);
 			},

@@ -81,6 +81,7 @@ function MainPage(props: MainPageProps) {
 		}
 	}, [tripName, locale]);
 
+	// todo: remove once we'll remove allEvents from trip.
 	useEffect(() => {
 		// update idtoevent, idtocategory and allevents array
 		const arr = [...eventStore.allEvents];
@@ -109,9 +110,11 @@ function MainPage(props: MainPageProps) {
 			}
 		});
 
-		setTimeout(() => {
-			eventStore.setAllEvents(arr);
-		}, 500);
+		// todo check
+		eventStore.setAllEvents(arr);
+		// setTimeout(() => {
+		// 	eventStore.setAllEvents(arr);
+		// }, 500);
 	}, [eventStore.sidebarEvents]);
 
 	function addEventToSidebar(event: any): boolean {
@@ -139,7 +142,7 @@ function MainPage(props: MainPageProps) {
 		}
 	}
 
-	function removeEventFromSidebarById(eventId: number | string): Record<number, SidebarEvent[]> {
+	async function removeEventFromSidebarById(eventId: number | string): Promise<Record<number, SidebarEvent[]>> {
 		const newEvents: Record<number, SidebarEvent[]> = { ...eventStore.sidebarEvents };
 		const newEventsToCategories = { ...eventsToCategories };
 		Object.keys(newEvents).forEach((category) => {
@@ -157,12 +160,15 @@ function MainPage(props: MainPageProps) {
 			),
 			eventStore.allEvents.find((e) => e.id.toString() === eventId.toString()),
 		] as CalendarEvent[];
-		eventStore.setCalendarEvents(newCalendarEvents);
+		await eventStore.setCalendarEvents(newCalendarEvents);
 
 		setEventsToCategories(newEventsToCategories);
-		setTimeout(() => {
-			eventStore.setSidebarEvents(newEvents);
-		}, 500);
+
+		// todo check
+		await eventStore.setSidebarEvents(newEvents);
+		// setTimeout(() => {
+		// 	eventStore.setSidebarEvents(newEvents);
+		// }, 500);
 
 		return newEvents;
 	}

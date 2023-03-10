@@ -470,7 +470,7 @@ export class EventStore {
 	}
 
 	@action
-	setCalendarEvents(newCalenderEvents: CalendarEvent[]) {
+	async setCalendarEvents(newCalenderEvents: CalendarEvent[]) {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
@@ -480,14 +480,14 @@ export class EventStore {
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
 		this.allowRemoveAllCalendarEvents = false;
 		const defaultEvents = this.getJSCalendarEvents() as CalendarEvent[]; // todo: make sure this conversion not fucking things up
-		this.dataService.setCalendarEvents(defaultEvents, this.tripName);
+		await this.dataService.setCalendarEvents(defaultEvents, this.tripName);
 	}
 
 	@action
-	setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>) {
+	async setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>) {
 		this.sidebarEvents = newSidebarEvents;
 		// if (!this.showOnlyEventsWithNoOpeningHours && !this.searchValue && !this.showOnlyEventsWithTodoComplete && !this.showOnlyEventsWithTodoComplete)
-		this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
+		await this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
 	}
 
 	@action
@@ -497,7 +497,7 @@ export class EventStore {
 	}
 
 	@action
-	setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]) {
+	async setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]) {
 		if (this.tripName == '') return;
 
 		// if (containsDuplicates(newAllEvents.map((x: SidebarEvent | CalendarEvent) => x.id))){
@@ -518,7 +518,7 @@ export class EventStore {
 
 		// update local storage
 		if (this.allEventsTripName === this.tripName) {
-			this.dataService.setAllEvents(this.allEvents, this.tripName);
+			await this.dataService.setAllEvents(this.allEvents, this.tripName);
 		}
 	}
 
