@@ -3,7 +3,7 @@ import moment from 'moment/moment';
 import TranslateService from './translate-service';
 import { EventInput } from '@fullcalendar/react';
 import { getEventDueDate, toDate } from '../utils/time-utils';
-import { LocationData } from '../utils/interfaces';
+import { CalendarEvent, LocationData } from '../utils/interfaces';
 import { runInAction } from 'mobx';
 import { GoogleTravelMode, ListViewSummaryMode, TriplanPriority } from '../utils/enums';
 import { priorityToColor } from '../utils/consts';
@@ -257,7 +257,7 @@ const ListViewService = {
 			orBackgroundStyle,
 		};
 	},
-	_sortEvents: (calendarEvents: EventInput[]) => {
+	_sortEvents: (calendarEvents: CalendarEvent[]) => {
 		return calendarEvents.sort((a, b) => {
 			const aTime = toDate(a.start).getTime();
 			const bTime = toDate(b.start).getTime();
@@ -276,7 +276,7 @@ const ListViewService = {
 		const dayTitle = `${dtStartName} - ${dtStart}`;
 		return dayTitle;
 	},
-	_buildCalendarEventsPerDay: (eventStore: EventStore, calendarEvents: EventInput[]) => {
+	_buildCalendarEventsPerDay: (eventStore: EventStore, calendarEvents: CalendarEvent[]) => {
 		const calendarEventsPerDay: Record<string, EventInput[]> = {};
 
 		let lastDayTitle = '';

@@ -222,7 +222,7 @@ export function containsDuplicates(array: any[]) {
 	return array.length !== new Set(array).size;
 }
 
-export function lockOrderedEvents(calendarEvent: EventInput) {
+export function lockOrderedEvents(calendarEvent: CalendarEvent) {
 	// const isOrdered = isEventAlreadyOrdered(calendarEvent);
 	// if (isOrdered) {
 	//     calendarEvent.editable = false;

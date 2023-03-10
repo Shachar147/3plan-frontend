@@ -423,7 +423,7 @@ const MapContainer = (props: MapContainerProps) => {
 						infoWindow.setContent(buildInfoWindowContent(event));
 						infoWindow.open(map, refMarker);
 					};
-				})(refMarker)
+				})()
 			);
 
 			// hover & leave events
@@ -434,7 +434,7 @@ const MapContainer = (props: MapContainerProps) => {
 					return function () {
 						refMarker.setIcon(markerIconWithBorder);
 					};
-				})(refMarker)
+				})()
 			);
 			googleRef.event.addListener(
 				refMarker,
@@ -443,7 +443,7 @@ const MapContainer = (props: MapContainerProps) => {
 					return function () {
 						refMarker.setIcon(markerIcon);
 					};
-				})(refMarker)
+				})()
 			);
 
 			// visible items change event
@@ -478,19 +478,24 @@ const MapContainer = (props: MapContainerProps) => {
 
 	const initSearchResultMarker = useMemo(() => {
 		return () => {
+			// @ts-ignore
 			const selectedSearchLocation = window.selectedSearchLocation;
 			searchMarkers = [];
+			// @ts-ignore
 			if (window.selectedSearchLocation) {
 				const coordinate = {
 					lat: selectedSearchLocation.latitude,
 					lng: selectedSearchLocation.longitude,
 					address: selectedSearchLocation.address,
+					// @ts-ignore
 					openingHours: window.openingHours,
 				};
+				// @ts-ignore
 				searchMarkers = [coordinate];
 			}
 
 			setSearchCoordinatesSearchValue(searchValue);
+			// @ts-ignore
 			setSearchCoordinates(searchMarkers);
 			return;
 
@@ -546,20 +551,21 @@ const MapContainer = (props: MapContainerProps) => {
 			//     markerCluster.removeMarkers(searchMarkers)
 			// }
 
-			searchMarkers = [refMarker];
-			// new MarkerClusterer(googleMapRef, [...markers, ...searchMarkers], {
-			//     imagePath: "/images/marker_images/m",
-			//     minimumClusterSize: 10
-			// });
-
-			return refMarker;
+			// searchMarkers = [refMarker];
+			// // new MarkerClusterer(googleMapRef, [...markers, ...searchMarkers], {
+			// //     imagePath: "/images/marker_images/m",
+			// //     minimumClusterSize: 10
+			// // });
+			//
+			// return refMarker;
 		};
 	}, [googleRef, googleMapRef]);
 
 	const onVisibleItemClick = useMemo(() => {
-		return (event, marker) => {
+		return (event: any, marker: any) => {
 			if (googleMapRef && infoWindow) {
 				const coordinates = event.location;
+				// @ts-ignore
 				setCenter({ lat: coordinates.latitude, lng: coordinates.longitude });
 
 				infoWindow.setContent(buildInfoWindowContent(event));
@@ -800,6 +806,7 @@ const MapContainer = (props: MapContainerProps) => {
 						type="text"
 						className="map-header-location-input-search"
 						onClick={() =>
+							// @ts-ignore
 							window.initLocationPicker(
 								'map-header-location-input-search',
 								'selectedSearchLocation',
@@ -807,6 +814,7 @@ const MapContainer = (props: MapContainerProps) => {
 							)
 						}
 						onKeyUp={() =>
+							// @ts-ignore
 							window.setManualLocation('map-header-location-input-search', 'selectedSearchLocation')
 						}
 						value={searchValue}
@@ -820,6 +828,7 @@ const MapContainer = (props: MapContainerProps) => {
 						<a
 							onClick={() => {
 								setSearchValue('');
+								// @ts-ignore
 								window.selectedSearchLocation = undefined;
 								initSearchResultMarker();
 							}}
@@ -849,6 +858,7 @@ const MapContainer = (props: MapContainerProps) => {
 				}
 				zoom={searchCoordinates.length > 0 || center ? 14 : 11}
 				yesIWantToUseGoogleMapApiInternals
+				// @ts-ignore
 				onGoogleApiLoaded={({ map, maps }) => setGoogleMapRef(map, maps)}
 				clickableIcons={false}
 				options={getOptions()}
@@ -857,6 +867,7 @@ const MapContainer = (props: MapContainerProps) => {
 					<Marker
 						key={index}
 						locationData={
+							// @ts-ignore
 							[{ ...place }].map((x) => {
 								x.longitude = x.lng;
 								x.latitude = x.lat;
@@ -865,10 +876,14 @@ const MapContainer = (props: MapContainerProps) => {
 								return x;
 							})[0]
 						}
+						// @ts-ignore
 						text={place.address}
+						// @ts-ignore
 						lat={place.lat}
+						// @ts-ignore
 						lng={place.lng}
 						searchValue={searchCoordinatesSearchValue}
+						// @ts-ignore
 						openingHours={place.openingHours}
 					/>
 				))}

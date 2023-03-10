@@ -2050,7 +2050,9 @@ const ReactModalService = {
 	},
 	openDeleteCategoryModal: (eventStore: EventStore, categoryId: number) => {
 		const newCategories = eventStore.categories.filter((c) => c.id != categoryId);
-		const newCalendarEvents = eventStore.calendarEvents.filter((c) => c.category != categoryId);
+		const newCalendarEvents = eventStore.calendarEvents.filter(
+			(c) => c.category.toString() !== categoryId.toString()
+		);
 		const newAllEvents = eventStore.allEvents.filter((c) => c.category != categoryId.toString());
 		const newSidebarEvents = eventStore.getJSSidebarEvents();
 		delete newSidebarEvents[categoryId];
@@ -2270,7 +2272,8 @@ const ReactModalService = {
 		const currentEvent = { ...found };
 
 		// for handle delete - to be able to say to which category this activity will return to
-		const categoryName = eventStore.categories.find((x) => x.id == currentEvent?.category)?.title ?? 'N/A';
+		const categoryName =
+			eventStore.categories.find((x) => x.id.toString() == currentEvent?.category.toString())?.title ?? 'N/A';
 
 		const handleDeleteEventResult = (
 			currentEvent: CalendarEvent,
@@ -2480,7 +2483,7 @@ const ReactModalService = {
 			return true;
 		};
 
-		const handleDuplicateEventResult = (eventStore: EventStore, originalEvent: EventInput) => {
+		const handleDuplicateEventResult = (eventStore: EventStore, originalEvent: CalendarEvent) => {
 			let newEvent = Object.assign({}, originalEvent);
 			const newId = eventStore.createEventId();
 			newEvent.id = newId;

@@ -17,7 +17,7 @@ import { CreateInstagramItemsResult, DownloadMediaResult, FixItemsResult } from 
 import { runInAction } from 'mobx';
 
 export interface TriplanAdminSidebarProps {
-	removeEventFromSidebarById: (eventId: string) => void;
+	removeEventFromSidebarById: (eventId: string) => Record<number, SidebarEvent[]>;
 	addToEventsToCategories: (event: SidebarEvent) => void;
 }
 
@@ -233,7 +233,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					<i
 						className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
 						aria-hidden="true"
-					></i>
+					/>
 					<span className={'flex-gap-5 align-items-center'}>
 						{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
 					</span>

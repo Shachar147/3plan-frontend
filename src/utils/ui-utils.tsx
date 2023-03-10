@@ -327,20 +327,7 @@ export const SELECT_STYLE = {
 	}),
 };
 
-export const getEventDivHtml = (eventStore: EventStore, event: EventApi | EventInput) => {
-	const json = {
-		id: event._def.publicId,
-		...event,
-		...event.extendedProps,
-		...event._def,
-		// ...event._instance.range,
-		start: event.start ?? event._instance?.range?.start,
-		end: event.end ?? event._instance?.range?.end,
-	};
-	console.log({ json });
-	const calendarEvent = buildCalendarEvent(json) as CalendarEvent;
-	console.log({ calendarEvent });
-
+export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarEvent) => {
 	const category = Number(calendarEvent.category!.toString());
 	const icon = calendarEvent.icon || eventStore.categoriesIcons[category];
 

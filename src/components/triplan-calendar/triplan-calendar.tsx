@@ -163,7 +163,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			className: classNames ? classNames.join(' ') : undefined,
 		};
 
-		const calendarEvent = buildCalendarEvent(event);
+		const calendarEvent = buildCalendarEvent(event) as CalendarEvent;
 
 		// remove event from Fullcalendar internal store
 		info.event.remove();
@@ -240,7 +240,21 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		eventEl.classList.add('triplan-calendar-event');
 
 		const event = info.event;
-		eventEl.innerHTML = getEventDivHtml(eventStore, event);
+
+		const json = {
+			// id: event._def.publicId,
+			...event,
+			...event.extendedProps,
+			...event._def,
+			// ...event._instance.range,
+			start: event.start ?? event._instance?.range?.start,
+			end: event.end ?? event._instance?.range?.end,
+		};
+		console.log({ json });
+		const calendarEvent = buildCalendarEvent(json) as CalendarEvent;
+		console.log({ calendarEvent });
+
+		eventEl.innerHTML = getEventDivHtml(eventStore, calendarEvent);
 
 		let arrayOfDomNodes = [eventEl];
 		return { domNodes: arrayOfDomNodes };

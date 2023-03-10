@@ -58,7 +58,7 @@ export class EventStore {
 	@observable weekendsVisible = true;
 	@observable categories: TriPlanCategory[] = [];
 	@observable sidebarEvents: Record<number, SidebarEvent[]> = {};
-	@observable calendarEvents: EventInput[] = [];
+	@observable calendarEvents: CalendarEvent[] = []; // EventInput[]
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
@@ -170,14 +170,14 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
-	reduceEventsEndDateToFitDistanceResult = (filteredEvents: EventInput[]): EventInput[] => {
+	reduceEventsEndDateToFitDistanceResult = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
 		// only if not in filter mode - add driving instructions
 		if (filteredEvents.length === this.calendarEvents.length) {
 			filteredEvents = filteredEvents.sort((a, b) => {
 				return toDate(a.start).getTime() - toDate(b.start).getTime();
 			});
 
-			const extractDetails = (event: EventInput) => {
+			const extractDetails = (event: CalendarEvent) => {
 				const location = event.location?.address;
 				const title = event.title;
 				const startDate = new Date(event.start!.toString());
@@ -185,7 +185,7 @@ export class EventStore {
 					? addDays(new Date(event.start!.toString()), 1)
 					: new Date(event.end!.toString());
 				const id = event.id!;
-				const coordinate = {
+				const coordinate: any = {
 					lat: event?.location?.latitude,
 					lng: event?.location?.longitude,
 				};
@@ -264,7 +264,7 @@ export class EventStore {
 			});
 			// console.info(eachEventAndItsDirections);
 
-			const newEvents: EventInput[] = [];
+			const newEvents: CalendarEvent[] = [];
 			filteredEvents.forEach((e) => {
 				// newEvents.push(e);
 				if (eachEventAndItsDirections[e.id!]) {
@@ -309,7 +309,7 @@ export class EventStore {
 	};
 
 	@computed
-	get filteredCalendarEvents(): EventInput[] {
+	get filteredCalendarEvents(): CalendarEvent[] {
 		let filteredEvents = this.getJSCalendarEvents().filter(
 			(event) =>
 				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
@@ -439,16 +439,16 @@ export class EventStore {
 		return false;
 	}
 
-	@action
-	addEvent(selectInfo: DateSelectArg, title: string | null) {
-		this.calendarEvents.push({
-			id: this.createEventId(),
-			title: title || 'New Event',
-			start: selectInfo.start,
-			end: selectInfo.end,
-			allDay: selectInfo.allDay,
-		});
-	}
+	// @action
+	// addEvent(selectInfo: DateSelectArg, title: string | null) {
+	// 	this.calendarEvents.push({
+	// 		id: this.createEventId(),
+	// 		title: title || 'New Event',
+	// 		start: selectInfo.start,
+	// 		end: selectInfo.end,
+	// 		allDay: selectInfo.allDay,
+	// 	} as unknown as CalendarEvent);
+	// }
 
 	@action
 	deleteEvent(eventId: string) {
@@ -463,15 +463,15 @@ export class EventStore {
 	}
 
 	@action
-	setCalendarEvents(newCalenderEvents: EventInput[]) {
+	setCalendarEvents(newCalenderEvents: CalendarEvent[]) {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
-		this.calendarEvents = this.calendarEvents.map((x: EventInput) => lockOrderedEvents(x));
+		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(x));
 
 		console.log({
 			newCalenderEvents,
-			calendarEvents: this.calendarEvents.map((x: EventInput) => lockOrderedEvents(x)),
+			calendarEvents: this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(x)),
 		});
 
 		// update local storage
@@ -753,7 +753,7 @@ export class EventStore {
 
 	// --- private functions ----------------------------------------------------
 
-	getJSCalendarEvents(): EventInput[] {
+	getJSCalendarEvents(): CalendarEvent[] {
 		return toJS(this.calendarEvents);
 	}
 
@@ -762,10 +762,9 @@ export class EventStore {
 		// return toJS(this.sidebarEvents);
 	}
 
-	updateEvent(storedEvent: SidebarEvent | EventInput | any, newEvent: SidebarEvent | EventInput | any) {
+	updateEvent(storedEvent: SidebarEvent | CalendarEvent | any, newEvent: SidebarEvent | CalendarEvent | any) {
 		storedEvent.title = newEvent.title;
 		storedEvent.allDay = newEvent.allDay;
-		debugger;
 		storedEvent.start = newEvent.start ?? storedEvent.start;
 		storedEvent.end = newEvent.end ?? storedEvent.end;
 		storedEvent.icon = newEvent.icon ?? storedEvent.icon;
