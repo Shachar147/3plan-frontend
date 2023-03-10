@@ -255,10 +255,6 @@ const ReactModalRenderHelper = {
 			});
 
 		if (!eventStore.modalValues[modalValueName]) {
-			// const idx = values.indexOf(extra.value?.toString());
-			// debugger;
-			// eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
-
 			const selectedOption = options.find((option) => option.value == extra.value?.toString());
 			eventStore.modalValues[modalValueName] = selectedOption;
 		}
@@ -1425,7 +1421,6 @@ const ReactModalService = {
 			const eventId = originalEvent.id!;
 			if (!eventStore) return;
 
-			// const oldEvent = eventStore.allEvents.find((e) => e.id === eventId);
 			const oldEvent = eventStore.allSidebarEvents.find((e) => e.id === eventId);
 			if (!oldEvent) {
 				console.error('old event not found');
@@ -1522,8 +1517,6 @@ const ReactModalService = {
 				// @ts-ignore
 				currentEvent['className'] = currentEvent.priority ? `priority-${currentEvent.priority}` : undefined;
 
-				// const sidebarEvents = eventStore.getJSSidebarEvents(); //eventStore.sidebarEvents;
-
 				sidebarEvents[parseInt(category)] = sidebarEvents[parseInt(category)] || [];
 				sidebarEvents[parseInt(category)].push(currentEvent);
 				eventStore.setSidebarEvents(sidebarEvents);
@@ -1559,7 +1552,7 @@ const ReactModalService = {
 					eventStore.setAllEvents(eventStore.allEvents);
 
 					const newSidebarEvents: Record<number, SidebarEvent[]> = {};
-					const existingSidebarEvents = eventStore.getJSSidebarEvents(); // eventStore.getSidebarEvents;
+					const existingSidebarEvents = eventStore.getJSSidebarEvents();
 					Object.keys(existingSidebarEvents).forEach((category) => {
 						const categoryId = parseInt(category);
 						newSidebarEvents[categoryId] = newSidebarEvents[categoryId] || [];
@@ -1606,7 +1599,6 @@ const ReactModalService = {
 
 		// on event click - show edit event popup
 		const eventId = event.id;
-		// const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
 		const initialData = eventStore.allSidebarEvents.find((e: any) => e.id.toString() === eventId.toString());
 		if (!initialData) {
 			console.error('event not found');
@@ -1707,7 +1699,6 @@ const ReactModalService = {
 				return;
 			}
 
-			// const foundEvent = eventStore.allEvents.find((e) => e.id.toString() === event.id.toString());
 			const foundEvent = eventStore.allSidebarEvents.find((e) => e.id.toString() === event.id.toString());
 			if (!foundEvent) {
 				console.error('event not found');
@@ -1735,7 +1726,6 @@ const ReactModalService = {
 
 		// on event click - show edit event popup
 		const eventId = event.id;
-		// const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
 		const initialData = eventStore.allSidebarEvents.find((e: any) => e.id.toString() === eventId.toString());
 		if (!initialData) {
 			console.error('event not found');
@@ -2005,8 +1995,6 @@ const ReactModalService = {
 			...sidebarEventData,
 		};
 
-		debugger;
-
 		// @ts-ignore
 		window.selectedLocation = initialData.location || undefined;
 
@@ -2053,7 +2041,7 @@ const ReactModalService = {
 		const newCategories = eventStore.categories.filter((c) => c.id != categoryId);
 		const newCalendarEvents = eventStore.calendarEvents.filter((c) => c.category != categoryId);
 		const newAllEvents = eventStore.allEvents.filter((c) => c.category != categoryId.toString());
-		const newSidebarEvents = eventStore.getJSSidebarEvents(); // { ...eventStore.getSidebarEvents };
+		const newSidebarEvents = eventStore.getJSSidebarEvents();
 		delete newSidebarEvents[categoryId];
 
 		const html = [
@@ -2322,10 +2310,8 @@ const ReactModalService = {
 			originalEvent: EventInput
 		) => {
 			const eventId = originalEvent.id!;
-			debugger;
 			if (!eventStore) return;
 
-			// const oldEvent = eventStore.allEvents.find((e) => e.id.toString() === eventId.toString());
 			const oldEvent = eventStore.allEventsComputed.find((e) => e.id!.toString() === eventId.toString());
 			if (!oldEvent) {
 				console.error('old event not found');
@@ -2399,7 +2385,6 @@ const ReactModalService = {
 			const preferredTimeChanged = originalEvent.preferredTime !== currentEvent.preferredTime;
 			const descriptionChanged = originalEvent.description !== currentEvent.description;
 			const isLocationChanged = originalEvent.location != currentEvent.location;
-			// const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
 			const oldCategory = eventStore.calendarEvents.find((e) => e.id === eventId)!.category;
 			const isCategoryChanged = oldCategory != categoryId;
 			const isOpeningHoursChanged = currentEvent.openingHours;
@@ -2526,8 +2511,6 @@ const ReactModalService = {
 			start: info.event.start,
 			end: info.event.end,
 		};
-
-		debugger;
 
 		// @ts-ignore
 		window.selectedLocation = initialData.location ?? currentEvent.location;
@@ -2865,7 +2848,7 @@ const ReactModalService = {
 	},
 
 	openShareToTinderModal: (eventStore: EventStore) => {
-		const all = [...eventStore.allEvents];
+		const all = [...eventStore.allEventsComputed];
 		const categories = [...eventStore.categories];
 		if (!categories) return;
 
