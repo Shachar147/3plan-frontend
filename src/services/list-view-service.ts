@@ -871,9 +871,6 @@ const ListViewService = {
 				}
 				previousDetail = x;
 			});
-
-			// debug
-			// console.log(loggerArr.join("\n"));
 		});
 
 		return summaryPerDay;
@@ -900,11 +897,8 @@ const ListViewService = {
 		return summaryPerDay;
 	},
 	buildHTMLSummary: (eventStore: EventStore) => {
-		let calendarEvents = eventStore.calendarEvents;
+		let calendarEvents = eventStore.filteredCalendarEvents; // used to be calendarEvents but now it also considering search and filters
 		const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
-
-		// debug
-		// calendarEvents = calendarEvents.filter((x) => (toDate(x.start).toLocaleDateString() === '12/6/2022');
 
 		// build calendar events per day
 		const calendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
