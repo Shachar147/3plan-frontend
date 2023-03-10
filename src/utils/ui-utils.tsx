@@ -4,14 +4,15 @@ import { EventStore } from '../stores/events-store';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ToggleButton, { OptionToggleButton } from '../components/toggle-button/toggle-button';
-import { AdminViewMode, ViewMode } from './enums';
+import { ViewMode } from './enums';
 import { getClasses, isEventAlreadyOrdered } from './utils';
 import TriplanTag from '../components/common/triplan-tag/triplan-tag';
 import { getUser } from '../helpers/auth';
 import Select from 'react-select';
 import { Observer } from 'mobx-react';
-import { EventInput } from '@fullcalendar/react';
+import { EventApi, EventInput } from '@fullcalendar/react';
 import { getTimeStringFromDate, toDate } from './time-utils';
+import { buildCalendarEvent, CalendarEvent } from './interfaces';
 
 const renderLanguageSelector = (eventStore: EventStore) => {
 	const options: any[] = [
@@ -326,33 +327,44 @@ export const SELECT_STYLE = {
 	}),
 };
 
-export const getEventDivHtml = (eventStore: EventStore, event: EventInput) => {
-	const category = event.category;
-	const icon = event.icon || eventStore.categoriesIcons[category];
+export const getEventDivHtml = (eventStore: EventStore, event: EventApi | EventInput) => {
+	const json = {
+		...event,
+		...event._instance?.range,
+		...event._def,
+		...event.extendedProps,
+		id: event._def.publicId,
+	};
+	console.log({ json });
+	const calendarEvent = buildCalendarEvent(json) as CalendarEvent;
+	console.log({ calendarEvent });
+
+	const category = Number(calendarEvent.category!.toString());
+	const icon = calendarEvent.icon || eventStore.categoriesIcons[category];
 
 	// locked
-	const tooltip = isEventAlreadyOrdered(event as EventInput)
+	const tooltip = isEventAlreadyOrdered(calendarEvent as EventInput)
 		? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP')
 		: '';
 	// event.classNames = event.classNames.join(",").replace('locked','').split(",");
 
 	let suggestedTime = '';
 	// @ts-ignore
-	if (event.suggestedEndTime) {
-		const dt = new Date(event.suggestedEndTime.toString());
+	if (calendarEvent.suggestedEndTime) {
+		const dt = new Date(calendarEvent.suggestedEndTime.toString());
 		suggestedTime = `<div class="fc-event-suggested-time">${TranslateService.translate(
 			eventStore,
 			'LEAVE_AT'
 		)} ${getTimeStringFromDate(dt)} ${TranslateService.translate(eventStore, 'TO_ARRIVE_ON_TIME')}</div>`;
 	}
 
-	return `<div title="${tooltip}">${icon} ${event.title}</div>
+	return `<div title="${tooltip}">${icon} ${calendarEvent.title}</div>
                 ${
-					event.allDay
+					calendarEvent.allDay
 						? ''
-						: `<div class="fc-event-time">${event.start ? getTimeStringFromDate(toDate(event.start)) : ''}${
-								event.end ? '-' + getTimeStringFromDate(toDate(event.end!)) : ''
-						  }</div>`
+						: `<div class="fc-event-time">${
+								calendarEvent.start ? getTimeStringFromDate(toDate(calendarEvent.start)) : ''
+						  }${calendarEvent.end ? '-' + getTimeStringFromDate(toDate(calendarEvent.end!)) : ''}</div>`
 				}
                 ${suggestedTime}
             `;

@@ -15,6 +15,38 @@ export interface CalendarEvent {
 	openingHours?: WeeklyOpeningHoursData;
 	images?: string; // add column 8
 	moreInfo?: string;
+	category?: string; // category id
+	suggestedEndTime?: any;
+}
+
+export function buildCalendarEvent(json: any): Partial<CalendarEvent> {
+	const calendarProps: string[] = [
+		'title',
+		'start',
+		'end',
+		'id',
+		'allDay',
+		'icon',
+		'priority',
+		'duration',
+		'preferredTime',
+		'description',
+		'location',
+		'openingHours',
+		'images',
+		'moreInfo',
+		'category',
+		'suggestedEndTime',
+	];
+
+	const calendarEvent: Partial<CalendarEvent> = {};
+
+	calendarProps.forEach((prop) => {
+		// @ts-ignore
+		calendarEvent[prop] = json[prop];
+	});
+
+	return calendarEvent;
 }
 
 export interface SidebarEvent {

@@ -2,7 +2,7 @@ import { GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority } from './
 import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
-import { Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
+import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');

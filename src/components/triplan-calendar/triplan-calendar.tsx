@@ -204,11 +204,11 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 	};
 
-	const renderEventContent = (eventContentArg: EventContentArg) => {
+	const renderEventContent = (info: EventContentArg) => {
 		let eventEl = document.createElement('div');
 		eventEl.classList.add('triplan-calendar-event');
 
-		const event = eventContentArg.event as EventInput;
+		const event = info.event;
 		eventEl.innerHTML = getEventDivHtml(eventStore, event);
 
 		let arrayOfDomNodes = [eventEl];
@@ -314,6 +314,11 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				end: addDays(toDate(eventStore.customDateRange.end), 1),
 			}}
 			slotMinTime={'07:00'}
+			eventSources={[
+				{
+					events: eventStore.filteredCalendarEvents,
+				},
+			]}
 		/>
 	);
 }

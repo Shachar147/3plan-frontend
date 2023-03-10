@@ -330,6 +330,8 @@ export class EventStore {
 
 		filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
 
+		console.log(filteredEvents);
+
 		return filteredEvents;
 	}
 
