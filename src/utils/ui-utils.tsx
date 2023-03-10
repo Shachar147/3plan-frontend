@@ -332,9 +332,12 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	const icon = calendarEvent.icon || eventStore.categoriesIcons[category];
 
 	// locked
-	const tooltip = isEventAlreadyOrdered(calendarEvent as EventInput)
-		? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP')
-		: '';
+	const tooltip = '';
+	// todo: uncomment if we'd like to return the functionality of locked events if already ordered.
+	// todo: uncomment also the code of locking them (look for the places that use isEventAlreadyOrdered)
+	// const tooltip = isEventAlreadyOrdered(calendarEvent as EventInput)
+	// 	? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP')
+	// 	: '';
 	// event.classNames = event.classNames.join(",").replace('locked','').split(",");
 
 	let suggestedTime = '';

@@ -225,20 +225,30 @@ export function containsDuplicates(array: any[]) {
 export function lockOrderedEvents(calendarEvent: CalendarEvent) {
 	// const isOrdered = isEventAlreadyOrdered(calendarEvent);
 	// if (isOrdered) {
-	//     calendarEvent.editable = false;
-	//     calendarEvent.durationEditable = false;
-	//     calendarEvent.disableDragging = true;
-	//     calendarEvent.classNames = calendarEvent.classNames ? `${calendarEvent.classNames.toString().replace(' locked','')} locked` : 'locked';
+	// 	// @ts-ignore
+	// 	calendarEvent.editable = false;
+	// 	// @ts-ignore
+	// 	calendarEvent.durationEditable = false;
+	// 	// @ts-ignore
+	// 	calendarEvent.disableDragging = true;
+	// 	// @ts-ignore
+	// 	calendarEvent.classNames = calendarEvent.className
+	// 		? `${calendarEvent.className.toString().replace(' locked', '')} locked`
+	// 		: 'locked';
 	// } else {
-	//     calendarEvent.editable = true;
-	//     calendarEvent.durationEditable = true;
-	//     calendarEvent.disableDragging = false;
-	//     console.log(calendarEvent.classNames)
-	//     // try {
-	//     //     calendarEvent.classNames = calendarEvent.classNames ? calendarEvent.classNames.replaceAll(/\s*locked/ig, '') : undefined;
-	//     // } catch {
-	//     //     console.error("error");
-	//     // }
+	// 	// @ts-ignore
+	// 	calendarEvent.editable = true;
+	// 	// @ts-ignore
+	// 	calendarEvent.durationEditable = true;
+	// 	// @ts-ignore
+	// 	calendarEvent.disableDragging = false;
+	// 	// @ts-ignore
+	// 	console.log(calendarEvent.classNames);
+	// 	// try {
+	// 	//     calendarEvent.classNames = calendarEvent.classNames ? calendarEvent.classNames.replaceAll(/\s*locked/ig, '') : undefined;
+	// 	// } catch {
+	// 	//     console.error("error");
+	// 	// }
 	// }
 	return calendarEvent;
 }
