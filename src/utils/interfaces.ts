@@ -56,7 +56,7 @@ export interface SidebarEvent {
 	title: string;
 	duration?: string;
 	icon?: string;
-	category?: string;
+	category: string;
 	description?: string;
 	priority?: TriplanPriority;
 	preferredTime?: TriplanEventPreferredTime;

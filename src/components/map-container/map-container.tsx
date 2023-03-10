@@ -778,7 +778,7 @@ const MapContainer = (props: MapContainerProps) => {
 		for (var i = 0; i < markers.length; i++) {
 			const marker = markers[i];
 			if (bounds.contains(marker.getPosition()) === true) {
-				const event = (props.allEvents ?? eventStore.allEvents).find(
+				const event = (props.allEvents ?? eventStore.allEventsFilteredComputed).find(
 					(x) => x.id.toString() === marker.eventId.toString()
 				);
 				visibleItems.push({ event, marker });

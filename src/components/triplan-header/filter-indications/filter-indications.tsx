@@ -69,7 +69,7 @@ function FilterIndications(props: FilterIndicationsProps) {
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'FILTER_INDICATIONS.MULTIPLE_FILTERS').replace(
 						'{{num}}',
-						totalFilters
+						totalFilters.toString()
 					)}
 					onDelete={() => {
 						eventStore.setShowOnlyEventsWithNoOpeningHours(false);

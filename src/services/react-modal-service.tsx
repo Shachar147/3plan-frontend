@@ -1300,6 +1300,9 @@ const ReactModalService = {
 				images,
 			} = ReactModalService.internal.getModalValues(eventStore);
 
+			// @ts-ignore
+			delete location?.openingHours;
+
 			if (initialCategoryId != undefined) {
 				categoryId = initialCategoryId;
 			}
@@ -1325,6 +1328,7 @@ const ReactModalService = {
 				location,
 				openingHours,
 				images,
+				category: categoryId,
 			} as SidebarEvent;
 
 			const isDurationValid =
@@ -1381,12 +1385,14 @@ const ReactModalService = {
 			handleAddSidebarEventResult(eventStore, categoryId);
 		};
 
-		const category = categoryId
-			? eventStore.categories.find((c) => c.id.toString() === categoryId.toString())
+		const triplanCategory = categoryId
+			? eventStore.categories.find((c) => c.id.toString() === categoryId!.toString())
 			: undefined;
 
-		const title = category
-			? `${TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CATEGORY.TITLE')}: ${category.title}`
+		const title = triplanCategory
+			? `${TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CATEGORY.TITLE')}: ${
+					triplanCategory.title
+			  }`
 			: TranslateService.translate(eventStore, 'ADD_EVENT_MODAL.TITLE');
 
 		// eventStore.modalValues.duration = eventStore.modalValues.duration || defaultTimedEventDuration;
