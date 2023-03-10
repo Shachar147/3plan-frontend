@@ -524,12 +524,15 @@ div[class$='-control'] {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
+	justify-content: center;
 }
 
 .file-button-label {
 	background-color: #efefef !important;
 	border-top-right-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
+	display: flex;
+	align-items: center;
 }
 
 .file-name-label {
