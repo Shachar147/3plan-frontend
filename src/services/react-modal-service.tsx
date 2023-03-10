@@ -1298,6 +1298,7 @@ const ReactModalService = {
 				location,
 				openingHours,
 				images,
+				moreInfo,
 			} = ReactModalService.internal.getModalValues(eventStore);
 
 			// @ts-ignore
@@ -1329,6 +1330,7 @@ const ReactModalService = {
 				openingHours,
 				images,
 				category: categoryId,
+				moreInfo,
 			} as SidebarEvent;
 
 			const isDurationValid =
@@ -1469,6 +1471,7 @@ const ReactModalService = {
 				openingHours,
 				images,
 				category,
+				moreInfo,
 			};
 
 			const isDurationValid = validateDuration(duration);
@@ -1584,6 +1587,8 @@ const ReactModalService = {
 									location,
 									openingHours,
 									images,
+									moreInfo,
+									category,
 								} as SidebarEvent);
 							}
 							newSidebarEvents[categoryId].push(_event);
@@ -1655,7 +1660,7 @@ const ReactModalService = {
 		});
 	},
 	openDuplicateSidebarEventModal: (eventStore: EventStore, event: SidebarEvent) => {
-		const handleDuplicateSidebarEventResult = (eventStore: EventStore, event: SidebarEvent) => {
+		const handleDuplicateSidebarEventResult = async (eventStore: EventStore, event: SidebarEvent) => {
 			if (!eventStore) return;
 
 			let {
@@ -1724,13 +1729,13 @@ const ReactModalService = {
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[parseInt(category)] = existingSidebarEvents[parseInt(category)] || [];
 			existingSidebarEvents[parseInt(category)].push(currentEvent);
-			eventStore.setSidebarEvents(existingSidebarEvents);
+			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			const allEventsEvent = {
-				...currentEvent,
-				category,
-			};
-			eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
+			debugger;
+			await eventStore.setAllEvents([
+				...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
+				currentEvent,
+			]);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,

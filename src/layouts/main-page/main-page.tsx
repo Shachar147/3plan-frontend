@@ -84,11 +84,11 @@ function MainPage(props: MainPageProps) {
 	// todo: remove once we'll remove allEvents from trip.
 	useEffect(() => {
 		// update idtoevent, idtocategory and allevents array
-		const arr = [...eventStore.allEvents];
+		const arr = [...eventStore.allEventsComputed];
 		const idToEvent: Record<string, SidebarEvent> = {};
 		const idToCategory: Record<string, number> = {};
 
-		const sidebarEvents: Record<number, SidebarEvent[]> = eventStore.getSidebarEvents;
+		const sidebarEvents: Record<number, SidebarEvent[]> = eventStore.sidebarEvents;
 
 		Object.keys(sidebarEvents).map((category: string) => {
 			const categoryId = Number(category);
@@ -103,7 +103,7 @@ function MainPage(props: MainPageProps) {
 			});
 		});
 
-		const existingIds = eventStore.allEvents.map((e) => e.id.toString());
+		const existingIds = eventStore.allEventsComputed.map((e) => e.id.toString());
 		Object.keys(idToEvent).forEach((eventId) => {
 			if (existingIds.indexOf(eventId) === -1) {
 				arr.push({ ...idToEvent[eventId], category: idToCategory[eventId].toString() });
@@ -115,7 +115,7 @@ function MainPage(props: MainPageProps) {
 		// setTimeout(() => {
 		// 	eventStore.setAllEvents(arr);
 		// }, 500);
-	}, [eventStore.sidebarEvents]);
+	}, [eventStore.allEventsComputed]);
 
 	function addEventToSidebar(event: any): boolean {
 		const newEvents: Record<string, SidebarEvent[]> = _.cloneDeep(eventStore.sidebarEvents);
