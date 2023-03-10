@@ -349,7 +349,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			locale={eventStore.calendarLocalCode}
 			direction={eventStore.getCurrentDirection()}
 			buttonIcons={false} // show the prev/next text
-			weekNumbers={true}
+			// weekNumbers={true}
 			navLinks={true} // can click day/week names to navigate views
 			dayMaxEvents={true} // allow "more" link when too many events
 			selectable={true}
