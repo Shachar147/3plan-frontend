@@ -327,7 +327,7 @@ export const SELECT_STYLE = {
 };
 
 export const getEventDivHtml = (eventStore: EventStore, event: EventInput) => {
-	const category = event.categoryId;
+	const category = event.category;
 	const icon = event.icon || eventStore.categoriesIcons[category];
 
 	// locked

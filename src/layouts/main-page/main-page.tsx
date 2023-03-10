@@ -119,7 +119,7 @@ function MainPage(props: MainPageProps) {
 		// let category = eventsToCategories[event.id];
 		// debugger;
 
-		let category = eventStore.categories.find((id) => id === (event.categoryId ?? event.category))?.id;
+		let category = eventStore.categories.find((id) => id === event.category)?.id;
 
 		if (!category) {
 			const findEvent = [...eventStore.allSidebarEvents, ...eventStore.calendarEvents].find(

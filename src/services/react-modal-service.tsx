@@ -931,7 +931,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				startDate,
@@ -1288,7 +1288,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				images,
@@ -1439,7 +1439,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				images,
@@ -1917,7 +1917,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				startDate,
@@ -2334,7 +2334,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				startDate,
@@ -2534,10 +2534,6 @@ const ReactModalService = {
 		eventStore.modalValues['openingHours'] = currentEvent.openingHours;
 		const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
 
-		// // hack
-		// if (initialData.categoryId || initialData.extra?.categoryId) {
-		// 	initialData.category = initialData.categoryId || initialData.extra?.categoryId;
-		// }
 		const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData);
 
 		inputs.push({
