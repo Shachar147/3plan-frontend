@@ -1491,7 +1491,6 @@ const ReactModalService = {
 				originalEvent.preferredTime != undefined &&
 				originalEvent.preferredTime.toString() !== currentEvent.preferredTime.toString();
 			const isDescriptionChanged = originalEvent.description !== currentEvent.description;
-			// const oldCategory = eventStore.allEvents.find((e) => e.id === event.id)!.category;
 			const oldCategory = eventStore.allSidebarEvents.find((e) => e.id === event.id)!.category;
 			const isCategoryChanged = oldCategory != category;
 			const isLocationChanged = originalEvent.location != currentEvent.location;
@@ -1543,7 +1542,6 @@ const ReactModalService = {
 					'success'
 				);
 			} else if (isChanged) {
-				// const eventFound = eventStore.allEvents.find((e) => e.id === event.id);
 				const eventFound = eventStore.allSidebarEvents.find((e) => e.id === event.id);
 				if (eventFound) {
 					eventStore.updateSidebarEvent(eventFound, {
