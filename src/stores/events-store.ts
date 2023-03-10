@@ -122,7 +122,6 @@ export class EventStore {
 			);
 			this.initBodyLocaleClassName();
 			this.initCustomDatesVisibilityBasedOnViewMode();
-			// console.log("hey2!")
 			this.isLoading = false;
 		} else {
 			const promises = [
@@ -231,7 +230,7 @@ export class EventStore {
 								currentEvent.endDate.toLocaleTimeString() !== '12:00:00 AM'
 							) {
 								if (currentEvent?.location !== details?.location) {
-									console.log(currentEvent.title, ' -> ', details.title);
+									// console.log(currentEvent.title, ' -> ', details.title);
 
 									const key = currentEvent.id!;
 									eachEventAndItsDirections[key] = eachEventAndItsDirections[key] || [];
@@ -243,7 +242,7 @@ export class EventStore {
 										details.coordinate
 									);
 									const distance = this.distanceResults.get(distanceKey);
-									console.log(distance);
+									// console.log(distance);
 									eachEventAndItsDirections[key].push({
 										target: {
 											id: details.id,
@@ -255,7 +254,7 @@ export class EventStore {
 									});
 								}
 							} else {
-								console.log('----------------------');
+								// console.log('----------------------');
 								break;
 							}
 							i++;

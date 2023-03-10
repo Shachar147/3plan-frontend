@@ -116,8 +116,6 @@ function PlacesTinder(props: PlacesTinderProps) {
 			.replace(/(http:\/\/[^\s]+)/g, "<a href='$1' target='_blank'>$1</a>")
 			.replace(/(https:\/\/[^\s]+)/g, "<a href='$1' target='_blank'>$1</a>");
 
-		// console.log("after", description);
-
 		return description;
 	}
 

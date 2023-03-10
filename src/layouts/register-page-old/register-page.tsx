@@ -77,7 +77,6 @@ const RegisterPageOld = () => {
 					password: password,
 				},
 				async function (res: any) {
-					// console.log(res);
 					if (res && res.error) {
 						setError(res.error);
 					} else {

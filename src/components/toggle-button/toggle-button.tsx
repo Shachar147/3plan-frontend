@@ -19,7 +19,7 @@ function setIntervalWhile(action: () => boolean, interval: number, maxTries: num
 		triesCounter++;
 		if (action() || triesCounter === maxTries) {
 			if (triesCounter === maxTries) {
-				console.log('reached max tries');
+				console.warn('reached max tries');
 			}
 			clearInterval(intervalId);
 			triesCounter = 0;

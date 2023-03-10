@@ -255,8 +255,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 			const eventsWithNoLocation = _.uniq(eventsWithNoLocationArr.map((x) => x.id));
 
-			// console.log('events with no location', eventsWithNoLocationArr);
-
 			const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation
 				? 'SHOW_ALL_EVENTS'
 				: 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION';
@@ -294,8 +292,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 			});
 
 			const eventsWithNoHours = _.uniq(eventsWithNoHoursArr.map((x) => x.id));
-
-			// console.log('events with no location', eventsWithNoLocationArr);
 
 			const eventsWithNoHoursKey = eventStore.showOnlyEventsWithNoOpeningHours
 				? 'SHOW_ALL_EVENTS'
@@ -338,8 +334,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 			// @ts-ignore
 			todoCompleteEvents = _.uniq(todoCompleteEvents.map((x) => x.id));
-
-			// console.log('events with no location', eventsWithNoLocationArr);
 
 			const todoCompleteEventsKey = eventStore.showOnlyEventsWithTodoComplete
 				? 'SHOW_ALL_EVENTS'
@@ -767,7 +761,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		const categoryEvents = eventStore.getSidebarEvents[categoryId] || [];
 
 		const preferredHoursHash: Record<string, SidebarEvent[]> = {};
-		// console.log(Object.keys(TriplanEventPreferredTime).filter((x) => !Number.isNaN(Number(x))));
 		Object.keys(TriplanEventPreferredTime)
 			.filter((x) => !Number.isNaN(Number(x)))
 			.forEach((preferredHour) => {
@@ -790,8 +783,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					})
 					.sort(sortByPriority);
 			});
-
-		// console.log("category events", categoryEvents, "by hour", preferredHoursHash);
 
 		if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
 			return undefined;

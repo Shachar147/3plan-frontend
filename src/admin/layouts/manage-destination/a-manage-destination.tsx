@@ -63,7 +63,6 @@ function AManageDestination() {
 			}) ?? [];
 
 		const searchValue = adminStore.searchValue;
-		console.log('searchValue', searchValue, activities.length);
 
 		function renderNavigation() {
 			return (
