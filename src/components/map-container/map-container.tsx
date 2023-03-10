@@ -217,16 +217,6 @@ const MapContainer = (props: MapContainerProps) => {
 					.map((image) => image.trim())
 					.filter((image) => image !== '');
 			}
-			//
-			// const str = `<div class="js-image-slider">
-			// 	<ul>
-			// 		${images.slice(0, 3).map((image, idx) => `<li><img src="${image}" style="min-height: 80px; width: 150px;"/></li>`).join("")}
-			// 	</ul>
-			// </div>`;
-			//
-			// console.log(str, typeof str);
-			//
-			// return str;
 
 			if (!images.length) {
 				return null;

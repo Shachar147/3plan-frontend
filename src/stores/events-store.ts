@@ -255,7 +255,6 @@ export class EventStore {
 									});
 								}
 							} else {
-								// console.log('----------------------');
 								break;
 							}
 							i++;
@@ -303,7 +302,6 @@ export class EventStore {
 			});
 
 			return newEvents;
-			// console.log(filteredEvents);
 		}
 
 		return filteredEvents;
@@ -320,9 +318,6 @@ export class EventStore {
 		);
 
 		filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
-
-		console.log({ filteredEvents });
-
 		return filteredEvents;
 	}
 
@@ -481,11 +476,6 @@ export class EventStore {
 		// lock ordered events
 		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(x));
 
-		console.log({
-			newCalenderEvents,
-			calendarEvents: this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(x)),
-		});
-
 		// update local storage
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
 		this.allowRemoveAllCalendarEvents = false;
@@ -638,7 +628,6 @@ export class EventStore {
 	@action
 	async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean) {
 		const existingTrips = await this.dataService.getTrips(this);
-		// console.log('existing', existingTrips, 'type', this.dataService.getDataSourceName());
 
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
@@ -866,7 +855,6 @@ export class EventStore {
 
 	async waitIfNeeded(startTime: number) {
 		const gap = minLoadTimeInSeconds * 1000 - (new Date().getTime() - startTime);
-		// console.log('gap in milliseconds: ', gap);
 		if (gap > 0) {
 			await new Promise((r) => setTimeout(r, gap));
 		}

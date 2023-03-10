@@ -379,7 +379,6 @@ const RootRouter = () => {
 		placeChangedCallback,
 		eventStore
 	) => {
-		// console.log("hereeeee");
 		const autoCompleteRef = document.querySelector(`.${className}`);
 		const autocomplete = new google.maps.places.Autocomplete(autoCompleteRef);
 

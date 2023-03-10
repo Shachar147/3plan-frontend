@@ -246,13 +246,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			...event,
 			...event.extendedProps,
 			...event._def,
-			// ...event._instance.range,
 			start: event.start ?? event._instance?.range?.start,
 			end: event.end ?? event._instance?.range?.end,
 		};
-		console.log({ json });
 		const calendarEvent = buildCalendarEvent(json) as CalendarEvent;
-		console.log({ calendarEvent });
 
 		eventEl.innerHTML = getEventDivHtml(eventStore, calendarEvent);
 
