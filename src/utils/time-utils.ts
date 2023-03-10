@@ -85,7 +85,8 @@ export function formatTime(timeString: string) {
 	return padTo2Digits(parseInt(parts[0])) + ':' + padTo2Digits(parseInt(parts[1]));
 }
 
-export function getInputDateTimeValue(date: Date) {
+export function getInputDateTimeValue(date?: Date): string | undefined {
+	if (!date) return undefined;
 	return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('.')[0];
 }
 

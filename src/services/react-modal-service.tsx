@@ -113,6 +113,7 @@ const ReactModalRenderHelper = {
 			id?: string;
 			className?: string;
 			value?: string;
+			disabled?: boolean;
 		},
 		ref?: any
 	) => {
@@ -128,6 +129,7 @@ const ReactModalRenderHelper = {
 				modalValueName={modalValueName}
 				placeholder={extra.placeholder}
 				placeholderKey={extra.placeholderKey}
+				readOnly={extra.disabled}
 			/>
 		);
 	},
@@ -695,7 +697,7 @@ const ReactModalService = {
 			// @ts-ignore
 			const selectedLocation = window.selectedLocation;
 
-			const inputs = [
+			const inputs: any[] = [
 				{
 					settings: {
 						modalValueName: 'icon',
@@ -725,150 +727,160 @@ const ReactModalService = {
 					textKey: 'MODALS.TITLE',
 					className: 'border-top-gray',
 				},
-				{
-					settings: {
-						modalValueName: 'start-time',
-						ref: eventStore.modalValuesRefs['start-time'],
-						type: 'date-picker',
-						extra: {
-							placeholder: `${TranslateService.translate(
-								eventStore,
-								'MODALS.PLACEHOLDER.PREFIX'
-							)} ${TranslateService.translate(eventStore, 'MODALS.START_TIME')}`,
-							value: getInputDateTimeValue(initialData?.start),
-						},
-					},
-					textKey: 'MODALS.START_TIME',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'end-time',
-						ref: eventStore.modalValuesRefs['end-time'],
-						type: 'date-picker',
-						extra: {
-							placeholder: `${TranslateService.translate(
-								eventStore,
-								'MODALS.PLACEHOLDER.PREFIX'
-							)} ${TranslateService.translate(eventStore, 'MODALS.END_TIME')}`,
-							value: getInputDateTimeValue(initialData?.end),
-						},
-					},
-					textKey: 'MODALS.END_TIME',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'category',
-						ref: eventStore.modalValuesRefs['category'],
-						type: 'category-selector',
-						extra: {
-							placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
-							value: initialData?.category,
-						},
-					},
-					textKey: 'MODALS.CATEGORY',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'description',
-						ref: eventStore.modalValuesRefs['description'],
-						type: 'textarea',
-						extra: {
-							placeholderKey: 'MODALS.DESCRIPTION_PLACEHOLDER',
-							value: initialData.description,
-						},
-					},
-					textKey: 'MODALS.DESCRIPTION',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'priority',
-						ref: eventStore.modalValuesRefs['priority'],
-						type: 'priority-selector',
-						extra: {
-							value: initialData?.priority ?? TriplanPriority.unset,
-							maxMenuHeight: 45 * 4,
-						},
-					},
-					textKey: 'MODALS.PRIORITY',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'preferred-time',
-						ref: eventStore.modalValuesRefs['preferred-time'],
-						type: 'preferred-time-selector',
-						extra: {
-							value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
-							maxMenuHeight: 45 * 4,
-						},
-					},
-					textKey: 'MODALS.PREFERRED_TIME',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'location',
-						ref: eventStore.modalValuesRefs['location'],
-						type: 'text',
-						extra: {
-							className: 'location-input',
-							value:
-								eventStore.modalValues['selectedLocation'] ||
-								initialData.location?.address ||
-								selectedLocation?.address ||
-								'',
-							onClick: initLocation,
-							onKeyUp: setManualLocation,
-							autoComplete: 'off',
-							placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
-						},
-					},
-					textKey: 'MODALS.LOCATION',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'opening-hours',
-						ref: eventStore.modalValuesRefs['opening-hours'],
-						type: 'opening-hours',
-						extra: {
-							value: initialData.openingHours,
-						},
-					},
-					textKey: 'MODALS.OPENING_HOURS',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'images', // add column 5
-						ref: eventStore.modalValuesRefs['images'],
-						type: 'images',
-						extra: {
-							placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
-							value: initialData.images,
-						},
-					},
-					textKey: 'MODALS.IMAGES',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'more-info',
-						ref: eventStore.modalValuesRefs['more-info'],
-						type: 'text',
-						extra: {
-							placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
-							value: initialData.moreInfo,
-						},
-					},
-					textKey: 'MODALS.MORE_INFO',
-					className: 'border-top-gray',
-				},
 			];
+			inputs.push(
+				...[
+					{
+						settings: {
+							modalValueName: 'start-time',
+							ref: eventStore.modalValuesRefs['start-time'],
+							type: 'date-picker',
+							extra: {
+								placeholder: `${TranslateService.translate(
+									eventStore,
+									'MODALS.PLACEHOLDER.PREFIX'
+								)} ${TranslateService.translate(eventStore, 'MODALS.START_TIME')}`,
+								value: getInputDateTimeValue(initialData?.start),
+								// disabled: initialData.allDay,
+							},
+						},
+						textKey: 'MODALS.START_TIME',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'end-time',
+							ref: eventStore.modalValuesRefs['end-time'],
+							type: 'date-picker',
+							extra: {
+								placeholder: `${TranslateService.translate(
+									eventStore,
+									'MODALS.PLACEHOLDER.PREFIX'
+								)} ${TranslateService.translate(eventStore, 'MODALS.END_TIME')}`,
+								value: getInputDateTimeValue(initialData?.end),
+								// disabled: initialData.allDay,
+							},
+						},
+						textKey: 'MODALS.END_TIME',
+						className: 'border-top-gray',
+					},
+				]
+			);
+			inputs.push(
+				...[
+					{
+						settings: {
+							modalValueName: 'category',
+							ref: eventStore.modalValuesRefs['category'],
+							type: 'category-selector',
+							extra: {
+								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+								value: initialData?.category,
+							},
+						},
+						textKey: 'MODALS.CATEGORY',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'description',
+							ref: eventStore.modalValuesRefs['description'],
+							type: 'textarea',
+							extra: {
+								placeholderKey: 'MODALS.DESCRIPTION_PLACEHOLDER',
+								value: initialData.description,
+							},
+						},
+						textKey: 'MODALS.DESCRIPTION',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'priority',
+							ref: eventStore.modalValuesRefs['priority'],
+							type: 'priority-selector',
+							extra: {
+								value: initialData?.priority ?? TriplanPriority.unset,
+								maxMenuHeight: 45 * 4,
+							},
+						},
+						textKey: 'MODALS.PRIORITY',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'preferred-time',
+							ref: eventStore.modalValuesRefs['preferred-time'],
+							type: 'preferred-time-selector',
+							extra: {
+								value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
+								maxMenuHeight: 45 * 4,
+							},
+						},
+						textKey: 'MODALS.PREFERRED_TIME',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'location',
+							ref: eventStore.modalValuesRefs['location'],
+							type: 'text',
+							extra: {
+								className: 'location-input',
+								value:
+									eventStore.modalValues['selectedLocation'] ||
+									initialData.location?.address ||
+									selectedLocation?.address ||
+									'',
+								onClick: initLocation,
+								onKeyUp: setManualLocation,
+								autoComplete: 'off',
+								placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
+							},
+						},
+						textKey: 'MODALS.LOCATION',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'opening-hours',
+							ref: eventStore.modalValuesRefs['opening-hours'],
+							type: 'opening-hours',
+							extra: {
+								value: initialData.openingHours,
+							},
+						},
+						textKey: 'MODALS.OPENING_HOURS',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'images', // add column 5
+							ref: eventStore.modalValuesRefs['images'],
+							type: 'images',
+							extra: {
+								placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
+								value: initialData.images,
+							},
+						},
+						textKey: 'MODALS.IMAGES',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'more-info',
+							ref: eventStore.modalValuesRefs['more-info'],
+							type: 'text',
+							extra: {
+								placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
+								value: initialData.moreInfo,
+							},
+						},
+						textKey: 'MODALS.MORE_INFO',
+						className: 'border-top-gray',
+					},
+				]
+			);
 			inputs[inputs.length - 1].className += ' border-bottom-gray padding-bottom-20';
 			return inputs;
 		},
@@ -1991,6 +2003,7 @@ const ReactModalService = {
 		const initialData = {
 			start: info.start,
 			end: info.end,
+			allDay: info.allDay,
 			...info.extendedProps,
 			...sidebarEventData,
 		};
@@ -2509,6 +2522,7 @@ const ReactModalService = {
 			...info.event.extendedProps,
 			start: info.event.start,
 			end: info.event.end,
+			allDay: info.event.allDay,
 		};
 
 		// @ts-ignore
