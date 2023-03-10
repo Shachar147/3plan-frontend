@@ -77,7 +77,7 @@ const MapContainer = (props: MapContainerProps) => {
 
 	const getKey = (x: Coordinate) => x.lat + ',' + x.lng;
 	// modify to props
-	const locations = (props.allEvents ?? eventStore.allEvents)
+	const locations = (props.allEvents ?? eventStore.allEventsFilteredComputed)
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
 			event: x,

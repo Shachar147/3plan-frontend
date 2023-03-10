@@ -163,8 +163,9 @@ export class EventStore {
 		const isTodoComplete = taskKeywords.find(
 			(k: string) =>
 				title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 ||
-				description?.toLowerCase().indexOf(k.toLowerCase()) !== -1
+				(description && description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
 		);
+
 		return !!isTodoComplete;
 	}
 
@@ -392,6 +393,17 @@ export class EventStore {
 	@computed
 	get allEventsComputed() {
 		return [...this.allSidebarEvents, ...this.getJSCalendarEvents()];
+	}
+
+	@computed
+	get allEventsFilteredComputed() {
+		return this.allEventsComputed.filter(
+			(event) =>
+				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
+				(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
+				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
+				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
+		);
 	}
 
 	@computed

@@ -236,7 +236,7 @@ function MainPage(props: MainPageProps) {
 						resize: 'vertical',
 						overflow: 'auto',
 					}}
-					key={JSON.stringify(eventStore.allEvents)}
+					key={JSON.stringify(eventStore.allEventsFilteredComputed)}
 				>
 					<MapContainer isCombined />
 				</div>
