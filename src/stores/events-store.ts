@@ -11,7 +11,7 @@ import {
 	TriplanPriority,
 	ViewMode,
 } from '../utils/enums';
-import { addDays, convertMsToHM, getInputDateTimeValue, toDate } from '../utils/time-utils';
+import { addDays, convertMsToHM, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -413,16 +413,7 @@ export class EventStore {
 
 	@action
 	changeEvent(changeInfo: any) {
-		// todo fix: there's a bug when moving allDay event to be regular event, end is undefined.
-		const newEvent = {
-			...changeInfo.event._def,
-			...changeInfo.event,
-			...changeInfo.event.extendedProps,
-			allDay: changeInfo.event.allDay,
-			start: changeInfo.event.start,
-			end: changeInfo.event.end,
-			hasEnd: true,
-		};
+		const newEvent = { ...changeInfo.event };
 
 		const eventId = changeInfo.event.id;
 		const storedEvent = this.calendarEvents.find((e) => e.id == eventId);

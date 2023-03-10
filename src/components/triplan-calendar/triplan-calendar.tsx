@@ -10,7 +10,14 @@ import { eventStoreContext } from '../../stores/events-store';
 import './triplan-calendar.scss';
 import { defaultTimedEventDuration } from '../../utils/defaults';
 import TranslateService from '../../services/translate-service';
-import { addDays, addHoursToDate, getDateRangeString, isTodayInDateRange, toDate } from '../../utils/time-utils';
+import {
+	addDays,
+	addHours,
+	addHoursToDate,
+	getDateRangeString,
+	isTodayInDateRange,
+	toDate,
+} from '../../utils/time-utils';
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
@@ -172,8 +179,23 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const handleEventChange = (changeInfo: any) => {
-		debugger;
-		eventStore.changeEvent(changeInfo);
+		// when changing "allDay" event to be regular event, it has no "end".
+		// the following lines fix it by extracting start&end from _instance.range, and converting them to the correct timezone.
+		const hoursToAdd = changeInfo.event._instance.range.start.getTimezoneOffset() / 60;
+		const dtStart = addHours(changeInfo.event._instance.range.start, hoursToAdd);
+		const dtEnd = addHours(changeInfo.event._instance.range.end, hoursToAdd);
+
+		const newEvent = {
+			...changeInfo.event._def,
+			...changeInfo.event,
+			...changeInfo.event.extendedProps,
+			allDay: changeInfo.event.allDay,
+			start: dtStart,
+			end: dtEnd,
+			hasEnd: !changeInfo.event.allDay,
+		};
+
+		eventStore.changeEvent({ event: newEvent });
 	};
 
 	const refreshSources = () => {

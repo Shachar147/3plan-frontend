@@ -134,6 +134,11 @@ export function addDays(dt: Date, days: number): Date {
 	return dt;
 }
 
+export function addHours(dt: Date, hours: number): Date {
+	dt.setHours(dt.getHours() + hours);
+	return dt;
+}
+
 export function fullCalendarFormatDate(dt: Date) {
 	const parts = dt.toLocaleDateString().replace(/\//gi, '-').split('-');
 	return [parts[2], padTo2Digits(Number(parts[0])), padTo2Digits(Number(parts[1]))].join('-');

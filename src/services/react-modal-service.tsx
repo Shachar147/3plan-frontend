@@ -2267,8 +2267,6 @@ const ReactModalService = {
 			return;
 		}
 
-		debugger;
-
 		const currentEvent = { ...found };
 
 		// for handle delete - to be able to say to which category this activity will return to
