@@ -1834,7 +1834,12 @@ const ReactModalService = {
 						{ReactModalRenderHelper.renderSelectInput(
 							eventStore,
 							'sidebar-event-to-add-to-calendar',
-							{ options, placeholderKey: 'SELECT_SIDEBAR_EVENT_PLACEHOLDER', removeDefaultClass: true },
+							{
+								options,
+								placeholderKey: 'SELECT_SIDEBAR_EVENT_PLACEHOLDER',
+								removeDefaultClass: true,
+								maxMenuHeight: eventStore.isMobile ? 35 * 3 : undefined,
+							},
 							'add-event-from-sidebar-selector'
 						)}
 					</div>
@@ -1857,6 +1862,7 @@ const ReactModalService = {
 				}
 			},
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SELECT'),
+			customClass: getClasses('triplan-add-calendar-event-from-existing', settings.customClass),
 		});
 	},
 	openAddCalendarEventModal: (eventStore: EventStore, addToEventsToCategories: (value: any) => void, info: any) => {

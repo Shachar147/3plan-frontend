@@ -62,3 +62,14 @@
   gap:10px;
   width: 100% !important;
 }
+
+.triplan-add-calendar-event-from-existing {
+  > div {
+    z-index: 2 !important;
+
+    .react-modal {
+      min-height: unset;
+      overflow: visible;
+    }
+  }
+}

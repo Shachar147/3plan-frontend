@@ -492,8 +492,9 @@ export class EventStore {
 
 	@action
 	setCategories(newCategories: TriPlanCategory[]) {
-		this.categories = newCategories;
-		this.dataService.setCategories(this.categories, this.tripName);
+		const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
+		this.categories = newCategoriesSorted;
+		this.dataService.setCategories(newCategoriesSorted, this.tripName);
 	}
 
 	@action
