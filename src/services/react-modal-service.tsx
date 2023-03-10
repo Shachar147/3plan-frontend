@@ -2431,9 +2431,6 @@ const ReactModalService = {
 				} as unknown;
 
 				// @ts-ignore
-				currentEvent['categoryId'] = categoryId;
-
-				// @ts-ignore
 				currentEvent['className'] = currentEvent.priority ? `priority-${currentEvent.priority}` : undefined;
 
 				eventStore.setCalendarEvents([

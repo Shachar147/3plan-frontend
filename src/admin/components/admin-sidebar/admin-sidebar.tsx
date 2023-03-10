@@ -726,7 +726,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 				flavor={ButtonFlavor.primary}
 				onClick={() => {
 					ReactModalService.openAddSidebarEventModal(eventStore, undefined);
-					// modalService.openAddSidebarEventModal(eventStore, undefined);
 				}}
 				style={{
 					width: '100%',
@@ -750,7 +749,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 				marginBlock: '10px',
 			}}
 			onClick={() => {
-				// ModalService.openAddSidebarEventModal(eventStore, categoryId)
 				ReactModalService.openAddSidebarEventModal(eventStore, categoryId);
 			}}
 			text={TranslateService.translate(eventStore, 'ADD_EVENT.BUTTON_TEXT')}

@@ -39,7 +39,6 @@ function Marker(props: MarkerProps): ReactElement {
 				minWidth: 'fit-content',
 			}}
 			onClick={() => {
-				// ModalService.openAddSidebarEventModal(eventStore, undefined, { location: locationData, title: searchValue, openingHours: openingHours })
 				ReactModalService.openAddSidebarEventModal(eventStore, undefined, {
 					location: locationData,
 					title: searchValue,
