@@ -2168,8 +2168,7 @@ const ReactModalService = {
 				// update our store
 				const updatedCalenderEvents = [...eventStore.getJSCalendarEvents()];
 				updatedCalenderEvents.forEach((e) => {
-					// const event = eventStore.allEvents.find((ev) => ev.id.toString() === e.id!.toString());
-					const event = eventStore.calendarEvents.find((ev) => ev.id!.toString() === e.id!.toString());
+					const event = eventStore.allEventsComputed.find((ev) => ev.id!.toString() === e.id!.toString());
 					if (event && event.category && event.category === categoryId.toString()) {
 						if (e.icon === oldIcon) {
 							e.icon = newIcon;
@@ -2717,10 +2716,8 @@ const ReactModalService = {
 			confirmBtnCssClass: 'primary-button',
 			onConfirm: () => {
 				// @ts-ignore
-				// const file = result.value;
 				const file = eventStore.modalValues['fileToUpload'];
 
-				// const file = document.getElementById("fileToUpload");
 				if (file) {
 					const reader = new FileReader();
 					reader.readAsText(file, 'UTF-8');
