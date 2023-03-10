@@ -18,7 +18,7 @@ import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers
 import { runInAction } from 'mobx';
 
 export interface TriplanSidebarProps {
-	removeEventFromSidebarById: (eventId: string) => void;
+	removeEventFromSidebarById: (eventId: string) => Record<number, SidebarEvent[]>;
 	addToEventsToCategories: (event: SidebarEvent) => void;
 	customDateRange: DateRangeFormatted;
 	setCustomDateRange: (newRange: DateRangeFormatted) => void;

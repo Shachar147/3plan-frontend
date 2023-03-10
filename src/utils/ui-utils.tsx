@@ -329,11 +329,13 @@ export const SELECT_STYLE = {
 
 export const getEventDivHtml = (eventStore: EventStore, event: EventApi | EventInput) => {
 	const json = {
-		...event,
-		...event._instance?.range,
-		...event._def,
-		...event.extendedProps,
 		id: event._def.publicId,
+		...event,
+		...event.extendedProps,
+		...event._def,
+		// ...event._instance.range,
+		start: event.start ?? event._instance?.range?.start,
+		end: event.end ?? event._instance?.range?.end,
 	};
 	console.log({ json });
 	const calendarEvent = buildCalendarEvent(json) as CalendarEvent;

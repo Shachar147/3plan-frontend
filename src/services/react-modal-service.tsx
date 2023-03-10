@@ -1418,7 +1418,7 @@ const ReactModalService = {
 	openEditSidebarEventModal: (
 		eventStore: EventStore,
 		event: SidebarEvent,
-		removeEventFromSidebarById: (eventId: string) => void,
+		removeEventFromSidebarById: (eventId: string) => Record<number, SidebarEvent[]>,
 		addToEventsToCategories: (value: any) => void
 	) => {
 		const handleEditSidebarEventResult = (eventStore: EventStore, originalEvent: SidebarEvent) => {
@@ -1509,7 +1509,7 @@ const ReactModalService = {
 
 			if (isCategoryChanged) {
 				// remove it from the old category
-				removeEventFromSidebarById(event.id);
+				const sidebarEvents = removeEventFromSidebarById(event.id);
 
 				// add it to the new category
 				// @ts-ignore
@@ -1522,7 +1522,7 @@ const ReactModalService = {
 				// @ts-ignore
 				currentEvent['className'] = currentEvent.priority ? `priority-${currentEvent.priority}` : undefined;
 
-				const sidebarEvents = eventStore.getJSSidebarEvents(); //eventStore.sidebarEvents;
+				// const sidebarEvents = eventStore.getJSSidebarEvents(); //eventStore.sidebarEvents;
 
 				sidebarEvents[parseInt(categoryId)] = sidebarEvents[parseInt(categoryId)] || [];
 				sidebarEvents[parseInt(categoryId)].push(currentEvent);
@@ -1662,6 +1662,7 @@ const ReactModalService = {
 				openingHours,
 				images,
 				moreInfo,
+				category,
 			} = ReactModalService.internal.getModalValues(eventStore);
 
 			const currentEvent = {
@@ -1676,6 +1677,7 @@ const ReactModalService = {
 				openingHours,
 				images, // add column 15
 				moreInfo,
+				category,
 			} as SidebarEvent;
 
 			const isDurationValid =
@@ -1712,15 +1714,15 @@ const ReactModalService = {
 				console.error('event not found');
 				return;
 			}
-			const categoryId = foundEvent.category || eventStore.categories[0].id.toString();
 
-			const existingSidebarEvents = eventStore.getJSSidebarEvents(); // { ...eventStore.getSidebarEvents };
-			existingSidebarEvents[parseInt(categoryId)].push(currentEvent);
+			const existingSidebarEvents = eventStore.getJSSidebarEvents();
+			existingSidebarEvents[parseInt(category)] = existingSidebarEvents[parseInt(category)] || [];
+			existingSidebarEvents[parseInt(category)].push(currentEvent);
 			eventStore.setSidebarEvents(existingSidebarEvents);
 
 			const allEventsEvent = {
 				...currentEvent,
-				category: categoryId.toString(),
+				category,
 			};
 			eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
 
@@ -2000,8 +2002,11 @@ const ReactModalService = {
 		const initialData = {
 			start: info.start,
 			end: info.end,
+			...info.extendedProps,
 			...sidebarEventData,
 		};
+
+		debugger;
 
 		// @ts-ignore
 		window.selectedLocation = initialData.location || undefined;
@@ -2359,6 +2364,7 @@ const ReactModalService = {
 				description,
 				images,
 				moreInfo, // add column 16
+				category: categoryId,
 			};
 
 			// written like this since otherwise, editing without changing anything will reset location to nothing
@@ -2517,6 +2523,7 @@ const ReactModalService = {
 
 		const initialData = {
 			...info.event._def,
+			...info.event.extendedProps,
 			start: info.event.start,
 			end: info.event.end,
 		};
@@ -2595,7 +2602,7 @@ const ReactModalService = {
 	},
 	openDeleteSidebarEventModal: (
 		eventStore: EventStore,
-		removeEventFromSidebarById: (eventId: string) => void,
+		removeEventFromSidebarById: (eventId: string) => Record<number, SidebarEvent[]>,
 		event: SidebarEvent
 	) => {
 		ReactModalService.internal.openModal(eventStore, {

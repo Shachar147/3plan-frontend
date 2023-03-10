@@ -15,7 +15,7 @@ export interface CalendarEvent {
 	openingHours?: WeeklyOpeningHoursData;
 	images?: string; // add column 8
 	moreInfo?: string;
-	category?: string; // category id
+	category: string; // category id
 	suggestedEndTime?: any;
 }
 

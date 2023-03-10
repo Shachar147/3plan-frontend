@@ -144,7 +144,7 @@ function MainPage(props: MainPageProps) {
 		}
 	}
 
-	function removeEventFromSidebarById(eventId: number | string) {
+	function removeEventFromSidebarById(eventId: number | string): Record<number, SidebarEvent[]> {
 		const newEvents: Record<number, SidebarEvent[]> = { ...eventStore.sidebarEvents };
 		const newEventsToCategories = { ...eventsToCategories };
 		Object.keys(newEvents).forEach((category) => {
@@ -168,6 +168,8 @@ function MainPage(props: MainPageProps) {
 		setTimeout(() => {
 			eventStore.setSidebarEvents(newEvents);
 		}, 500);
+
+		return newEvents;
 	}
 
 	function renderListView() {

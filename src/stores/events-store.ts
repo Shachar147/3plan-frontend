@@ -330,7 +330,7 @@ export class EventStore {
 
 		filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
 
-		console.log(filteredEvents);
+		console.log({ filteredEvents });
 
 		return filteredEvents;
 	}
@@ -477,6 +477,11 @@ export class EventStore {
 
 		// lock ordered events
 		this.calendarEvents = this.calendarEvents.map((x: EventInput) => lockOrderedEvents(x));
+
+		console.log({
+			newCalenderEvents,
+			calendarEvents: this.calendarEvents.map((x: EventInput) => lockOrderedEvents(x)),
+		});
 
 		// update local storage
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
