@@ -1439,7 +1439,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				category: categoryId,
+				category,
 				location,
 				openingHours,
 				images,
@@ -1457,6 +1457,7 @@ const ReactModalService = {
 				location,
 				openingHours,
 				images,
+				category,
 			};
 
 			const isDurationValid = validateDuration(duration);
@@ -1492,7 +1493,7 @@ const ReactModalService = {
 			const isDescriptionChanged = originalEvent.description !== currentEvent.description;
 			// const oldCategory = eventStore.allEvents.find((e) => e.id === event.id)!.category;
 			const oldCategory = eventStore.allSidebarEvents.find((e) => e.id === event.id)!.category;
-			const isCategoryChanged = oldCategory != categoryId;
+			const isCategoryChanged = oldCategory != category;
 			const isLocationChanged = originalEvent.location != currentEvent.location;
 			const isImagesChanged = originalEvent.images != currentEvent.images; // add column 11
 			const isMoreInfoChanged = originalEvent.moreInfo != currentEvent.moreInfo;
@@ -1516,7 +1517,7 @@ const ReactModalService = {
 				currentEvent = {
 					...currentEvent,
 					id: eventStore.createEventId(),
-					category: categoryId,
+					category,
 				};
 
 				// @ts-ignore
@@ -1524,12 +1525,12 @@ const ReactModalService = {
 
 				// const sidebarEvents = eventStore.getJSSidebarEvents(); //eventStore.sidebarEvents;
 
-				sidebarEvents[parseInt(categoryId)] = sidebarEvents[parseInt(categoryId)] || [];
-				sidebarEvents[parseInt(categoryId)].push(currentEvent);
+				sidebarEvents[parseInt(category)] = sidebarEvents[parseInt(category)] || [];
+				sidebarEvents[parseInt(category)].push(currentEvent);
 				eventStore.setSidebarEvents(sidebarEvents);
 				const allEventsEvent = {
 					...currentEvent,
-					category: categoryId.toString(),
+					category,
 				};
 				eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== eventId), allEventsEvent]);
 
@@ -1555,7 +1556,7 @@ const ReactModalService = {
 						openingHours,
 						images, // add column 14
 						moreInfo,
-						category: categoryId,
+						category,
 					} as SidebarEvent);
 					eventStore.setAllEvents(eventStore.allEvents);
 
