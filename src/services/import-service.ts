@@ -400,7 +400,8 @@ const ImportService = {
 			numOfEventsWithErrors: Object.keys(numOfEventsWithErrors).length,
 		});
 	},
-	import: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
+	// ERROR HANDLING: todo add try/catch & show a message if fails
+	import: async (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
 		let categoriesImported = false;
 		let eventsImported = false;
 		if (info.categoriesToAdd.length > 0) {
@@ -416,7 +417,7 @@ const ImportService = {
 				newSidebarEvents[category] = newSidebarEvents[category] || [];
 				newSidebarEvents[category].push(event);
 			});
-			eventStore.setSidebarEvents(newSidebarEvents);
+			await eventStore.setSidebarEvents(newSidebarEvents);
 			eventsImported = true;
 		}
 

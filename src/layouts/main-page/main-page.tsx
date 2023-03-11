@@ -110,13 +110,11 @@ function MainPage(props: MainPageProps) {
 			}
 		});
 
-		// todo check
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		eventStore.setAllEvents(arr);
-		// setTimeout(() => {
-		// 	eventStore.setAllEvents(arr);
-		// }, 500);
 	}, [eventStore.allEventsComputed]);
 
+	// ERROR HANDLING: todo add try/catch & show a message if fails
 	function addEventToSidebar(event: any): boolean {
 		const newEvents: Record<string, SidebarEvent[]> = _.cloneDeep(eventStore.sidebarEvents);
 
@@ -142,6 +140,7 @@ function MainPage(props: MainPageProps) {
 		}
 	}
 
+	// ERROR HANDLING: todo add try/catch & show a message if fails
 	async function removeEventFromSidebarById(eventId: number | string): Promise<Record<number, SidebarEvent[]>> {
 		const newEvents: Record<number, SidebarEvent[]> = { ...eventStore.sidebarEvents };
 		const newEventsToCategories = { ...eventsToCategories };
@@ -164,11 +163,7 @@ function MainPage(props: MainPageProps) {
 
 		setEventsToCategories(newEventsToCategories);
 
-		// todo check
 		await eventStore.setSidebarEvents(newEvents);
-		// setTimeout(() => {
-		// 	eventStore.setSidebarEvents(newEvents);
-		// }, 500);
 
 		return newEvents;
 	}

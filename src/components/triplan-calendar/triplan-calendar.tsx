@@ -145,6 +145,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		return false;
 	};
 
+	// ERROR HANDLING: todo add try/catch & show a message if fails
 	const onEventReceive = (info: any) => {
 		// on event recieved (dropped) - keep its category and delete it from the sidebar.
 		if (!eventStore) return;
@@ -195,6 +196,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			hasEnd: !changeInfo.event.allDay,
 		};
 
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		return eventStore.changeEvent({ event: newEvent });
 	};
 

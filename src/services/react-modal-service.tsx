@@ -1284,6 +1284,7 @@ const ReactModalService = {
 		// @ts-ignore
 		window.openingHours = initialData.openingHours || undefined;
 
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleAddSidebarEventResult = async (eventStore: EventStore, initialCategoryId?: number) => {
 			if (!eventStore) return;
 
@@ -1438,6 +1439,7 @@ const ReactModalService = {
 		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
 		addToEventsToCategories: (value: any) => void
 	) => {
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleEditSidebarEventResult = async (eventStore: EventStore, originalEvent: SidebarEvent) => {
 			const eventId = originalEvent.id!;
 			if (!eventStore) return;
@@ -1666,6 +1668,7 @@ const ReactModalService = {
 		});
 	},
 	openDuplicateSidebarEventModal: (eventStore: EventStore, event: SidebarEvent) => {
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleDuplicateSidebarEventResult = async (eventStore: EventStore, event: SidebarEvent) => {
 			if (!eventStore) return;
 
@@ -1931,6 +1934,7 @@ const ReactModalService = {
 		info: any,
 		sidebarEventData?: SidebarEvent
 	) => {
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleAddCalendarEventResult = async (eventStore: EventStore) => {
 			if (!eventStore) return true;
 
@@ -2075,6 +2079,8 @@ const ReactModalService = {
 			},
 		});
 	},
+
+	// ERROR HANDLING: todo add try/catch & show a message if fails
 	openDeleteCategoryModal: (eventStore: EventStore, categoryId: number) => {
 		const newCategories = eventStore.categories.filter((c) => c.id != categoryId);
 		const newCalendarEvents = eventStore.calendarEvents.filter(
@@ -2084,6 +2090,7 @@ const ReactModalService = {
 		const newSidebarEvents = eventStore.getJSSidebarEvents();
 		delete newSidebarEvents[categoryId];
 
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const onConfirm = async () => {
 			// delete from sidebar
 			await eventStore.setSidebarEvents(newSidebarEvents);
@@ -2147,6 +2154,8 @@ const ReactModalService = {
 			});
 		}
 	},
+
+	// ERROR HANDLING: todo add try/catch & show a message if fails
 	openEditCategoryModal: (TriplanCalendarRef: any, eventStore: EventStore, categoryId: number) => {
 		const category = eventStore.categories.find((c) => c.id.toString() === categoryId.toString());
 		if (!category) return;
@@ -2349,6 +2358,7 @@ const ReactModalService = {
 			);
 		};
 
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleEditEventResult = async (
 			eventStore: EventStore,
 			addEventToSidebar: (event: SidebarEvent) => boolean,
@@ -2515,6 +2525,7 @@ const ReactModalService = {
 			return true;
 		};
 
+		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleDuplicateEventResult = async (eventStore: EventStore, originalEvent: CalendarEvent) => {
 			let newEvent = Object.assign({}, originalEvent);
 			const newId = eventStore.createEventId();
@@ -2646,6 +2657,8 @@ const ReactModalService = {
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
 			confirmBtnCssClass: 'primary-button red',
+
+			// ERROR HANDLING: todo add try/catch & show a message if fails
 			onConfirm: async () => {
 				await removeEventFromSidebarById(event.id);
 				await eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
