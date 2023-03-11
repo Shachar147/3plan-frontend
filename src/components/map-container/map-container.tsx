@@ -16,7 +16,7 @@ import * as ReactDOMServer from 'react-dom/server';
 // @ts-ignore
 import Slider from 'react-slick';
 import { AllEventsEvent } from '../../services/data-handlers/data-handler-base';
-import { Coordinate, LocationData } from '../../utils/interfaces';
+import { Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
 
 interface MarkerProps {
 	text?: string;
@@ -56,6 +56,7 @@ interface MapContainerProps {
 	allEvents?: AllEventsEvent[];
 	getNameLink?: (x: AllEventsEvent) => string;
 	isCombined?: boolean;
+	addToEventsToCategories: (event: SidebarEvent) => void;
 }
 
 const MapContainer = (props: MapContainerProps) => {
@@ -904,16 +905,56 @@ const MapContainer = (props: MapContainerProps) => {
 					{visibleItems.length > 0 &&
 						filteredVisibleItems.length === 0 &&
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
-					{filteredVisibleItems.map((x) => (
-						<div
-							className={`fc-event priority-${x.event.priority}`}
-							onClick={() => {
-								onVisibleItemClick(x.event, x.marker);
-							}}
-						>
-							{x.event.title}
-						</div>
-					))}
+					{filteredVisibleItems.map((info) => {
+						const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
+
+						let addToCalendar = undefined;
+						if (props.addToEventsToCategories) {
+							addToCalendar = (
+								<i
+									className="fa fa-calendar-times-o visible-items-calendar-indicator"
+									aria-hidden="true"
+									onClick={(e) => {
+										e.stopPropagation();
+										e.preventDefault();
+										ReactModalService.openAddCalendarEventNewModal(
+											eventStore,
+											props.addToEventsToCategories,
+											{
+												...info.event,
+												extendedProps: {
+													...info.event,
+												},
+											}
+										);
+									}}
+									title="לחץ לשיבוץ בלוח השנה"
+								/>
+							);
+
+							if (calendarEvent) {
+								addToCalendar = (
+									<i
+										className="fa fa-calendar-check-o visible-items-calendar-indicator"
+										aria-hidden="true"
+										title="שובץ בלוח השנה"
+									/>
+								);
+							}
+						}
+
+						return (
+							<div
+								className={`fc-event priority-${info.event.priority}`}
+								onClick={() => {
+									onVisibleItemClick(info.event, info.marker);
+								}}
+							>
+								{addToCalendar}
+								{info.event.title}
+							</div>
+						);
+					})}
 				</div>
 			</div>
 		</div>

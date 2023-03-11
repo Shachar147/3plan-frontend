@@ -56,9 +56,9 @@
 		color: #666666;
 		border: #e6e6e6;
 
-		max-height: 200px;
-		height: 200px;
-		min-height: 200px;
+		max-height: 270px;
+		height: 270px;
+		min-height: 270px;
 
 		&.combined {
 			max-height: 95px;
@@ -166,4 +166,19 @@
 	position: relative;
 	top: 20px;
 	text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
+.visible-items-calendar-indicator {
+	&.fa-calendar-check-o {
+		color: mediumseagreen;
+		cursor: default;
+	}
+	&.fa-calendar-times-o {
+		//color: var(--red);
+		color: var(--black);
+		opacity: 0.6;
+		&:hover {
+			opacity: 0.45;
+		}
+	}
 }
