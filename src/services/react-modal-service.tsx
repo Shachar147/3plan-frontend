@@ -2860,8 +2860,8 @@ const ReactModalService = {
 			),
 			confirmBtnCssClass: 'primary-button',
 			showConfirmButton: info.categoriesToAdd.length > 0 || info.eventsToAdd.length > 0,
-			onConfirm: () => {
-				const { categoriesImported, eventsImported } = ImportService.import(eventStore, info);
+			onConfirm: async () => {
+				const { categoriesImported, eventsImported } = await ImportService.import(eventStore, info);
 				if (categoriesImported || eventsImported) {
 					ReactModalService.internal.alertMessage(
 						eventStore,
