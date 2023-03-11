@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getTinderServerAddress } from '../../config/config';
+import { Exception } from 'sass';
 
 const unAuthorizedRoutes = ['signin'];
 
@@ -86,8 +87,10 @@ function _apiPut(url: string, data: any, accessToken?: string) {
 			return res;
 		})
 		.catch(function (error) {
-			handleUnauthorizedError(error, url).then((isRedirected) => {});
-			return null;
+			if (!handleUnauthorizedError(error, url).then((isRedirected) => {})) {
+				throw error;
+			}
+			// return null;
 		});
 }
 

@@ -178,7 +178,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info);
 	};
 
-	const handleEventChange = (changeInfo: any) => {
+	const handleEventChange = async (changeInfo: any) => {
 		// when changing "allDay" event to be regular event, it has no "end".
 		// the following lines fix it by extracting start&end from _instance.range, and converting them to the correct timezone.
 		const hoursToAdd = changeInfo.event._instance.range.start.getTimezoneOffset() / 60;
@@ -195,7 +195,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			hasEnd: !changeInfo.event.allDay,
 		};
 
-		eventStore.changeEvent({ event: newEvent });
+		return eventStore.changeEvent({ event: newEvent });
 	};
 
 	const refreshSources = () => {

@@ -419,7 +419,7 @@ export class EventStore {
 	}
 
 	@action
-	changeEvent(changeInfo: any) {
+	async changeEvent(changeInfo: any) {
 		const newEvent = { ...changeInfo.event };
 
 		const eventId = changeInfo.event.id;
@@ -427,35 +427,24 @@ export class EventStore {
 		if (storedEvent) {
 			this.updateEvent(storedEvent, newEvent);
 
-			this.setCalendarEvents([
+			await this.setCalendarEvents([
 				...this.calendarEvents.filter((event) => event!.id!.toString() !== eventId.toString()),
 				storedEvent,
 			]);
 
 			const findEvent = this.allEvents.find((event) => event.id.toString() === eventId.toString());
 			if (findEvent) {
-				this.updateEvent(findEvent, storedEvent);
+				await this.updateEvent(findEvent, storedEvent);
 			} else {
 				console.error('event not found!');
 			}
 
-			this.setAllEvents([...this.allEvents]);
+			await this.setAllEvents([...this.allEvents]);
 
 			return true;
 		}
 		return false;
 	}
-
-	// @action
-	// addEvent(selectInfo: DateSelectArg, title: string | null) {
-	// 	this.calendarEvents.push({
-	// 		id: this.createEventId(),
-	// 		title: title || 'New Event',
-	// 		start: selectInfo.start,
-	// 		end: selectInfo.end,
-	// 		allDay: selectInfo.allDay,
-	// 	} as unknown as CalendarEvent);
-	// }
 
 	@action
 	deleteEvent(eventId: string) {
@@ -480,21 +469,21 @@ export class EventStore {
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
 		this.allowRemoveAllCalendarEvents = false;
 		const defaultEvents = this.getJSCalendarEvents() as CalendarEvent[]; // todo: make sure this conversion not fucking things up
-		await this.dataService.setCalendarEvents(defaultEvents, this.tripName);
+		return this.dataService.setCalendarEvents(defaultEvents, this.tripName);
 	}
 
 	@action
 	async setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>) {
 		this.sidebarEvents = newSidebarEvents;
 		// if (!this.showOnlyEventsWithNoOpeningHours && !this.searchValue && !this.showOnlyEventsWithTodoComplete && !this.showOnlyEventsWithTodoComplete)
-		await this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
+		return this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
 	}
 
 	@action
 	setCategories(newCategories: TriPlanCategory[]) {
 		const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
 		this.categories = newCategoriesSorted;
-		this.dataService.setCategories(newCategoriesSorted, this.tripName);
+		return this.dataService.setCategories(newCategoriesSorted, this.tripName);
 	}
 
 	@action
@@ -519,8 +508,9 @@ export class EventStore {
 
 		// update local storage
 		if (this.allEventsTripName === this.tripName) {
-			await this.dataService.setAllEvents(this.allEvents, this.tripName);
+			return this.dataService.setAllEvents(this.allEvents, this.tripName);
 		}
+		return Promise.resolve();
 	}
 
 	@action
@@ -548,9 +538,11 @@ export class EventStore {
 			newEvents[categoryId].push(sidebarEvent);
 		});
 
-		this.setSidebarEvents(newEvents);
+		const promise1 = this.setSidebarEvents(newEvents);
 		this.allowRemoveAllCalendarEvents = true;
-		this.setCalendarEvents([]);
+		const promise2 = this.setCalendarEvents([]);
+
+		return Promise.all([promise1, promise2]);
 	}
 
 	@action
@@ -560,7 +552,7 @@ export class EventStore {
 		// change body class name
 		this.initBodyLocaleClassName();
 
-		this.dataService.setCalendarLocale(this.calendarLocalCode, this.tripName);
+		return this.dataService.setCalendarLocale(this.calendarLocalCode, this.tripName);
 	}
 
 	@action

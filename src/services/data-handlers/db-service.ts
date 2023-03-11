@@ -1,9 +1,10 @@
 import { EventStore } from '../../stores/events-store';
-import { defaultDateRange, defaultLocalCode, LS_DISTANCE_RESULTS } from '../../utils/defaults';
+import { LS_DISTANCE_RESULTS } from '../../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, Trip } from './data-handler-base';
-import { apiDelete, apiGetPromise, apiPost, apiPut } from '../../helpers/api';
+import { apiDelete, apiGetPromise } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
+import { apiPut, apiPost } from '../../admin/helpers/api';
 
 export interface upsertTripProps {
 	name?: string;
@@ -87,89 +88,24 @@ export class DBService implements BaseDataHandler {
 
 	// --- SET ------------------------------------------------------------------------------
 	async setAllEvents(allEvents: AllEventsEvent[], tripName: string) {
-		await apiPut(
-			this,
-			`/trip/name/${tripName}`,
-			{ allEvents },
-			async function (res: any) {
-				// success
-			},
-			function (error: any, error_retry: number) {
-				// error
-			},
-			function () {
-				// finish
-			}
-		);
+		return apiPut(`/trip/name/${tripName}`, { allEvents });
 	}
 
 	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
-		await apiPut(
-			this,
-			`/trip/name/${tripName}`,
-			{ calendarEvents },
-			async function (res: any) {
-				// success
-			},
-			function (error: any, error_retry: number) {
-				// error
-			},
-			function () {
-				// finish
-			}
-		);
+		return apiPut(`/trip/name/${tripName}`, { calendarEvents });
 	}
 
 	async setCalendarLocale(calendarLocale: LocaleCode, tripName?: string) {
 		if (!tripName) return;
-		await apiPut(
-			this,
-			`/trip/name/${tripName}`,
-			{ calendarLocale },
-			async function (res: any) {
-				// success
-			},
-			function (error: any, error_retry: number) {
-				// error
-			},
-			function () {
-				// finish
-			}
-		);
+		return apiPut(`/trip/name/${tripName}`, { calendarLocale });
 	}
 
 	async setCategories(categories: TriPlanCategory[], tripName: string) {
-		await apiPut(
-			this,
-			`/trip/name/${tripName}`,
-			{ categories },
-			async function (res: any) {
-				// success
-			},
-			function (error: any, error_retry: number) {
-				// error
-			},
-			function () {
-				// finish
-			}
-		);
+		return apiPut(`/trip/name/${tripName}`, { categories });
 	}
 
 	async setDateRange(dateRange: DateRangeFormatted, tripName: string) {
-		await apiPut(
-			this,
-			`/trip/name/${tripName}`,
-			{ dateRange },
-			async function (res: any) {
-				// success
-			},
-			function (error: any, error_retry: number) {
-				// error
-			},
-			function () {
-				// finish
-			}
-		);
+		return apiPut(`/trip/name/${tripName}`, { dateRange });
 	}
 
 	setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string): void {
@@ -179,37 +115,11 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) {
-		await apiPut(
-			this,
-			`/trip/name/${tripName}`,
-			{ sidebarEvents },
-			async function (res: any) {
-				// success
-			},
-			function (error: any, error_retry: number) {
-				// error
-			},
-			function () {
-				// finish
-			}
-		);
+		return apiPut(`/trip/name/${tripName}`, { sidebarEvents });
 	}
 
 	async setTripName(tripName: string, newTripName: string) {
-		await apiPut(
-			this,
-			`/trip/name/${tripName}`,
-			{ name: newTripName },
-			async function (res: any) {
-				// success
-			},
-			function (error: any, error_retry: number) {
-				// error
-			},
-			function () {
-				// finish
-			}
-		);
+		return apiPut(`/trip/name/${tripName}`, { name: newTripName });
 	}
 
 	// --------------------------------------------------------------------------------------
@@ -252,44 +162,33 @@ export class DBService implements BaseDataHandler {
 		finallyCallback?: () => void
 	) {
 		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale } = data;
-		await apiPost(
-			this,
-			'/trip',
-			{ name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale },
-			async function (res: any) {
+		await apiPost('/trip', {
+			name,
+			dateRange,
+			categories,
+			calendarEvents,
+			sidebarEvents,
+			allEvents,
+			calendarLocale,
+		})
+			.then((res: any) => {
 				if (successCallback) {
 					successCallback(res);
 				}
-			},
-			function (error: any, error_retry: number) {
-				// console.log(error);
-				// let req_error = error.message;
-				// if (error.message.indexOf("401") !== -1) { req_error = UNAUTHORIZED_ERROR; }
-				// if (error.message.indexOf("400") !== -1) { req_error = `Oops, failed saving this game.` }
-
+			})
+			.catch((error: any) => {
 				if (errorCallback) {
-					errorCallback(error, error_retry);
+					errorCallback(error, 3);
 				}
-			},
-			function () {
+			})
+			.finally(() => {
 				if (finallyCallback) {
 					finallyCallback();
 				}
-			}
-		);
+			});
 	}
 
 	async duplicateTrip(_eventStore: EventStore, tripName: string, newTripName: string) {
-		await apiPost(
-			this,
-			`/trip/duplicate`,
-			{ name: tripName, newName: newTripName },
-			async function (res: any) {},
-			function (error: any, error_retry: number) {
-				// console.log(error);
-				// let req_error = error.message;
-			},
-			function () {}
-		);
+		await apiPost(`/trip/duplicate`, { name: tripName, newName: newTripName });
 	}
 }

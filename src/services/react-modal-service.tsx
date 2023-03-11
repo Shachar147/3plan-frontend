@@ -1004,8 +1004,8 @@ const ReactModalService = {
 			}
 
 			if (isOk) {
-				runInAction(() => {
-					eventStore.setCategories([
+				runInAction(async () => {
+					await eventStore.setCategories([
 						...eventStore.categories,
 						{
 							id: eventStore.createCategoryId(),
@@ -1284,7 +1284,7 @@ const ReactModalService = {
 		// @ts-ignore
 		window.openingHours = initialData.openingHours || undefined;
 
-		const handleAddSidebarEventResult = (eventStore: EventStore, initialCategoryId?: number) => {
+		const handleAddSidebarEventResult = async (eventStore: EventStore, initialCategoryId?: number) => {
 			if (!eventStore) return;
 
 			let {
@@ -1365,13 +1365,16 @@ const ReactModalService = {
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
 			existingSidebarEvents[categoryId].push(currentEvent);
-			eventStore.setSidebarEvents(existingSidebarEvents);
+			await eventStore.setSidebarEvents(existingSidebarEvents);
 
 			const allEventsEvent = {
 				...currentEvent,
 				category: categoryId.toString(),
 			};
-			eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
+			await eventStore.setAllEvents([
+				...eventStore.allEvents.filter((x) => x.id !== currentEvent.id),
+				allEventsEvent,
+			]);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -1383,8 +1386,8 @@ const ReactModalService = {
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
-		const onConfirm = () => {
-			handleAddSidebarEventResult(eventStore, categoryId);
+		const onConfirm = async () => {
+			await handleAddSidebarEventResult(eventStore, categoryId);
 		};
 
 		const triplanCategory = categoryId
@@ -1538,12 +1541,15 @@ const ReactModalService = {
 
 				sidebarEvents[parseInt(category)] = sidebarEvents[parseInt(category)] || [];
 				sidebarEvents[parseInt(category)].push(currentEvent);
-				eventStore.setSidebarEvents(sidebarEvents);
+				await eventStore.setSidebarEvents(sidebarEvents);
 				const allEventsEvent = {
 					...currentEvent,
 					category,
 				};
-				eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== eventId), allEventsEvent]);
+				await eventStore.setAllEvents([
+					...eventStore.allEvents.filter((x) => x.id !== eventId),
+					allEventsEvent,
+				]);
 
 				addToEventsToCategories(currentEvent);
 
@@ -1568,7 +1574,7 @@ const ReactModalService = {
 						moreInfo,
 						category,
 					} as SidebarEvent);
-					eventStore.setAllEvents(eventStore.allEvents);
+					await eventStore.setAllEvents(eventStore.allEvents);
 
 					const newSidebarEvents: Record<number, SidebarEvent[]> = {};
 					const existingSidebarEvents = eventStore.getJSSidebarEvents();
@@ -1599,7 +1605,7 @@ const ReactModalService = {
 							(_event) => _event.id !== event.id
 						);
 					}
-					eventStore.setSidebarEvents(newSidebarEvents);
+					await eventStore.setSidebarEvents(newSidebarEvents);
 
 					ReactModalService.internal.alertMessage(
 						eventStore,
@@ -1632,8 +1638,8 @@ const ReactModalService = {
 		// @ts-ignore
 		window.openingHours = initialData.openingHours || undefined;
 
-		const onConfirm = () => {
-			handleEditSidebarEventResult(eventStore, event);
+		const onConfirm = async () => {
+			await handleEditSidebarEventResult(eventStore, event);
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
@@ -1925,7 +1931,7 @@ const ReactModalService = {
 		info: any,
 		sidebarEventData?: SidebarEvent
 	) => {
-		const handleAddCalendarEventResult = (eventStore: EventStore) => {
+		const handleAddCalendarEventResult = async (eventStore: EventStore) => {
 			if (!eventStore) return true;
 
 			let {
@@ -1985,14 +1991,16 @@ const ReactModalService = {
 				return false;
 			}
 
-			eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
+			const result = await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 
+			debugger;
 			addToEventsToCategories(currentEvent);
 
-			eventStore.setAllEvents([
+			const result2 = await eventStore.setAllEvents([
 				...eventStore.allEvents.filter((x) => x.id !== currentEvent.id),
 				{ ...currentEvent, category: categoryId },
 			]);
+			debugger;
 
 			if (sidebarEventData) {
 				const newSidebarEvents = eventStore.getJSSidebarEvents();
@@ -2001,8 +2009,11 @@ const ReactModalService = {
 						(e) => e.id !== initialData.id
 					);
 				});
-				eventStore.setSidebarEvents(newSidebarEvents);
+				const result3 = await eventStore.setSidebarEvents(newSidebarEvents);
+				debugger;
 			}
+
+			debugger;
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -2028,8 +2039,8 @@ const ReactModalService = {
 		// @ts-ignore
 		window.openingHours = initialData.openingHours || undefined;
 
-		const onConfirm = () => {
-			const isOk = handleAddCalendarEventResult(eventStore);
+		const onConfirm = async () => {
+			const isOk = await handleAddCalendarEventResult(eventStore);
 			if (isOk) {
 				ReactModalService.internal.closeModal(eventStore);
 			}
@@ -2073,21 +2084,21 @@ const ReactModalService = {
 		const newSidebarEvents = eventStore.getJSSidebarEvents();
 		delete newSidebarEvents[categoryId];
 
-		const onConfirm = () => {
+		const onConfirm = async () => {
 			// delete from sidebar
-			eventStore.setSidebarEvents(newSidebarEvents);
+			await eventStore.setSidebarEvents(newSidebarEvents);
 
 			// delete from categories
-			eventStore.setCategories([...newCategories]);
+			await eventStore.setCategories([...newCategories]);
 
 			// delete from calendar
 			if (newCalendarEvents.length === 0) {
 				eventStore.allowRemoveAllCalendarEvents = true;
 			}
-			eventStore.setCalendarEvents([...newCalendarEvents]);
+			await eventStore.setCalendarEvents([...newCalendarEvents]);
 
 			// delete from all events
-			eventStore.setAllEvents([...newAllEvents]);
+			await eventStore.setAllEvents([...newAllEvents]);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -2141,7 +2152,7 @@ const ReactModalService = {
 		if (!category) return;
 		const categoryName = category.title;
 
-		const onConfirm = () => {
+		const onConfirm = async () => {
 			const oldIcon = category.icon;
 			const oldName = categoryName;
 
@@ -2190,7 +2201,7 @@ const ReactModalService = {
 					return;
 				}
 
-				eventStore.setCategories([
+				await eventStore.setCategories([
 					...eventStore.categories.filter((c) => c.id.toString() !== categoryId.toString()),
 					{
 						id: categoryId,
@@ -2210,7 +2221,7 @@ const ReactModalService = {
 					}
 				});
 
-				eventStore.setCalendarEvents([...updatedCalenderEvents]);
+				await eventStore.setCalendarEvents([...updatedCalenderEvents]);
 
 				// remove from fullcalendar store
 				TriplanCalendarRef.current.refreshSources();
@@ -2338,7 +2349,7 @@ const ReactModalService = {
 			);
 		};
 
-		const handleEditEventResult = (
+		const handleEditEventResult = async (
 			eventStore: EventStore,
 			addEventToSidebar: (event: SidebarEvent) => boolean,
 			originalEvent: EventInput
@@ -2448,7 +2459,7 @@ const ReactModalService = {
 				// @ts-ignore
 				currentEvent['className'] = currentEvent.priority ? `priority-${currentEvent.priority}` : undefined;
 
-				eventStore.setCalendarEvents([
+				await eventStore.setCalendarEvents([
 					...eventStore.calendarEvents.filter((x) => x.id !== eventId),
 					currentEvent,
 				]);
@@ -2456,7 +2467,10 @@ const ReactModalService = {
 					...currentEvent,
 					category: categoryId.toString(),
 				};
-				eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== eventId), allEventsEvent]);
+				await eventStore.setAllEvents([
+					...eventStore.allEvents.filter((x) => x.id !== eventId),
+					allEventsEvent,
+				]);
 				ReactModalService.internal.alertMessage(
 					eventStore,
 					'MODALS.UPDATED.TITLE',
@@ -2464,7 +2478,7 @@ const ReactModalService = {
 					'success'
 				);
 			} else if (isChanged) {
-				const isUpdated = eventStore.changeEvent({
+				const isUpdated = await eventStore.changeEvent({
 					event: {
 						id: eventId,
 						title: currentEvent.title,
@@ -2501,7 +2515,7 @@ const ReactModalService = {
 			return true;
 		};
 
-		const handleDuplicateEventResult = (eventStore: EventStore, originalEvent: CalendarEvent) => {
+		const handleDuplicateEventResult = async (eventStore: EventStore, originalEvent: CalendarEvent) => {
 			let newEvent = Object.assign({}, originalEvent);
 			const newId = eventStore.createEventId();
 			newEvent.id = newId;
@@ -2512,11 +2526,11 @@ const ReactModalService = {
 			// console.log("original", JSON.parse(JSON.stringify(originalEvent)), "new", newEvent);
 
 			// update calendar events
-			eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
+			await eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
 
 			// update all events
 			// @ts-ignore
-			eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
+			await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
 		};
 
 		const onDeleteClick = () => {
@@ -2529,8 +2543,8 @@ const ReactModalService = {
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
-		const onConfirm = () => {
-			const isOk = handleEditEventResult(eventStore, addEventToSidebar, info.event);
+		const onConfirm = async () => {
+			const isOk = await handleEditEventResult(eventStore, addEventToSidebar, info.event);
 			if (isOk) {
 				ReactModalService.internal.closeModal(eventStore);
 			}
