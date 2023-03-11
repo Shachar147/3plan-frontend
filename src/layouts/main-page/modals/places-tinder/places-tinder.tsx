@@ -119,6 +119,13 @@ function PlacesTinder(props: PlacesTinderProps) {
 		return description;
 	}
 
+	function handleLocalMedia(x: string): string {
+		if (x.startsWith('/media')) {
+			x = `${getTinderServerAddress()}${x}`;
+		}
+		return x;
+	}
+
 	function like() {
 		const existingCategory = eventStore.categories.filter((c) => c.title === currentPlace['category']);
 
@@ -132,8 +139,8 @@ function PlacesTinder(props: PlacesTinderProps) {
 			(currentPlace?.tinder || currentPlace)?.downloadedImages ??
 			(currentPlace?.tinder || currentPlace)?.images ??
 			[];
-		currentPlace['videos'] = videos;
-		currentPlace['images'] = images;
+		currentPlace['videos'] = videos.map(handleLocalMedia);
+		currentPlace['images'] = images.map(handleLocalMedia);
 		if (!currentPlace['category'] || currentPlace['category'] == '') {
 			currentPlace['category'] = TranslateService.translate(eventStore, 'GENERAL_CATEGORY.TITLE');
 		}
@@ -164,6 +171,8 @@ function PlacesTinder(props: PlacesTinderProps) {
 		const initialData = {
 			...currentPlace,
 			description,
+			moreInfo: currentPlace.moreInfo ?? currentPlace.more_info,
+			title: currentPlace.title ?? currentPlace.name,
 			images: (currentPlace.tinder || currentPlace).images.join('\n'),
 		};
 
