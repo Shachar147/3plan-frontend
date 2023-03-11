@@ -2071,7 +2071,8 @@ const ReactModalService = {
 			content,
 			onConfirm,
 			onCancel: () => {
-				if (eventStore.allSidebarEvents.length !== 0) {
+				// if sidebarEventData passed means we got here directly from map / from place we wanted to add a specific event.
+				if (eventStore.allSidebarEvents.length !== 0 && !sidebarEventData) {
 					ReactModalService.openAddCalendarEventModal(eventStore, addToEventsToCategories, info);
 				} else {
 					ReactModalService.internal.closeModal(eventStore);

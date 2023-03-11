@@ -925,7 +925,8 @@ const MapContainer = (props: MapContainerProps) => {
 												extendedProps: {
 													...info.event,
 												},
-											}
+											},
+											info.event
 										);
 									}}
 									title="לחץ לשיבוץ בלוח השנה"
