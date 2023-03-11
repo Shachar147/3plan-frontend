@@ -9,13 +9,46 @@ export interface CalendarEvent {
 	icon?: string;
 	priority?: TriplanPriority;
 	duration?: string;
-	extendedProps?: any;
 	preferredTime?: TriplanEventPreferredTime;
 	description?: string;
 	location?: LocationData;
 	openingHours?: WeeklyOpeningHoursData;
 	images?: string; // add column 8
 	moreInfo?: string;
+	category: string; // category id
+	suggestedEndTime?: any;
+	className?: string;
+}
+
+export function buildCalendarEvent(json: any): Partial<CalendarEvent> {
+	const calendarProps: string[] = [
+		'title',
+		'start',
+		'end',
+		'id',
+		'allDay',
+		'icon',
+		'priority',
+		'duration',
+		'preferredTime',
+		'description',
+		'location',
+		'openingHours',
+		'images',
+		'moreInfo',
+		'category',
+		'suggestedEndTime',
+		'className',
+	];
+
+	const calendarEvent: Partial<CalendarEvent> = {};
+
+	calendarProps.forEach((prop) => {
+		// @ts-ignore
+		calendarEvent[prop] = json[prop];
+	});
+
+	return calendarEvent;
 }
 
 export interface SidebarEvent {
@@ -23,11 +56,10 @@ export interface SidebarEvent {
 	title: string;
 	duration?: string;
 	icon?: string;
-	category?: string;
+	category: string;
 	description?: string;
 	priority?: TriplanPriority;
 	preferredTime?: TriplanEventPreferredTime;
-	extendedProps?: any;
 	className?: string;
 	location?: LocationData;
 	allDay?: Boolean;

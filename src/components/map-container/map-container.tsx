@@ -39,7 +39,6 @@ function Marker(props: MarkerProps): ReactElement {
 				minWidth: 'fit-content',
 			}}
 			onClick={() => {
-				// ModalService.openAddSidebarEventModal(eventStore, undefined, { location: locationData, title: searchValue, openingHours: openingHours })
 				ReactModalService.openAddSidebarEventModal(eventStore, undefined, {
 					location: locationData,
 					title: searchValue,
@@ -77,7 +76,7 @@ const MapContainer = (props: MapContainerProps) => {
 
 	const getKey = (x: Coordinate) => x.lat + ',' + x.lng;
 	// modify to props
-	const locations = (props.allEvents ?? eventStore.allEvents)
+	const locations = (props.allEvents ?? eventStore.allEventsFilteredComputed)
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
 			event: x,
@@ -127,7 +126,7 @@ const MapContainer = (props: MapContainerProps) => {
 			: '';
 
 		let scheduledTo = '';
-		if (!props) {
+		if (!props.allEvents) {
 			const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
 
 			scheduledTo = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED');
@@ -146,21 +145,13 @@ const MapContainer = (props: MapContainerProps) => {
 			scheduledTo = `<span style='${rowContainerStyle}'><i style='${iStyle}' class='fa fa-calendar' aria-hidden='true'></i> <span>${scheduledToPrefix}: ${scheduledTo}</span></span>`;
 		}
 
-		let category =
-			Object.keys(props).length > 0
-				? event.category
-				: event.extendedProps && event.extendedProps.categoryId
-				? event.extendedProps.categoryId
-				: event.category;
-		if (!props || !Object.keys(props).length) {
+		let category = event.category;
+		if (!props.allEvents) {
 			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 		}
 		const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
 
-		let preferredTime =
-			event.extendedProps && Object.keys(event.extendedProps).includes('preferredTime')
-				? event.extendedProps.preferredTime
-				: event.preferredTime;
+		let preferredTime = event.preferredTime;
 
 		if (preferredTime) {
 			preferredTime = TriplanEventPreferredTime[preferredTime];
@@ -178,7 +169,7 @@ const MapContainer = (props: MapContainerProps) => {
 		const url = BuildEventUrl(event.location);
 		const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`;
 
-		const moreInfoUrl = event.moreInfo ?? event.extendedProps?.moreInfo;
+		const moreInfoUrl = event.moreInfo;
 		const moreInfoBlock = moreInfoUrl
 			? `<span><a href="${moreInfoUrl}" target="_blank">${TranslateService.translate(
 					eventStore,
@@ -186,7 +177,7 @@ const MapContainer = (props: MapContainerProps) => {
 			  )}</a></span>`
 			: '';
 
-		let images = event.extendedProps?.images ?? event.images;
+		let images = event.images;
 		const sliderSettings = {
 			dots: true,
 			infinite: true,
@@ -225,16 +216,6 @@ const MapContainer = (props: MapContainerProps) => {
 					.map((image) => image.trim())
 					.filter((image) => image !== '');
 			}
-			//
-			// const str = `<div class="js-image-slider">
-			// 	<ul>
-			// 		${images.slice(0, 3).map((image, idx) => `<li><img src="${image}" style="min-height: 80px; width: 150px;"/></li>`).join("")}
-			// 	</ul>
-			// </div>`;
-			//
-			// console.log(str, typeof str);
-			//
-			// return str;
 
 			if (!images.length) {
 				return null;
@@ -283,12 +264,9 @@ const MapContainer = (props: MapContainerProps) => {
 		const getIconUrl = (event: any) => {
 			let icon = '';
 			let bgColor = priorityToMapColor[event.priority].replace('#', '');
-			let category =
-				event.extendedProps && event.extendedProps.categoryId ? event.extendedProps.categoryId : event.category;
-
-			category = props.allEvents
+			let category: string = props.allEvents
 				? event.category
-				: eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
+				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
 
 			category = category ? category.toLowerCase() : '';
 			const title = event.title.toLowerCase();
@@ -434,7 +412,7 @@ const MapContainer = (props: MapContainerProps) => {
 						infoWindow.setContent(buildInfoWindowContent(event));
 						infoWindow.open(map, refMarker);
 					};
-				})(refMarker)
+				})()
 			);
 
 			// hover & leave events
@@ -445,7 +423,7 @@ const MapContainer = (props: MapContainerProps) => {
 					return function () {
 						refMarker.setIcon(markerIconWithBorder);
 					};
-				})(refMarker)
+				})()
 			);
 			googleRef.event.addListener(
 				refMarker,
@@ -454,7 +432,7 @@ const MapContainer = (props: MapContainerProps) => {
 					return function () {
 						refMarker.setIcon(markerIcon);
 					};
-				})(refMarker)
+				})()
 			);
 
 			// visible items change event
@@ -489,19 +467,24 @@ const MapContainer = (props: MapContainerProps) => {
 
 	const initSearchResultMarker = useMemo(() => {
 		return () => {
+			// @ts-ignore
 			const selectedSearchLocation = window.selectedSearchLocation;
 			searchMarkers = [];
+			// @ts-ignore
 			if (window.selectedSearchLocation) {
 				const coordinate = {
 					lat: selectedSearchLocation.latitude,
 					lng: selectedSearchLocation.longitude,
 					address: selectedSearchLocation.address,
+					// @ts-ignore
 					openingHours: window.openingHours,
 				};
+				// @ts-ignore
 				searchMarkers = [coordinate];
 			}
 
 			setSearchCoordinatesSearchValue(searchValue);
+			// @ts-ignore
 			setSearchCoordinates(searchMarkers);
 			return;
 
@@ -557,20 +540,21 @@ const MapContainer = (props: MapContainerProps) => {
 			//     markerCluster.removeMarkers(searchMarkers)
 			// }
 
-			searchMarkers = [refMarker];
-			// new MarkerClusterer(googleMapRef, [...markers, ...searchMarkers], {
-			//     imagePath: "/images/marker_images/m",
-			//     minimumClusterSize: 10
-			// });
-
-			return refMarker;
+			// searchMarkers = [refMarker];
+			// // new MarkerClusterer(googleMapRef, [...markers, ...searchMarkers], {
+			// //     imagePath: "/images/marker_images/m",
+			// //     minimumClusterSize: 10
+			// // });
+			//
+			// return refMarker;
 		};
 	}, [googleRef, googleMapRef]);
 
 	const onVisibleItemClick = useMemo(() => {
-		return (event, marker) => {
+		return (event: any, marker: any) => {
 			if (googleMapRef && infoWindow) {
 				const coordinates = event.location;
+				// @ts-ignore
 				setCenter({ lat: coordinates.latitude, lng: coordinates.longitude });
 
 				infoWindow.setContent(buildInfoWindowContent(event));
@@ -783,7 +767,7 @@ const MapContainer = (props: MapContainerProps) => {
 		for (var i = 0; i < markers.length; i++) {
 			const marker = markers[i];
 			if (bounds.contains(marker.getPosition()) === true) {
-				const event = (props.allEvents ?? eventStore.allEvents).find(
+				const event = (props.allEvents ?? eventStore.allEventsFilteredComputed).find(
 					(x) => x.id.toString() === marker.eventId.toString()
 				);
 				visibleItems.push({ event, marker });
@@ -811,6 +795,7 @@ const MapContainer = (props: MapContainerProps) => {
 						type="text"
 						className="map-header-location-input-search"
 						onClick={() =>
+							// @ts-ignore
 							window.initLocationPicker(
 								'map-header-location-input-search',
 								'selectedSearchLocation',
@@ -818,6 +803,7 @@ const MapContainer = (props: MapContainerProps) => {
 							)
 						}
 						onKeyUp={() =>
+							// @ts-ignore
 							window.setManualLocation('map-header-location-input-search', 'selectedSearchLocation')
 						}
 						value={searchValue}
@@ -831,6 +817,7 @@ const MapContainer = (props: MapContainerProps) => {
 						<a
 							onClick={() => {
 								setSearchValue('');
+								// @ts-ignore
 								window.selectedSearchLocation = undefined;
 								initSearchResultMarker();
 							}}
@@ -860,6 +847,7 @@ const MapContainer = (props: MapContainerProps) => {
 				}
 				zoom={searchCoordinates.length > 0 || center ? 14 : 11}
 				yesIWantToUseGoogleMapApiInternals
+				// @ts-ignore
 				onGoogleApiLoaded={({ map, maps }) => setGoogleMapRef(map, maps)}
 				clickableIcons={false}
 				options={getOptions()}
@@ -868,6 +856,7 @@ const MapContainer = (props: MapContainerProps) => {
 					<Marker
 						key={index}
 						locationData={
+							// @ts-ignore
 							[{ ...place }].map((x) => {
 								x.longitude = x.lng;
 								x.latitude = x.lat;
@@ -876,10 +865,14 @@ const MapContainer = (props: MapContainerProps) => {
 								return x;
 							})[0]
 						}
+						// @ts-ignore
 						text={place.address}
+						// @ts-ignore
 						lat={place.lat}
+						// @ts-ignore
 						lng={place.lng}
 						searchValue={searchCoordinatesSearchValue}
+						// @ts-ignore
 						openingHours={place.openingHours}
 					/>
 				))}

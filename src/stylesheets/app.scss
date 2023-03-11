@@ -324,11 +324,6 @@ body {
 	position: relative;
 }
 
-/* display */
-.display-none {
-	display: none;
-}
-
 /* flexbox */
 .flex-1-1-0 {
 	display: flex;
@@ -529,12 +524,15 @@ div[class$='-control'] {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
+	justify-content: center;
 }
 
 .file-button-label {
 	background-color: #efefef !important;
 	border-top-right-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
+	display: flex;
+	align-items: center;
 }
 
 .file-name-label {
@@ -765,4 +763,9 @@ input[type='text'] {
 
 .cursor-default {
 	cursor: default;
+}
+
+/* display */
+.display-none {
+	display: none !important;
 }

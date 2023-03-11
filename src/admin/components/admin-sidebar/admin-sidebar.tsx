@@ -17,7 +17,7 @@ import { CreateInstagramItemsResult, DownloadMediaResult, FixItemsResult } from 
 import { runInAction } from 'mobx';
 
 export interface TriplanAdminSidebarProps {
-	removeEventFromSidebarById: (eventId: string) => void;
+	removeEventFromSidebarById: (eventId: string) => Record<number, SidebarEvent[]>;
 	addToEventsToCategories: (event: SidebarEvent) => void;
 }
 
@@ -128,7 +128,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 									});
 							})
 							.catch((error) => {
-								debugger;
 								ReactModalService.internal.alertMessage(
 									eventStore,
 									'MODALS.ERROR.TITLE',
@@ -234,7 +233,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					<i
 						className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
 						aria-hidden="true"
-					></i>
+					/>
 					<span className={'flex-gap-5 align-items-center'}>
 						{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
 					</span>
@@ -247,7 +246,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 	const renderWarnings = () => {
 		const renderNoLocationEventsStatistics = () => {
 			const eventsWithNoLocationArr = eventStore.allEvents.filter((x) => {
-				const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
+				const eventHaveNoLocation = !x.location;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
 
@@ -255,8 +254,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 			});
 
 			const eventsWithNoLocation = _.uniq(eventsWithNoLocationArr.map((x) => x.id));
-
-			// console.log('events with no location', eventsWithNoLocationArr);
 
 			const eventsWithNoLocationKey = eventStore.showOnlyEventsWithNoLocation
 				? 'SHOW_ALL_EVENTS'
@@ -287,7 +284,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 		const renderNoOpeningHoursEventsStatistics = () => {
 			const eventsWithNoHoursArr = eventStore.allEvents.filter((x) => {
-				const eventHaveNoHours = !(x.openingHours || (x.extendedProps && x.extendedProps.openingHours));
+				const eventHaveNoHours = !x.openingHours;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
 
@@ -295,8 +292,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 			});
 
 			const eventsWithNoHours = _.uniq(eventsWithNoHoursArr.map((x) => x.id));
-
-			// console.log('events with no location', eventsWithNoLocationArr);
 
 			const eventsWithNoHoursKey = eventStore.showOnlyEventsWithNoOpeningHours
 				? 'SHOW_ALL_EVENTS'
@@ -339,8 +334,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 			// @ts-ignore
 			todoCompleteEvents = _.uniq(todoCompleteEvents.map((x) => x.id));
-
-			// console.log('events with no location', eventsWithNoLocationArr);
 
 			const todoCompleteEventsKey = eventStore.showOnlyEventsWithTodoComplete
 				? 'SHOW_ALL_EVENTS'
@@ -459,7 +452,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 			const eventsByPriority: Record<string, SidebarEvent[] & CalendarEvent[]> = {};
 			// eventStore.allEvents.forEach((iter) => {
 			[...Object.values(eventStore.sidebarEvents).flat(), ...eventStore.calendarEvents].forEach((iter) => {
-				const priority = iter.priority || TriplanPriority.unset;
+				const priority = iter.priority ?? TriplanPriority.unset;
 				eventsByPriority[priority] = eventsByPriority[priority] || [];
 
 				// @ts-ignore
@@ -468,10 +461,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 			const calendarEventsByPriority: Record<string, SidebarEvent[]> = {};
 			eventStore.calendarEvents.forEach((iter) => {
-				const priority =
-					iter.extendedProps && iter.extendedProps.priority
-						? iter.extendedProps.priority
-						: iter.priority || TriplanPriority.unset;
+				const priority = iter.priority ?? TriplanPriority.unset;
 				calendarEventsByPriority[priority] = calendarEventsByPriority[priority] || [];
 				calendarEventsByPriority[priority].push(iter as SidebarEvent);
 			});
@@ -736,7 +726,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 				flavor={ButtonFlavor.primary}
 				onClick={() => {
 					ReactModalService.openAddSidebarEventModal(eventStore, undefined);
-					// modalService.openAddSidebarEventModal(eventStore, undefined);
 				}}
 				style={{
 					width: '100%',
@@ -760,7 +749,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 				marginBlock: '10px',
 			}}
 			onClick={() => {
-				// ModalService.openAddSidebarEventModal(eventStore, categoryId)
 				ReactModalService.openAddSidebarEventModal(eventStore, categoryId);
 			}}
 			text={TranslateService.translate(eventStore, 'ADD_EVENT.BUTTON_TEXT')}
@@ -771,7 +759,6 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		const categoryEvents = eventStore.getSidebarEvents[categoryId] || [];
 
 		const preferredHoursHash: Record<string, SidebarEvent[]> = {};
-		// console.log(Object.keys(TriplanEventPreferredTime).filter((x) => !Number.isNaN(Number(x))));
 		Object.keys(TriplanEventPreferredTime)
 			.filter((x) => !Number.isNaN(Number(x)))
 			.forEach((preferredHour) => {
@@ -790,15 +777,10 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						(x) => x.preferredTime != undefined && x.preferredTime.toString() === preferredHour.toString()
 					)
 					.filter((e) => {
-						if (e.title == undefined) {
-							// debugger;
-						}
 						return e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1;
 					})
 					.sort(sortByPriority);
 			});
-
-		// console.log("category events", categoryEvents, "by hour", preferredHoursHash);
 
 		if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
 			return undefined;
@@ -848,36 +830,14 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						data-category={categoryId}
 						data-icon={event.icon}
 						data-description={event.description}
-						data-priority={
-							event.priority !== undefined
-								? event.priority
-								: event.extendedProps
-								? event.extendedProps.priority
-								: undefined
-						}
-						data-preferred-time={
-							event.preferredTime !== undefined
-								? event.preferredTime
-								: event.extendedProps
-								? event.extendedProps.preferredTime
-								: undefined
-						}
+						data-priority={event.priority}
+						data-preferred-time={event.preferredTime}
 						data-location={
-							Object.keys(event).includes('location')
-								? JSON.stringify(event.location)
-								: event.extendedProps && event.extendedProps.location
-								? JSON.stringify(event.extendedProps.location)
-								: undefined
+							Object.keys(event).includes('location') ? JSON.stringify(event.location) : undefined
 						}
-						data-opening-hours={
-							event.openingHours !== undefined
-								? event.openingHours
-								: event.extendedProps
-								? event.extendedProps.openingHours
-								: undefined
-						}
-						data-images={event.images ?? event.extendedProps?.images} // add column 3
-						data-more-info={event.moreInfo ?? event.extendedProps?.moreInfo}
+						data-opening-hours={event.openingHours}
+						data-images={event.images} // add column 3
+						data-more-info={event.moreInfo}
 						key={event.id}
 					>
 						<span

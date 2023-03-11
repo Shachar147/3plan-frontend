@@ -22,7 +22,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 		<div
 			className={getClasses(
 				['custom-dates-container'],
-				!(eventStore.isCalendarView || eventStore.isCombinedView) && 'hidden'
+				!(eventStore.isCalendarView || eventStore.isCombinedView) && 'display-none'
 			)}
 		>
 			<div className={'custom-dates-line'}>

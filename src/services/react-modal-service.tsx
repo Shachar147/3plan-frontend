@@ -113,6 +113,7 @@ const ReactModalRenderHelper = {
 			id?: string;
 			className?: string;
 			value?: string;
+			disabled?: boolean;
 		},
 		ref?: any
 	) => {
@@ -128,6 +129,7 @@ const ReactModalRenderHelper = {
 				modalValueName={modalValueName}
 				placeholder={extra.placeholder}
 				placeholderKey={extra.placeholderKey}
+				readOnly={extra.disabled}
 			/>
 		);
 	},
@@ -255,10 +257,6 @@ const ReactModalRenderHelper = {
 			});
 
 		if (!eventStore.modalValues[modalValueName]) {
-			// const idx = values.indexOf(extra.value?.toString());
-			// debugger;
-			// eventStore.modalValues[modalValueName] = idx > -1 && idx < options.length ? options[idx] : undefined;
-
 			const selectedOption = options.find((option) => option.value == extra.value?.toString());
 			eventStore.modalValues[modalValueName] = selectedOption;
 		}
@@ -527,7 +525,7 @@ const ReactModalService = {
 						type: 'icon-selector',
 						extra: {
 							id: 'new-icon',
-							value: initialData?.icon || initialData?.extendedProps?.icon,
+							value: initialData?.icon,
 						},
 					},
 					textKey: 'MODALS.ICON',
@@ -556,7 +554,7 @@ const ReactModalService = {
 						type: 'category-selector',
 						extra: {
 							placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
-							value: initialData?.category || initialData?.extendedProps?.categoryId,
+							value: initialData?.category,
 						},
 					},
 					textKey: 'MODALS.CATEGORY',
@@ -587,10 +585,7 @@ const ReactModalService = {
 								'MODALS.PLACEHOLDER.PREFIX'
 							)} ${TranslateService.translate(eventStore, 'MODALS.DURATION')}`,
 							// placeholder: defaultTimedEventDuration,
-							value:
-								initialData?.duration ||
-								initialData?.extendedProps?.duration ||
-								defaultTimedEventDuration,
+							value: initialData?.duration ?? defaultTimedEventDuration,
 						},
 					},
 					textKey: 'MODALS.DURATION',
@@ -602,8 +597,7 @@ const ReactModalService = {
 						ref: eventStore.modalValuesRefs['priority'],
 						type: 'priority-selector',
 						extra: {
-							value:
-								initialData?.priority || initialData?.extendedProps?.priority || TriplanPriority.unset,
+							value: initialData?.priority ?? TriplanPriority.unset,
 							maxMenuHeight: 45 * 4,
 						},
 					},
@@ -616,10 +610,7 @@ const ReactModalService = {
 						ref: eventStore.modalValuesRefs['preferred-time'],
 						type: 'preferred-time-selector',
 						extra: {
-							value:
-								initialData.preferredTime ||
-								initialData?.extendedProps?.preferredTime ||
-								TriplanEventPreferredTime.unset,
+							value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
 							maxMenuHeight: 45 * 4,
 						},
 					},
@@ -653,7 +644,7 @@ const ReactModalService = {
 						ref: eventStore.modalValuesRefs['opening-hours'],
 						type: 'opening-hours',
 						extra: {
-							value: initialData.openingHours || initialData?.extendedProps?.openingHours,
+							value: initialData.openingHours,
 						},
 					},
 					textKey: 'MODALS.OPENING_HOURS',
@@ -706,7 +697,7 @@ const ReactModalService = {
 			// @ts-ignore
 			const selectedLocation = window.selectedLocation;
 
-			const inputs = [
+			const inputs: any[] = [
 				{
 					settings: {
 						modalValueName: 'icon',
@@ -714,7 +705,7 @@ const ReactModalService = {
 						type: 'icon-selector',
 						extra: {
 							id: 'new-icon',
-							value: initialData?.icon || initialData?.extendedProps?.icon,
+							value: initialData?.icon,
 						},
 					},
 					textKey: 'MODALS.ICON',
@@ -736,169 +727,158 @@ const ReactModalService = {
 					textKey: 'MODALS.TITLE',
 					className: 'border-top-gray',
 				},
-				{
-					settings: {
-						modalValueName: 'start-time',
-						ref: eventStore.modalValuesRefs['start-time'],
-						type: 'date-picker',
-						extra: {
-							placeholder: `${TranslateService.translate(
-								eventStore,
-								'MODALS.PLACEHOLDER.PREFIX'
-							)} ${TranslateService.translate(eventStore, 'MODALS.START_TIME')}`,
-							value: getInputDateTimeValue(initialData?.start),
-						},
-					},
-					textKey: 'MODALS.START_TIME',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'end-time',
-						ref: eventStore.modalValuesRefs['end-time'],
-						type: 'date-picker',
-						extra: {
-							placeholder: `${TranslateService.translate(
-								eventStore,
-								'MODALS.PLACEHOLDER.PREFIX'
-							)} ${TranslateService.translate(eventStore, 'MODALS.END_TIME')}`,
-							value: getInputDateTimeValue(initialData?.end),
-						},
-					},
-					textKey: 'MODALS.END_TIME',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'category',
-						ref: eventStore.modalValuesRefs['category'],
-						type: 'category-selector',
-						extra: {
-							placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
-							value: initialData?.category || initialData?.extendedProps?.categoryId,
-						},
-					},
-					textKey: 'MODALS.CATEGORY',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'description',
-						ref: eventStore.modalValuesRefs['description'],
-						type: 'textarea',
-						extra: {
-							placeholderKey: 'MODALS.DESCRIPTION_PLACEHOLDER',
-							value: initialData.description,
-						},
-					},
-					textKey: 'MODALS.DESCRIPTION',
-					className: 'border-top-gray',
-				},
-				// {
-				//     settings: {
-				//         modalValueName: 'duration',
-				//         ref: eventStore.modalValuesRefs['duration'],
-				//         type: 'text',
-				//         extra: {
-				//             // value: defaultTimedEventDuration,
-				//             placeholder: `${TranslateService.translate(eventStore, 'MODALS.PLACEHOLDER.PREFIX')} ${TranslateService.translate(eventStore, 'MODALS.DURATION')}`,
-				//             // placeholder: defaultTimedEventDuration,
-				//             value: initialData?.duration || initialData?.extendedProps?.duration || defaultTimedEventDuration
-				//         },
-				//     },
-				//     textKey: 'MODALS.DURATION',
-				//     className: 'border-top-gray'
-				// },
-				{
-					settings: {
-						modalValueName: 'priority',
-						ref: eventStore.modalValuesRefs['priority'],
-						type: 'priority-selector',
-						extra: {
-							value:
-								initialData?.priority || initialData?.extendedProps?.priority || TriplanPriority.unset,
-							maxMenuHeight: 45 * 4,
-						},
-					},
-					textKey: 'MODALS.PRIORITY',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'preferred-time',
-						ref: eventStore.modalValuesRefs['preferred-time'],
-						type: 'preferred-time-selector',
-						extra: {
-							value:
-								initialData.preferredTime ||
-								initialData?.extendedProps?.preferredTime ||
-								TriplanEventPreferredTime.unset,
-							maxMenuHeight: 45 * 4,
-						},
-					},
-					textKey: 'MODALS.PREFERRED_TIME',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'location',
-						ref: eventStore.modalValuesRefs['location'],
-						type: 'text',
-						extra: {
-							className: 'location-input',
-							value:
-								eventStore.modalValues['selectedLocation'] ||
-								initialData.location?.address ||
-								selectedLocation?.address ||
-								'',
-							onClick: initLocation,
-							onKeyUp: setManualLocation,
-							autoComplete: 'off',
-							placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
-						},
-					},
-					textKey: 'MODALS.LOCATION',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'opening-hours',
-						ref: eventStore.modalValuesRefs['opening-hours'],
-						type: 'opening-hours',
-						extra: {
-							value: initialData.openingHours || initialData?.extendedProps?.openingHours,
-						},
-					},
-					textKey: 'MODALS.OPENING_HOURS',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'images', // add column 5
-						ref: eventStore.modalValuesRefs['images'],
-						type: 'images',
-						extra: {
-							placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
-							value: initialData.images,
-						},
-					},
-					textKey: 'MODALS.IMAGES',
-					className: 'border-top-gray',
-				},
-				{
-					settings: {
-						modalValueName: 'more-info',
-						ref: eventStore.modalValuesRefs['more-info'],
-						type: 'text',
-						extra: {
-							placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
-							value: initialData.moreInfo,
-						},
-					},
-					textKey: 'MODALS.MORE_INFO',
-					className: 'border-top-gray',
-				},
 			];
+			inputs.push(
+				...[
+					{
+						settings: {
+							modalValueName: 'start-time',
+							ref: eventStore.modalValuesRefs['start-time'],
+							type: 'date-picker',
+							extra: {
+								placeholder: `${TranslateService.translate(
+									eventStore,
+									'MODALS.PLACEHOLDER.PREFIX'
+								)} ${TranslateService.translate(eventStore, 'MODALS.START_TIME')}`,
+								value: getInputDateTimeValue(initialData?.start),
+							},
+						},
+						textKey: 'MODALS.START_TIME',
+						className: getClasses('border-top-gray', initialData.allDay && 'display-none'),
+					},
+					{
+						settings: {
+							modalValueName: 'end-time',
+							ref: eventStore.modalValuesRefs['end-time'],
+							type: 'date-picker',
+							extra: {
+								placeholder: `${TranslateService.translate(
+									eventStore,
+									'MODALS.PLACEHOLDER.PREFIX'
+								)} ${TranslateService.translate(eventStore, 'MODALS.END_TIME')}`,
+								value: getInputDateTimeValue(initialData?.end),
+							},
+						},
+						textKey: 'MODALS.END_TIME',
+						className: getClasses('border-top-gray', initialData.allDay && 'display-none'),
+					},
+				]
+			);
+			inputs.push(
+				...[
+					{
+						settings: {
+							modalValueName: 'category',
+							ref: eventStore.modalValuesRefs['category'],
+							type: 'category-selector',
+							extra: {
+								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+								value: initialData?.category,
+							},
+						},
+						textKey: 'MODALS.CATEGORY',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'description',
+							ref: eventStore.modalValuesRefs['description'],
+							type: 'textarea',
+							extra: {
+								placeholderKey: 'MODALS.DESCRIPTION_PLACEHOLDER',
+								value: initialData.description,
+							},
+						},
+						textKey: 'MODALS.DESCRIPTION',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'priority',
+							ref: eventStore.modalValuesRefs['priority'],
+							type: 'priority-selector',
+							extra: {
+								value: initialData?.priority ?? TriplanPriority.unset,
+								maxMenuHeight: 45 * 4,
+							},
+						},
+						textKey: 'MODALS.PRIORITY',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'preferred-time',
+							ref: eventStore.modalValuesRefs['preferred-time'],
+							type: 'preferred-time-selector',
+							extra: {
+								value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
+								maxMenuHeight: 45 * 4,
+							},
+						},
+						textKey: 'MODALS.PREFERRED_TIME',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'location',
+							ref: eventStore.modalValuesRefs['location'],
+							type: 'text',
+							extra: {
+								className: 'location-input',
+								value:
+									eventStore.modalValues['selectedLocation'] ||
+									initialData.location?.address ||
+									selectedLocation?.address ||
+									'',
+								onClick: initLocation,
+								onKeyUp: setManualLocation,
+								autoComplete: 'off',
+								placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
+							},
+						},
+						textKey: 'MODALS.LOCATION',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'opening-hours',
+							ref: eventStore.modalValuesRefs['opening-hours'],
+							type: 'opening-hours',
+							extra: {
+								value: initialData.openingHours,
+							},
+						},
+						textKey: 'MODALS.OPENING_HOURS',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'images', // add column 5
+							ref: eventStore.modalValuesRefs['images'],
+							type: 'images',
+							extra: {
+								placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
+								value: initialData.images,
+							},
+						},
+						textKey: 'MODALS.IMAGES',
+						className: 'border-top-gray',
+					},
+					{
+						settings: {
+							modalValueName: 'more-info',
+							ref: eventStore.modalValuesRefs['more-info'],
+							type: 'text',
+							extra: {
+								placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
+								value: initialData.moreInfo,
+							},
+						},
+						textKey: 'MODALS.MORE_INFO',
+						className: 'border-top-gray',
+					},
+				]
+			);
 			inputs[inputs.length - 1].className += ' border-bottom-gray padding-bottom-20';
 			return inputs;
 		},
@@ -957,7 +937,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				startDate,
@@ -1314,11 +1294,15 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				images,
+				moreInfo,
 			} = ReactModalService.internal.getModalValues(eventStore);
+
+			// @ts-ignore
+			delete location?.openingHours;
 
 			if (initialCategoryId != undefined) {
 				categoryId = initialCategoryId;
@@ -1345,6 +1329,8 @@ const ReactModalService = {
 				location,
 				openingHours,
 				images,
+				category: categoryId,
+				moreInfo,
 			} as SidebarEvent;
 
 			const isDurationValid =
@@ -1401,12 +1387,14 @@ const ReactModalService = {
 			handleAddSidebarEventResult(eventStore, categoryId);
 		};
 
-		const category = categoryId
-			? eventStore.categories.find((c) => c.id.toString() === categoryId.toString())
+		const triplanCategory = categoryId
+			? eventStore.categories.find((c) => c.id.toString() === categoryId!.toString())
 			: undefined;
 
-		const title = category
-			? `${TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CATEGORY.TITLE')}: ${category.title}`
+		const title = triplanCategory
+			? `${TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CATEGORY.TITLE')}: ${
+					triplanCategory.title
+			  }`
 			: TranslateService.translate(eventStore, 'ADD_EVENT_MODAL.TITLE');
 
 		// eventStore.modalValues.duration = eventStore.modalValues.duration || defaultTimedEventDuration;
@@ -1444,14 +1432,13 @@ const ReactModalService = {
 	openEditSidebarEventModal: (
 		eventStore: EventStore,
 		event: SidebarEvent,
-		removeEventFromSidebarById: (eventId: string) => void,
+		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
 		addToEventsToCategories: (value: any) => void
 	) => {
-		const handleEditSidebarEventResult = (eventStore: EventStore, originalEvent: SidebarEvent) => {
+		const handleEditSidebarEventResult = async (eventStore: EventStore, originalEvent: SidebarEvent) => {
 			const eventId = originalEvent.id!;
 			if (!eventStore) return;
 
-			// const oldEvent = eventStore.allEvents.find((e) => e.id === eventId);
 			const oldEvent = eventStore.allSidebarEvents.find((e) => e.id === eventId);
 			if (!oldEvent) {
 				console.error('old event not found');
@@ -1465,7 +1452,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category,
 				location,
 				openingHours,
 				images,
@@ -1483,6 +1470,8 @@ const ReactModalService = {
 				location,
 				openingHours,
 				images,
+				category,
+				moreInfo,
 			};
 
 			const isDurationValid = validateDuration(duration);
@@ -1503,15 +1492,6 @@ const ReactModalService = {
 				return;
 			}
 
-			if (originalEvent.extendedProps) {
-				Object.keys(originalEvent.extendedProps).forEach((key) => {
-					if (!Object.keys(currentEvent).includes(key)) {
-						// @ts-ignore
-						currentEvent[key] = originalEvent.extendedProps[key];
-					}
-				});
-			}
-
 			const durationChanged =
 				originalEvent.duration !== currentEvent.duration.toString() &&
 				!(originalEvent.duration == undefined && currentEvent.duration == defaultTimedEventDuration);
@@ -1525,9 +1505,8 @@ const ReactModalService = {
 				originalEvent.preferredTime != undefined &&
 				originalEvent.preferredTime.toString() !== currentEvent.preferredTime.toString();
 			const isDescriptionChanged = originalEvent.description !== currentEvent.description;
-			// const oldCategory = eventStore.allEvents.find((e) => e.id === event.id)!.category;
 			const oldCategory = eventStore.allSidebarEvents.find((e) => e.id === event.id)!.category;
-			const isCategoryChanged = oldCategory != categoryId;
+			const isCategoryChanged = oldCategory != category;
 			const isLocationChanged = originalEvent.location != currentEvent.location;
 			const isImagesChanged = originalEvent.images != currentEvent.images; // add column 11
 			const isMoreInfoChanged = originalEvent.moreInfo != currentEvent.moreInfo;
@@ -1544,29 +1523,25 @@ const ReactModalService = {
 
 			if (isCategoryChanged) {
 				// remove it from the old category
-				removeEventFromSidebarById(event.id);
+				const sidebarEvents = await removeEventFromSidebarById(event.id);
 
 				// add it to the new category
 				// @ts-ignore
 				currentEvent = {
 					...currentEvent,
 					id: eventStore.createEventId(),
-					extendedProps: {
-						categoryId,
-					},
+					category,
 				};
 
 				// @ts-ignore
 				currentEvent['className'] = currentEvent.priority ? `priority-${currentEvent.priority}` : undefined;
 
-				const sidebarEvents = eventStore.getJSSidebarEvents(); //eventStore.sidebarEvents;
-
-				sidebarEvents[parseInt(categoryId)] = sidebarEvents[parseInt(categoryId)] || [];
-				sidebarEvents[parseInt(categoryId)].push(currentEvent);
+				sidebarEvents[parseInt(category)] = sidebarEvents[parseInt(category)] || [];
+				sidebarEvents[parseInt(category)].push(currentEvent);
 				eventStore.setSidebarEvents(sidebarEvents);
 				const allEventsEvent = {
 					...currentEvent,
-					category: categoryId.toString(),
+					category,
 				};
 				eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== eventId), allEventsEvent]);
 
@@ -1579,7 +1554,6 @@ const ReactModalService = {
 					'success'
 				);
 			} else if (isChanged) {
-				// const eventFound = eventStore.allEvents.find((e) => e.id === event.id);
 				const eventFound = eventStore.allSidebarEvents.find((e) => e.id === event.id);
 				if (eventFound) {
 					eventStore.updateSidebarEvent(eventFound, {
@@ -1592,14 +1566,12 @@ const ReactModalService = {
 						openingHours,
 						images, // add column 14
 						moreInfo,
-						extendedProps: {
-							categoryId,
-						},
+						category,
 					} as SidebarEvent);
 					eventStore.setAllEvents(eventStore.allEvents);
 
 					const newSidebarEvents: Record<number, SidebarEvent[]> = {};
-					const existingSidebarEvents = eventStore.getJSSidebarEvents(); // eventStore.getSidebarEvents;
+					const existingSidebarEvents = eventStore.getJSSidebarEvents();
 					Object.keys(existingSidebarEvents).forEach((category) => {
 						const categoryId = parseInt(category);
 						newSidebarEvents[categoryId] = newSidebarEvents[categoryId] || [];
@@ -1615,6 +1587,8 @@ const ReactModalService = {
 									location,
 									openingHours,
 									images,
+									moreInfo,
+									category,
 								} as SidebarEvent);
 							}
 							newSidebarEvents[categoryId].push(_event);
@@ -1646,7 +1620,6 @@ const ReactModalService = {
 
 		// on event click - show edit event popup
 		const eventId = event.id;
-		// const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
 		const initialData = eventStore.allSidebarEvents.find((e: any) => e.id.toString() === eventId.toString());
 		if (!initialData) {
 			console.error('event not found');
@@ -1687,7 +1660,7 @@ const ReactModalService = {
 		});
 	},
 	openDuplicateSidebarEventModal: (eventStore: EventStore, event: SidebarEvent) => {
-		const handleDuplicateSidebarEventResult = (eventStore: EventStore, event: SidebarEvent) => {
+		const handleDuplicateSidebarEventResult = async (eventStore: EventStore, event: SidebarEvent) => {
 			if (!eventStore) return;
 
 			let {
@@ -1701,6 +1674,7 @@ const ReactModalService = {
 				openingHours,
 				images,
 				moreInfo,
+				category,
 			} = ReactModalService.internal.getModalValues(eventStore);
 
 			const currentEvent = {
@@ -1715,6 +1689,7 @@ const ReactModalService = {
 				openingHours,
 				images, // add column 15
 				moreInfo,
+				category,
 			} as SidebarEvent;
 
 			const isDurationValid =
@@ -1745,23 +1720,21 @@ const ReactModalService = {
 				return;
 			}
 
-			// const foundEvent = eventStore.allEvents.find((e) => e.id.toString() === event.id.toString());
 			const foundEvent = eventStore.allSidebarEvents.find((e) => e.id.toString() === event.id.toString());
 			if (!foundEvent) {
 				console.error('event not found');
 				return;
 			}
-			const categoryId = foundEvent.category || eventStore.categories[0].id.toString();
 
-			const existingSidebarEvents = eventStore.getJSSidebarEvents(); // { ...eventStore.getSidebarEvents };
-			existingSidebarEvents[parseInt(categoryId)].push(currentEvent);
-			eventStore.setSidebarEvents(existingSidebarEvents);
+			const existingSidebarEvents = eventStore.getJSSidebarEvents();
+			existingSidebarEvents[parseInt(category)] = existingSidebarEvents[parseInt(category)] || [];
+			existingSidebarEvents[parseInt(category)].push(currentEvent);
+			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			const allEventsEvent = {
-				...currentEvent,
-				category: categoryId.toString(),
-			};
-			eventStore.setAllEvents([...eventStore.allEvents.filter((x) => x.id !== currentEvent.id), allEventsEvent]);
+			await eventStore.setAllEvents([
+				...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
+				currentEvent,
+			]);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -1773,7 +1746,6 @@ const ReactModalService = {
 
 		// on event click - show edit event popup
 		const eventId = event.id;
-		// const initialData = eventStore.allEvents.find((e: any) => e.id.toString() === eventId.toString());
 		const initialData = eventStore.allSidebarEvents.find((e: any) => e.id.toString() === eventId.toString());
 		if (!initialData) {
 			console.error('event not found');
@@ -1862,7 +1834,12 @@ const ReactModalService = {
 						{ReactModalRenderHelper.renderSelectInput(
 							eventStore,
 							'sidebar-event-to-add-to-calendar',
-							{ options, placeholderKey: 'SELECT_SIDEBAR_EVENT_PLACEHOLDER', removeDefaultClass: true },
+							{
+								options,
+								placeholderKey: 'SELECT_SIDEBAR_EVENT_PLACEHOLDER',
+								removeDefaultClass: true,
+								maxMenuHeight: eventStore.isMobile ? 35 * 3 : undefined,
+							},
 							'add-event-from-sidebar-selector'
 						)}
 					</div>
@@ -1885,6 +1862,7 @@ const ReactModalService = {
 				}
 			},
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SELECT'),
+			customClass: getClasses('triplan-add-calendar-event-from-existing', settings.customClass),
 		});
 	},
 	openAddCalendarEventModal: (eventStore: EventStore, addToEventsToCategories: (value: any) => void, info: any) => {
@@ -1956,7 +1934,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				startDate,
@@ -1981,16 +1959,6 @@ const ReactModalService = {
 				openingHours,
 				images,
 				moreInfo, // add column 16
-				extendedProps: {
-					title,
-					icon,
-					priority: priority as TriplanPriority,
-					preferredTime: preferredTime as TriplanEventPreferredTime,
-					description,
-					categoryId: categoryId,
-					location,
-					openingHours,
-				},
 			} as CalendarEvent;
 
 			// @ts-ignore
@@ -2049,6 +2017,8 @@ const ReactModalService = {
 		const initialData = {
 			start: info.start,
 			end: info.end,
+			allDay: info.allDay,
+			...info.extendedProps,
 			...sidebarEventData,
 		};
 
@@ -2097,11 +2067,45 @@ const ReactModalService = {
 	openDeleteCategoryModal: (eventStore: EventStore, categoryId: number) => {
 		const newCategories = eventStore.categories.filter((c) => c.id != categoryId);
 		const newCalendarEvents = eventStore.calendarEvents.filter(
-			(c) => c.category != categoryId && (!c.extendedProps || c.extendedProps.categoryId != categoryId)
+			(c) => c.category.toString() !== categoryId.toString()
 		);
-		const newAllEvents = eventStore.allEvents.filter((c) => c.category != categoryId.toString());
-		const newSidebarEvents = eventStore.getJSSidebarEvents(); // { ...eventStore.getSidebarEvents };
+		const newAllEvents = eventStore.allEventsComputed.filter((c) => c.category != categoryId.toString());
+		const newSidebarEvents = eventStore.getJSSidebarEvents();
 		delete newSidebarEvents[categoryId];
+
+		const onConfirm = () => {
+			// delete from sidebar
+			eventStore.setSidebarEvents(newSidebarEvents);
+
+			// delete from categories
+			eventStore.setCategories([...newCategories]);
+
+			// delete from calendar
+			if (newCalendarEvents.length === 0) {
+				eventStore.allowRemoveAllCalendarEvents = true;
+			}
+			eventStore.setCalendarEvents([...newCalendarEvents]);
+
+			// delete from all events
+			eventStore.setAllEvents([...newAllEvents]);
+
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.DELETED.TITLE',
+				'MODALS.DELETED.CATEGORY.CONTENT',
+				'success'
+			);
+
+			ReactModalService.internal.closeModal(eventStore);
+		};
+
+		const totalAffectedSidebar =
+			Object.values(eventStore.getJSSidebarEvents()).flat().length -
+			Object.values(newSidebarEvents).flat().length;
+
+		const totalAffectedCalendar = eventStore.calendarEvents.length - newCalendarEvents.length;
+
+		const totalAffected = eventStore.allEventsComputed.length - newAllEvents.length;
 
 		const html = [
 			TranslateService.translate(eventStore, 'MODALS.DELETE_CATEGORY.CONTENT'),
@@ -2109,57 +2113,28 @@ const ReactModalService = {
 			TranslateService.translate(eventStore, 'MODALS.DELETE_CATEGORY.CONTENT.IT_WILL_AFFECT'),
 			'<ul>' +
 				[
-					`<li>${eventStore.calendarEvents.length - newCalendarEvents.length} ${TranslateService.translate(
-						eventStore,
-						'CALENDAR_EVENTS'
-					)}</li>`,
-					`<li>${
-						Object.values(eventStore.getJSSidebarEvents()).flat().length -
-						Object.values(newSidebarEvents).flat().length
-					} ${TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}</li>`,
-					`<li>${eventStore.allEvents.length - newAllEvents.length} ${TranslateService.translate(
-						eventStore,
-						'TOTAL_EVENTS'
-					)}</li>`,
+					`<li>${totalAffectedCalendar} ${TranslateService.translate(eventStore, 'CALENDAR_EVENTS')}</li>`,
+					`<li>${totalAffectedSidebar} ${TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}</li>`,
+					`<li>${totalAffected} ${TranslateService.translate(eventStore, 'TOTAL_EVENTS')}</li>`,
 				].join('') +
 				'</ul>',
 		].join('<br/>');
 
-		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
-			title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${
-				eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title
-			}`,
-			content: <div dangerouslySetInnerHTML={{ __html: html }} />,
-			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
-			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
-			confirmBtnCssClass: 'primary-button red',
-			onConfirm: () => {
-				// delete from sidebar
-				eventStore.setSidebarEvents(newSidebarEvents);
-
-				// delete from categories
-				eventStore.setCategories([...newCategories]);
-
-				// delete from calendar
-				if (newCalendarEvents.length === 0) {
-					eventStore.allowRemoveAllCalendarEvents = true;
-				}
-				eventStore.setCalendarEvents([...newCalendarEvents]);
-
-				// delete from all events
-				eventStore.setAllEvents([...newAllEvents]);
-
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.DELETED.TITLE',
-					'MODALS.DELETED.CATEGORY.CONTENT',
-					'success'
-				);
-
-				ReactModalService.internal.closeModal(eventStore);
-			},
-		});
+		if (totalAffected == 0) {
+			onConfirm();
+		} else {
+			ReactModalService.internal.openModal(eventStore, {
+				...getDefaultSettings(eventStore),
+				title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${
+					eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title
+				}`,
+				content: <div dangerouslySetInnerHTML={{ __html: html }} />,
+				cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+				confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
+				confirmBtnCssClass: 'primary-button red',
+				onConfirm,
+			});
+		}
 	},
 	openEditCategoryModal: (TriplanCalendarRef: any, eventStore: EventStore, categoryId: number) => {
 		const category = eventStore.categories.find((c) => c.id.toString() === categoryId.toString());
@@ -2227,8 +2202,7 @@ const ReactModalService = {
 				// update our store
 				const updatedCalenderEvents = [...eventStore.getJSCalendarEvents()];
 				updatedCalenderEvents.forEach((e) => {
-					// const event = eventStore.allEvents.find((ev) => ev.id.toString() === e.id!.toString());
-					const event = eventStore.calendarEvents.find((ev) => ev.id!.toString() === e.id!.toString());
+					const event = eventStore.allEventsComputed.find((ev) => ev.id!.toString() === e.id!.toString());
 					if (event && event.category && event.category === categoryId.toString()) {
 						if (e.icon === oldIcon) {
 							e.icon = newIcon;
@@ -2318,8 +2292,9 @@ const ReactModalService = {
 
 		const currentEvent = { ...found };
 
+		// for handle delete - to be able to say to which category this activity will return to
 		const categoryName =
-			eventStore.categories.find((x) => x.id == currentEvent?.extendedProps?.categoryId)?.title ?? 'N/A';
+			eventStore.categories.find((x) => x.id.toString() == currentEvent?.category.toString())?.title ?? 'N/A';
 
 		const handleDeleteEventResult = (
 			currentEvent: CalendarEvent,
@@ -2371,8 +2346,7 @@ const ReactModalService = {
 			const eventId = originalEvent.id!;
 			if (!eventStore) return;
 
-			// const oldEvent = eventStore.allEvents.find((e) => e.id.toString() === eventId.toString());
-			const oldEvent = eventStore.allSidebarEvents.find((e) => e.id.toString() === eventId.toString());
+			const oldEvent = eventStore.allEventsComputed.find((e) => e.id!.toString() === eventId.toString());
 			if (!oldEvent) {
 				console.error('old event not found');
 				return false;
@@ -2384,7 +2358,7 @@ const ReactModalService = {
 				priority,
 				preferredTime,
 				description,
-				categoryId,
+				category: categoryId,
 				location,
 				openingHours,
 				startDate,
@@ -2395,10 +2369,7 @@ const ReactModalService = {
 
 			// @ts-ignore
 			const locationText = location?.address;
-			const prevLocationText =
-				originalEvent.extendedProps && originalEvent.extendedProps.location
-					? originalEvent.extendedProps.location.address
-					: undefined;
+			const prevLocationText = originalEvent.location?.address;
 
 			let currentEvent: CalendarEvent = {
 				title,
@@ -2412,6 +2383,7 @@ const ReactModalService = {
 				description,
 				images,
 				moreInfo, // add column 16
+				category: categoryId,
 			};
 
 			// written like this since otherwise, editing without changing anything will reset location to nothing
@@ -2422,15 +2394,6 @@ const ReactModalService = {
 
 			if (location) {
 				currentEvent['openingHours'] = openingHours;
-			}
-
-			if (originalEvent.extendedProps) {
-				Object.keys(originalEvent.extendedProps).forEach((key) => {
-					if (!Object.keys(currentEvent).includes(key)) {
-						// @ts-ignore
-						currentEvent[key] = originalEvent.extendedProps[key];
-					}
-				});
 			}
 
 			// @ts-ignore
@@ -2452,15 +2415,10 @@ const ReactModalService = {
 				(originalEvent.end && originalEvent.end.toString() !== currentEvent.end.toString());
 			const iconChanged = oldEvent.icon !== currentEvent.icon;
 			const titleChanged = originalEvent.title !== currentEvent.title;
-			const priorityChanged =
-				originalEvent.extendedProps && originalEvent.extendedProps.priority !== currentEvent.priority;
-			const preferredTimeChanged =
-				originalEvent.extendedProps && originalEvent.extendedProps.preferredTime !== currentEvent.preferredTime;
-			const descriptionChanged =
-				originalEvent.extendedProps && originalEvent.extendedProps.description !== currentEvent.description;
-			const isLocationChanged =
-				originalEvent.extendedProps && originalEvent.extendedProps.location != currentEvent.location;
-			// const oldCategory = eventStore.allEvents.find((e) => e.id === eventId)!.category;
+			const priorityChanged = originalEvent.priority !== currentEvent.priority;
+			const preferredTimeChanged = originalEvent.preferredTime !== currentEvent.preferredTime;
+			const descriptionChanged = originalEvent.description !== currentEvent.description;
+			const isLocationChanged = originalEvent.location != currentEvent.location;
 			const oldCategory = eventStore.calendarEvents.find((e) => e.id === eventId)!.category;
 			const isCategoryChanged = oldCategory != categoryId;
 			const isOpeningHoursChanged = currentEvent.openingHours;
@@ -2484,13 +2442,8 @@ const ReactModalService = {
 				currentEvent = {
 					...currentEvent,
 					id: eventStore.createEventId(),
-					extendedProps: {
-						categoryId,
-					},
-				};
-
-				// @ts-ignore
-				currentEvent['categoryId'] = categoryId;
+					category: categoryId,
+				} as unknown;
 
 				// @ts-ignore
 				currentEvent['className'] = currentEvent.priority ? `priority-${currentEvent.priority}` : undefined;
@@ -2548,12 +2501,10 @@ const ReactModalService = {
 			return true;
 		};
 
-		const handleDuplicateEventResult = (eventStore: EventStore, originalEvent: EventInput) => {
+		const handleDuplicateEventResult = (eventStore: EventStore, originalEvent: CalendarEvent) => {
 			let newEvent = Object.assign({}, originalEvent);
-			newEvent.extendedProps = { ...originalEvent.extendedProps };
 			const newId = eventStore.createEventId();
 			newEvent.id = newId;
-			newEvent.extendedProps.id = newId;
 
 			// @ts-ignore
 			newEvent.start = originalEvent.start;
@@ -2587,28 +2538,23 @@ const ReactModalService = {
 
 		const initialData = {
 			...info.event._def,
+			...info.event.extendedProps,
 			start: info.event.start,
 			end: info.event.end,
-			...info.event.extendedProps,
+			allDay: info.event.allDay,
 		};
 
 		// @ts-ignore
-		window.selectedLocation =
-			initialData.location || currentEvent.location || currentEvent?.extendedProps?.location;
+		window.selectedLocation = initialData.location ?? currentEvent.location;
 
 		// @ts-ignore
-		window.openingHours =
-			initialData.openingHours || currentEvent.openingHours || currentEvent.extendedProps?.openingHours;
+		window.openingHours = initialData.openingHours ?? currentEvent.openingHours;
 
 		// @ts-ignore
 		eventStore.modalValues['selectedLocation'] = window.selectedLocation?.address;
 		eventStore.modalValues['openingHours'] = currentEvent.openingHours;
 		const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
 
-		// // hack
-		// if (initialData.categoryId || initialData.extra?.categoryId) {
-		// 	initialData.category = initialData.categoryId || initialData.extra?.categoryId;
-		// }
 		const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData);
 
 		inputs.push({
@@ -2670,7 +2616,7 @@ const ReactModalService = {
 	},
 	openDeleteSidebarEventModal: (
 		eventStore: EventStore,
-		removeEventFromSidebarById: (eventId: string) => void,
+		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
 		event: SidebarEvent
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
@@ -2686,9 +2632,9 @@ const ReactModalService = {
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
 			confirmBtnCssClass: 'primary-button red',
-			onConfirm: () => {
-				removeEventFromSidebarById(event.id);
-				eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
+			onConfirm: async () => {
+				await removeEventFromSidebarById(event.id);
+				await eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
 
 				ReactModalService.internal.closeModal(eventStore);
 			},
@@ -2803,10 +2749,8 @@ const ReactModalService = {
 			confirmBtnCssClass: 'primary-button',
 			onConfirm: () => {
 				// @ts-ignore
-				// const file = result.value;
 				const file = eventStore.modalValues['fileToUpload'];
 
-				// const file = document.getElementById("fileToUpload");
 				if (file) {
 					const reader = new FileReader();
 					reader.readAsText(file, 'UTF-8');
@@ -2934,7 +2878,7 @@ const ReactModalService = {
 	},
 
 	openShareToTinderModal: (eventStore: EventStore) => {
-		const all = [...eventStore.allEvents];
+		const all = [...eventStore.allEventsComputed];
 		const categories = [...eventStore.categories];
 		if (!categories) return;
 
@@ -2953,10 +2897,6 @@ const ReactModalService = {
 			// let isOk = true;
 			// excludeKeywords.map((keyword) => {
 			//     let { title, description } = place;
-			//     const { title2, description2 } = place?.extendedProps;
-			//
-			//     title = title || title2;
-			//     description = description || description2 || "";
 			//
 			//     if (title.toLowerCase().indexOf(keyword) !== -1 || description?.toLowerCase().indexOf(keyword) !== -1){
 			//         isOk = false;
@@ -2968,7 +2908,7 @@ const ReactModalService = {
 			//
 			// todo complete: remove duplicates
 			// todo complete: remove categoryId
-			// todo complete: remove extendedProps.id
+			// todo complete: remove event.id
 			// todo complete: remove 'הוזמן לשעה...' from the descirption
 			// todo complete: remove 'הערה:' from the description (for example "use Euro and not Shekels")
 			//
@@ -2978,11 +2918,8 @@ const ReactModalService = {
 		all.filter(filterOutIrrelevant).forEach((x: any) => {
 			delete x['id'];
 			x['category'] = categories.find((c) => c.id)?.title;
-			if (x['extendedProps'] && x['extendedProps']['categoryId']) {
-				delete x['extendedProps']['categoryId'];
-			}
 			x['tinder'] = {
-				images: (x.images || x.extendedProps?.images)?.split('\n'),
+				images: x.images?.split('\n'),
 				more_info: x.moreInfo,
 				source: 'Admin Recommendation',
 			};

@@ -18,7 +18,7 @@ import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers
 import { runInAction } from 'mobx';
 
 export interface TriplanSidebarProps {
-	removeEventFromSidebarById: (eventId: string) => void;
+	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
 	addToEventsToCategories: (event: SidebarEvent) => void;
 	customDateRange: DateRangeFormatted;
 	setCustomDateRange: (newRange: DateRangeFormatted) => void;
@@ -149,7 +149,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const renderWarnings = () => {
 		const renderNoLocationEventsStatistics = () => {
 			const eventsWithNoLocationArr = eventStore.allEvents.filter((x) => {
-				const eventHaveNoLocation = !(x.location || (x.extendedProps && x.extendedProps.location));
+				const eventHaveNoLocation = !x.location;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
 
@@ -189,7 +189,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		const renderNoOpeningHoursEventsStatistics = () => {
 			const eventsWithNoHoursArr = eventStore.allEvents.filter((x) => {
-				const eventHaveNoHours = !(x.openingHours || (x.extendedProps && x.extendedProps.openingHours));
+				const eventHaveNoHours = !x.openingHours;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
 
@@ -306,7 +306,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS');
 		const actionsBlock = wrapWithSidebarGroup(
 			<>
-				{(eventStore.isCalendarView || eventStore.isMobile) && renderClearAll()}
+				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
 				{renderImportButtons()}
 			</>,
 			undefined,
@@ -364,10 +364,42 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderPrioritiesLegend = () => {
+		const getTotalHotelsAmount = () => {
+			const allEvents = eventStore.allEventsComputed;
+			let totalHotelsInCalendar = 0;
+			const totalHotels = allEvents.filter((x) => {
+				const categoryId = x.category ?? eventStore.categories[0]?.id;
+				if (!x.category) {
+					console.error(`event somehow don't have any category, ${x}`);
+				}
+
+				let categoryTitle: string = eventStore.categories[0]?.title;
+				if (!Number.isNaN(categoryId)) {
+					const categoryObject = eventStore.categories.find((x) => x.id.toString() == categoryId.toString());
+					if (categoryObject) {
+						categoryTitle = categoryObject.title;
+					}
+				}
+
+				const isMatching =
+					!(
+						isDessert(categoryTitle, x.title!) ||
+						isBasketball(categoryTitle, x.title!) ||
+						isFlight(x.title!)
+					) && isHotel(categoryTitle, x.title!);
+
+				const calendarEvent = eventStore.calendarEvents.find((c) => c.id == x.id);
+				if (isMatching && calendarEvent) totalHotelsInCalendar++;
+				return isMatching;
+			}).length;
+
+			return { totalHotels, totalHotelsInCalendar };
+		};
+
 		const renderPrioritiesStatistics = () => {
 			const eventsByPriority: Record<string, SidebarEvent[] & CalendarEvent[]> = {};
-			const allEvents = [...Object.values(eventStore.sidebarEvents).flat(), ...eventStore.calendarEvents];
-			// eventStore.allEvents.forEach((iter) => {
+			const allEvents = eventStore.allEventsComputed;
+
 			allEvents.forEach((iter) => {
 				const priority = iter.priority || TriplanPriority.unset;
 				eventsByPriority[priority] = eventsByPriority[priority] || [];
@@ -378,10 +410,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			const calendarEventsByPriority: Record<string, SidebarEvent[]> = {};
 			eventStore.calendarEvents.forEach((iter) => {
-				const priority =
-					iter.extendedProps && iter.extendedProps.priority
-						? iter.extendedProps.priority
-						: iter.priority || TriplanPriority.unset;
+				const priority = iter.priority || TriplanPriority.unset;
 				calendarEventsByPriority[priority] = calendarEventsByPriority[priority] || [];
 				calendarEventsByPriority[priority].push(iter as SidebarEvent);
 			});
@@ -424,37 +453,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					);
 				});
 
-			let totalHotelsInCalendar = 0;
 			const notInCalendar = TranslateService.translate(eventStore, 'NOT_IN_CALENDAR');
-			const totalHotels = allEvents.filter((x) => {
-				const categoryId = x.category ?? x.extendedProps?.category;
-				let category = categoryId;
-				if (!Number.isNaN(category)) {
-					const categoryObject = eventStore.categories.find((x) => x.id == categoryId);
-					if (categoryObject) {
-						category = categoryObject.title;
-					}
-				}
-
-				if (category == undefined) {
-					x.category = eventStore.categories[0];
-					const categoryObject = eventStore.categories[0];
-					if (categoryObject) {
-						category = categoryObject.title;
-					}
-				}
-
-				category = category?.toString();
-				const isMatching =
-					!(isDessert(category, x.title!) || isBasketball(category, x.title!) || isFlight(x.title!)) &&
-					isHotel(category, x.title!);
-
-				const calendarEvent = eventStore.calendarEvents.find((c) => c.id == x.id);
-				if (isMatching && calendarEvent) {
-					totalHotelsInCalendar++;
-				}
-				return isMatching;
-			}).length;
+			const { totalHotels, totalHotelsInCalendar } = getTotalHotelsAmount();
 			const translatedHotels = TranslateService.translate(eventStore, 'HOTELS');
 			const custom = (
 				<>
@@ -591,14 +591,14 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const borderStyle = '1px solid rgba(0, 0, 0, 0.05)';
 
 		let totalDisplayedCategories = 0;
-		const categoriesBlock = eventStore.categories.map((category, index) => {
-			const sidebarItemsCount = (eventStore.getSidebarEvents[category.id] || []).filter(
+		const categoriesBlock = eventStore.categories.map((triplanCategory, index) => {
+			const sidebarItemsCount = (eventStore.getSidebarEvents[triplanCategory.id] || []).filter(
 				(e) => e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1
 			).length;
 
 			const calendarItemsCount = eventStore.calendarEvents.filter((e) => {
 				return (
-					(e.category ?? e.extendedProps?.category) === category.id &&
+					e.category.toString() == triplanCategory.id.toString() &&
 					e.title?.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1
 				);
 			}).length;
@@ -622,11 +622,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
 			};
 
-			const isOpen = eventStore.openCategories.has(category.id);
+			const isOpen = eventStore.openCategories.has(triplanCategory.id);
 			const eventsStyle = isOpen ? openStyle : closedStyle;
 
 			return (
-				<div className={'external-events'} key={category.id}>
+				<div className={'external-events'} key={triplanCategory.id}>
 					<div
 						className={'sidebar-statistics'}
 						style={{
@@ -638,7 +638,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							borderTop: index === 0 ? borderStyle : '0',
 						}}
 						onClick={() => {
-							eventStore.toggleCategory(category.id);
+							eventStore.toggleCategory(triplanCategory.id);
 						}}
 					>
 						<i
@@ -646,8 +646,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							aria-hidden="true"
 						/>
 						<span>
-							{category.icon ? `${category.icon} ` : ''}
-							{category.title}
+							{triplanCategory.icon ? `${triplanCategory.icon} ` : ''}
+							{triplanCategory.title}
 						</span>
 						<div title={totalItemsCountTooltip}>
 							({sidebarItemsCount}/{itemsCount})
@@ -659,7 +659,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									onEditCategory(category.id);
+									onEditCategory(triplanCategory.id);
 								}}
 							/>
 							<i
@@ -669,15 +669,15 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									ReactModalService.openDeleteCategoryModal(eventStore, category.id);
+									ReactModalService.openDeleteCategoryModal(eventStore, triplanCategory.id);
 								}}
 							/>
 						</div>
 					</div>
 					<div style={eventsStyle as unknown as CSSProperties}>
-						{renderCategoryEvents(category.id)}
-						{renderNoItemsInCategoryPlaceholder(category)}
-						{renderAddSidebarEventButton(category.id)}
+						{renderCategoryEvents(triplanCategory.id)}
+						{renderNoItemsInCategoryPlaceholder(triplanCategory)}
+						{renderAddSidebarEventButton(triplanCategory.id)}
 					</div>
 				</div>
 			);
@@ -758,7 +758,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				flavor={ButtonFlavor.primary}
 				onClick={() => {
 					ReactModalService.openAddSidebarEventModal(eventStore, undefined);
-					// modalService.openAddSidebarEventModal(eventStore, undefined);
 				}}
 				style={{
 					width: '100%',
@@ -782,7 +781,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				marginBlock: '10px',
 			}}
 			onClick={() => {
-				// ModalService.openAddSidebarEventModal(eventStore, categoryId)
 				ReactModalService.openAddSidebarEventModal(eventStore, categoryId);
 			}}
 			text={TranslateService.translate(eventStore, 'ADD_EVENT.BUTTON_TEXT')}
@@ -812,9 +810,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						(x) => x.preferredTime != undefined && x.preferredTime.toString() === preferredHour.toString()
 					)
 					.filter((e) => {
-						if (e.title == undefined) {
-							// debugger;
-						}
 						return e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1;
 					})
 					.sort(sortByPriority);
@@ -897,36 +892,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						data-category={categoryId}
 						data-icon={event.icon}
 						data-description={event.description}
-						data-priority={
-							event.priority !== undefined
-								? event.priority
-								: event.extendedProps
-								? event.extendedProps.priority
-								: undefined
-						}
-						data-preferred-time={
-							event.preferredTime !== undefined
-								? event.preferredTime
-								: event.extendedProps
-								? event.extendedProps.preferredTime
-								: undefined
-						}
+						data-priority={event.priority}
+						data-preferred-time={event.preferredTime}
 						data-location={
-							Object.keys(event).includes('location')
-								? JSON.stringify(event.location)
-								: event.extendedProps && event.extendedProps.location
-								? JSON.stringify(event.extendedProps.location)
-								: undefined
+							Object.keys(event).includes('location') ? JSON.stringify(event.location) : undefined
 						}
 						data-opening-hours={
-							event.openingHours !== undefined
-								? event.openingHours
-								: event.extendedProps
-								? event.extendedProps.openingHours
-								: undefined
+							// used to be simply event.openingHours
+							Object.keys(event).includes('openingHours') ? JSON.stringify(event.openingHours) : undefined
 						}
-						data-images={event.images ?? event.extendedProps?.images} // add column 3
-						data-more-info={event.moreInfo ?? event.extendedProps?.moreInfo}
+						data-images={event.images} // add column 3
+						data-more-info={event.moreInfo}
 						key={event.id}
 					>
 						<span

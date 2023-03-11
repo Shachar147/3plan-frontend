@@ -39,4 +39,9 @@ export const TriplanTinderApiService = {
 		}
 		return {} as CreateInstagramItemsResult;
 	},
+
+	async scrapeInstagramProfile(_userid: string): Promise<CreateInstagramItemsResult> {
+		// todo complete
+		return {} as CreateInstagramItemsResult;
+	},
 };

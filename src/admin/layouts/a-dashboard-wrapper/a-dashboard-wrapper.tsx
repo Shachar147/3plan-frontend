@@ -40,12 +40,14 @@ function ADashboardWrapper(props: AdminDashboardWrapperProps) {
 	function renderSidebar() {
 		return (
 			<TriplanAdminSidebar
-				removeEventFromSidebarById={function (eventId: string): void {
+				removeEventFromSidebarById={function (eventId: string): Record<number, SidebarEvent[]> {
 					alert('remove!');
+					return {};
 				}}
 				addToEventsToCategories={function (event: SidebarEvent): void {
 					alert('add!');
 				}}
+				// @ts-ignore
 				TriplanCalendarRef={undefined}
 			/>
 		);

@@ -3,8 +3,15 @@ import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { DateSelectArg, EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
-import { GoogleTravelMode, ListViewSummaryMode, TripDataSource, ViewMode } from '../utils/enums';
-import { convertMsToHM, toDate } from '../utils/time-utils';
+import {
+	GoogleTravelMode,
+	ListViewSummaryMode,
+	TripDataSource,
+	TriplanEventPreferredTime,
+	TriplanPriority,
+	ViewMode,
+} from '../utils/enums';
+import { addDays, convertMsToHM, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -51,7 +58,7 @@ export class EventStore {
 	@observable weekendsVisible = true;
 	@observable categories: TriPlanCategory[] = [];
 	@observable sidebarEvents: Record<number, SidebarEvent[]> = {};
-	@observable calendarEvents: EventInput[] = [];
+	@observable calendarEvents: CalendarEvent[] = []; // EventInput[]
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
@@ -115,7 +122,6 @@ export class EventStore {
 			);
 			this.initBodyLocaleClassName();
 			this.initCustomDatesVisibilityBasedOnViewMode();
-			// console.log("hey2!")
 			this.isLoading = false;
 		} else {
 			const promises = [
@@ -153,34 +159,34 @@ export class EventStore {
 
 	checkIfEventHaveOpenTasks(event: SidebarEvent | CalendarEvent | AllEventsEvent | EventInput): boolean {
 		let { title, description } = event;
-		if (description == undefined && event.extendedProps) {
-			description = event.extendedProps.description;
-		}
 		const { taskKeywords } = ListViewService._initSummaryConfiguration();
 		const isTodoComplete = taskKeywords.find(
 			(k: string) =>
 				title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 ||
-				description?.toLowerCase().indexOf(k.toLowerCase()) !== -1
+				(description && description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
 		);
+
 		return !!isTodoComplete;
 	}
 
 	// --- computed -------------------------------------------------------------
 
-	reduceEventsEndDateToFitDistanceResult = (filteredEvents: EventInput[]): EventInput[] => {
+	reduceEventsEndDateToFitDistanceResult = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
 		// only if not in filter mode - add driving instructions
 		if (filteredEvents.length === this.calendarEvents.length) {
 			filteredEvents = filteredEvents.sort((a, b) => {
 				return toDate(a.start).getTime() - toDate(b.start).getTime();
 			});
 
-			const extractDetails = (event: EventInput) => {
-				const location = event.extendedProps?.location?.address;
+			const extractDetails = (event: CalendarEvent) => {
+				const location = event.location?.address;
 				const title = event.title;
 				const startDate = new Date(event.start!.toString());
-				const endDate = new Date(event.end!.toString());
+				const endDate = event.allDay
+					? addDays(new Date(event.start!.toString()), 1)
+					: new Date(event.end!.toString());
 				const id = event.id!;
-				const coordinate = {
+				const coordinate: any = {
 					lat: event?.location?.latitude,
 					lng: event?.location?.longitude,
 				};
@@ -198,7 +204,7 @@ export class EventStore {
 						.filter(
 							(e, idx) =>
 								new Date(e.start!.toString()).getTime() >= currentEvent.endDate.getTime() &&
-								e.extendedProps?.location &&
+								e.location &&
 								!e.allDay &&
 								e.id !== currentEvent.id
 						)
@@ -225,7 +231,7 @@ export class EventStore {
 								currentEvent.endDate.toLocaleTimeString() !== '12:00:00 AM'
 							) {
 								if (currentEvent?.location !== details?.location) {
-									console.log(currentEvent.title, ' -> ', details.title);
+									// console.log(currentEvent.title, ' -> ', details.title);
 
 									const key = currentEvent.id!;
 									eachEventAndItsDirections[key] = eachEventAndItsDirections[key] || [];
@@ -237,7 +243,7 @@ export class EventStore {
 										details.coordinate
 									);
 									const distance = this.distanceResults.get(distanceKey);
-									console.log(distance);
+									// console.log(distance);
 									eachEventAndItsDirections[key].push({
 										target: {
 											id: details.id,
@@ -249,7 +255,6 @@ export class EventStore {
 									});
 								}
 							} else {
-								console.log('----------------------');
 								break;
 							}
 							i++;
@@ -259,29 +264,18 @@ export class EventStore {
 			});
 			// console.info(eachEventAndItsDirections);
 
-			const uuidv4 = () => {
-				// @ts-ignore
-				return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-					(c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
-				);
-			};
-
-			const newEvents: EventInput[] = [];
+			const newEvents: CalendarEvent[] = [];
 			filteredEvents.forEach((e) => {
 				// newEvents.push(e);
 				if (eachEventAndItsDirections[e.id!]) {
 					let minStartDate = new Date(new Date().setFullYear(3000));
 					eachEventAndItsDirections[e.id!].forEach((obj: any) => {
-						// debugger;
-
 						// duration is not longer then 3 hours (probably flight) and more then 5 minutes
 						if (
 							obj.distance &&
 							obj.distance.duration_value < 60 * 60 * 3 &&
 							obj.distance.duration_value > 60 * 5
 						) {
-							// const priority = TriplanPriority.must;
-
 							const endDate = new Date(obj.target.arrivalTime);
 							const startDate = new Date(endDate.getTime() - obj.distance.duration_value * 1000);
 
@@ -289,26 +283,7 @@ export class EventStore {
 								minStartDate = startDate;
 							}
 
-							// newEvents.push({
-							//     // title: `driving from ${e.title} to ${obj!.target!.title}`,
-							//     title: `${obj.distance.duration} ${this.travelMode}`,
-							//     start: startDate,
-							//     end: endDate,
-							//     id: uuidv4(),
-							//     allDay: false,
-							//     icon: '✈',
-							//     className: `driving-event`,
-							//     priority, // todo complete
-							//     // duration: string // todo complete
-							//     // extendedProps? : any
-							//     // preferredTime? : TriplanEventPreferredTime,
-							//     // description? : string
-							//     // location? : LocationData
-							//     // openingHours? : WeeklyOpeningHoursData
-							//     extendedProps: {
-							//         priority
-							//     }
-							// } as CalendarEvent)
+							// todo complete - add a locked driving event here?
 						}
 					});
 
@@ -319,8 +294,7 @@ export class EventStore {
 						console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
 						// e.end = minStartDate;
 						if (problem) e.className += ' red-border';
-						e.extendedProps = e.extendedProps || {};
-						e.extendedProps.suggestedEndTime = minStartDate;
+						e.suggestedEndTime = minStartDate;
 					}
 				}
 
@@ -328,34 +302,22 @@ export class EventStore {
 			});
 
 			return newEvents;
-			// console.log(filteredEvents);
 		}
 
 		return filteredEvents;
 	};
 
 	@computed
-	get filteredCalendarEvents(): EventInput[] {
+	get filteredCalendarEvents(): CalendarEvent[] {
 		let filteredEvents = this.getJSCalendarEvents().filter(
 			(event) =>
 				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
-				(this.showOnlyEventsWithNoLocation
-					? !(
-							event.location != undefined ||
-							(event.extendedProps && event.extendedProps.location != undefined)
-					  )
-					: true) &&
-				(this.showOnlyEventsWithNoOpeningHours
-					? !(
-							event.openingHours != undefined ||
-							(event.extendedProps && event.extendedProps.openingHours != undefined)
-					  )
-					: true) &&
+				(this.showOnlyEventsWithNoLocation ? !(event.location != undefined) : true) &&
+				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
 		);
 
 		filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
-
 		return filteredEvents;
 	}
 
@@ -395,15 +357,8 @@ export class EventStore {
 				.filter(
 					(event) =>
 						event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
-						(this.showOnlyEventsWithNoLocation
-							? !(event.location || (event.extendedProps && event.extendedProps.location))
-							: true) &&
-						(this.showOnlyEventsWithNoOpeningHours
-							? !(
-									event.openingHours != undefined ||
-									(event.extendedProps && event.extendedProps.openingHours != undefined)
-							  )
-							: true) &&
+						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
+						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
 				);
 		});
@@ -431,6 +386,22 @@ export class EventStore {
 	}
 
 	@computed
+	get allEventsComputed() {
+		return [...this.allSidebarEvents, ...this.getJSCalendarEvents()];
+	}
+
+	@computed
+	get allEventsFilteredComputed() {
+		return this.allEventsComputed.filter(
+			(event) =>
+				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
+				(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
+				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
+				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
+		);
+	}
+
+	@computed
 	get isFiltered(): boolean {
 		return (
 			!!this.searchValue?.length ||
@@ -449,7 +420,8 @@ export class EventStore {
 
 	@action
 	changeEvent(changeInfo: any) {
-		const newEvent = changeInfo.event;
+		const newEvent = { ...changeInfo.event };
+
 		const eventId = changeInfo.event.id;
 		const storedEvent = this.calendarEvents.find((e) => e.id == eventId);
 		if (storedEvent) {
@@ -474,16 +446,16 @@ export class EventStore {
 		return false;
 	}
 
-	@action
-	addEvent(selectInfo: DateSelectArg, title: string | null) {
-		this.calendarEvents.push({
-			id: this.createEventId(),
-			title: title || 'New Event',
-			start: selectInfo.start,
-			end: selectInfo.end,
-			allDay: selectInfo.allDay,
-		});
-	}
+	// @action
+	// addEvent(selectInfo: DateSelectArg, title: string | null) {
+	// 	this.calendarEvents.push({
+	// 		id: this.createEventId(),
+	// 		title: title || 'New Event',
+	// 		start: selectInfo.start,
+	// 		end: selectInfo.end,
+	// 		allDay: selectInfo.allDay,
+	// 	} as unknown as CalendarEvent);
+	// }
 
 	@action
 	deleteEvent(eventId: string) {
@@ -498,42 +470,41 @@ export class EventStore {
 	}
 
 	@action
-	setCalendarEvents(newCalenderEvents: EventInput[]) {
+	async setCalendarEvents(newCalenderEvents: CalendarEvent[]) {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
-		this.calendarEvents = this.calendarEvents.map((x: EventInput) => lockOrderedEvents(x));
+		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(x));
 
 		// update local storage
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
 		this.allowRemoveAllCalendarEvents = false;
 		const defaultEvents = this.getJSCalendarEvents() as CalendarEvent[]; // todo: make sure this conversion not fucking things up
-		this.dataService.setCalendarEvents(defaultEvents, this.tripName);
+		await this.dataService.setCalendarEvents(defaultEvents, this.tripName);
 	}
 
 	@action
-	setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>) {
+	async setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>) {
 		this.sidebarEvents = newSidebarEvents;
 		// if (!this.showOnlyEventsWithNoOpeningHours && !this.searchValue && !this.showOnlyEventsWithTodoComplete && !this.showOnlyEventsWithTodoComplete)
-		this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
+		await this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
 	}
 
 	@action
 	setCategories(newCategories: TriPlanCategory[]) {
-		this.categories = newCategories;
-		this.dataService.setCategories(this.categories, this.tripName);
+		const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
+		this.categories = newCategoriesSorted;
+		this.dataService.setCategories(newCategoriesSorted, this.tripName);
 	}
 
 	@action
-	setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]) {
+	async setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]) {
 		if (this.tripName == '') return;
 
 		// if (containsDuplicates(newAllEvents.map((x: SidebarEvent | CalendarEvent) => x.id))){
 		//     // alert("error! contains duplicates!");
-		//     // debugger;
 		// }
 
-		// debugger;
 		this.allEvents = [...newAllEvents].map((x) => {
 			if ('start' in x) {
 				// @ts-ignore
@@ -548,7 +519,7 @@ export class EventStore {
 
 		// update local storage
 		if (this.allEventsTripName === this.tripName) {
-			this.dataService.setAllEvents(this.allEvents, this.tripName);
+			await this.dataService.setAllEvents(this.allEvents, this.tripName);
 		}
 	}
 
@@ -559,7 +530,7 @@ export class EventStore {
 		const eventToCategory: any = {};
 		const eventIdToEvent: any = {};
 		this.allEvents.forEach((e) => {
-			eventToCategory[e.id] = e.category ? e.category : e.extendedProps ? e.extendedProps.categoryId : undefined;
+			eventToCategory[e.id] = e.category;
 			eventIdToEvent[e.id] = e;
 		});
 
@@ -569,14 +540,10 @@ export class EventStore {
 			const sidebarEvent = eventIdToEvent[eventId];
 			delete sidebarEvent.start;
 			delete sidebarEvent.end;
-			if (sidebarEvent.extendedProps) {
-				sidebarEvent.priority = sidebarEvent.extendedProps.priority;
-			}
-			if (!sidebarEvent.preferredTime) {
-				sidebarEvent.preferredTime = sidebarEvent.extendedProps
-					? sidebarEvent.extendedProps.preferredTime
-					: sidebarEvent.preferredTime;
-			}
+
+			sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
+			sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
+
 			newEvents[categoryId] = newEvents[categoryId] || [];
 			newEvents[categoryId].push(sidebarEvent);
 		});
@@ -662,7 +629,6 @@ export class EventStore {
 	@action
 	async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean) {
 		const existingTrips = await this.dataService.getTrips(this);
-		// console.log('existing', existingTrips, 'type', this.dataService.getDataSourceName());
 
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
@@ -789,7 +755,7 @@ export class EventStore {
 
 	// --- private functions ----------------------------------------------------
 
-	getJSCalendarEvents(): EventInput[] {
+	getJSCalendarEvents(): CalendarEvent[] {
 		return toJS(this.calendarEvents);
 	}
 
@@ -798,64 +764,27 @@ export class EventStore {
 		// return toJS(this.sidebarEvents);
 	}
 
-	updateEvent(storedEvent: SidebarEvent | EventInput | any, newEvent: SidebarEvent | EventInput | any) {
+	updateEvent(storedEvent: SidebarEvent | CalendarEvent | any, newEvent: SidebarEvent | CalendarEvent | any) {
 		storedEvent.title = newEvent.title;
 		storedEvent.allDay = newEvent.allDay;
-		storedEvent.start = newEvent.start || storedEvent.start;
-		storedEvent.end = newEvent.end || storedEvent.end;
-		storedEvent.icon =
-			newEvent.icon != undefined
-				? newEvent.icon
-				: newEvent.extendedProps
-				? newEvent.extendedProps.icon
-				: storedEvent.extendedProps
-				? storedEvent.extendedProps.icon
-				: storedEvent.icon;
-		storedEvent.priority =
-			newEvent.priority != undefined
-				? newEvent.priority
-				: newEvent.extendedProps
-				? newEvent.extendedProps.priority
-				: storedEvent.priority;
-		storedEvent.description =
-			newEvent.description != undefined
-				? newEvent.description
-				: newEvent.extendedProps
-				? newEvent.extendedProps.description
-				: storedEvent.description;
+		storedEvent.start = newEvent.start ?? storedEvent.start;
+		storedEvent.end = newEvent.end ?? storedEvent.end;
+		storedEvent.icon = newEvent.icon ?? storedEvent.icon;
+		storedEvent.priority = newEvent.priority ?? storedEvent.priority;
+		storedEvent.description = newEvent.description ?? storedEvent.description;
 		storedEvent.className = `priority-${storedEvent.priority}`;
 		// storedEvent.className = newEvent.className || storedEvent.className;
 
-		storedEvent.extendedProps = storedEvent.extendedProps || {};
-		if (newEvent.extendedProps) {
-			Object.keys(newEvent.extendedProps).forEach((key) => {
-				storedEvent.extendedProps![key] = newEvent.extendedProps[key];
-			});
-		}
-		storedEvent.extendedProps.icon = storedEvent.icon;
-		storedEvent.extendedProps.priority = storedEvent.priority;
-		storedEvent.extendedProps.description = storedEvent.description;
+		storedEvent.location = Object.keys(newEvent).includes('location') ? newEvent.location : storedEvent.location;
 
-		storedEvent.extendedProps.location = Object.keys(newEvent).includes('location')
-			? newEvent.location
-			: storedEvent.extendedProps.location
-			? storedEvent.extendedProps.location
-			: storedEvent.location;
-		storedEvent.location = storedEvent.extendedProps.location;
-
-		storedEvent.extendedProps.openingHours = Object.keys(newEvent).includes('openingHours')
+		storedEvent.openingHours = Object.keys(newEvent).includes('openingHours')
 			? newEvent.openingHours
-			: storedEvent.extendedProps.openingHours
-			? storedEvent.extendedProps.openingHours
 			: storedEvent.openingHours;
-		storedEvent.openingHours = storedEvent.extendedProps.openingHours;
 
 		// add column 7
-		storedEvent.extendedProps.images = newEvent.images || newEvent.extendedProps?.images;
-		storedEvent.images = storedEvent.extendedProps.images;
+		storedEvent.images = newEvent.images || storedEvent.images;
 
-		storedEvent.extendedProps.moreInfo = newEvent.moreInfo || newEvent.extendedProps?.moreInfo;
-		storedEvent.moreInfo = storedEvent.extendedProps.moreInfo;
+		storedEvent.moreInfo = newEvent.moreInfo ?? storedEvent.moreInfo;
 
 		// @ts-ignore
 		const millisecondsDiff = storedEvent.end - storedEvent.start;
@@ -866,39 +795,17 @@ export class EventStore {
 
 	updateSidebarEvent(storedEvent: SidebarEvent, newEvent: SidebarEvent) {
 		storedEvent.title = newEvent.title;
-		storedEvent.icon = newEvent.icon != undefined ? newEvent.icon : storedEvent.icon;
-		storedEvent.duration = newEvent.duration || storedEvent.duration;
-		storedEvent.extendedProps =
-			newEvent.extendedProps != undefined
-				? newEvent.extendedProps
-				: storedEvent.extendedProps
-				? storedEvent.extendedProps
-				: {};
-		storedEvent.priority = newEvent.priority != undefined ? newEvent.priority : storedEvent.priority;
-		storedEvent.preferredTime =
-			newEvent.preferredTime != undefined ? newEvent.preferredTime : storedEvent.preferredTime;
-		storedEvent.description = newEvent.description != undefined ? newEvent.description : storedEvent.description;
+		storedEvent.icon = newEvent.icon ?? storedEvent.icon;
+		storedEvent.duration = newEvent.duration ?? storedEvent.duration;
+		storedEvent.priority = newEvent.priority ?? storedEvent.priority;
+		storedEvent.preferredTime = newEvent.preferredTime ?? storedEvent.preferredTime;
+		storedEvent.description = newEvent.description ?? storedEvent.description;
 		storedEvent.location = Object.keys(newEvent).includes('location') ? newEvent.location : storedEvent.location;
 		storedEvent.openingHours = Object.keys(newEvent).includes('openingHours')
 			? newEvent.openingHours
 			: storedEvent.openingHours;
 		storedEvent.images = newEvent.images; // add column 6
 		storedEvent.moreInfo = newEvent.moreInfo;
-
-		if (newEvent.extendedProps) {
-			Object.keys(newEvent.extendedProps).forEach((key) => {
-				storedEvent.extendedProps![key] = newEvent.extendedProps[key];
-			});
-
-			if (storedEvent.extendedProps.location) {
-				delete storedEvent.extendedProps.location;
-			}
-
-			// ?
-			if (storedEvent.extendedProps.openingHours) {
-				delete storedEvent.extendedProps.openingHours;
-			}
-		}
 	}
 
 	getCurrentDirection() {
@@ -949,7 +856,6 @@ export class EventStore {
 
 	async waitIfNeeded(startTime: number) {
 		const gap = minLoadTimeInSeconds * 1000 - (new Date().getTime() - startTime);
-		// console.log('gap in milliseconds: ', gap);
 		if (gap > 0) {
 			await new Promise((r) => setTimeout(r, gap));
 		}

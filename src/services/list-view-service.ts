@@ -3,12 +3,13 @@ import moment from 'moment/moment';
 import TranslateService from './translate-service';
 import { EventInput } from '@fullcalendar/react';
 import { getEventDueDate, toDate } from '../utils/time-utils';
-import { LocationData } from '../utils/interfaces';
+import { CalendarEvent, LocationData } from '../utils/interfaces';
 import { runInAction } from 'mobx';
 import { GoogleTravelMode, ListViewSummaryMode, TriplanPriority } from '../utils/enums';
 import { priorityToColor } from '../utils/consts';
 import { BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString } from '../utils/utils';
 import { getEventDivHtml } from '../utils/ui-utils';
+import _ from 'lodash';
 
 const ListViewService = {
 	_getDayName: (dateStr: string, locale: string) => {
@@ -70,7 +71,7 @@ const ListViewService = {
 					indentOrGroupKeys[orGroupKey].push(indentText);
 				} else {
 					error = true;
-					debugger;
+					console.error('error! or-group regex failed!');
 				}
 			});
 
@@ -256,7 +257,7 @@ const ListViewService = {
 			orBackgroundStyle,
 		};
 	},
-	_sortEvents: (calendarEvents: EventInput[]) => {
+	_sortEvents: (calendarEvents: CalendarEvent[]) => {
 		return calendarEvents.sort((a, b) => {
 			const aTime = toDate(a.start).getTime();
 			const bTime = toDate(b.start).getTime();
@@ -275,7 +276,7 @@ const ListViewService = {
 		const dayTitle = `${dtStartName} - ${dtStart}`;
 		return dayTitle;
 	},
-	_buildCalendarEventsPerDay: (eventStore: EventStore, calendarEvents: EventInput[]) => {
+	_buildCalendarEventsPerDay: (eventStore: EventStore, calendarEvents: CalendarEvent[]) => {
 		const calendarEventsPerDay: Record<string, EventInput[]> = {};
 
 		let lastDayTitle = '';
@@ -289,8 +290,7 @@ const ListViewService = {
 		const sortedEvents = ListViewService._sortEvents(calendarEvents);
 		sortedEvents.forEach((event, index) => {
 			// clone event
-			event.extendedProps = event.extendedProps || {};
-			const clonedEvent = { ...event, ...event.extendedProps };
+			const clonedEvent = _.cloneDeep(event);
 
 			// day title
 			const dayTitle = ListViewService._getEventDayTitle(eventStore, clonedEvent);
@@ -793,7 +793,7 @@ const ListViewService = {
 					parentIsOr = x.or;
 				}
 
-				const thisLocation = x.event.extendedProps.location;
+				const thisLocation = x.event.location;
 				if (prevLocation && thisLocation && prevLocation.address != thisLocation.address) {
 					loggerArr.push('~ ' + prevTitle + ' -> ' + x.event.title);
 
@@ -871,9 +871,6 @@ const ListViewService = {
 				}
 				previousDetail = x;
 			});
-
-			// debug
-			// console.log(loggerArr.join("\n"));
 		});
 
 		return summaryPerDay;
@@ -900,11 +897,8 @@ const ListViewService = {
 		return summaryPerDay;
 	},
 	buildHTMLSummary: (eventStore: EventStore) => {
-		let calendarEvents = eventStore.calendarEvents;
+		let calendarEvents = eventStore.filteredCalendarEvents; // used to be calendarEvents but now it also considering search and filters
 		const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
-
-		// debug
-		// calendarEvents = calendarEvents.filter((x) => (toDate(x.start).toLocaleDateString() === '12/6/2022');
 
 		// build calendar events per day
 		const calendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(

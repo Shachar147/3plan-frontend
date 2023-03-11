@@ -105,10 +105,6 @@ const ImportService = {
 				nc = str[c + 1];
 			arr[row] = arr[row] || [];
 			arr[row][col] = arr[row][col] || '';
-			//
-			// if (a) {
-			//     debugger;
-			// }
 
 			if (cc == '"' && quote && nc == '"') {
 				arr[row][col] += cc;
@@ -172,8 +168,6 @@ const ImportService = {
 		// const lines = result.replace(/\r/ig, '').split('\n').map((l) => l.split(','));
 
 		const lines = ImportService.CSVToArray(result);
-
-		// debugger;
 
 		const keyToAttr = {
 			[TranslateService.translate(eventStore, 'TEMPLATE.ICON')]: 'icon',
@@ -378,7 +372,6 @@ const ImportService = {
 			categoryIcons[categoryId] = iconMax;
 		});
 
-		// debugger;
 		categoriesToAdd = categoriesToAdd.map((category) => {
 			// @ts-ignore
 			category.icon =

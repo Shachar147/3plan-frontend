@@ -1,7 +1,7 @@
 import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
+import { buildCalendarEvent, CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
-import FullCalendar, { EventContentArg, EventInput } from '@fullcalendar/react';
+import FullCalendar, { EventContentArg } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
@@ -12,8 +12,8 @@ import { defaultTimedEventDuration } from '../../utils/defaults';
 import TranslateService from '../../services/translate-service';
 import {
 	addDays,
+	addHours,
 	addHoursToDate,
-	fullCalendarFormatDate,
 	getDateRangeString,
 	isTodayInDateRange,
 	toDate,
@@ -98,24 +98,29 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		let location = eventEl.getAttribute('data-location');
 		let openingHours = eventEl.getAttribute('data-opening-hours');
 		let images = eventEl.getAttribute('data-images'); // add column 1
+
 		let moreInfo = eventEl.getAttribute('data-more-info');
 
-		return {
+		const event = {
 			title,
 			id,
 			duration,
 			className: priority ? `priority-${priority}` : undefined,
+			category: categoryId,
+			description,
+			priority,
+			icon: eventIcon,
+			preferredTime,
+			location: location ? JSON.parse(location) : undefined,
+			openingHours: openingHours ? JSON.parse(openingHours) : undefined,
+			images, // add column 2
+			moreInfo,
+		};
+
+		return {
+			...event,
 			extendedProps: {
-				id,
-				categoryId,
-				description,
-				priority,
-				icon: eventIcon,
-				preferredTime,
-				location: location ? JSON.parse(location) : undefined,
-				openingHours,
-				images, // add column 2
-				moreInfo,
+				...event,
 			},
 		};
 	};
@@ -147,22 +152,24 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// callback
 		props.onEventReceive && props.onEventReceive(info.event.id);
 
-		const { start, end, title, id, classNames, extendedProps, allDay } = info.event;
+		const { id, classNames } = info.event;
 		const event = {
-			start,
-			end,
-			title,
-			id,
+			...info.event._def,
+			start: info.event.start,
+			end: info.event.end,
+			id: info.event._def.publicId,
+			...info.event,
+			...info.event.extendedProps,
 			className: classNames ? classNames.join(' ') : undefined,
-			extendedProps,
-			allDay,
 		};
+
+		const calendarEvent = buildCalendarEvent(event) as CalendarEvent;
 
 		// remove event from Fullcalendar internal store
 		info.event.remove();
 
 		// add it to our store (so it'll be updated on fullcalendar via calendarEvents prop)
-		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== id), event]);
+		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== id), calendarEvent]);
 
 		refreshSources();
 	};
@@ -172,7 +179,23 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const handleEventChange = (changeInfo: any) => {
-		eventStore.changeEvent(changeInfo);
+		// when changing "allDay" event to be regular event, it has no "end".
+		// the following lines fix it by extracting start&end from _instance.range, and converting them to the correct timezone.
+		const hoursToAdd = changeInfo.event._instance.range.start.getTimezoneOffset() / 60;
+		const dtStart = addHours(changeInfo.event._instance.range.start, hoursToAdd);
+		const dtEnd = addHours(changeInfo.event._instance.range.end, hoursToAdd);
+
+		const newEvent = {
+			...changeInfo.event._def,
+			...changeInfo.event,
+			...changeInfo.event.extendedProps,
+			allDay: changeInfo.event.allDay,
+			start: dtStart,
+			end: dtEnd,
+			hasEnd: !changeInfo.event.allDay,
+		};
+
+		eventStore.changeEvent({ event: newEvent });
 	};
 
 	const refreshSources = () => {
@@ -212,12 +235,23 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 	};
 
-	const renderEventContent = (eventContentArg: EventContentArg) => {
+	const renderEventContent = (info: EventContentArg) => {
 		let eventEl = document.createElement('div');
 		eventEl.classList.add('triplan-calendar-event');
 
-		const event = eventContentArg.event as EventInput;
-		eventEl.innerHTML = getEventDivHtml(eventStore, event);
+		const event = info.event;
+
+		const json = {
+			// id: event._def.publicId,
+			...event,
+			...event.extendedProps,
+			...event._def,
+			start: event.start ?? event._instance?.range?.start,
+			end: event.end ?? event._instance?.range?.end,
+		};
+		const calendarEvent = buildCalendarEvent(json) as CalendarEvent;
+
+		eventEl.innerHTML = getEventDivHtml(eventStore, calendarEvent);
 
 		let arrayOfDomNodes = [eventEl];
 		return { domNodes: arrayOfDomNodes };
@@ -301,7 +335,13 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			droppable={true}
 			plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
 			ref={calendarComponentRef}
-			events={eventStore.filteredCalendarEvents}
+			events={eventStore.filteredCalendarEvents.map((x) => ({
+				...x,
+				extendedProps: {
+					...x,
+				},
+				className: x.className ?? `priority-${x.priority}`,
+			}))}
 			eventReceive={onEventReceive}
 			eventClick={onEventClick}
 			eventChange={handleEventChange}
@@ -309,7 +349,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			locale={eventStore.calendarLocalCode}
 			direction={eventStore.getCurrentDirection()}
 			buttonIcons={false} // show the prev/next text
-			weekNumbers={true}
+			// weekNumbers={true}
 			navLinks={true} // can click day/week names to navigate views
 			dayMaxEvents={true} // allow "more" link when too many events
 			selectable={true}

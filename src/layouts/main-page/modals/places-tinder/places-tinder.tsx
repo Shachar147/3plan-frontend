@@ -1,12 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import { EventStore } from '../../../../stores/events-store';
-import placesData from './data';
 import SelectInput, { SelectInputOption } from '../../../../components/inputs/select-input/select-input';
 import './place-tinder.scss';
 import TranslateService from '../../../../services/translate-service';
-// @ts-ignore
-// import ImageGallery from 'react-image-gallery';
 import '../../../../stylesheets/react-image-gallery.scss';
 import Button, { ButtonFlavor } from '../../../../components/common/button/button';
 import ReactModalService from '../../../../services/react-modal-service';
@@ -16,8 +13,7 @@ import { getClasses } from '../../../../utils/utils';
 // @ts-ignore
 import Slider from 'react-slick';
 import { TriplanTinderApiService } from '../../../../admin/services/triplan-tinder-api-service';
-import { observable, runInAction } from 'mobx';
-import { TinderItem } from '../../../../admin/helpers/interfaces';
+import { runInAction } from 'mobx';
 import { getTinderServerAddress } from '../../../../config/config';
 
 interface PlacesTinderProps {
@@ -47,7 +43,6 @@ function PlacesTinder(props: PlacesTinderProps) {
 
 	const [currIdx, setCurrIdx] = useState(0);
 	const [destination, setDestination] = useState<string | null>(props.destination || null);
-	// const placesDataMap: Record<string, any[]> = useMemo(() => placesData, []);
 
 	const [hasInit, setHasInit] = useState(false);
 	const [placesDataMap, setPlacesDataMap] = useState<Record<string, any[]>>({});
@@ -121,9 +116,14 @@ function PlacesTinder(props: PlacesTinderProps) {
 			.replace(/(http:\/\/[^\s]+)/g, "<a href='$1' target='_blank'>$1</a>")
 			.replace(/(https:\/\/[^\s]+)/g, "<a href='$1' target='_blank'>$1</a>");
 
-		// console.log("after", description);
-
 		return description;
+	}
+
+	function handleLocalMedia(x: string): string {
+		if (x.startsWith('/media')) {
+			x = `${getTinderServerAddress()}${x}`;
+		}
+		return x;
 	}
 
 	function like() {
@@ -139,8 +139,8 @@ function PlacesTinder(props: PlacesTinderProps) {
 			(currentPlace?.tinder || currentPlace)?.downloadedImages ??
 			(currentPlace?.tinder || currentPlace)?.images ??
 			[];
-		currentPlace['videos'] = videos;
-		currentPlace['images'] = images;
+		currentPlace['videos'] = videos.map(handleLocalMedia);
+		currentPlace['images'] = images.map(handleLocalMedia);
 		if (!currentPlace['category'] || currentPlace['category'] == '') {
 			currentPlace['category'] = TranslateService.translate(eventStore, 'GENERAL_CATEGORY.TITLE');
 		}
@@ -171,6 +171,8 @@ function PlacesTinder(props: PlacesTinderProps) {
 		const initialData = {
 			...currentPlace,
 			description,
+			moreInfo: currentPlace.moreInfo ?? currentPlace.more_info,
+			title: currentPlace.title ?? currentPlace.name,
 			images: (currentPlace.tinder || currentPlace).images.join('\n'),
 		};
 

@@ -25,6 +25,7 @@ import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector';
+import _ from 'lodash';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -80,13 +81,14 @@ function MainPage(props: MainPageProps) {
 		}
 	}, [tripName, locale]);
 
+	// todo: remove once we'll remove allEvents from trip.
 	useEffect(() => {
 		// update idtoevent, idtocategory and allevents array
-		const arr = [...eventStore.allEvents];
+		const arr = [...eventStore.allEventsComputed];
 		const idToEvent: Record<string, SidebarEvent> = {};
 		const idToCategory: Record<string, number> = {};
 
-		const sidebarEvents: Record<number, SidebarEvent[]> = eventStore.getSidebarEvents;
+		const sidebarEvents: Record<number, SidebarEvent[]> = eventStore.sidebarEvents;
 
 		Object.keys(sidebarEvents).map((category: string) => {
 			const categoryId = Number(category);
@@ -101,39 +103,36 @@ function MainPage(props: MainPageProps) {
 			});
 		});
 
-		const existingIds = eventStore.allEvents.map((e) => e.id.toString());
+		const existingIds = eventStore.allEventsComputed.map((e) => e.id.toString());
 		Object.keys(idToEvent).forEach((eventId) => {
 			if (existingIds.indexOf(eventId) === -1) {
 				arr.push({ ...idToEvent[eventId], category: idToCategory[eventId].toString() });
 			}
 		});
 
-		setTimeout(() => {
-			eventStore.setAllEvents(arr);
-		}, 500);
-	}, [eventStore.sidebarEvents]);
+		// todo check
+		eventStore.setAllEvents(arr);
+		// setTimeout(() => {
+		// 	eventStore.setAllEvents(arr);
+		// }, 500);
+	}, [eventStore.allEventsComputed]);
 
 	function addEventToSidebar(event: any): boolean {
-		const newEvents: Record<string, SidebarEvent[]> = { ...eventStore.sidebarEvents };
-		let category = eventsToCategories[event.id];
+		const newEvents: Record<string, SidebarEvent[]> = _.cloneDeep(eventStore.sidebarEvents);
+
+		let category = eventStore.categories.find((id) => id === event.category)?.id?.toString();
 		if (!category) {
-			const findEvent = eventStore.allEvents.find((x) => x.id.toString() === event.id.toString());
+			const findEvent = [...eventStore.allSidebarEvents, ...eventStore.calendarEvents].find(
+				(x) => x.id!.toString() === event.id.toString()
+			);
 			if (findEvent) {
 				category = findEvent.category;
-				if (!category && findEvent && findEvent.extendedProps) {
-					category = findEvent.extendedProps.categoryId;
-				}
 			}
 		}
 
 		if (category != undefined) {
 			delete event.start;
 			delete event.end;
-
-			if (event.extendedProps) {
-				event.preferredTime = event.extendedProps.preferredTime;
-			}
-
 			newEvents[category] = newEvents[category] || [];
 			newEvents[category].push(event);
 			eventStore.setSidebarEvents(newEvents);
@@ -143,7 +142,7 @@ function MainPage(props: MainPageProps) {
 		}
 	}
 
-	function removeEventFromSidebarById(eventId: number | string) {
+	async function removeEventFromSidebarById(eventId: number | string): Promise<Record<number, SidebarEvent[]>> {
 		const newEvents: Record<number, SidebarEvent[]> = { ...eventStore.sidebarEvents };
 		const newEventsToCategories = { ...eventsToCategories };
 		Object.keys(newEvents).forEach((category) => {
@@ -161,12 +160,17 @@ function MainPage(props: MainPageProps) {
 			),
 			eventStore.allEvents.find((e) => e.id.toString() === eventId.toString()),
 		] as CalendarEvent[];
-		eventStore.setCalendarEvents(newCalendarEvents);
+		await eventStore.setCalendarEvents(newCalendarEvents);
 
 		setEventsToCategories(newEventsToCategories);
-		setTimeout(() => {
-			eventStore.setSidebarEvents(newEvents);
-		}, 500);
+
+		// todo check
+		await eventStore.setSidebarEvents(newEvents);
+		// setTimeout(() => {
+		// 	eventStore.setSidebarEvents(newEvents);
+		// }, 500);
+
+		return newEvents;
 	}
 
 	function renderListView() {
@@ -238,7 +242,7 @@ function MainPage(props: MainPageProps) {
 						resize: 'vertical',
 						overflow: 'auto',
 					}}
-					key={JSON.stringify(eventStore.allEvents)}
+					key={JSON.stringify(eventStore.allEventsFilteredComputed)}
 				>
 					<MapContainer isCombined />
 				</div>
@@ -276,7 +280,7 @@ function MainPage(props: MainPageProps) {
 	function addToEventsToCategories(newEvent: any) {
 		setEventsToCategories({
 			...eventsToCategories,
-			[newEvent.id]: newEvent.extendedProps.categoryId,
+			[newEvent.id]: newEvent.category,
 		});
 	}
 

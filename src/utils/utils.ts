@@ -2,7 +2,7 @@ import { GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority } from './
 import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
-import { Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
+import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');
@@ -222,32 +222,39 @@ export function containsDuplicates(array: any[]) {
 	return array.length !== new Set(array).size;
 }
 
-export function lockOrderedEvents(calendarEvent: EventInput) {
+export function lockOrderedEvents(calendarEvent: CalendarEvent) {
 	// const isOrdered = isEventAlreadyOrdered(calendarEvent);
 	// if (isOrdered) {
-	//     calendarEvent.editable = false;
-	//     calendarEvent.durationEditable = false;
-	//     calendarEvent.disableDragging = true;
-	//     calendarEvent.classNames = calendarEvent.classNames ? `${calendarEvent.classNames.toString().replace(' locked','')} locked` : 'locked';
+	// 	// @ts-ignore
+	// 	calendarEvent.editable = false;
+	// 	// @ts-ignore
+	// 	calendarEvent.durationEditable = false;
+	// 	// @ts-ignore
+	// 	calendarEvent.disableDragging = true;
+	// 	// @ts-ignore
+	// 	calendarEvent.classNames = calendarEvent.className
+	// 		? `${calendarEvent.className.toString().replace(' locked', '')} locked`
+	// 		: 'locked';
 	// } else {
-	//     calendarEvent.editable = true;
-	//     calendarEvent.durationEditable = true;
-	//     calendarEvent.disableDragging = false;
-	//     console.log(calendarEvent.classNames)
-	//     // try {
-	//     //     calendarEvent.classNames = calendarEvent.classNames ? calendarEvent.classNames.replaceAll(/\s*locked/ig, '') : undefined;
-	//     // } catch {
-	//     //     debugger;
-	//     // }
+	// 	// @ts-ignore
+	// 	calendarEvent.editable = true;
+	// 	// @ts-ignore
+	// 	calendarEvent.durationEditable = true;
+	// 	// @ts-ignore
+	// 	calendarEvent.disableDragging = false;
+	// 	// @ts-ignore
+	// 	console.log(calendarEvent.classNames);
+	// 	// try {
+	// 	//     calendarEvent.classNames = calendarEvent.classNames ? calendarEvent.classNames.replaceAll(/\s*locked/ig, '') : undefined;
+	// 	// } catch {
+	// 	//     console.error("error");
+	// 	// }
 	// }
 	return calendarEvent;
 }
 
 export function isEventAlreadyOrdered(calendarEvent: EventInput) {
-	return (
-		calendarEvent?.extendedProps?.description &&
-		isMatching(calendarEvent?.extendedProps?.description?.toLowerCase(), ['הוזמן', 'ordered'])
-	);
+	return calendarEvent.description && isMatching(calendarEvent.description?.toLowerCase(), ['הוזמן', 'ordered']);
 }
 
 export function isDefined(value: any) {

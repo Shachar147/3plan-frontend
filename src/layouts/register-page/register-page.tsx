@@ -115,9 +115,7 @@ function RegisterPage() {
 					if (err.response && err.response.data && err.response.data.message) {
 						const message = err.response.data.message;
 						setError(typeof message === 'object' ? message.join('<br>') : message);
-
-						console.log(err, message);
-
+						console.error(err, message);
 						if (err.response.data.statusCode && [404].indexOf(err.response.data.statusCode) !== -1) {
 							setError('Network Error');
 						}

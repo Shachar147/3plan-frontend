@@ -126,8 +126,8 @@ export class LocalStorageService implements BaseDataHandler {
 		});
 
 		results.forEach((e: any) => {
-			if (e.extendedProps && e.extendedProps.suggestedEndTime) {
-				delete e.extendedProps.suggestedEndTime;
+			if (e.suggestedEndTime) {
+				delete e.suggestedEndTime;
 			}
 		});
 
@@ -196,13 +196,11 @@ export class LocalStorageService implements BaseDataHandler {
 
 	// --- SET ------------------------------------------------------------------------------
 	setAllEvents(allEvents: AllEventsEvent[], tripName: string): void {
-		// debugger;
 		const key = tripName ? [LS_ALL_EVENTS, tripName].join('-') : LS_ALL_EVENTS;
 		localStorage.setItem(key, JSON.stringify(allEvents));
 	}
 
 	setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string): void {
-		// debugger;
 		const key = tripName ? [LS_CALENDAR_EVENTS, tripName].join('-') : LS_CALENDAR_EVENTS;
 		localStorage.setItem(key, JSON.stringify(calendarEvents));
 	}
@@ -219,7 +217,6 @@ export class LocalStorageService implements BaseDataHandler {
 	}
 
 	setDateRange(dateRange: DateRangeFormatted, tripName: string): void {
-		// debugger;
 		const key = tripName ? [LS_CUSTOM_DATE_RANGE, tripName].join('-') : LS_CUSTOM_DATE_RANGE;
 		localStorage.setItem(key, JSON.stringify(dateRange));
 	}
