@@ -929,7 +929,7 @@ const MapContainer = (props: MapContainerProps) => {
 											info.event
 										);
 									}}
-									title="לחץ לשיבוץ בלוח השנה"
+									title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
 								/>
 							);
 
@@ -938,7 +938,7 @@ const MapContainer = (props: MapContainerProps) => {
 									<i
 										className="fa fa-calendar-check-o visible-items-calendar-indicator"
 										aria-hidden="true"
-										title="שובץ בלוח השנה"
+										title={TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
 									/>
 								);
 							}

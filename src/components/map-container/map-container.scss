@@ -170,7 +170,7 @@
 
 .visible-items-calendar-indicator {
 	&.fa-calendar-check-o {
-		color: mediumseagreen;
+		color: var(--blue);
 		cursor: default;
 	}
 	&.fa-calendar-times-o {

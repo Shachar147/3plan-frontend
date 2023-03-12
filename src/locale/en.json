@@ -386,5 +386,7 @@
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT": "Removing this event from the calendar will move it back to category <b>{X}</b> in the sidebar",
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "Remove event from calendar",
 	"SIDEBAR.SHOWING_X_OF_Y": "Showing {X} out of {Y} activities. to cancel show all, ",
-	"GENERAL.CLICK_HERE": "click here"
+	"GENERAL.CLICK_HERE": "click here",
+	"CLICK_HERE_TO_ADD_TO_CALENDAR": "Click here to add activity to calendar",
+	"ALREADY_IN_CALENDAR": "Already in calendar"
 }
