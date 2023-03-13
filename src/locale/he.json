@@ -39,6 +39,8 @@
 	"MODALS.ERROR.TITLE": "שגיאה",
 	"MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "הכותרת לא יכולה להיות ריקה",
 	"MODALS.ERROR.CATEGORY_CANT_BE_EMPTY": "הקטגוריה לא יכולה להיות ריקה",
+	"MODALS.ERROR.START_DATE_CANT_BE_EMPTY": "זמן ההתחלה לא יכול להיות ריק",
+	"MODALS.ERROR.END_DATE_CANT_BE_EMPTY": "זמן הסיום לא יכול להיות ריק",
 	"MODALS.ADDED.TITLE": "נוסף!",
 	"MODALS.ADDED.CONTENT": "הפעילות נוספה בהצלחה",
 	"MODALS.ADD_EVENT_TO_CATEGORY.TITLE": "הוסף פעילות לקטגוריה",

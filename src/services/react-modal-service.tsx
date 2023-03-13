@@ -1995,17 +1995,37 @@ const ReactModalService = {
 				return false;
 			}
 
-			const result = await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
+			if (!startDate) {
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'MODALS.ERROR.TITLE',
+					'MODALS.ERROR.START_DATE_CANT_BE_EMPTY',
+					'error'
+				);
+				return false;
+			}
 
-			debugger;
+			if (!endDate) {
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'MODALS.ERROR.TITLE',
+					'MODALS.ERROR.END_DATE_CANT_BE_EMPTY',
+					'error'
+				);
+				return false;
+			}
+
+			await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 			addToEventsToCategories(currentEvent);
 
-			const result2 = await eventStore.setAllEvents([
+			await eventStore.setAllEvents([
 				...eventStore.allEvents.filter((x) => x.id !== currentEvent.id),
 				{ ...currentEvent, category: categoryId },
 			]);
-			debugger;
 
+			// if we got sidebarEventData it means we're trying to add already existing event to the calendar.
+			// (it could be either by clicking on the calendar and choosing 'add from existing' or trying to add from the map)
+			// in this case, after we added it to calendar, we need to remove it from sidebar.
 			if (sidebarEventData) {
 				const newSidebarEvents = eventStore.getJSSidebarEvents();
 				Object.keys(newSidebarEvents).forEach((category) => {
@@ -2013,11 +2033,8 @@ const ReactModalService = {
 						(e) => e.id !== initialData.id
 					);
 				});
-				const result3 = await eventStore.setSidebarEvents(newSidebarEvents);
-				debugger;
+				await eventStore.setSidebarEvents(newSidebarEvents);
 			}
-
-			debugger;
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
