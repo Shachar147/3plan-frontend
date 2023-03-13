@@ -114,6 +114,7 @@ const ReactModalRenderHelper = {
 			className?: string;
 			value?: string;
 			disabled?: boolean;
+			enforceMinMax?: boolean;
 		},
 		ref?: any
 	) => {
@@ -130,6 +131,7 @@ const ReactModalRenderHelper = {
 				placeholder={extra.placeholder}
 				placeholderKey={extra.placeholderKey}
 				readOnly={extra.disabled}
+				enforceMinMax={extra.enforceMinMax}
 			/>
 		);
 	},
@@ -741,6 +743,7 @@ const ReactModalService = {
 									'MODALS.PLACEHOLDER.PREFIX'
 								)} ${TranslateService.translate(eventStore, 'MODALS.START_TIME')}`,
 								value: getInputDateTimeValue(initialData?.start),
+								enforceMinMax: true,
 							},
 						},
 						textKey: 'MODALS.START_TIME',
@@ -757,6 +760,7 @@ const ReactModalService = {
 									'MODALS.PLACEHOLDER.PREFIX'
 								)} ${TranslateService.translate(eventStore, 'MODALS.END_TIME')}`,
 								value: getInputDateTimeValue(initialData?.end),
+								enforceMinMax: true,
 							},
 						},
 						textKey: 'MODALS.END_TIME',

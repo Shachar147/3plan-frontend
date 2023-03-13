@@ -20,6 +20,8 @@ interface DatePickerProps {
 	onClick?: () => void;
 	onKeyUp?: () => void;
 	autoComplete?: string;
+
+	enforceMinMax?: boolean;
 }
 export interface DatePickerRef {
 	getValue(): string;
@@ -30,12 +32,13 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 		wrapperClassName,
 		id,
 		name,
-		placeholder,
 		placeholderKey,
 		modalValueName,
 		className,
 		onClick,
 		onKeyUp,
+		placeholder,
+		enforceMinMax = false,
 		autoComplete = 'true',
 	} = props;
 	const initialValue = eventStore.modalValues ? eventStore.modalValues[modalValueName] : undefined;
@@ -48,6 +51,18 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 		},
 	}));
 
+	const handleFocus = (event: any) => {
+		event.target.type = 'datetime-local';
+		event.target.value = '';
+	};
+
+	const handleBlur = (event: any) => {
+		if (!event.target.value) {
+			event.target.type = 'text';
+			event.target.value = props.placeholder || 'YYYY-MM-DDTHH:MM';
+		}
+	};
+
 	return (
 		<div className={getClasses('triplan-date-picker-input', wrapperClassName)}>
 			<input
@@ -55,7 +70,7 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 				name={name}
 				className={getClasses(['datePickerInput'], className)}
 				ref={ref}
-				type="datetime-local"
+				type="text"
 				value={value}
 				onClick={() => {
 					onClick && onClick();
@@ -75,6 +90,10 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 						: undefined
 				}
 				autoComplete={autoComplete}
+				min={enforceMinMax ? `${eventStore.customDateRange.start}T00:00` : undefined}
+				max={enforceMinMax ? `${eventStore.customDateRange.end}T23:59` : undefined}
+				onFocus={handleFocus}
+				onBlur={handleBlur}
 			/>
 		</div>
 	);
