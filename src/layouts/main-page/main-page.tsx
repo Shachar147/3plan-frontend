@@ -239,7 +239,7 @@ function MainPage(props: MainPageProps) {
 					}}
 					key={JSON.stringify(eventStore.allEventsFilteredComputed)}
 				>
-					<MapContainer isCombined />
+					<MapContainer isCombined addToEventsToCategories={addToEventsToCategories} />
 				</div>
 			);
 		}
@@ -258,7 +258,7 @@ function MainPage(props: MainPageProps) {
 				}}
 				key={JSON.stringify(eventStore.allEvents)}
 			>
-				<MapContainer />
+				<MapContainer addToEventsToCategories={addToEventsToCategories} />
 			</div>
 		);
 	}

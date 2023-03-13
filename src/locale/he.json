@@ -39,6 +39,8 @@
 	"MODALS.ERROR.TITLE": "שגיאה",
 	"MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "הכותרת לא יכולה להיות ריקה",
 	"MODALS.ERROR.CATEGORY_CANT_BE_EMPTY": "הקטגוריה לא יכולה להיות ריקה",
+	"MODALS.ERROR.START_DATE_CANT_BE_EMPTY": "זמן ההתחלה לא יכול להיות ריק",
+	"MODALS.ERROR.END_DATE_CANT_BE_EMPTY": "זמן הסיום לא יכול להיות ריק",
 	"MODALS.ADDED.TITLE": "נוסף!",
 	"MODALS.ADDED.CONTENT": "הפעילות נוספה בהצלחה",
 	"MODALS.ADD_EVENT_TO_CATEGORY.TITLE": "הוסף פעילות לקטגוריה",
@@ -463,5 +465,7 @@
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT": "הסרת הפעילות מלוח השנה תחזיר אותה לקטגוריה <b>{X}</b> בתפריט הצד",
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "הסרת פעילות מלוח השנה",
 	"SIDEBAR.SHOWING_X_OF_Y": "מציג {X} מתוך {Y} פעילויות. לביטול החיפוש והצגת כל התוצאות",
-	"GENERAL.CLICK_HERE": "לחץ כאן"
+	"GENERAL.CLICK_HERE": "לחץ כאן",
+	"CLICK_HERE_TO_ADD_TO_CALENDAR": "לחץ לשיבוץ בלוח השנה",
+	"ALREADY_IN_CALENDAR": "שובץ בלוח השנה"
 }

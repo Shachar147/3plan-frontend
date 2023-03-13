@@ -198,6 +198,19 @@ const ListViewService = {
 		const tripSummaryTitle =
 			TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE') + ' - ' + eventStore.tripName;
 
+		// if we're on no description mode, do not show also prefixes.
+		if (eventStore.listViewSummaryMode === ListViewSummaryMode.noDescriptions) {
+			return {
+				todoComplete,
+				ordered,
+				startPrefix: '',
+				lastPrefix: '',
+				middlePrefixes: [''],
+				or,
+				tripSummaryTitle,
+			};
+		}
+
 		return {
 			todoComplete,
 			ordered,

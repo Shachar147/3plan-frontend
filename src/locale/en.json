@@ -28,6 +28,8 @@
 	"MODALS.ERROR.TITLE": "Error",
 	"MODALS.ERROR.TITLE_CANNOT_BE_EMPTY": "Title cannot be empty",
 	"MODALS.ERROR.CATEGORY_CANT_BE_EMPTY": "Category cannot be empty",
+	"MODALS.ERROR.START_DATE_CANT_BE_EMPTY": "Start date cannot be empty",
+	"MODALS.ERROR.END_DATE_CANT_BE_EMPTY": "End date cannot be empty",
 	"MODALS.ADDED.TITLE": "Added!",
 	"MODALS.ADDED.CONTENT": "Activity have been added.",
 	"MODALS.ADD_EVENT_TO_CATEGORY.TITLE": "Add Activity to Category",
@@ -386,5 +388,7 @@
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT": "Removing this event from the calendar will move it back to category <b>{X}</b> in the sidebar",
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE": "Remove event from calendar",
 	"SIDEBAR.SHOWING_X_OF_Y": "Showing {X} out of {Y} activities. to cancel show all, ",
-	"GENERAL.CLICK_HERE": "click here"
+	"GENERAL.CLICK_HERE": "click here",
+	"CLICK_HERE_TO_ADD_TO_CALENDAR": "Click here to add activity to calendar",
+	"ALREADY_IN_CALENDAR": "Already in calendar"
 }
