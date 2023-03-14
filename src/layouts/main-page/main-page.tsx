@@ -219,9 +219,9 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
-	function renderMapView() {
+	function renderMapView(shouldShow: boolean = true) {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.map) {
-			return null;
+			shouldShow = false;
 		}
 
 		if (eventStore.viewMode === ViewMode.combined) {
@@ -229,7 +229,8 @@ function MainPage(props: MainPageProps) {
 				<div
 					className={getClasses(
 						['map-container'],
-						!eventStore.isCombinedView && 'opacity-0 position-absolute'
+						!eventStore.isCombinedView && 'opacity-0 position-absolute',
+						!shouldShow && 'display-none'
 					)}
 					style={{
 						height: '250px',
@@ -248,7 +249,8 @@ function MainPage(props: MainPageProps) {
 			<div
 				className={getClasses(
 					['map-container flex-1-1-0'],
-					!eventStore.isMapView && 'opacity-0 position-absolute'
+					!eventStore.isMapView && 'opacity-0 position-absolute',
+					!shouldShow && 'display-none'
 				)}
 				style={{
 					height: 'CALC(100vh - 120px)',
@@ -407,7 +409,7 @@ function MainPage(props: MainPageProps) {
 					) : (
 						<>
 							{renderSidebar()}
-							{eventStore.isMapView && renderMapView()}
+							{renderMapView(eventStore.isMapView)}
 							{eventStore.isListView && renderListView()}
 							{eventStore.isCalendarView && renderCalendarView()}
 							{eventStore.isCombinedView && renderCombinedView()}
