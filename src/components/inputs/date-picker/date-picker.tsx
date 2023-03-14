@@ -72,8 +72,9 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 				ref={ref}
 				type="text"
 				value={value}
-				onClick={() => {
+				onClick={(e) => {
 					onClick && onClick();
+					handleFocus(e);
 				}}
 				onKeyUp={() => {
 					onKeyUp && onKeyUp();
