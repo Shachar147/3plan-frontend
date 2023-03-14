@@ -1,0 +1,15 @@
+{
+  "short_name": "Triplan",
+  "name": "Triplan",
+  "icons": [
+    {
+      "src": "images/logo/new-logo.png",
+      "type": "image/png",
+      "sizes": "568x439"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
