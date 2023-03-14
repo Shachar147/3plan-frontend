@@ -89,7 +89,11 @@ export class EventStore {
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
+
+	// map filters
 	@observable filterOutPriorities = observable.map({});
+	@observable hideScheduled: boolean = false;
+	@observable hideUnScheduled: boolean = false;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -400,7 +404,9 @@ export class EventStore {
 				(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
-				!this.filterOutPriorities.get(getEnumKey(TriplanPriority, event.priority))
+				!this.filterOutPriorities.get(getEnumKey(TriplanPriority, event.priority)) &&
+				(this.hideScheduled ? !this.calendarEvents.find((x) => x.id == event.id) : true) &&
+				(this.hideUnScheduled ? !!this.calendarEvents.find((x) => x.id == event.id) : true)
 		);
 	}
 
@@ -413,6 +419,8 @@ export class EventStore {
 			this.showOnlyEventsWithTodoComplete
 			// for now it affects only map. todo complete - add it to sidebar filters as well both in UI and on logic
 			// || !!Array.from(this.filterOutPriorities.values()).length
+			// || this.hideScheduled
+			// || this.hideUnScheduled
 		);
 	}
 

@@ -791,83 +791,131 @@ const MapContainer = (props: MapContainerProps) => {
 		})
 		.filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
 
-	function renderMapPrioritiesFilters() {
+	function renderMapFilters() {
 		const allOption = { label: TranslateService.translate(eventStore, 'ALL'), value: '' };
 		const priorities = Object.keys(TriplanPriority).filter((priority) => Number.isNaN(Number(priority)));
 		const otherOptions = priorities.map((p) => ({ label: TranslateService.translate(eventStore, p), value: p }));
+
+		function renderScheduledOrNotFilters() {
+			return (
+				<div className="flex-row gap-5 align-items-center">
+					<span>{TranslateService.translate(eventStore, 'SHOW_ONLY')}</span>
+					<Observer>
+						{() => (
+							<a
+								className={getClasses('map-filter-toggle', !eventStore.hideScheduled && 'active')}
+								onClick={() => {
+									runInAction(() => {
+										eventStore.hideScheduled = !eventStore.hideScheduled;
+									});
+								}}
+							>
+								{TranslateService.translate(eventStore, 'SCHEDULED_EVENTS')}
+							</a>
+						)}
+					</Observer>
+					<span>|</span>
+					<Observer>
+						{() => (
+							<a
+								className={getClasses('map-filter-toggle', !eventStore.hideUnScheduled && 'active')}
+								onClick={() => {
+									runInAction(() => {
+										eventStore.hideUnScheduled = !eventStore.hideUnScheduled;
+									});
+								}}
+							>
+								{TranslateService.translate(eventStore, 'UNSCHEDULED_EVENTS')}
+							</a>
+						)}
+					</Observer>
+				</div>
+			);
+		}
+
+		function renderPrioritiesFilters() {
+			return (
+				<div className="flex-row gap-5 align-items-center">
+					<span>{TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_PRIORITY')}</span>
+					{eventStore.isMobile && (
+						<SelectInput
+							ref={undefined}
+							id={'map-filter-priorities'}
+							name={'map-filter-priorities'}
+							options={[allOption, ...otherOptions]}
+							value={
+								Array.from(eventStore.filterOutPriorities.values()).length == 0
+									? allOption
+									: otherOptions.find(
+											(o) =>
+												o.value ===
+												priorities.find((p) => !eventStore.filterOutPriorities.get(p))
+									  )
+							}
+							onChange={(data: any) => {
+								runInAction(() => {
+									eventStore.filterOutPriorities = observable.map({});
+									if (data.value != '') {
+										priorities
+											.filter((x) => x !== data.value)
+											.map((x) => {
+												eventStore.filterOutPriorities.set(x, true);
+											});
+									}
+								});
+							}}
+							modalValueName={'filterByPriority'}
+							maxMenuHeight={120}
+							removeDefaultClass={true}
+							isClearable={false}
+						/>
+					)}
+					{!eventStore.isMobile && (
+						<div className="map-filter-priorities">
+							{priorities.map((priority, idx) => {
+								return (
+									<div className="flex-row gap-5" key={`filter-by-priority-${priority}`}>
+										<Observer>
+											{() => (
+												<a
+													className={getClasses(
+														'map-filter-toggle',
+														!eventStore.filterOutPriorities.get(priority) && 'active'
+													)}
+													onClick={() => {
+														eventStore.toggleFilterPriority(priority);
+													}}
+												>
+													{TranslateService.translate(eventStore, priority)}
+												</a>
+											)}
+										</Observer>
+										{idx !== priorities.length - 1 && <span>|</span>}
+									</div>
+								);
+							})}
+						</div>
+					)}
+				</div>
+			);
+		}
+
 		return (
 			<div
 				className={getClasses(
-					'map-filter-priorities-container',
-					eventStore.isMobile && 'justify-content-center'
+					'map-filters-container',
+					eventStore.isMobile && 'justify-content-center flex-column'
 				)}
 			>
-				<span>{TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_PRIORITY')}</span>
-				{eventStore.isMobile && (
-					<SelectInput
-						ref={undefined}
-						id={'map-filter-priorities'}
-						name={'map-filter-priorities'}
-						options={[allOption, ...otherOptions]}
-						value={
-							Array.from(eventStore.filterOutPriorities.values()).length == 0
-								? allOption
-								: otherOptions.find(
-										(o) =>
-											o.value === priorities.find((p) => !eventStore.filterOutPriorities.get(p))
-								  )
-						}
-						onChange={(data: any) => {
-							runInAction(() => {
-								eventStore.filterOutPriorities = observable.map({});
-								if (data.value != '') {
-									priorities
-										.filter((x) => x !== data.value)
-										.map((x) => {
-											eventStore.filterOutPriorities.set(x, true);
-										});
-								}
-							});
-						}}
-						modalValueName={'filterByPriority'}
-						maxMenuHeight={120}
-						removeDefaultClass={true}
-						isClearable={false}
-					/>
-				)}
-				{!eventStore.isMobile && (
-					<div className="map-filter-priorities">
-						{priorities.map((priority, idx) => {
-							return (
-								<div className="flex-row gap-5" key={`filter-by-priority-${priority}`}>
-									<Observer>
-										{() => (
-											<a
-												className={getClasses(
-													'map-filter-toggle',
-													!eventStore.filterOutPriorities.get(priority) && 'active'
-												)}
-												onClick={() => {
-													eventStore.toggleFilterPriority(priority);
-												}}
-											>
-												{TranslateService.translate(eventStore, priority)}
-											</a>
-										)}
-									</Observer>
-									{idx !== priorities.length - 1 && <span>|</span>}
-								</div>
-							);
-						})}
-					</div>
-				)}
+				{renderPrioritiesFilters()}
+				{renderScheduledOrNotFilters()}
 			</div>
 		);
 	}
 
 	return (
 		<div className={getClasses('map-container', props.isCombined && 'combined')}>
-			{renderMapPrioritiesFilters()}
+			{renderMapFilters()}
 			<div className="map-header">
 				<div className={'map-search-location-input'}>
 					<input

@@ -183,9 +183,9 @@
 	}
 }
 
-.map-filter-priorities-container {
+.map-filters-container {
 	display: flex;
-	gap: 10px;
+	gap: 20px;
 	align-items: center;
 
 	.map-filter-priorities {
@@ -212,7 +212,7 @@
 }
 
 body.rtl {
-	.map-filter-priorities-container {
+	.map-filters-container {
 		direction: rtl;
 	}
 }

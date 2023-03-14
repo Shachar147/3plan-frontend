@@ -29,6 +29,8 @@ function FilterIndications(props: FilterIndicationsProps) {
 	if (showOnlyEventsWithNoOpeningHours) totalFilters += 1;
 	if (showOnlyEventsWithTodoComplete) totalFilters += 1;
 	if (showOnlyEventsWithSpecificPriorities) totalFilters += 1;
+	if (eventStore.hideScheduled) totalFilters += 1;
+	if (eventStore.hideUnScheduled) totalFilters += 1;
 
 	function renderSingleFilter() {
 		return (
@@ -73,6 +75,26 @@ function FilterIndications(props: FilterIndicationsProps) {
 						}}
 					/>
 				)}
+				{eventStore.hideScheduled && (
+					<TriplanTag
+						text={TranslateService.translate(eventStore, 'HIDE_SCHEDULED_EVENTS.FILTER_TAG')}
+						onDelete={() => {
+							runInAction(() => {
+								eventStore.hideScheduled = false;
+							});
+						}}
+					/>
+				)}
+				{eventStore.hideUnScheduled && (
+					<TriplanTag
+						text={TranslateService.translate(eventStore, 'HIDE_UNSCHEDULED_EVENTS.FILTER_TAG')}
+						onDelete={() => {
+							runInAction(() => {
+								eventStore.hideUnScheduled = false;
+							});
+						}}
+					/>
+				)}
 			</div>
 		);
 	}
@@ -97,6 +119,8 @@ function FilterIndications(props: FilterIndicationsProps) {
 
 						runInAction(() => {
 							eventStore.filterOutPriorities = observable.map({});
+							eventStore.hideUnScheduled = false;
+							eventStore.hideScheduled = false;
 						});
 					}}
 				/>
