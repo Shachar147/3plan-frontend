@@ -5,11 +5,13 @@ import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import { getClasses } from '../../../utils/utils';
 import './filter-indications.scss';
+import { observable, runInAction } from 'mobx';
 
 interface FilterIndicationsProps {
 	showOnlyEventsWithNoLocation?: boolean;
 	showOnlyEventsWithNoOpeningHours?: boolean;
 	showOnlyEventsWithTodoComplete?: boolean;
+	showOnlyEventsWithSpecificPriorities?: boolean;
 }
 function FilterIndications(props: FilterIndicationsProps) {
 	const eventStore = useContext(eventStoreContext);
@@ -19,10 +21,14 @@ function FilterIndications(props: FilterIndicationsProps) {
 	const showOnlyEventsWithTodoComplete =
 		props.showOnlyEventsWithTodoComplete ?? eventStore.showOnlyEventsWithTodoComplete;
 
+	const showOnlyEventsWithSpecificPriorities =
+		props.showOnlyEventsWithSpecificPriorities ?? !!Array.from(eventStore.filterOutPriorities.values()).length;
+
 	let totalFilters = 0;
 	if (showOnlyEventsWithNoLocation) totalFilters += 1;
 	if (showOnlyEventsWithNoOpeningHours) totalFilters += 1;
 	if (showOnlyEventsWithTodoComplete) totalFilters += 1;
+	if (showOnlyEventsWithSpecificPriorities) totalFilters += 1;
 
 	function renderSingleFilter() {
 		return (
@@ -54,6 +60,19 @@ function FilterIndications(props: FilterIndicationsProps) {
 						}}
 					/>
 				)}
+				{showOnlyEventsWithSpecificPriorities && (
+					<TriplanTag
+						text={TranslateService.translate(
+							eventStore,
+							'SHOW_ONLY_EVENTS_WITH_SPECIFIC_PRIORITIES.FILTER_TAG'
+						)}
+						onDelete={() => {
+							runInAction(() => {
+								eventStore.filterOutPriorities = observable.map({});
+							});
+						}}
+					/>
+				)}
 			</div>
 		);
 	}
@@ -75,6 +94,10 @@ function FilterIndications(props: FilterIndicationsProps) {
 						eventStore.setShowOnlyEventsWithNoOpeningHours(false);
 						eventStore.setShowOnlyEventsWithTodoComplete(false);
 						eventStore.setShowOnlyEventsWithNoLocation(false);
+
+						runInAction(() => {
+							eventStore.filterOutPriorities = observable.map({});
+						});
 					}}
 				/>
 			</div>
