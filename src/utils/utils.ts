@@ -66,6 +66,31 @@ export const LOADERS: Record<string, Partial<Loader>> = {
 	// 	backgroundColor: '#ffcb3c', // done
 	// 	top: '30px',
 	// },
+	'giphy1.gif': {
+		backgroundColor: '#fff',
+		top: '30px',
+		textColor: 'black',
+	},
+	'giphy2.gif': {
+		backgroundColor: '#fff',
+		top: '30px',
+		textColor: 'black',
+	},
+	'giphy3.gif': {
+		backgroundColor: '#fff',
+		top: '30px',
+		textColor: 'black',
+	},
+	'giphy4.gif': {
+		backgroundColor: '#fff',
+		top: '30px',
+		textColor: 'black',
+	},
+	'travel5.gif': {
+		backgroundColor: '#41aeb4', // done
+		top: '30px',
+		textColor: 'white',
+	},
 };
 export function shuffle(array: any[]) {
 	let counter = array.length;
