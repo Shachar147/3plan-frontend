@@ -51,12 +51,16 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 		},
 	}));
 
+	// TODO for some reason placeholder not working well on mobile, need to fix.
 	const handleFocus = (event: any) => {
+		if (!eventStore.isMobile) return;
 		event.target.type = 'datetime-local';
 		event.target.value = '';
 	};
 
+	// TODO for some reason placeholder not working well on mobile, need to fix.
 	const handleBlur = (event: any) => {
+		if (!eventStore.isMobile) return;
 		if (!event.target.value) {
 			event.target.type = 'text';
 			event.target.value = props.placeholder || 'YYYY-MM-DDTHH:MM';
@@ -70,7 +74,7 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 				name={name}
 				className={getClasses(['datePickerInput'], className)}
 				ref={ref}
-				type="text"
+				type={eventStore.isMobile ? 'datetime-local' : 'text'}
 				value={value}
 				onClick={(e) => {
 					onClick && onClick();
