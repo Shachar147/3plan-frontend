@@ -1,5 +1,5 @@
 const CACHE_NAME = 'my-pwa-cache-v1';
-const urlsToCache = ['/', '/index.html', '/manifest.json'];
+const urlsToCache = ['icon.png'];
 
 self.addEventListener('install', (event) => {
 	event.waitUntil(
