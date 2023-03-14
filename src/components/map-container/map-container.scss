@@ -182,3 +182,37 @@
 		}
 	}
 }
+
+.map-filter-priorities-container {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+
+	.map-filter-priorities {
+		display: flex;
+		gap: 5px;
+	}
+
+	.map-filter-toggle {
+		cursor: pointer;
+		transition: opacity 0.2s ease-in-out;
+
+		&:hover {
+			opacity: 0.6;
+		}
+
+		&.active {
+			color: var(--blue);
+
+			&:hover {
+				color: var(--blue) !important;
+			}
+		}
+	}
+}
+
+body.rtl {
+	.map-filter-priorities-container {
+		direction: rtl;
+	}
+}

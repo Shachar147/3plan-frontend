@@ -8,7 +8,7 @@ import { eventStoreContext } from '../../stores/events-store';
 import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
 import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
-import { TriplanEventPreferredTime } from '../../utils/enums';
+import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { BuildEventUrl, getClasses, isBasketball, isDessert, isFlight, isHotel, isMatching } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
@@ -17,6 +17,9 @@ import * as ReactDOMServer from 'react-dom/server';
 import Slider from 'react-slick';
 import { AllEventsEvent } from '../../services/data-handlers/data-handler-base';
 import { Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
+import { Observer } from 'mobx-react';
+import SelectInput from '../inputs/select-input/select-input';
+import { observable, runInAction } from 'mobx';
 
 interface MarkerProps {
 	text?: string;
@@ -788,8 +791,83 @@ const MapContainer = (props: MapContainerProps) => {
 		})
 		.filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
 
+	function renderMapPrioritiesFilters() {
+		const allOption = { label: TranslateService.translate(eventStore, 'ALL'), value: '' };
+		const priorities = Object.keys(TriplanPriority).filter((priority) => Number.isNaN(Number(priority)));
+		const otherOptions = priorities.map((p) => ({ label: TranslateService.translate(eventStore, p), value: p }));
+		return (
+			<div
+				className={getClasses(
+					'map-filter-priorities-container',
+					eventStore.isMobile && 'justify-content-center'
+				)}
+			>
+				<span>{TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_PRIORITY')}</span>
+				{eventStore.isMobile && (
+					<SelectInput
+						ref={undefined}
+						id={'map-filter-priorities'}
+						name={'map-filter-priorities'}
+						options={[allOption, ...otherOptions]}
+						value={
+							Array.from(eventStore.filterOutPriorities.values()).length == 0
+								? allOption
+								: otherOptions.find(
+										(o) =>
+											o.value === priorities.find((p) => !eventStore.filterOutPriorities.get(p))
+								  )
+						}
+						onChange={(data: any) => {
+							runInAction(() => {
+								eventStore.filterOutPriorities = observable.map({});
+								if (data.value != '') {
+									priorities
+										.filter((x) => x !== data.value)
+										.map((x) => {
+											eventStore.filterOutPriorities.set(x, true);
+										});
+								}
+							});
+						}}
+						modalValueName={'filterByPriority'}
+						maxMenuHeight={120}
+						removeDefaultClass={true}
+						isClearable={false}
+					/>
+				)}
+				{!eventStore.isMobile && (
+					<div className="map-filter-priorities">
+						{priorities.map((priority, idx) => {
+							return (
+								<div className="flex-row gap-5" key={`filter-by-priority-${priority}`}>
+									<Observer>
+										{() => (
+											<a
+												className={getClasses(
+													'map-filter-toggle',
+													!eventStore.filterOutPriorities.get(priority) && 'active'
+												)}
+												onClick={() => {
+													eventStore.toggleFilterPriority(priority);
+												}}
+											>
+												{TranslateService.translate(eventStore, priority)}
+											</a>
+										)}
+									</Observer>
+									{idx !== priorities.length - 1 && <span>|</span>}
+								</div>
+							);
+						})}
+					</div>
+				)}
+			</div>
+		);
+	}
+
 	return (
 		<div className={getClasses('map-container', props.isCombined && 'combined')}>
+			{renderMapPrioritiesFilters()}
 			<div className="map-header">
 				<div className={'map-search-location-input'}>
 					<input

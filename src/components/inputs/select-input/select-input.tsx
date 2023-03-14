@@ -23,6 +23,7 @@ interface SelectInputProps {
 	onChange?: (value: any) => any;
 	removeDefaultClass?: boolean;
 	value?: any;
+	isClearable?: boolean;
 }
 export interface SelectInputRef {
 	getValue(): SelectInputOption;
@@ -44,7 +45,7 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 		<div className={getClasses(!props.removeDefaultClass && 'triplan-selector', wrapperClassName)}>
 			<Select
 				ref={ref}
-				isClearable={!readOnly}
+				isClearable={props.isClearable ?? !readOnly}
 				isSearchable={!readOnly}
 				isDisabled={readOnly}
 				id={id}

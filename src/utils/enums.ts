@@ -47,3 +47,11 @@ export enum TripDataSource {
 	LOCAL = 'LOCAL',
 	DB = 'DB',
 }
+
+export function getEnumKey(enumObj: any, value: any) {
+	for (let key in enumObj) {
+		if (enumObj[key] == value) {
+			return key;
+		}
+	}
+}

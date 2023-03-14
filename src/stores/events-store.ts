@@ -4,6 +4,7 @@ import { DateSelectArg, EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
 import {
+	getEnumKey,
 	GoogleTravelMode,
 	ListViewSummaryMode,
 	TripDataSource,
@@ -88,6 +89,7 @@ export class EventStore {
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
+	@observable filterOutPriorities = observable.map({});
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -392,12 +394,18 @@ export class EventStore {
 
 	@computed
 	get allEventsFilteredComputed() {
+		console.log(
+			'here',
+			this.allEventsComputed[0].priority,
+			getEnumKey(TriplanPriority, this.allEventsComputed[0].priority)
+		);
 		return this.allEventsComputed.filter(
 			(event) =>
 				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
 				(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
-				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
+				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
+				!this.filterOutPriorities.get(getEnumKey(TriplanPriority, event.priority))
 		);
 	}
 
@@ -408,6 +416,8 @@ export class EventStore {
 			this.showOnlyEventsWithNoLocation ||
 			this.showOnlyEventsWithNoOpeningHours ||
 			this.showOnlyEventsWithTodoComplete
+			// for now it affects only map. todo complete - add it to sidebar filters as well both in UI and on logic
+			// || !!Array.from(this.filterOutPriorities.values()).length
 		);
 	}
 
@@ -743,6 +753,15 @@ export class EventStore {
 	@action
 	setIsSearchOpen(isOpen: boolean) {
 		this.isSearchOpen = isOpen;
+	}
+
+	@action
+	toggleFilterPriority(priority: string) {
+		if (this.filterOutPriorities.get(priority)) {
+			this.filterOutPriorities.delete(priority);
+		} else {
+			this.filterOutPriorities.set(priority, true);
+		}
 	}
 
 	// --- private functions ----------------------------------------------------
