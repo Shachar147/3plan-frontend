@@ -394,11 +394,6 @@ export class EventStore {
 
 	@computed
 	get allEventsFilteredComputed() {
-		console.log(
-			'here',
-			this.allEventsComputed[0].priority,
-			getEnumKey(TriplanPriority, this.allEventsComputed[0].priority)
-		);
 		return this.allEventsComputed.filter(
 			(event) =>
 				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
