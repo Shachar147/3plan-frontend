@@ -1,15 +1,17 @@
 {
   "short_name": "Triplan",
   "name": "Triplan",
-  "icons": [
-    {
-      "src": "icon.png",
-      "type": "image/png",
-      "sizes": "500x500"
-    }
-  ],
+  "icons": [{
+    "src": "icon.png",
+    "type": "image/png",
+    "sizes": "500x500"
+  }],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "cache": {
+    "name": "my-cache",
+    "no-store": true
+  }
 }
