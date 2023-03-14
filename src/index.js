@@ -547,18 +547,18 @@ const RootRouter = () => {
 
 	// added this code, manifest.json, service-worker.js and icon.png for PWA.
 	// PWA allows to save the site as when opening Safari -> share icon -> Add to home screen
-	if ('serviceWorker' in navigator) {
-		window.addEventListener('load', () => {
-			navigator.serviceWorker
-				.register('/service-worker.js')
-				.then((registration) => {
-					console.log('Service worker registered:', registration);
-				})
-				.catch((error) => {
-					console.error('Service worker registration failed:', error);
-				});
-		});
-	}
+	// if ('serviceWorker' in navigator) {
+	// 	window.addEventListener('load', () => {
+	// 		navigator.serviceWorker
+	// 			.register('/service-worker.js')
+	// 			.then((registration) => {
+	// 				console.log('Service worker registered:', registration);
+	// 			})
+	// 			.catch((error) => {
+	// 				console.error('Service worker registration failed:', error);
+	// 			});
+	// 	});
+	// }
 
 	return (
 		<>
