@@ -1,0 +1,606 @@
+@media only screen and (min-width: 600px) and (max-width: 768px) {
+	/* For tablets: */
+}
+
+@media only screen and (max-width: 600px) {
+	/* For mobiles: */
+
+	.main-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		> .padding-inline-8 {
+			width: 100%;
+		}
+
+		.main-layout-container {
+			padding-inline: 0;
+			width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			.main-layout {
+				width: CALC(100% - 20px);
+				padding-top: 12px;
+			}
+		}
+	}
+
+	body {
+		.triplan-header {
+			flex-direction: column !important;
+			gap: 0;
+			align-items: center;
+
+			.language-selector {
+				order: 1;
+			}
+
+			.triplan-header-starter {
+				order: 2;
+
+				max-width: unset;
+				width: 100%;
+				justify-content: center;
+
+				.link-button {
+					display: flex;
+					white-space: nowrap;
+				}
+			}
+
+			.triplan-header-actionbar {
+				order: 3;
+			}
+
+			.language-selector {
+				flex-shrink: 0;
+				justify-content: center;
+			}
+
+			.filter-tags-container {
+				margin-top: 8px;
+			}
+		}
+
+		.main-page {
+			// make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
+			.fc-view-harness {
+				min-height: 1775px !important;
+			}
+
+			.fc-scroller {
+				height: auto !important;
+			}
+
+			.fc-head .fc-widget-header {
+				margin-right: 0 !important;
+			}
+
+			.fc-scroller {
+				overflow: visible !important;
+			}
+
+			// END: make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
+
+			.fc-header-toolbar {
+				font-size: 12px;
+				flex-direction: column;
+
+				.fc-icon-chevron-right,
+				.fc-icon-chevron-left {
+					font-size: 12px;
+				}
+			}
+
+			/* hide language selector - todo improve */
+			.start-side {
+				//display: none; // header looks better without it
+			}
+
+			.main-layout-container {
+				.main-layout {
+					flex-direction: column;
+					gap: 20px;
+					height: max-content;
+				}
+			}
+
+			.external-events-container {
+				width: 100%;
+				max-width: unset;
+				padding-inline: 0;
+
+				.custom-dates-line {
+					input[type='date'] {
+						display: flex;
+						flex: 1 1 0;
+						min-width: 0;
+					}
+				}
+			}
+
+			.category-actions {
+				font-size: 12px;
+				flex-wrap: wrap;
+				gap: 2px;
+
+				//.link-button {
+				//	flex-grow: 1;
+				//	flex-shrink: 0;
+				//}
+			}
+		}
+
+		.main-page .triplan-header .triplan-header-actionbar {
+			flex-direction: column;
+			align-items: center;
+			gap: 8px;
+			width: 100%;
+
+			.search-container {
+				padding-inline: 0;
+				margin-top: 8px;
+				width: 100%;
+			}
+		}
+
+		.main-part {
+			display: flex;
+			flex: 1 1 0;
+			//overflow: hidden;
+			width: 100%;
+			min-width: unset;
+			height: 100vh;
+			min-height: max-content;
+
+			.logo-container {
+				min-width: 200px !important;
+			}
+		}
+
+		.landing-page-layout .main-part .slogan {
+			padding-block: 20px;
+			min-width: 40px !important;
+		}
+
+		.main-buttons,
+		.start-now-button {
+			flex-direction: column;
+			padding-inline: 40px;
+			min-width: 40px !important;
+		}
+
+		.footer {
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding-inline: 0;
+
+			a {
+				align-items: flex-start;
+			}
+		}
+
+		/* my trips */
+		.create-new-trip-form {
+			width: 100%;
+		}
+
+		&.rtl {
+		}
+	}
+
+	.landing-page-layout {
+		padding-inline: 0 !important;
+
+		.main-part {
+			justify-content: center;
+			flex-grow: 1;
+
+			.slogan {
+				word-break: break-word;
+				padding-inline: 20px;
+			}
+		}
+
+		.footer {
+			display: none !important;
+		}
+	}
+
+	.login-page,
+	.register-page {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding-inline: 0 !important;
+
+		.register-page-content,
+		.login-page-content {
+			padding-inline: 0 !important;
+
+			.logo-container {
+				width: 60%;
+			}
+
+			.register-form,
+			.login-form {
+				max-width: unset;
+				padding-block: 20px !important;
+				padding-inline: 32px !important;
+
+				.textInput {
+					min-width: unset;
+				}
+			}
+		}
+	}
+
+	.my-trips-header,
+	.my-trips,
+	.no-trips-placeholder {
+		max-width: 100%;
+	}
+	.my-trips-header {
+		.multiple-options-toggle-button-items-container {
+			justify-content: center;
+		}
+	}
+	.my-trips-trip-name {
+		max-width: CALC(100% - 170px) !important;
+	}
+	#amount-of-days {
+		display: none;
+	}
+	.create-new-trip-form {
+		padding-inline: 30px;
+	}
+
+	.sweet-alert.triplan-react-modal {
+		min-width: unset !important;
+
+		.slick-slider,
+		.triplan-selector,
+		.triplan-textarea-input,
+		.triplan-text-input,
+		input,
+		textarea {
+			min-width: unset !important;
+			max-width: 100%;
+		}
+
+		.triplan-text-input,
+		.input-with-label > .flex-column,
+		.triplan-textarea-input {
+			min-width: 0 !important;
+		}
+
+		.react-modal.bright-scrollbar {
+			max-height: 60vh !important;
+			//max-height: CALC(90vh - 100px) !important; // todo complete
+		}
+	}
+
+	.calendar-container {
+		padding-bottom: 30px;
+	}
+	.fc-view-harness {
+		height: 700px !important;
+	}
+
+	// place map view "visible items" pane under the map on mobile view, instead of above it, since on mobile
+	// it covers almost the whole map and not very functional when its over the map.
+	.visible-items-pane {
+		&.mobile {
+			position: relative !important;
+			order: 3 !important;
+			top: 0 !important;
+			width: 100% !important;
+			max-width: unset !important;
+			left: 0 !important;
+
+			.search-container {
+				max-width: unset !important;
+			}
+		}
+	}
+
+	// add/edit calendar event
+	#new-icon {
+		width: 100%;
+	}
+	.triplan-date-picker-input {
+		display: flex;
+		flex: 1 1 0;
+		min-width: 0;
+	}
+
+	.custom-group.actions {
+		flex-direction: column !important;
+	}
+
+	//.sweet-alert.fullscreen-modal {
+	//  position: fixed !important;
+	//  bottom: 0 !important;
+	//  min-height: 90vh;
+	//
+	//  > div {
+	//    display: flex;
+	//    flex: 1 1 0;
+	//  }
+	//}
+
+	.landing-page-layout .main-part {
+		width: 100% !important;
+	}
+
+	.triplan-header.rtl .triplan-header-starter,
+	.triplan-header.rtl .triplan-header-actionbar {
+		justify-content: center;
+	}
+
+	// since we have the footer actionbar in the mobile, adding margin bottom to the main content so it won't be stick to the footer actionbar.
+	.external-events-container,
+	.calender-container,
+	.map-container,
+	.list-container {
+		margin-bottom: 20px !important;
+	}
+
+	.map-container {
+		height: 100vh;
+
+		.map-info-window-title {
+			font-size: 14px !important;
+		}
+
+		.js-image-slider {
+			img {
+				height: 50px;
+				width: 75px;
+				min-height: 50px;
+				max-height: 50px;
+				min-width: 75px;
+				max-width: 75px;
+			}
+		}
+	}
+
+	.login-page,
+	.register-page {
+		.logo-container {
+			min-width: 280px !important;
+		}
+	}
+
+	.fc-toolbar-chunk {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.map-search-location-input {
+		input {
+			border-radius: 20px;
+			padding-inline: 10px !important;
+		}
+	}
+	.trip-summary {
+		border-radius: 20px;
+	}
+
+	.main-part {
+		margin-top: 120px !important;
+	}
+
+	.main-page {
+		margin-top: 60px !important;
+	}
+
+	.search-container {
+		margin-bottom: 10px !important;
+		width: 100%;
+		max-width: unset;
+		text-align: center;
+
+		input {
+			max-width: unset !important;
+		}
+	}
+
+	.create-new-trip-form {
+		position: relative;
+		top: -180px !important;
+
+		.my-trips.bright-scrollbar {
+			max-height: 300px !important;
+		}
+	}
+
+	.main-part .up {
+		position: relative;
+		top: -190px !important;
+	}
+
+	.mobile-header-search-container {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		text-align: center;
+		width: 100%;
+		margin-bottom: 10px;
+		margin-top: 30px; // changed from 20 to 30 due to "youre looking at TRIPNAME" line
+	}
+
+	.main-page {
+		.main-page-calendar-view {
+			.custom-dates-line {
+				input[type='date'] {
+					display: flex;
+					flex: 1 1 0;
+					min-width: 0;
+				}
+			}
+		}
+	}
+
+	.custom-dates-line {
+		text-align: right;
+		input[type='date'] {
+			background-color: white !important;
+			color: #2d2d2d !important;
+			height: 33px;
+		}
+	}
+
+	.triplan-date-picker-input {
+		input[type='date'],
+		input[type='datetime-local'] {
+			background-color: white !important;
+			color: #2d2d2d !important;
+			height: 33px;
+			direction: ltr !important;
+			width: 100% !important;
+			min-width: 200px !important;
+		}
+	}
+
+	body.rtl {
+		.main-page {
+			.main-page-calendar-view {
+				.custom-dates-line {
+					flex-direction: row-reverse;
+
+					//input[type='date'] {
+					//	padding-inline-end: 10px;
+					//}
+				}
+			}
+			input[type='date'] {
+				padding-inline-end: 10px;
+			}
+		}
+	}
+
+	// modals
+	.slide-up {
+		position: fixed !important;
+		bottom: -100% !important;
+		transition: all 1s ease-in-out;
+	}
+	.slided-up {
+		transition: all 1s ease-in-out;
+		bottom: 0 !important;
+	}
+	.triplan-react-modal {
+		animation: unset !important;
+		width: 100% !important;
+
+		// more circular border for nicer look
+		border-top-left-radius: 30px !important;
+		border-top-right-radius: 30px !important;
+		box-shadow: 0 0 10px 0 #777 !important;
+	}
+
+	.add-calendar-event-modal-choose-where {
+		flex-direction: column;
+	}
+
+	.input-with-label {
+		label {
+			font-size: 14px;
+			min-width: 50px;
+			max-width: 50px;
+		}
+	}
+	.triplan-react-modal {
+		//animation: 300ms ease 0s 1 normal none !important;
+
+		input {
+			height: 37px !important;
+		}
+		div[class$='ValueContainer'],
+		.opening-hours-details,
+		input,
+		select,
+		textarea {
+			font-size: 14px !important;
+		}
+		div[id^='react-select-'],
+		div[class$='singleValue'] {
+			font-size: 12px;
+		}
+		textarea {
+			line-height: 26px !important;
+		}
+		input,
+		select,
+		textarea {
+			width: 245px;
+			line-height: 37px;
+		}
+	}
+
+	.external-events-container {
+		min-width: unset !important;
+	}
+
+	.places-tinder-modal {
+		max-height: 90vh;
+
+		.slick-slider,
+		.slick-list,
+		.slick-tarck {
+			max-height: 150px;
+		}
+
+		.bright-scrollbar {
+			max-height: 50px;
+		}
+	}
+}
+
+@media only screen and (max-height: 600px) and (orientation: landscape) {
+	/* For mobiles on landspace: */
+	.please-rotate-your-phone {
+		display: flex;
+	}
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+}
+
+@media only screen and (max-width: 400px) and (max-height: 400px) {
+	.please-rotate-your-phone {
+		display: none !important;
+	}
+
+	.device-is-not-supported {
+		display: flex !important;
+
+		img {
+			max-width: 20vh;
+		}
+	}
+}
