@@ -11,7 +11,7 @@
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "cache": {
-    "name": "my-cache",
+    "name": "my-pwa-cache-v1",
     "no-store": true
   }
 }
