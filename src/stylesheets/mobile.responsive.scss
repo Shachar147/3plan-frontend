@@ -231,6 +231,11 @@
 			.login-form {
 				max-width: unset;
 				padding-block: 20px !important;
+				padding-inline: 32px !important;
+
+				.textInput {
+					min-width: unset;
+				}
 			}
 		}
 	}
