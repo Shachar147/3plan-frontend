@@ -35,10 +35,21 @@
 
 .list-container .list-view-mode-selector {
 	position: absolute;
-	margin-top: 10px;
 	right: unset;
 	left: 10px;
 	z-index: 9999;
+
+	// making sure it has a white background so when scrolling we won't see scrolled info (background will cover it)
+	width: CALC(100% - 25px);
+	direction: ltr;
+	background-color: white;
+	padding-block: 10px 20px;
+}
+
+body.rtl {
+	.list-container .list-view-mode-selector {
+		direction: rtl;
+	}
 }
 
 .info-box-summary-container {
