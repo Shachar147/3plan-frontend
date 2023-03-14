@@ -2559,11 +2559,11 @@ const ReactModalService = {
 			// console.log("original", JSON.parse(JSON.stringify(originalEvent)), "new", newEvent);
 
 			// update calendar events
-			await eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
+			eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
 
 			// update all events
 			// @ts-ignore
-			await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
+			eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
 		};
 
 		const onDeleteClick = () => {

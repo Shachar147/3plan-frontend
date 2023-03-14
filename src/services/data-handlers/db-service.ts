@@ -2,9 +2,8 @@ import { EventStore } from '../../stores/events-store';
 import { LS_DISTANCE_RESULTS } from '../../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, Trip } from './data-handler-base';
-import { apiDelete, apiGetPromise } from '../../helpers/api';
+import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
-import { apiPut, apiPost } from '../../admin/helpers/api';
 
 export interface upsertTripProps {
 	name?: string;
@@ -88,24 +87,24 @@ export class DBService implements BaseDataHandler {
 
 	// --- SET ------------------------------------------------------------------------------
 	async setAllEvents(allEvents: AllEventsEvent[], tripName: string) {
-		return apiPut(`/trip/name/${tripName}`, { allEvents });
+		return await apiPut(`/trip/name/${tripName}`, { allEvents });
 	}
 
 	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
-		return apiPut(`/trip/name/${tripName}`, { calendarEvents });
+		return await apiPut(`/trip/name/${tripName}`, { calendarEvents });
 	}
 
 	async setCalendarLocale(calendarLocale: LocaleCode, tripName?: string) {
 		if (!tripName) return;
-		return apiPut(`/trip/name/${tripName}`, { calendarLocale });
+		return await apiPut(`/trip/name/${tripName}`, { calendarLocale });
 	}
 
 	async setCategories(categories: TriPlanCategory[], tripName: string) {
-		return apiPut(`/trip/name/${tripName}`, { categories });
+		return await apiPut(`/trip/name/${tripName}`, { categories });
 	}
 
 	async setDateRange(dateRange: DateRangeFormatted, tripName: string) {
-		return apiPut(`/trip/name/${tripName}`, { dateRange });
+		return await apiPut(`/trip/name/${tripName}`, { dateRange });
 	}
 
 	setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string): void {
@@ -115,11 +114,11 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) {
-		return apiPut(`/trip/name/${tripName}`, { sidebarEvents });
+		return await apiPut(`/trip/name/${tripName}`, { sidebarEvents });
 	}
 
 	async setTripName(tripName: string, newTripName: string) {
-		return apiPut(`/trip/name/${tripName}`, { name: newTripName });
+		return await apiPut(`/trip/name/${tripName}`, { name: newTripName });
 	}
 
 	// --------------------------------------------------------------------------------------
