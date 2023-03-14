@@ -546,6 +546,8 @@ const RootRouter = () => {
 		return window.location.href.indexOf('localhost') !== -1 || window.location.href.indexOf('0.0.0.0') !== -1;
 	}
 
+	// added this code, manifest.json, service-worker.js and icon.png for PWA.
+	// PWA allows to save the site as when opening Safari -> share icon -> Add to home screen
 	if ('serviceWorker' in navigator) {
 		window.addEventListener('load', () => {
 			navigator.serviceWorker
