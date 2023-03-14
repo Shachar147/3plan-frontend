@@ -21,6 +21,7 @@ import { runInAction } from 'mobx';
 import { getCoordinatesRangeKey, padTo2Digits } from './utils/utils';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Observer } from 'mobx-react';
+import PrivateRoute from './PrivateRoute';
 import RegisterPage from './layouts/register-page/register-page';
 import LogoutPage from './layouts/logout-page/logout-page';
 import { getToken, getUser } from './helpers/auth';
@@ -544,21 +545,6 @@ const RootRouter = () => {
 	function isDevMode() {
 		return window.location.href.indexOf('localhost') !== -1 || window.location.href.indexOf('0.0.0.0') !== -1;
 	}
-
-	// added this code, manifest.json, service-worker.js and icon.png for PWA.
-	// PWA allows to save the site as when opening Safari -> share icon -> Add to home screen
-	// if ('serviceWorker' in navigator) {
-	// 	window.addEventListener('load', () => {
-	// 		navigator.serviceWorker
-	// 			.register('/service-worker.js')
-	// 			.then((registration) => {
-	// 				console.log('Service worker registered:', registration);
-	// 			})
-	// 			.catch((error) => {
-	// 				console.error('Service worker registration failed:', error);
-	// 			});
-	// 	});
-	// }
 
 	return (
 		<>
