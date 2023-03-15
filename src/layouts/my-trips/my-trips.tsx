@@ -20,7 +20,6 @@ import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
-import MobileHeader from '../../components/mobile-header/mobile-header';
 
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
 
@@ -39,6 +38,8 @@ function MyTrips() {
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
 	const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
+
+	const [error, setError] = useState<any>(undefined);
 	const [isLoadingTrips, setIsLoadingTrips] = useState(false);
 
 	const dataService = useMemo(() => DataServices.getService(dataSource), [dataSource]);
@@ -48,10 +49,17 @@ function MyTrips() {
 	useEffect(() => {
 		setLsTrips([]);
 		setIsLoadingTrips(true);
-		dataService.getTrips(eventStore).then((trips: Trip[]) => {
-			setLsTrips(trips);
-			setIsLoadingTrips(false);
-		});
+		setError(undefined);
+		dataService
+			.getTrips(eventStore)
+			.then((trips: Trip[]) => {
+				setLsTrips(trips);
+				setIsLoadingTrips(false);
+			})
+			.catch((error) => {
+				setError(error);
+				setIsLoadingTrips(false);
+			});
 	}, [dataService, dataSource]);
 
 	useEffect(() => {
@@ -112,6 +120,26 @@ function MyTrips() {
 			>
 				<img src={noTripsPlaceholderIcon} className="opacity-0-3" />
 				{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}
+			</div>
+		);
+	}
+
+	function returnErrorPlaceholder() {
+		return (
+			<div
+				className={getClasses(
+					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder'],
+					eventStore.isListView && 'hidden'
+				)}
+			>
+				<img src="images/oops.png" className="oops-placeholder" />
+				<span
+					style={{
+						color: '#d2105b',
+					}}
+				>
+					{TranslateService.translate(eventStore, 'OOPS_SOMETHING_WENT_WRONG')}
+				</span>
 			</div>
 		);
 	}
@@ -223,6 +251,7 @@ function MyTrips() {
 	}
 
 	function renderForm() {
+		if (error) return returnErrorPlaceholder();
 		if (isLoadingTrips) return renderLoadingTrips();
 		return lsTrips.length === 0 ? renderNoTripsPlaceholder() : renderListOfTrips();
 	}
