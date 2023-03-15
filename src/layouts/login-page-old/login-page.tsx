@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { setToken } from '../../helpers/auth';
 import { Link, useNavigate } from 'react-router-dom';
-import { apiPost } from '../../helpers/api';
+import { apiPostWithCallback } from '../../helpers/api';
 import { LOGIN_DELAY } from '../../utils/consts';
 import './login-page.scss';
 import { eventStoreContext } from '../../stores/events-store';
@@ -62,8 +62,7 @@ const LoginPageOld = () => {
 			setValidating(true);
 
 			// trying to login and get a token.
-			apiPost(
-				this,
+			apiPostWithCallback(
 				'/auth/signin',
 				{
 					username: username,

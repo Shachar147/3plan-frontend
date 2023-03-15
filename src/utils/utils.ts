@@ -91,6 +91,56 @@ export const LOADERS: Record<string, Partial<Loader>> = {
 		top: '30px',
 		textColor: 'white',
 	},
+	'road1.gif': {
+		backgroundColor: '#DB7D74', // done
+		top: '30px',
+		textColor: 'white',
+	},
+	'road2.gif': {
+		backgroundColor: '#FFC100', // done
+		top: '30px',
+		textColor: 'white',
+	},
+	'road3.gif': {
+		backgroundColor: '#00D158', // done
+		top: '30px',
+		textColor: 'white',
+	},
+	'road4.gif': {
+		backgroundColor: '#00B7C8', // done
+		top: '30px',
+		textColor: 'white',
+	},
+	'travel6.gif': {
+		backgroundColor: '#6DDDEB', // done
+		top: '30px',
+		textColor: 'white',
+	},
+	'travel7.gif': {
+		backgroundColor: '#80E5EB', // done
+		top: '30px',
+		textColor: 'white',
+	},
+	'plane4.gif': {
+		backgroundColor: '#16B5E4', // done
+		top: '30px',
+		textColor: 'white',
+	},
+	'plane5.gif': {
+		backgroundColor: '#596285', // done
+		top: '30px',
+		textColor: 'white',
+	},
+	// 'plane6.gif': {
+	// 	backgroundColor: '#596285', // done
+	// 	top: '30px',
+	// 	textColor: 'white',
+	// },
+	'plane7.gif': {
+		backgroundColor: '#C5EBF9', // done
+		top: '30px',
+		textColor: 'black',
+	},
 };
 export function shuffle(array: any[]) {
 	let counter = array.length;

@@ -41,7 +41,7 @@ async function handleUnauthorizedError(error, url) {
 	return false;
 }
 
-export function apiPost(url, data, onSuccess, onError, onFinish) {
+export function apiPost(url, data) {
 	return axios
 		.put(getServerAddress() + url, data, {
 			headers: {
@@ -57,29 +57,30 @@ export function apiPost(url, data, onSuccess, onError, onFinish) {
 			}
 			// return null;
 		});
-
-	// axios
-	// 	.post(getServerAddress() + url, data, {
-	// 		headers: {
-	// 			'Access-Control-Allow-Origin': '*',
-	// 		},
-	// 	})
-	// 	.then((res) => {
-	// 		onSuccess(res);
-	// 	})
-	// 	.catch(function (error) {
-	// 		handleUnauthorizedError(error, url).then((isRedirected) => {
-	// 			if (!isRedirected) {
-	// 				onError(error, () => {
-	// 					self.setState({ error: '' });
-	// 					apiPost(self, url, data, onSuccess, onError, onFinish);
-	// 				});
-	// 			}
-	// 		});
-	// 	})
-	// 	.then(function () {
-	// 		onFinish();
-	// 	});
+}
+export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
+	axios
+		.post(getServerAddress() + url, data, {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+		})
+		.then((res) => {
+			onSuccess(res);
+		})
+		.catch(function (error) {
+			handleUnauthorizedError(error, url).then((isRedirected) => {
+				if (!isRedirected) {
+					onError(error, () => {
+						self.setState({ error: '' });
+						apiPost(self, url, data, onSuccess, onError, onFinish);
+					});
+				}
+			});
+		})
+		.then(function () {
+			onFinish();
+		});
 }
 
 export function apiPut(url, data, onSuccess, onError, onFinish) {

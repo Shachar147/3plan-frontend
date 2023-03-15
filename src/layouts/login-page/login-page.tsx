@@ -12,7 +12,7 @@ import ReactModalService from '../../services/react-modal-service';
 import { setToken } from '../../helpers/auth';
 import axios from 'axios';
 import { LOGIN_DELAY } from '../../utils/consts';
-import { apiPost } from '../../helpers/api';
+import { apiPostWithCallback } from '../../helpers/api';
 import './login-page.scss';
 
 const defaultErrorField: Record<string, boolean> = {
@@ -89,8 +89,7 @@ function LoginPage() {
 			setValidating(true);
 
 			// trying to login and get a token.
-			apiPost(
-				this,
+			apiPostWithCallback(
 				'/auth/signin',
 				{
 					username: username,

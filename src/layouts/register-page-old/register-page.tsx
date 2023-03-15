@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { apiPost } from '../../helpers/api';
+import { apiPost, apiPostWithCallback } from '../../helpers/api';
 import TextInputWrapper from '../../components/inputs/text-input-wrapper/text-input-wrapper';
 import { LOGIN_DELAY } from '../../utils/consts';
 import './register-page.scss';
@@ -69,8 +69,7 @@ const RegisterPageOld = () => {
 			setErrorField(defaultErrorField);
 			setValidating(true);
 
-			apiPost(
-				this,
+			apiPostWithCallback(
 				'/auth/signup',
 				{
 					username: username,

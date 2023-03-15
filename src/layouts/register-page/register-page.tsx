@@ -9,7 +9,7 @@ import { getClasses } from '../../utils/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { LOGIN_DELAY } from '../../utils/consts';
-import { apiPost } from '../../helpers/api';
+import { apiPostWithCallback } from '../../helpers/api';
 
 const defaultErrorField: Record<string, boolean> = {
 	username: false,
@@ -89,8 +89,7 @@ function RegisterPage() {
 			setErrorField(defaultErrorField);
 			setValidating(true);
 
-			apiPost(
-				this,
+			apiPostWithCallback(
 				'/auth/signup',
 				{
 					username: username,
