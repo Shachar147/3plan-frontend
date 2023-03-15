@@ -105,12 +105,15 @@ const MapContainer = (props: MapContainerProps) => {
 
 	// --- side effects -----------------------------------------------------------------
 	useEffect(() => {
-		const script = document.createElement('script');
-		script.src =
-			'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js';
-		script.async = true;
-		document.body.appendChild(script);
-	});
+		if (!document.getElementById('markercluster')) {
+			const script = document.createElement('script');
+			script.src =
+				'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js';
+			script.async = true;
+			script.id = 'markercluster';
+			document.body.appendChild(script);
+		}
+	}, []);
 
 	// --- functions --------------------------------------------------------------------
 	const addressPrefix = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.ADDRESS');

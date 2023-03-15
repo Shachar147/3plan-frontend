@@ -5,6 +5,13 @@
 	max-width: 300px;
 	transition: 350ms;
 
+	.react-autosuggest__container {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		align-items: center;
+	}
+
 	&.hidden {
 		width: 0;
 		height: 0;
@@ -17,17 +24,49 @@
 		}
 	}
 
-	.triplan-text-input {
-		width: 100%;
+	input[type='text'] {
+		padding-inline: 10px;
+		border: 1px solid #dde3eb;
+		border-radius: 20px;
+		height: 40px;
+		min-width: 200px;
+		//width: 100%;
+		transition: all 0.5s ease-in-out;
+	}
+}
 
-		input[type='text'] {
-			padding-inline: 10px;
-			border: 1px solid #dde3eb;
-			border-radius: 20px;
-			height: 40px;
-			min-width: 200px;
-			width: 100%;
-			transition: all 0.5s ease-in-out;
+.search-suggestions-container {
+	background-color: white;
+	margin-top: 5px;
+	border-bottom-left-radius: 20px;
+	border-bottom-right-radius: 20px;
+	margin-inline: 10px;
+	width: 480px;
+
+	max-height: 150px;
+	overflow-y: auto;
+
+	ul {
+		padding-inline: 0;
+	}
+
+	li {
+		padding-inline: 10px;
+		list-style: none;
+		//min-height: 30px;
+		//line-height: 30px;
+
+		&:hover {
+			cursor: pointer;
+			background-color: rgba(0,0,0,0.05);
+			color: var(--blue);
 		}
+	}
+}
+
+body.rtl {
+	.search-suggestions-container{
+		direction: rtl;
+		text-align: right;
 	}
 }

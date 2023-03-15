@@ -3029,6 +3029,7 @@ const ReactModalService = {
 			content,
 		});
 	},
+	openSearchModal: () => {},
 };
 
 export default ReactModalService;

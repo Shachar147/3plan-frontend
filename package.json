@@ -34,6 +34,7 @@
 		"prettier": "^2.8.1",
 		"puppeteer": "^18.1.0",
 		"react": "16.8.6",
+		"react-autosuggest": "^10.1.0",
 		"react-bootstrap-sweetalert": "^5.2.0",
 		"react-dom": "16.8.6",
 		"react-ellipsis-with-tooltip": "^1.1.1",
