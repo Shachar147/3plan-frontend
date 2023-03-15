@@ -766,7 +766,7 @@ const MapContainer = (props: MapContainerProps) => {
 	const updateVisibleMarkers = () => {
 		const bounds = googleMapRef.getBounds();
 		let count = 0;
-		const visibleItems = [];
+		let visibleItems = [];
 
 		for (var i = 0; i < markers.length; i++) {
 			const marker = markers[i];
@@ -774,10 +774,17 @@ const MapContainer = (props: MapContainerProps) => {
 				const event = (props.allEvents ?? eventStore.allEventsFilteredComputed).find(
 					(x) => x.id.toString() === marker.eventId.toString()
 				);
-				visibleItems.push({ event, marker });
-				count++;
+				if (event) {
+					visibleItems.push({ event, marker });
+					count++;
+				} else {
+					console.error(`event with id ${marker.eventId} not found`);
+				}
 			}
 		}
+
+		visibleItems = visibleItems.sort((a, b) => (a.event.title > b.event.title ? 1 : -1));
+
 		setVisibleItems(visibleItems);
 	};
 
@@ -914,7 +921,13 @@ const MapContainer = (props: MapContainerProps) => {
 	}
 
 	return (
-		<div className={getClasses('map-container', props.isCombined && 'combined')}>
+		<div
+			className={getClasses(
+				'map-container',
+				props.isCombined && 'combined',
+				eventStore.isMobile && 'resize-none'
+			)}
+		>
 			{renderMapFilters()}
 			<div className="map-header">
 				<div className={'map-search-location-input'}>
@@ -972,7 +985,7 @@ const MapContainer = (props: MapContainerProps) => {
 						? { lat: coordinates[0].lat, lng: coordinates[0].lng }
 						: undefined
 				}
-				zoom={searchCoordinates.length > 0 || center ? 14 : 11}
+				zoom={searchCoordinates.length > 0 || center ? 14 : 7}
 				yesIWantToUseGoogleMapApiInternals
 				// @ts-ignore
 				onGoogleApiLoaded={({ map, maps }) => setGoogleMapRef(map, maps)}

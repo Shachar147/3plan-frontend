@@ -43,11 +43,17 @@
 	}
 
 	.visible-items-pane {
+		&.mobile {
+			max-height: 270px;
+			height: 270px;
+			min-height: 270px;
+			resize: none;
+		}
 		&:not(.mobile) {
 			position: absolute;
-			left: 15px;
+			left: 5px;
 		}
-		bottom: 23px;
+		top: 85px;
 		z-index: 999;
 		background-color: white;
 		padding-block: 10px;
@@ -56,16 +62,20 @@
 		color: #666666;
 		border: #e6e6e6;
 
-		max-height: 270px;
-		height: 270px;
-		min-height: 270px;
+		//max-height: 270px;
+		//height: 270px;
+		//min-height: 270px;
+		min-height : 120px;
+		max-height: 50%;
+		resize: vertical;
+		overflow: auto;
 
 		&.combined {
-			max-height: 95px;
-			height: 95px;
-			min-height: 95px;
+			//max-height: 95px;
+			//height: 95px;
+			min-height: 120px;
 
-			bottom: 5px;
+			//bottom: 5px;
 			left: 5px;
 
 			.visible-items-header {
@@ -227,7 +237,7 @@ body.ltr {
 			&.combined {
 				left: unset;
 				right: 5px;
-				bottom: 5px;
+				//bottom: 5px;
 			}
 		}
 	}
