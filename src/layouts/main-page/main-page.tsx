@@ -9,7 +9,7 @@ import './main-page.scss';
 
 import TriplanCalendar, { TriPlanCalendarRef } from '../../components/triplan-calendar/triplan-calendar';
 import { eventStoreContext } from '../../stores/events-store';
-import { observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react';
 import { defaultEventsToCategories } from '../../utils/defaults';
 import { getViewSelectorOptions } from '../../utils/ui-utils';
 import { useParams } from 'react-router-dom';
@@ -224,6 +224,8 @@ function MainPage(props: MainPageProps) {
 			shouldShow = false;
 		}
 
+		console.log(JSON.stringify(eventStore.allEventsFilteredComputed));
+
 		if (eventStore.viewMode === ViewMode.combined) {
 			return (
 				<div
@@ -260,7 +262,7 @@ function MainPage(props: MainPageProps) {
 				}}
 				key={JSON.stringify(eventStore.allEventsFilteredComputed)}
 			>
-				<MapContainer addToEventsToCategories={addToEventsToCategories} />
+				<Observer>{() => <MapContainer addToEventsToCategories={addToEventsToCategories} />}</Observer>
 			</div>
 		);
 	}
@@ -409,7 +411,7 @@ function MainPage(props: MainPageProps) {
 					) : (
 						<>
 							{renderSidebar()}
-							{renderMapView(eventStore.isMapView)}
+							{eventStore.isMapView && renderMapView(eventStore.isMapView)}
 							{eventStore.isListView && renderListView()}
 							{eventStore.isCalendarView && renderCalendarView()}
 							{eventStore.isCombinedView && renderCombinedView()}
