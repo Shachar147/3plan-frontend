@@ -9,7 +9,7 @@ import { renderFooterLine } from '../../utils/ui-utils';
 import { getClasses } from '../../utils/utils';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import ReactModalService from '../../services/react-modal-service';
-import DataServices, { Trip } from '../../services/data-handlers/data-handler-base';
+import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import { TripDataSource } from '../../utils/enums';
