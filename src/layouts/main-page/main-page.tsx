@@ -224,7 +224,7 @@ function MainPage(props: MainPageProps) {
 			shouldShow = false;
 		}
 
-		if (eventStore.viewMode === ViewMode.combined) {
+		if (!eventStore.isMobile && eventStore.viewMode === ViewMode.combined) {
 			return (
 				<div
 					className={getClasses(
@@ -392,6 +392,8 @@ function MainPage(props: MainPageProps) {
 		withFilterTags: true,
 		withMyTrips: true,
 	};
+
+	console.log({ mobileViewMode: eventStore.mobileViewMode });
 
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>

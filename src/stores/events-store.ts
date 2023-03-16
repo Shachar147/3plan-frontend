@@ -336,22 +336,22 @@ export class EventStore {
 
 	@computed
 	get isListView() {
-		return this.viewMode === ViewMode.list;
+		return this.isMobile ? this.mobileViewMode === ViewMode.list : this.viewMode === ViewMode.list;
 	}
 
 	@computed
 	get isMapView() {
-		return this.viewMode === ViewMode.map;
+		return this.isMobile ? this.mobileViewMode === ViewMode.map : this.viewMode === ViewMode.map;
 	}
 
 	@computed
 	get isCalendarView() {
-		return this.viewMode === ViewMode.calendar;
+		return this.isMobile ? this.mobileViewMode === ViewMode.calendar : this.viewMode === ViewMode.calendar;
 	}
 
 	@computed
 	get isCombinedView() {
-		return this.viewMode === ViewMode.combined;
+		return this.isMobile ? false : this.viewMode === ViewMode.combined;
 	}
 
 	@computed
