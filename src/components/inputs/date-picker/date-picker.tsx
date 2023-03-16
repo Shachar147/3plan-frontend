@@ -32,12 +32,12 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 		wrapperClassName,
 		id,
 		name,
+		placeholder,
 		placeholderKey,
 		modalValueName,
 		className,
 		onClick,
 		onKeyUp,
-		placeholder,
 		enforceMinMax = false,
 		autoComplete = 'true',
 	} = props;
@@ -51,22 +51,6 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 		},
 	}));
 
-	// TODO for some reason placeholder not working well on mobile, need to fix.
-	const handleFocus = (event: any) => {
-		if (eventStore.isMobile) return;
-		event.target.type = 'datetime-local';
-		event.target.value = '';
-	};
-
-	// TODO for some reason placeholder not working well on mobile, need to fix.
-	const handleBlur = (event: any) => {
-		if (eventStore.isMobile) return;
-		if (!event.target.value) {
-			event.target.type = 'text';
-			event.target.value = props.placeholder || 'YYYY-MM-DDTHH:MM';
-		}
-	};
-
 	return (
 		<div className={getClasses('triplan-date-picker-input', wrapperClassName)}>
 			<input
@@ -74,11 +58,10 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 				name={name}
 				className={getClasses(['datePickerInput'], className)}
 				ref={ref}
-				type={eventStore.isMobile ? 'datetime-local' : 'text'}
+				type="datetime-local"
 				value={value}
-				onClick={(e) => {
+				onClick={() => {
 					onClick && onClick();
-					handleFocus(e);
 				}}
 				onKeyUp={() => {
 					onKeyUp && onKeyUp();
@@ -97,8 +80,6 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 				autoComplete={autoComplete}
 				min={enforceMinMax ? `${eventStore.customDateRange.start}T00:00` : undefined}
 				max={enforceMinMax ? `${eventStore.customDateRange.end}T23:59` : undefined}
-				onFocus={handleFocus}
-				onBlur={handleBlur}
 			/>
 		</div>
 	);

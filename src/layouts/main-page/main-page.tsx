@@ -224,8 +224,6 @@ function MainPage(props: MainPageProps) {
 			shouldShow = false;
 		}
 
-		console.log(JSON.stringify(eventStore.allEventsFilteredComputed));
-
 		if (eventStore.viewMode === ViewMode.combined) {
 			return (
 				<div
@@ -240,7 +238,7 @@ function MainPage(props: MainPageProps) {
 						resize: 'vertical',
 						overflow: 'auto',
 					}}
-					key={JSON.stringify(eventStore.allEventsFilteredComputed)}
+					key={`combined-${JSON.stringify(eventStore.allEventsFilteredComputed)}`}
 				>
 					<MapContainer isCombined addToEventsToCategories={addToEventsToCategories} />
 				</div>
