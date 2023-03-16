@@ -122,10 +122,11 @@ const GettingStartedPage = () => {
 			// @ts-ignore
 			await DataServices.DBService.createTrip(
 				tripData,
-				() => {
+				(res: any) => {
 					eventStore.setCustomDateRange(customDateRange);
 					eventStore.dataService.setDateRange(customDateRange, TripName);
-					navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+					navigate(`/plan/${res.data.name}`);
+					// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 				},
 				() => {
 					ReactModalService.internal.alertMessage(

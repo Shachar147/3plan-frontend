@@ -393,8 +393,6 @@ function MainPage(props: MainPageProps) {
 		withMyTrips: true,
 	};
 
-	console.log({ mobileViewMode: eventStore.mobileViewMode });
-
 	return (
 		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
 			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
