@@ -161,7 +161,8 @@ export class DBService implements BaseDataHandler {
 		finallyCallback?: () => void
 	) {
 		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale } = data;
-		await apiPost('/trip', {
+
+		return await apiPost('/trip', {
 			name,
 			dateRange,
 			categories,

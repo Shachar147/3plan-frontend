@@ -41,9 +41,9 @@ async function handleUnauthorizedError(error, url) {
 	return false;
 }
 
-export function apiPost(url, data) {
-	return axios
-		.put(getServerAddress() + url, data, {
+export async function apiPost(url, data) {
+	return await axios
+		.post(getServerAddress() + url, data, {
 			headers: {
 				'Access-Control-Allow-Origin': '*',
 			},

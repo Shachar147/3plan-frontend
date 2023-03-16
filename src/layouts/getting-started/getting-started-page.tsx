@@ -9,7 +9,7 @@ import { renderFooterLine } from '../../utils/ui-utils';
 import { getClasses } from '../../utils/utils';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import ReactModalService from '../../services/react-modal-service';
-import DataServices from '../../services/data-handlers/data-handler-base';
+import DataServices, { Trip } from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import { TripDataSource } from '../../utils/enums';
@@ -122,10 +122,11 @@ const GettingStartedPage = () => {
 			// @ts-ignore
 			await DataServices.DBService.createTrip(
 				tripData,
-				() => {
+				(res: any) => {
 					eventStore.setCustomDateRange(customDateRange);
 					eventStore.dataService.setDateRange(customDateRange, TripName);
-					navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+					navigate(`/plan/${res.data.name}`);
+					// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 				},
 				() => {
 					ReactModalService.internal.alertMessage(
