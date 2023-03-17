@@ -592,15 +592,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		let totalDisplayedCategories = 0;
 		const categoriesBlock = eventStore.categories.map((triplanCategory, index) => {
-			const sidebarItemsCount = (eventStore.getSidebarEvents[triplanCategory.id] || []).filter(
-				(e) => e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1
-			).length;
+			const sidebarItemsCount = (eventStore.getSidebarEvents[triplanCategory.id] || []).length;
 
-			const calendarItemsCount = eventStore.calendarEvents.filter((e) => {
-				return (
-					e.category.toString() == triplanCategory.id.toString() &&
-					e.title?.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1
-				);
+			const calendarItemsCount = eventStore.filteredCalendarEvents.filter((e) => {
+				return e.category.toString() == triplanCategory.id.toString();
 			}).length;
 
 			const itemsCount = sidebarItemsCount + calendarItemsCount;
@@ -809,9 +804,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					.filter(
 						(x) => x.preferredTime != undefined && x.preferredTime.toString() === preferredHour.toString()
 					)
-					.filter((e) => {
-						return e.title.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) !== -1;
-					})
 					.sort(sortByPriority);
 			});
 

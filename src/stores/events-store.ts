@@ -317,7 +317,12 @@ export class EventStore {
 	get filteredCalendarEvents(): CalendarEvent[] {
 		let filteredEvents = this.getJSCalendarEvents().filter(
 			(event) =>
-				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
+				(event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 ||
+					(event.description &&
+						event.description.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) ||
+					(event.location &&
+						event.location.address &&
+						event.location.address.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1)) &&
 				(this.showOnlyEventsWithNoLocation ? !(event.location != undefined) : true) &&
 				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
@@ -362,7 +367,12 @@ export class EventStore {
 				.map((x) => toJS(x))
 				.filter(
 					(event) =>
-						event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
+						(event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 ||
+							(event.description &&
+								event.description.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) ||
+							(event.location &&
+								event.location.address &&
+								event.location.address.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1)) &&
 						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
@@ -400,7 +410,12 @@ export class EventStore {
 	get allEventsFilteredComputed() {
 		return this.allEventsComputed.filter(
 			(event) =>
-				event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 &&
+				(event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 ||
+					(event.description &&
+						event.description.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) ||
+					(event.location &&
+						event.location.address &&
+						event.location.address.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1)) &&
 				(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
@@ -488,7 +503,6 @@ export class EventStore {
 	@action
 	async setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>) {
 		this.sidebarEvents = newSidebarEvents;
-		// if (!this.showOnlyEventsWithNoOpeningHours && !this.searchValue && !this.showOnlyEventsWithTodoComplete && !this.showOnlyEventsWithTodoComplete)
 		return this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
 	}
 
