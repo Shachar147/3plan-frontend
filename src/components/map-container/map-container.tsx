@@ -346,7 +346,7 @@ const MapContainer = (props: MapContainerProps) => {
 			) {
 				icon = iconsMap['mountains'];
 			} else if (
-				isMatching(title, ['lake', 'lakes', ' נהר ', 'אגם']) ||
+				isMatching(title, ['lake ', 'lakes', ' נהר ', 'אגם']) ||
 				isMatching(category, ['lakes', 'נהרות', 'אגמים'])
 			) {
 				icon = iconsMap['lakes'];

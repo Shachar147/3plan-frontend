@@ -21,6 +21,7 @@ import {
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
+import { trace } from 'mobx';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -364,6 +365,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				end: addDays(toDate(eventStore.customDateRange.end), 1),
 			}}
 			slotMinTime={'07:00'}
+			scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
 		/>
 	);
 }
