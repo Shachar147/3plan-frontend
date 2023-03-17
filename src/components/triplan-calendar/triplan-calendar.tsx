@@ -181,20 +181,22 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const handleEventChange = async (changeInfo: any) => {
-		// when changing "allDay" event to be regular event, it has no "end".
-		// the following lines fix it by extracting start&end from _instance.range, and converting them to the correct timezone.
-		const hoursToAdd = changeInfo.event._instance.range.start.getTimezoneOffset() / 60;
-		const dtStart = addHours(changeInfo.event._instance.range.start, hoursToAdd);
-		const dtEnd = addHours(changeInfo.event._instance.range.end, hoursToAdd);
+		// // when changing "allDay" event to be regular event, it has no "end".
+		// // the following lines fix it by extracting start&end from _instance.range, and converting them to the correct timezone.
+		// const hoursToAdd = changeInfo.event._instance.range.start.getTimezoneOffset() / 60;
+		// const dtStart = addHours(changeInfo.event._instance.range.start, hoursToAdd);
+		// const dtEnd = addHours(changeInfo.event._instance.range.end, hoursToAdd);
 
 		const newEvent = {
 			...changeInfo.event._def,
-			...changeInfo.event,
 			...changeInfo.event.extendedProps,
+			...changeInfo.event,
 			allDay: changeInfo.event.allDay,
-			start: dtStart,
-			end: dtEnd,
+			// start: dtStart,
+			// end: dtEnd,
 			hasEnd: !changeInfo.event.allDay,
+			start: changeInfo.event.start,
+			end: changeInfo.event.end,
 		};
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
