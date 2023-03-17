@@ -34,6 +34,7 @@ import Slider from 'react-slick';
 // import _ from 'lodash';
 import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
+import LocationInput from '../components/inputs/location-input/location-input';
 
 const ReactModalRenderHelper = {
 	renderInputWithLabel: (eventStore: EventStore, textKey: string, input: JSX.Element, className?: string) => {
@@ -61,6 +62,22 @@ const ReactModalRenderHelper = {
 	) => {
 		if (extra.value && !eventStore.modalValues[modalValueName]) {
 			eventStore.modalValues[modalValueName] = extra.value;
+		}
+
+		if (modalValueName === 'location'){
+			return (
+				<LocationInput
+					id={extra.id}
+					className={extra.className}
+					ref={ref}
+					modalValueName={modalValueName}
+					onClick={extra.onClick}
+					onKeyUp={extra.onKeyUp}
+					placeholder={extra.placeholder}
+					placeholderKey={extra.placeholderKey}
+					autoComplete={extra.autoComplete}
+				/>
+			)
 		}
 
 		return (

@@ -802,3 +802,13 @@ body.rtl {
 		text-align: right;
 	}
 }
+
+.triplan-text-input {
+	position: relative;
+
+	i.fa {
+		position: absolute;
+		top: 9px;
+		left: 10px;
+	}
+}
