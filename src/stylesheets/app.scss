@@ -505,7 +505,7 @@ div[class$='-control'] {
 }
 
 .swal2-container {
-	z-index: 99999;
+	z-index: 99999 !important;
 }
 
 .fc-event.locked {
