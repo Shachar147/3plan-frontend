@@ -398,5 +398,6 @@
 	"ALL": "All",
 	"SHOW_ONLY": "Show only:",
 	"SCHEDULED_EVENTS": "Scheduled activities",
-	"UNSCHEDULED_EVENTS": "Unscheduled activities"
+	"UNSCHEDULED_EVENTS": "Unscheduled activities",
+	"SEARCH_RESULTS": "Search results"
 }

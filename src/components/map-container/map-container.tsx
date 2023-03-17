@@ -763,7 +763,25 @@ const MapContainer = (props: MapContainerProps) => {
 		};
 	};
 
+	const getAllMarkers = () => {
+		const visibleItems = [];
+		for (var i = 0; i < markers.length; i++) {
+			const marker = markers[i];
+			const event = (props.allEvents ?? eventStore.allEventsFilteredComputed).find(
+				(x) => x.id.toString() === marker.eventId.toString()
+			);
+			if (event) {
+				visibleItems.push({ event, marker });
+			} else {
+				console.error(`event with id ${marker.eventId} not found`);
+			}
+		}
+		return visibleItems.sort((a, b) => (a.event.title > b.event.title ? 1 : -1));
+	};
+
 	const updateVisibleMarkers = () => {
+		if (visibleItemsSearchValue) return;
+
 		const bounds = googleMapRef.getBounds();
 		let count = 0;
 		let visibleItems = [];
@@ -790,13 +808,16 @@ const MapContainer = (props: MapContainerProps) => {
 
 	// --- render -----------------------------------------------------------------------
 
-	const filteredVisibleItems = visibleItems
-		.sort((a, b) => {
-			const priority1 = Number(a.event.priority) === 0 ? 999 : a.event.priority;
-			const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
-			return priority1 - priority2;
-		})
-		.filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
+	let filteredVisibleItems = visibleItemsSearchValue
+		? getAllMarkers()
+		: visibleItems.sort((a, b) => {
+				const priority1 = Number(a.event.priority) === 0 ? 999 : a.event.priority;
+				const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
+				return priority1 - priority2;
+		  });
+	// .filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
+
+	console.log({ visibleItems });
 
 	function renderMapFilters() {
 		const allOption = { label: TranslateService.translate(eventStore, 'ALL'), value: '' };
@@ -1025,9 +1046,6 @@ const MapContainer = (props: MapContainerProps) => {
 					props.isCombined && 'combined'
 				)}
 			>
-				<div className="visible-items-header">
-					<b>{TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.TITLE')}:</b>
-				</div>
 				<div className={'search-container'}>
 					<input
 						type={'text'}
@@ -1039,8 +1057,19 @@ const MapContainer = (props: MapContainerProps) => {
 						placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
 					/>
 				</div>
+				<div className="visible-items-header">
+					<b>
+						{TranslateService.translate(
+							eventStore,
+							visibleItemsSearchValue ? 'SEARCH_RESULTS' : 'MAP.VISIBLE_ITEMS.TITLE'
+						)}
+						:
+					</b>
+				</div>
 				<div className={'visible-items-fc-events bright-scrollbar'}>
-					{visibleItems.length === 0 && TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
+					{!visibleItemsSearchValue &&
+						visibleItems.length === 0 &&
+						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
 					{visibleItems.length > 0 &&
 						filteredVisibleItems.length === 0 &&
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
