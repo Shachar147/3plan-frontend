@@ -266,6 +266,9 @@ const RootRouter = () => {
 
 	window.setManualLocation = (className = 'location-input', variableName = 'selectedLocation', eventStore) => {
 		const address = document.querySelector(`.${className}`)?.value;
+		if (window[variableName] && window[variableName]["address"] == address) {
+			return;
+		}
 		window[variableName] = {
 			address,
 			latitude: undefined,
