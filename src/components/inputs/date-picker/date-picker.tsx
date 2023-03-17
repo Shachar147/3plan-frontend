@@ -42,7 +42,7 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 		autoComplete = 'true',
 	} = props;
 	const initialValue = eventStore.modalValues ? eventStore.modalValues[modalValueName] : undefined;
-	const [value, setValue] = useState(initialValue);
+	let [value, setValue] = useState(initialValue);
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({
@@ -80,6 +80,7 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 				autoComplete={autoComplete}
 				min={enforceMinMax ? `${eventStore.customDateRange.start}T00:00` : undefined}
 				max={enforceMinMax ? `${eventStore.customDateRange.end}T23:59` : undefined}
+				data-value={!eventStore.isMobile ? 'disabled' : value ?? 'empty'}
 			/>
 		</div>
 	);
