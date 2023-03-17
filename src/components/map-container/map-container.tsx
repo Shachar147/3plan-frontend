@@ -1064,7 +1064,8 @@ const MapContainer = (props: MapContainerProps) => {
 												extendedProps: {
 													...info.event,
 												},
-											}
+											},
+											info.event
 										);
 									}}
 									title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
