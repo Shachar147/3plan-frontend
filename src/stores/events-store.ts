@@ -476,7 +476,7 @@ export class EventStore {
 
 	@action
 	deleteEvent(eventId: string) {
-		this.setCalendarEvents([
+		return this.setCalendarEvents([
 			...this.calendarEvents.filter((event) => event!.id!.toString() !== eventId.toString()),
 		]);
 	}

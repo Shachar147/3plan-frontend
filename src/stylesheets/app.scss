@@ -472,6 +472,12 @@ div[class$='-control'] {
 	max-width: 320px;
 }
 
+.triplan-selector {
+	&.disabled {
+		opacity: 0.7;
+	}
+}
+
 .input-with-label input.textInput {
 	height: 37px; /* 47px */
 }

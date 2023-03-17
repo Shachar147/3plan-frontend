@@ -458,6 +458,26 @@ const getDefaultSettings = (eventStore: EventStore) => {
 
 const ReactModalService = {
 	internal: {
+		disableOnConfirm: () => {
+			// @ts-ignore
+			$(
+				'.triplan-react-modal .input-with-label input, .triplan-react-modal .input-with-label textarea, .triplan-react-modal .input-with-label button'
+			).attr('disabled', true);
+			// @ts-ignore
+			$('.triplan-react-modal .triplan-selector, .triplan-react-modal .icon-selector').addClass('disabled');
+			// @ts-ignore
+			$('.triplan-react-modal>p .primary-button')
+				.parent()
+				.html('<a href="#" class="btn btn-lg btn-info primary-button disabled">שומר...</a>');
+		},
+		openOopsErrorModal: (eventStore: EventStore) => {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG',
+				'error'
+			);
+		},
 		openModal: (eventStore: EventStore, settings: any, isSecondModal: boolean = false) => {
 			const shouldSlideUp = eventStore.isMobile && settings.slideUp;
 
@@ -1258,12 +1278,7 @@ const ReactModalService = {
 							window.location.reload();
 						},
 						() => {
-							ReactModalService.internal.alertMessage(
-								eventStore,
-								'MODALS.ERROR.TITLE',
-								'MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG',
-								'error'
-							);
+							ReactModalService.internal.openOopsErrorModal(eventStore);
 						}
 					);
 				} else {
@@ -2347,12 +2362,14 @@ const ReactModalService = {
 		) => {
 			ReactModalService.openConfirmModal(
 				eventStore,
-				() => {
+				async () => {
 					// add back to sidebar
 					if (addEventToSidebar(currentEvent)) {
+						ReactModalService.internal.disableOnConfirm();
+
 						// remove from calendar
 						eventStore.allowRemoveAllCalendarEvents = true;
-						eventStore.deleteEvent(eventId);
+						await eventStore.deleteEvent(eventId);
 
 						// refreshSources();
 
@@ -2365,12 +2382,7 @@ const ReactModalService = {
 
 						ReactModalService.internal.closeModal(eventStore);
 					} else {
-						ReactModalService.internal.alertMessage(
-							eventStore,
-							'MODALS.ERROR.TITLE',
-							'MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG',
-							'error'
-						);
+						ReactModalService.internal.openOopsErrorModal(eventStore);
 						return;
 					}
 				},
@@ -2395,6 +2407,7 @@ const ReactModalService = {
 			const oldEvent = eventStore.allEventsComputed.find((e) => e.id!.toString() === eventId.toString());
 			if (!oldEvent) {
 				console.error('old event not found');
+				ReactModalService.internal.openOopsErrorModal(eventStore);
 				return false;
 			}
 
@@ -2562,24 +2575,26 @@ const ReactModalService = {
 			// console.log("original", JSON.parse(JSON.stringify(originalEvent)), "new", newEvent);
 
 			// update calendar events
-			eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
+			await eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
 
 			// update all events
 			// @ts-ignore
-			eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
+			await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
 		};
 
 		const onDeleteClick = () => {
 			handleDeleteEventResult(currentEvent as unknown as CalendarEvent, addEventToSidebar);
 		};
 
-		const onDuplicateClick = () => {
+		const onDuplicateClick = async () => {
+			ReactModalService.internal.disableOnConfirm();
 			const calendarEvent = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
-			handleDuplicateEventResult(eventStore, calendarEvent as CalendarEvent);
+			await handleDuplicateEventResult(eventStore, calendarEvent as CalendarEvent);
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
 		const onConfirm = async () => {
+			ReactModalService.internal.disableOnConfirm();
 			const isOk = await handleEditEventResult(eventStore, addEventToSidebar, info.event);
 			if (isOk) {
 				ReactModalService.internal.closeModal(eventStore);
@@ -2713,8 +2728,8 @@ const ReactModalService = {
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, continueKey),
 			confirmBtnCssClass: 'primary-button',
-			onConfirm: () => {
-				callback();
+			onConfirm: async () => {
+				await callback();
 
 				ReactModalService.internal.closeModal(eventStore);
 			},
@@ -2895,12 +2910,7 @@ const ReactModalService = {
 						'success'
 					);
 				} else {
-					ReactModalService.internal.alertMessage(
-						eventStore,
-						'MODALS.ERROR.TITLE',
-						'OOPS_SOMETHING_WENT_WRONG',
-						'error'
-					);
+					ReactModalService.internal.openOopsErrorModal(eventStore);
 				}
 
 				ReactModalService.internal.closeModal(eventStore);
