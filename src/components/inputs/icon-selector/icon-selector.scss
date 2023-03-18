@@ -2,4 +2,8 @@
 	svg {
 		cursor: pointer;
 	}
+
+	&.disabled {
+		opacity: 0.7;
+	}
 }

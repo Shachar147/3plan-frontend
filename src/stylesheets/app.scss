@@ -472,6 +472,12 @@ div[class$='-control'] {
 	max-width: 320px;
 }
 
+.triplan-selector {
+	&.disabled {
+		opacity: 0.7;
+	}
+}
+
 .input-with-label input.textInput {
 	height: 37px; /* 47px */
 }
@@ -505,7 +511,7 @@ div[class$='-control'] {
 }
 
 .swal2-container {
-	z-index: 99999;
+	z-index: 99999 !important;
 }
 
 .fc-event.locked {
@@ -776,4 +782,29 @@ input[type='text'] {
 
 .oops-placeholder {
 	width: 100px;
+}
+
+input[type="datetime-local"],
+input[type="datetime-local"] {
+	content: "" !important;
+}
+
+input[type="datetime-local"][data-value="empty"]:before {
+	content: attr(placeholder) !important;
+	color: #aaa;
+	width: 200px;
+	position:absolute;
+}
+
+body.rtl {
+	input[type="datetime-local"]:focus:before,
+	input[type="datetime-local"]:valid:before {
+		content: "" !important;
+	}
+
+	input[type="datetime-local"][data-value="empty"]:before {
+		content: attr(placeholder) !important;
+		direction: rtl;
+		text-align: right;
+	}
 }

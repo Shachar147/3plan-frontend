@@ -10,14 +10,7 @@ import { eventStoreContext } from '../../stores/events-store';
 import './triplan-calendar.scss';
 import { defaultTimedEventDuration } from '../../utils/defaults';
 import TranslateService from '../../services/translate-service';
-import {
-	addDays,
-	addHours,
-	addHoursToDate,
-	getDateRangeString,
-	isTodayInDateRange,
-	toDate,
-} from '../../utils/time-utils';
+import { addDays, addHoursToDate, getDateRangeString, isTodayInDateRange, toDate } from '../../utils/time-utils';
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
@@ -80,7 +73,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		});
 
 		setDraggables(draggablesArr);
-	}, [props.categories]);
+	}, [props.categories, eventStore.allEventsFilteredComputed]);
 
 	useEffect(() => {
 		calendarComponentRef.current!.render();
@@ -180,20 +173,22 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const handleEventChange = async (changeInfo: any) => {
-		// when changing "allDay" event to be regular event, it has no "end".
-		// the following lines fix it by extracting start&end from _instance.range, and converting them to the correct timezone.
-		const hoursToAdd = changeInfo.event._instance.range.start.getTimezoneOffset() / 60;
-		const dtStart = addHours(changeInfo.event._instance.range.start, hoursToAdd);
-		const dtEnd = addHours(changeInfo.event._instance.range.end, hoursToAdd);
+		// // when changing "allDay" event to be regular event, it has no "end".
+		// // the following lines fix it by extracting start&end from _instance.range, and converting them to the correct timezone.
+		// const hoursToAdd = changeInfo.event._instance.range.start.getTimezoneOffset() / 60;
+		// const dtStart = addHours(changeInfo.event._instance.range.start, hoursToAdd);
+		// const dtEnd = addHours(changeInfo.event._instance.range.end, hoursToAdd);
 
 		const newEvent = {
 			...changeInfo.event._def,
-			...changeInfo.event,
 			...changeInfo.event.extendedProps,
+			...changeInfo.event,
 			allDay: changeInfo.event.allDay,
-			start: dtStart,
-			end: dtEnd,
+			// start: dtStart,
+			// end: dtEnd,
 			hasEnd: !changeInfo.event.allDay,
+			start: changeInfo.event.start,
+			end: changeInfo.event.end,
 		};
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
@@ -251,6 +246,15 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			start: event.start ?? event._instance?.range?.start,
 			end: event.end ?? event._instance?.range?.end,
 		};
+
+		// debug
+		if (!event.start) {
+			console.error('renderEventContent', 'event.start does not exist', event);
+		}
+		if (!event.end) {
+			console.error('renderEventContent', 'event.end does not exist', event);
+		}
+
 		const calendarEvent = buildCalendarEvent(json) as CalendarEvent;
 
 		eventEl.innerHTML = getEventDivHtml(eventStore, calendarEvent);
@@ -364,6 +368,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				end: addDays(toDate(eventStore.customDateRange.end), 1),
 			}}
 			slotMinTime={'07:00'}
+			scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
 		/>
 	);
 }
