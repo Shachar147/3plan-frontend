@@ -10,18 +10,10 @@ import { eventStoreContext } from '../../stores/events-store';
 import './triplan-calendar.scss';
 import { defaultTimedEventDuration } from '../../utils/defaults';
 import TranslateService from '../../services/translate-service';
-import {
-	addDays,
-	addHours,
-	addHoursToDate,
-	getDateRangeString,
-	isTodayInDateRange,
-	toDate,
-} from '../../utils/time-utils';
+import { addDays, addHoursToDate, getDateRangeString, isTodayInDateRange, toDate } from '../../utils/time-utils';
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
-import { trace } from 'mobx';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -81,7 +73,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		});
 
 		setDraggables(draggablesArr);
-	}, [props.categories]);
+	}, [props.categories, eventStore.allEventsFilteredComputed]);
 
 	useEffect(() => {
 		calendarComponentRef.current!.render();
