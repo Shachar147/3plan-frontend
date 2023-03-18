@@ -1099,7 +1099,7 @@ const MapContainer = (props: MapContainerProps) => {
 						onChange={(e) => {
 							setVisibleItemsSearchValue(e.target.value);
 						}}
-						placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+						placeholder={TranslateService.translate(eventStore, 'MAP_SEARCH_PLACEHOLDER')}
 					/>
 				</div>
 				<div className="visible-items-header">
