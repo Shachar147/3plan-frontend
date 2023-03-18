@@ -1382,6 +1382,8 @@ const ReactModalService = {
 				return;
 			}
 
+			ReactModalService.internal.disableOnConfirm();
+
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
 			existingSidebarEvents[categoryId].push(currentEvent);
@@ -1544,6 +1546,8 @@ const ReactModalService = {
 				isLocationChanged ||
 				isImagesChanged ||
 				isMoreInfoChanged;
+
+			ReactModalService.internal.disableOnConfirm();
 
 			if (isCategoryChanged) {
 				// remove it from the old category
@@ -1753,6 +1757,8 @@ const ReactModalService = {
 				console.error('event not found');
 				return;
 			}
+
+			ReactModalService.internal.disableOnConfirm();
 
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[parseInt(category)] = existingSidebarEvents[parseInt(category)] || [];
@@ -2034,6 +2040,8 @@ const ReactModalService = {
 				return false;
 			}
 
+			ReactModalService.internal.disableOnConfirm();
+
 			await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 			addToEventsToCategories(currentEvent);
 
@@ -2132,6 +2140,8 @@ const ReactModalService = {
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const onConfirm = async () => {
+			ReactModalService.internal.disableOnConfirm();
+
 			// delete from sidebar
 			await eventStore.setSidebarEvents(newSidebarEvents);
 
@@ -2249,6 +2259,8 @@ const ReactModalService = {
 					);
 					return;
 				}
+
+				ReactModalService.internal.disableOnConfirm();
 
 				await eventStore.setCategories([
 					...eventStore.categories.filter((c) => c.id.toString() !== categoryId.toString()),
@@ -2495,6 +2507,8 @@ const ReactModalService = {
 				isImagesChanged ||
 				isMoreInfoChanged;
 
+			ReactModalService.internal.disableOnConfirm();
+
 			if (isCategoryChanged) {
 				// add it to the new category
 				// @ts-ignore
@@ -2565,6 +2579,8 @@ const ReactModalService = {
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleDuplicateEventResult = async (eventStore: EventStore, originalEvent: CalendarEvent) => {
+			ReactModalService.internal.disableOnConfirm();
+
 			let newEvent = Object.assign({}, originalEvent);
 			const newId = eventStore.createEventId();
 			newEvent.id = newId;
@@ -2700,6 +2716,8 @@ const ReactModalService = {
 
 			// ERROR HANDLING: todo add try/catch & show a message if fails
 			onConfirm: async () => {
+				ReactModalService.internal.disableOnConfirm();
+
 				await removeEventFromSidebarById(event.id);
 				await eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
 
