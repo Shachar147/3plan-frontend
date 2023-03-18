@@ -254,6 +254,15 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			start: event.start ?? event._instance?.range?.start,
 			end: event.end ?? event._instance?.range?.end,
 		};
+
+		// debug
+		if (!event.start) {
+			console.error('renderEventContent', 'event.start does not exist', event);
+		}
+		if (!event.end) {
+			console.error('renderEventContent', 'event.end does not exist', event);
+		}
+
 		const calendarEvent = buildCalendarEvent(json) as CalendarEvent;
 
 		eventEl.innerHTML = getEventDivHtml(eventStore, calendarEvent);
