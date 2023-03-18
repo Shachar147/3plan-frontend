@@ -82,9 +82,8 @@ const MapContainer = (props: MapContainerProps) => {
 
 	const coordinatesToEvents = {};
 	const texts: Record<string, string> = {};
-	// let googleRef: any; // , googleMapRef: any, infoWindow: any;
-	// let googleMapRef: any;
 
+	// let googleRef: any, googleMapRef: any, infoWindow: any;
 	let [googleMapRef, setGoogleMapRef] = useState<any>(undefined);
 	let [googleRef, setGoogleRef] = useState<any>(undefined);
 	let [infoWindow, setinfoWindow] = useState<any>(undefined);
@@ -849,7 +848,6 @@ const MapContainer = (props: MapContainerProps) => {
 				const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
 				return priority1 - priority2;
 		  });
-	// .filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
 
 	function renderMapFilters() {
 		const allOption = { label: TranslateService.translate(eventStore, 'ALL'), value: '' };
