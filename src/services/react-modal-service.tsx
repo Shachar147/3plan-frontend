@@ -997,7 +997,7 @@ const ReactModalService = {
 	openAddCategoryModal: (eventStore: EventStore) => {
 		ReactModalService.internal.resetWindowVariables(eventStore);
 
-		const onConfirm = () => {
+		const onConfirm = async () => {
 			// @ts-ignore
 			const newIcon = eventStore.modalValues.icon?.label;
 
@@ -1029,6 +1029,7 @@ const ReactModalService = {
 
 			if (isOk) {
 				runInAction(async () => {
+					ReactModalService.internal.disableOnConfirm();
 					await eventStore.setCategories([
 						...eventStore.categories,
 						{
@@ -1792,8 +1793,9 @@ const ReactModalService = {
 		// @ts-ignore
 		window.openingHours = initialData.openingHours || undefined;
 
-		const onConfirm = () => {
-			handleDuplicateSidebarEventResult(eventStore, event);
+		const onConfirm = async () => {
+			ReactModalService.internal.disableOnConfirm();
+			await handleDuplicateSidebarEventResult(eventStore, event);
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
