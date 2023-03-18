@@ -1296,7 +1296,8 @@ const ReactModalService = {
 		eventStore: EventStore,
 		categoryId?: number,
 		initialData: any = {},
-		isSecondModal: boolean = false
+		isSecondModal: boolean = false,
+		onClose?: () => void
 	) => {
 		// @ts-ignore
 		window.selectedLocation = initialData.location || undefined;
@@ -1406,6 +1407,7 @@ const ReactModalService = {
 				'success'
 			);
 
+			if (onClose) onClose();
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
@@ -1451,6 +1453,10 @@ const ReactModalService = {
 				title,
 				content,
 				onConfirm,
+				onCancel: () => {
+					if (onClose) onClose();
+					ReactModalService.internal.closeModal(eventStore);
+				},
 			},
 			isSecondModal
 		);

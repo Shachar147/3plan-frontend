@@ -28,10 +28,11 @@ interface MarkerProps {
 	locationData: LocationData;
 	openingHours: any;
 	searchValue: string;
+	clearSearch?: () => void;
 }
 
 function Marker(props: MarkerProps): ReactElement {
-	const { text, lng, lat, locationData, openingHours, searchValue } = props;
+	const { text, lng, lat, locationData, openingHours, searchValue, clearSearch } = props;
 	const eventStore = useContext(eventStoreContext);
 	return (
 		<div
@@ -42,11 +43,19 @@ function Marker(props: MarkerProps): ReactElement {
 				minWidth: 'fit-content',
 			}}
 			onClick={() => {
-				ReactModalService.openAddSidebarEventModal(eventStore, undefined, {
-					location: locationData,
-					title: searchValue,
-					openingHours: openingHours,
-				});
+				ReactModalService.openAddSidebarEventModal(
+					eventStore,
+					undefined,
+					{
+						location: locationData,
+						title: searchValue,
+						openingHours: openingHours,
+					},
+					undefined,
+					() => {
+						if (clearSearch) clearSearch();
+					}
+				);
 			}}
 		>
 			<i className="fa fa-map-marker fa-4x text-success" />
@@ -920,6 +929,27 @@ const MapContainer = (props: MapContainerProps) => {
 		);
 	}
 
+	function clearSearch() {
+		setSearchValue('');
+		// @ts-ignore
+		window.selectedSearchLocation = undefined;
+		initSearchResultMarker();
+	}
+
+	function clearSearchOnEscape(e: any) {
+		if (e.key === 'Escape') {
+			clearSearch();
+		}
+	}
+
+	useEffect(() => {
+		document.addEventListener('keydown', clearSearchOnEscape);
+
+		return () => {
+			document.removeEventListener('keydown', clearSearchOnEscape);
+		};
+	}, []);
+
 	return (
 		<div
 			className={getClasses(
@@ -954,16 +984,7 @@ const MapContainer = (props: MapContainerProps) => {
 						placeholder={TranslateService.translate(eventStore, 'MAP_VIEW.SEARCH.PLACEHOLDER')}
 					/>
 					<div className={getClasses('clear-search', searchCoordinates.length === 0 && 'hidden')}>
-						<a
-							onClick={() => {
-								setSearchValue('');
-								// @ts-ignore
-								window.selectedSearchLocation = undefined;
-								initSearchResultMarker();
-							}}
-						>
-							x
-						</a>
+						<a onClick={clearSearch}>x</a>
 					</div>
 				</div>
 			</div>
@@ -1005,6 +1026,7 @@ const MapContainer = (props: MapContainerProps) => {
 								return x;
 							})[0]
 						}
+						clearSearch={clearSearch}
 						// @ts-ignore
 						text={place.address}
 						// @ts-ignore
@@ -1065,7 +1087,8 @@ const MapContainer = (props: MapContainerProps) => {
 													...info.event,
 												},
 											},
-											info.event
+											info.event,
+											() => clearSearch()
 										);
 									}}
 									title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
