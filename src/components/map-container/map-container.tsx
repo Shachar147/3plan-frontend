@@ -114,12 +114,20 @@ const MapContainer = (props: MapContainerProps) => {
 
 	// --- side effects -----------------------------------------------------------------
 	useEffect(() => {
+		if (document.getElementById('marker-cluster')) return; // todo check
 		const script = document.createElement('script');
+		script.id = 'marker-cluster';
 		script.src =
 			'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js';
 		script.async = true;
 		document.body.appendChild(script);
-	});
+	}, []);
+
+	useEffect(() => {
+		if (searchValue === '') {
+			clearSearch();
+		}
+	}, [searchValue]);
 
 	// --- functions --------------------------------------------------------------------
 	const addressPrefix = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.ADDRESS');
