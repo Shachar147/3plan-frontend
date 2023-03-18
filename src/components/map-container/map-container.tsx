@@ -82,7 +82,12 @@ const MapContainer = (props: MapContainerProps) => {
 
 	const coordinatesToEvents = {};
 	const texts: Record<string, string> = {};
-	let googleRef: any, googleMapRef: any, infoWindow: any;
+
+	// let googleRef: any, googleMapRef: any, infoWindow: any;
+	let [googleMapRef, setGoogleMapRef] = useState<any>(undefined);
+	let [googleRef, setGoogleRef] = useState<any>(undefined);
+	let [infoWindow, setinfoWindow] = useState<any>(undefined);
+
 	let searchMarkers: ReactElement[] = [];
 	let markerCluster;
 	let markers: any[] = [];
@@ -276,12 +281,7 @@ const MapContainer = (props: MapContainerProps) => {
                              </div>`;
 	};
 
-	const setGoogleMapRef = (map: any, maps: any) => {
-		googleMapRef = map;
-		googleRef = maps;
-
-		infoWindow = new googleRef.InfoWindow();
-
+	const initMarkers = (map = googleMapRef) => {
 		const getIconUrl = (event: any) => {
 			let icon = '';
 			let bgColor = priorityToMapColor[event.priority].replace('#', '');
@@ -384,6 +384,15 @@ const MapContainer = (props: MapContainerProps) => {
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
 		};
 
+		const icon = {
+			url: 'https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1577-food-fork-knife_4x.png&highlight=ff000000,FF5252,ff000000&scale=2.0',
+			scaledSize: new googleRef.Size(30, 30),
+			fillColor: '#F00',
+			fillOpacity: 0.7,
+			strokeWeight: 0.4,
+			strokeColor: '#ffffff',
+		};
+
 		const initMarkerFromCoordinate = (coordinate: Coordinate) => {
 			const key = getKey(coordinate);
 			// @ts-ignore
@@ -464,17 +473,19 @@ const MapContainer = (props: MapContainerProps) => {
 
 			return refMarker;
 		};
-
-		const icon = {
-			url: 'https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1577-food-fork-knife_4x.png&highlight=ff000000,FF5252,ff000000&scale=2.0',
-			scaledSize: new googleRef.Size(30, 30),
-			fillColor: '#F00',
-			fillOpacity: 0.7,
-			strokeWeight: 0.4,
-			strokeColor: '#ffffff',
-		};
-
 		markers = coordinates && coordinates.map((coordinate) => initMarkerFromCoordinate(coordinate));
+	};
+
+	const initMap = (map: any, maps: any) => {
+		googleMapRef = map;
+		googleRef = maps;
+		infoWindow = new googleRef.InfoWindow();
+
+		setGoogleMapRef(map);
+		setGoogleRef(maps);
+		setinfoWindow(new googleRef.InfoWindow());
+
+		initMarkers(map);
 
 		googleRef.event.addListener(map, 'click', function (_event: any) {
 			infoWindow.close();
@@ -579,14 +590,17 @@ const MapContainer = (props: MapContainerProps) => {
 				setCenter({ lat: coordinates.latitude, lng: coordinates.longitude });
 
 				infoWindow.setContent(buildInfoWindowContent(event));
-				infoWindow.open(googleMapRef, marker);
-
-				infoWindow.onClose(() => {
-					alert('on close!');
-				});
+				if (marker) infoWindow.open(googleMapRef, marker);
+				// else {
+				// 	setTimeout(() => {
+				// 		initMarkers();
+				// 		marker = markers.find((x) => x.eventId == event.id);
+				// 		if (marker) infoWindow.open(googleMapRef, marker);
+				// 	}, 1000);
+				// }
 			}
 		};
-	}, [googleMapRef, infoWindow]);
+	}, [googleMapRef, infoWindow, markers]);
 
 	const getOptions = () => {
 		const noDefaultMarkers = {
@@ -780,7 +794,27 @@ const MapContainer = (props: MapContainerProps) => {
 		};
 	};
 
+	const getAllMarkers = (searchValue: string) => {
+		const visibleItems = [];
+
+		const allEvents = (props.allEvents ?? eventStore.allEventsComputed).filter(
+			(x) =>
+				x.title.toLowerCase().includes(searchValue.toLowerCase()) &&
+				x.location &&
+				x.location.latitude &&
+				x.location.longitude
+		);
+		for (let i = 0; i < allEvents.length; i++) {
+			const event = allEvents[i];
+			const marker = markers.find((x) => event.id.toString() === x.eventId.toString());
+			visibleItems.push({ event, marker });
+		}
+		return visibleItems.sort((a, b) => (a.event.title > b.event.title ? 1 : -1));
+	};
+
 	const updateVisibleMarkers = () => {
+		if (visibleItemsSearchValue) return;
+
 		const bounds = googleMapRef.getBounds();
 		let count = 0;
 		let visibleItems = [];
@@ -807,13 +841,13 @@ const MapContainer = (props: MapContainerProps) => {
 
 	// --- render -----------------------------------------------------------------------
 
-	const filteredVisibleItems = visibleItems
-		.sort((a, b) => {
-			const priority1 = Number(a.event.priority) === 0 ? 999 : a.event.priority;
-			const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
-			return priority1 - priority2;
-		})
-		.filter((x) => x.event.title.toLowerCase().indexOf(visibleItemsSearchValue.toLowerCase()) !== -1);
+	let filteredVisibleItems = visibleItemsSearchValue
+		? getAllMarkers(visibleItemsSearchValue)
+		: visibleItems.sort((a, b) => {
+				const priority1 = Number(a.event.priority) === 0 ? 999 : a.event.priority;
+				const priority2 = Number(b.event.priority) === 0 ? 999 : b.event.priority;
+				return priority1 - priority2;
+		  });
 
 	function renderMapFilters() {
 		const allOption = { label: TranslateService.translate(eventStore, 'ALL'), value: '' };
@@ -1017,7 +1051,7 @@ const MapContainer = (props: MapContainerProps) => {
 				zoom={searchCoordinates.length > 0 || center ? 14 : 7}
 				yesIWantToUseGoogleMapApiInternals
 				// @ts-ignore
-				onGoogleApiLoaded={({ map, maps }) => setGoogleMapRef(map, maps)}
+				onGoogleApiLoaded={({ map, maps }) => initMap(map, maps)}
 				clickableIcons={false}
 				options={getOptions()}
 			>
@@ -1055,9 +1089,6 @@ const MapContainer = (props: MapContainerProps) => {
 					props.isCombined && 'combined'
 				)}
 			>
-				<div className="visible-items-header">
-					<b>{TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.TITLE')}:</b>
-				</div>
 				<div className={'search-container'}>
 					<input
 						type={'text'}
@@ -1066,11 +1097,22 @@ const MapContainer = (props: MapContainerProps) => {
 						onChange={(e) => {
 							setVisibleItemsSearchValue(e.target.value);
 						}}
-						placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+						placeholder={TranslateService.translate(eventStore, 'MAP_SEARCH_PLACEHOLDER')}
 					/>
 				</div>
+				<div className="visible-items-header">
+					<b>
+						{TranslateService.translate(
+							eventStore,
+							visibleItemsSearchValue ? 'SEARCH_RESULTS' : 'MAP.VISIBLE_ITEMS.TITLE'
+						)}
+						:
+					</b>
+				</div>
 				<div className={'visible-items-fc-events bright-scrollbar'}>
-					{visibleItems.length === 0 && TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
+					{!visibleItemsSearchValue &&
+						visibleItems.length === 0 &&
+						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
 					{visibleItems.length > 0 &&
 						filteredVisibleItems.length === 0 &&
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
