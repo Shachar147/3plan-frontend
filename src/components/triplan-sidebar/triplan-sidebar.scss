@@ -110,8 +110,8 @@
 		margin-inline-end: 3px;
 		flex-basis: content;
 		flex-grow: 0;
-		word-break: break-all;
-		min-width: 200px;
+		word-break: break-word;
+		min-width: 30px;
 	}
 
 	.sidebar-event-icon {
