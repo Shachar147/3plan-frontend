@@ -1017,7 +1017,8 @@ const MapContainer = (props: MapContainerProps) => {
 							window.initLocationPicker(
 								'map-header-location-input-search',
 								'selectedSearchLocation',
-								initSearchResultMarker
+								initSearchResultMarker,
+								eventStore
 							)
 						}
 						onKeyUp={() =>

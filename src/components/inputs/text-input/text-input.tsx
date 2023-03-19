@@ -71,6 +71,8 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		},
 	}));
 
+	console.log({ icon });
+
 	const icon_block = !icon ? undefined : (
 		<i data-testid={`data-test-id-${modalValueName}`} className={`${icon}`} />
 		// <i data-testid={`data-test-id-${modalValueName}`} className={`${icon} icon`} />

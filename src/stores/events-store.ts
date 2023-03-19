@@ -89,6 +89,7 @@ export class EventStore {
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
+	@observable forceUpdate = 0;
 
 	// map filters
 	@observable filterOutPriorities = observable.map({});

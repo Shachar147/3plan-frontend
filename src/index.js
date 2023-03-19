@@ -266,17 +266,29 @@ const RootRouter = () => {
 
 	window.setManualLocation = (className = 'location-input', variableName = 'selectedLocation', eventStore) => {
 		const address = document.querySelector(`.${className}`)?.value;
-		if (window[variableName] && window[variableName]["address"] == address) {
+		console.log({
+			address,
+			oldAddress: window[variableName]?.['address'],
+			isSame: window[variableName]?.['address'] == address,
+		});
+		if (window[variableName]?.['address'] == address) {
 			return;
 		}
-		window[variableName] = {
+		console.log('hereeeee');
+		const loc = {
 			address,
 			latitude: undefined,
 			longitude: undefined,
 		};
 
+		window[variableName] = loc;
+
 		if (eventStore) {
 			eventStore.modalValues[variableName] = undefined;
+
+			runInAction(() => {
+				eventStore.forceUpdate += 1;
+			});
 		}
 
 		window.openingHours = undefined;
@@ -447,7 +459,20 @@ const RootRouter = () => {
 					latitude,
 					longitude,
 				};
+
+				eventStore.modalValues['location'] = {
+					address,
+					latitude,
+					longitude,
+				};
+				runInAction(() => {
+					eventStore.forceUpdate += 1;
+				});
 			}
+
+			console.log({
+				photos: place.photos.map((x) => x.getUrl()),
+			});
 
 			window.placeInfo = {
 				googleMapsUrl: place.url,

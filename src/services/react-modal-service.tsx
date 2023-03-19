@@ -76,7 +76,7 @@ const ReactModalRenderHelper = {
 			eventStore.modalValues[modalValueName] = extra.value;
 		}
 
-		if (modalValueName === 'location'){
+		if (modalValueName === 'location') {
 			return (
 				<LocationInput
 					id={extra.id}
@@ -89,7 +89,7 @@ const ReactModalRenderHelper = {
 					placeholderKey={extra.placeholderKey}
 					autoComplete={extra.autoComplete}
 				/>
-			)
+			);
 		}
 
 		return (
@@ -593,12 +593,12 @@ const ReactModalService = {
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
-				window.initLocationPicker('location-input', 'selectedLocation', undefined);
+				window.initLocationPicker('location-input', 'selectedLocation', undefined, eventStore);
 			};
 
 			const setManualLocation = () => {
 				// @ts-ignore
-				window.setManualLocation('location-input', 'selectedLocation');
+				window.setManualLocation('location-input', 'selectedLocation', eventStore);
 			};
 
 			// @ts-ignore
@@ -776,12 +776,12 @@ const ReactModalService = {
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
-				window.initLocationPicker('location-input', 'selectedLocation', undefined);
+				window.initLocationPicker('location-input', 'selectedLocation', undefined, eventStore);
 			};
 
 			const setManualLocation = () => {
 				// @ts-ignore
-				window.setManualLocation('location-input', 'selectedLocation');
+				window.setManualLocation('location-input', 'selectedLocation', eventStore);
 			};
 
 			// @ts-ignore
