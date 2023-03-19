@@ -369,6 +369,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			}}
 			slotMinTime={'07:00'}
 			scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
+			dayHeaderFormat={{
+				/* show weekday and date in a format of Sunday 14.3 for example - always - on all views */
+				weekday: 'short',
+				day: 'numeric',
+				month: 'numeric',
+			}}
 		/>
 	);
 }
