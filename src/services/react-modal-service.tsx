@@ -1491,7 +1491,12 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible'
+						)}
+					>
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
 						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
