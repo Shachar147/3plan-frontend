@@ -24,6 +24,10 @@ button:disabled {
 		background-color: var(--red) !important;
 		box-shadow: none !important;
 	}
+
+	&.disabled {
+		opacity: 0.4;
+	}
 }
 
 .swal2-confirm:not(:disabled):hover,

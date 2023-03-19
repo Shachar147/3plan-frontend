@@ -30,6 +30,11 @@
 
 .triplan-react-modal {
   min-width: 500px;
+  max-width: 570px !important;
+
+  p {
+    z-index: 0 !important;
+  }
 }
 
 .triplan-react-modal ul {
@@ -71,5 +76,16 @@
       min-height: unset;
       overflow: visible;
     }
+  }
+}
+
+.show-hide-more {
+  color: var(--blue) !important;
+  text-decoration: underline !important;
+  user-select: none;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.6;
   }
 }

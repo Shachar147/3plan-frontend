@@ -95,6 +95,9 @@ export class EventStore {
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
 
+	// add side bar modal
+	@observable isModalMinimized: boolean = true;
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {
@@ -476,7 +479,7 @@ export class EventStore {
 
 	@action
 	deleteEvent(eventId: string) {
-		this.setCalendarEvents([
+		return this.setCalendarEvents([
 			...this.calendarEvents.filter((event) => event!.id!.toString() !== eventId.toString()),
 		]);
 	}
