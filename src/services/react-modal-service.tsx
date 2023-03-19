@@ -448,7 +448,8 @@ const getDefaultSettings = (eventStore: EventStore) => {
 		dependencies: [eventStore.modalSettings, eventStore.secondModalSettings, eventStore.modalValues],
 		customClass: 'triplan-react-modal',
 		customContainerClass: 'display-none',
-		reverseButtons: eventStore.getCurrentDirection() === 'rtl',
+		// reverseButtons: eventStore.getCurrentDirection() === 'rtl',
+		reverseButtons: true,
 		slideUp: true, // default animation - slide up.
 		onCancel: () => {
 			ReactModalService.internal.closeModal(eventStore);

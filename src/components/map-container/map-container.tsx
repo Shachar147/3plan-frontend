@@ -868,7 +868,10 @@ const MapContainer = (props: MapContainerProps) => {
 									});
 								}}
 							>
-								{TranslateService.translate(eventStore, 'SCHEDULED_EVENTS')}
+								{TranslateService.translate(
+									eventStore,
+									eventStore.isMobile ? 'SCHEDULED_EVENTS.SHORT' : 'SCHEDULED_EVENTS'
+								)}
 							</a>
 						)}
 					</Observer>
@@ -883,7 +886,10 @@ const MapContainer = (props: MapContainerProps) => {
 									});
 								}}
 							>
-								{TranslateService.translate(eventStore, 'UNSCHEDULED_EVENTS')}
+								{TranslateService.translate(
+									eventStore,
+									eventStore.isMobile ? 'UNSCHEDULED_EVENTS.SHORT' : 'UNSCHEDULED_EVENTS'
+								)}
 							</a>
 						)}
 					</Observer>
@@ -1023,7 +1029,10 @@ const MapContainer = (props: MapContainerProps) => {
 							setSearchValue(e.target.value);
 						}}
 						autoComplete="off"
-						placeholder={TranslateService.translate(eventStore, 'MAP_VIEW.SEARCH.PLACEHOLDER')}
+						placeholder={TranslateService.translate(
+							eventStore,
+							eventStore.isMobile ? 'MAP_VIEW.SEARCH.PLACEHOLDER.SHORT' : 'MAP_VIEW.SEARCH.PLACEHOLDER'
+						)}
 					/>
 					<div className={getClasses('clear-search', searchCoordinates.length === 0 && 'hidden')}>
 						<a onClick={clearSearch}>x</a>

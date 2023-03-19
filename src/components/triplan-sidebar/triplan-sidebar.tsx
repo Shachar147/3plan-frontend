@@ -436,10 +436,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 					const color = priorityToColor[priority];
 
-					const translatedPriority = TranslateService.translate(eventStore, priorityText).replace(
-						'עדיפות ',
-						''
-					);
+					const translatedPriority = TranslateService.translate(eventStore, priorityText)
+						.replace('עדיפות ', '')
+						.replace(' priority', '');
 
 					return (
 						<div className={'sidebar-statistics'} key={`sidebar-statistics-for-${priorityText}`}>

@@ -486,6 +486,12 @@ div[class$='-control'] {
 	min-width: 78px;
 }
 
+body.ltr {
+	.input-with-label label {
+		min-width: 140px;
+	}
+}
+
 .sweet-alert .btn {
 	/*margin: 0 !important;*/
 
