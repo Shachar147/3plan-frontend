@@ -105,21 +105,22 @@
 
 .sidebar-event-title-container {
 	display: flex;
-}
 
-.sidebar-event-title-container .sidebar-event-title-text {
-	margin-inline-end: 3px;
-	flex-basis: content;
-	flex-grow: 0;
-	word-break: break-all;
-}
+	.sidebar-event-title-text {
+		margin-inline-end: 3px;
+		flex-basis: content;
+		flex-grow: 0;
+		word-break: break-all;
+		min-width: 200px;
+	}
 
-.sidebar-event-title-container .sidebar-event-icon {
-	margin-inline-end: 3px;
-}
+	.sidebar-event-icon {
+		margin-inline-end: 3px;
+	}
 
-.sidebar-event-title-container .sidebar-event-duration {
-	min-width: fit-content;
+	.sidebar-event-duration {
+		min-width: fit-content;
+	}
 }
 
 .sidebar-statistics {
