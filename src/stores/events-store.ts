@@ -95,6 +95,9 @@ export class EventStore {
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
 
+	// add side bar modal
+	@observable isModalMinimized: boolean = true;
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {

@@ -74,3 +74,14 @@
     }
   }
 }
+
+.show-hide-more {
+  color: var(--blue) !important;
+  text-decoration: underline !important;
+  user-select: none;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.6;
+  }
+}

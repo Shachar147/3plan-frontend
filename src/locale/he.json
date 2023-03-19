@@ -480,5 +480,7 @@
 	"SCHEDULED_EVENTS.SHORT": "פעילויות משובצות",
 	"UNSCHEDULED_EVENTS.SHORT": "פעילויות לא משובצות",
 	"SEARCH_RESULTS": "תוצאות חיפוש",
-	"MAP_SEARCH_PLACEHOLDER": "חפש בכל הפעילויות שלך"
+	"MAP_SEARCH_PLACEHOLDER": "חפש בכל הפעילויות שלך",
+	"SHOW_MORE": "הצג עוד",
+	"SHOW_LESS": "הצג פחות"
 }
