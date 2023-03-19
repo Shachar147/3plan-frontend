@@ -36,9 +36,21 @@ import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 
 const ReactModalRenderHelper = {
-	renderInputWithLabel: (eventStore: EventStore, textKey: string, input: JSX.Element, className?: string) => {
+	renderInputWithLabel: (
+		eventStore: EventStore,
+		textKey: string,
+		input: JSX.Element,
+		className?: string,
+		showOnMinimize?: boolean
+	) => {
 		return (
-			<div className={getClasses(['input-with-label flex-row gap-30 align-items-center'], className)}>
+			<div
+				className={getClasses(
+					['input-with-label flex-row gap-30 align-items-center'],
+					className,
+					eventStore.isModalMinimized && !showOnMinimize && 'display-none'
+				)}
+			>
 				<label>{TranslateService.translate(eventStore, textKey)}</label>
 				{input}
 			</div>
@@ -428,11 +440,22 @@ const ReactModalRenderHelper = {
 
 		return input;
 	},
-	renderRow: (eventStore: EventStore, row: { settings: any; textKey: string; className?: string }) => {
+	renderRow: (
+		eventStore: EventStore,
+		row: { settings: any; textKey: string; className?: string; showOnMinimized?: boolean },
+		hasMinimizeMode: boolean = false
+	) => {
 		const input = ReactModalRenderHelper.getRowInput(eventStore, row);
 
 		if (input) {
-			return ReactModalRenderHelper.renderInputWithLabel(eventStore, row.textKey, input, row.className);
+			const showOnMinimize = hasMinimizeMode ? row.showOnMinimized : true;
+			return ReactModalRenderHelper.renderInputWithLabel(
+				eventStore,
+				row.textKey,
+				input,
+				row.className,
+				showOnMinimize
+			);
 		}
 	},
 };
@@ -459,6 +482,30 @@ const getDefaultSettings = (eventStore: EventStore) => {
 
 const ReactModalService = {
 	internal: {
+		renderShowHideMore: (eventStore: EventStore) => {
+			return (
+				<div
+					className={getClasses(
+						'input-with-label flex-row gap-30 align-items-center justify-content-center padding-top-0',
+						!eventStore.isModalMinimized && 'display-none'
+					)}
+				>
+					<a
+						onClick={() => {
+							runInAction(() => {
+								eventStore.isModalMinimized = !eventStore.isModalMinimized;
+							});
+						}}
+						className="show-hide-more"
+					>
+						{TranslateService.translate(
+							eventStore,
+							eventStore.isModalMinimized ? 'SHOW_MORE' : 'SHOW_LESS'
+						)}
+					</a>
+				</div>
+			);
+		},
 		disableOnConfirm: () => {
 			// @ts-ignore
 			$(
@@ -569,6 +616,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.TITLE',
 					className: 'border-top-gray',
+					showOnMinimized: true,
 				},
 				{
 					settings: {
@@ -582,6 +630,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.CATEGORY',
 					className: 'border-top-gray',
+					showOnMinimized: true,
 				},
 				{
 					settings: {
@@ -660,6 +709,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.LOCATION',
 					className: 'border-top-gray',
+					showOnMinimized: true,
 				},
 				{
 					settings: {
@@ -980,6 +1030,9 @@ const ReactModalService = {
 				}
 
 				eventStore.modalValues = {};
+
+				// set it back to default
+				eventStore.isModalMinimized = true;
 			});
 			ReactModalService.internal.resetWindowVariables(eventStore);
 		},
@@ -1439,7 +1492,8 @@ const ReactModalService = {
 			<Observer>
 				{() => (
 					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>
@@ -1683,7 +1737,8 @@ const ReactModalService = {
 			<Observer>
 				{() => (
 					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>

@@ -403,5 +403,7 @@
 	"SCHEDULED_EVENTS.SHORT": "Scheduled",
 	"UNSCHEDULED_EVENTS.SHORT": "Unscheduled",
 	"SEARCH_RESULTS": "Search results",
-	"MAP_SEARCH_PLACEHOLDER": "Search in all activities"
+	"MAP_SEARCH_PLACEHOLDER": "Search in all activities",
+	"SHOW_MORE": "Show more",
+	"SHOW_LESS": "Show less"
 }
