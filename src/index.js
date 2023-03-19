@@ -465,6 +465,10 @@ const RootRouter = () => {
 					latitude,
 					longitude,
 				};
+
+				// todo check
+				eventStore.modalValues['photos'] = place.photos.map((x) => x.getUrl());
+
 				runInAction(() => {
 					eventStore.forceUpdate += 1;
 				});

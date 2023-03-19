@@ -13,9 +13,13 @@ function LocationInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 
 		// @ts-ignore
 		const shouldShow =
-			eventStore.modalValues['location'] &&
-			eventStore.modalValues['location']['latitude'] &&
-			eventStore.modalValues['location']['longitude'];
+			eventStore.modalValues[props.modalValueName]?.['latitude'] &&
+			eventStore.modalValues[props.modalValueName]?.['longitude'];
+
+		console.log({
+			modalValues: eventStore.modalValues,
+		});
+
 		setShowIcon(shouldShow);
 
 		// @ts-ignore

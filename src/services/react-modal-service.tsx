@@ -57,6 +57,15 @@ const ReactModalRenderHelper = {
 			</div>
 		);
 	},
+	// todo complete:
+	// 1 - on edit event, location does not show the location coordinate since it keeps only the address.
+	// maybe need to check if type is string - check if there's coordinate on allEvents. otherwise - check from here.
+
+	// 2 - auto images are not being filled in on the textarea itself and not being saved. see how to do it.
+
+	// 3 - check how to auto-rerender images slider when text changes
+
+	// 4 - this PR have 100% things that not written good, fix it.
 	renderTextInput: (
 		eventStore: EventStore,
 		modalValueName: string,
@@ -414,7 +423,10 @@ const ReactModalRenderHelper = {
 				input = <div ref={row.settings.ref} dangerouslySetInnerHTML={{ __html: html }} />;
 				break;
 			case 'images':
-				const images = row.settings.extra.value?.replace(/\n^/, '').replace(/$\n/, '').split('\n') || [];
+				const images =
+					row.settings.extra.value?.replace(/\n^/, '').replace(/$\n/, '').split('\n') ??
+					eventStore.modalValues['photos'] ??
+					[];
 				input = ReactModalRenderHelper.renderTextAreaInput(
 					eventStore,
 					row.settings.modalValueName,
