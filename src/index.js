@@ -31,6 +31,15 @@ import MobileLanguageSelectorPage from './layouts/language-selector/mobile-langu
 import AdminDashboard from './admin/layouts/dashboard/admin-dashboard';
 import AdminManageDestinationItems from './admin/layouts/manage-destination/a-manage-destination';
 import AManageItem from './admin/layouts/manage-item/a-manage-item';
+import {
+	ATTRACTIONS_KEYWORDS,
+	DESSERTS_KEYWORDS,
+	FLIGHT_KEYWORDS,
+	FOOD_KEYWORDS,
+	NIGHTLIFE_KEYWORDS,
+	STORE_KEYWORDS,
+	TOURIST_KEYWORDS,
+} from './components/map-container/map-container';
 
 // import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
@@ -480,27 +489,125 @@ const RootRouter = () => {
 								label: x.icon ? `${x.icon} ${x.title}` : x.title,
 							}));
 
+						const storeCategory = options.find((x) => isMatching(x.label, STORE_KEYWORDS));
+						const food = options.find((x) => isMatching(x.label, FOOD_KEYWORDS));
+						const dessertOrFood =
+							(isMatching(place.name, DESSERTS_KEYWORDS)
+								? options.find((x) => isMatching(x.label, DESSERTS_KEYWORDS))
+								: undefined) ?? food;
+						const nightLife = options.find((x) => isMatching(x.label, NIGHTLIFE_KEYWORDS));
+						const attractions = options.find((x) => isMatching(x.label, ATTRACTIONS_KEYWORDS));
+						const tourism = options.find((x) => isMatching(x.label, TOURIST_KEYWORDS));
+
 						const typesToCategories = {
-							bar: options.categories.find((x) =>
-								isMatching(x.label, [
-									'club',
-									'cocktail',
-									'beer',
-									'bar',
-									'מועדונים',
-									'ברים',
-									'מסיבות',
-									'חיי לילה',
-								])
-							),
+							bar: nightLife,
+							// accounting: undefined,
+							airport: options.find((x) => isMatching(x.label, FLIGHT_KEYWORDS)),
+							amusement_park: attractions,
+							aquarium: attractions,
+							// art_gallery: undefined,
+							// atm: undefined,
+							bakery: dessertOrFood,
+							food: dessertOrFood,
+							store: storeCategory,
+							bicycle_store: storeCategory,
+							book_store: storeCategory,
+							// bank: undefined,
+							// beauty_salon: undefined,
+							bowling_alley: attractions,
+							// bus_station: undefined,
+							cafe: dessertOrFood,
+							campground: undefined,
+							// car_dealer: undefined,
+							car_rental: options.find((x) => isMatching(x.label, ['general', 'כללי'])),
+							// car_repair: undefined,
+							// car_wash: undefined,
+							casino: nightLife,
+							// cemetery: undefined,
+							church: tourism,
+							city_hall: tourism,
+							clothing_store: storeCategory,
+							convenience_store: storeCategory,
+							// courthouse: undefined,
+							// dentist: undefined,
+							department_store: storeCategory,
+							// doctor: undefined,
+							// drugstore: undefined,
+							// electrician: undefined,
+							electronics_store: storeCategory,
+							embassy: tourism,
+							// fire_station: undefined,
+							// florist: undefined,
+							// funeral_home: undefined,
+							furniture_store: storeCategory,
+							// gas_station: undefined,
+							gym: undefined,
+							// hair_care: undefined,
+							hardware_store: storeCategory,
+							hindu_temple: tourism,
+							home_goods_store: storeCategory,
+							// hospital: undefined,
+							// insurance_agency: undefined,
+							jewelry_store: storeCategory,
+							// laundry: undefined,
+							// lawyer: undefined,
+							library: tourism,
+							// light_rail_station: undefined,
+							liquor_store: storeCategory,
+							// local_government_office: undefined,
+							// locksmith: undefined,
+							// lodging: undefined,
+							// meal_delivery: undefined,
+							// meal_takeaway: undefined,
+							// mosque: undefined,
+							// movie_rental: undefined,
+							movie_theater: attractions,
+							// moving_company: undefined,
+							museum: undefined,
+							night_club: nightLife,
+							// painter: undefined,
+							// park: undefined,
+							// parking: undefined,
+							// pet_store: undefined,
+							// pharmacy: undefined,
+							// physiotherapist: undefined,
+							// plumber: undefined,
+							// police: undefined,
+							// post_office: undefined,
+							// primary_school: undefined,
+							// real_estate_agency: undefined,
+							restaurant: food,
+							// roofing_contractor: undefined,
+							// rv_park: undefined,
+							// school: undefined,
+							// secondary_school: undefined,
+							shoe_store: storeCategory,
+							shopping_mall: storeCategory,
+							spa: attractions,
+							stadium: attractions,
+							// storage: undefined,
+							// subway_station: undefined,
+							supermarket: undefined,
+							// synagogue: undefined,
+							// taxi_stand: undefined,
+							tourist_attraction: tourism,
+							// train_station: undefined,
+							// transit_station: undefined,
+							// travel_agency: undefined,
+							// university: undefined,
+							// veterinary_care: undefined,
+							zoo: attractions,
 						};
 
 						place.types.forEach((type) => {
-							if (typesToCategories[type]) {
+							if (!eventStore.modalValues['category'] && typesToCategories[type]) {
 								eventStore.modalValues['category'] = typesToCategories[type];
+								break;
 							}
 						});
 					}
+
+					alert(place.types);
 
 					// current_opening_hours.weekday_text
 					// map icon - https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png

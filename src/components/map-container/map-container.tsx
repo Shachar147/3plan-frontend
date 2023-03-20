@@ -31,6 +31,34 @@ interface MarkerProps {
 	clearSearch?: () => void;
 }
 
+export const NIGHTLIFE_KEYWORDS = [
+	'club',
+	'cocktail',
+	'beer',
+	'bar',
+	'מועדונים',
+	'ברים',
+	'מסיבות',
+	'חיי לילה',
+	'casino',
+	'קזינו',
+];
+export const ATTRACTIONS_KEYWORDS = ['attraction', 'attractions', 'אטרקציות', 'פעילויות'];
+export const DESSERTS_KEYWORDS = [
+	'desserts',
+	'קינוחים',
+	'גלידה',
+	'macaroons',
+	'מקרונים',
+	'cookie',
+	'עוגייה',
+	'ice cream',
+];
+export const FOOD_KEYWORDS = ['food', 'restaurant', 'אוכל', 'מסעדת', 'מסעדות', 'cafe', 'קפה'];
+export const STORE_KEYWORDS = ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'];
+export const FLIGHT_KEYWORDS = ['flight', 'טיסה', 'airport', 'שדה תעופה', 'שדה התעופה', 'טיסות'];
+export const TOURIST_KEYWORDS = ['tourism', 'תיירות', 'אתרים'];
+
 function Marker(props: MarkerProps): ReactElement {
 	const { text, lng, lat, locationData, openingHours, searchValue, clearSearch } = props;
 	const eventStore = useContext(eventStoreContext);
@@ -317,16 +345,13 @@ const MapContainer = (props: MapContainerProps) => {
 				icon = iconsMap['basketball'];
 			} else if (isDessert(category, title)) {
 				icon = iconsMap['desserts'];
-			} else if (isFlight(title)) {
+			} else if (isFlight(category, title)) {
 				icon = iconsMap['flights'];
 				bgColor = flightColor;
 			} else if (isHotel(category, title)) {
 				icon = iconsMap['hotel'];
 				bgColor = hotelColor;
-			} else if (
-				isMatching(category, ['food', 'restaurant', 'אוכל', 'מסעדות', 'cafe', 'קפה']) ||
-				isMatching(title, ['food', 'restaurant', 'אוכל', 'מסעדת', 'cafe', 'קפה'])
-			) {
+			} else if (isMatching(category, FOOD_KEYWORDS) || isMatching(title, FOOD_KEYWORDS)) {
 				icon = iconsMap['food'];
 			} else if (isMatching(category, ['photo', 'תמונות'])) {
 				icon = iconsMap['photos'];
@@ -335,7 +360,7 @@ const MapContainer = (props: MapContainerProps) => {
 				isMatching(title, ['nature', 'flower', 'garden', 'גן ה', 'גני ה', 'פרח', 'טבע'])
 			) {
 				icon = iconsMap['flowers'];
-			} else if (isMatching(category, ['attraction', 'attractions', 'אטרקציות', 'פעילויות'])) {
+			} else if (isMatching(category, ATTRACTIONS_KEYWORDS)) {
 				icon = iconsMap['attractions'];
 			} else if (
 				isMatching(category, ['coffee shops', 'coffee shop', 'קופישופס']) ||
@@ -346,13 +371,11 @@ const MapContainer = (props: MapContainerProps) => {
 				isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
 			) {
 				icon = iconsMap['beach'];
-			} else if (
-				isMatching(category, ['club', 'cocktail', 'beer', 'bar', 'מועדונים', 'ברים', 'מסיבות', 'חיי לילה'])
-			) {
+			} else if (isMatching(category, NIGHTLIFE_KEYWORDS)) {
 				icon = iconsMap['nightlife'];
-			} else if (isMatching(category, ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'])) {
+			} else if (isMatching(category, STORE_KEYWORDS)) {
 				icon = iconsMap['shopping'];
-			} else if (isMatching(category, ['tourism', 'תיירות', 'אתרים'])) {
+			} else if (isMatching(category, TOURIST_KEYWORDS)) {
 				icon = iconsMap['tourism'];
 			} else if (
 				isMatching(title, ['city', 'עיירה']) ||
@@ -1149,8 +1172,7 @@ const MapContainer = (props: MapContainerProps) => {
 													...info.event,
 												},
 											},
-											info.event,
-											() => clearSearch()
+											info.event
 										);
 									}}
 									title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
