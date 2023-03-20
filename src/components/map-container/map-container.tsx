@@ -1151,7 +1151,7 @@ const MapContainer = (props: MapContainerProps) => {
 					{visibleItems.length > 0 &&
 						filteredVisibleItems.length === 0 &&
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
-					{filteredVisibleItems.map((info) => {
+					{filteredVisibleItems.map((info, idx) => {
 						const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
 
 						let addToCalendar = undefined;
@@ -1192,6 +1192,7 @@ const MapContainer = (props: MapContainerProps) => {
 
 						return (
 							<div
+								key={`filtered-visible-item-${idx}`}
 								className={`fc-event priority-${info.event.priority}`}
 								onClick={() => {
 									onVisibleItemClick(info.event, info.marker);

@@ -791,7 +791,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.ICON',
-					className: 'border-top-gray',
+					className: 'border-top-gray icon-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -807,7 +808,7 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.TITLE',
-					className: 'border-top-gray',
+					className: 'border-top-gray name-row',
 				},
 			];
 			inputs.push(
@@ -827,7 +828,7 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.START_TIME',
-						className: getClasses('border-top-gray', initialData.allDay && 'display-none'),
+						className: getClasses('border-top-gray start-time-row', initialData.allDay && 'display-none'),
 					},
 					{
 						settings: {
@@ -844,7 +845,7 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.END_TIME',
-						className: getClasses('border-top-gray', initialData.allDay && 'display-none'),
+						className: getClasses('border-top-gray end-time-row', initialData.allDay && 'display-none'),
 					},
 				]
 			);
@@ -861,7 +862,7 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.CATEGORY',
-						className: 'border-top-gray',
+						className: 'border-top-gray category-row',
 					},
 					{
 						settings: {
@@ -874,7 +875,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.DESCRIPTION',
-						className: 'border-top-gray',
+						className: 'border-top-gray description-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -887,7 +889,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.PRIORITY',
-						className: 'border-top-gray',
+						className: 'border-top-gray priority-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -900,7 +903,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.PREFERRED_TIME',
-						className: 'border-top-gray',
+						className: 'border-top-gray preferred-time-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -921,7 +925,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.LOCATION',
-						className: 'border-top-gray',
+						className: 'border-top-gray location-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -933,7 +938,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.OPENING_HOURS',
-						className: 'border-top-gray',
+						className: 'border-top-gray opening-hours-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -946,7 +952,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.IMAGES',
-						className: 'border-top-gray',
+						className: 'border-top-gray images-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -959,7 +966,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.MORE_INFO',
-						className: 'border-top-gray',
+						className: 'border-top-gray more-info-row',
+						showOnMinimized: false,
 					},
 				]
 			);
@@ -1888,8 +1896,15 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`duplicate-sidebar-event-modal-${eventStore.forceUpdate}`}
+					>
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>
@@ -2185,8 +2200,15 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`add-calendar-event-modal-new-${eventStore.forceUpdate}`}
+					>
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>
@@ -2758,14 +2780,21 @@ const ReactModalService = {
 				},
 			},
 			textKey: 'MODALS.ACTIONS',
-			className: 'border-top-gray',
+			className: 'border-top-gray actions-row',
 		} as any);
 
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`add-calendar-event-modal-existing-${eventStore.forceUpdate}`}
+					>
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>

@@ -463,7 +463,7 @@ const RootRouter = () => {
 						arr.push(`phone: ${place.international_phone_number}`);
 					}
 					if (place.rating) {
-						arr.push(`Google Rating: ${place.rating}/5 (${place.user_ratings_total} total)`);
+						arr.push(`Google Rating: ${place.rating}/5 (${place.user_ratings_total} reviews)`);
 					}
 
 					console.log('before', eventStore.modalValues);
@@ -590,7 +590,7 @@ const RootRouter = () => {
 							supermarket: undefined,
 							// synagogue: undefined,
 							// taxi_stand: undefined,
-							tourist_attraction: tourism,
+							tourist_attraction: tourism ?? attractions,
 							// train_station: undefined,
 							// transit_station: undefined,
 							// travel_agency: undefined,
@@ -598,6 +598,8 @@ const RootRouter = () => {
 							// veterinary_care: undefined,
 							zoo: attractions,
 						};
+
+						console.log({ types: place.types });
 
 						place.types.forEach((type) => {
 							if (!eventStore.modalValues['category'] && typesToCategories[type]) {
