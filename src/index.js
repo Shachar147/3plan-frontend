@@ -18,7 +18,7 @@ import TranslateService from './services/translate-service';
 import { eventStoreContext } from './stores/events-store';
 import ThemeExample from './layouts/theme-example/theme-example';
 import { runInAction } from 'mobx';
-import { getCoordinatesRangeKey, padTo2Digits } from './utils/utils';
+import { getCoordinatesRangeKey, isMatching, padTo2Digits } from './utils/utils';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Observer } from 'mobx-react';
 import PrivateRoute from './PrivateRoute';
@@ -444,6 +444,72 @@ const RootRouter = () => {
 					latitude,
 					longitude,
 				};
+
+				// todo check
+				eventStore.modalValues['location'] = address;
+
+				runInAction(() => {
+					const arr = [];
+					if (place.international_phone_number) {
+						arr.push(`phone: ${place.international_phone_number}`);
+					}
+					if (place.rating) {
+						arr.push(`Google Rating: ${place.rating}/5 (${place.user_ratings_total} total)`);
+					}
+
+					console.log('before', eventStore.modalValues);
+
+					eventStore.modalValues['name'] = eventStore.modalValues['name'] ?? place.name;
+
+					eventStore.modalValues['images'] =
+						eventStore.modalValues['images'] ?? place.photos.map((x) => x.getUrl()).join('\n');
+					eventStore.modalValues['more-info'] =
+						eventStore.modalValues['more-info'] ?? eventStore.modalValues['moreInfo'] ?? place.website;
+					eventStore.modalValues['description'] =
+						eventStore.modalValues['description'] ?? arr.length > 0 ? arr.join('\n') : undefined;
+
+					console.log({
+						types: place.types,
+					});
+
+					if (place.types && !eventStore.modalValues['category']) {
+						const options = eventStore.categories
+							.sort((a, b) => a.id - b.id)
+							.map((x, index) => ({
+								value: x.id,
+								label: x.icon ? `${x.icon} ${x.title}` : x.title,
+							}));
+
+						const typesToCategories = {
+							bar: options.categories.find((x) =>
+								isMatching(x.label, [
+									'club',
+									'cocktail',
+									'beer',
+									'bar',
+									'מועדונים',
+									'ברים',
+									'מסיבות',
+									'חיי לילה',
+								])
+							),
+						};
+
+						place.types.forEach((type) => {
+							if (typesToCategories[type]) {
+								eventStore.modalValues['category'] = typesToCategories[type];
+							}
+						});
+					}
+
+					// current_opening_hours.weekday_text
+					// map icon - https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png
+					// google maps url - https://maps.google.com/?cid=15387026663019329345
+					// category - place.types
+					console.log('after', eventStore.modalValues);
+
+					eventStore.forceUpdate += 1;
+				});
 			}
 
 			window.placeInfo = {

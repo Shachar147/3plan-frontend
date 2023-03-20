@@ -397,7 +397,11 @@ const ReactModalRenderHelper = {
 				input = <div ref={row.settings.ref} dangerouslySetInnerHTML={{ __html: html }} />;
 				break;
 			case 'images':
-				const images = row.settings.extra.value?.replace(/\n^/, '').replace(/$\n/, '').split('\n') || [];
+				const images =
+					(row.settings.extra.value ?? eventStore.modalValues[row.settings.modalValueName] ?? '')
+						.replace(/\n^/, '')
+						.replace(/$\n/, '')
+						.split('\n') || [];
 				input = ReactModalRenderHelper.renderTextAreaInput(
 					eventStore,
 					row.settings.modalValueName,
@@ -415,7 +419,7 @@ const ReactModalRenderHelper = {
 				};
 
 				return (
-					<div className="flex-column gap-10 images-input">
+					<div className="flex-column gap-10 images-input" key={`images-slider-${images.join('\n')}`}>
 						{images && images.length > 0 && (
 							<Slider {...sliderSettings}>
 								{images.map((image: string) => (
@@ -576,7 +580,7 @@ const ReactModalService = {
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
-				window.initLocationPicker('location-input', 'selectedLocation', undefined);
+				window.initLocationPicker('location-input', 'selectedLocation', undefined, eventStore);
 			};
 
 			const setManualLocation = () => {
@@ -759,7 +763,7 @@ const ReactModalService = {
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
-				window.initLocationPicker('location-input', 'selectedLocation', undefined);
+				window.initLocationPicker('location-input', 'selectedLocation', undefined, eventStore);
 			};
 
 			const setManualLocation = () => {
@@ -1359,6 +1363,13 @@ const ReactModalService = {
 		// @ts-ignore
 		window.openingHours = initialData.openingHours || undefined;
 
+		console.log({
+			// @ts-ignore
+			window: window.openingHours,
+			modalValues: eventStore.modalValues,
+			initialData,
+		});
+
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleAddSidebarEventResult = async (eventStore: EventStore, initialCategoryId?: number) => {
 			if (!eventStore) return;
@@ -1376,6 +1387,10 @@ const ReactModalService = {
 				images,
 				moreInfo,
 			} = ReactModalService.internal.getModalValues(eventStore);
+
+			console.log({
+				images,
+			});
 
 			// @ts-ignore
 			delete location?.openingHours;
@@ -1496,6 +1511,7 @@ const ReactModalService = {
 							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
 							eventStore.isModalMinimized && 'overflow-visible'
 						)}
+						key={`add-sidebar-event-modal-${eventStore.forceUpdate}`}
 					>
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
 						{ReactModalService.internal.renderShowHideMore(eventStore)}

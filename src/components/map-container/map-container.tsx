@@ -346,7 +346,9 @@ const MapContainer = (props: MapContainerProps) => {
 				isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
 			) {
 				icon = iconsMap['beach'];
-			} else if (isMatching(category, ['club', 'cocktail', 'beer', 'bar', 'מועדונים', 'ברים', 'מסיבות'])) {
+			} else if (
+				isMatching(category, ['club', 'cocktail', 'beer', 'bar', 'מועדונים', 'ברים', 'מסיבות', 'חיי לילה'])
+			) {
 				icon = iconsMap['nightlife'];
 			} else if (isMatching(category, ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'])) {
 				icon = iconsMap['shopping'];
@@ -1017,7 +1019,8 @@ const MapContainer = (props: MapContainerProps) => {
 							window.initLocationPicker(
 								'map-header-location-input-search',
 								'selectedSearchLocation',
-								initSearchResultMarker
+								initSearchResultMarker,
+								eventStore
 							)
 						}
 						onKeyUp={() =>
