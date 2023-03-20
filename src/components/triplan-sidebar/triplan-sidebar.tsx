@@ -385,7 +385,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					!(
 						isDessert(categoryTitle, x.title!) ||
 						isBasketball(categoryTitle, x.title!) ||
-						isFlight(x.title!)
+						isFlight(categoryTitle, x.title!)
 					) && isHotel(categoryTitle, x.title!);
 
 				const calendarEvent = eventStore.calendarEvents.find((c) => c.id == x.id);

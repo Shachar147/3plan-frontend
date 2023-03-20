@@ -98,6 +98,8 @@ export class EventStore {
 	// add side bar modal
 	@observable isModalMinimized: boolean = true;
 
+	@observable forceUpdate = 0;
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {

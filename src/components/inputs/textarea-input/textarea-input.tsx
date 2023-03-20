@@ -62,9 +62,8 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
 						: undefined
 				}
 				disabled={props.readOnly}
-			>
-				{value}
-			</textarea>
+				value={value}
+			/>
 		</div>
 	);
 }
