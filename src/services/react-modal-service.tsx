@@ -420,7 +420,7 @@ const ReactModalRenderHelper = {
 
 				return (
 					<div className="flex-column gap-10 images-input">
-						{images && images.length > 0 && (
+						{images && images.length > 0 && !(images.length === 1 && images[0] === '') && (
 							<Slider {...sliderSettings}>
 								{images.map((image: string) => (
 									<img
@@ -490,7 +490,7 @@ const ReactModalService = {
 			return (
 				<div
 					className={getClasses(
-						'input-with-label flex-row gap-30 align-items-center justify-content-center padding-top-0',
+						'input-with-label flex-row gap-30 align-items-center justify-content-center padding-top-0 show-hide-more-row',
 						!eventStore.isModalMinimized && 'display-none'
 					)}
 				>
@@ -603,7 +603,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.ICON',
-					className: 'border-top-gray',
+					className: 'border-top-gray icon-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -619,8 +620,7 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.TITLE',
-					className: 'border-top-gray',
-					showOnMinimized: true,
+					className: 'border-top-gray name-row',
 				},
 				{
 					settings: {
@@ -633,8 +633,7 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.CATEGORY',
-					className: 'border-top-gray',
-					showOnMinimized: true,
+					className: 'border-top-gray category-row',
 				},
 				{
 					settings: {
@@ -647,7 +646,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.DESCRIPTION',
-					className: 'border-top-gray',
+					className: 'border-top-gray description-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -665,7 +665,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.DURATION',
-					className: 'border-top-gray',
+					className: 'border-top-gray duration-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -678,7 +679,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.PRIORITY',
-					className: 'border-top-gray',
+					className: 'border-top-gray priority-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -691,7 +693,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.PREFERRED_TIME',
-					className: 'border-top-gray',
+					className: 'border-top-gray perferred-time-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -712,8 +715,7 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.LOCATION',
-					className: 'border-top-gray',
-					showOnMinimized: true,
+					className: 'border-top-gray location-row',
 				},
 				{
 					settings: {
@@ -725,7 +727,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.OPENING_HOURS',
-					className: 'border-top-gray',
+					className: 'border-top-gray opening-hours-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -738,20 +741,22 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.IMAGES',
-					className: 'border-top-gray',
+					className: 'border-top-gray images-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
 						modalValueName: 'more-info',
 						ref: eventStore.modalValuesRefs['more-info'],
-						type: 'text',
+						type: 'textarea',
 						extra: {
 							placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 							value: initialData.moreInfo,
 						},
 					},
 					textKey: 'MODALS.MORE_INFO',
-					className: 'border-top-gray',
+					className: 'border-top-gray more-info-row',
+					showOnMinimized: false,
 				},
 			];
 			inputs[inputs.length - 1].className += ' border-bottom-gray padding-bottom-20';
@@ -947,7 +952,7 @@ const ReactModalService = {
 						settings: {
 							modalValueName: 'more-info',
 							ref: eventStore.modalValuesRefs['more-info'],
-							type: 'text',
+							type: 'textarea',
 							extra: {
 								placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 								value: initialData.moreInfo,
@@ -1498,7 +1503,7 @@ const ReactModalService = {
 					<div
 						className={getClasses(
 							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
-							eventStore.isModalMinimized && 'overflow-visible'
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
 						)}
 						key={`add-sidebar-event-modal-${eventStore.forceUpdate}`}
 					>
@@ -1746,7 +1751,13 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`edit-sidebar-event-modal-${eventStore.forceUpdate}`}
+					>
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
 						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>

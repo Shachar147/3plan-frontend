@@ -89,3 +89,18 @@
     opacity: 0.6;
   }
 }
+
+.modal-minimized {
+  .location-row{
+    order: 1;
+  }
+  .name-row {
+    order: 2;
+  }
+  .category-row {
+    order: 3;
+  }
+  .show-hide-more-row {
+    order: 4;
+  }
+}
