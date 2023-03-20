@@ -40,8 +40,8 @@ const ReactModalRenderHelper = {
 		eventStore: EventStore,
 		textKey: string,
 		input: JSX.Element,
-		className?: string,
-		showOnMinimize?: boolean
+		className: string | undefined = undefined,
+		showOnMinimize: boolean = true
 	) => {
 		return (
 			<div
