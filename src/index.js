@@ -602,7 +602,6 @@ const RootRouter = () => {
 						place.types.forEach((type) => {
 							if (!eventStore.modalValues['category'] && typesToCategories[type]) {
 								eventStore.modalValues['category'] = typesToCategories[type];
-								break;
 							}
 						});
 					}
