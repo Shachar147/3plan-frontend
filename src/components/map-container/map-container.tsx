@@ -60,6 +60,7 @@ export const FLIGHT_KEYWORDS = ['flight', 'טיסה', 'airport', 'שדה תעו�
 export const TOURIST_KEYWORDS = ['tourism', 'תיירות', 'אתרים'];
 export const NATURE_KEYWORDS = [
 	'nature',
+	'טבע',
 	'lake',
 	'lakes',
 	'waterfall',
@@ -69,7 +70,6 @@ export const NATURE_KEYWORDS = [
 	'נהר',
 	'נהרות',
 	'מפל',
-	'טבע',
 	'flower',
 	'garden',
 	'גן ה',
