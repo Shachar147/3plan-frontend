@@ -473,13 +473,12 @@ const RootRouter = () => {
 					eventStore.modalValues['images'] =
 						eventStore.modalValues['images'] ?? place.photos.map((x) => x.getUrl()).join('\n');
 					eventStore.modalValues['more-info'] =
-						eventStore.modalValues['more-info'] ?? eventStore.modalValues['moreInfo'] ?? place.website;
+						eventStore.modalValues['more-info'] ??
+						eventStore.modalValues['moreInfo'] ??
+						place.website ??
+						place.url;
 					eventStore.modalValues['description'] =
 						eventStore.modalValues['description'] ?? arr.length > 0 ? arr.join('\n') : undefined;
-
-					console.log({
-						types: place.types,
-					});
 
 					if (place.types && !eventStore.modalValues['category']) {
 						const options = eventStore.categories
@@ -498,6 +497,7 @@ const RootRouter = () => {
 						const nightLife = options.find((x) => isMatching(x.label, NIGHTLIFE_KEYWORDS));
 						const attractions = options.find((x) => isMatching(x.label, ATTRACTIONS_KEYWORDS));
 						const tourism = options.find((x) => isMatching(x.label, TOURIST_KEYWORDS));
+						const general = options.find((x) => isMatching(x.label, ['general', 'כללי']));
 
 						const typesToCategories = {
 							bar: nightLife,
@@ -519,7 +519,7 @@ const RootRouter = () => {
 							cafe: dessertOrFood,
 							campground: undefined,
 							// car_dealer: undefined,
-							car_rental: options.find((x) => isMatching(x.label, ['general', 'כללי'])),
+							car_rental: general,
 							// car_repair: undefined,
 							// car_wash: undefined,
 							casino: nightLife,
@@ -605,8 +605,6 @@ const RootRouter = () => {
 							}
 						});
 					}
-
-					alert(place.types);
 
 					// current_opening_hours.weekday_text
 					// map icon - https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/bar-71.png
