@@ -58,6 +58,24 @@ export const FOOD_KEYWORDS = ['food', 'restaurant', 'אוכל', 'מסעדת', '�
 export const STORE_KEYWORDS = ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'];
 export const FLIGHT_KEYWORDS = ['flight', 'טיסה', 'airport', 'שדה תעופה', 'שדה התעופה', 'טיסות'];
 export const TOURIST_KEYWORDS = ['tourism', 'תיירות', 'אתרים'];
+export const NATURE_KEYWORDS = [
+	'nature',
+	'lake',
+	'lakes',
+	'waterfall',
+	'sea',
+	'אגם',
+	'אגמים',
+	'נהר',
+	'נהרות',
+	'מפל',
+	'טבע',
+	'flower',
+	'garden',
+	'גן ה',
+	'גני ה',
+	'פרח',
+];
 
 function Marker(props: MarkerProps): ReactElement {
 	const { text, lng, lat, locationData, openingHours, searchValue, clearSearch } = props;
@@ -355,10 +373,7 @@ const MapContainer = (props: MapContainerProps) => {
 				icon = iconsMap['food'];
 			} else if (isMatching(category, ['photo', 'תמונות'])) {
 				icon = iconsMap['photos'];
-			} else if (
-				isMatching(category, ['nature', 'flower', 'garden', 'גן ה', 'גני ה', 'פרח', 'טבע']) ||
-				isMatching(title, ['nature', 'flower', 'garden', 'גן ה', 'גני ה', 'פרח', 'טבע'])
-			) {
+			} else if (isMatching(category, NATURE_KEYWORDS) || isMatching(title, NATURE_KEYWORDS)) {
 				icon = iconsMap['flowers'];
 			} else if (isMatching(category, ATTRACTIONS_KEYWORDS)) {
 				icon = iconsMap['attractions'];

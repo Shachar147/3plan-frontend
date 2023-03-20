@@ -36,6 +36,7 @@ import {
 	DESSERTS_KEYWORDS,
 	FLIGHT_KEYWORDS,
 	FOOD_KEYWORDS,
+	NATURE_KEYWORDS,
 	NIGHTLIFE_KEYWORDS,
 	STORE_KEYWORDS,
 	TOURIST_KEYWORDS,
@@ -463,7 +464,7 @@ const RootRouter = () => {
 						arr.push(`phone: ${place.international_phone_number}`);
 					}
 					if (place.rating) {
-						arr.push(`Google Rating: ${place.rating}/5 (${place.user_ratings_total} reviews)`);
+						arr.push(`Google Rating: ${place.rating}/5 (${place.user_ratings_total} total)`);
 					}
 
 					console.log('before', eventStore.modalValues);
@@ -498,6 +499,7 @@ const RootRouter = () => {
 						const attractions = options.find((x) => isMatching(x.label, ATTRACTIONS_KEYWORDS));
 						const tourism = options.find((x) => isMatching(x.label, TOURIST_KEYWORDS));
 						const general = options.find((x) => isMatching(x.label, ['general', 'כללי']));
+						const nature = options.find((x) => isMatching(x.label, NATURE_KEYWORDS));
 
 						const typesToCategories = {
 							bar: nightLife,
@@ -565,6 +567,7 @@ const RootRouter = () => {
 							// moving_company: undefined,
 							museum: undefined,
 							night_club: nightLife,
+							natural_feature: nature,
 							// painter: undefined,
 							// park: undefined,
 							// parking: undefined,
