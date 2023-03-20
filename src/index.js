@@ -412,14 +412,21 @@ const RootRouter = () => {
 					: undefined;
 
 			// update category
+			const options = eventStore.categories
+				.sort((a, b) => a.id - b.id)
+				.map((x, index) => ({
+					value: x.id,
+					label: x.icon ? `${x.icon} ${x.title}` : x.title,
+				}));
+			console.log({ place });
+			if (place.name && !eventStore.modalValues['category']) {
+				console.log({ name: place.name });
+				if (isMatching(place.name, ['hotel', 'מלון'])) {
+					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, ['hotel', 'מלון']));
+					console.log('here', eventStore.modalValues['category']);
+				}
+			}
 			if (place.types && !eventStore.modalValues['category']) {
-				const options = eventStore.categories
-					.sort((a, b) => a.id - b.id)
-					.map((x, index) => ({
-						value: x.id,
-						label: x.icon ? `${x.icon} ${x.title}` : x.title,
-					}));
-
 				const storeCategory = options.find((x) => isMatching(x.label, STORE_KEYWORDS));
 				const food = options.find((x) => isMatching(x.label, FOOD_KEYWORDS));
 				const dessertOrFood =
@@ -533,7 +540,7 @@ const RootRouter = () => {
 					zoo: attractions,
 				};
 
-				console.log({ types: place.types });
+				// console.log({ types: place.types });
 
 				place.types.forEach((type) => {
 					if (!eventStore.modalValues['category'] && typesToCategories[type]) {
