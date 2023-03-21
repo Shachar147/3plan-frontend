@@ -1280,20 +1280,39 @@ const ReactModalService = {
 			}
 
 			if (isOk) {
-				await eventStore.dataService.duplicateTrip(eventStore, tripName, newName);
+				await eventStore.dataService
+					.duplicateTrip(eventStore, tripName, newName)
+					.then(() => {
+						ReactModalService.internal.closeModal(eventStore);
 
-				ReactModalService.internal.closeModal(eventStore);
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.DUPLICATED.TITLE',
+							'MODALS.DUPLICATED_TRIP.CONTENT',
+							'success'
+						);
 
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.DUPLICATED.TITLE',
-					'MODALS.DUPLICATED_TRIP.CONTENT',
-					'success'
-				);
-
-				setTimeout(() => {
-					window.location.reload();
-				}, 2000);
+						setTimeout(() => {
+							window.location.reload();
+						}, 2000);
+					})
+					.catch((e) => {
+						if (e.response.data.statusCode === 409) {
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.ERROR.TITLE',
+								'TRIP_ALREADY_EXISTS',
+								'error'
+							);
+						} else {
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.ERROR.TITLE',
+								'OOPS_SOMETHING_WENT_WRONG',
+								'error'
+							);
+						}
+					});
 			}
 		};
 
