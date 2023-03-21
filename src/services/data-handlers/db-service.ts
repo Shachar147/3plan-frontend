@@ -189,6 +189,6 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async duplicateTrip(_eventStore: EventStore, tripName: string, newTripName: string) {
-		await apiPost(`/trip/duplicate`, { name: tripName, newName: newTripName });
+		return await apiPost(`/trip/duplicate`, { name: tripName, newName: newTripName });
 	}
 }

@@ -3,6 +3,7 @@ import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
 import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
+import { FLIGHT_KEYWORDS } from '../components/map-container/map-container';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');
@@ -271,14 +272,14 @@ export function isMatching(str: string, options: string[]) {
 	let isMatch = false;
 	let idx = 0;
 	while (!isMatch && idx < options.length) {
-		isMatch = str.indexOf(options[idx]) !== -1;
+		isMatch = str.toLowerCase().indexOf(options[idx].toLowerCase()) !== -1;
 		idx++;
 	}
 	return isMatch;
 }
 
-export function isFlight(title: string) {
-	return isMatching(title, ['flight', 'טיסה']);
+export function isFlight(category: string, title: string) {
+	return isMatching(title, FLIGHT_KEYWORDS) || isMatching(category, FLIGHT_KEYWORDS);
 }
 
 export function isDessert(category: string, title: string) {

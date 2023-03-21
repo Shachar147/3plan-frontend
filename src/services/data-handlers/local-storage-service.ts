@@ -257,7 +257,7 @@ export class LocalStorageService implements BaseDataHandler {
 		localStorage.setItem(LS_DATA_SOURCE, dataSource);
 	}
 
-	duplicateTrip(eventStore: EventStore, tripName: string, dupTripName: string): Trip {
+	async duplicateTrip(eventStore: EventStore, tripName: string, dupTripName: string): Promise<Trip> {
 		const data = {
 			allEvents: this.getAllEvents(eventStore, tripName),
 			calendarEvents: this.getCalendarEvents(tripName),
