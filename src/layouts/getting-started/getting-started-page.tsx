@@ -128,13 +128,22 @@ const GettingStartedPage = () => {
 					navigate(`/plan/${res.data.name}`);
 					// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 				},
-				() => {
-					ReactModalService.internal.alertMessage(
-						eventStore,
-						'MODALS.ERROR.TITLE',
-						'OOPS_SOMETHING_WENT_WRONG',
-						'error'
-					);
+				(e) => {
+					if (e.response.data.statusCode === 409) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'TRIP_ALREADY_EXISTS',
+							'error'
+						);
+					} else {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'OOPS_SOMETHING_WENT_WRONG',
+							'error'
+						);
+					}
 				},
 				() => {}
 			);

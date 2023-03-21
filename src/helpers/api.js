@@ -51,8 +51,9 @@ export async function apiPost(url, data) {
 		.then((res) => {
 			return res;
 		})
-		.catch(function (error) {
-			if (!handleUnauthorizedError(error, url).then((isRedirected) => {})) {
+		.catch(async (error) => {
+			const isUnauthorized = await handleUnauthorizedError(error, url);
+			if (!isUnauthorized) {
 				throw error;
 			}
 			// return null;

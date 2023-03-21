@@ -482,5 +482,6 @@
 	"SEARCH_RESULTS": "תוצאות חיפוש",
 	"MAP_SEARCH_PLACEHOLDER": "חפש בכל הפעילויות שלך",
 	"SHOW_MORE": "הצג עוד",
-	"SHOW_LESS": "הצג פחות"
+	"SHOW_LESS": "הצג פחות",
+	"TRIP_ALREADY_EXISTS": "אופס, כבר קיים טיול עם השם הזה :("
 }

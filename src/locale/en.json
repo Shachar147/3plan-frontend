@@ -405,5 +405,6 @@
 	"SEARCH_RESULTS": "Search results",
 	"MAP_SEARCH_PLACEHOLDER": "Search in all activities",
 	"SHOW_MORE": "Show more",
-	"SHOW_LESS": "Show less"
+	"SHOW_LESS": "Show less",
+	"TRIP_ALREADY_EXISTS": "Oops, Trip with that name already exist :("
 }
