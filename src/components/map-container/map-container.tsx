@@ -1230,6 +1230,7 @@ const MapContainer = (props: MapContainerProps) => {
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
 					{filteredVisibleItems.map((info, idx) => {
 						const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
+						// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
 						const idxInDay = calendarEvent
 							? eventStore.getEventIndexInCalendarByDay(calendarEvent)
 							: undefined;
