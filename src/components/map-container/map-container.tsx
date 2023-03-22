@@ -907,7 +907,7 @@ const MapContainer = (props: MapContainerProps) => {
 
 		function renderScheduledOrNotFilters() {
 			return (
-				<div className="flex-row gap-5 align-items-center">
+				<div className="flex-row gap-5 align-items-center map-scheduled-or-not">
 					<span>{TranslateService.translate(eventStore, 'SHOW_ONLY')}</span>
 					<Observer>
 						{() => (
@@ -950,7 +950,7 @@ const MapContainer = (props: MapContainerProps) => {
 
 		function renderPrioritiesFilters() {
 			return (
-				<div className="flex-row gap-5 align-items-center">
+				<div className="flex-row gap-5 align-items-center map-priorities-filter">
 					<span>{TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_PRIORITY')}</span>
 					{eventStore.isMobile && (
 						<SelectInput
@@ -1032,7 +1032,7 @@ const MapContainer = (props: MapContainerProps) => {
 					.reverse(),
 			];
 			return (
-				<div className="flex-row gap-5 align-items-center">
+				<div className="flex-row gap-5 align-items-center map-view-selection">
 					<span>{TranslateService.translate(eventStore, 'SHOW_MAP_ACTIVITIES_BY')}</span>
 					<SelectInput
 						ref={undefined}

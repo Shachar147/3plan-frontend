@@ -307,6 +307,13 @@
 				max-width: unset !important;
 			}
 		}
+
+		height: auto;
+		min-height: 50px !important;
+
+		.search-container {
+			display: none;
+		}
 	}
 
 	// add/edit calendar event
@@ -367,6 +374,49 @@
 				min-width: 75px;
 				max-width: 75px;
 			}
+		}
+
+		.map-filters-container {
+			order :4;
+
+			margin-top: 20px;
+
+			.map-scheduled-or-not {
+				order: 1;
+			}
+			.map-view-selection {
+				order: 2;
+			}
+			.map-priorities-filter {
+				order: 3;
+			}
+
+			padding-inline-start: 10px;
+
+			.map-scheduled-or-not,
+			.map-view-selection,
+			.map-priorities-filter {
+				width: 100%;
+				justify-content: flex-start !important;
+			}
+			.map-priorities-filter {
+				justify-content: space-between;
+				width: 100%;
+				padding-inline: 0 !important;
+			}
+			.map-view-selection,
+			.map-priorities-filter {
+				>span {
+					min-width: 160px;
+				}
+				div[class$='control'] {
+					width: 163px;
+				}
+			}
+		}
+
+		.map-header {
+			order :2;
 		}
 	}
 
@@ -433,7 +483,7 @@
 		text-align: center;
 		width: 100%;
 		margin-bottom: 10px;
-		margin-top: 30px; // changed from 20 to 30 due to "youre looking at TRIPNAME" line
+		margin-top: 40px; // changed from 20 to 40 due to "youre looking at TRIPNAME" line
 	}
 
 	.main-page {
@@ -482,6 +532,14 @@
 			}
 			input[type='date'] {
 				padding-inline-end: 10px;
+			}
+		}
+
+		.map-view-selection,
+		.map-priorities-filter {
+			>span,
+			div[class$='control'] {
+				text-align: right;
 			}
 		}
 	}
