@@ -237,14 +237,9 @@ body.rtl {
 body.ltr {
 	.visible-items-pane {
 		&:not(.mobile) {
-			//left: unset;
-			//left: 10px;
-			//top: 85px;
-
 			&.combined {
 				left: unset;
 				right: 5px;
-				//bottom: 5px;
 			}
 		}
 	}
