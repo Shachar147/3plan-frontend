@@ -406,5 +406,8 @@
 	"MAP_SEARCH_PLACEHOLDER": "Search in all activities",
 	"SHOW_MORE": "Show more",
 	"SHOW_LESS": "Show less",
-	"TRIP_ALREADY_EXISTS": "Oops, Trip with that name already exist :("
+	"TRIP_ALREADY_EXISTS": "Oops, Trip with that name already exist :(",
+	"SHOW_MAP_ACTIVITIES_BY": "Show map activities by:",
+	"BY_CATEGORIES_AND_PRIORITIES": "Categories & Priorities",
+	"CHRONOLOGICAL_ORDER": "Chronological order - day {X}"
 }
