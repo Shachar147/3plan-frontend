@@ -1,5 +1,4 @@
-import React, { ReactElement } from 'react';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useMemo, useState } from 'react';
 // @ts-ignore
 import GoogleMapReact from 'google-map-react';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
@@ -8,7 +7,7 @@ import { eventStoreContext } from '../../stores/events-store';
 import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
 import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
-import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
+import { MapViewMode, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { BuildEventUrl, getClasses, isBasketball, isDessert, isFlight, isHotel, isMatching } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
@@ -424,6 +423,11 @@ const MapContainer = (props: MapContainerProps) => {
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
 		};
 
+		const getIconUrlByIdx = (event: any, idx: number) => {
+			const bgColor = priorityToMapColor[event.priority].replace('#', '');
+			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1738-blank-sequence_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0&color=ffffffff&psize=15&text=${idx}`;
+		};
+
 		const icon = {
 			url: 'https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1577-food-fork-knife_4x.png&highlight=ff000000,FF5252,ff000000&scale=2.0',
 			scaledSize: new googleRef.Size(30, 30),
@@ -439,7 +443,14 @@ const MapContainer = (props: MapContainerProps) => {
 			const event = coordinatesToEvents[key];
 
 			// marker + marker when hovering
-			icon.url = getIconUrl(event);
+			if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
+				// by day and index in day
+				const idx = eventStore.getEventIndexInCalendarByDay(event);
+				icon.url = getIconUrlByIdx(event, idx + 1);
+			} else {
+				icon.url = getIconUrl(event);
+			}
+
 			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority] };
 			const markerIconWithBorder = {
 				...markerIcon,
@@ -896,7 +907,7 @@ const MapContainer = (props: MapContainerProps) => {
 
 		function renderScheduledOrNotFilters() {
 			return (
-				<div className="flex-row gap-5 align-items-center">
+				<div className="flex-row gap-5 align-items-center map-scheduled-or-not">
 					<span>{TranslateService.translate(eventStore, 'SHOW_ONLY')}</span>
 					<Observer>
 						{() => (
@@ -939,7 +950,7 @@ const MapContainer = (props: MapContainerProps) => {
 
 		function renderPrioritiesFilters() {
 			return (
-				<div className="flex-row gap-5 align-items-center">
+				<div className="flex-row gap-5 align-items-center map-priorities-filter">
 					<span>{TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_PRIORITY')}</span>
 					{eventStore.isMobile && (
 						<SelectInput
@@ -1004,6 +1015,56 @@ const MapContainer = (props: MapContainerProps) => {
 			);
 		}
 
+		function renderMapViewSelection() {
+			const SEPARATOR = '---';
+			const options: { label: string; value: string }[] = [
+				{
+					label: TranslateService.translate(eventStore, 'BY_CATEGORIES_AND_PRIORITIES'),
+					value: MapViewMode.CATEGORIES_AND_PRIORITIES,
+				},
+				...eventStore.scheduledDaysNames
+					.map((dayName) => ({
+						label: TranslateService.translate(eventStore, 'CHRONOLOGICAL_ORDER', {
+							X: dayName,
+						}),
+						value: `${MapViewMode.CHRONOLOGICAL_ORDER}${SEPARATOR}${dayName}`,
+					}))
+					.reverse(),
+			];
+			return (
+				<div className="flex-row gap-5 align-items-center map-view-selection">
+					<span>{TranslateService.translate(eventStore, 'SHOW_MAP_ACTIVITIES_BY')}</span>
+					<SelectInput
+						ref={undefined}
+						id={'map-view-mode'}
+						name={'map-view-mode'}
+						options={options}
+						value={
+							options.find((o) => o.value === eventStore.mapViewMode) ??
+							options.find(
+								(o) => o.value === `${eventStore.mapViewMode}${SEPARATOR}${eventStore.mapViewDayFilter}`
+							)
+						}
+						onChange={(data: any) => {
+							runInAction(() => {
+								if (data.value == MapViewMode.CATEGORIES_AND_PRIORITIES) {
+									eventStore.mapViewMode = data.value;
+								} else {
+									const parts = data.value.split(SEPARATOR);
+									eventStore.mapViewMode = parts[0];
+									eventStore.mapViewDayFilter = parts[1];
+								}
+							});
+						}}
+						modalValueName={'mapViewModeSelector'}
+						maxMenuHeight={120}
+						removeDefaultClass={true}
+						isClearable={false}
+					/>
+				</div>
+			);
+		}
+
 		return (
 			<div
 				className={getClasses(
@@ -1013,6 +1074,7 @@ const MapContainer = (props: MapContainerProps) => {
 			>
 				{renderPrioritiesFilters()}
 				{renderScheduledOrNotFilters()}
+				{renderMapViewSelection()}
 			</div>
 		);
 	}
@@ -1168,6 +1230,10 @@ const MapContainer = (props: MapContainerProps) => {
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
 					{filteredVisibleItems.map((info, idx) => {
 						const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
+						// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
+						const idxInDay = calendarEvent
+							? eventStore.getEventIndexInCalendarByDay(calendarEvent)
+							: undefined;
 
 						let addToCalendar = undefined;
 						if (props.addToEventsToCategories) {
@@ -1214,6 +1280,14 @@ const MapContainer = (props: MapContainerProps) => {
 								}}
 							>
 								{addToCalendar}
+								{eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+								eventStore.mapViewDayFilter &&
+								idxInDay != undefined ? (
+									<>
+										{idxInDay + 1}
+										{' - '}
+									</>
+								) : undefined}
 								{info.event.title}
 							</div>
 						);

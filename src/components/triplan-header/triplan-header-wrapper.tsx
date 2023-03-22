@@ -30,7 +30,7 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 		}
 
 		if (currentMobileView === ViewMode.map) {
-			withSearch = false;
+			// withSearch = false;
 		}
 
 		return (
