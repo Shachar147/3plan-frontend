@@ -3,24 +3,21 @@ name: Update Release Notes
 on:
   pull_request:
     types: [closed]
-    branches:
-      - master
 
 jobs:
   update_release_notes:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
       - name: Update Release Notes
         run: |
           pr_number=$(echo $GITHUB_REF | sed 's/refs\/pull\///' | sed 's/\/merge//')
           pr_description=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/$pr_number | jq -r '.body')
           echo "$pr_description" >> release_notes.md
-      - name: Commit Changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Update Release Notes
-          commit_options: '--no-verify'
-          commit_user_email: 'actions@github.com'
-          commit_user_name: 'GitHub Actions'
