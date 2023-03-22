@@ -308,8 +308,13 @@
 			}
 		}
 
-		height: auto;
-		min-height: 50px !important;
+		height: max-content !important;
+		min-height: 202px !important;
+		max-height: 202px !important;
+
+		&.visible-items-fc-events {
+			height: max-content;
+		}
 
 		.search-container {
 			display: none;
@@ -379,7 +384,7 @@
 		.map-filters-container {
 			order :4;
 
-			margin-top: 20px;
+			margin-top: 15px;
 
 			.map-scheduled-or-not {
 				order: 1;
@@ -410,7 +415,7 @@
 					min-width: 160px;
 				}
 				div[class$='control'] {
-					width: 163px;
+					width: 155px;
 				}
 			}
 		}
