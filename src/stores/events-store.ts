@@ -480,7 +480,7 @@ export class EventStore {
 			.filter(
 				(e) =>
 					new Date(e.start).toLocaleDateString() === day &&
-					e.location?.loatitude &&
+					e.location?.latitude &&
 					e.location?.longitude &&
 					!e.allDay
 			)
