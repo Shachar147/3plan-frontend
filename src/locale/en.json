@@ -409,5 +409,6 @@
 	"TRIP_ALREADY_EXISTS": "Oops, Trip with that name already exist :(",
 	"SHOW_MAP_ACTIVITIES_BY": "Show map activities by:",
 	"BY_CATEGORIES_AND_PRIORITIES": "Categories & Priorities",
-	"CHRONOLOGICAL_ORDER": "Chronological order - day {X}"
+	"CHRONOLOGICAL_ORDER": "Chronological order - day {X}",
+	"CALCULATE_DISTANCE": "Calculate distance"
 }

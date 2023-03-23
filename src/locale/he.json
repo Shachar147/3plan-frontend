@@ -486,5 +486,6 @@
 	"TRIP_ALREADY_EXISTS": "אופס, כבר קיים טיול עם השם הזה :(",
 	"SHOW_MAP_ACTIVITIES_BY": "הצג פעילויות על המפה לפי:",
 	"BY_CATEGORIES_AND_PRIORITIES": "קטגוריות ועדיפויות",
-	"CHRONOLOGICAL_ORDER": "סדר כרונולוגי - יום {X}"
+	"CHRONOLOGICAL_ORDER": "סדר כרונולוגי - יום {X}",
+	"CALCULATE_DISTANCE": "חשב מרחקים"
 }

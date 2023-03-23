@@ -19,6 +19,7 @@ import { Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
 import { Observer } from 'mobx-react';
 import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
+import Button, { ButtonFlavor } from '../common/button/button';
 
 interface MarkerProps {
 	text?: string;
@@ -1065,6 +1066,19 @@ const MapContainer = (props: MapContainerProps) => {
 			);
 		}
 
+		function renderCalculateDistancesButton() {
+			return (
+				<Button
+					flavor={ButtonFlavor.secondary}
+					text={TranslateService.translate(eventStore, 'CALCULATE_DISTANCE')}
+					onClick={() => {
+						ReactModalService.openCalculateDistancesModal(eventStore);
+					}}
+					className="calculate-distances-button brown"
+				/>
+			);
+		}
+
 		return (
 			<div
 				className={getClasses(
@@ -1075,6 +1089,7 @@ const MapContainer = (props: MapContainerProps) => {
 				{renderPrioritiesFilters()}
 				{renderScheduledOrNotFilters()}
 				{renderMapViewSelection()}
+				{renderCalculateDistancesButton()}
 			</div>
 		);
 	}
@@ -1100,99 +1115,8 @@ const MapContainer = (props: MapContainerProps) => {
 		};
 	}, []);
 
-	return (
-		<div
-			className={getClasses(
-				'map-container',
-				props.isCombined && 'combined',
-				eventStore.isMobile && 'resize-none'
-			)}
-		>
-			{renderMapFilters()}
-			<div className="map-header">
-				<div className={'map-search-location-input'}>
-					<input
-						type="text"
-						className="map-header-location-input-search"
-						onClick={() =>
-							// @ts-ignore
-							window.initLocationPicker(
-								'map-header-location-input-search',
-								'selectedSearchLocation',
-								initSearchResultMarker,
-								eventStore
-							)
-						}
-						onKeyUp={() =>
-							// @ts-ignore
-							window.setManualLocation('map-header-location-input-search', 'selectedSearchLocation')
-						}
-						value={searchValue}
-						onChange={(e) => {
-							setSearchValue(e.target.value);
-						}}
-						autoComplete="off"
-						placeholder={TranslateService.translate(
-							eventStore,
-							eventStore.isMobile ? 'MAP_VIEW.SEARCH.PLACEHOLDER.SHORT' : 'MAP_VIEW.SEARCH.PLACEHOLDER'
-						)}
-					/>
-					<div className={getClasses('clear-search', searchCoordinates.length === 0 && 'hidden')}>
-						<a onClick={clearSearch}>x</a>
-					</div>
-				</div>
-			</div>
-			{/*{!googleMapRef && (*/}
-			{/*    <div>*/}
-			{/*        {TranslateService.translate(eventStore, 'MAP_VIEW.LOADING_PLACEHOLDER')}*/}
-			{/*    </div>*/}
-			{/*)}*/}
-			<GoogleMapReact
-				bootstrapURLKeys={{
-					key: 'AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo',
-				}} /* AIzaSyA16d9FJFh__vK04jU1P64vnEpPc3jenec */
-				center={
-					searchCoordinates.length > 0
-						? searchCoordinates[0]
-						: center
-						? center
-						: coordinates.length > 0
-						? { lat: coordinates[0].lat, lng: coordinates[0].lng }
-						: undefined
-				}
-				zoom={searchCoordinates.length > 0 || center ? 14 : 7}
-				yesIWantToUseGoogleMapApiInternals
-				// @ts-ignore
-				onGoogleApiLoaded={({ map, maps }) => initMap(map, maps)}
-				clickableIcons={false}
-				options={getOptions()}
-			>
-				{searchCoordinates.map((place, index) => (
-					<Marker
-						key={index}
-						locationData={
-							// @ts-ignore
-							[{ ...place }].map((x) => {
-								x.longitude = x.lng;
-								x.latitude = x.lat;
-								delete x.lng;
-								delete x.lat;
-								return x;
-							})[0]
-						}
-						clearSearch={clearSearch}
-						// @ts-ignore
-						text={place.address}
-						// @ts-ignore
-						lat={place.lat}
-						// @ts-ignore
-						lng={place.lng}
-						searchValue={searchCoordinatesSearchValue}
-						// @ts-ignore
-						openingHours={place.openingHours}
-					/>
-				))}
-			</GoogleMapReact>
+	function renderVisibleItemsPane() {
+		return (
 			<div
 				className={getClasses(
 					'visible-items-pane',
@@ -1294,6 +1218,106 @@ const MapContainer = (props: MapContainerProps) => {
 					})}
 				</div>
 			</div>
+		);
+	}
+
+	return (
+		<div
+			className={getClasses(
+				'map-container',
+				props.isCombined && 'combined',
+				eventStore.isMobile && 'resize-none'
+			)}
+		>
+			{renderMapFilters()}
+			<div className="map-header">
+				<div className={'map-search-location-input'}>
+					<input
+						type="text"
+						className="map-header-location-input-search"
+						onClick={() =>
+							// @ts-ignore
+							window.initLocationPicker(
+								'map-header-location-input-search',
+								'selectedSearchLocation',
+								initSearchResultMarker,
+								eventStore
+							)
+						}
+						onKeyUp={() =>
+							// @ts-ignore
+							window.setManualLocation('map-header-location-input-search', 'selectedSearchLocation')
+						}
+						value={searchValue}
+						onChange={(e) => {
+							setSearchValue(e.target.value);
+						}}
+						autoComplete="off"
+						placeholder={TranslateService.translate(
+							eventStore,
+							eventStore.isMobile ? 'MAP_VIEW.SEARCH.PLACEHOLDER.SHORT' : 'MAP_VIEW.SEARCH.PLACEHOLDER'
+						)}
+					/>
+					<div className={getClasses('clear-search', searchCoordinates.length === 0 && 'hidden')}>
+						<a onClick={clearSearch}>x</a>
+					</div>
+				</div>
+			</div>
+			{/*{!googleMapRef && (*/}
+			{/*    <div>*/}
+			{/*        {TranslateService.translate(eventStore, 'MAP_VIEW.LOADING_PLACEHOLDER')}*/}
+			{/*    </div>*/}
+			{/*)}*/}
+			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
+				<GoogleMapReact
+					bootstrapURLKeys={{
+						key: 'AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo',
+					}} /* AIzaSyA16d9FJFh__vK04jU1P64vnEpPc3jenec */
+					center={
+						searchCoordinates.length > 0
+							? searchCoordinates[0]
+							: center
+							? center
+							: coordinates.length > 0
+							? { lat: coordinates[0].lat, lng: coordinates[0].lng }
+							: undefined
+					}
+					zoom={searchCoordinates.length > 0 || center ? 14 : 7}
+					yesIWantToUseGoogleMapApiInternals
+					// @ts-ignore
+					onGoogleApiLoaded={({ map, maps }) => initMap(map, maps)}
+					clickableIcons={false}
+					options={getOptions()}
+				>
+					{searchCoordinates.map((place, index) => (
+						<Marker
+							key={index}
+							locationData={
+								// @ts-ignore
+								[{ ...place }].map((x) => {
+									x.longitude = x.lng;
+									x.latitude = x.lat;
+									delete x.lng;
+									delete x.lat;
+									return x;
+								})[0]
+							}
+							clearSearch={clearSearch}
+							// @ts-ignore
+							text={place.address}
+							// @ts-ignore
+							lat={place.lat}
+							// @ts-ignore
+							lng={place.lng}
+							searchValue={searchCoordinatesSearchValue}
+							// @ts-ignore
+							openingHours={place.openingHours}
+						/>
+					))}
+				</GoogleMapReact>
+				{!eventStore.isMobile && renderVisibleItemsPane()}
+			</div>
+			{eventStore.isMobile && renderVisibleItemsPane()}
 		</div>
 	);
 };

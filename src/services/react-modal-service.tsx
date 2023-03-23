@@ -3193,6 +3193,24 @@ const ReactModalService = {
 			content,
 		});
 	},
+	openCalculateDistancesModal(eventStore: EventStore) {
+		const content = <div>this is the content</div>;
+
+		const onConfirm = () => {
+			alert('hey!');
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			confirmBtnText: 'lets do it',
+			cancelBtnText: 'cancel',
+			title: 'title',
+			type: 'controlled',
+			customClass: 'triplan-react-modal max-width-350',
+			onConfirm,
+			content,
+		});
+	},
 };
 
 export default ReactModalService;
