@@ -1228,70 +1228,79 @@ const MapContainer = (props: MapContainerProps) => {
 					{visibleItems.length > 0 &&
 						filteredVisibleItems.length === 0 &&
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
-					{filteredVisibleItems.map((info, idx) => {
-						const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
-						// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
-						const idxInDay = calendarEvent
-							? eventStore.getEventIndexInCalendarByDay(calendarEvent)
-							: undefined;
+					{filteredVisibleItems
+						.map((info) => {
+							const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
+							// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
+							const idxInDay = calendarEvent
+								? eventStore.getEventIndexInCalendarByDay(calendarEvent)
+								: 99999999;
 
-						let addToCalendar = undefined;
-						if (props.addToEventsToCategories) {
-							addToCalendar = (
-								<i
-									className="fa fa-calendar-times-o visible-items-calendar-indicator"
-									aria-hidden="true"
-									onClick={(e) => {
-										e.stopPropagation();
-										e.preventDefault();
-										ReactModalService.openAddCalendarEventNewModal(
-											eventStore,
-											props.addToEventsToCategories,
-											{
-												...info.event,
-												extendedProps: {
-													...info.event,
-												},
-											},
-											info.event
-										);
-									}}
-									title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
-								/>
-							);
-
-							if (calendarEvent) {
+							return {
+								info,
+								calendarEvent,
+								idxInDay,
+							};
+						})
+						.sort((a, b) => a.idxInDay - b.idxInDay)
+						.map(({ info, idxInDay, calendarEvent }, idx) => {
+							let addToCalendar = undefined;
+							if (props.addToEventsToCategories) {
 								addToCalendar = (
 									<i
-										className="fa fa-calendar-check-o visible-items-calendar-indicator"
+										className="fa fa-calendar-times-o visible-items-calendar-indicator"
 										aria-hidden="true"
-										title={TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
+										onClick={(e) => {
+											e.stopPropagation();
+											e.preventDefault();
+											ReactModalService.openAddCalendarEventNewModal(
+												eventStore,
+												props.addToEventsToCategories,
+												{
+													...info.event,
+													extendedProps: {
+														...info.event,
+													},
+												},
+												info.event
+											);
+										}}
+										title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
 									/>
 								);
-							}
-						}
 
-						return (
-							<div
-								key={`filtered-visible-item-${idx}`}
-								className={`fc-event priority-${info.event.priority}`}
-								onClick={() => {
-									onVisibleItemClick(info.event, info.marker);
-								}}
-							>
-								{addToCalendar}
-								{eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
-								eventStore.mapViewDayFilter &&
-								idxInDay != undefined ? (
-									<>
-										{idxInDay + 1}
-										{' - '}
-									</>
-								) : undefined}
-								{info.event.title}
-							</div>
-						);
-					})}
+								if (calendarEvent) {
+									addToCalendar = (
+										<i
+											className="fa fa-calendar-check-o visible-items-calendar-indicator"
+											aria-hidden="true"
+											title={TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
+										/>
+									);
+								}
+							}
+
+							return (
+								<div
+									key={`filtered-visible-item-${idx}`}
+									className={`fc-event priority-${info.event.priority}`}
+									onClick={() => {
+										onVisibleItemClick(info.event, info.marker);
+									}}
+								>
+									{addToCalendar}
+									{eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+									eventStore.mapViewDayFilter &&
+									idxInDay != undefined ? (
+										<>
+											{idxInDay + 1}
+											{' - '}
+										</>
+									) : undefined}
+									{info.event.title}
+								</div>
+							);
+						})}
 				</div>
 			</div>
 		</div>
