@@ -477,7 +477,13 @@ export class EventStore {
 		}
 		const idx = this.calendarEvents
 			.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-			.filter((e) => new Date(e.start).toLocaleDateString() === day)
+			.filter(
+				(e) =>
+					new Date(e.start).toLocaleDateString() === day &&
+					e.location?.loatitude &&
+					e.location?.longitude &&
+					!e.allDay
+			)
 			.findIndex((e) => e.id == event.id);
 		return idx;
 	}
