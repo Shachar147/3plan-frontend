@@ -1,11 +1,20 @@
-import React, { CSSProperties, useContext } from 'react';
+import React, { CSSProperties, useContext, useState } from 'react';
 import TranslateService from '../../services/translate-service';
-import { addLineBreaks, getClasses, isBasketball, isDessert, isFlight, isHotel, ucfirst } from '../../utils/utils';
-import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
+import {
+	addLineBreaks,
+	getClasses,
+	getCoordinatesRangeKey,
+	isBasketball,
+	isDessert,
+	isFlight,
+	isHotel,
+	ucfirst,
+} from '../../utils/utils';
+import { GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
-import { Observer, observer } from 'mobx-react';
+import { observer, Observer } from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import Button, { ButtonFlavor } from '../common/button/button';
@@ -310,6 +319,79 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			value: x,
 		}));
 
+		const [from, setFrom] = useState<any>(null);
+		const [to, setTo] = useState<any>(null);
+
+		const renderFromToDistanceResult = () => {
+			// console.log({ from, to });
+			// console.log({ modalValues: eventStore.modalValues });
+			// if (!eventStore.modalValues['from'] || !eventStore.modalValues['to']) {
+			// 	return null;
+			// }
+
+			if (!from || !to) {
+				return null;
+			}
+
+			const distanceKey = getCoordinatesRangeKey(eventStore.travelMode, from.value, to.value);
+
+			const distanceResult = eventStore.distanceResults.has(distanceKey)
+				? eventStore.distanceResults.get(distanceKey)
+				: 'N/A';
+
+			let duration = 'N/A';
+			let distance = 'N/A';
+			if (typeof distanceResult == 'object') {
+				duration = distanceResult.duration;
+				distance = distanceResult.distance;
+
+				duration = duration.replaceAll('mins', TranslateService.translate(eventStore, 'DURATION.MINS'));
+				duration = duration.replaceAll('min', TranslateService.translate(eventStore, 'DURATION.MIN'));
+				duration = duration.replaceAll('hours', TranslateService.translate(eventStore, 'DURATION.HOURS'));
+				duration = duration.replaceAll('hour', TranslateService.translate(eventStore, 'DURATION.HOUR'));
+				duration = duration.replaceAll('1 שעה', 'שעה');
+				duration = duration.replaceAll('1 דקה', 'דקה');
+
+				distance = distance.replaceAll('km', TranslateService.translate(eventStore, 'DISTANCE.KM'));
+				distance = distance.replaceAll('m', TranslateService.translate(eventStore, 'DISTANCE.M'));
+			}
+
+			let travelMode = '';
+			switch (eventStore.travelMode) {
+				case GoogleTravelMode.TRANSIT:
+					// prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
+					travelMode = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.TRANSIT.SUFFIX');
+					break;
+				case GoogleTravelMode.DRIVING:
+					travelMode = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING.SUFFIX');
+					break;
+				case GoogleTravelMode.WALKING:
+					travelMode = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.WALKING');
+					break;
+				default:
+					break;
+			}
+
+			return (
+				<div className="flex-col gap-8">
+					{/*<div>{`${from.label} -> ${to.label}`}</div>*/}
+					<div>
+						{distanceResult
+							? typeof distanceResult == 'string'
+								? distanceResult
+								: `${TranslateService.translate(
+										eventStore,
+										'GENERAL.TIME'
+								  )}: ${TranslateService.translate(eventStore, duration)} (${TranslateService.translate(
+										eventStore,
+										distance
+								  )}) ${travelMode}`
+							: 'No Route'}
+					</div>
+				</div>
+			);
+		};
+
 		const renderContent = () => (
 			<div className="sidebar-distances-block">
 				{ReactModalRenderHelper.renderInputWithLabel(
@@ -318,7 +400,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					ReactModalRenderHelper.renderSelectInput(
 						eventStore,
 						'from',
-						{ options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
+						{
+							options: options.filter((x) => (to ? JSON.stringify(x) !== JSON.stringify(to) : true)),
+							placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER',
+							onChange: (data: any) => setFrom(data),
+						},
 						'category-selector',
 						undefined
 					),
@@ -331,12 +417,20 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					ReactModalRenderHelper.renderSelectInput(
 						eventStore,
 						'to',
-						{ options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
+						{
+							options: options.filter((x) => (from ? JSON.stringify(x) !== JSON.stringify(from) : true)),
+							placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER',
+							onChange: (data: any) => setTo(data),
+						},
 						'category-selector',
 						undefined
 					),
 					'sidebar-distances-select-row'
 				)}
+
+				<div className="sidebar-distance-result" key={JSON.stringify(eventStore.modalValues)}>
+					<Observer>{() => renderFromToDistanceResult()}</Observer>
+				</div>
 			</div>
 		);
 

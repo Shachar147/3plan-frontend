@@ -502,5 +502,8 @@
 	"SIDEBAR.DISTANCES_BLOCK.FROM": "מ:",
 	"SIDEBAR.DISTANCES_BLOCK.TO": "עד:",
 	"NOTE.COULD_TAKE_AWHILE": "* פעולה זו עשויה להימשך מספר דקות",
-	"SIDEBAR.DISTANCES_BLOCK.TITLE": "חישוב מרחקים"
+	"SIDEBAR.DISTANCES_BLOCK.TITLE": "חישוב מרחקים",
+	"GENERAL.TIME": "זמן",
+	"GENERAL.DISTANCE": "מרחק",
+	"DISTANCE.PREFIX.DRIVING.SUFFIX": "בנסיעה"
 }

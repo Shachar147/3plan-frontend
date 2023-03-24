@@ -176,6 +176,7 @@
 	"DISTANCE.PREFIX.WALKING": "Walking",
 	"DISTANCE.PREFIX.DRIVING": "Driving",
 	"DISTANCE.PREFIX.TRANSIT.SUFFIX": "on public transportation",
+	"DISTANCE.PREFIX.DRIVING.SUFFIX": "by car",
 	"DURATION.MINS": "mins",
 	"DURATION.MIN": "min",
 	"DURATION.HOURS": "hours",
@@ -425,5 +426,7 @@
 	"SIDEBAR.DISTANCES_BLOCK.FROM": "From:",
 	"SIDEBAR.DISTANCES_BLOCK.TO": "To:",
 	"NOTE.COULD_TAKE_AWHILE": "* action might take a while",
-	"SIDEBAR.DISTANCES_BLOCK.TITLE": "Calculate Distance"
+	"SIDEBAR.DISTANCES_BLOCK.TITLE": "Calculate Distance",
+	"GENERAL.TIME": "time",
+	"GENERAL.DISTANCE": "distance"
 }

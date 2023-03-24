@@ -421,11 +421,12 @@ const RootRouter = () => {
 			console.log({ place });
 			if (place.name && !eventStore.modalValues['category']) {
 				console.log({ name: place.name });
-				if (isMatching(place.name, ['hotel', 'מלון'])) {
+				if (isMatching(place.name, ['hotel', 'מלון']) || isMatching(place.website ?? '', ['hotel', 'מלון'])) {
 					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, ['hotel', 'מלון']));
-					console.log('here', eventStore.modalValues['category']);
+					// console.log('here', eventStore.modalValues['category']);
 				}
 			}
+
 			if (place.types && !eventStore.modalValues['category']) {
 				const storeCategory = options.find((x) => isMatching(x.label, STORE_KEYWORDS));
 				const food = options.find((x) => isMatching(x.label, FOOD_KEYWORDS));

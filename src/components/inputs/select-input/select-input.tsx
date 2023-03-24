@@ -5,6 +5,7 @@ import TranslateService from '../../../services/translate-service';
 import { SELECT_STYLE } from '../../../utils/ui-utils';
 import { eventStoreContext } from '../../../stores/events-store';
 import { observer } from 'mobx-react';
+import { runInAction } from 'mobx';
 
 export interface SelectInputOption {
 	value: string;
@@ -54,7 +55,9 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 				placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined}
 				value={value}
 				onChange={(data) => {
-					eventStore.modalValues[modalValueName] = data;
+					runInAction(() => {
+						eventStore.modalValues[modalValueName] = data;
+					});
 					setValue(data);
 					if (props.onChange) {
 						props.onChange(data);
