@@ -16,7 +16,11 @@
 .triplan-react-modal a.btn {
   padding: 5px !important;
   padding-inline: 15px !important;
-  width: 100% !important;
+  //width: 100% !important;
+}
+
+.triplan-react-modal>p {
+  flex-direction: column;
 }
 
 .triplan-react-modal button.primary-button,

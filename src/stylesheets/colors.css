@@ -7,6 +7,7 @@
 	--black: #2c2c2c;
 	/*--light-blue: #42adde;*/
 	--blue: #37b5ff;
+	--blue-gray: #748597;
 	--light-blue: #d5eaff;
 	--dark-blue: #0066d5;
 	--darkest-blue: #052c8f;
@@ -16,6 +17,14 @@
 
 .black-color {
 	color: var(--black);
+}
+
+.blue-gray-color {
+	color: var(--blue-gray);
+}
+
+.pink-color {
+	color: var(--pink);
 }
 
 .black-background {

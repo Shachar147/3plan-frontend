@@ -107,6 +107,10 @@ body {
 	font-size: 20px;
 }
 
+.font-size-100 {
+	font-size: 100px !important;
+}
+
 .flex-flow-wrap {
 	display: flex;
 	flex-flow: wrap;
@@ -400,6 +404,10 @@ body {
 
 .gap-15 {
 	gap: 15px;
+}
+
+.gap-16 {
+	gap: 16px;
 }
 
 .gap-20 {
@@ -772,6 +780,10 @@ input[type='text'] {
 	width: 100%;
 }
 
+.width-max-content {
+	width: max-content;
+}
+
 .z-index-99999999 {
 	z-index:99999999
 }
@@ -820,4 +832,12 @@ body.rtl {
 		direction: rtl;
 		text-align: right;
 	}
+}
+
+.white-space-pre {
+	white-space: pre;
+}
+
+.white-space-pre-line {
+	white-space: pre-line;
 }

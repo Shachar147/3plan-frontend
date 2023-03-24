@@ -625,6 +625,10 @@
 			max-height: 50px;
 		}
 	}
+
+	.triplan-react-modal a.btn {
+		width: 100% !important;
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {

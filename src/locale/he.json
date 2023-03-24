@@ -487,5 +487,13 @@
 	"SHOW_MAP_ACTIVITIES_BY": "הצג פעילויות על המפה לפי:",
 	"BY_CATEGORIES_AND_PRIORITIES": "קטגוריות ועדיפויות",
 	"CHRONOLOGICAL_ORDER": "סדר כרונולוגי - יום {X}",
-	"CALCULATE_DISTANCE": "חשב מרחקים"
+	"CALCULATE_DISTANCE": "חשב מרחקים",
+	"CALCULATE_DISTANCES_MODAL.TITLE": "ישנן {X} נקודות ציון!",
+	"CALCULATE_DISTANCES_MODAL.DESCRIPTION": "חישוב המרחקים בין כל נקודות הציון שלכם יכול לעזור לכם בצורה משמעותית!\n\nלאחר שתעשו זאת, תיפתח לכם אופציה נוספת בתפריט הצד שתאפשר לכם לבדוק את המרחק והזמן שייקח לכם להגיע מנקודה אחת לשנייה, או לבדוק איזה נקודות קרובות לנקודה אחרת שתבחרו",
+	"CALCULATE_DISTANCES_MODAL.CTA": "חשב!",
+	"CALCULATE_DISTANCES_MODAL.CANCEL": "צא",
+	"CALCULATE_DISTANCES_MODAL.CTA.CALCULATING": "מחשב... {X}%",
+	"CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.TITLE": "ווהו!",
+	"CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.CONTENT": "החישוב הסתיים :)",
+	"CALCULATE_DISTANCES_MODAL.CTA.FINISHED": "סיים לחשב! (100%), חשב שוב"
 }

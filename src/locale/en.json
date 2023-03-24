@@ -410,5 +410,13 @@
 	"SHOW_MAP_ACTIVITIES_BY": "Show map activities by:",
 	"BY_CATEGORIES_AND_PRIORITIES": "Categories & Priorities",
 	"CHRONOLOGICAL_ORDER": "Chronological order - day {X}",
-	"CALCULATE_DISTANCE": "Calculate distance"
+	"CALCULATE_DISTANCE": "Calculate distance",
+	"CALCULATE_DISTANCES_MODAL.TITLE": "There are {X} locations!",
+	"CALCULATE_DISTANCES_MODAL.DESCRIPTION": "Calculating the distance between all the coordinates on your map can help you significantly!\n\nDoing that will add a new section to your sidebar allowing you to check the distance and duration between specific locations, or checking which locations are close to another location",
+	"CALCULATE_DISTANCES_MODAL.CTA": "Let's go!",
+	"CALCULATE_DISTANCES_MODAL.CANCEL": "Close",
+	"CALCULATE_DISTANCES_MODAL.CTA.CALCULATING": "Calculating... {X}%",
+	"CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.TITLE": "Yessir!",
+	"CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.CONTENT": "Finished Calculating :)",
+	"CALCULATE_DISTANCES_MODAL.CTA.FINISHED": "Calculated! (100%), Calculate again"
 }

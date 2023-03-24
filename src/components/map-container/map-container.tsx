@@ -20,6 +20,7 @@ import { Observer } from 'mobx-react';
 import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
 import Button, { ButtonFlavor } from '../common/button/button';
+import { apiPost } from '../../helpers/api';
 
 interface MarkerProps {
 	text?: string;
@@ -1067,13 +1068,15 @@ const MapContainer = (props: MapContainerProps) => {
 		}
 
 		function renderCalculateDistancesButton() {
+			const onButtonClick = () => {
+				ReactModalService.openCalculateDistancesModal(eventStore);
+			};
+
 			return (
 				<Button
 					flavor={ButtonFlavor.secondary}
 					text={TranslateService.translate(eventStore, 'CALCULATE_DISTANCE')}
-					onClick={() => {
-						ReactModalService.openCalculateDistancesModal(eventStore);
-					}}
+					onClick={() => onButtonClick()}
 					className="calculate-distances-button brown"
 				/>
 			);
@@ -1155,9 +1158,12 @@ const MapContainer = (props: MapContainerProps) => {
 					{filteredVisibleItems.map((info, idx) => {
 						const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
 						// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
-						const idxInDay = calendarEvent
-							? eventStore.getEventIndexInCalendarByDay(calendarEvent)
-							: undefined;
+						const idxInDay =
+							calendarEvent &&
+							eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+							eventStore.mapViewDayFilter
+								? eventStore.getEventIndexInCalendarByDay(calendarEvent)
+								: undefined;
 
 						let addToCalendar = undefined;
 						if (props.addToEventsToCategories) {

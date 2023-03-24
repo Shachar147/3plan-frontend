@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
-import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
+import { CalendarEvent, Coordinate, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
 import {
 	getEnumKey,
 	GoogleTravelMode,
@@ -100,6 +100,13 @@ export class EventStore {
 
 	// add side bar modal
 	@observable isModalMinimized: boolean = true;
+
+	// distances
+	@observable distanceModalOpened: boolean = false;
+	@observable taskId: number | undefined;
+	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
+	@observable taskData: any = { progress: 0 };
+	@observable distances: Record<string, Record<string, any>> = {};
 
 	@observable forceUpdate = 0;
 
@@ -200,10 +207,14 @@ export class EventStore {
 					? addDays(new Date(event.start!.toString()), 1)
 					: new Date(event.end!.toString());
 				const id = event.id!;
-				const coordinate: any = {
-					lat: event?.location?.latitude,
-					lng: event?.location?.longitude,
-				};
+
+				const coordinate: Coordinate | undefined =
+					event.location?.latitude && event.location?.longitude
+						? {
+								lat: event.location.latitude,
+								lng: event.location.longitude,
+						  }
+						: undefined;
 
 				return { id, title, location, startDate, endDate, coordinate };
 			};
@@ -213,7 +224,7 @@ export class EventStore {
 			filteredEvents.forEach((event, index) => {
 				let currentEvent = extractDetails(event);
 
-				if (currentEvent.location && !event.allDay) {
+				if (currentEvent.coordinate && !event.allDay) {
 					const nextEvents = filteredEvents
 						.filter(
 							(e, idx) =>
@@ -242,7 +253,8 @@ export class EventStore {
 							const details = extractDetails(nextEvents[i]);
 							if (
 								details.startDate.toLocaleDateString() === currentEvent.endDate.toLocaleDateString() &&
-								currentEvent.endDate.toLocaleTimeString() !== '12:00:00 AM'
+								currentEvent.endDate.toLocaleTimeString() !== '12:00:00 AM' &&
+								details.coordinate
 							) {
 								if (currentEvent?.location !== details?.location) {
 									// console.log(currentEvent.title, ' -> ', details.title);
@@ -480,6 +492,32 @@ export class EventStore {
 			.filter((e) => new Date(e.start).toLocaleDateString() === day)
 			.findIndex((e) => e.id == event.id);
 		return idx;
+	}
+
+	@computed
+	get getAllEventsLocations(): Coordinate[] {
+		const allLocations = Array.from(
+			new Set(
+				this.allEventsComputed
+					.filter((x) => x.location?.latitude && x.location?.longitude)
+					.map((x) =>
+						JSON.stringify({
+							lat: x.location?.latitude,
+							lng: x.location?.longitude,
+							eventName: x.title,
+						})
+					)
+			)
+		).map((x) => JSON.parse(x));
+
+		// if there are multiple evnets with same location but different name, take only one of them.
+		const filtered: Record<string, any> = {};
+		allLocations.forEach((x) => {
+			const key = JSON.stringify({ lat: x.lat, lng: x.lng });
+			filtered[key] = x;
+		});
+
+		return Object.values(filtered);
 	}
 
 	// --- actions --------------------------------------------------------------

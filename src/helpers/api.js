@@ -41,6 +41,25 @@ async function handleUnauthorizedError(error, url) {
 	return false;
 }
 
+export async function apiGetNew(url, data) {
+	return await axios
+		.get(getServerAddress() + url, {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+		})
+		.then((res) => {
+			return res;
+		})
+		.catch(async (error) => {
+			const isUnauthorized = await handleUnauthorizedError(error, url);
+			if (!isUnauthorized) {
+				throw error;
+			}
+			// return null;
+		});
+}
+
 export async function apiPost(url, data) {
 	return await axios
 		.post(getServerAddress() + url, data, {
