@@ -159,7 +159,8 @@
 	"MODALS.UPDATED_TRIP.CONTENT": "Trip have been updated",
 	"APP.TITLE": "Triplan - planning your trips was never easier!",
 	"CATEGORY.GENERAL": "General",
-	"CATEGORY.LOGISTICS": "Flights and Hotels",
+	"CATEGORY.HOTELS": "Hotels",
+	"CATEGORY.FLIGHTS": "Flights",
 	"MODALS.LOCATION.PLACEHOLDER": "Enter Location...",
 	"SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "show which",
 	"SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE": "Show which",
@@ -374,7 +375,8 @@
 	"CATEGORY.ATTRACTIONS":"Attractions",
 	"CATEGORY.GIMMICKS": "Gimmicks",
 	"CATEGORY.GENERAL.DESCRIPTION": "Add general activities to this category",
-	"CATEGORY.LOGISTICS.DESCRIPTION": "Add flights and hotels to this category",
+	"CATEGORY.HOTELS.DESCRIPTION": "Add hotels to this category",
+	"CATEGORY.FLIGHTS.DESCRIPTION": "Add flights to this category",
 	"CATEGORY.FOOD.DESCRIPTION": "Add resturants and coffee shops to this category",
 	"CATEGORY.DESSERTS.DESCRIPTION": "Add candy shops, ice creams and desserts to this category",
 	"CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION": "Add bars, clubs and nightlife activities to this category",
@@ -412,7 +414,8 @@
 	"CHRONOLOGICAL_ORDER": "Chronological order - day {X}",
 	"CALCULATE_DISTANCE": "Calculate distance",
 	"CALCULATE_DISTANCES_MODAL.TITLE": "There are {X} locations!",
-	"CALCULATE_DISTANCES_MODAL.DESCRIPTION": "Calculating the distance between all the coordinates on your map can help you significantly!\n\nDoing that will add a new section to your sidebar allowing you to check the distance and duration between specific locations, or checking which locations are close to another location",
+	"CALCULATE_DISTANCES_MODAL.DESCRIPTION_OLD": "Calculating the distance between all the coordinates on your map can help you significantly!\n\nDoing that will add a new section to your sidebar allowing you to check the distance and duration between specific locations, or checking which locations are close to another location.",
+	"CALCULATE_DISTANCES_MODAL.DESCRIPTION": "Calculating the distance between all the coordinates on your map can help you significantly!\n\nDoing so will add a new section to your sidebar allowing you to check the distance and duration from one location to another, or which locations are close to another location you choose!\n\nBeside that, two more useful feature you'll be exposed two are:\n1. Traveling info will be added to your list view summary\n2. Red indication and suggested leave time will be added to activities that are too close to each other\n(based on calculated travel time)",
 	"CALCULATE_DISTANCES_MODAL.CTA": "Let's go!",
 	"CALCULATE_DISTANCES_MODAL.CANCEL": "Close",
 	"CALCULATE_DISTANCES_MODAL.CTA.CALCULATING": "Calculating... {X}%",
@@ -421,5 +424,6 @@
 	"CALCULATE_DISTANCES_MODAL.CTA.FINISHED": "Calculated! (100%), Calculate again",
 	"SIDEBAR.DISTANCES_BLOCK.FROM": "From:",
 	"SIDEBAR.DISTANCES_BLOCK.TO": "To:",
-	"NOTE.COULD_TAKE_AWHILE": "* action might take a while"
+	"NOTE.COULD_TAKE_AWHILE": "* action might take a while",
+	"SIDEBAR.DISTANCES_BLOCK.TITLE": "Calculate Distance"
 }

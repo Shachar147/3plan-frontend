@@ -233,8 +233,8 @@ function MainPage(props: MainPageProps) {
 						!shouldShow && 'display-none'
 					)}
 					style={{
-						height: '250px',
-						minHeight: '250px',
+						height: '260px',
+						minHeight: '260px',
 						resize: 'vertical',
 						overflow: 'auto',
 					}}
@@ -254,7 +254,7 @@ function MainPage(props: MainPageProps) {
 				)}
 				style={{
 					height: 'CALC(100vh - 120px)',
-					minHeight: '250px',
+					minHeight: '260px',
 					resize: 'vertical',
 					overflow: 'auto',
 				}}

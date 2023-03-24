@@ -303,7 +303,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const renderDistances = () => {
 		const shouldShowDistancesBlock = Array.from(eventStore.distanceResults.values()).length > 0;
 
-		const groupTitle = 'חישוב מרחקים';
+		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.TITLE');
 
 		const options = eventStore.allEventsLocations.map((x) => ({
 			label: x.eventName,

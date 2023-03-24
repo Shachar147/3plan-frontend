@@ -268,7 +268,7 @@ export function toDistanceString(
 	}
 }
 
-export function isMatching(str: string, options: string[]) {
+export function isMatching(str: string = '', options: string[]) {
 	let isMatch = false;
 	let idx = 0;
 	while (!isMatch && idx < options.length) {

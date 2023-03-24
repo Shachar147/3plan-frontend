@@ -170,7 +170,8 @@
 	"MODALS.UPDATED_TRIP.CONTENT": "הטיול עודכן בהצלחה",
 	"APP.TITLE": "Triplan - תכנון טיולים מעולם לא היה פשוט יותר!",
 	"CATEGORY.GENERAL": "כללי",
-	"CATEGORY.LOGISTICS": "בתי מלון וטיסות",
+	"CATEGORY.HOTELS": "בתי מלון",
+	"CATEGORY.FLIGHTS": "טיסות",
 	"MODALS.LOCATION.PLACEHOLDER": "הזן מיקום...",
 	"SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "הצג אילו",
 	"SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE": "הצג אילו",
@@ -452,7 +453,8 @@
 	"CATEGORY.ATTRACTIONS":"אטרקציות",
 	"CATEGORY.GIMMICKS": "גימיקים",
 	"CATEGORY.GENERAL.DESCRIPTION": "הוסף פעילויות כלליות לקטגוריה זו",
-	"CATEGORY.LOGISTICS.DESCRIPTION": "הוסף טיסות ובתי מלון לקטגוריה זו",
+	"CATEGORY.HOTELS.DESCRIPTION": "הוסף בתי מלון לקטגוריה זו",
+	"CATEGORY.FLIGHTS.DESCRIPTION": "הוסף טיסות לקטגוריה זו",
 	"CATEGORY.FOOD.DESCRIPTION": "הוסף מסעדות ובתי קפה לקטגוריה זו",
 	"CATEGORY.DESSERTS.DESCRIPTION": "הוסף חנויות ממתקים, גלידות וקינוחים לקטגוריה זו",
 	"CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION": "הוסף ברים, מועדונים ופעילויות המתאימות לחיי הלילה לקטגוריה זו",
@@ -499,5 +501,6 @@
 	"CALCULATE_DISTANCES_MODAL.CTA.FINISHED": "סיים לחשב! (100%), חשב שוב",
 	"SIDEBAR.DISTANCES_BLOCK.FROM": "מ:",
 	"SIDEBAR.DISTANCES_BLOCK.TO": "עד:",
-	"NOTE.COULD_TAKE_AWHILE": "* פעולה זו עשויה להימשך מספר דקות"
+	"NOTE.COULD_TAKE_AWHILE": "* פעולה זו עשויה להימשך מספר דקות",
+	"SIDEBAR.DISTANCES_BLOCK.TITLE": "חישוב מרחקים"
 }
