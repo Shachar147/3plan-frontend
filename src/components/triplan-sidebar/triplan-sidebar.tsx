@@ -5,7 +5,7 @@ import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
-import { observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import Button, { ButtonFlavor } from '../common/button/button';
@@ -13,7 +13,7 @@ import Button, { ButtonFlavor } from '../common/button/button';
 import * as _ from 'lodash';
 import { hotelColor, priorityToColor } from '../../utils/consts';
 import ListViewService from '../../services/list-view-service';
-import ReactModalService from '../../services/react-modal-service';
+import ReactModalService, { ReactModalRenderHelper } from '../../services/react-modal-service';
 import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { runInAction } from 'mobx';
 
@@ -25,12 +25,13 @@ export interface TriplanSidebarProps {
 	TriplanCalendarRef: React.MutableRefObject<HTMLDivElement>;
 }
 
-enum SidebarGroups {
+export enum SidebarGroups {
 	CALENDAR_STATISTICS = 'CALENDAR_STATISTICS',
 	WARNINGS = 'WARNINGS',
 	ACTIONS = 'ACTIONS',
 	RECOMMENDATIONS = 'RECOMMENDATIONS',
 	PRIORITIES_LEGEND = 'PRIORITIES_LEGEND',
+	DISTANCES = 'DISTANCES',
 }
 
 const TriplanSidebar = (props: TriplanSidebarProps) => {
@@ -136,7 +137,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					<i
 						className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
 						aria-hidden="true"
-					></i>
+					/>
 					<span className={'flex-gap-5 align-items-center'}>
 						{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
 					</span>
@@ -295,6 +296,70 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			<>
 				<hr className={'margin-block-2'} />
 				{warningsBlock}
+			</>
+		) : undefined;
+	};
+
+	const renderDistances = () => {
+		const shouldShowDistancesBlock = Array.from(eventStore.distanceResults.values()).length > 0;
+
+		const groupTitle = 'חישוב מרחקים';
+
+		const options = eventStore.allEventsLocations.map((x) => ({
+			label: x.eventName,
+			value: x,
+		}));
+
+		const renderContent = () => (
+			<div className="sidebar-distances-block">
+				{ReactModalRenderHelper.renderInputWithLabel(
+					eventStore,
+					'SIDEBAR.DISTANCES_BLOCK.FROM',
+					ReactModalRenderHelper.renderSelectInput(
+						eventStore,
+						'from',
+						{ options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
+						'category-selector',
+						undefined
+					),
+					'sidebar-distances-select-row'
+				)}
+
+				{ReactModalRenderHelper.renderInputWithLabel(
+					eventStore,
+					'SIDEBAR.DISTANCES_BLOCK.TO',
+					ReactModalRenderHelper.renderSelectInput(
+						eventStore,
+						'to',
+						{ options, placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
+						'category-selector',
+						undefined
+					),
+					'sidebar-distances-select-row'
+				)}
+			</div>
+		);
+
+		const distancesBlock = (
+			<Observer>
+				{() =>
+					shouldShowDistancesBlock
+						? wrapWithSidebarGroup(
+								<>{renderContent()}</>,
+								'fa-map-signs',
+								SidebarGroups.DISTANCES,
+								groupTitle,
+								eventStore.allEventsLocations.length
+						  )
+						: null
+				}
+			</Observer>
+		);
+
+		return distancesBlock ? (
+			<>
+				<hr className={'margin-block-2'} />
+				{distancesBlock}
 			</>
 		) : undefined;
 	};
@@ -996,6 +1061,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				</div>
 				<div>
 					{renderWarnings()}
+					{renderDistances()}
 					{renderActions()}
 					{renderRecommendations()}
 					{renderCalendarSidebarStatistics()}

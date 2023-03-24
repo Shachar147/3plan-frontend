@@ -489,11 +489,15 @@
 	"CHRONOLOGICAL_ORDER": "סדר כרונולוגי - יום {X}",
 	"CALCULATE_DISTANCE": "חשב מרחקים",
 	"CALCULATE_DISTANCES_MODAL.TITLE": "ישנן {X} נקודות ציון!",
-	"CALCULATE_DISTANCES_MODAL.DESCRIPTION": "חישוב המרחקים בין כל נקודות הציון שלכם יכול לעזור לכם בצורה משמעותית!\n\nלאחר שתעשו זאת, תיפתח לכם אופציה נוספת בתפריט הצד שתאפשר לכם לבדוק את המרחק והזמן שייקח לכם להגיע מנקודה אחת לשנייה, או לבדוק איזה נקודות קרובות לנקודה אחרת שתבחרו",
-	"CALCULATE_DISTANCES_MODAL.CTA": "חשב!",
+	"CALCULATE_DISTANCES_MODAL.DESCRIPTION_OLD": "חישוב המרחקים בין כל נקודות הציון שלכם יכול לעזור לכם בצורה משמעותית!\n\nלאחר שתעשו זאת, תיפתח לכם אופציה נוספת בתפריט הצד שתאפשר לכם לבדוק את המרחק והזמן שייקח לכם להגיע מנקודה אחת לשנייה, או לבדוק איזה נקודות קרובות לנקודה אחרת שתבחרו",
+	"CALCULATE_DISTANCES_MODAL.DESCRIPTION": "חישוב המרחקים בין כל נקודות הציון שלכם יכול לעזור לכם בצורה משמעותית!\n\nלאחר שתעשו זאת, תיפתח לכם אופציה נוספת בתפריט הצד שתאפשר לכם לבדוק את המרחק והזמן שייקח לכם להגיע מנקודה אחת לשנייה, או לבדוק איזה נקודות קרובות לנקודה אחרת שתבחרו!\n\nנוסף על כך, לאחר חישוב המרחקים תוכלו לראות בתצוגת הרשימה מידע אודות המרחקים בין פעילות אחת לזו שאחריה, ובתצוגת לוח השנה תוכלו לראות אינדיקציה לפעילויות ששיבצתם צפוף מדי בלי לקחת בחשבון את זמני ההגעה",
+	"CALCULATE_DISTANCES_MODAL.CTA": "מדהים! חשב",
 	"CALCULATE_DISTANCES_MODAL.CANCEL": "צא",
 	"CALCULATE_DISTANCES_MODAL.CTA.CALCULATING": "מחשב... {X}%",
 	"CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.TITLE": "ווהו!",
 	"CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.CONTENT": "החישוב הסתיים :)",
-	"CALCULATE_DISTANCES_MODAL.CTA.FINISHED": "סיים לחשב! (100%), חשב שוב"
+	"CALCULATE_DISTANCES_MODAL.CTA.FINISHED": "סיים לחשב! (100%), חשב שוב",
+	"SIDEBAR.DISTANCES_BLOCK.FROM": "מ:",
+	"SIDEBAR.DISTANCES_BLOCK.TO": "עד:",
+	"NOTE.COULD_TAKE_AWHILE": "* פעולה זו עשויה להימשך מספר דקות"
 }

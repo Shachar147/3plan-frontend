@@ -11,6 +11,8 @@ import { BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDist
 import { getEventDivHtml } from '../utils/ui-utils';
 import _ from 'lodash';
 
+const destinationRoutesAddFromAndTo = true;
+
 const ListViewService = {
 	_getDayName: (dateStr: string, locale: string) => {
 		const date = new Date(dateStr);
@@ -570,7 +572,7 @@ const ListViewService = {
 					: '';
 
 				// disable google maps distance calc for now
-				distanceToNextEvent = '';
+				// distanceToNextEvent = '';
 
 				// const from = previousLineWasOr ? `${TranslateService.translate(eventStore, 'FROM')} ${prevEventTitle} ` : "";
 
@@ -593,15 +595,25 @@ const ListViewService = {
 
 					const url = BuildEventUrl(event.location);
 					const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${
-						event.location.address.split(' - ')[0]
+						event.title
+						// event.location.address.split(' - ')[0]
 					}</a></span>`;
 
-					distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
+					if (destinationRoutesAddFromAndTo) {
+						distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
                                 ${arrow}
                                 ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${
-						prevLocation?.address.split(' - ')[0]
-					} ${TranslateService.translate(eventStore, 'TO')}${urlBlock}
+							// @ts-ignore
+							prevLocation?.eventName
+							// prevLocation?.address.split(' - ')[0]
+						} ${TranslateService.translate(eventStore, 'TO')} ${urlBlock}
                             </span>`;
+					} else {
+						distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
+                                ${arrow}
+                                ${distanceToNextEvent}
+                            </span>`;
+					}
 				}
 
 				if (
@@ -643,6 +655,12 @@ const ListViewService = {
 
 				if (!previousLineWasOr && !nextLineIsOr) {
 					prevLocation = event.location;
+
+					// instead of showing the address in the destination route, show activity name.
+					if (prevLocation) {
+						// @ts-ignore
+						prevLocation.eventName = event.title!;
+					}
 				}
 
 				previousLineWasIndent = indent !== '';
@@ -715,16 +733,17 @@ const ListViewService = {
 				const key = getCoordinatesRangeKey(travelMode, prevCoordinate, thisCoordinate);
 				if (!eventStore.distanceResults.has(key)) {
 					runInAction(() => {
-						console.log(
-							`checking distance between`,
-							prevLocation?.address,
-							` and `,
-							thisLocation.address,
-							prevCoordinate,
-							thisCoordinate,
-							`(${travelMode.toString()})`
-						);
-						eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
+						// disable frontend calculation
+						// console.log(
+						// 	`checking distance between`,
+						// 	prevLocation?.address,
+						// 	` and `,
+						// 	thisLocation.address,
+						// 	prevCoordinate,
+						// 	thisCoordinate,
+						// 	`(${travelMode.toString()})`
+						// );
+						// eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
 
 						// @ts-ignore
 						window.routes.push({
@@ -735,8 +754,9 @@ const ListViewService = {
 							to: thisLocation.address,
 						});
 
+						// disable frontend calculation
 						// @ts-ignore
-						window.calculateMatrixDistance(travelMode, prevCoordinate, thisCoordinate);
+						// window.calculateMatrixDistance(travelMode, prevCoordinate, thisCoordinate);
 					});
 				} else {
 					if (prevLocation && thisLocation) {
@@ -769,7 +789,7 @@ const ListViewService = {
 				: '';
 
 			// disable google maps distance calc for now
-			distanceToNextEvent = '';
+			// distanceToNextEvent = '';
 
 			return distanceToNextEvent;
 		};
@@ -819,6 +839,7 @@ const ListViewService = {
 				}
 
 				const thisLocation = x.event.location;
+				if (thisLocation) thisLocation.eventName = x.event.title!;
 				if (prevLocation && thisLocation && prevLocation.address != thisLocation.address) {
 					loggerArr.push('~ ' + prevTitle + ' -> ' + x.event.title);
 
@@ -846,16 +867,28 @@ const ListViewService = {
 
 						const url = BuildEventUrl(thisLocation);
 						const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${
-							thisLocation.address.split(' - ')[0]
+							// @ts-ignore
+							x.event.title
+							// thisLocation.address.split(' - ')[0]
 						}</a></span>`;
 
 						rowClass = ` class="${rowClass}"`;
-						distanceToNextEvent = `<span style="color: ${distanceColor}; ${backgroundStyle}"${rowClass}>
+
+						if (destinationRoutesAddFromAndTo) {
+							distanceToNextEvent = `<span style='color: ${distanceColor}; ${backgroundStyle}'${rowClass}>
                                 ${arrow}
                                 ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${
-							prevLocation?.address.split(' - ')[0]
-						} ${TranslateService.translate(eventStore, 'TO')}${urlBlock}
+								// @ts-ignore
+								prevLocation?.eventName
+								// prevLocation?.address.split(' - ')[0]
+							} ${TranslateService.translate(eventStore, 'TO')} ${urlBlock}
                             </span>`;
+						} else {
+							distanceToNextEvent = `<span style='color: ${distanceColor}; ${backgroundStyle}'${rowClass}>
+                                ${arrow}
+                                ${distanceToNextEvent}
+                            </span>`;
+						}
 
 						distanceToNextEvent = doNotShowImpossibleToGetThereDistanceErrorOnFlights(
 							distanceToNextEvent,

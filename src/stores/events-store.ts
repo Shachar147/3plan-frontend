@@ -106,7 +106,7 @@ export class EventStore {
 	@observable taskId: number | undefined;
 	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
 	@observable taskData: any = { progress: 0 };
-	@observable distances: Record<string, Record<string, any>> = {};
+	// @observable sidebarForceRefresh = 0;
 
 	@observable forceUpdate = 0;
 
@@ -138,6 +138,7 @@ export class EventStore {
 		const startTime = new Date().getTime();
 		this.isLoading = true;
 		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
+			// disabled on local
 			this.distanceResults = observable.map<string, DistanceResult>(
 				DataServices.LocalStorageService.getDistanceResults()
 			);
@@ -495,7 +496,7 @@ export class EventStore {
 	}
 
 	@computed
-	get getAllEventsLocations(): Coordinate[] {
+	get allEventsLocations(): Coordinate[] {
 		const allLocations = Array.from(
 			new Set(
 				this.allEventsComputed

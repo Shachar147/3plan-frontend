@@ -177,3 +177,41 @@
 		}
 	}
 }
+
+.sidebar-distances-block {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	.sidebar-distances-select-row {
+		&.input-with-label {
+			padding-top: 0;
+			gap: 10px !important;
+			font-size: 14px;
+
+			label {
+				min-width: 50px;
+				height: 100%;
+				margin-bottom: 0;
+			}
+
+			.triplan-selector {
+				min-width: 280px;
+				max-width: 280px;
+				width: 280px;
+			}
+		}
+	}
+}
+
+body.rtl {
+	.sidebar-distances-select-row {
+		&.input-with-label {
+			text-align: center;
+
+			label {
+				min-width: 20px;
+			}
+		}
+	}
+}

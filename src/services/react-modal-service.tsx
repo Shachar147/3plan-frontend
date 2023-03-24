@@ -1,7 +1,7 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService, { TranslationParams } from './translate-service';
 import React, { useEffect } from 'react';
-import { runInAction } from 'mobx';
+import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
 import { getClasses, ucfirst } from '../utils/utils';
 
@@ -35,8 +35,9 @@ import Slider from 'react-slick';
 import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 import { apiGetNew, apiGetPromise, apiPost } from '../helpers/api';
+import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 
-const ReactModalRenderHelper = {
+export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
 		eventStore: EventStore,
 		textKey: string,
@@ -3195,7 +3196,7 @@ const ReactModalService = {
 		});
 	},
 	openCalculateDistancesModal(eventStore: EventStore) {
-		const allLocations = eventStore.getAllEventsLocations;
+		const allLocations = eventStore.allEventsLocations;
 
 		var checkTaskStatus: NodeJS.Timeout | undefined;
 
@@ -3208,6 +3209,9 @@ const ReactModalService = {
 				<div className="white-space-pre-line flex-col gap-16">
 					<i className="fa fa-map-signs font-size-100 blue-gray-color" aria-hidden="true" />
 					{TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.DESCRIPTION')}
+					<div className="blue-gray-color margin-top-5 font-size-12">
+						{TranslateService.translate(eventStore, 'NOTE.COULD_TAKE_AWHILE')}
+					</div>
 				</div>
 			);
 		};
@@ -3259,9 +3263,17 @@ const ReactModalService = {
 									'CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.CONTENT',
 									'success'
 								)
-								.then(() => {
+								.then(async () => {
+									const newDistanceResults = await DataServices.DBService.getDistanceResults(
+										eventStore.tripName
+									);
+									runInAction(() => {
+										eventStore.distanceResults = observable.map(newDistanceResults);
+									});
+
 									if (eventStore.distanceModalOpened) {
 										this.internal.closeModal(eventStore);
+										eventStore.openSidebarGroup(SidebarGroups.DISTANCES);
 									}
 								});
 						}

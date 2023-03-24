@@ -221,7 +221,7 @@ export function toDistanceString(
 	let duration = distanceResult.duration;
 	let distance = distanceResult.distance;
 
-	if (duration.indexOf('day') !== -1) {
+	if (duration && duration.indexOf('day') !== -1) {
 		return '';
 	}
 
@@ -232,7 +232,7 @@ export function toDistanceString(
 	const reachingTo = TranslateService.translate(eventStore, 'REACHING_TO_NEXT_DESTINATION');
 
 	// means there are no ways to get there in this travel mode
-	if (distance === '-' || duration === '-') {
+	if (!distance || !duration || distance === '-' || duration === '-') {
 		return `${reachingTo}: ${TranslateService.translate(
 			eventStore,
 			'DISTANCE.ERROR.NO_POSSIBLE_WAY'
@@ -346,4 +346,22 @@ export function BuildEventUrl(location: LocationData) {
 
 export async function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function coordinateToString(coordinate: Coordinate): string {
+	return `${coordinate.lat},${coordinate.lng}`;
+}
+
+export function stringToCoordinate(coordinateStr: string): Coordinate | undefined {
+	const parts = coordinateStr.split(',');
+	if (parts.length !== 2) {
+		return undefined;
+	}
+	if (Number.isNaN(Number(parts[0])) || Number.isNaN(Number(parts[1]))) {
+		return undefined;
+	}
+	return {
+		lat: Number(parts[0]),
+		lng: Number(parts[1]),
+	};
 }

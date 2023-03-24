@@ -7,7 +7,7 @@ import { eventStoreContext } from '../../stores/events-store';
 import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
 import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
-import { MapViewMode, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
+import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { BuildEventUrl, getClasses, isBasketball, isDessert, isFlight, isHotel, isMatching } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
@@ -1068,6 +1068,14 @@ const MapContainer = (props: MapContainerProps) => {
 		}
 
 		function renderCalculateDistancesButton() {
+			if (eventStore.dataService.getDataSourceName() == TripDataSource.LOCAL) {
+				return;
+			}
+
+			if (eventStore.allEventsLocations.length < 2) {
+				return;
+			}
+
 			const onButtonClick = () => {
 				ReactModalService.openCalculateDistancesModal(eventStore);
 			};
