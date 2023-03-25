@@ -281,15 +281,47 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			) : null;
 		};
 
+		const renderEventsWithDistanceProblemsStatistics = () => {
+			const eventsWithDistanceProblems = eventStore.eventsWithDistanceProblems;
+
+			const distanceProblemsEventsKey = eventStore.showOnlyEventsWithDistanceProblems
+				? 'SHOW_ALL_EVENTS'
+				: 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS';
+
+			return !!eventsWithDistanceProblems.length ? (
+				<div
+					className={getClasses(
+						['sidebar-statistics padding-inline-0'],
+						eventStore.showOnlyEventsWithDistanceProblems && 'blue-color'
+					)}
+				>
+					<Button
+						icon={'fa-exclamation-triangle'}
+						text={`${eventsWithDistanceProblems.length} ${TranslateService.translate(
+							eventStore,
+							'EVENTS_WITH_DISTANCE_PROBLEMS'
+						)} (${TranslateService.translate(eventStore, distanceProblemsEventsKey)})`}
+						onClick={() => {
+							eventStore.toggleShowOnlyEventsWithDistanceProblems();
+						}}
+						flavor={ButtonFlavor['movable-link']}
+						className={getClasses(eventStore.showOnlyEventsWithDistanceProblems && 'blue-color')}
+					/>
+				</div>
+			) : null;
+		};
+
 		const noLocationWarning = renderNoLocationEventsStatistics();
 		const noOpeningHoursWarning = renderNoOpeningHoursEventsStatistics();
 		const eventsWithTodoComplete = renderEventsWithTodoCompleteStatistics();
+		const eventsWithDistanceProblems = renderEventsWithDistanceProblemsStatistics();
 		const numOfItems = [noLocationWarning, noOpeningHoursWarning].filter((x) => x != null).length;
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.WARNING');
 		const warningsBlock =
 			noLocationWarning || noOpeningHoursWarning
 				? wrapWithSidebarGroup(
 						<>
+							{eventsWithDistanceProblems}
 							{noLocationWarning}
 							{noOpeningHoursWarning}
 							{eventsWithTodoComplete}

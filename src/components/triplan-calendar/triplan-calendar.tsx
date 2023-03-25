@@ -341,7 +341,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			droppable={true}
 			plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
 			ref={calendarComponentRef}
-			events={eventStore.filteredCalendarEvents.map((x) => ({
+			events={eventStore.reduceEventsEndDateToFitDistanceResult(eventStore.filteredCalendarEvents).map((x) => ({
 				...x,
 				extendedProps: {
 					...x,

@@ -182,15 +182,34 @@ const renderSearch = (eventStore: EventStore) => {
 };
 
 const renderFilterTags = (eventStore: EventStore) => {
-	const { showOnlyEventsWithNoLocation, showOnlyEventsWithNoOpeningHours, showOnlyEventsWithTodoComplete } =
-		eventStore;
+	const {
+		showOnlyEventsWithNoLocation,
+		showOnlyEventsWithNoOpeningHours,
+		showOnlyEventsWithTodoComplete,
+		showOnlyEventsWithDistanceProblems,
+	} = eventStore;
 
-	if (!(showOnlyEventsWithNoLocation || showOnlyEventsWithNoOpeningHours || showOnlyEventsWithTodoComplete)) {
+	if (
+		!(
+			showOnlyEventsWithNoLocation ||
+			showOnlyEventsWithNoOpeningHours ||
+			showOnlyEventsWithTodoComplete ||
+			showOnlyEventsWithDistanceProblems
+		)
+	) {
 		return null;
 	}
 
 	return (
 		<div className={'filter-tags-container'}>
+			{showOnlyEventsWithDistanceProblems && (
+				<TriplanTag
+					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG')}
+					onDelete={() => {
+						eventStore.setShowOnlyEventsWithDistanceProblems(false);
+					}}
+				/>
+			)}
 			{showOnlyEventsWithNoLocation && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG')}

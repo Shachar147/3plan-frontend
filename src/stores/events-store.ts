@@ -76,6 +76,7 @@ export class EventStore {
 	@observable showOnlyEventsWithNoLocation: boolean = false;
 	@observable showOnlyEventsWithNoOpeningHours: boolean = false;
 	@observable showOnlyEventsWithTodoComplete: boolean = false;
+	@observable showOnlyEventsWithDistanceProblems: boolean = false;
 	@observable calculatingDistance = 0;
 	@observable distanceResults = observable.map<string, DistanceResult>();
 	@observable travelMode = GoogleTravelMode.DRIVING;
@@ -106,7 +107,7 @@ export class EventStore {
 	@observable taskId: number | undefined;
 	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
 	@observable taskData: any = { progress: 0 };
-	// @observable sidebarForceRefresh = 0;
+	@observable eventsWithDistanceProblems: any[] = [];
 
 	@observable forceUpdate = 0;
 
@@ -194,6 +195,18 @@ export class EventStore {
 	// --- computed -------------------------------------------------------------
 
 	reduceEventsEndDateToFitDistanceResult = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
+		if (this.showOnlyEventsWithDistanceProblems) {
+			return filteredEvents.map((x) => {
+				x.suggestedEndTime = this.eventsWithDistanceProblems.find((e) => e.id == x.id)?.suggestedEndTime;
+				x.className = x.className || '';
+				x.className += ' red-border';
+				return x;
+			});
+		}
+
+		const eventsWithWarnings: any[] = [];
+		const eventsWithProblems: any[] = [];
+
 		// only if not in filter mode - add driving instructions
 		if (filteredEvents.length === this.calendarEvents.length) {
 			filteredEvents = filteredEvents.sort((a, b) => {
@@ -320,12 +333,24 @@ export class EventStore {
 					if (problem || warn) {
 						console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
 						// e.end = minStartDate;
-						if (problem) e.className += ' red-border';
+						if (problem) {
+							e.className += ' red-border';
+							eventsWithProblems.push({ id: e.id, suggestedEndTime: minStartDate });
+						} else {
+							eventsWithWarnings.push({ id: e.id, suggestedEndTime: minStartDate });
+						}
 						e.suggestedEndTime = minStartDate;
 					}
 				}
 
 				newEvents.push(e);
+			});
+
+			console.log({
+				eventsWithProblems,
+			});
+			runInAction(() => {
+				this.eventsWithDistanceProblems = eventsWithProblems;
 			});
 
 			return newEvents;
@@ -346,10 +371,13 @@ export class EventStore {
 						event.location.address.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1)) &&
 				(this.showOnlyEventsWithNoLocation ? !(event.location != undefined) : true) &&
 				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
-				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
+				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
+				(this.showOnlyEventsWithDistanceProblems
+					? !!this.eventsWithDistanceProblems.find((x) => event.id == x.id)
+					: true)
 		);
 
-		filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
+		// filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
 		return filteredEvents;
 	}
 
@@ -802,8 +830,18 @@ export class EventStore {
 	}
 
 	@action
+	toggleShowOnlyEventsWithDistanceProblems() {
+		this.showOnlyEventsWithDistanceProblems = !this.showOnlyEventsWithDistanceProblems;
+	}
+
+	@action
 	setShowOnlyEventsWithNoLocation(newVal: boolean) {
 		this.showOnlyEventsWithNoLocation = newVal;
+	}
+
+	@action
+	setShowOnlyEventsWithDistanceProblems(newVal: boolean) {
+		this.showOnlyEventsWithDistanceProblems = newVal;
 	}
 
 	@action

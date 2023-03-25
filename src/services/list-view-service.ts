@@ -958,7 +958,7 @@ const ListViewService = {
 		return summaryPerDay;
 	},
 	buildHTMLSummary: (eventStore: EventStore) => {
-		let calendarEvents = eventStore.filteredCalendarEvents; // used to be calendarEvents but now it also considering search and filters
+		let calendarEvents = eventStore.reduceEventsEndDateToFitDistanceResult(eventStore.filteredCalendarEvents); // used to be calendarEvents but now it also considering search and filters
 		const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
 
 		// build calendar events per day

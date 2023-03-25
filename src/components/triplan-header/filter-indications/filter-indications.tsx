@@ -12,6 +12,7 @@ interface FilterIndicationsProps {
 	showOnlyEventsWithNoOpeningHours?: boolean;
 	showOnlyEventsWithTodoComplete?: boolean;
 	showOnlyEventsWithSpecificPriorities?: boolean;
+	showOnlyEventsWithDistanceProblems?: boolean;
 }
 function FilterIndications(props: FilterIndicationsProps) {
 	const eventStore = useContext(eventStoreContext);
@@ -24,7 +25,11 @@ function FilterIndications(props: FilterIndicationsProps) {
 	const showOnlyEventsWithSpecificPriorities =
 		props.showOnlyEventsWithSpecificPriorities ?? !!Array.from(eventStore.filterOutPriorities.values()).length;
 
+	const showOnlyEventsWithDistanceProblems =
+		props.showOnlyEventsWithDistanceProblems ?? eventStore.showOnlyEventsWithDistanceProblems;
+
 	let totalFilters = 0;
+	if (showOnlyEventsWithDistanceProblems) totalFilters += 1;
 	if (showOnlyEventsWithNoLocation) totalFilters += 1;
 	if (showOnlyEventsWithNoOpeningHours) totalFilters += 1;
 	if (showOnlyEventsWithTodoComplete) totalFilters += 1;
@@ -35,6 +40,17 @@ function FilterIndications(props: FilterIndicationsProps) {
 	function renderSingleFilter() {
 		return (
 			<div className={getClasses('filter-tags-container flex-row gap-8', eventStore.isRtl && 'direction-rtl')}>
+				{showOnlyEventsWithDistanceProblems && (
+					<TriplanTag
+						text={TranslateService.translate(
+							eventStore,
+							'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG'
+						)}
+						onDelete={() => {
+							eventStore.setShowOnlyEventsWithDistanceProblems(false);
+						}}
+					/>
+				)}
 				{showOnlyEventsWithNoLocation && (
 					<TriplanTag
 						text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG')}
@@ -113,6 +129,7 @@ function FilterIndications(props: FilterIndicationsProps) {
 						totalFilters.toString()
 					)}
 					onDelete={() => {
+						eventStore.setShowOnlyEventsWithDistanceProblems(false);
 						eventStore.setShowOnlyEventsWithNoOpeningHours(false);
 						eventStore.setShowOnlyEventsWithTodoComplete(false);
 						eventStore.setShowOnlyEventsWithNoLocation(false);
