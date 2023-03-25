@@ -216,6 +216,7 @@ export function getCoordinatesRangeKey(travelMode: string, startDestination: Coo
 export function toDistanceString(
 	eventStore: EventStore,
 	distanceResult: DistanceResult,
+	short: boolean = false,
 	travelMode?: GoogleTravelMode
 ) {
 	let duration = distanceResult.duration;
@@ -229,11 +230,11 @@ export function toDistanceString(
 		travelMode = eventStore.travelMode;
 	}
 
-	const reachingTo = TranslateService.translate(eventStore, 'REACHING_TO_NEXT_DESTINATION');
+	const reachingTo = short ? '' : `${TranslateService.translate(eventStore, 'REACHING_TO_NEXT_DESTINATION')}: `;
 
 	// means there are no ways to get there in this travel mode
 	if (!distance || !duration || distance === '-' || duration === '-') {
-		return `${reachingTo}: ${TranslateService.translate(
+		return `${reachingTo}${TranslateService.translate(
 			eventStore,
 			'DISTANCE.ERROR.NO_POSSIBLE_WAY'
 		)}${TranslateService.translate(eventStore, 'TRAVEL_MODE.' + eventStore.travelMode.toUpperCase())}`;
@@ -256,13 +257,13 @@ export function toDistanceString(
 		case GoogleTravelMode.TRANSIT:
 			prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
 			suffix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.TRANSIT.SUFFIX');
-			return `${reachingTo}: ${prefix} ${duration} (${distance}) ${suffix}`;
+			return `${reachingTo}${prefix} ${duration} (${distance}) ${suffix}`;
 		case GoogleTravelMode.DRIVING:
 			prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
-			return `${reachingTo}: ${prefix} ${duration} (${distance})`;
+			return `${reachingTo}${prefix} ${duration} (${distance})`;
 		case GoogleTravelMode.WALKING:
 			prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.WALKING');
-			return `${reachingTo}: ${prefix} ${duration} (${distance})`;
+			return `${reachingTo}${prefix} ${duration} (${distance})`;
 		default:
 			return '';
 	}

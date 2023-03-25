@@ -211,6 +211,10 @@ body {
 	padding-inline: 0;
 }
 
+.padding-inline-3 {
+	padding-inline: 3px !important;
+}
+
 .padding-inline-8 {
 	padding-inline: 8px;
 }
@@ -400,6 +404,18 @@ body {
 
 .cursor-pointer {
 	cursor: pointer;
+}
+
+.gap-2 {
+	gap: 2px;
+}
+
+.gap-3 {
+	gap: 3px;
+}
+
+.gap-4 {
+	gap: 4px;
 }
 
 .gap-5 {

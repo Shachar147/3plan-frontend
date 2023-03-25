@@ -1,4 +1,4 @@
-import React, { CSSProperties, useContext, useState } from 'react';
+import React, { CSSProperties, useContext, useRef, useState } from 'react';
 import TranslateService from '../../services/translate-service';
 import {
 	addLineBreaks,
@@ -8,12 +8,13 @@ import {
 	isDessert,
 	isFlight,
 	isHotel,
+	toDistanceString,
 	ucfirst,
 } from '../../utils/utils';
 import { GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
-import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
+import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { observer, Observer } from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
@@ -323,71 +324,46 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const [to, setTo] = useState<any>(null);
 
 		const renderFromToDistanceResult = () => {
-			// console.log({ from, to });
-			// console.log({ modalValues: eventStore.modalValues });
-			// if (!eventStore.modalValues['from'] || !eventStore.modalValues['to']) {
-			// 	return null;
-			// }
-
 			if (!from || !to) {
 				return null;
 			}
 
 			const distanceKey = getCoordinatesRangeKey(eventStore.travelMode, from.value, to.value);
 
-			const distanceResult = eventStore.distanceResults.has(distanceKey)
+			const distanceResult: DistanceResult | undefined = eventStore.distanceResults.has(distanceKey)
 				? eventStore.distanceResults.get(distanceKey)
+				: undefined;
+
+			const distanceString = distanceResult
+				? toDistanceString(eventStore, distanceResult, true, eventStore.travelMode)
 				: 'N/A';
 
-			let duration = 'N/A';
-			let distance = 'N/A';
-			if (typeof distanceResult == 'object') {
-				duration = distanceResult.duration;
-				distance = distanceResult.distance;
-
-				duration = duration.replaceAll('mins', TranslateService.translate(eventStore, 'DURATION.MINS'));
-				duration = duration.replaceAll('min', TranslateService.translate(eventStore, 'DURATION.MIN'));
-				duration = duration.replaceAll('hours', TranslateService.translate(eventStore, 'DURATION.HOURS'));
-				duration = duration.replaceAll('hour', TranslateService.translate(eventStore, 'DURATION.HOUR'));
-				duration = duration.replaceAll('1 שעה', 'שעה');
-				duration = duration.replaceAll('1 דקה', 'דקה');
-
-				distance = distance.replaceAll('km', TranslateService.translate(eventStore, 'DISTANCE.KM'));
-				distance = distance.replaceAll('m', TranslateService.translate(eventStore, 'DISTANCE.M'));
-			}
-
-			let travelMode = '';
-			switch (eventStore.travelMode) {
-				case GoogleTravelMode.TRANSIT:
-					// prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
-					travelMode = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.TRANSIT.SUFFIX');
-					break;
-				case GoogleTravelMode.DRIVING:
-					travelMode = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING.SUFFIX');
-					break;
-				case GoogleTravelMode.WALKING:
-					travelMode = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.WALKING');
-					break;
-				default:
-					break;
+			if (distanceString === 'N/A') {
+				return (
+					<div className="flex-col gap-8 sidebar-distances-block-result">
+						<div className="flex-row align-items-center">
+							{TranslateService.translate(
+								eventStore,
+								'SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.PREFIX'
+							)}
+							<Button
+								flavor={ButtonFlavor.link}
+								onClick={() => alert('here')}
+								text={TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE')}
+								className="padding-inline-3"
+							/>
+							{TranslateService.translate(
+								eventStore,
+								'SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX'
+							)}
+						</div>
+					</div>
+				);
 			}
 
 			return (
-				<div className="flex-col gap-8">
-					{/*<div>{`${from.label} -> ${to.label}`}</div>*/}
-					<div>
-						{distanceResult
-							? typeof distanceResult == 'string'
-								? distanceResult
-								: `${TranslateService.translate(
-										eventStore,
-										'GENERAL.TIME'
-								  )}: ${TranslateService.translate(eventStore, duration)} (${TranslateService.translate(
-										eventStore,
-										distance
-								  )}) ${travelMode}`
-							: 'No Route'}
-					</div>
+				<div className="flex-col gap-8 sidebar-distances-block-result">
+					<div>{distanceString}</div>
 				</div>
 			);
 		};

@@ -32,3 +32,11 @@
 		}
 	}
 }
+
+
+body.ltr {
+	.triplan-header-actionbar {
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+	}
+}

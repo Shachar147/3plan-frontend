@@ -428,5 +428,7 @@
 	"NOTE.COULD_TAKE_AWHILE": "* action might take a while",
 	"SIDEBAR.DISTANCES_BLOCK.TITLE": "Calculate Distance",
 	"GENERAL.TIME": "time",
-	"GENERAL.DISTANCE": "distance"
+	"GENERAL.DISTANCE": "distance",
+	"SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.PREFIX": "Route not calculated,",
+	"SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX": "to calculate it"
 }

@@ -567,7 +567,7 @@ const ListViewService = {
 
 				let distanceToNextEvent = distanceKey
 					? eventStore.distanceResults.has(distanceKey)
-						? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, travelMode)
+						? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, false, travelMode)
 						: TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 					: '';
 
@@ -784,7 +784,7 @@ const ListViewService = {
 
 			let distanceToNextEvent = distanceKey
 				? eventStore.distanceResults.has(distanceKey)
-					? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, travelMode)
+					? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, false, travelMode)
 					: TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 				: '';
 
