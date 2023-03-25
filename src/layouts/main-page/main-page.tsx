@@ -92,7 +92,7 @@ function MainPage(props: MainPageProps) {
 
 		Object.keys(sidebarEvents).map((category: string) => {
 			const categoryId = Number(category);
-			const categoryEvents: SidebarEvent[] = sidebarEvents[categoryId];
+			const categoryEvents: SidebarEvent[] = sidebarEvents[categoryId] ?? [];
 			categoryEvents.forEach((event) => {
 				if (event.priority) {
 					event.className = `priority-${event.priority}`;

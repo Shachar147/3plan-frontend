@@ -458,7 +458,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			</Observer>
 		);
 
-		return distancesBlock ? (
+		return shouldShowDistancesBlock ? (
 			<>
 				<hr className={'margin-block-2'} />
 				{distancesBlock}
