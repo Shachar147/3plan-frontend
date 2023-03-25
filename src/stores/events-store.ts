@@ -497,6 +497,21 @@ export class EventStore {
 
 	@computed
 	get allEventsLocations(): Coordinate[] {
+		const allLocations = this.allEventsLocationsWithDuplicates;
+
+		// if there are multiple evnets with same location but different name, take only one of them.
+		const filtered: Record<string, any> = {};
+		allLocations.forEach((x) => {
+			const key = JSON.stringify({ lat: x.lat, lng: x.lng });
+			filtered[key] = x;
+		});
+
+		return Object.values(filtered);
+	}
+
+	@computed
+	get allEventsLocationsWithDuplicates(): Coordinate[] {
+		// returns all locations with duplicates (if names are different)
 		const allLocations = Array.from(
 			new Set(
 				this.allEventsComputed
@@ -511,14 +526,7 @@ export class EventStore {
 			)
 		).map((x) => JSON.parse(x));
 
-		// if there are multiple evnets with same location but different name, take only one of them.
-		const filtered: Record<string, any> = {};
-		allLocations.forEach((x) => {
-			const key = JSON.stringify({ lat: x.lat, lng: x.lng });
-			filtered[key] = x;
-		});
-
-		return Object.values(filtered);
+		return allLocations;
 	}
 
 	// --- actions --------------------------------------------------------------

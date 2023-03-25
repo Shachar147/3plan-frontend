@@ -315,7 +315,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.TITLE');
 
-		const options = eventStore.allEventsLocations.map((x) => ({
+		const options = eventStore.allEventsLocationsWithDuplicates.map((x) => ({
 			label: x.eventName,
 			value: x,
 		}));
@@ -348,7 +348,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							)}
 							<Button
 								flavor={ButtonFlavor.link}
-								onClick={() => alert('here')}
+								onClick={() => ReactModalService.openCalculateDistancesModal(eventStore)}
 								text={TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE')}
 								className="padding-inline-3"
 							/>

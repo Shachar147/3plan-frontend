@@ -203,6 +203,20 @@
 			}
 		}
 	}
+
+	.sidebar-distances-block-result {
+		background-color: rgba(0, 0, 0, 0.03);
+		border-radius: 18px;
+		color: #6a6868;
+		margin-inline: 30px;
+		min-width: 280px;
+		width: max-content;
+		padding-inline: 8px;
+	}
+
+	.sidebar-distance-result {
+		margin-bottom: 6px;
+	}
 }
 
 body.rtl {
