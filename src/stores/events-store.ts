@@ -199,7 +199,7 @@ export class EventStore {
 			return filteredEvents.map((x) => {
 				x.suggestedEndTime = this.eventsWithDistanceProblems.find((e) => e.id == x.id)?.suggestedEndTime;
 				x.className = x.className || '';
-				x.className += ' red-border';
+				x.className = x.className.replaceAll(' red-background', '') + ' red-background';
 				return x;
 			});
 		}
@@ -334,7 +334,9 @@ export class EventStore {
 						console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
 						// e.end = minStartDate;
 						if (problem) {
-							e.className += ' red-border';
+							e.className = e.className || '';
+							e.className = e.className.replaceAll(' red-background', '') + ' red-background';
+							e.className += ' red-background';
 							eventsWithProblems.push({ id: e.id, suggestedEndTime: minStartDate });
 						} else {
 							eventsWithWarnings.push({ id: e.id, suggestedEndTime: minStartDate });
