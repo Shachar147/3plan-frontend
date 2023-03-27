@@ -660,6 +660,9 @@ const ListViewService = {
 	): Record<string, string[]> => {
 		const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
 
+		// @ts-ignore
+		window.routes = [];
+
 		// --- functions -----------------------------------------------
 		interface ListViewRowDetail {
 			or: boolean;
@@ -722,6 +725,15 @@ const ListViewService = {
 							`(${travelMode.toString()})`
 						);
 						eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
+
+						// @ts-ignore
+						window.routes.push({
+							travelMode,
+							prevCoordinate,
+							thisCoordinate,
+							from: prevLocation?.address,
+							to: thisLocation.address,
+						});
 
 						// @ts-ignore
 						window.calculateMatrixDistance(travelMode, prevCoordinate, thisCoordinate);
@@ -885,6 +897,9 @@ const ListViewService = {
 				previousDetail = x;
 			});
 		});
+
+		// @ts-ignore
+		console.log({ routes: window.routes });
 
 		return summaryPerDay;
 	},

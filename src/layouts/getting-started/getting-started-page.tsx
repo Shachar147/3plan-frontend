@@ -13,6 +13,7 @@ import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import { TripDataSource } from '../../utils/enums';
+import { upsertTripProps } from '../../services/data-handlers/db-service';
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -110,7 +111,7 @@ const GettingStartedPage = () => {
 			eventStore.dataService.setDateRange(customDateRange, TripName);
 			navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 		} else {
-			const tripData = {
+			const tripData: upsertTripProps = {
 				name: TripName,
 				dateRange: customDateRange,
 				calendarLocale: eventStore.calendarLocalCode,
@@ -128,13 +129,22 @@ const GettingStartedPage = () => {
 					navigate(`/plan/${res.data.name}`);
 					// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 				},
-				() => {
-					ReactModalService.internal.alertMessage(
-						eventStore,
-						'MODALS.ERROR.TITLE',
-						'OOPS_SOMETHING_WENT_WRONG',
-						'error'
-					);
+				(e) => {
+					if (e.response.data.statusCode === 409) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'TRIP_ALREADY_EXISTS',
+							'error'
+						);
+					} else {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'OOPS_SOMETHING_WENT_WRONG',
+							'error'
+						);
+					}
 				},
 				() => {}
 			);

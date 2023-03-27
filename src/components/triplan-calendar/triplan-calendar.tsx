@@ -10,18 +10,10 @@ import { eventStoreContext } from '../../stores/events-store';
 import './triplan-calendar.scss';
 import { defaultTimedEventDuration } from '../../utils/defaults';
 import TranslateService from '../../services/translate-service';
-import {
-	addDays,
-	addHours,
-	addHoursToDate,
-	getDateRangeString,
-	isTodayInDateRange,
-	toDate,
-} from '../../utils/time-utils';
+import { addDays, addHoursToDate, getDateRangeString, isTodayInDateRange, toDate } from '../../utils/time-utils';
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
-import { trace } from 'mobx';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -81,7 +73,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		});
 
 		setDraggables(draggablesArr);
-	}, [props.categories]);
+	}, [props.categories, eventStore.allEventsFilteredComputed]);
 
 	useEffect(() => {
 		calendarComponentRef.current!.render();
@@ -254,6 +246,15 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			start: event.start ?? event._instance?.range?.start,
 			end: event.end ?? event._instance?.range?.end,
 		};
+
+		// debug
+		if (!event.start) {
+			console.error('renderEventContent', 'event.start does not exist', event);
+		}
+		if (!event.end) {
+			console.error('renderEventContent', 'event.end does not exist', event);
+		}
+
 		const calendarEvent = buildCalendarEvent(json) as CalendarEvent;
 
 		eventEl.innerHTML = getEventDivHtml(eventStore, calendarEvent);
@@ -368,6 +369,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			}}
 			slotMinTime={'07:00'}
 			scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
+			dayHeaderFormat={{
+				/* show weekday and date in a format of Sunday 14.3 for example - always - on all views */
+				weekday: 'short',
+				day: 'numeric',
+				month: 'numeric',
+			}}
 		/>
 	);
 }

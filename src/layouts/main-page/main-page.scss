@@ -37,7 +37,7 @@
 	position: absolute;
 	right: unset;
 	left: 10px;
-	z-index: 9999;
+	z-index: 5000;
 
 	// making sure it has a white background so when scrolling we won't see scrolled info (background will cover it)
 	width: CALC(100% - 25px);
