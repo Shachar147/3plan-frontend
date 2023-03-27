@@ -12,6 +12,10 @@
     right: 5px;
     left: unset;
   }
+
+  input.location-input {
+    padding-inline-end: 27px !important;
+  }
 }
 
 body.rtl {
