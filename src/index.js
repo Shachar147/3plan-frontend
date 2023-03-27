@@ -43,8 +43,6 @@ import {
 	TOURIST_KEYWORDS,
 } from './components/map-container/map-container';
 
-// import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-
 // Dubai
 // Namos / Twiggy?
 // Billionare?

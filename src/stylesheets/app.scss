@@ -212,6 +212,10 @@ body {
 }
 
 .padding-inline-3 {
+	padding-inline: 3px;
+}
+
+.padding-inline-3-important {
 	padding-inline: 3px !important;
 }
 
@@ -625,12 +629,10 @@ body.ltr {
 }
 
 .red-background {
-	//border-color: red !important;
-	//border: 1px solid red;
-	background-color: #fcf2f2 !important;
+	background-color: var(--invalid-red-background) !important;
 
 	.fc-event, .fc-event-main {
-		background-color: #fcf2f2 !important;
+		background-color: var(--invalid-red-background) !important;
 	}
 }
 

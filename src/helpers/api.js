@@ -56,6 +56,7 @@ export async function apiGetNew(url, data) {
 			if (!isUnauthorized) {
 				throw error;
 			}
+			return error;
 		});
 }
 
@@ -74,6 +75,7 @@ export async function apiPost(url, data) {
 			if (!isUnauthorized) {
 				throw error;
 			}
+			return error;
 		});
 }
 export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {

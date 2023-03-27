@@ -139,9 +139,7 @@ export class EventStore {
 		this.isLoading = true;
 		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
 			// disabled on local
-			this.distanceResults = observable.map<string, DistanceResult>(
-				await DataServices.LocalStorageService.getDistanceResults()
-			);
+			this.distanceResults = observable.map<string, DistanceResult>();
 			this.initBodyLocaleClassName();
 			this.initCustomDatesVisibilityBasedOnViewMode();
 			this.isLoading = false;
@@ -375,7 +373,6 @@ export class EventStore {
 					: true)
 		);
 
-		// filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
 		return filteredEvents;
 	}
 

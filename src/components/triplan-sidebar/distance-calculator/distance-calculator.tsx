@@ -47,7 +47,7 @@ const DistanceCalculator = () => {
 							flavor={ButtonFlavor.link}
 							onClick={() => ReactModalService.openCalculateDistancesModal(eventStore)}
 							text={TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE')}
-							className="padding-inline-3"
+							className="padding-inline-3-important"
 						/>
 						{TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX')}
 					</div>

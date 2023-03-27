@@ -26,16 +26,13 @@ import Button, { ButtonFlavor } from '../components/common/button/button';
 import ImportService from './import-service';
 
 // @ts-ignore
-// import ImageGallery from 'react-image-gallery';
-// import { Carousel } from "react-responsive-carousel";
 import Slider from 'react-slick';
 
 // @ts-ignore
-// import _ from 'lodash';
 import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 import LocationInput from '../components/inputs/location-input/location-input';
-import { apiGetNew, apiGetPromise, apiPost } from '../helpers/api';
+import { apiGetNew, apiPost } from '../helpers/api';
 import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 
 export const ReactModalRenderHelper = {
@@ -3225,6 +3222,7 @@ const ReactModalService = {
 			content,
 		});
 	},
+	// todo: consider moving some of the logic here to a deidcated distance service
 	openCalculateDistancesModal(eventStore: EventStore) {
 		const allLocations = eventStore.allEventsLocations;
 
@@ -3252,16 +3250,17 @@ const ReactModalService = {
 				to: allLocations,
 				tripName: eventStore.tripName,
 			});
-			// @ts-ignore
+
 			const taskId = result.data.taskId;
 
-			const MAX_UPDATE_CHECKS = 100;
+			const MAX_UPDATE_CHECKS = 300;
+			const INTERVAL_MS = 1500;
 			var counter = 0;
+
 			const updateTaskStatus = async () => {
 				counter++;
 				const result = await apiGetNew(`/task-status/${taskId}`);
 				runInAction(() => {
-					// @ts-ignore
 					eventStore.taskData = result.data;
 
 					// update text & make button disabled
@@ -3314,7 +3313,7 @@ const ReactModalService = {
 			runInAction(() => {
 				eventStore.taskId = taskId;
 				updateTaskStatus();
-				checkTaskStatus = setInterval(updateTaskStatus, 1500);
+				checkTaskStatus = setInterval(updateTaskStatus, INTERVAL_MS);
 				eventStore.checkTaskStatus = checkTaskStatus;
 			});
 		};
@@ -3337,8 +3336,6 @@ const ReactModalService = {
 			onConfirm,
 			content,
 			onCancel: () => {
-				// alert('closed!');
-				// clearInterval(checkTaskStatus);
 				runInAction(() => {
 					eventStore.distanceModalOpened = false;
 				});
