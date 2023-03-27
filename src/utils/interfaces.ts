@@ -79,6 +79,7 @@ export interface LocationData {
 	address: string;
 	latitude?: number;
 	longitude?: number;
+	eventName?: string;
 }
 
 export interface OpeningHours {

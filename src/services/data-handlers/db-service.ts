@@ -54,8 +54,7 @@ export class DBService implements BaseDataHandler {
 
 	async getDistanceResults(tripName?: string): Promise<Record<string, DistanceResult>> {
 		if (!tripName) {
-			// @ts-ignore
-			return undefined;
+			return {};
 		}
 
 		const res: any = await apiGetPromise(this, `/distance/trip/${tripName}`);
@@ -65,16 +64,14 @@ export class DBService implements BaseDataHandler {
 		res.data.results.forEach((x: any) => {
 			const key = getCoordinatesRangeKey('DRIVING', stringToCoordinate(x.from)!, stringToCoordinate(x.to)!);
 
-			const distanceResult = {
+			result[key] = {
 				from: x.from,
 				to: x.to,
 				duration: x.duration?.text,
 				distance: x.distance?.text,
 				duration_value: x.duration?.value,
 				distance_value: x.distance?.value,
-			};
-
-			result[key] = distanceResult;
+			} as DistanceResult;
 		});
 
 		return result;

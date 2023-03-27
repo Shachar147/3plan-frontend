@@ -395,8 +395,7 @@ const ListViewService = {
 						x.priority && (x.priority == TriplanPriority.must || x.priority == TriplanPriority.high)
 				)
 				.map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
-			// @ts-ignore
-			highlightEvents = [...new Set(highlightEvents)];
+			highlightEvents = [...Array.from(new Set(highlightEvents))];
 			highlightsPerDay[dayTitle] = highlightEvents.join(', ');
 
 			let previousLineWasOr = false;
@@ -603,7 +602,6 @@ const ListViewService = {
 						distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
                                 ${arrow}
                                 ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${
-							// @ts-ignore
 							prevLocation?.eventName
 							// prevLocation?.address.split(' - ')[0]
 						} ${TranslateService.translate(eventStore, 'TO')} ${urlBlock}
@@ -658,7 +656,6 @@ const ListViewService = {
 
 					// instead of showing the address in the destination route, show activity name.
 					if (prevLocation) {
-						// @ts-ignore
 						prevLocation.eventName = event.title!;
 					}
 				}
@@ -755,7 +752,6 @@ const ListViewService = {
 						});
 
 						// disable frontend calculation
-						// @ts-ignore
 						// window.calculateMatrixDistance(travelMode, prevCoordinate, thisCoordinate);
 					});
 				} else {
@@ -817,7 +813,6 @@ const ListViewService = {
 			const details = buildRowsDetails(summaryPerDay[dayTitle]);
 
 			let previousDetail: any;
-			// @ts-ignore
 			const loggerArr: string[] = [];
 			let prevLocation: LocationData | undefined;
 			let prevTitle: string;
@@ -867,7 +862,6 @@ const ListViewService = {
 
 						const url = BuildEventUrl(thisLocation);
 						const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${
-							// @ts-ignore
 							x.event.title
 							// thisLocation.address.split(' - ')[0]
 						}</a></span>`;
@@ -878,7 +872,6 @@ const ListViewService = {
 							distanceToNextEvent = `<span style='color: ${distanceColor}; ${backgroundStyle}'${rowClass}>
                                 ${arrow}
                                 ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${
-								// @ts-ignore
 								prevLocation?.eventName
 								// prevLocation?.address.split(' - ')[0]
 							} ${TranslateService.translate(eventStore, 'TO')} ${urlBlock}
@@ -908,18 +901,15 @@ const ListViewService = {
 					loggerArr.push(x.event.title + temp);
 				}
 
-				// @ts-ignore
 				if (x.or && i + 1 < details.length && !details[i + 1].differentOrGroup) {
 					loggerArr.push('OR:');
 				}
 
-				// @ts-ignore
 				if (!x.or) {
 					prevLocation = thisLocation;
 					prevTitle = x.event.title;
 				}
 
-				// @ts-ignore
 				if ((x.or || x.indent) && i + 1 < details.length && !(details[i + 1].or || details[i + 1].indent)) {
 					loggerArr.push('');
 					// prevLocation = undefined;
@@ -931,7 +921,6 @@ const ListViewService = {
 			});
 		});
 
-		// // @ts-ignore
 		// console.log({ routes: window.routes });
 
 		return summaryPerDay;
