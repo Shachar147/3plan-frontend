@@ -1063,6 +1063,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						data-more-info={event.moreInfo}
 						key={event.id}
 					>
+						<span className={'sidebar-event-icon flex-grow-0'}>
+							{event.icon || eventStore.categoriesIcons[categoryId]}
+						</span>
 						<span
 							className="sidebar-event-title-container"
 							title={'Edit'}
@@ -1075,12 +1078,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								);
 							}}
 						>
-							<span className={'sidebar-event-title-text'}>
-								<span className={'sidebar-event-icon'}>
-									{event.icon || eventStore.categoriesIcons[categoryId]}
-								</span>
-								{event.title}
-							</span>
+							<span className={'sidebar-event-title-text'}>{event.title}</span>
 							<span className={'sidebar-event-duration'}>
 								({getDurationString(eventStore, event.duration)})
 							</span>

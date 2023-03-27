@@ -15,7 +15,7 @@ import * as ReactDOMServer from 'react-dom/server';
 // @ts-ignore
 import Slider from 'react-slick';
 import { AllEventsEvent } from '../../services/data-handlers/data-handler-base';
-import { Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
+import { CalendarEvent, Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
 import { Observer } from 'mobx-react';
 import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
@@ -154,6 +154,7 @@ const MapContainer = (props: MapContainerProps) => {
 		coordinatesToEvents[getKey(coordinate)] = x.event;
 	});
 
+	// @ts-ignore
 	const coordinates = _.uniq(locations.map((x) => getKey(x))).map((x) => ({
 		lat: Number(x.split(',')[0]),
 		lng: Number(x.split(',')[1]),
@@ -444,13 +445,13 @@ const MapContainer = (props: MapContainerProps) => {
 			// marker + marker when hovering
 			if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
 				// by day and index in day
-				const idx = eventStore.getEventIndexInCalendarByDay(event);
+				const idx = eventStore.getEventIndexInCalendarByDay(event as CalendarEvent);
 				icon.url = getIconUrlByIdx(event, idx + 1);
 			} else {
 				icon.url = getIconUrl(event);
 			}
 
-			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority] };
+			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority!] };
 			const markerIconWithBorder = {
 				...markerIcon,
 				strokeColor: '#ffffff',
