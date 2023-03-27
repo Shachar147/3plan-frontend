@@ -463,6 +463,14 @@ body {
 	gap: 5px;
 }
 
+.flex-wrap {
+	flex-wrap: wrap;
+}
+
+.flex-wrap-reverse {
+	flex-wrap: wrap-reverse;
+}
+
 .align-items-center {
 	align-items: center;
 }
@@ -654,6 +662,10 @@ body.ltr {
 
 .min-height-300 {
 	min-height: 300px;
+}
+
+.min-width-38 {
+	min-width: 38px;
 }
 
 .min-width-313 {

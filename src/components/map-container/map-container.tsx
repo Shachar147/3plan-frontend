@@ -16,7 +16,7 @@ import * as ReactDOMServer from 'react-dom/server';
 import Slider from 'react-slick';
 import { AllEventsEvent } from '../../services/data-handlers/data-handler-base';
 import { CalendarEvent, Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
-import { Observer } from 'mobx-react';
+import { observer, Observer } from 'mobx-react';
 import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
 import Button, { ButtonFlavor } from '../common/button/button';
@@ -1083,17 +1083,42 @@ const MapContainer = (props: MapContainerProps) => {
 			);
 		}
 
+		function renderFilterButton() {
+			return (
+				<Button
+					text={''}
+					onClick={() => eventStore.toggleMapFilters()}
+					className={getClasses('min-width-38', !eventStore.mapFiltersVisible && 'brown')}
+					flavor={ButtonFlavor.secondary}
+					icon={'fa-filter'}
+				/>
+			);
+		}
+
 		return (
-			<div
-				className={getClasses(
-					'map-filters-container',
-					eventStore.isMobile && 'justify-content-center flex-column'
-				)}
-			>
-				{renderPrioritiesFilters()}
-				{renderScheduledOrNotFilters()}
-				{renderMapViewSelection()}
-				{renderCalculateDistancesButton()}
+			<div>
+				<div className="map-filters-container">
+					{renderFilterButton()}
+					{renderCalculateDistancesButton()}
+				</div>
+				{eventStore.mapFiltersVisible ? (
+					<div className="flex-col actual-filters-container">
+						<hr className="margin-block-2" />
+						<div
+							className={getClasses(
+								'map-filters-container actual-filters',
+								eventStore.isMobile && 'justify-content-center flex-column'
+							)}
+						>
+							<div className="flex-row gap-16 flex-1-1-0 flex-wrap-reverse justify-content-center">
+								{renderPrioritiesFilters()}
+								{renderScheduledOrNotFilters()}
+								{renderMapViewSelection()}
+							</div>
+						</div>
+						<hr className="margin-block-2" />
+					</div>
+				) : null}
 			</div>
 		);
 	}
@@ -1335,4 +1360,4 @@ const MapContainer = (props: MapContainerProps) => {
 	);
 };
 
-export default MapContainer;
+export default observer(MapContainer);

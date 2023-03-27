@@ -94,6 +94,7 @@ export class EventStore {
 	@observable forceUpdate = 0;
 
 	// map filters
+	@observable mapFiltersVisible: boolean = false;
 	@observable filterOutPriorities = observable.map({});
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
@@ -548,7 +549,6 @@ export class EventStore {
 	}
 
 	// --- actions --------------------------------------------------------------
-
 	@action
 	setHideCustomDates(hide: boolean) {
 		this.hideCustomDates = hide;
@@ -897,6 +897,11 @@ export class EventStore {
 		} else {
 			this.filterOutPriorities.set(priority, true);
 		}
+	}
+
+	@action
+	toggleMapFilters() {
+		this.mapFiltersVisible = !this.mapFiltersVisible;
 	}
 
 	// --- private functions ----------------------------------------------------

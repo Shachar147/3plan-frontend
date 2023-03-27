@@ -233,8 +233,8 @@ function MainPage(props: MainPageProps) {
 						!shouldShow && 'display-none'
 					)}
 					style={{
-						height: '260px',
-						minHeight: '260px',
+						height: '310px',
+						minHeight: '310px',
 						resize: 'vertical',
 						overflow: 'auto',
 					}}
