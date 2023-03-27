@@ -1,21 +1,11 @@
-import React, { CSSProperties, useContext, useRef, useState } from 'react';
+import React, { CSSProperties, useContext } from 'react';
 import TranslateService from '../../services/translate-service';
-import {
-	addLineBreaks,
-	getClasses,
-	getCoordinatesRangeKey,
-	isBasketball,
-	isDessert,
-	isFlight,
-	isHotel,
-	toDistanceString,
-	ucfirst,
-} from '../../utils/utils';
-import { GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
+import { addLineBreaks, getClasses, isBasketball, isDessert, isFlight, isHotel, ucfirst } from '../../utils/utils';
+import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
-import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
-import { observer, Observer } from 'mobx-react';
+import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
+import { observer } from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import Button, { ButtonFlavor } from '../common/button/button';
@@ -23,9 +13,10 @@ import Button, { ButtonFlavor } from '../common/button/button';
 import * as _ from 'lodash';
 import { hotelColor, priorityToColor } from '../../utils/consts';
 import ListViewService from '../../services/list-view-service';
-import ReactModalService, { ReactModalRenderHelper } from '../../services/react-modal-service';
+import ReactModalService from '../../services/react-modal-service';
 import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { runInAction } from 'mobx';
+import DistanceCalculator from './distance-calculator/distance-calculator';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -43,6 +34,61 @@ export enum SidebarGroups {
 	PRIORITIES_LEGEND = 'PRIORITIES_LEGEND',
 	DISTANCES = 'DISTANCES',
 }
+
+export const wrapWithSidebarGroup = (
+	children: JSX.Element,
+	groupIcon: string | undefined = undefined,
+	groupKey: string,
+	groupTitle: string,
+	itemsCount: number,
+	textColor: string = 'inherit'
+) => {
+	const eventStore = useContext(eventStoreContext);
+	const isOpen = eventStore.openSidebarGroups.has(groupKey);
+	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
+	const openStyle = {
+		maxHeight: 100 * itemsCount + 90 + 'px',
+		padding: '10px',
+		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+	};
+	const closedStyle = {
+		maxHeight: 0,
+		overflowY: 'hidden',
+		padding: 0,
+		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+	};
+
+	const eventsStyle = isOpen ? openStyle : closedStyle;
+
+	return (
+		<>
+			<div
+				className={'sidebar-statistics'}
+				style={{
+					color: textColor,
+					paddingInlineStart: '10px',
+					cursor: 'pointer',
+					backgroundColor: '#e5e9ef80',
+					borderBottom: '1px solid #e5e9ef',
+					height: '45px',
+				}}
+				onClick={() => {
+					eventStore.toggleSidebarGroups(groupKey);
+				}}
+			>
+				<i
+					className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
+					aria-hidden="true"
+				/>
+				<span className={'flex-gap-5 align-items-center'}>
+					{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
+				</span>
+			</div>
+			<div style={eventsStyle as unknown as CSSProperties}>{children}</div>
+		</>
+	);
+};
 
 const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const eventStore = useContext(eventStoreContext);
@@ -99,60 +145,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					}}
 					flavor={ButtonFlavor['movable-link']}
 				/>
-			</>
-		);
-	};
-
-	const wrapWithSidebarGroup = (
-		children: JSX.Element,
-		groupIcon: string | undefined = undefined,
-		groupKey: string,
-		groupTitle: string,
-		itemsCount: number,
-		textColor: string = 'inherit'
-	) => {
-		const isOpen = eventStore.openSidebarGroups.has(groupKey);
-		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
-
-		const openStyle = {
-			maxHeight: 100 * itemsCount + 90 + 'px',
-			padding: '10px',
-			transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
-		};
-		const closedStyle = {
-			maxHeight: 0,
-			overflowY: 'hidden',
-			padding: 0,
-			transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
-		};
-
-		const eventsStyle = isOpen ? openStyle : closedStyle;
-
-		return (
-			<>
-				<div
-					className={'sidebar-statistics'}
-					style={{
-						color: textColor,
-						paddingInlineStart: '10px',
-						cursor: 'pointer',
-						backgroundColor: '#e5e9ef80',
-						borderBottom: '1px solid #e5e9ef',
-						height: '45px',
-					}}
-					onClick={() => {
-						eventStore.toggleSidebarGroups(groupKey);
-					}}
-				>
-					<i
-						className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
-						aria-hidden="true"
-					/>
-					<span className={'flex-gap-5 align-items-center'}>
-						{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
-					</span>
-				</div>
-				<div style={eventsStyle as unknown as CSSProperties}>{children}</div>
 			</>
 		);
 	};
@@ -343,128 +335,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderDistances = () => {
-		const UNKNOWN_DISTANCE_RESULT = 'N/A';
-		const shouldShowDistancesBlock = Array.from(eventStore.distanceResults.values()).length > 0;
-
-		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.TITLE');
-
-		const options = eventStore.allEventsLocationsWithDuplicates.map((x) => ({
-			label: x.eventName,
-			value: x,
-		}));
-
-		const [from, setFrom] = useState<any>(null);
-		const [to, setTo] = useState<any>(null);
-
-		const renderFromToDistanceResult = () => {
-			if (!from || !to) {
-				return null;
-			}
-
-			const distanceKey = getCoordinatesRangeKey(eventStore.travelMode, from.value, to.value);
-
-			const distanceResult: DistanceResult | undefined = eventStore.distanceResults.has(distanceKey)
-				? eventStore.distanceResults.get(distanceKey)
-				: undefined;
-
-			const distanceString = distanceResult
-				? toDistanceString(eventStore, distanceResult, true, eventStore.travelMode)
-				: UNKNOWN_DISTANCE_RESULT;
-
-			if (distanceString === UNKNOWN_DISTANCE_RESULT) {
-				return (
-					<div className="flex-col gap-8 sidebar-distances-block-result">
-						<div className="flex-row align-items-center">
-							{TranslateService.translate(
-								eventStore,
-								'SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.PREFIX'
-							)}
-							<Button
-								flavor={ButtonFlavor.link}
-								onClick={() => ReactModalService.openCalculateDistancesModal(eventStore)}
-								text={TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE')}
-								className="padding-inline-3"
-							/>
-							{TranslateService.translate(
-								eventStore,
-								'SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX'
-							)}
-						</div>
-					</div>
-				);
-			}
-
-			return (
-				<div className="flex-col gap-8 sidebar-distances-block-result">
-					<div>{distanceString}</div>
-				</div>
-			);
-		};
-
-		const renderContent = () => (
-			<div className="sidebar-distances-block">
-				{ReactModalRenderHelper.renderInputWithLabel(
-					eventStore,
-					'SIDEBAR.DISTANCES_BLOCK.FROM',
-					ReactModalRenderHelper.renderSelectInput(
-						eventStore,
-						'from',
-						{
-							options: options.filter((x) => (to ? JSON.stringify(x) !== JSON.stringify(to) : true)),
-							placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER',
-							onChange: (data: any) => setFrom(data),
-						},
-						'category-selector',
-						undefined
-					),
-					'sidebar-distances-select-row'
-				)}
-
-				{ReactModalRenderHelper.renderInputWithLabel(
-					eventStore,
-					'SIDEBAR.DISTANCES_BLOCK.TO',
-					ReactModalRenderHelper.renderSelectInput(
-						eventStore,
-						'to',
-						{
-							options: options.filter((x) => (from ? JSON.stringify(x) !== JSON.stringify(from) : true)),
-							placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER',
-							onChange: (data: any) => setTo(data),
-						},
-						'category-selector',
-						undefined
-					),
-					'sidebar-distances-select-row'
-				)}
-
-				<div className="sidebar-distance-result" key={JSON.stringify(eventStore.modalValues)}>
-					<Observer>{() => renderFromToDistanceResult()}</Observer>
-				</div>
-			</div>
-		);
-
-		const distancesBlock = (
-			<Observer>
-				{() =>
-					shouldShowDistancesBlock
-						? wrapWithSidebarGroup(
-								<>{renderContent()}</>,
-								'fa-map-signs',
-								SidebarGroups.DISTANCES,
-								groupTitle,
-								eventStore.allEventsLocations.length
-						  )
-						: null
-				}
-			</Observer>
-		);
-
-		return shouldShowDistancesBlock ? (
-			<>
-				<hr className={'margin-block-2'} />
-				{distancesBlock}
-			</>
-		) : undefined;
+		const shouldShowDistancesBlock =
+			Array.from(eventStore.distanceResults.values()).length > 0 &&
+			eventStore.allEventsLocationsWithDuplicates.length >= 2;
+		return shouldShowDistancesBlock ? <DistanceCalculator /> : undefined;
 	};
 
 	const renderActions = () => {
