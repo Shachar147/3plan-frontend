@@ -193,7 +193,7 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
-	reduceEventsEndDateToFitDistanceResult = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
+	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
 		if (this.showOnlyEventsWithDistanceProblems) {
 			return filteredEvents.map((x) => {
 				x.suggestedEndTime = this.eventsWithDistanceProblems.find((e) => e.id == x.id)?.suggestedEndTime;
