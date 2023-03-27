@@ -947,6 +947,11 @@ const ListViewService = {
 		// add distances
 		summaryPerDay = ListViewService._addReachingNextDestinationInstructions(eventStore, summaryPerDay);
 
+		const noItemsPlaceholder =
+			Object.keys(summaryPerDay).length == 0
+				? TranslateService.translate(eventStore, 'LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY')
+				: '';
+
 		const InfoBoxSummary = () => {
 			return `
         <div style="max-width: 990px;">
@@ -978,6 +983,7 @@ const ListViewService = {
 			return `
         <div style="max-width: 990px;">
             <h3><b><u>${tripSummaryTitle}</b></u></h3>
+            <b>${noItemsPlaceholder}</b>
             ${Object.keys(summaryPerDay)
 				.map((dayTitle) => {
 					const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : '';
