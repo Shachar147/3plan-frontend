@@ -331,14 +331,14 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				<hr className={'margin-block-2'} />
 				{warningsBlock}
 			</>
-		) : undefined;
+		) : null;
 	};
 
 	const renderDistances = () => {
 		const shouldShowDistancesBlock =
 			Array.from(eventStore.distanceResults.values()).length > 0 &&
 			eventStore.allEventsLocationsWithDuplicates.length >= 2;
-		return shouldShowDistancesBlock ? <DistanceCalculator /> : undefined;
+		return shouldShowDistancesBlock ? <DistanceCalculator /> : null;
 	};
 
 	const renderActions = () => {
@@ -851,7 +851,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		// console.log("category events", categoryEvents, "by hour", preferredHoursHash);
 
 		if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
-			return undefined;
+			return null;
 		}
 
 		return Object.keys(preferredHoursHash)

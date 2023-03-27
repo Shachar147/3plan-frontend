@@ -3,7 +3,7 @@ import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
 import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
-import { FLIGHT_KEYWORDS } from '../components/map-container/map-container';
+import { FLIGHT_KEYWORDS, HOTEL_KEYWORDS } from '../components/map-container/map-container';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');
@@ -292,7 +292,7 @@ export function isBasketball(category: string, title: string) {
 }
 
 export function isHotel(category: string, title: string) {
-	return isMatching(category, ['hotel', 'מלון']) || isMatching(title, ['hotel', 'מלון']);
+	return isMatching(category, HOTEL_KEYWORDS) || isMatching(title, HOTEL_KEYWORDS);
 }
 
 export function containsDuplicates(array: any[]) {

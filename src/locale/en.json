@@ -419,7 +419,6 @@
 	"CHRONOLOGICAL_ORDER": "Chronological order - day {X}",
 	"CALCULATE_DISTANCE": "Calculate distance",
 	"CALCULATE_DISTANCES_MODAL.TITLE": "There are {X} locations!",
-	"CALCULATE_DISTANCES_MODAL.DESCRIPTION_OLD": "Calculating the distance between all the coordinates on your map can help you significantly!\n\nDoing that will add a new section to your sidebar allowing you to check the distance and duration between specific locations, or checking which locations are close to another location.",
 	"CALCULATE_DISTANCES_MODAL.DESCRIPTION": "Calculating the distance between all the coordinates on your map can help you significantly!\n\nDoing so will add a new section to your sidebar allowing you to check the distance and duration from one location to another, or which locations are close to another location you choose!\n\nBeside that, two more useful feature you'll be exposed two are:\n1. Traveling info will be added to your list view summary\n2. Red indication and suggested leave time will be added to activities that are too close to each other\n(based on calculated travel time)",
 	"CALCULATE_DISTANCES_MODAL.CTA": "Let's go!",
 	"CALCULATE_DISTANCES_MODAL.CANCEL": "Close",

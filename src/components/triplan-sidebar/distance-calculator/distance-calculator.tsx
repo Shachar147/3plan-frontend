@@ -108,7 +108,7 @@ const DistanceCalculator = () => {
 		<Observer>
 			{() =>
 				wrapWithSidebarGroup(
-					<>{renderContent()}</>,
+					renderContent(),
 					'fa-map-signs',
 					SidebarGroups.DISTANCES,
 					groupTitle,

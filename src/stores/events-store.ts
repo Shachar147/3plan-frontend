@@ -140,7 +140,7 @@ export class EventStore {
 		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
 			// disabled on local
 			this.distanceResults = observable.map<string, DistanceResult>(
-				DataServices.LocalStorageService.getDistanceResults()
+				await DataServices.LocalStorageService.getDistanceResults()
 			);
 			this.initBodyLocaleClassName();
 			this.initCustomDatesVisibilityBasedOnViewMode();
@@ -784,7 +784,7 @@ export class EventStore {
 				this.customDateRange = DataServices.LocalStorageService.getDateRange(name);
 				this.allEvents = DataServices.LocalStorageService.getAllEvents(this, name);
 				this.categories = DataServices.LocalStorageService.getCategories(this, name);
-				newDistanceResults = DataServices.LocalStorageService.getDistanceResults(name);
+				newDistanceResults = await DataServices.LocalStorageService.getDistanceResults(name);
 			} else {
 				this.isLoading = true;
 				const tripData = await DataServices.DBService.getTripData(name);

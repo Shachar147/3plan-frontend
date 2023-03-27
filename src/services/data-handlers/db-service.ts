@@ -52,8 +52,7 @@ export class DBService implements BaseDataHandler {
 		return dateRange;
 	}
 
-	// @ts-ignore
-	async getDistanceResults(tripName?: string): Promise<Map<string, DistanceResult>> {
+	async getDistanceResults(tripName?: string): Promise<Record<string, DistanceResult>> {
 		if (!tripName) {
 			// @ts-ignore
 			return undefined;
@@ -78,20 +77,7 @@ export class DBService implements BaseDataHandler {
 			result[key] = distanceResult;
 		});
 
-		// @ts-ignore
 		return result;
-
-		// // todo complete - move to dedicated route in the server.
-		//
-		// // return new Map<string,DistanceResult>(); // todo complete
-		// const createMode = window.location.href.indexOf('/create/') !== -1;
-		// const key = tripName ? [LS_DISTANCE_RESULTS, tripName].join('-') : LS_DISTANCE_RESULTS;
-		// if (!localStorage.getItem(key)) {
-		// 	if (!createMode) return new Map<string, DistanceResult>();
-		// 	this.setDistanceResults({} as Map<string, DistanceResult>, tripName);
-		// }
-		// // @ts-ignore
-		// return JSON.parse(localStorage.getItem(key)) || {};
 	}
 
 	async getSidebarEvents(tripName?: string, createMode?: boolean): Promise<Record<number, SidebarEvent[]>> {

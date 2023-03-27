@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getServerAddress, getTinderServerAddress } from '../config/config';
+import { getServerAddress } from '../config/config';
 
 const unAuthorizedRoutes = ['signin'];
 
@@ -56,7 +56,6 @@ export async function apiGetNew(url, data) {
 			if (!isUnauthorized) {
 				throw error;
 			}
-			// return null;
 		});
 }
 
@@ -75,7 +74,6 @@ export async function apiPost(url, data) {
 			if (!isUnauthorized) {
 				throw error;
 			}
-			// return null;
 		});
 }
 export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
@@ -117,35 +115,7 @@ export function apiPut(url, data, onSuccess, onError, onFinish) {
 			if (!handleUnauthorizedError(error, url).then((isRedirected) => {})) {
 				throw error;
 			}
-			// return null;
 		});
-
-	// const httpClient = axios.create();
-	// httpClient.defaults.timeout = 600000;
-	//
-	// httpClient
-	// 	.put(getServerAddress() + url, data, {
-	// 		timeout: 600000,
-	// 		headers: {
-	// 			'Access-Control-Allow-Origin': '*',
-	// 		},
-	// 	})
-	// 	.then((res) => {
-	// 		onSuccess(res);
-	// 	})
-	// 	.catch(function (error) {
-	// 		handleUnauthorizedError(error, url).then((isRedirected) => {
-	// 			if (!isRedirected) {
-	// 				onError(error, () => {
-	// 					self.setState({ error: '' });
-	// 					apiPut(self, url, data, onSuccess, onError, onFinish);
-	// 				});
-	// 			}
-	// 		});
-	// 	})
-	// 	.then(function () {
-	// 		onFinish();
-	// 	});
 }
 
 export function apiDelete(self, url, onSuccess, onError, onFinish) {
@@ -171,7 +141,6 @@ export function apiDelete(self, url, onSuccess, onError, onFinish) {
 				if (!isRedirected) {
 					onError(error, () => {
 						self.setState({ error: '' });
-						// apiPut(self, url, data, onSuccess, onError, onFinish);
 					});
 				}
 			});

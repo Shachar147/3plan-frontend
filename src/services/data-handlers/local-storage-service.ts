@@ -180,18 +180,21 @@ export class LocalStorageService implements BaseDataHandler {
 		return JSON.parse(localStorage.getItem(key)!);
 	}
 
-	getDistanceResults(tripName?: string): Map<string, DistanceResult> {
-		// todo change - need to be general, not trip related
-		// BUT - need to make sure we won't cross localstorage limits.
+	async getDistanceResults(tripName?: string): Promise<Record<string, DistanceResult>> {
+		// disabled on local storage
+		return {};
 
-		const createMode = window.location.href.indexOf('/create/') !== -1;
-		const key = tripName ? [LS_DISTANCE_RESULTS, tripName].join('-') : LS_DISTANCE_RESULTS;
-		if (!localStorage.getItem(key)) {
-			if (!createMode) return new Map<string, DistanceResult>();
-			this.setDistanceResults({} as Map<string, DistanceResult>, tripName);
-		}
-		// @ts-ignore
-		return JSON.parse(localStorage.getItem(key)) || {};
+		// // todo change - need to be general, not trip related
+		// // BUT - need to make sure we won't cross localstorage limits.
+		//
+		// const createMode = window.location.href.indexOf('/create/') !== -1;
+		// const key = tripName ? [LS_DISTANCE_RESULTS, tripName].join('-') : LS_DISTANCE_RESULTS;
+		// if (!localStorage.getItem(key)) {
+		// 	if (!createMode) return new Map<string, DistanceResult>();
+		// 	this.setDistanceResults({} as Map<string, DistanceResult>, tripName);
+		// }
+		// // @ts-ignore
+		// return JSON.parse(localStorage.getItem(key)) || {};
 	}
 
 	// --- SET ------------------------------------------------------------------------------

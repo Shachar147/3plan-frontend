@@ -36,6 +36,7 @@ import {
 	DESSERTS_KEYWORDS,
 	FLIGHT_KEYWORDS,
 	FOOD_KEYWORDS,
+	HOTEL_KEYWORDS,
 	NATURE_KEYWORDS,
 	NIGHTLIFE_KEYWORDS,
 	STORE_KEYWORDS,
@@ -431,8 +432,8 @@ const RootRouter = () => {
 					label: x.icon ? `${x.icon} ${x.title}` : x.title,
 				}));
 			if (place.name && !eventStore.modalValues['category']) {
-				if (isMatching(place.name, ['hotel', 'מלון']) || isMatching(place.website ?? '', ['hotel', 'מלון'])) {
-					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, ['hotel', 'מלון']));
+				if (isMatching(place.name, HOTEL_KEYWORDS) || isMatching(place.website ?? '', HOTEL_KEYWORDS)) {
+					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, HOTEL_KEYWORDS));
 				}
 			}
 
