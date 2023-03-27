@@ -48,6 +48,11 @@ export enum TripDataSource {
 	DB = 'DB',
 }
 
+export enum MapViewMode {
+	CATEGORIES_AND_PRIORITIES = 'CATEGORIES_AND_PRIORITIES',
+	CHRONOLOGICAL_ORDER = 'CHRONOLOGICAL_ORDER',
+}
+
 export function getEnumKey(enumObj: any, value: any) {
 	for (let key in enumObj) {
 		if (enumObj[key] == value) {

@@ -13,6 +13,7 @@ import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import { TripDataSource } from '../../utils/enums';
+import { upsertTripProps } from '../../services/data-handlers/db-service';
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -110,7 +111,7 @@ const GettingStartedPage = () => {
 			eventStore.dataService.setDateRange(customDateRange, TripName);
 			navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 		} else {
-			const tripData = {
+			const tripData: upsertTripProps = {
 				name: TripName,
 				dateRange: customDateRange,
 				calendarLocale: eventStore.calendarLocalCode,

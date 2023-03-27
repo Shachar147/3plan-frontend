@@ -227,7 +227,7 @@ function MyTrips() {
 				className={classList}
 				onClick={() => {
 					eventStore.setTripName(tripName);
-					navigate('/plan/' + LSTripName, {});
+					navigate('/plan/' + tripName, {});
 				}}
 			>
 				{renderTripInfo()}
