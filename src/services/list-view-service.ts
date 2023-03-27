@@ -21,7 +21,9 @@ const ListViewService = {
 	_formatTime: (timeString: string) => moment(timeString, ['h:mm A']).format('HH:mm'),
 	_randomElement: (array: any[]) => array[Math.floor(Math.random() * array.length)],
 	_formatDescription: (description: string) => {
-		if (!description) return description;
+		if (!description) {
+			return description;
+		}
 		return description.replaceAll('&#10;', '<br/>').replaceAll('\n', '<br/>').replaceAll('<br/><br/>', '<br/>');
 	},
 	_getEventFromEventRow: (eventStore: EventStore, eventRow: string) => {
@@ -759,7 +761,9 @@ const ListViewService = {
 						// console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address, `(${travelMode.toString()})`);
 					}
 				}
-				if (distanceKey === '') distanceKey = key;
+				if (distanceKey === '') {
+					distanceKey = key;
+				}
 			});
 
 			let travelMode = GoogleTravelMode.DRIVING;
@@ -834,7 +838,9 @@ const ListViewService = {
 				}
 
 				const thisLocation = x.event.location;
-				if (thisLocation) thisLocation.eventName = x.event.title!;
+				if (thisLocation) {
+					thisLocation.eventName = x.event.title!;
+				}
 				if (prevLocation && thisLocation && prevLocation.address != thisLocation.address) {
 					loggerArr.push('~ ' + prevTitle + ' -> ' + x.event.title);
 
