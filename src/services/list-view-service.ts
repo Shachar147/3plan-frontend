@@ -947,13 +947,10 @@ const ListViewService = {
 		// add distances
 		summaryPerDay = ListViewService._addReachingNextDestinationInstructions(eventStore, summaryPerDay);
 
-		const noItemsPlaceholder = '';
-		if (Object.keys(summaryPerDay).length == 0) {
-			noItemsPlaceholder = TranslateService.translate(
-				eventStore,
-				'LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY'
-			);
-		}
+		const noItemsPlaceholder =
+			Object.keys(summaryPerDay).length == 0
+				? TranslateService.translate(eventStore, 'LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY')
+				: '';
 
 		const InfoBoxSummary = () => {
 			return `
