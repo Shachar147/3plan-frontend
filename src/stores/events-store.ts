@@ -1,12 +1,13 @@
-import { createContext, useState } from 'react';
+import { createContext } from 'react';
 import { action, computed, observable, runInAction, toJS } from 'mobx';
-import { DateSelectArg, EventInput } from '@fullcalendar/react';
+import { EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
 import {
 	getEnumKey,
 	GoogleTravelMode,
 	ListViewSummaryMode,
+	MapViewMode,
 	TripDataSource,
 	TriplanEventPreferredTime,
 	TriplanPriority,
@@ -94,6 +95,13 @@ export class EventStore {
 	@observable filterOutPriorities = observable.map({});
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
+	@observable mapViewMode: MapViewMode = MapViewMode.CATEGORIES_AND_PRIORITIES;
+	@observable mapViewDayFilter: string | undefined;
+
+	// add side bar modal
+	@observable isModalMinimized: boolean = true;
+
+	@observable forceUpdate = 0;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -408,8 +416,20 @@ export class EventStore {
 
 	@computed
 	get allEventsFilteredComputed() {
-		return this.allEventsComputed.filter(
-			(event) =>
+		console.log({
+			mapViewDayFilter: this.mapViewDayFilter,
+			// @ts-ignore
+			results: this.mapViewDayFilter
+				? this.allEventsComputed.find(
+						// @ts-ignore
+						(x) => x.start && new Date(x.start).toLocaleDateString() === this.mapViewDayFilter
+				  )
+				: [],
+		});
+		return this.allEventsComputed.filter((event) => {
+			const calendarEvent = this.calendarEvents.find((c) => c.id == event.id);
+
+			return (
 				(event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 ||
 					(event.description &&
 						event.description.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) ||
@@ -421,8 +441,14 @@ export class EventStore {
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
 				!this.filterOutPriorities.get(getEnumKey(TriplanPriority, event.priority)) &&
 				(this.hideScheduled ? !this.calendarEvents.find((x) => x.id == event.id) : true) &&
-				(this.hideUnScheduled ? !!this.calendarEvents.find((x) => x.id == event.id) : true)
-		);
+				(this.hideUnScheduled ? !!this.calendarEvents.find((x) => x.id == event.id) : true) &&
+				(this.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && this.mapViewDayFilter
+					? !calendarEvent || calendarEvent.allDay || !calendarEvent.start
+						? false
+						: new Date(calendarEvent.start).toLocaleDateString() === this.mapViewDayFilter
+					: true)
+			);
+		});
 	}
 
 	@computed
@@ -437,6 +463,29 @@ export class EventStore {
 			// || this.hideScheduled
 			// || this.hideUnScheduled
 		);
+	}
+
+	@computed
+	get scheduledDaysNames(): string[] {
+		return Array.from(new Set(this.calendarEvents.map((x) => new Date(x.start).toLocaleDateString())));
+	}
+
+	getEventIndexInCalendarByDay(event: CalendarEvent, day: string | undefined = this.mapViewDayFilter) {
+		if (!this.mapViewDayFilter) {
+			console.error(`wrong use of getEventIndexInCalendarByDay - day not passed`);
+			return -1;
+		}
+		const idx = this.calendarEvents
+			.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+			.filter(
+				(e) =>
+					new Date(e.start).toLocaleDateString() === day &&
+					e.location?.latitude &&
+					e.location?.longitude &&
+					!e.allDay
+			)
+			.findIndex((e) => e.id == event.id);
+		return idx;
 	}
 
 	// --- actions --------------------------------------------------------------
@@ -476,7 +525,7 @@ export class EventStore {
 
 	@action
 	deleteEvent(eventId: string) {
-		this.setCalendarEvents([
+		return this.setCalendarEvents([
 			...this.calendarEvents.filter((event) => event!.id!.toString() !== eventId.toString()),
 		]);
 	}

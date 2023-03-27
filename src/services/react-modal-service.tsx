@@ -36,9 +36,21 @@ import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 
 const ReactModalRenderHelper = {
-	renderInputWithLabel: (eventStore: EventStore, textKey: string, input: JSX.Element, className?: string) => {
+	renderInputWithLabel: (
+		eventStore: EventStore,
+		textKey: string,
+		input: JSX.Element,
+		className: string | undefined = undefined,
+		showOnMinimize: boolean = true
+	) => {
 		return (
-			<div className={getClasses(['input-with-label flex-row gap-30 align-items-center'], className)}>
+			<div
+				className={getClasses(
+					['input-with-label flex-row gap-30 align-items-center'],
+					className,
+					eventStore.isModalMinimized && !showOnMinimize && 'display-none'
+				)}
+			>
 				<label>{TranslateService.translate(eventStore, textKey)}</label>
 				{input}
 			</div>
@@ -385,7 +397,11 @@ const ReactModalRenderHelper = {
 				input = <div ref={row.settings.ref} dangerouslySetInnerHTML={{ __html: html }} />;
 				break;
 			case 'images':
-				const images = row.settings.extra.value?.replace(/\n^/, '').replace(/$\n/, '').split('\n') || [];
+				const images =
+					(row.settings.extra.value ?? eventStore.modalValues[row.settings.modalValueName] ?? '')
+						.replace(/\n^/, '')
+						.replace(/$\n/, '')
+						.split('\n') || [];
 				input = ReactModalRenderHelper.renderTextAreaInput(
 					eventStore,
 					row.settings.modalValueName,
@@ -404,7 +420,7 @@ const ReactModalRenderHelper = {
 
 				return (
 					<div className="flex-column gap-10 images-input">
-						{images && images.length > 0 && (
+						{images && images.length > 0 && !(images.length === 1 && images[0] === '') && (
 							<Slider {...sliderSettings}>
 								{images.map((image: string) => (
 									<img
@@ -428,11 +444,22 @@ const ReactModalRenderHelper = {
 
 		return input;
 	},
-	renderRow: (eventStore: EventStore, row: { settings: any; textKey: string; className?: string }) => {
+	renderRow: (
+		eventStore: EventStore,
+		row: { settings: any; textKey: string; className?: string; showOnMinimized?: boolean },
+		hasMinimizeMode: boolean = false
+	) => {
 		const input = ReactModalRenderHelper.getRowInput(eventStore, row);
 
 		if (input) {
-			return ReactModalRenderHelper.renderInputWithLabel(eventStore, row.textKey, input, row.className);
+			const showOnMinimize = hasMinimizeMode ? row.showOnMinimized : true;
+			return ReactModalRenderHelper.renderInputWithLabel(
+				eventStore,
+				row.textKey,
+				input,
+				row.className,
+				showOnMinimize
+			);
 		}
 	},
 };
@@ -448,7 +475,8 @@ const getDefaultSettings = (eventStore: EventStore) => {
 		dependencies: [eventStore.modalSettings, eventStore.secondModalSettings, eventStore.modalValues],
 		customClass: 'triplan-react-modal',
 		customContainerClass: 'display-none',
-		reverseButtons: eventStore.getCurrentDirection() === 'rtl',
+		// reverseButtons: eventStore.getCurrentDirection() === 'rtl',
+		reverseButtons: true,
 		slideUp: true, // default animation - slide up.
 		onCancel: () => {
 			ReactModalService.internal.closeModal(eventStore);
@@ -458,6 +486,50 @@ const getDefaultSettings = (eventStore: EventStore) => {
 
 const ReactModalService = {
 	internal: {
+		renderShowHideMore: (eventStore: EventStore) => {
+			return (
+				<div
+					className={getClasses(
+						'input-with-label flex-row gap-30 align-items-center justify-content-center padding-top-0 show-hide-more-row',
+						!eventStore.isModalMinimized && 'display-none'
+					)}
+				>
+					<a
+						onClick={() => {
+							runInAction(() => {
+								eventStore.isModalMinimized = !eventStore.isModalMinimized;
+							});
+						}}
+						className="show-hide-more"
+					>
+						{TranslateService.translate(
+							eventStore,
+							eventStore.isModalMinimized ? 'SHOW_MORE' : 'SHOW_LESS'
+						)}
+					</a>
+				</div>
+			);
+		},
+		disableOnConfirm: () => {
+			// @ts-ignore
+			$(
+				'.triplan-react-modal .input-with-label input, .triplan-react-modal .input-with-label textarea, .triplan-react-modal .input-with-label button'
+			).attr('disabled', true);
+			// @ts-ignore
+			$('.triplan-react-modal .triplan-selector, .triplan-react-modal .icon-selector').addClass('disabled');
+			// @ts-ignore
+			$('.triplan-react-modal>p .primary-button')
+				.parent()
+				.html('<a href="#" class="btn btn-lg btn-info primary-button disabled">שומר...</a>');
+		},
+		openOopsErrorModal: (eventStore: EventStore) => {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG',
+				'error'
+			);
+		},
 		openModal: (eventStore: EventStore, settings: any, isSecondModal: boolean = false) => {
 			const shouldSlideUp = eventStore.isMobile && settings.slideUp;
 
@@ -508,7 +580,7 @@ const ReactModalService = {
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
-				window.initLocationPicker('location-input', 'selectedLocation', undefined);
+				window.initLocationPicker('location-input', 'selectedLocation', undefined, eventStore);
 			};
 
 			const setManualLocation = () => {
@@ -531,7 +603,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.ICON',
-					className: 'border-top-gray',
+					className: 'border-top-gray icon-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -547,7 +620,7 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.TITLE',
-					className: 'border-top-gray',
+					className: 'border-top-gray name-row',
 				},
 				{
 					settings: {
@@ -560,7 +633,7 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.CATEGORY',
-					className: 'border-top-gray',
+					className: 'border-top-gray category-row',
 				},
 				{
 					settings: {
@@ -573,7 +646,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.DESCRIPTION',
-					className: 'border-top-gray',
+					className: 'border-top-gray description-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -591,7 +665,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.DURATION',
-					className: 'border-top-gray',
+					className: 'border-top-gray duration-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -604,7 +679,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.PRIORITY',
-					className: 'border-top-gray',
+					className: 'border-top-gray priority-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -617,7 +693,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.PREFERRED_TIME',
-					className: 'border-top-gray',
+					className: 'border-top-gray perferred-time-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -638,7 +715,7 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.LOCATION',
-					className: 'border-top-gray',
+					className: 'border-top-gray location-row',
 				},
 				{
 					settings: {
@@ -650,7 +727,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.OPENING_HOURS',
-					className: 'border-top-gray',
+					className: 'border-top-gray opening-hours-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -663,20 +741,22 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.IMAGES',
-					className: 'border-top-gray',
+					className: 'border-top-gray images-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
 						modalValueName: 'more-info',
 						ref: eventStore.modalValuesRefs['more-info'],
-						type: 'text',
+						type: 'textarea',
 						extra: {
 							placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 							value: initialData.moreInfo,
 						},
 					},
 					textKey: 'MODALS.MORE_INFO',
-					className: 'border-top-gray',
+					className: 'border-top-gray more-info-row',
+					showOnMinimized: false,
 				},
 			];
 			inputs[inputs.length - 1].className += ' border-bottom-gray padding-bottom-20';
@@ -688,7 +768,7 @@ const ReactModalService = {
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
-				window.initLocationPicker('location-input', 'selectedLocation', undefined);
+				window.initLocationPicker('location-input', 'selectedLocation', undefined, eventStore);
 			};
 
 			const setManualLocation = () => {
@@ -711,7 +791,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.ICON',
-					className: 'border-top-gray',
+					className: 'border-top-gray icon-row',
+					showOnMinimized: false,
 				},
 				{
 					settings: {
@@ -727,7 +808,7 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.TITLE',
-					className: 'border-top-gray',
+					className: 'border-top-gray name-row',
 				},
 			];
 			inputs.push(
@@ -747,7 +828,7 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.START_TIME',
-						className: getClasses('border-top-gray', initialData.allDay && 'display-none'),
+						className: getClasses('border-top-gray start-time-row', initialData.allDay && 'display-none'),
 					},
 					{
 						settings: {
@@ -764,7 +845,7 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.END_TIME',
-						className: getClasses('border-top-gray', initialData.allDay && 'display-none'),
+						className: getClasses('border-top-gray end-time-row', initialData.allDay && 'display-none'),
 					},
 				]
 			);
@@ -781,7 +862,7 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.CATEGORY',
-						className: 'border-top-gray',
+						className: 'border-top-gray category-row',
 					},
 					{
 						settings: {
@@ -794,7 +875,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.DESCRIPTION',
-						className: 'border-top-gray',
+						className: 'border-top-gray description-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -807,7 +889,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.PRIORITY',
-						className: 'border-top-gray',
+						className: 'border-top-gray priority-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -820,7 +903,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.PREFERRED_TIME',
-						className: 'border-top-gray',
+						className: 'border-top-gray preferred-time-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -841,7 +925,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.LOCATION',
-						className: 'border-top-gray',
+						className: 'border-top-gray location-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -853,7 +938,8 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.OPENING_HOURS',
-						className: 'border-top-gray',
+						className: 'border-top-gray opening-hours-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -866,20 +952,22 @@ const ReactModalService = {
 							},
 						},
 						textKey: 'MODALS.IMAGES',
-						className: 'border-top-gray',
+						className: 'border-top-gray images-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
 							modalValueName: 'more-info',
 							ref: eventStore.modalValuesRefs['more-info'],
-							type: 'text',
+							type: 'textarea',
 							extra: {
 								placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 								value: initialData.moreInfo,
 							},
 						},
 						textKey: 'MODALS.MORE_INFO',
-						className: 'border-top-gray',
+						className: 'border-top-gray more-info-row',
+						showOnMinimized: false,
 					},
 				]
 			);
@@ -959,6 +1047,9 @@ const ReactModalService = {
 				}
 
 				eventStore.modalValues = {};
+
+				// set it back to default
+				eventStore.isModalMinimized = true;
 			});
 			ReactModalService.internal.resetWindowVariables(eventStore);
 		},
@@ -977,7 +1068,7 @@ const ReactModalService = {
 	openAddCategoryModal: (eventStore: EventStore) => {
 		ReactModalService.internal.resetWindowVariables(eventStore);
 
-		const onConfirm = () => {
+		const onConfirm = async () => {
 			// @ts-ignore
 			const newIcon = eventStore.modalValues.icon?.label;
 
@@ -1009,6 +1100,7 @@ const ReactModalService = {
 
 			if (isOk) {
 				runInAction(async () => {
+					ReactModalService.internal.disableOnConfirm();
 					await eventStore.setCategories([
 						...eventStore.categories,
 						{
@@ -1188,20 +1280,39 @@ const ReactModalService = {
 			}
 
 			if (isOk) {
-				await eventStore.dataService.duplicateTrip(eventStore, tripName, newName);
+				await eventStore.dataService
+					.duplicateTrip(eventStore, tripName, newName)
+					.then(() => {
+						ReactModalService.internal.closeModal(eventStore);
 
-				ReactModalService.internal.closeModal(eventStore);
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.DUPLICATED.TITLE',
+							'MODALS.DUPLICATED_TRIP.CONTENT',
+							'success'
+						);
 
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.DUPLICATED.TITLE',
-					'MODALS.DUPLICATED_TRIP.CONTENT',
-					'success'
-				);
-
-				setTimeout(() => {
-					window.location.reload();
-				}, 2000);
+						setTimeout(() => {
+							window.location.reload();
+						}, 2000);
+					})
+					.catch((e) => {
+						if (e.response.data.statusCode === 409) {
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.ERROR.TITLE',
+								'TRIP_ALREADY_EXISTS',
+								'error'
+							);
+						} else {
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.ERROR.TITLE',
+								'OOPS_SOMETHING_WENT_WRONG',
+								'error'
+							);
+						}
+					});
 			}
 		};
 
@@ -1258,12 +1369,7 @@ const ReactModalService = {
 							window.location.reload();
 						},
 						() => {
-							ReactModalService.internal.alertMessage(
-								eventStore,
-								'MODALS.ERROR.TITLE',
-								'MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG',
-								'error'
-							);
+							ReactModalService.internal.openOopsErrorModal(eventStore);
 						}
 					);
 				} else {
@@ -1280,7 +1386,8 @@ const ReactModalService = {
 		eventStore: EventStore,
 		categoryId?: number,
 		initialData: any = {},
-		isSecondModal: boolean = false
+		isSecondModal: boolean = false,
+		onClose?: () => void
 	) => {
 		// @ts-ignore
 		window.selectedLocation = initialData.location || undefined;
@@ -1367,6 +1474,8 @@ const ReactModalService = {
 				return;
 			}
 
+			ReactModalService.internal.disableOnConfirm();
+
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
 			existingSidebarEvents[categoryId].push(currentEvent);
@@ -1388,6 +1497,7 @@ const ReactModalService = {
 				'success'
 			);
 
+			if (onClose) onClose();
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
@@ -1417,8 +1527,15 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`add-sidebar-event-modal-${eventStore.forceUpdate}`}
+					>
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>
@@ -1433,6 +1550,10 @@ const ReactModalService = {
 				title,
 				content,
 				onConfirm,
+				onCancel: () => {
+					if (onClose) onClose();
+					ReactModalService.internal.closeModal(eventStore);
+				},
 			},
 			isSecondModal
 		);
@@ -1529,6 +1650,8 @@ const ReactModalService = {
 				isLocationChanged ||
 				isImagesChanged ||
 				isMoreInfoChanged;
+
+			ReactModalService.internal.disableOnConfirm();
 
 			if (isCategoryChanged) {
 				// remove it from the old category
@@ -1655,8 +1778,15 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`edit-sidebar-event-modal-${eventStore.forceUpdate}`}
+					>
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>
@@ -1739,6 +1869,8 @@ const ReactModalService = {
 				return;
 			}
 
+			ReactModalService.internal.disableOnConfirm();
+
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[parseInt(category)] = existingSidebarEvents[parseInt(category)] || [];
 			existingSidebarEvents[parseInt(category)].push(currentEvent);
@@ -1771,8 +1903,9 @@ const ReactModalService = {
 		// @ts-ignore
 		window.openingHours = initialData.openingHours || undefined;
 
-		const onConfirm = () => {
-			handleDuplicateSidebarEventResult(eventStore, event);
+		const onConfirm = async () => {
+			ReactModalService.internal.disableOnConfirm();
+			await handleDuplicateSidebarEventResult(eventStore, event);
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
@@ -1782,8 +1915,15 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`duplicate-sidebar-event-modal-${eventStore.forceUpdate}`}
+					>
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>
@@ -2019,6 +2159,8 @@ const ReactModalService = {
 				return false;
 			}
 
+			ReactModalService.internal.disableOnConfirm();
+
 			await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 			addToEventsToCategories(currentEvent);
 
@@ -2077,8 +2219,15 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`add-calendar-event-modal-new-${eventStore.forceUpdate}`}
+					>
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>
@@ -2117,6 +2266,8 @@ const ReactModalService = {
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const onConfirm = async () => {
+			ReactModalService.internal.disableOnConfirm();
+
 			// delete from sidebar
 			await eventStore.setSidebarEvents(newSidebarEvents);
 
@@ -2235,6 +2386,8 @@ const ReactModalService = {
 					return;
 				}
 
+				ReactModalService.internal.disableOnConfirm();
+
 				await eventStore.setCategories([
 					...eventStore.categories.filter((c) => c.id.toString() !== categoryId.toString()),
 					{
@@ -2347,12 +2500,14 @@ const ReactModalService = {
 		) => {
 			ReactModalService.openConfirmModal(
 				eventStore,
-				() => {
+				async () => {
 					// add back to sidebar
 					if (addEventToSidebar(currentEvent)) {
+						ReactModalService.internal.disableOnConfirm();
+
 						// remove from calendar
 						eventStore.allowRemoveAllCalendarEvents = true;
-						eventStore.deleteEvent(eventId);
+						await eventStore.deleteEvent(eventId);
 
 						// refreshSources();
 
@@ -2365,12 +2520,7 @@ const ReactModalService = {
 
 						ReactModalService.internal.closeModal(eventStore);
 					} else {
-						ReactModalService.internal.alertMessage(
-							eventStore,
-							'MODALS.ERROR.TITLE',
-							'MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG',
-							'error'
-						);
+						ReactModalService.internal.openOopsErrorModal(eventStore);
 						return;
 					}
 				},
@@ -2395,6 +2545,7 @@ const ReactModalService = {
 			const oldEvent = eventStore.allEventsComputed.find((e) => e.id!.toString() === eventId.toString());
 			if (!oldEvent) {
 				console.error('old event not found');
+				ReactModalService.internal.openOopsErrorModal(eventStore);
 				return false;
 			}
 
@@ -2482,6 +2633,8 @@ const ReactModalService = {
 				isImagesChanged ||
 				isMoreInfoChanged;
 
+			ReactModalService.internal.disableOnConfirm();
+
 			if (isCategoryChanged) {
 				// add it to the new category
 				// @ts-ignore
@@ -2552,6 +2705,8 @@ const ReactModalService = {
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleDuplicateEventResult = async (eventStore: EventStore, originalEvent: CalendarEvent) => {
+			ReactModalService.internal.disableOnConfirm();
+
 			let newEvent = Object.assign({}, originalEvent);
 			const newId = eventStore.createEventId();
 			newEvent.id = newId;
@@ -2562,24 +2717,26 @@ const ReactModalService = {
 			// console.log("original", JSON.parse(JSON.stringify(originalEvent)), "new", newEvent);
 
 			// update calendar events
-			eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
+			await eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
 
 			// update all events
 			// @ts-ignore
-			eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
+			await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
 		};
 
 		const onDeleteClick = () => {
 			handleDeleteEventResult(currentEvent as unknown as CalendarEvent, addEventToSidebar);
 		};
 
-		const onDuplicateClick = () => {
+		const onDuplicateClick = async () => {
+			ReactModalService.internal.disableOnConfirm();
 			const calendarEvent = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
-			handleDuplicateEventResult(eventStore, calendarEvent as CalendarEvent);
+			await handleDuplicateEventResult(eventStore, calendarEvent as CalendarEvent);
 			ReactModalService.internal.closeModal(eventStore);
 		};
 
 		const onConfirm = async () => {
+			ReactModalService.internal.disableOnConfirm();
 			const isOk = await handleEditEventResult(eventStore, addEventToSidebar, info.event);
 			if (isOk) {
 				ReactModalService.internal.closeModal(eventStore);
@@ -2642,14 +2799,21 @@ const ReactModalService = {
 				},
 			},
 			textKey: 'MODALS.ACTIONS',
-			className: 'border-top-gray',
+			className: 'border-top-gray actions-row',
 		} as any);
 
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
-						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
+					<div
+						className={getClasses(
+							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
+							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+						)}
+						key={`add-calendar-event-modal-existing-${eventStore.forceUpdate}`}
+					>
+						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input, true))}
+						{ReactModalService.internal.renderShowHideMore(eventStore)}
 					</div>
 				)}
 			</Observer>
@@ -2685,6 +2849,8 @@ const ReactModalService = {
 
 			// ERROR HANDLING: todo add try/catch & show a message if fails
 			onConfirm: async () => {
+				ReactModalService.internal.disableOnConfirm();
+
 				await removeEventFromSidebarById(event.id);
 				await eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
 
@@ -2713,8 +2879,8 @@ const ReactModalService = {
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, continueKey),
 			confirmBtnCssClass: 'primary-button',
-			onConfirm: () => {
-				callback();
+			onConfirm: async () => {
+				await callback();
 
 				ReactModalService.internal.closeModal(eventStore);
 			},
@@ -2895,12 +3061,7 @@ const ReactModalService = {
 						'success'
 					);
 				} else {
-					ReactModalService.internal.alertMessage(
-						eventStore,
-						'MODALS.ERROR.TITLE',
-						'OOPS_SOMETHING_WENT_WRONG',
-						'error'
-					);
+					ReactModalService.internal.openOopsErrorModal(eventStore);
 				}
 
 				ReactModalService.internal.closeModal(eventStore);

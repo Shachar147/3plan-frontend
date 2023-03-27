@@ -83,6 +83,9 @@ body {
 .overflow-hidden {
 	overflow: hidden;
 }
+.overflow-visible {
+	overflow: visible !important;
+}
 
 .visible {
 	visibility: visible;
@@ -202,6 +205,10 @@ body {
 
 .padding-inline-15 {
 	padding-inline: 15px;
+}
+
+.padding-top-0 {
+	padding-top: 0 !important;
 }
 
 .padding-top-2 {
@@ -472,12 +479,24 @@ div[class$='-control'] {
 	max-width: 320px;
 }
 
+.triplan-selector {
+	&.disabled {
+		opacity: 0.7;
+	}
+}
+
 .input-with-label input.textInput {
 	height: 37px; /* 47px */
 }
 
 .input-with-label label {
 	min-width: 78px;
+}
+
+body.ltr {
+	.input-with-label label {
+		min-width: 140px;
+	}
 }
 
 .sweet-alert .btn {

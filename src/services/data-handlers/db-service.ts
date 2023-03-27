@@ -8,10 +8,10 @@ import { TripDataSource } from '../../utils/enums';
 export interface upsertTripProps {
 	name?: string;
 	dateRange?: DateRangeFormatted;
-	categories?: string;
-	calendarEvents?: string;
-	sidebarEvents?: string;
-	allEvents?: string;
+	categories?: any[];
+	calendarEvents?: any[];
+	sidebarEvents?: Record<number, any[]>;
+	allEvents?: any[];
 	calendarLocale?: LocaleCode;
 }
 
@@ -189,6 +189,6 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async duplicateTrip(_eventStore: EventStore, tripName: string, newTripName: string) {
-		await apiPost(`/trip/duplicate`, { name: tripName, newName: newTripName });
+		return await apiPost(`/trip/duplicate`, { name: tripName, newName: newTripName });
 	}
 }

@@ -105,21 +105,23 @@
 
 .sidebar-event-title-container {
 	display: flex;
-}
+	width: 100%;
 
-.sidebar-event-title-container .sidebar-event-title-text {
-	margin-inline-end: 3px;
-	flex-basis: content;
-	flex-grow: 0;
-	word-break: break-all;
-}
+	.sidebar-event-title-text {
+		margin-inline-end: 3px;
+		flex-basis: content;
+		flex-grow: 0;
+		word-break: break-word;
+		min-width: 30px;
+	}
 
-.sidebar-event-title-container .sidebar-event-icon {
-	margin-inline-end: 3px;
-}
+	.sidebar-event-icon {
+		margin-inline-end: 3px;
+	}
 
-.sidebar-event-title-container .sidebar-event-duration {
-	min-width: fit-content;
+	.sidebar-event-duration {
+		min-width: fit-content;
+	}
 }
 
 .sidebar-statistics {
