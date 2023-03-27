@@ -71,12 +71,7 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		},
 	}));
 
-	console.log({ icon });
-
-	const icon_block = !icon ? undefined : (
-		<i data-testid={`data-test-id-${modalValueName}`} className={`${icon}`} />
-		// <i data-testid={`data-test-id-${modalValueName}`} className={`${icon} icon`} />
-	);
+	const icon_block = !icon ? undefined : <i data-testid={`data-test-id-${modalValueName}`} className={`${icon}`} />;
 	const style = error ? { border: '1px solid var(--red)' } : undefined;
 
 	const input = (
