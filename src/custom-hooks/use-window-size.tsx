@@ -42,7 +42,7 @@ export function useHandleWindowResize() {
 		runInAction(() => {
 			if (!eventStore.isMobile && isMobile) {
 				eventStore.setMobileViewMode(
-					DataServices.LocalStorageService.getLastViewMode(eventStore.mobileViewMode)
+					DataServices.LocalStorageService.getLastMobileViewMode(eventStore.mobileViewMode)
 				);
 			}
 			eventStore.setIsMobile(isMobile);

@@ -30,6 +30,7 @@ import { TripDataSource, ViewMode } from '../../utils/enums';
 export class LocalStorageService implements BaseDataHandler {
 	CONTINUE_AS_GUEST_MODAL_LS_KEY = 'triplan-hide-continue-as-guest-modal';
 	LAST_MOBILE_VIEW_MODE = 'triplan-last-mobile-view-mode';
+	LAST_VIEW_MODE = 'triplan-last-view-mode';
 
 	getDataSourceName() {
 		return TripDataSource.LOCAL;
@@ -291,14 +292,25 @@ export class LocalStorageService implements BaseDataHandler {
 		localStorage.setItem(this.CONTINUE_AS_GUEST_MODAL_LS_KEY, '1');
 	}
 
-	// --- Mobile ---------------------------------------------------------------------------
 	setLastViewMode(defaultView: ViewMode) {
-		localStorage.setItem(this.LAST_MOBILE_VIEW_MODE, defaultView);
+		localStorage.setItem(this.LAST_VIEW_MODE, defaultView);
 	}
 
 	getLastViewMode(defaultView: ViewMode): ViewMode {
-		if (!localStorage.getItem(this.LAST_MOBILE_VIEW_MODE)) {
+		if (!localStorage.getItem(this.LAST_VIEW_MODE)) {
 			this.setLastViewMode(defaultView);
+		}
+		return localStorage.getItem(this.LAST_VIEW_MODE) as ViewMode;
+	}
+
+	// --- Mobile ---------------------------------------------------------------------------
+	setLastMobileViewMode(defaultView: ViewMode) {
+		localStorage.setItem(this.LAST_MOBILE_VIEW_MODE, defaultView);
+	}
+
+	getLastMobileViewMode(defaultView: ViewMode): ViewMode {
+		if (!localStorage.getItem(this.LAST_MOBILE_VIEW_MODE)) {
+			this.setLastMobileViewMode(defaultView);
 		}
 		return localStorage.getItem(this.LAST_MOBILE_VIEW_MODE) as ViewMode;
 	}

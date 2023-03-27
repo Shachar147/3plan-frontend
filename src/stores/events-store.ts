@@ -64,8 +64,8 @@ export class EventStore {
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
-	@observable viewMode = ViewMode.combined;
-	@observable mobileViewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.sidebar);
+	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.combined);
+	@observable mobileViewMode = DataServices.LocalStorageService.getLastMobileViewMode(ViewMode.sidebar);
 	@observable hideCustomDates = this.viewMode == ViewMode.calendar;
 	@observable openCategories = observable.map<number, number>({});
 	@observable openSidebarGroups = observable.map<string, number>({});
@@ -696,11 +696,13 @@ export class EventStore {
 	}
 
 	@action
-	setViewMode(newVideMode: ViewMode) {
-		this.viewMode = newVideMode;
+	setViewMode(newViewMode: ViewMode) {
+		this.viewMode = newViewMode;
 
 		// show hide custom dates based on view
 		this.initCustomDatesVisibilityBasedOnViewMode();
+
+		DataServices.LocalStorageService.setLastViewMode(newViewMode);
 	}
 
 	@action

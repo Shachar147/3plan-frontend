@@ -57,7 +57,7 @@ function MainPage(props: MainPageProps) {
 			if (eventStore.mobileViewMode !== ViewMode.sidebar) {
 				eventStore.setViewMode(eventStore.mobileViewMode as ViewMode);
 			}
-			DataServices.LocalStorageService.setLastViewMode(eventStore.mobileViewMode);
+			DataServices.LocalStorageService.setLastMobileViewMode(eventStore.mobileViewMode);
 		}
 	}, [eventStore.mobileViewMode]);
 
