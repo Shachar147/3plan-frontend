@@ -14,7 +14,7 @@ interface MobileHeaderProps extends TriplanHeaderProps {
 }
 
 function MobileHeader(options: MobileHeaderProps) {
-	const { withLogo = false, showTripName } = options;
+	const { withLogo = false } = options;
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
 
@@ -39,19 +39,19 @@ function MobileHeader(options: MobileHeaderProps) {
 					</div>
 				</div>
 			</div>
-			{showTripName && (
-				<div className="mobile-header-trip-name">
-					{/*<a*/}
-					{/*	onClick={() => {*/}
-					{/*		navigate('/my-trips');*/}
-					{/*	}}*/}
-					{/*>*/}
-					{/*	{TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}*/}
-					{/*</a>*/}
-					{/*{' > '}*/}
-					{eventStore.tripName}
-				</div>
-			)}
+			{/*{showTripName && (*/}
+			{/*	<div className="mobile-header-trip-name">*/}
+			{/*		/!*<a*!/*/}
+			{/*		/!*	onClick={() => {*!/*/}
+			{/*		/!*		navigate('/my-trips');*!/*/}
+			{/*		/!*	}}*!/*/}
+			{/*		/!*>*!/*/}
+			{/*		/!*	{TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}*!/*/}
+			{/*		/!*</a>*!/*/}
+			{/*		/!*{' > '}*!/*/}
+			{/*		{eventStore.tripName}*/}
+			{/*	</div>*/}
+			{/*)}*/}
 		</div>
 	);
 }

@@ -25,6 +25,7 @@ export interface TriplanHeaderProps {
 	showOnlyEventsWithNoOpeningHours?: boolean; // shouldn't really pass them, only for storybook
 	showOnlyEventsWithTodoComplete?: boolean; // shouldn't really pass them, only for storybook
 	withLanguageSelector?: boolean;
+	showTripName?: boolean;
 }
 
 function TriplanHeader(options: TriplanHeaderProps = {}) {

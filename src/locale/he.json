@@ -488,5 +488,6 @@
 	"BY_CATEGORIES_AND_PRIORITIES": "קטגוריות ועדיפויות",
 	"CHRONOLOGICAL_ORDER": "סדר כרונולוגי - יום {X}",
 	"DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER": "הזן כותרת",
-	"LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY": "אין פעילות בלוח השנה, הוסף כדי לקבל סיכום"
+	"LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY": "אין פעילות בלוח השנה, הוסף כדי לקבל סיכום",
+	"MOBILE_NAVBAR.TRIP_ITEM": "תכנון טיול: {X}"
 }

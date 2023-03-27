@@ -411,5 +411,6 @@
 	"SHOW_MAP_ACTIVITIES_BY": "Show map activities by:",
 	"BY_CATEGORIES_AND_PRIORITIES": "Categories & Priorities",
 	"CHRONOLOGICAL_ORDER": "Chronological order - day {X}",
-	"LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY": "There are no activities in the calendar, add to get a summary"
+	"LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY": "There are no activities in the calendar, add to get a summary",
+	"MOBILE_NAVBAR.TRIP_ITEM": "Planning trip: {X}"
 }

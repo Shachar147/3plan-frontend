@@ -831,3 +831,13 @@ body.rtl {
 		left: 10px;
 	}
 }
+
+.height-max-content {
+	height: max-content;
+}
+
+body.rtl {
+	.nav-text {
+		text-align: right;
+	}
+}

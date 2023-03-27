@@ -29,6 +29,7 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 		withFilterTags = false, // todo complete! think how to display filters in the mobile view
 		withLoginLogout = true,
 		withLanguageSelector = true,
+		showTripName,
 	} = options;
 
 	const isLoggedIn = !!getUser();
@@ -38,6 +39,14 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 	const SidebarData: any[] = useMemo(
 		() =>
 			[
+				showTripName && {
+					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.TRIP_ITEM', {
+						X: eventStore.tripName,
+					}),
+					onClick: () => {},
+					icon: 'fa-plane',
+					cName: 'nav-text height-max-content active',
+				},
 				withSearch && {
 					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
 					onClick: () => {
