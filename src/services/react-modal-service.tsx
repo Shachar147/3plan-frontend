@@ -1226,7 +1226,7 @@ const ReactModalService = {
 							eventStore,
 							'MODALS.TITLE',
 							ReactModalRenderHelper.renderTextInput(eventStore, 'name', {
-								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+								placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
 								id: 'new-name',
 							}),
 							'border-top-gray border-bottom-gray padding-bottom-20'
@@ -1324,7 +1324,7 @@ const ReactModalService = {
 							eventStore,
 							'MODALS.TITLE',
 							ReactModalRenderHelper.renderTextInput(eventStore, 'name', {
-								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+								placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
 								id: 'new-name',
 							}),
 							'border-top-gray border-bottom-gray padding-bottom-20'
