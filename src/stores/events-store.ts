@@ -533,9 +533,9 @@ export class EventStore {
 	}
 
 	@computed
-	get allEventsLocationsWithDuplicates(): Coordinate[] {
+	get allEventsLocationsWithDuplicates(): { lat: number; lng: number; eventName: string }[] {
 		// returns all locations with duplicates (if names are different)
-		const allLocations = Array.from(
+		return Array.from(
 			new Set(
 				this.allEventsComputed
 					.filter((x) => x.location?.latitude && x.location?.longitude)
@@ -548,8 +548,6 @@ export class EventStore {
 					)
 			)
 		).map((x) => JSON.parse(x));
-
-		return allLocations;
 	}
 
 	// --- actions --------------------------------------------------------------

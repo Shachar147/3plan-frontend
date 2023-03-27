@@ -343,6 +343,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderDistances = () => {
+		const UNKNOWN_DISTANCE_RESULT = 'N/A';
 		const shouldShowDistancesBlock = Array.from(eventStore.distanceResults.values()).length > 0;
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.TITLE');
@@ -368,9 +369,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			const distanceString = distanceResult
 				? toDistanceString(eventStore, distanceResult, true, eventStore.travelMode)
-				: 'N/A';
+				: UNKNOWN_DISTANCE_RESULT;
 
-			if (distanceString === 'N/A') {
+			if (distanceString === UNKNOWN_DISTANCE_RESULT) {
 				return (
 					<div className="flex-col gap-8 sidebar-distances-block-result">
 						<div className="flex-row align-items-center">

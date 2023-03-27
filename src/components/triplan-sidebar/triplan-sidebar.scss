@@ -207,13 +207,11 @@
 	}
 
 	.sidebar-distances-block-result {
-		background-color: rgba(0, 0, 0, 0.03);
+		background-color: var(--black-bg);
 		border-radius: 18px;
-		color: #6a6868;
+		color: var(--brown-gray);
 		margin-inline-start: 30px;
 		min-width: 280px;
-		//width: max-content;
-		//width: 100%;
 		padding-inline: 8px;
 
 		display: flex;
