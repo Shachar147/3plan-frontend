@@ -347,9 +347,6 @@ export class EventStore {
 				newEvents.push(e);
 			});
 
-			console.log({
-				eventsWithProblems,
-			});
 			runInAction(() => {
 				this.eventsWithDistanceProblems = eventsWithProblems;
 			});
@@ -458,16 +455,6 @@ export class EventStore {
 
 	@computed
 	get allEventsFilteredComputed() {
-		console.log({
-			mapViewDayFilter: this.mapViewDayFilter,
-			// @ts-ignore
-			results: this.mapViewDayFilter
-				? this.allEventsComputed.find(
-						// @ts-ignore
-						(x) => x.start && new Date(x.start).toLocaleDateString() === this.mapViewDayFilter
-				  )
-				: [],
-		});
 		return this.allEventsComputed.filter((event) => {
 			const calendarEvent = this.calendarEvents.find((c) => c.id == event.id);
 
@@ -519,7 +506,7 @@ export class EventStore {
 			console.error(`wrong use of getEventIndexInCalendarByDay - day not passed`);
 			return -1;
 		}
-		return this.calendarEvents
+		const calendarEventsInDay = this.calendarEvents
 			.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
 			.filter(
 				(e) =>
@@ -527,8 +514,8 @@ export class EventStore {
 					e.location?.latitude &&
 					e.location?.longitude &&
 					!e.allDay
-			)
-			.findIndex((e) => e.id == event.id);
+			);
+		return calendarEventsInDay.findIndex((e) => e.id == event.id);
 	}
 
 	@computed

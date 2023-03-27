@@ -430,12 +430,9 @@ const RootRouter = () => {
 					value: x.id,
 					label: x.icon ? `${x.icon} ${x.title}` : x.title,
 				}));
-			console.log({ place });
 			if (place.name && !eventStore.modalValues['category']) {
-				console.log({ name: place.name });
 				if (isMatching(place.name, ['hotel', 'מלון']) || isMatching(place.website ?? '', ['hotel', 'מלון'])) {
 					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, ['hotel', 'מלון']));
-					// console.log('here', eventStore.modalValues['category']);
 				}
 			}
 

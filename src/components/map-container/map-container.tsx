@@ -1069,7 +1069,7 @@ const MapContainer = (props: MapContainerProps) => {
 		function renderCalculateDistancesButton() {
 			if (
 				eventStore.dataService.getDataSourceName() == TripDataSource.LOCAL ||
-				eventStore.allEventsLocations.length < 2
+				eventStore.allEventsLocationsWithDuplicates.length < 2
 			) {
 				return;
 			}
@@ -1160,6 +1160,7 @@ const MapContainer = (props: MapContainerProps) => {
 					{filteredVisibleItems
 						.map((info) => {
 							const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
+
 							// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
 
 							let idxInDay = -1;
@@ -1227,7 +1228,9 @@ const MapContainer = (props: MapContainerProps) => {
 									{addToCalendar}
 									{eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
 									eventStore.mapViewDayFilter &&
-									idxInDay != undefined ? (
+									idxInDay != undefined &&
+									idxInDay >= 0 &&
+									visibleItemsSearchValue === '' ? (
 										<>
 											{idxInDay + 1}
 											{' - '}

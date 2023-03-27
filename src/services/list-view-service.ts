@@ -931,8 +931,8 @@ const ListViewService = {
 			});
 		});
 
-		// @ts-ignore
-		console.log({ routes: window.routes });
+		// // @ts-ignore
+		// console.log({ routes: window.routes });
 
 		return summaryPerDay;
 	},
