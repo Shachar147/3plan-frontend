@@ -34,6 +34,7 @@ import Slider from 'react-slick';
 // import _ from 'lodash';
 import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
+import LocationInput from '../components/inputs/location-input/location-input';
 import { apiGetNew, apiGetPromise, apiPost } from '../helpers/api';
 import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 
@@ -58,6 +59,15 @@ export const ReactModalRenderHelper = {
 			</div>
 		);
 	},
+	// todo complete:
+	// 1 - on edit event, location does not show the location coordinate since it keeps only the address.
+	// maybe need to check if type is string - check if there's coordinate on allEvents. otherwise - check from here.
+
+	// 2 - auto images are not being filled in on the textarea itself and not being saved. see how to do it.
+
+	// 3 - check how to auto-rerender images slider when text changes
+
+	// 4 - this PR have 100% things that not written good, fix it.
 	renderTextInput: (
 		eventStore: EventStore,
 		modalValueName: string,
@@ -75,6 +85,22 @@ export const ReactModalRenderHelper = {
 	) => {
 		if (extra.value && !eventStore.modalValues[modalValueName]) {
 			eventStore.modalValues[modalValueName] = extra.value;
+		}
+
+		if (modalValueName === 'location') {
+			return (
+				<LocationInput
+					id={extra.id}
+					className={extra.className}
+					ref={ref}
+					modalValueName={modalValueName}
+					onClick={extra.onClick}
+					onKeyUp={extra.onKeyUp}
+					placeholder={extra.placeholder}
+					placeholderKey={extra.placeholderKey}
+					autoComplete={extra.autoComplete}
+				/>
+			);
 		}
 
 		return (
@@ -591,7 +617,7 @@ const ReactModalService = {
 
 			const setManualLocation = () => {
 				// @ts-ignore
-				window.setManualLocation('location-input', 'selectedLocation');
+				window.setManualLocation('location-input', 'selectedLocation', eventStore);
 			};
 
 			// @ts-ignore
@@ -711,8 +737,8 @@ const ReactModalService = {
 							className: 'location-input',
 							value:
 								eventStore.modalValues['selectedLocation'] ||
-								initialData.location?.address ||
-								selectedLocation?.address ||
+								initialData.location ||
+								selectedLocation ||
 								'',
 							onClick: initLocation,
 							onKeyUp: setManualLocation,
@@ -779,7 +805,7 @@ const ReactModalService = {
 
 			const setManualLocation = () => {
 				// @ts-ignore
-				window.setManualLocation('location-input', 'selectedLocation');
+				window.setManualLocation('location-input', 'selectedLocation', eventStore);
 			};
 
 			// @ts-ignore
@@ -921,8 +947,8 @@ const ReactModalService = {
 								className: 'location-input',
 								value:
 									eventStore.modalValues['selectedLocation'] ||
-									initialData.location?.address ||
-									selectedLocation?.address ||
+									initialData.location ||
+									selectedLocation ||
 									'',
 								onClick: initLocation,
 								onKeyUp: setManualLocation,
@@ -1232,7 +1258,7 @@ const ReactModalService = {
 							eventStore,
 							'MODALS.TITLE',
 							ReactModalRenderHelper.renderTextInput(eventStore, 'name', {
-								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+								placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
 								id: 'new-name',
 							}),
 							'border-top-gray border-bottom-gray padding-bottom-20'
@@ -1330,7 +1356,7 @@ const ReactModalService = {
 							eventStore,
 							'MODALS.TITLE',
 							ReactModalRenderHelper.renderTextInput(eventStore, 'name', {
-								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+								placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
 								id: 'new-name',
 							}),
 							'border-top-gray border-bottom-gray padding-bottom-20'
@@ -2764,7 +2790,7 @@ const ReactModalService = {
 		window.openingHours = initialData.openingHours ?? currentEvent.openingHours;
 
 		// @ts-ignore
-		eventStore.modalValues['selectedLocation'] = window.selectedLocation?.address;
+		eventStore.modalValues['selectedLocation'] = window.selectedLocation;
 		eventStore.modalValues['openingHours'] = currentEvent.openingHours;
 		const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
 

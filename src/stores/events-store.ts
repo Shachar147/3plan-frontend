@@ -91,6 +91,7 @@ export class EventStore {
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
+	@observable forceUpdate = 0;
 
 	// map filters
 	@observable filterOutPriorities = observable.map({});
@@ -108,8 +109,6 @@ export class EventStore {
 	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
 	@observable taskData: any = { progress: 0 };
 	@observable eventsWithDistanceProblems: any[] = [];
-
-	@observable forceUpdate = 0;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -510,7 +509,9 @@ export class EventStore {
 
 	@computed
 	get scheduledDaysNames(): string[] {
-		return Array.from(new Set(this.calendarEvents.map((x) => new Date(x.start).toLocaleDateString())));
+		return Array.from(new Set(this.calendarEvents.map((x) => new Date(x.start).setHours(0, 0, 0, 0))))
+			.sort((a, b) => b - a)
+			.map((x) => new Date(x).toLocaleDateString());
 	}
 
 	getEventIndexInCalendarByDay(event: CalendarEvent, day: string | undefined = this.mapViewDayFilter) {
@@ -518,11 +519,16 @@ export class EventStore {
 			console.error(`wrong use of getEventIndexInCalendarByDay - day not passed`);
 			return -1;
 		}
-		const idx = this.calendarEvents
+		return this.calendarEvents
 			.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-			.filter((e) => new Date(e.start).toLocaleDateString() === day)
+			.filter(
+				(e) =>
+					new Date(e.start).toLocaleDateString() === day &&
+					e.location?.latitude &&
+					e.location?.longitude &&
+					!e.allDay
+			)
 			.findIndex((e) => e.id == event.id);
-		return idx;
 	}
 
 	@computed

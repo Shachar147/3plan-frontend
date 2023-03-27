@@ -95,6 +95,7 @@
 	"ADD_CATEGORY.BUTTON_TEXT": "Add Category",
 	"ADD_CATEGORY_MODAL.TITLE.ADD_CATEGORY": "Add Category",
 	"ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER": "Enter Category Name...",
+	"DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER": "Enter Title",
 	"MODALS.CREATE.TITLE": "Created!",
 	"MODALS.CREATE_CATEGORY.CONTENT": "Category have been created",
 	"MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST": "a category with that name already exist",
@@ -433,5 +434,6 @@
 	"GENERAL.TIME": "time",
 	"GENERAL.DISTANCE": "distance",
 	"SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.PREFIX": "Route not calculated,",
-	"SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX": "to calculate it"
+	"SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX": "to calculate it",
+	"LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY": "There are no activities in the calendar, add to get a summary"
 }

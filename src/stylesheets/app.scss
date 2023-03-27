@@ -874,3 +874,13 @@ body.rtl {
 .white-space-pre-line {
 	white-space: pre-line;
 }
+
+.triplan-text-input {
+	position: relative;
+
+	i.fa {
+		position: absolute;
+		top: 9px;
+		left: 10px;
+	}
+}

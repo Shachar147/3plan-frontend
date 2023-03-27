@@ -125,7 +125,7 @@ const LocationPicker = (props: LocationPickerProps) => {
 		// set location (to update input value)
 		setLocation(address);
 
-		// set location data (to update React & Angular locationData states)
+		// set location data
 		// if address is empty, we should update locationData to None.
 		let newLocationData =
 			address && address !== ''
