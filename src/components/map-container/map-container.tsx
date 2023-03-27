@@ -1232,9 +1232,16 @@ const MapContainer = (props: MapContainerProps) => {
 						.map((info) => {
 							const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
 							// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
-							const idxInDay = calendarEvent
-								? eventStore.getEventIndexInCalendarByDay(calendarEvent)
-								: 99999999;
+
+							let idxInDay = -1;
+							if (
+								eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+								eventStore.mapViewDayFilter
+							) {
+								idxInDay = calendarEvent
+									? eventStore.getEventIndexInCalendarByDay(calendarEvent)
+									: 99999999;
+							}
 
 							return {
 								info,

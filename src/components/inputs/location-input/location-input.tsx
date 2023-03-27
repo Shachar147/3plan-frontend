@@ -2,39 +2,27 @@ import TextInput, { TextInputProps, TextInputRef } from '../text-input/text-inpu
 import React, { Ref, useContext, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { eventStoreContext } from '../../../stores/events-store';
+import './location-input.scss';
 
 function LocationInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 	const [showIcon, setShowIcon] = useState(false);
 	const eventStore = useContext(eventStoreContext);
 
 	useEffect(() => {
-		// @ts-ignore
-		// console.log('here', 'changed', eventStore.modalValues['location']);
-
-		// @ts-ignore
 		const shouldShow =
 			eventStore.modalValues[props.modalValueName]?.['latitude'] &&
 			eventStore.modalValues[props.modalValueName]?.['longitude'];
 
-		console.log({
-			modalValues: eventStore.modalValues,
-		});
+		console.log({ modalValues: eventStore.modalValues });
 
 		setShowIcon(shouldShow);
-
-		// @ts-ignore
-	}, [eventStore.forceUpdate]); // Empty array ensures that effect is only run on mount
-
-	// console.log('value', props.modalValueName, eventStore.modalValues['selectedLocation']);
-
-	// console.log({
-	// 	modalValues: eventStore.modalValues,
-	// 	props,
-	// 	value: eventStore.modalValues[props.modalValueName]?.address,
-	// });
+	}, [eventStore.forceUpdate]);
 
 	return (
-		<div key={`location-input-${eventStore.modalValues[props.modalValueName]?.address}`}>
+		<div
+			className={'location-input-container'}
+			key={`location-input-${eventStore.modalValues[props.modalValueName]?.address}`}
+		>
 			<TextInput
 				id={`location-${eventStore.forceUpdate}`}
 				{...props}

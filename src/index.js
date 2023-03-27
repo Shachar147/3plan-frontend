@@ -281,6 +281,8 @@ const RootRouter = () => {
 			return;
 		}
 
+		let lostCoordinate = !!window[variableName]?.latitude;
+
 		window[variableName] = {
 			address,
 			latitude: undefined,
@@ -290,9 +292,11 @@ const RootRouter = () => {
 		if (eventStore) {
 			eventStore.modalValues[variableName] = undefined;
 
-			runInAction(() => {
-				eventStore.forceUpdate += 1;
-			});
+			if (lostCoordinate) {
+				runInAction(() => {
+					eventStore.forceUpdate += 1;
+				});
+			}
 		}
 
 		window.openingHours = undefined;
@@ -641,12 +645,11 @@ const RootRouter = () => {
 				};
 
 				// todo check
-				eventStore.modalValues['location'] = address;
-				// eventStore.modalValues['location'] = {
-				// 	address,
-				// 	latitude,
-				// 	longitude,
-				// };
+				eventStore.modalValues['location'] = {
+					address,
+					latitude,
+					longitude,
+				};
 
 				updatePlaceDetails(place);
 			}

@@ -731,8 +731,8 @@ const ReactModalService = {
 							className: 'location-input',
 							value:
 								eventStore.modalValues['selectedLocation'] ||
-								initialData.location?.address ||
-								selectedLocation?.address ||
+								initialData.location ||
+								selectedLocation ||
 								'',
 							onClick: initLocation,
 							onKeyUp: setManualLocation,
@@ -941,8 +941,8 @@ const ReactModalService = {
 								className: 'location-input',
 								value:
 									eventStore.modalValues['selectedLocation'] ||
-									initialData.location?.address ||
-									selectedLocation?.address ||
+									initialData.location ||
+									selectedLocation ||
 									'',
 								onClick: initLocation,
 								onKeyUp: setManualLocation,
@@ -2784,7 +2784,7 @@ const ReactModalService = {
 		window.openingHours = initialData.openingHours ?? currentEvent.openingHours;
 
 		// @ts-ignore
-		eventStore.modalValues['selectedLocation'] = window.selectedLocation?.address;
+		eventStore.modalValues['selectedLocation'] = window.selectedLocation;
 		eventStore.modalValues['openingHours'] = currentEvent.openingHours;
 		const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
 
