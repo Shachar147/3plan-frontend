@@ -120,13 +120,13 @@ interface MapContainerProps {
 const MapContainer = (props: MapContainerProps) => {
 	const [searchValue, setSearchValue] = useState('');
 	const [searchCoordinatesSearchValue, setSearchCoordinatesSearchValue] = useState(''); // keeps searchValue that matches current search coordinates
-	const [searchCoordinates, setSearchCoordinates] = useState([]);
+	const [searchCoordinates, setSearchCoordinates] = useState<any[]>([]);
 	const [visibleItems, setVisibleItems] = useState<any[]>([]);
 	const [visibleItemsSearchValue, setVisibleItemsSearchValue] = useState('');
-	const [center, setCenter] = useState(undefined);
+	const [center, setCenter] = useState<Coordinate | undefined>(undefined);
 	const eventStore = useContext(eventStoreContext);
 
-	const coordinatesToEvents = {};
+	const coordinatesToEvents: Record<string, AllEventsEvent> = {};
 	const texts: Record<string, string> = {};
 
 	// let googleRef: any, googleMapRef: any, infoWindow: any;
@@ -139,7 +139,7 @@ const MapContainer = (props: MapContainerProps) => {
 	let markers: any[] = [];
 
 	const getKey = (x: Coordinate) => x.lat + ',' + x.lng;
-	// modify to props
+
 	const locations = (props.allEvents ?? eventStore.allEventsFilteredComputed)
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
@@ -149,12 +149,11 @@ const MapContainer = (props: MapContainerProps) => {
 			lng: x.location?.longitude,
 		}));
 	locations.forEach((x) => {
-		// @ts-ignore
-		texts[getKey(x)] = x.label;
-		// @ts-ignore
-		coordinatesToEvents[getKey(x)] = x.event;
+		const coordinate: Coordinate = { lat: x.lat!, lng: x.lng! };
+		texts[getKey(coordinate)] = x.label;
+		coordinatesToEvents[getKey(coordinate)] = x.event;
 	});
-	// @ts-ignore
+
 	const coordinates = _.uniq(locations.map((x) => getKey(x))).map((x) => ({
 		lat: Number(x.split(',')[0]),
 		lng: Number(x.split(',')[1]),
@@ -440,7 +439,6 @@ const MapContainer = (props: MapContainerProps) => {
 
 		const initMarkerFromCoordinate = (coordinate: Coordinate) => {
 			const key = getKey(coordinate);
-			// @ts-ignore
 			const event = coordinatesToEvents[key];
 
 			// marker + marker when hovering
@@ -556,19 +554,18 @@ const MapContainer = (props: MapContainerProps) => {
 			searchMarkers = [];
 			// @ts-ignore
 			if (window.selectedSearchLocation) {
-				const coordinate = {
+				const coordinate: any = {
 					lat: selectedSearchLocation.latitude,
 					lng: selectedSearchLocation.longitude,
 					address: selectedSearchLocation.address,
 					// @ts-ignore
 					openingHours: window.openingHours,
 				};
-				// @ts-ignore
+
 				searchMarkers = [coordinate];
 			}
 
 			setSearchCoordinatesSearchValue(searchValue);
-			// @ts-ignore
 			setSearchCoordinates(searchMarkers);
 			return;
 
@@ -638,7 +635,7 @@ const MapContainer = (props: MapContainerProps) => {
 		return (event: any, marker: any) => {
 			if (googleMapRef && infoWindow) {
 				const coordinates = event.location;
-				// @ts-ignore
+
 				setCenter({ lat: coordinates.latitude, lng: coordinates.longitude });
 
 				infoWindow.setContent(buildInfoWindowContent(event));
@@ -1287,11 +1284,6 @@ const MapContainer = (props: MapContainerProps) => {
 					</div>
 				</div>
 			</div>
-			{/*{!googleMapRef && (*/}
-			{/*    <div>*/}
-			{/*        {TranslateService.translate(eventStore, 'MAP_VIEW.LOADING_PLACEHOLDER')}*/}
-			{/*    </div>*/}
-			{/*)}*/}
 			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
 				<GoogleMapReact
 					bootstrapURLKeys={{
@@ -1317,7 +1309,6 @@ const MapContainer = (props: MapContainerProps) => {
 						<Marker
 							key={index}
 							locationData={
-								// @ts-ignore
 								[{ ...place }].map((x) => {
 									x.longitude = x.lng;
 									x.latitude = x.lat;
@@ -1327,14 +1318,10 @@ const MapContainer = (props: MapContainerProps) => {
 								})[0]
 							}
 							clearSearch={clearSearch}
-							// @ts-ignore
 							text={place.address}
-							// @ts-ignore
 							lat={place.lat}
-							// @ts-ignore
 							lng={place.lng}
 							searchValue={searchCoordinatesSearchValue}
-							// @ts-ignore
 							openingHours={place.openingHours}
 						/>
 					))}
