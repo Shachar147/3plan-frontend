@@ -1,0 +1,28 @@
+.location-input-container {
+  .fa.fa-map-marker {
+    width: 20px;
+    text-align: left;
+    background-color: white;
+    //height: CALC(100%-2px);
+    top: 1px;
+    bottom: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 5px;
+    left: unset;
+  }
+
+  input.location-input {
+    padding-inline-end: 27px !important;
+  }
+}
+
+body.rtl {
+  .location-input-container {
+    .fa.fa-map-marker {
+      left: 5px;
+      right: unset;
+    }
+  }
+}

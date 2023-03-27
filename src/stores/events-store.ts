@@ -90,6 +90,7 @@ export class EventStore {
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
+	@observable forceUpdate = 0;
 
 	// map filters
 	@observable filterOutPriorities = observable.map({});
@@ -100,8 +101,6 @@ export class EventStore {
 
 	// add side bar modal
 	@observable isModalMinimized: boolean = true;
-
-	@observable forceUpdate = 0;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
