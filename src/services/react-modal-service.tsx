@@ -15,7 +15,7 @@ import {
 	SidebarEvent,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
-import { TripDataSource, TriplanEventPreferredTime, TriplanPriority } from '../utils/enums';
+import { TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../utils/enums';
 import { convertMsToHM, formatDuration, getInputDateTimeValue, validateDuration } from '../utils/time-utils';
 import SelectInput, { SelectInputOption } from '../components/inputs/select-input/select-input';
 import TextInput from '../components/inputs/text-input/text-input';
@@ -3302,7 +3302,15 @@ const ReactModalService = {
 
 									if (eventStore.distanceModalOpened) {
 										this.internal.closeModal(eventStore);
-										eventStore.openSidebarGroup(SidebarGroups.DISTANCES);
+
+										if (eventStore.isMobile) {
+											eventStore.setMobileViewMode(ViewMode.sidebar);
+											setTimeout(() => {
+												eventStore.openSidebarGroup(SidebarGroups.DISTANCES);
+											}, 600);
+										} else {
+											eventStore.openSidebarGroup(SidebarGroups.DISTANCES);
+										}
 									}
 								});
 						}

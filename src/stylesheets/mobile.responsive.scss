@@ -263,6 +263,11 @@
 	.sweet-alert.triplan-react-modal {
 		min-width: unset !important;
 
+		h2 + div {
+			max-height: 50vh;
+			overflow: auto;
+		}
+
 		.slick-slider,
 		.triplan-selector,
 		.triplan-textarea-input,
