@@ -185,6 +185,8 @@
 	"DURATION.MIN": "min",
 	"DURATION.HOURS": "hours",
 	"DURATION.HOUR": "hour",
+	"DURATION.DAYS": "days",
+	"DURATION.DAY": "day",
 	"DISTANCE.KM": "km",
 	"DISTANCE.M": "m",
 	"REACHING_TO_NEXT_DESTINATION": "Reaching to the next destination",

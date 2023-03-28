@@ -217,12 +217,13 @@ export function toDistanceString(
 	eventStore: EventStore,
 	distanceResult: DistanceResult,
 	short: boolean = false,
-	travelMode?: GoogleTravelMode
+	travelMode?: GoogleTravelMode,
+	showOverDayDistances = true
 ) {
 	let duration = distanceResult.duration;
 	let distance = distanceResult.distance;
 
-	if (duration && duration.indexOf('day') !== -1) {
+	if (duration && duration.indexOf('day') !== -1 && !showOverDayDistances) {
 		return '';
 	}
 
@@ -244,6 +245,8 @@ export function toDistanceString(
 	duration = duration.replaceAll('min', TranslateService.translate(eventStore, 'DURATION.MIN'));
 	duration = duration.replaceAll('hours', TranslateService.translate(eventStore, 'DURATION.HOURS'));
 	duration = duration.replaceAll('hour', TranslateService.translate(eventStore, 'DURATION.HOUR'));
+	duration = duration.replaceAll('day', TranslateService.translate(eventStore, 'DURATION.DAYS'));
+	duration = duration.replaceAll('days', TranslateService.translate(eventStore, 'DURATION.DAY'));
 
 	duration = duration.replaceAll('1 שעה', 'שעה');
 	duration = duration.replaceAll('1 דקה', 'דקה');

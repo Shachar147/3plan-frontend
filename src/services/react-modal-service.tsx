@@ -3259,7 +3259,7 @@ const ReactModalService = {
 
 			const updateTaskStatus = async () => {
 				counter++;
-				const result = await apiGetNew(`/task-status/${taskId}`);
+				const result = await apiGetNew(`/task/${taskId}`);
 				runInAction(() => {
 					eventStore.taskData = result.data;
 

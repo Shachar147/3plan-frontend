@@ -1097,7 +1097,12 @@ const MapContainer = (props: MapContainerProps) => {
 
 		return (
 			<div>
-				<div className="map-filters-container">
+				<div
+					className={getClasses(
+						'map-filters-container',
+						!eventStore.isMobile && 'gap-8 justify-content-start'
+					)}
+				>
 					{renderFilterButton()}
 					{renderCalculateDistancesButton()}
 				</div>

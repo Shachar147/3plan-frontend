@@ -35,7 +35,7 @@ const DistanceCalculator = () => {
 			: undefined;
 
 		const distanceString = distanceResult
-			? toDistanceString(eventStore, distanceResult, true, eventStore.travelMode)
+			? toDistanceString(eventStore, distanceResult, true, eventStore.travelMode, true)
 			: UNKNOWN_DISTANCE_RESULT;
 
 		if (distanceString === UNKNOWN_DISTANCE_RESULT) {

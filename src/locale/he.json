@@ -193,6 +193,8 @@
 	"DURATION.MIN": "דקה",
 	"DURATION.HOURS": "שעות",
 	"DURATION.HOUR": "שעה",
+	"DURATION.DAYS": "ימים",
+	"DURATION.DAY": "ימים",
 	"DISTANCE.KM": "קילומטר",
 	"DISTANCE.M": "מטרים",
 	"REACHING_TO_NEXT_DESTINATION": "מעבר ליעד הבא",
