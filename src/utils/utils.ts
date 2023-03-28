@@ -3,7 +3,7 @@ import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
 import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
-import { FLIGHT_KEYWORDS } from '../components/map-container/map-container';
+import { FLIGHT_KEYWORDS, HOTEL_KEYWORDS } from '../components/map-container/map-container';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');
@@ -216,12 +216,14 @@ export function getCoordinatesRangeKey(travelMode: string, startDestination: Coo
 export function toDistanceString(
 	eventStore: EventStore,
 	distanceResult: DistanceResult,
-	travelMode?: GoogleTravelMode
+	short: boolean = false,
+	travelMode?: GoogleTravelMode,
+	showOverDayDistances = true
 ) {
 	let duration = distanceResult.duration;
 	let distance = distanceResult.distance;
 
-	if (duration.indexOf('day') !== -1) {
+	if (duration && duration.indexOf('day') !== -1 && !showOverDayDistances) {
 		return '';
 	}
 
@@ -229,11 +231,11 @@ export function toDistanceString(
 		travelMode = eventStore.travelMode;
 	}
 
-	const reachingTo = TranslateService.translate(eventStore, 'REACHING_TO_NEXT_DESTINATION');
+	const reachingTo = short ? '' : `${TranslateService.translate(eventStore, 'REACHING_TO_NEXT_DESTINATION')}: `;
 
 	// means there are no ways to get there in this travel mode
-	if (distance === '-' || duration === '-') {
-		return `${reachingTo}: ${TranslateService.translate(
+	if (!distance || !duration || distance === '-' || duration === '-') {
+		return `${reachingTo}${TranslateService.translate(
 			eventStore,
 			'DISTANCE.ERROR.NO_POSSIBLE_WAY'
 		)}${TranslateService.translate(eventStore, 'TRAVEL_MODE.' + eventStore.travelMode.toUpperCase())}`;
@@ -243,6 +245,8 @@ export function toDistanceString(
 	duration = duration.replaceAll('min', TranslateService.translate(eventStore, 'DURATION.MIN'));
 	duration = duration.replaceAll('hours', TranslateService.translate(eventStore, 'DURATION.HOURS'));
 	duration = duration.replaceAll('hour', TranslateService.translate(eventStore, 'DURATION.HOUR'));
+	duration = duration.replaceAll('day', TranslateService.translate(eventStore, 'DURATION.DAYS'));
+	duration = duration.replaceAll('days', TranslateService.translate(eventStore, 'DURATION.DAY'));
 
 	duration = duration.replaceAll('1 שעה', 'שעה');
 	duration = duration.replaceAll('1 דקה', 'דקה');
@@ -256,19 +260,19 @@ export function toDistanceString(
 		case GoogleTravelMode.TRANSIT:
 			prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
 			suffix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.TRANSIT.SUFFIX');
-			return `${reachingTo}: ${prefix} ${duration} (${distance}) ${suffix}`;
+			return `${reachingTo}${prefix} ${duration} (${distance}) ${suffix}`;
 		case GoogleTravelMode.DRIVING:
 			prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.DRIVING');
-			return `${reachingTo}: ${prefix} ${duration} (${distance})`;
+			return `${reachingTo}${prefix} ${duration} (${distance})`;
 		case GoogleTravelMode.WALKING:
 			prefix = TranslateService.translate(eventStore, 'DISTANCE.PREFIX.WALKING');
-			return `${reachingTo}: ${prefix} ${duration} (${distance})`;
+			return `${reachingTo}${prefix} ${duration} (${distance})`;
 		default:
 			return '';
 	}
 }
 
-export function isMatching(str: string, options: string[]) {
+export function isMatching(str: string = '', options: string[]) {
 	let isMatch = false;
 	let idx = 0;
 	while (!isMatch && idx < options.length) {
@@ -291,7 +295,7 @@ export function isBasketball(category: string, title: string) {
 }
 
 export function isHotel(category: string, title: string) {
-	return isMatching(category, ['hotel', 'מלון']) || isMatching(title, ['hotel', 'מלון']);
+	return isMatching(category, HOTEL_KEYWORDS) || isMatching(title, HOTEL_KEYWORDS);
 }
 
 export function containsDuplicates(array: any[]) {
@@ -346,4 +350,22 @@ export function BuildEventUrl(location: LocationData) {
 
 export async function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function coordinateToString(coordinate: Coordinate): string {
+	return `${coordinate.lat},${coordinate.lng}`;
+}
+
+export function stringToCoordinate(coordinateStr: string): Coordinate | undefined {
+	const parts = coordinateStr.split(',');
+	if (parts.length !== 2) {
+		return undefined;
+	}
+	if (Number.isNaN(Number(parts[0])) || Number.isNaN(Number(parts[1]))) {
+		return undefined;
+	}
+	return {
+		lat: Number(parts[0]),
+		lng: Number(parts[1]),
+	};
 }

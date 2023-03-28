@@ -111,8 +111,9 @@
 		margin-inline-end: 3px;
 		flex-basis: content;
 		flex-grow: 0;
-		word-break: break-word;
-		min-width: 30px;
+		word-break: break-all;
+		//min-width: max-content;
+		//white-space: nowrap;
 	}
 
 	.sidebar-event-icon {
@@ -175,5 +176,65 @@
 		&:hover {
 			opacity: 0.6;
 		}
+	}
+}
+
+.sidebar-distances-block {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding-top: 10px;
+
+	.sidebar-distances-select-row {
+		&.input-with-label {
+			padding-top: 0;
+			gap: 10px !important;
+			font-size: 14px;
+
+			label {
+				min-width: 50px;
+				height: 100%;
+				margin-bottom: 0;
+			}
+
+			.triplan-selector {
+				max-width: 100%;
+				display: flex;
+				flex: 1 1 0;
+				min-width: 0;
+			}
+		}
+	}
+
+	.sidebar-distances-block-result {
+		background-color: var(--black-bg);
+		border-radius: 18px;
+		color: var(--brown-gray);
+		margin-inline-start: 30px;
+		min-width: 280px;
+		padding-inline: 8px;
+
+		display: flex;
+		flex: 1 1 0;
+	}
+
+	.sidebar-distance-result {
+		margin-bottom: 6px;
+	}
+}
+
+body.rtl {
+	.sidebar-distances-select-row {
+		&.input-with-label {
+			text-align: center;
+
+			label {
+				min-width: 20px;
+			}
+		}
+	}
+
+	.sidebar-distance-result {
+		text-align: right;
 	}
 }

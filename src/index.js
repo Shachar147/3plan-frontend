@@ -36,13 +36,12 @@ import {
 	DESSERTS_KEYWORDS,
 	FLIGHT_KEYWORDS,
 	FOOD_KEYWORDS,
+	HOTEL_KEYWORDS,
 	NATURE_KEYWORDS,
 	NIGHTLIFE_KEYWORDS,
 	STORE_KEYWORDS,
 	TOURIST_KEYWORDS,
 } from './components/map-container/map-container';
-
-// import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
 // Dubai
 // Namos / Twiggy?
@@ -63,7 +62,6 @@ import {
 // - need to sync only if clicked on sync button. if synced - it need to be removed from local storage and be stored **only** on db.
 // - verify it good before doing that, and backup dubai and viena first ^^
 
-// - make events with timing problems more noticeable (currently red-border)
 // - add filter of show only events with problematic hours (and make sure it'll show them even though we're on filter mode)
 // - add price (!) and total price (!)
 // - add "leave at X to arrive on time" to list view (!!)
@@ -431,14 +429,12 @@ const RootRouter = () => {
 					value: x.id,
 					label: x.icon ? `${x.icon} ${x.title}` : x.title,
 				}));
-			console.log({ place });
 			if (place.name && !eventStore.modalValues['category']) {
-				console.log({ name: place.name });
-				if (isMatching(place.name, ['hotel', 'מלון'])) {
-					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, ['hotel', 'מלון']));
-					console.log('here', eventStore.modalValues['category']);
+				if (isMatching(place.name, HOTEL_KEYWORDS) || isMatching(place.website ?? '', HOTEL_KEYWORDS)) {
+					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, HOTEL_KEYWORDS));
 				}
 			}
+
 			if (place.types && !eventStore.modalValues['category']) {
 				const storeCategory = options.find((x) => isMatching(x.label, STORE_KEYWORDS));
 				const food = options.find((x) => isMatching(x.label, FOOD_KEYWORDS));

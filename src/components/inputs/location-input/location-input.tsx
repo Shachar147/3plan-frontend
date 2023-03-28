@@ -13,8 +13,6 @@ function LocationInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 			eventStore.modalValues[props.modalValueName]?.['latitude'] &&
 			eventStore.modalValues[props.modalValueName]?.['longitude'];
 
-		console.log({ modalValues: eventStore.modalValues });
-
 		setShowIcon(shouldShow);
 	}, [eventStore.forceUpdate]);
 

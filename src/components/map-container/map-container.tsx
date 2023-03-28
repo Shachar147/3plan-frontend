@@ -7,7 +7,7 @@ import { eventStoreContext } from '../../stores/events-store';
 import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
 import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
-import { MapViewMode, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
+import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../../utils/enums';
 import { BuildEventUrl, getClasses, isBasketball, isDessert, isFlight, isHotel, isMatching } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
@@ -15,10 +15,11 @@ import * as ReactDOMServer from 'react-dom/server';
 // @ts-ignore
 import Slider from 'react-slick';
 import { AllEventsEvent } from '../../services/data-handlers/data-handler-base';
-import { Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
-import { Observer } from 'mobx-react';
+import { CalendarEvent, Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
+import { observer, Observer } from 'mobx-react';
 import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
+import Button, { ButtonFlavor } from '../common/button/button';
 
 interface MarkerProps {
 	text?: string;
@@ -56,6 +57,7 @@ export const DESSERTS_KEYWORDS = [
 export const FOOD_KEYWORDS = ['food', 'restaurant', 'אוכל', 'מסעדת', 'מסעדות', 'cafe', 'קפה'];
 export const STORE_KEYWORDS = ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'];
 export const FLIGHT_KEYWORDS = ['flight', 'טיסה', 'airport', 'שדה תעופה', 'שדה התעופה', 'טיסות'];
+export const HOTEL_KEYWORDS = ['hotel', 'מלון'];
 export const TOURIST_KEYWORDS = ['tourism', 'תיירות', 'אתרים'];
 export const NATURE_KEYWORDS = [
 	'nature',
@@ -119,13 +121,13 @@ interface MapContainerProps {
 const MapContainer = (props: MapContainerProps) => {
 	const [searchValue, setSearchValue] = useState('');
 	const [searchCoordinatesSearchValue, setSearchCoordinatesSearchValue] = useState(''); // keeps searchValue that matches current search coordinates
-	const [searchCoordinates, setSearchCoordinates] = useState([]);
+	const [searchCoordinates, setSearchCoordinates] = useState<any[]>([]);
 	const [visibleItems, setVisibleItems] = useState<any[]>([]);
 	const [visibleItemsSearchValue, setVisibleItemsSearchValue] = useState('');
-	const [center, setCenter] = useState(undefined);
+	const [center, setCenter] = useState<Coordinate | undefined>(undefined);
 	const eventStore = useContext(eventStoreContext);
 
-	const coordinatesToEvents = {};
+	const coordinatesToEvents: Record<string, AllEventsEvent> = {};
 	const texts: Record<string, string> = {};
 
 	// let googleRef: any, googleMapRef: any, infoWindow: any;
@@ -138,7 +140,7 @@ const MapContainer = (props: MapContainerProps) => {
 	let markers: any[] = [];
 
 	const getKey = (x: Coordinate) => x.lat + ',' + x.lng;
-	// modify to props
+
 	const locations = (props.allEvents ?? eventStore.allEventsFilteredComputed)
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
@@ -148,11 +150,11 @@ const MapContainer = (props: MapContainerProps) => {
 			lng: x.location?.longitude,
 		}));
 	locations.forEach((x) => {
-		// @ts-ignore
-		texts[getKey(x)] = x.label;
-		// @ts-ignore
-		coordinatesToEvents[getKey(x)] = x.event;
+		const coordinate: Coordinate = { lat: x.lat!, lng: x.lng! };
+		texts[getKey(coordinate)] = x.label;
+		coordinatesToEvents[getKey(coordinate)] = x.event;
 	});
+
 	// @ts-ignore
 	const coordinates = _.uniq(locations.map((x) => getKey(x))).map((x) => ({
 		lat: Number(x.split(',')[0]),
@@ -439,19 +441,18 @@ const MapContainer = (props: MapContainerProps) => {
 
 		const initMarkerFromCoordinate = (coordinate: Coordinate) => {
 			const key = getKey(coordinate);
-			// @ts-ignore
 			const event = coordinatesToEvents[key];
 
 			// marker + marker when hovering
 			if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
 				// by day and index in day
-				const idx = eventStore.getEventIndexInCalendarByDay(event);
+				const idx = eventStore.getEventIndexInCalendarByDay(event as CalendarEvent);
 				icon.url = getIconUrlByIdx(event, idx + 1);
 			} else {
 				icon.url = getIconUrl(event);
 			}
 
-			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority] };
+			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority!] };
 			const markerIconWithBorder = {
 				...markerIcon,
 				strokeColor: '#ffffff',
@@ -555,19 +556,18 @@ const MapContainer = (props: MapContainerProps) => {
 			searchMarkers = [];
 			// @ts-ignore
 			if (window.selectedSearchLocation) {
-				const coordinate = {
+				const coordinate: any = {
 					lat: selectedSearchLocation.latitude,
 					lng: selectedSearchLocation.longitude,
 					address: selectedSearchLocation.address,
 					// @ts-ignore
 					openingHours: window.openingHours,
 				};
-				// @ts-ignore
+
 				searchMarkers = [coordinate];
 			}
 
 			setSearchCoordinatesSearchValue(searchValue);
-			// @ts-ignore
 			setSearchCoordinates(searchMarkers);
 			return;
 
@@ -637,7 +637,7 @@ const MapContainer = (props: MapContainerProps) => {
 		return (event: any, marker: any) => {
 			if (googleMapRef && infoWindow) {
 				const coordinates = event.location;
-				// @ts-ignore
+
 				setCenter({ lat: coordinates.latitude, lng: coordinates.longitude });
 
 				infoWindow.setContent(buildInfoWindowContent(event));
@@ -1057,7 +1057,7 @@ const MapContainer = (props: MapContainerProps) => {
 							});
 						}}
 						modalValueName={'mapViewModeSelector'}
-						maxMenuHeight={120}
+						maxMenuHeight={eventStore.viewMode === ViewMode.combined ? 210 : 45 * 6}
 						removeDefaultClass={true}
 						isClearable={false}
 					/>
@@ -1065,16 +1065,65 @@ const MapContainer = (props: MapContainerProps) => {
 			);
 		}
 
+		function renderCalculateDistancesButton() {
+			if (
+				eventStore.dataService.getDataSourceName() == TripDataSource.LOCAL ||
+				eventStore.allEventsLocationsWithDuplicates.length < 2
+			) {
+				return;
+			}
+
+			return (
+				<Button
+					flavor={ButtonFlavor.secondary}
+					text={TranslateService.translate(eventStore, 'CALCULATE_DISTANCE')}
+					onClick={() => ReactModalService.openCalculateDistancesModal(eventStore)}
+					className="calculate-distances-button brown"
+				/>
+			);
+		}
+
+		function renderFilterButton() {
+			return (
+				<Button
+					text={''}
+					onClick={() => eventStore.toggleMapFilters()}
+					className={getClasses('min-width-38', !eventStore.mapFiltersVisible && 'brown')}
+					flavor={ButtonFlavor.secondary}
+					icon={'fa-filter'}
+				/>
+			);
+		}
+
 		return (
-			<div
-				className={getClasses(
-					'map-filters-container',
-					eventStore.isMobile && 'justify-content-center flex-column'
-				)}
-			>
-				{renderPrioritiesFilters()}
-				{renderScheduledOrNotFilters()}
-				{renderMapViewSelection()}
+			<div>
+				<div
+					className={getClasses(
+						'map-filters-container',
+						!eventStore.isMobile && 'gap-8 justify-content-start'
+					)}
+				>
+					{renderFilterButton()}
+					{renderCalculateDistancesButton()}
+				</div>
+				{eventStore.mapFiltersVisible ? (
+					<div className="flex-col actual-filters-container">
+						<hr className="margin-block-2" />
+						<div
+							className={getClasses(
+								'map-filters-container actual-filters',
+								eventStore.isMobile && 'justify-content-center flex-column'
+							)}
+						>
+							<div className="flex-row gap-16 flex-1-1-0 flex-wrap-reverse justify-content-center">
+								{renderPrioritiesFilters()}
+								{renderScheduledOrNotFilters()}
+								{renderMapViewSelection()}
+							</div>
+						</div>
+						<hr className="margin-block-2" />
+					</div>
+				) : null}
 			</div>
 		);
 	}
@@ -1100,99 +1149,8 @@ const MapContainer = (props: MapContainerProps) => {
 		};
 	}, []);
 
-	return (
-		<div
-			className={getClasses(
-				'map-container',
-				props.isCombined && 'combined',
-				eventStore.isMobile && 'resize-none'
-			)}
-		>
-			{renderMapFilters()}
-			<div className="map-header">
-				<div className={'map-search-location-input'}>
-					<input
-						type="text"
-						className="map-header-location-input-search"
-						onClick={() =>
-							// @ts-ignore
-							window.initLocationPicker(
-								'map-header-location-input-search',
-								'selectedSearchLocation',
-								initSearchResultMarker,
-								eventStore
-							)
-						}
-						onKeyUp={() =>
-							// @ts-ignore
-							window.setManualLocation('map-header-location-input-search', 'selectedSearchLocation')
-						}
-						value={searchValue}
-						onChange={(e) => {
-							setSearchValue(e.target.value);
-						}}
-						autoComplete="off"
-						placeholder={TranslateService.translate(
-							eventStore,
-							eventStore.isMobile ? 'MAP_VIEW.SEARCH.PLACEHOLDER.SHORT' : 'MAP_VIEW.SEARCH.PLACEHOLDER'
-						)}
-					/>
-					<div className={getClasses('clear-search', searchCoordinates.length === 0 && 'hidden')}>
-						<a onClick={clearSearch}>x</a>
-					</div>
-				</div>
-			</div>
-			{/*{!googleMapRef && (*/}
-			{/*    <div>*/}
-			{/*        {TranslateService.translate(eventStore, 'MAP_VIEW.LOADING_PLACEHOLDER')}*/}
-			{/*    </div>*/}
-			{/*)}*/}
-			<GoogleMapReact
-				bootstrapURLKeys={{
-					key: 'AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo',
-				}} /* AIzaSyA16d9FJFh__vK04jU1P64vnEpPc3jenec */
-				center={
-					searchCoordinates.length > 0
-						? searchCoordinates[0]
-						: center
-						? center
-						: coordinates.length > 0
-						? { lat: coordinates[0].lat, lng: coordinates[0].lng }
-						: undefined
-				}
-				zoom={searchCoordinates.length > 0 || center ? 14 : 7}
-				yesIWantToUseGoogleMapApiInternals
-				// @ts-ignore
-				onGoogleApiLoaded={({ map, maps }) => initMap(map, maps)}
-				clickableIcons={false}
-				options={getOptions()}
-			>
-				{searchCoordinates.map((place, index) => (
-					<Marker
-						key={index}
-						locationData={
-							// @ts-ignore
-							[{ ...place }].map((x) => {
-								x.longitude = x.lng;
-								x.latitude = x.lat;
-								delete x.lng;
-								delete x.lat;
-								return x;
-							})[0]
-						}
-						clearSearch={clearSearch}
-						// @ts-ignore
-						text={place.address}
-						// @ts-ignore
-						lat={place.lat}
-						// @ts-ignore
-						lng={place.lng}
-						searchValue={searchCoordinatesSearchValue}
-						// @ts-ignore
-						openingHours={place.openingHours}
-					/>
-				))}
-			</GoogleMapReact>
+	function renderVisibleItemsPane() {
+		return (
 			<div
 				className={getClasses(
 					'visible-items-pane',
@@ -1231,6 +1189,7 @@ const MapContainer = (props: MapContainerProps) => {
 					{filteredVisibleItems
 						.map((info) => {
 							const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
+
 							// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
 
 							let idxInDay = -1;
@@ -1298,7 +1257,9 @@ const MapContainer = (props: MapContainerProps) => {
 									{addToCalendar}
 									{eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
 									eventStore.mapViewDayFilter &&
-									idxInDay != undefined ? (
+									idxInDay != undefined &&
+									idxInDay >= 0 &&
+									visibleItemsSearchValue === '' ? (
 										<>
 											{idxInDay + 1}
 											{' - '}
@@ -1310,8 +1271,98 @@ const MapContainer = (props: MapContainerProps) => {
 						})}
 				</div>
 			</div>
+		);
+	}
+
+	return (
+		<div
+			className={getClasses(
+				'map-container',
+				props.isCombined && 'combined',
+				eventStore.isMobile && 'resize-none'
+			)}
+		>
+			{renderMapFilters()}
+			<div className="map-header">
+				<div className={'map-search-location-input'}>
+					<input
+						type="text"
+						className="map-header-location-input-search"
+						onClick={() =>
+							// @ts-ignore
+							window.initLocationPicker(
+								'map-header-location-input-search',
+								'selectedSearchLocation',
+								initSearchResultMarker,
+								eventStore
+							)
+						}
+						onKeyUp={() =>
+							// @ts-ignore
+							window.setManualLocation('map-header-location-input-search', 'selectedSearchLocation')
+						}
+						value={searchValue}
+						onChange={(e) => {
+							setSearchValue(e.target.value);
+						}}
+						autoComplete="off"
+						placeholder={TranslateService.translate(
+							eventStore,
+							eventStore.isMobile ? 'MAP_VIEW.SEARCH.PLACEHOLDER.SHORT' : 'MAP_VIEW.SEARCH.PLACEHOLDER'
+						)}
+					/>
+					<div className={getClasses('clear-search', searchCoordinates.length === 0 && 'hidden')}>
+						<a onClick={clearSearch}>x</a>
+					</div>
+				</div>
+			</div>
+			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
+				<GoogleMapReact
+					bootstrapURLKeys={{
+						key: 'AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo',
+					}} /* AIzaSyA16d9FJFh__vK04jU1P64vnEpPc3jenec */
+					center={
+						searchCoordinates.length > 0
+							? searchCoordinates[0]
+							: center
+							? center
+							: coordinates.length > 0
+							? { lat: coordinates[0].lat, lng: coordinates[0].lng }
+							: undefined
+					}
+					zoom={searchCoordinates.length > 0 || center ? 14 : 7}
+					yesIWantToUseGoogleMapApiInternals
+					// @ts-ignore
+					onGoogleApiLoaded={({ map, maps }) => initMap(map, maps)}
+					clickableIcons={false}
+					options={getOptions()}
+				>
+					{searchCoordinates.map((place, index) => (
+						<Marker
+							key={index}
+							locationData={
+								[{ ...place }].map((x) => {
+									x.longitude = x.lng;
+									x.latitude = x.lat;
+									delete x.lng;
+									delete x.lat;
+									return x;
+								})[0]
+							}
+							clearSearch={clearSearch}
+							text={place.address}
+							lat={place.lat}
+							lng={place.lng}
+							searchValue={searchCoordinatesSearchValue}
+							openingHours={place.openingHours}
+						/>
+					))}
+				</GoogleMapReact>
+				{!eventStore.isMobile && renderVisibleItemsPane()}
+			</div>
+			{eventStore.isMobile && renderVisibleItemsPane()}
 		</div>
 	);
 };
 
-export default MapContainer;
+export default observer(MapContainer);

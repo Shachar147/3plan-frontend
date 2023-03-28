@@ -64,7 +64,7 @@ export interface BaseDataHandler {
 		createMode?: boolean
 	) => Promise<AllEventsEvent[]> | AllEventsEvent[];
 	getCalendarLocale: (tripName?: string, createMode?: boolean) => Promise<LocaleCode> | LocaleCode;
-	getDistanceResults: (tripName?: string) => Promise<Map<string, DistanceResult>> | Map<string, DistanceResult>;
+	getDistanceResults: (tripName?: string) => Promise<Record<string, DistanceResult>>;
 	getDataSourceName: () => TripDataSource;
 }
 

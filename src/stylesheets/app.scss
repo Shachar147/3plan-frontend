@@ -103,8 +103,20 @@ body {
 	cursor: pointer;
 }
 
+.font-size-12 {
+	font-size: 12px;
+}
+
+.font-size-14 {
+	font-size: 14px;
+}
+
 .font-size-20 {
 	font-size: 20px;
+}
+
+.font-size-100 {
+	font-size: 100px !important;
 }
 
 .flex-flow-wrap {
@@ -199,6 +211,14 @@ body {
 	padding-inline: 0;
 }
 
+.padding-inline-3 {
+	padding-inline: 3px;
+}
+
+.padding-inline-3-important {
+	padding-inline: 3px !important;
+}
+
 .padding-inline-8 {
 	padding-inline: 8px;
 }
@@ -276,6 +296,10 @@ body {
 	margin-block: 2px;
 }
 
+.margin-top-5 {
+	margin-top: 5px;
+}
+
 .margin-top-10 {
 	margin-top: 10px;
 }
@@ -337,6 +361,10 @@ body {
 	flex: 1 1 0;
 }
 
+.flex-grow-0 {
+	flex-grow: 0;
+}
+
 .flex-column,
 .flex-col {
 	display: flex;
@@ -378,12 +406,28 @@ body {
 	align-items: center;
 }
 
+.justify-content-start {
+	justify-content: start;
+}
+
 .justify-content-center {
 	justify-content: center;
 }
 
 .cursor-pointer {
 	cursor: pointer;
+}
+
+.gap-2 {
+	gap: 2px;
+}
+
+.gap-3 {
+	gap: 3px;
+}
+
+.gap-4 {
+	gap: 4px;
 }
 
 .gap-5 {
@@ -402,6 +446,10 @@ body {
 	gap: 15px;
 }
 
+.gap-16 {
+	gap: 16px;
+}
+
 .gap-20 {
 	gap: 20px;
 }
@@ -417,6 +465,14 @@ body {
 .flex-gap-5 {
 	display: flex;
 	gap: 5px;
+}
+
+.flex-wrap {
+	flex-wrap: wrap;
+}
+
+.flex-wrap-reverse {
+	flex-wrap: wrap-reverse;
 }
 
 .align-items-center {
@@ -584,9 +640,12 @@ body.ltr {
 	width: 0 !important;
 }
 
-.red-border {
-	border-color: red !important;
-	border: 1px solid red;
+.red-background {
+	background-color: var(--invalid-red-background) !important;
+
+	.fc-event, .fc-event-main {
+		background-color: var(--invalid-red-background) !important;
+	}
 }
 
 .max-width-250 {
@@ -607,6 +666,10 @@ body.ltr {
 
 .min-height-300 {
 	min-height: 300px;
+}
+
+.min-width-38 {
+	min-width: 38px;
 }
 
 .min-width-313 {
@@ -772,6 +835,10 @@ input[type='text'] {
 	width: 100%;
 }
 
+.width-max-content {
+	width: max-content;
+}
+
 .z-index-99999999 {
 	z-index:99999999
 }
@@ -820,6 +887,14 @@ body.rtl {
 		direction: rtl;
 		text-align: right;
 	}
+}
+
+.white-space-pre {
+	white-space: pre;
+}
+
+.white-space-pre-line {
+	white-space: pre-line;
 }
 
 .triplan-text-input {

@@ -4,6 +4,7 @@ import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '..
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, Trip } from './data-handler-base';
 import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
+import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
 
 export interface upsertTripProps {
 	name?: string;
@@ -51,18 +52,29 @@ export class DBService implements BaseDataHandler {
 		return dateRange;
 	}
 
-	async getDistanceResults(tripName?: string): Promise<Map<string, DistanceResult>> {
-		// todo complete - move to dedicated route in the server.
-
-		// return new Map<string,DistanceResult>(); // todo complete
-		const createMode = window.location.href.indexOf('/create/') !== -1;
-		const key = tripName ? [LS_DISTANCE_RESULTS, tripName].join('-') : LS_DISTANCE_RESULTS;
-		if (!localStorage.getItem(key)) {
-			if (!createMode) return new Map<string, DistanceResult>();
-			this.setDistanceResults({} as Map<string, DistanceResult>, tripName);
+	async getDistanceResults(tripName?: string): Promise<Record<string, DistanceResult>> {
+		if (!tripName) {
+			return {};
 		}
-		// @ts-ignore
-		return JSON.parse(localStorage.getItem(key)) || {};
+
+		const res: any = await apiGetPromise(this, `/distance/trip/${tripName}`);
+
+		const result: Record<string, DistanceResult> = {};
+
+		res.data.results.forEach((x: any) => {
+			const key = getCoordinatesRangeKey('DRIVING', stringToCoordinate(x.from)!, stringToCoordinate(x.to)!);
+
+			result[key] = {
+				from: x.from,
+				to: x.to,
+				duration: x.duration?.text,
+				distance: x.distance?.text,
+				duration_value: x.duration?.value,
+				distance_value: x.distance?.value,
+			} as DistanceResult;
+		});
+
+		return result;
 	}
 
 	async getSidebarEvents(tripName?: string, createMode?: boolean): Promise<Record<number, SidebarEvent[]>> {

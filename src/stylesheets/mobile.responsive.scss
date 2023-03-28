@@ -382,9 +382,8 @@
 		}
 
 		.map-filters-container {
-			order :4;
-
-			margin-top: 15px;
+			//order :4;
+			//margin-top: 15px;
 
 			.map-scheduled-or-not {
 				order: 1;
@@ -595,7 +594,7 @@
 		}
 		div[id^='react-select-'],
 		div[class$='singleValue'] {
-			font-size: 12px;
+			font-size: 14px;
 		}
 		textarea {
 			line-height: 26px !important;
@@ -624,6 +623,14 @@
 		.bright-scrollbar {
 			max-height: 50px;
 		}
+	}
+
+	.triplan-react-modal a.btn {
+		width: 100% !important;
+	}
+
+	.sidebar-event-title-container {
+		flex-flow: row wrap;
 	}
 }
 

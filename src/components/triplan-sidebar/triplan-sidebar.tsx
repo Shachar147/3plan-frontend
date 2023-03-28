@@ -16,6 +16,7 @@ import ListViewService from '../../services/list-view-service';
 import ReactModalService from '../../services/react-modal-service';
 import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { runInAction } from 'mobx';
+import DistanceCalculator from './distance-calculator/distance-calculator';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -25,13 +26,69 @@ export interface TriplanSidebarProps {
 	TriplanCalendarRef: React.MutableRefObject<HTMLDivElement>;
 }
 
-enum SidebarGroups {
+export enum SidebarGroups {
 	CALENDAR_STATISTICS = 'CALENDAR_STATISTICS',
 	WARNINGS = 'WARNINGS',
 	ACTIONS = 'ACTIONS',
 	RECOMMENDATIONS = 'RECOMMENDATIONS',
 	PRIORITIES_LEGEND = 'PRIORITIES_LEGEND',
+	DISTANCES = 'DISTANCES',
 }
+
+export const wrapWithSidebarGroup = (
+	children: JSX.Element,
+	groupIcon: string | undefined = undefined,
+	groupKey: string,
+	groupTitle: string,
+	itemsCount: number,
+	textColor: string = 'inherit'
+) => {
+	const eventStore = useContext(eventStoreContext);
+	const isOpen = eventStore.openSidebarGroups.has(groupKey);
+	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
+	const openStyle = {
+		maxHeight: 100 * itemsCount + 90 + 'px',
+		padding: '10px',
+		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+	};
+	const closedStyle = {
+		maxHeight: 0,
+		overflowY: 'hidden',
+		padding: 0,
+		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+	};
+
+	const eventsStyle = isOpen ? openStyle : closedStyle;
+
+	return (
+		<>
+			<div
+				className={'sidebar-statistics'}
+				style={{
+					color: textColor,
+					paddingInlineStart: '10px',
+					cursor: 'pointer',
+					backgroundColor: '#e5e9ef80',
+					borderBottom: '1px solid #e5e9ef',
+					height: '45px',
+				}}
+				onClick={() => {
+					eventStore.toggleSidebarGroups(groupKey);
+				}}
+			>
+				<i
+					className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
+					aria-hidden="true"
+				/>
+				<span className={'flex-gap-5 align-items-center'}>
+					{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
+				</span>
+			</div>
+			<div style={eventsStyle as unknown as CSSProperties}>{children}</div>
+		</>
+	);
+};
 
 const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const eventStore = useContext(eventStoreContext);
@@ -88,60 +145,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					}}
 					flavor={ButtonFlavor['movable-link']}
 				/>
-			</>
-		);
-	};
-
-	const wrapWithSidebarGroup = (
-		children: JSX.Element,
-		groupIcon: string | undefined = undefined,
-		groupKey: string,
-		groupTitle: string,
-		itemsCount: number,
-		textColor: string = 'inherit'
-	) => {
-		const isOpen = eventStore.openSidebarGroups.has(groupKey);
-		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
-
-		const openStyle = {
-			maxHeight: 100 * itemsCount + 90 + 'px',
-			padding: '10px',
-			transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
-		};
-		const closedStyle = {
-			maxHeight: 0,
-			overflowY: 'hidden',
-			padding: 0,
-			transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
-		};
-
-		const eventsStyle = isOpen ? openStyle : closedStyle;
-
-		return (
-			<>
-				<div
-					className={'sidebar-statistics'}
-					style={{
-						color: textColor,
-						paddingInlineStart: '10px',
-						cursor: 'pointer',
-						backgroundColor: '#e5e9ef80',
-						borderBottom: '1px solid #e5e9ef',
-						height: '45px',
-					}}
-					onClick={() => {
-						eventStore.toggleSidebarGroups(groupKey);
-					}}
-				>
-					<i
-						className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
-						aria-hidden="true"
-					></i>
-					<span className={'flex-gap-5 align-items-center'}>
-						{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
-					</span>
-				</div>
-				<div style={eventsStyle as unknown as CSSProperties}>{children}</div>
 			</>
 		);
 	};
@@ -270,15 +273,47 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			) : null;
 		};
 
+		const renderEventsWithDistanceProblemsStatistics = () => {
+			const eventsWithDistanceProblems = eventStore.eventsWithDistanceProblems;
+
+			const distanceProblemsEventsKey = eventStore.showOnlyEventsWithDistanceProblems
+				? 'SHOW_ALL_EVENTS'
+				: 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS';
+
+			return !!eventsWithDistanceProblems.length ? (
+				<div
+					className={getClasses(
+						['sidebar-statistics padding-inline-0'],
+						eventStore.showOnlyEventsWithDistanceProblems && 'blue-color'
+					)}
+				>
+					<Button
+						icon={'fa-exclamation-triangle'}
+						text={`${eventsWithDistanceProblems.length} ${TranslateService.translate(
+							eventStore,
+							'EVENTS_WITH_DISTANCE_PROBLEMS'
+						)} (${TranslateService.translate(eventStore, distanceProblemsEventsKey)})`}
+						onClick={() => {
+							eventStore.toggleShowOnlyEventsWithDistanceProblems();
+						}}
+						flavor={ButtonFlavor['movable-link']}
+						className={getClasses(eventStore.showOnlyEventsWithDistanceProblems && 'blue-color')}
+					/>
+				</div>
+			) : null;
+		};
+
 		const noLocationWarning = renderNoLocationEventsStatistics();
 		const noOpeningHoursWarning = renderNoOpeningHoursEventsStatistics();
 		const eventsWithTodoComplete = renderEventsWithTodoCompleteStatistics();
+		const eventsWithDistanceProblems = renderEventsWithDistanceProblemsStatistics();
 		const numOfItems = [noLocationWarning, noOpeningHoursWarning].filter((x) => x != null).length;
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.WARNING');
 		const warningsBlock =
 			noLocationWarning || noOpeningHoursWarning
 				? wrapWithSidebarGroup(
 						<>
+							{eventsWithDistanceProblems}
 							{noLocationWarning}
 							{noOpeningHoursWarning}
 							{eventsWithTodoComplete}
@@ -296,7 +331,14 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				<hr className={'margin-block-2'} />
 				{warningsBlock}
 			</>
-		) : undefined;
+		) : null;
+	};
+
+	const renderDistances = () => {
+		const shouldShowDistancesBlock =
+			Array.from(eventStore.distanceResults.values()).length > 0 &&
+			eventStore.allEventsLocationsWithDuplicates.length >= 2;
+		return shouldShowDistancesBlock ? <DistanceCalculator /> : null;
 	};
 
 	const renderActions = () => {
@@ -809,7 +851,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		// console.log("category events", categoryEvents, "by hour", preferredHoursHash);
 
 		if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
-			return undefined;
+			return null;
 		}
 
 		return Object.keys(preferredHoursHash)
@@ -896,6 +938,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						data-more-info={event.moreInfo}
 						key={event.id}
 					>
+						<span className={'sidebar-event-icon flex-grow-0'}>
+							{event.icon || eventStore.categoriesIcons[categoryId]}
+						</span>
 						<span
 							className="sidebar-event-title-container"
 							title={'Edit'}
@@ -908,12 +953,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								);
 							}}
 						>
-							<span className={'sidebar-event-title-text'}>
-								<span className={'sidebar-event-icon'}>
-									{event.icon || eventStore.categoriesIcons[categoryId]}
-								</span>
-								{event.title}
-							</span>
+							<span className={'sidebar-event-title-text'}>{event.title}</span>
 							<span className={'sidebar-event-duration'}>
 								({getDurationString(eventStore, event.duration)})
 							</span>
@@ -996,6 +1036,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				</div>
 				<div>
 					{renderWarnings()}
+					{renderDistances()}
 					{renderActions()}
 					{renderRecommendations()}
 					{renderCalendarSidebarStatistics()}

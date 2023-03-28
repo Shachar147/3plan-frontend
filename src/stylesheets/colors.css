@@ -7,15 +7,27 @@
 	--black: #2c2c2c;
 	/*--light-blue: #42adde;*/
 	--blue: #37b5ff;
+	--blue-gray: #748597;
+	--brown-gray: #6a6868;
 	--light-blue: #d5eaff;
+	--black-bg: rgba(0, 0, 0, 0.03);
 	--dark-blue: #0066d5;
 	--darkest-blue: #052c8f;
 	--red: #ff5252;
+	--invalid-red-background: #fcf2f2;
 	--triplan-orange: #ffb752;
 }
 
 .black-color {
 	color: var(--black);
+}
+
+.blue-gray-color {
+	color: var(--blue-gray);
+}
+
+.pink-color {
+	color: var(--pink);
 }
 
 .black-background {

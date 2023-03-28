@@ -79,6 +79,7 @@ export interface LocationData {
 	address: string;
 	latitude?: number;
 	longitude?: number;
+	eventName?: string;
 }
 
 export interface OpeningHours {
@@ -98,6 +99,7 @@ export interface WeeklyOpeningHoursData {
 export interface Coordinate {
 	lat: number;
 	lng: number;
+	eventName?: string;
 }
 
 export interface ImportEventsConfirmInfo {

@@ -11,6 +11,8 @@ import { BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDist
 import { getEventDivHtml } from '../utils/ui-utils';
 import _ from 'lodash';
 
+const destinationRoutesAddFromAndTo = true;
+
 const ListViewService = {
 	_getDayName: (dateStr: string, locale: string) => {
 		const date = new Date(dateStr);
@@ -19,7 +21,9 @@ const ListViewService = {
 	_formatTime: (timeString: string) => moment(timeString, ['h:mm A']).format('HH:mm'),
 	_randomElement: (array: any[]) => array[Math.floor(Math.random() * array.length)],
 	_formatDescription: (description: string) => {
-		if (!description) return description;
+		if (!description) {
+			return description;
+		}
 		return description.replaceAll('&#10;', '<br/>').replaceAll('\n', '<br/>').replaceAll('<br/><br/>', '<br/>');
 	},
 	_getEventFromEventRow: (eventStore: EventStore, eventRow: string) => {
@@ -393,8 +397,7 @@ const ListViewService = {
 						x.priority && (x.priority == TriplanPriority.must || x.priority == TriplanPriority.high)
 				)
 				.map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
-			// @ts-ignore
-			highlightEvents = [...new Set(highlightEvents)];
+			highlightEvents = [...Array.from(new Set(highlightEvents))];
 			highlightsPerDay[dayTitle] = highlightEvents.join(', ');
 
 			let previousLineWasOr = false;
@@ -565,12 +568,12 @@ const ListViewService = {
 
 				let distanceToNextEvent = distanceKey
 					? eventStore.distanceResults.has(distanceKey)
-						? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, travelMode)
+						? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, false, travelMode)
 						: TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 					: '';
 
 				// disable google maps distance calc for now
-				distanceToNextEvent = '';
+				// distanceToNextEvent = '';
 
 				// const from = previousLineWasOr ? `${TranslateService.translate(eventStore, 'FROM')} ${prevEventTitle} ` : "";
 
@@ -593,15 +596,24 @@ const ListViewService = {
 
 					const url = BuildEventUrl(event.location);
 					const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${
-						event.location.address.split(' - ')[0]
+						event.title
+						// event.location.address.split(' - ')[0]
 					}</a></span>`;
 
-					distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
+					if (destinationRoutesAddFromAndTo) {
+						distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
                                 ${arrow}
                                 ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${
-						prevLocation?.address.split(' - ')[0]
-					} ${TranslateService.translate(eventStore, 'TO')}${urlBlock}
+							prevLocation?.eventName
+							// prevLocation?.address.split(' - ')[0]
+						} ${TranslateService.translate(eventStore, 'TO')} ${urlBlock}
                             </span>`;
+					} else {
+						distanceToNextEvent = `${lineBefore}<span style="color: ${distanceColor}; ${backgroundStyle}"${firstRowClass}>
+                                ${arrow}
+                                ${distanceToNextEvent}
+                            </span>`;
+					}
 				}
 
 				if (
@@ -643,6 +655,11 @@ const ListViewService = {
 
 				if (!previousLineWasOr && !nextLineIsOr) {
 					prevLocation = event.location;
+
+					// instead of showing the address in the destination route, show activity name.
+					if (prevLocation) {
+						prevLocation.eventName = event.title!;
+					}
 				}
 
 				previousLineWasIndent = indent !== '';
@@ -715,16 +732,17 @@ const ListViewService = {
 				const key = getCoordinatesRangeKey(travelMode, prevCoordinate, thisCoordinate);
 				if (!eventStore.distanceResults.has(key)) {
 					runInAction(() => {
-						console.log(
-							`checking distance between`,
-							prevLocation?.address,
-							` and `,
-							thisLocation.address,
-							prevCoordinate,
-							thisCoordinate,
-							`(${travelMode.toString()})`
-						);
-						eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
+						// disable frontend calculation
+						// console.log(
+						// 	`checking distance between`,
+						// 	prevLocation?.address,
+						// 	` and `,
+						// 	thisLocation.address,
+						// 	prevCoordinate,
+						// 	thisCoordinate,
+						// 	`(${travelMode.toString()})`
+						// );
+						// eventStore.calculatingDistance = eventStore.calculatingDistance + 1;
 
 						// @ts-ignore
 						window.routes.push({
@@ -735,15 +753,17 @@ const ListViewService = {
 							to: thisLocation.address,
 						});
 
-						// @ts-ignore
-						window.calculateMatrixDistance(travelMode, prevCoordinate, thisCoordinate);
+						// disable frontend calculation
+						// window.calculateMatrixDistance(travelMode, prevCoordinate, thisCoordinate);
 					});
 				} else {
 					if (prevLocation && thisLocation) {
 						// console.log(`already have distance between`, prevLocation.address, ` and `, thisLocation.address, `(${travelMode.toString()})`);
 					}
 				}
-				if (distanceKey === '') distanceKey = key;
+				if (distanceKey === '') {
+					distanceKey = key;
+				}
 			});
 
 			let travelMode = GoogleTravelMode.DRIVING;
@@ -764,12 +784,12 @@ const ListViewService = {
 
 			let distanceToNextEvent = distanceKey
 				? eventStore.distanceResults.has(distanceKey)
-					? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, travelMode)
+					? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, false, travelMode)
 					: TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 				: '';
 
 			// disable google maps distance calc for now
-			distanceToNextEvent = '';
+			// distanceToNextEvent = '';
 
 			return distanceToNextEvent;
 		};
@@ -797,7 +817,6 @@ const ListViewService = {
 			const details = buildRowsDetails(summaryPerDay[dayTitle]);
 
 			let previousDetail: any;
-			// @ts-ignore
 			const loggerArr: string[] = [];
 			let prevLocation: LocationData | undefined;
 			let prevTitle: string;
@@ -819,6 +838,9 @@ const ListViewService = {
 				}
 
 				const thisLocation = x.event.location;
+				if (thisLocation) {
+					thisLocation.eventName = x.event.title!;
+				}
 				if (prevLocation && thisLocation && prevLocation.address != thisLocation.address) {
 					loggerArr.push('~ ' + prevTitle + ' -> ' + x.event.title);
 
@@ -846,16 +868,26 @@ const ListViewService = {
 
 						const url = BuildEventUrl(thisLocation);
 						const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${
-							thisLocation.address.split(' - ')[0]
+							x.event.title
+							// thisLocation.address.split(' - ')[0]
 						}</a></span>`;
 
 						rowClass = ` class="${rowClass}"`;
-						distanceToNextEvent = `<span style="color: ${distanceColor}; ${backgroundStyle}"${rowClass}>
+
+						if (destinationRoutesAddFromAndTo) {
+							distanceToNextEvent = `<span style='color: ${distanceColor}; ${backgroundStyle}'${rowClass}>
                                 ${arrow}
                                 ${distanceToNextEvent} ${TranslateService.translate(eventStore, 'FROM')}${
-							prevLocation?.address.split(' - ')[0]
-						} ${TranslateService.translate(eventStore, 'TO')}${urlBlock}
+								prevLocation?.eventName
+								// prevLocation?.address.split(' - ')[0]
+							} ${TranslateService.translate(eventStore, 'TO')} ${urlBlock}
                             </span>`;
+						} else {
+							distanceToNextEvent = `<span style='color: ${distanceColor}; ${backgroundStyle}'${rowClass}>
+                                ${arrow}
+                                ${distanceToNextEvent}
+                            </span>`;
+						}
 
 						distanceToNextEvent = doNotShowImpossibleToGetThereDistanceErrorOnFlights(
 							distanceToNextEvent,
@@ -875,18 +907,15 @@ const ListViewService = {
 					loggerArr.push(x.event.title + temp);
 				}
 
-				// @ts-ignore
 				if (x.or && i + 1 < details.length && !details[i + 1].differentOrGroup) {
 					loggerArr.push('OR:');
 				}
 
-				// @ts-ignore
 				if (!x.or) {
 					prevLocation = thisLocation;
 					prevTitle = x.event.title;
 				}
 
-				// @ts-ignore
 				if ((x.or || x.indent) && i + 1 < details.length && !(details[i + 1].or || details[i + 1].indent)) {
 					loggerArr.push('');
 					// prevLocation = undefined;
@@ -898,8 +927,7 @@ const ListViewService = {
 			});
 		});
 
-		// @ts-ignore
-		console.log({ routes: window.routes });
+		// console.log({ routes: window.routes });
 
 		return summaryPerDay;
 	},
@@ -925,7 +953,7 @@ const ListViewService = {
 		return summaryPerDay;
 	},
 	buildHTMLSummary: (eventStore: EventStore) => {
-		let calendarEvents = eventStore.filteredCalendarEvents; // used to be calendarEvents but now it also considering search and filters
+		let calendarEvents = eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents); // used to be calendarEvents but now it also considering search and filters
 		const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
 
 		// build calendar events per day

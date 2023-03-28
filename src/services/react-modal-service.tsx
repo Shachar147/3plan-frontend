@@ -1,7 +1,7 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService, { TranslationParams } from './translate-service';
-import React from 'react';
-import { runInAction } from 'mobx';
+import React, { useEffect } from 'react';
+import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
 import { getClasses, ucfirst } from '../utils/utils';
 
@@ -26,17 +26,16 @@ import Button, { ButtonFlavor } from '../components/common/button/button';
 import ImportService from './import-service';
 
 // @ts-ignore
-// import ImageGallery from 'react-image-gallery';
-// import { Carousel } from "react-responsive-carousel";
 import Slider from 'react-slick';
 
 // @ts-ignore
-// import _ from 'lodash';
 import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 import LocationInput from '../components/inputs/location-input/location-input';
+import { apiGetNew, apiPost } from '../helpers/api';
+import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 
-const ReactModalRenderHelper = {
+export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
 		eventStore: EventStore,
 		textKey: string,
@@ -206,6 +205,8 @@ const ReactModalRenderHelper = {
 			readOnly?: boolean;
 			maxMenuHeight?: number;
 			removeDefaultClass?: boolean;
+			onChange?: (data: any) => void;
+			value?: any;
 		},
 		wrapperClassName: string,
 		ref?: any
@@ -221,6 +222,8 @@ const ReactModalRenderHelper = {
 				modalValueName={modalValueName}
 				maxMenuHeight={extra.maxMenuHeight}
 				removeDefaultClass={extra.removeDefaultClass}
+				onChange={extra.onChange}
+				value={extra.value}
 			/>
 		);
 	},
@@ -3217,6 +3220,127 @@ const ReactModalService = {
 			customClass: 'triplan-react-modal max-width-350',
 			onConfirm,
 			content,
+		});
+	},
+	// todo: consider moving some of the logic here to a deidcated distance service
+	openCalculateDistancesModal(eventStore: EventStore) {
+		const allLocations = eventStore.allEventsLocations;
+
+		var checkTaskStatus: NodeJS.Timeout | undefined;
+
+		runInAction(() => {
+			eventStore.distanceModalOpened = true;
+		});
+
+		const content = () => {
+			return (
+				<div className="white-space-pre-line flex-col gap-16">
+					<i className="fa fa-map-signs font-size-100 blue-gray-color" aria-hidden="true" />
+					{TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.DESCRIPTION')}
+					<div className="blue-gray-color margin-top-5 font-size-12">
+						{TranslateService.translate(eventStore, 'NOTE.COULD_TAKE_AWHILE')}
+					</div>
+				</div>
+			);
+		};
+
+		const onConfirm = async () => {
+			const result = await apiPost('/distance', {
+				from: allLocations,
+				to: allLocations,
+				tripName: eventStore.tripName,
+			});
+
+			const taskId = result.data.taskId;
+
+			const MAX_UPDATE_CHECKS = 300;
+			const INTERVAL_MS = 1500;
+			var counter = 0;
+
+			const updateTaskStatus = async () => {
+				counter++;
+				const result = await apiGetNew(`/task/${taskId}`);
+				runInAction(() => {
+					eventStore.taskData = result.data;
+
+					// update text & make button disabled
+					if (eventStore.distanceModalOpened) {
+						eventStore.setModalSettings({
+							...eventStore.modalSettings,
+							disabled: true,
+							confirmBtnText: TranslateService.translate(
+								eventStore,
+								'CALCULATE_DISTANCES_MODAL.CTA.CALCULATING',
+								{
+									X: eventStore.taskData.progress,
+								}
+							),
+						});
+					}
+
+					if (checkTaskStatus && (eventStore.taskData.progress == 100 || counter >= MAX_UPDATE_CHECKS)) {
+						clearInterval(checkTaskStatus);
+
+						if (eventStore.distanceModalOpened) {
+							eventStore.taskId = undefined;
+							eventStore.taskData = undefined;
+
+							ReactModalService.internal
+								.alertMessage(
+									eventStore,
+									'CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.TITLE',
+									'CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.CONTENT',
+									'success'
+								)
+								.then(async () => {
+									const newDistanceResults = await DataServices.DBService.getDistanceResults(
+										eventStore.tripName
+									);
+									runInAction(() => {
+										eventStore.distanceResults = observable.map(newDistanceResults);
+									});
+
+									if (eventStore.distanceModalOpened) {
+										this.internal.closeModal(eventStore);
+										eventStore.openSidebarGroup(SidebarGroups.DISTANCES);
+									}
+								});
+						}
+					}
+				});
+			};
+
+			runInAction(() => {
+				eventStore.taskId = taskId;
+				updateTaskStatus();
+				checkTaskStatus = setInterval(updateTaskStatus, INTERVAL_MS);
+				eventStore.checkTaskStatus = checkTaskStatus;
+			});
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			confirmBtnText: eventStore.taskId
+				? eventStore.taskData.progress == 100
+					? TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CTA.FINISHED')
+					: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CTA.CALCULATING', {
+							X: eventStore.taskData.progress,
+					  })
+				: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CTA'),
+			cancelBtnText: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CANCEL'),
+			title: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.TITLE', {
+				X: allLocations.length,
+			}),
+			type: 'controlled',
+			customClass: 'triplan-react-modal max-width-350',
+			onConfirm,
+			content,
+			onCancel: () => {
+				runInAction(() => {
+					eventStore.distanceModalOpened = false;
+				});
+				ReactModalService.internal.closeModal(eventStore);
+			},
 		});
 	},
 };

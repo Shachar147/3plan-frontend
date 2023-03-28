@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
-import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
+import { CalendarEvent, Coordinate, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
 import {
 	getEnumKey,
 	GoogleTravelMode,
@@ -64,8 +64,8 @@ export class EventStore {
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
-	@observable viewMode = ViewMode.combined;
-	@observable mobileViewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.sidebar);
+	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.combined);
+	@observable mobileViewMode = DataServices.LocalStorageService.getLastMobileViewMode(ViewMode.sidebar);
 	@observable hideCustomDates = this.viewMode == ViewMode.calendar;
 	@observable openCategories = observable.map<number, number>({});
 	@observable openSidebarGroups = observable.map<string, number>({});
@@ -76,6 +76,7 @@ export class EventStore {
 	@observable showOnlyEventsWithNoLocation: boolean = false;
 	@observable showOnlyEventsWithNoOpeningHours: boolean = false;
 	@observable showOnlyEventsWithTodoComplete: boolean = false;
+	@observable showOnlyEventsWithDistanceProblems: boolean = false;
 	@observable calculatingDistance = 0;
 	@observable distanceResults = observable.map<string, DistanceResult>();
 	@observable travelMode = GoogleTravelMode.DRIVING;
@@ -93,6 +94,7 @@ export class EventStore {
 	@observable forceUpdate = 0;
 
 	// map filters
+	@observable mapFiltersVisible: boolean = false;
 	@observable filterOutPriorities = observable.map({});
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
@@ -101,6 +103,13 @@ export class EventStore {
 
 	// add side bar modal
 	@observable isModalMinimized: boolean = true;
+
+	// distances
+	@observable distanceModalOpened: boolean = false;
+	@observable taskId: number | undefined;
+	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
+	@observable taskData: any = { progress: 0 };
+	@observable eventsWithDistanceProblems: any[] = [];
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -130,9 +139,8 @@ export class EventStore {
 		const startTime = new Date().getTime();
 		this.isLoading = true;
 		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
-			this.distanceResults = observable.map<string, DistanceResult>(
-				DataServices.LocalStorageService.getDistanceResults()
-			);
+			// disabled on local
+			this.distanceResults = observable.map<string, DistanceResult>();
 			this.initBodyLocaleClassName();
 			this.initCustomDatesVisibilityBasedOnViewMode();
 			this.isLoading = false;
@@ -184,7 +192,19 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
-	reduceEventsEndDateToFitDistanceResult = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
+	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
+		if (this.showOnlyEventsWithDistanceProblems) {
+			return filteredEvents.map((x) => {
+				x.suggestedEndTime = this.eventsWithDistanceProblems.find((e) => e.id == x.id)?.suggestedEndTime;
+				x.className = x.className || '';
+				x.className = x.className.replaceAll(' red-background', '') + ' red-background';
+				return x;
+			});
+		}
+
+		const eventsWithWarnings: any[] = [];
+		const eventsWithProblems: any[] = [];
+
 		// only if not in filter mode - add driving instructions
 		if (filteredEvents.length === this.calendarEvents.length) {
 			filteredEvents = filteredEvents.sort((a, b) => {
@@ -199,10 +219,14 @@ export class EventStore {
 					? addDays(new Date(event.start!.toString()), 1)
 					: new Date(event.end!.toString());
 				const id = event.id!;
-				const coordinate: any = {
-					lat: event?.location?.latitude,
-					lng: event?.location?.longitude,
-				};
+
+				const coordinate: Coordinate | undefined =
+					event.location?.latitude && event.location?.longitude
+						? {
+								lat: event.location.latitude,
+								lng: event.location.longitude,
+						  }
+						: undefined;
 
 				return { id, title, location, startDate, endDate, coordinate };
 			};
@@ -212,7 +236,7 @@ export class EventStore {
 			filteredEvents.forEach((event, index) => {
 				let currentEvent = extractDetails(event);
 
-				if (currentEvent.location && !event.allDay) {
+				if (currentEvent.coordinate && !event.allDay) {
 					const nextEvents = filteredEvents
 						.filter(
 							(e, idx) =>
@@ -241,7 +265,8 @@ export class EventStore {
 							const details = extractDetails(nextEvents[i]);
 							if (
 								details.startDate.toLocaleDateString() === currentEvent.endDate.toLocaleDateString() &&
-								currentEvent.endDate.toLocaleTimeString() !== '12:00:00 AM'
+								currentEvent.endDate.toLocaleTimeString() !== '12:00:00 AM' &&
+								details.coordinate
 							) {
 								if (currentEvent?.location !== details?.location) {
 									// console.log(currentEvent.title, ' -> ', details.title);
@@ -306,12 +331,23 @@ export class EventStore {
 					if (problem || warn) {
 						console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
 						// e.end = minStartDate;
-						if (problem) e.className += ' red-border';
+						if (problem) {
+							e.className = e.className || '';
+							e.className = e.className.replaceAll(' red-background', '') + ' red-background';
+							e.className += ' red-background';
+							eventsWithProblems.push({ id: e.id, suggestedEndTime: minStartDate });
+						} else {
+							eventsWithWarnings.push({ id: e.id, suggestedEndTime: minStartDate });
+						}
 						e.suggestedEndTime = minStartDate;
 					}
 				}
 
 				newEvents.push(e);
+			});
+
+			runInAction(() => {
+				this.eventsWithDistanceProblems = eventsWithProblems;
 			});
 
 			return newEvents;
@@ -332,10 +368,12 @@ export class EventStore {
 						event.location.address.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1)) &&
 				(this.showOnlyEventsWithNoLocation ? !(event.location != undefined) : true) &&
 				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
-				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
+				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
+				(this.showOnlyEventsWithDistanceProblems
+					? !!this.eventsWithDistanceProblems.find((x) => event.id == x.id)
+					: true)
 		);
 
-		filteredEvents = this.reduceEventsEndDateToFitDistanceResult(filteredEvents);
 		return filteredEvents;
 	}
 
@@ -415,16 +453,6 @@ export class EventStore {
 
 	@computed
 	get allEventsFilteredComputed() {
-		console.log({
-			mapViewDayFilter: this.mapViewDayFilter,
-			// @ts-ignore
-			results: this.mapViewDayFilter
-				? this.allEventsComputed.find(
-						// @ts-ignore
-						(x) => x.start && new Date(x.start).toLocaleDateString() === this.mapViewDayFilter
-				  )
-				: [],
-		});
 		return this.allEventsComputed.filter((event) => {
 			const calendarEvent = this.calendarEvents.find((c) => c.id == event.id);
 
@@ -466,7 +494,9 @@ export class EventStore {
 
 	@computed
 	get scheduledDaysNames(): string[] {
-		return Array.from(new Set(this.calendarEvents.map((x) => new Date(x.start).toLocaleDateString())));
+		return Array.from(new Set(this.calendarEvents.map((x) => new Date(x.start).setHours(0, 0, 0, 0))))
+			.sort((a, b) => b - a)
+			.map((x) => new Date(x).toLocaleDateString());
 	}
 
 	getEventIndexInCalendarByDay(event: CalendarEvent, day: string | undefined = this.mapViewDayFilter) {
@@ -474,7 +504,7 @@ export class EventStore {
 			console.error(`wrong use of getEventIndexInCalendarByDay - day not passed`);
 			return -1;
 		}
-		const idx = this.calendarEvents
+		const calendarEventsInDay = this.calendarEvents
 			.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
 			.filter(
 				(e) =>
@@ -482,13 +512,43 @@ export class EventStore {
 					e.location?.latitude &&
 					e.location?.longitude &&
 					!e.allDay
+			);
+		return calendarEventsInDay.findIndex((e) => e.id == event.id);
+	}
+
+	@computed
+	get allEventsLocations(): Coordinate[] {
+		const allLocations = this.allEventsLocationsWithDuplicates;
+
+		// if there are multiple evnets with same location but different name, take only one of them.
+		const filtered: Record<string, any> = {};
+		allLocations.forEach((x) => {
+			const key = JSON.stringify({ lat: x.lat, lng: x.lng });
+			filtered[key] = x;
+		});
+
+		return Object.values(filtered);
+	}
+
+	@computed
+	get allEventsLocationsWithDuplicates(): { lat: number; lng: number; eventName: string }[] {
+		// returns all locations with duplicates (if names are different)
+		return Array.from(
+			new Set(
+				this.allEventsComputed
+					.filter((x) => x.location?.latitude && x.location?.longitude)
+					.map((x) =>
+						JSON.stringify({
+							lat: x.location?.latitude,
+							lng: x.location?.longitude,
+							eventName: x.title,
+						})
+					)
 			)
-			.findIndex((e) => e.id == event.id);
-		return idx;
+		).map((x) => JSON.parse(x));
 	}
 
 	// --- actions --------------------------------------------------------------
-
 	@action
 	setHideCustomDates(hide: boolean) {
 		this.hideCustomDates = hide;
@@ -636,11 +696,13 @@ export class EventStore {
 	}
 
 	@action
-	setViewMode(newVideMode: ViewMode) {
-		this.viewMode = newVideMode;
+	setViewMode(newViewMode: ViewMode) {
+		this.viewMode = newViewMode;
 
 		// show hide custom dates based on view
 		this.initCustomDatesVisibilityBasedOnViewMode();
+
+		DataServices.LocalStorageService.setLastViewMode(newViewMode);
 	}
 
 	@action
@@ -721,7 +783,7 @@ export class EventStore {
 				this.customDateRange = DataServices.LocalStorageService.getDateRange(name);
 				this.allEvents = DataServices.LocalStorageService.getAllEvents(this, name);
 				this.categories = DataServices.LocalStorageService.getCategories(this, name);
-				newDistanceResults = DataServices.LocalStorageService.getDistanceResults(name);
+				newDistanceResults = await DataServices.LocalStorageService.getDistanceResults(name);
 			} else {
 				this.isLoading = true;
 				const tripData = await DataServices.DBService.getTripData(name);
@@ -760,8 +822,18 @@ export class EventStore {
 	}
 
 	@action
+	toggleShowOnlyEventsWithDistanceProblems() {
+		this.showOnlyEventsWithDistanceProblems = !this.showOnlyEventsWithDistanceProblems;
+	}
+
+	@action
 	setShowOnlyEventsWithNoLocation(newVal: boolean) {
 		this.showOnlyEventsWithNoLocation = newVal;
+	}
+
+	@action
+	setShowOnlyEventsWithDistanceProblems(newVal: boolean) {
+		this.showOnlyEventsWithDistanceProblems = newVal;
 	}
 
 	@action
@@ -827,6 +899,11 @@ export class EventStore {
 		} else {
 			this.filterOutPriorities.set(priority, true);
 		}
+	}
+
+	@action
+	toggleMapFilters() {
+		this.mapFiltersVisible = !this.mapFiltersVisible;
 	}
 
 	// --- private functions ----------------------------------------------------

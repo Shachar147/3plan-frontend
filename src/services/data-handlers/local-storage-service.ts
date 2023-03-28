@@ -30,6 +30,7 @@ import { TripDataSource, ViewMode } from '../../utils/enums';
 export class LocalStorageService implements BaseDataHandler {
 	CONTINUE_AS_GUEST_MODAL_LS_KEY = 'triplan-hide-continue-as-guest-modal';
 	LAST_MOBILE_VIEW_MODE = 'triplan-last-mobile-view-mode';
+	LAST_VIEW_MODE = 'triplan-last-view-mode';
 
 	getDataSourceName() {
 		return TripDataSource.LOCAL;
@@ -180,18 +181,21 @@ export class LocalStorageService implements BaseDataHandler {
 		return JSON.parse(localStorage.getItem(key)!);
 	}
 
-	getDistanceResults(tripName?: string): Map<string, DistanceResult> {
-		// todo change - need to be general, not trip related
-		// BUT - need to make sure we won't cross localstorage limits.
+	async getDistanceResults(tripName?: string): Promise<Record<string, DistanceResult>> {
+		// disabled on local storage
+		return {};
 
-		const createMode = window.location.href.indexOf('/create/') !== -1;
-		const key = tripName ? [LS_DISTANCE_RESULTS, tripName].join('-') : LS_DISTANCE_RESULTS;
-		if (!localStorage.getItem(key)) {
-			if (!createMode) return new Map<string, DistanceResult>();
-			this.setDistanceResults({} as Map<string, DistanceResult>, tripName);
-		}
-		// @ts-ignore
-		return JSON.parse(localStorage.getItem(key)) || {};
+		// // todo change - need to be general, not trip related
+		// // BUT - need to make sure we won't cross localstorage limits.
+		//
+		// const createMode = window.location.href.indexOf('/create/') !== -1;
+		// const key = tripName ? [LS_DISTANCE_RESULTS, tripName].join('-') : LS_DISTANCE_RESULTS;
+		// if (!localStorage.getItem(key)) {
+		// 	if (!createMode) return new Map<string, DistanceResult>();
+		// 	this.setDistanceResults({} as Map<string, DistanceResult>, tripName);
+		// }
+		// // @ts-ignore
+		// return JSON.parse(localStorage.getItem(key)) || {};
 	}
 
 	// --- SET ------------------------------------------------------------------------------
@@ -288,14 +292,25 @@ export class LocalStorageService implements BaseDataHandler {
 		localStorage.setItem(this.CONTINUE_AS_GUEST_MODAL_LS_KEY, '1');
 	}
 
-	// --- Mobile ---------------------------------------------------------------------------
 	setLastViewMode(defaultView: ViewMode) {
-		localStorage.setItem(this.LAST_MOBILE_VIEW_MODE, defaultView);
+		localStorage.setItem(this.LAST_VIEW_MODE, defaultView);
 	}
 
 	getLastViewMode(defaultView: ViewMode): ViewMode {
-		if (!localStorage.getItem(this.LAST_MOBILE_VIEW_MODE)) {
+		if (!localStorage.getItem(this.LAST_VIEW_MODE)) {
 			this.setLastViewMode(defaultView);
+		}
+		return localStorage.getItem(this.LAST_VIEW_MODE) as ViewMode;
+	}
+
+	// --- Mobile ---------------------------------------------------------------------------
+	setLastMobileViewMode(defaultView: ViewMode) {
+		localStorage.setItem(this.LAST_MOBILE_VIEW_MODE, defaultView);
+	}
+
+	getLastMobileViewMode(defaultView: ViewMode): ViewMode {
+		if (!localStorage.getItem(this.LAST_MOBILE_VIEW_MODE)) {
+			this.setLastMobileViewMode(defaultView);
 		}
 		return localStorage.getItem(this.LAST_MOBILE_VIEW_MODE) as ViewMode;
 	}

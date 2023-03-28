@@ -57,7 +57,7 @@ function MainPage(props: MainPageProps) {
 			if (eventStore.mobileViewMode !== ViewMode.sidebar) {
 				eventStore.setViewMode(eventStore.mobileViewMode as ViewMode);
 			}
-			DataServices.LocalStorageService.setLastViewMode(eventStore.mobileViewMode);
+			DataServices.LocalStorageService.setLastMobileViewMode(eventStore.mobileViewMode);
 		}
 	}, [eventStore.mobileViewMode]);
 
@@ -92,7 +92,7 @@ function MainPage(props: MainPageProps) {
 
 		Object.keys(sidebarEvents).map((category: string) => {
 			const categoryId = Number(category);
-			const categoryEvents: SidebarEvent[] = sidebarEvents[categoryId];
+			const categoryEvents: SidebarEvent[] = sidebarEvents[categoryId] ?? [];
 			categoryEvents.forEach((event) => {
 				if (event.priority) {
 					event.className = `priority-${event.priority}`;
@@ -233,8 +233,8 @@ function MainPage(props: MainPageProps) {
 						!shouldShow && 'display-none'
 					)}
 					style={{
-						height: '250px',
-						minHeight: '250px',
+						height: '310px',
+						minHeight: '310px',
 						resize: 'vertical',
 						overflow: 'auto',
 					}}
@@ -254,7 +254,7 @@ function MainPage(props: MainPageProps) {
 				)}
 				style={{
 					height: 'CALC(100vh - 120px)',
-					minHeight: '250px',
+					minHeight: '260px',
 					resize: 'vertical',
 					overflow: 'auto',
 				}}

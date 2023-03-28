@@ -53,7 +53,7 @@
 			position: absolute;
 			left: 5px;
 		}
-		top: 102px;
+		top: 5px;
 		z-index: 999;
 		background-color: white;
 		padding-block: 10px;
@@ -117,6 +117,10 @@
 				cursor: pointer;
 			}
 		}
+	}
+
+	.secondary-button.calculate-distances-button {
+		padding-inline: 16px;
 	}
 }
 
@@ -193,16 +197,42 @@
 	}
 }
 
+.map-container {
+	hr.margin-block-2 {
+		width: 100%;
+	}
+}
+
+.actual-filters-container {
+	margin-top: 10px;
+}
+
 .map-filters-container {
 	display: flex;
-	gap: 20px;
-	align-items: center;
+	align-items: start;
+	gap: 16px;
 	justify-content: space-between;
 	width: 100%;
+	flex-wrap: wrap;
+
+	&.actual-filters {
+		padding-top: 4px;
+		padding-bottom: 4px;
+		background-color: rgba(229, 233, 239, 0.5);
+		border-bottom: 1px solid rgb(229, 233, 239);
+		border-top: 1px solid rgb(229, 233, 239);
+	}
 
 	.map-filter-priorities {
 		display: flex;
 		gap: 5px;
+	}
+
+	.map-filter-priorities,
+	.map-scheduled-or-not,
+	.map-view-selection,
+	.calculate-distances-button {
+		flex-shrink: 0;
 	}
 
 	.map-filter-toggle {

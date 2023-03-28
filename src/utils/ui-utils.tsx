@@ -182,15 +182,34 @@ const renderSearch = (eventStore: EventStore) => {
 };
 
 const renderFilterTags = (eventStore: EventStore) => {
-	const { showOnlyEventsWithNoLocation, showOnlyEventsWithNoOpeningHours, showOnlyEventsWithTodoComplete } =
-		eventStore;
+	const {
+		showOnlyEventsWithNoLocation,
+		showOnlyEventsWithNoOpeningHours,
+		showOnlyEventsWithTodoComplete,
+		showOnlyEventsWithDistanceProblems,
+	} = eventStore;
 
-	if (!(showOnlyEventsWithNoLocation || showOnlyEventsWithNoOpeningHours || showOnlyEventsWithTodoComplete)) {
+	if (
+		!(
+			showOnlyEventsWithNoLocation ||
+			showOnlyEventsWithNoOpeningHours ||
+			showOnlyEventsWithTodoComplete ||
+			showOnlyEventsWithDistanceProblems
+		)
+	) {
 		return null;
 	}
 
 	return (
 		<div className={'filter-tags-container'}>
+			{showOnlyEventsWithDistanceProblems && (
+				<TriplanTag
+					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG')}
+					onDelete={() => {
+						eventStore.setShowOnlyEventsWithDistanceProblems(false);
+					}}
+				/>
+			)}
 			{showOnlyEventsWithNoLocation && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG')}
@@ -332,7 +351,7 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	const icon = calendarEvent.icon || eventStore.categoriesIcons[category];
 
 	// locked
-	const tooltip = '';
+	let tooltip = '';
 	// todo: uncomment if we'd like to return the functionality of locked events if already ordered.
 	// todo: uncomment also the code of locking them (look for the places that use isEventAlreadyOrdered)
 	// const tooltip = isEventAlreadyOrdered(calendarEvent as EventInput)
@@ -344,10 +363,12 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	// @ts-ignore
 	if (calendarEvent.suggestedEndTime) {
 		const dt = new Date(calendarEvent.suggestedEndTime.toString());
-		suggestedTime = `<div class="fc-event-suggested-time">${TranslateService.translate(
-			eventStore,
-			'LEAVE_AT'
-		)} ${getTimeStringFromDate(dt)} ${TranslateService.translate(eventStore, 'TO_ARRIVE_ON_TIME')}</div>`;
+		const leaveAtStr = `${TranslateService.translate(eventStore, 'LEAVE_AT')} ${getTimeStringFromDate(
+			dt
+		)} ${TranslateService.translate(eventStore, 'TO_ARRIVE_ON_TIME')}`;
+		suggestedTime = `<div class="fc-event-suggested-time">${leaveAtStr}</div>`;
+
+		tooltip = leaveAtStr;
 	}
 
 	return `<div title="${tooltip}">${icon} ${calendarEvent.title}</div>
