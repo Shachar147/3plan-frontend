@@ -206,7 +206,6 @@ export const ReactModalRenderHelper = {
 			maxMenuHeight?: number;
 			removeDefaultClass?: boolean;
 			onChange?: (data: any) => void;
-			value?: any;
 		},
 		wrapperClassName: string,
 		ref?: any
@@ -223,7 +222,6 @@ export const ReactModalRenderHelper = {
 				maxMenuHeight={extra.maxMenuHeight}
 				removeDefaultClass={extra.removeDefaultClass}
 				onChange={extra.onChange}
-				value={extra.value}
 			/>
 		);
 	},
