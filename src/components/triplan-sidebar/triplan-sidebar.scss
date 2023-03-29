@@ -224,8 +224,15 @@
 }
 
 .no-nearby-placeholder {
+	background-color: var(--black-bg);
+	border-radius: 18px;
+	color: var(--brown-gray);
+	min-width: 280px;
+	padding: 8px 16px;
+	line-height: 10px;
+	padding-block: 16px 8px;
+
 	display: inline-block;
-	opacity: 0.6;
 	button {
 		display: inline-block;
 	}

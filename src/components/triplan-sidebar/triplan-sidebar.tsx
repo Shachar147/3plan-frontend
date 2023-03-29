@@ -374,9 +374,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					const location = eventStore.selectedCalendarEvent!.location!;
 					const coordinate = { lat: location.latitude!, lng: location.longitude! };
 					if (eventStore.hasDistanceResultsOfCoordinate(coordinate)) {
-						noResultsPlaceholder = TranslateService.translate(
-							eventStore,
-							'NO_NEARBY_ACTIVITIES_PLACEHOLDER'
+						noResultsPlaceholder = (
+							<>{TranslateService.translate(eventStore, 'NO_NEARBY_ACTIVITIES_PLACEHOLDER')}</>
 						);
 					} else {
 						noResultsPlaceholder = (
