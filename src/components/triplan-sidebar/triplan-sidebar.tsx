@@ -2,6 +2,7 @@ import React, { CSSProperties, useContext } from 'react';
 import TranslateService from '../../services/translate-service';
 import {
 	addLineBreaks,
+	coordinateToString,
 	getClasses,
 	isBasketball,
 	isDessert,
@@ -347,9 +348,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.TITLE');
 
 		const renderCloseTo = () => {
-			if (!eventStore.selectedCalendarEvent || !eventStore.selectedCalendarEventCloseBy?.length) {
-				return null;
-			}
+			// if (!eventStore.selectedCalendarEvent || !eventStore.selectedCalendarEventCloseBy?.length) {
+			// 	return null;
+			// }
 
 			// todo:
 			// 1 - render this block always. if there's no event, it will show no results.
@@ -361,32 +362,81 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			// 7 - add details about this event - already scheduled? sidebar? which category? etc.
 			// 8 - under each draggable put timing and distance
 
+			let noResultsPlaceholder: string | React.ReactNode = '';
+
+			let blockTitle = TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES.EMPTY');
+			if (eventStore.selectedCalendarEvent) {
+				blockTitle = TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES', {
+					X: eventStore.selectedCalendarEvent.title,
+				});
+
+				if (!eventStore.selectedCalendarEventCloseBy?.length) {
+					const location = eventStore.selectedCalendarEvent!.location!;
+					const coordinate = { lat: location.latitude!, lng: location.longitude! };
+					if (eventStore.hasDistanceResultsOfCoordinate(coordinate)) {
+						noResultsPlaceholder = TranslateService.translate(
+							eventStore,
+							'NO_NEARBY_ACTIVITIES_PLACEHOLDER'
+						);
+					} else {
+						noResultsPlaceholder = (
+							<>
+								{TranslateService.translate(
+									eventStore,
+									'NO_NEARBY_ACTIVITIES_PLACEHOLDER.NOT_CALCULATED'
+								)}
+								<Button
+									flavor={ButtonFlavor.link}
+									onClick={() => ReactModalService.openCalculateDistancesModal(eventStore)}
+									text={TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE')}
+									className="padding-inline-3-important"
+								/>
+								{TranslateService.translate(
+									eventStore,
+									'SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX'
+								)}
+							</>
+						);
+					}
+				}
+			}
+
 			return (
 				<>
 					<div className="body-text-align padding-block-10 flex-col gap-8">
-						<span
-							dangerouslySetInnerHTML={{
-								__html: TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES', {
-									X: eventStore.selectedCalendarEvent.title,
-								}),
-							}}
-						/>
-						<ul className="padding-inline-20">
-							{eventStore.selectedCalendarEventCloseBy.map((x: any, idx: number) => (
-								<li key={`close-by-${idx}`}>
-									{`${x.event.eventName} - ${toDistanceString(
-										eventStore,
-										x,
-										true,
-										x.travelMode,
-										true
-									)}`}
-								</li>
-							))}
-						</ul>
+						<span className="text-decoration-underline">{blockTitle}</span>
+						{noResultsPlaceholder !== '' && (
+							<div className="no-nearby-placeholder">{noResultsPlaceholder}</div>
+						)}
+						{!!eventStore.selectedCalendarEventCloseBy?.length && (
+							<ul className="padding-inline-20">
+								{eventStore.selectedCalendarEventCloseBy.map((x: any, idx: number) => (
+									<li key={`close-by-${idx}`}>
+										{`${x.event.eventName} - ${toDistanceString(
+											eventStore,
+											x,
+											true,
+											x.travelMode,
+											true
+										)}`}
+									</li>
+								))}
+							</ul>
+						)}
 					</div>
 					<hr className="margin-block-2" />
 				</>
+			);
+		};
+
+		const renderDistanceCalculator = () => {
+			return (
+				<div className="body-text-align padding-block-10 flex-col gap-8">
+					<span className="text-decoration-underline">
+						{TranslateService.translate(eventStore, 'DISTANCE_CALCULATOR.TITLE')}
+					</span>
+					<DistanceCalculator />
+				</div>
 			);
 		};
 
@@ -401,7 +451,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{wrapWithSidebarGroup(
 							<>
 								{renderCloseTo()}
-								<DistanceCalculator />
+								{renderDistanceCalculator()}
 							</>,
 							'fa-map-signs',
 							SidebarGroups.DISTANCES,

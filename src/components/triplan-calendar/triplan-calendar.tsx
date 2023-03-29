@@ -193,7 +193,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			end: changeInfo.event.end,
 		};
 
-		eventStore.setSelectedCalendarEvent(changeInfo.event);
+		eventStore.setSelectedCalendarEvent(newEvent); // changeInfo.event);
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		return eventStore.changeEvent({ event: newEvent });

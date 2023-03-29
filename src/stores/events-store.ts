@@ -1078,6 +1078,12 @@ export class EventStore {
 			await new Promise((r) => setTimeout(r, gap));
 		}
 	}
+
+	hasDistanceResultsOfCoordinate(coordinate: Coordinate): boolean {
+		const coordinateKey = coordinateToString(coordinate);
+		const found = Object.keys(this.distanceResults).find((x) => x.indexOf(coordinateKey) !== -1);
+		return !!found;
+	}
 }
 
 export const eventStoreContext = createContext(new EventStore());

@@ -800,6 +800,10 @@ a.text-decoration-none {
 	text-decoration: none;
 }
 
+.text-decoration-underline {
+	text-decoration: underline;
+}
+
 input[type='text'] {
 	&:focus {
 		outline: none;

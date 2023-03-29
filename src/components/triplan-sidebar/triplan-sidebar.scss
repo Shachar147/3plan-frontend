@@ -223,6 +223,14 @@
 	}
 }
 
+.no-nearby-placeholder {
+	display: inline-block;
+	opacity: 0.6;
+	button {
+		display: inline-block;
+	}
+}
+
 body.rtl {
 	.sidebar-distances-select-row {
 		&.input-with-label {
