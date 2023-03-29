@@ -17,7 +17,7 @@ import { addDays, convertMsToHM, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
-import { getCoordinatesRangeKey, lockOrderedEvents } from '../utils/utils';
+import { coordinateToString, getCoordinatesRangeKey, lockOrderedEvents } from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
 import {
 	AllEventsEvent,
@@ -30,6 +30,8 @@ import ListViewService from '../services/list-view-service';
 import { LocalStorageService } from '../services/data-handlers/local-storage-service';
 import { DBService } from '../services/data-handlers/db-service';
 import { getUser } from '../helpers/auth';
+import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
+import { apiGetNew, apiPost } from '../helpers/api';
 
 const defaultModalSettings = {
 	show: false,
@@ -110,6 +112,10 @@ export class EventStore {
 	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
 	@observable taskData: any = { progress: 0 };
 	@observable eventsWithDistanceProblems: any[] = [];
+	@observable selectedCalendarEvent: CalendarEvent | undefined = undefined;
+	@observable selectedCalendarEventCloseBy: any[] | undefined = undefined;
+	@observable distanceSectionAutoOpened: boolean = false;
+	@observable closedDistanceAutoOpened: boolean = false; // indicates user closing auto-opened distance section
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -556,26 +562,23 @@ export class EventStore {
 
 	@action
 	async changeEvent(changeInfo: any) {
-		const newEvent = { ...changeInfo.event };
-
 		const eventId = changeInfo.event.id;
 		const storedEvent = this.calendarEvents.find((e) => e.id == eventId);
 		if (storedEvent) {
-			this.updateEvent(storedEvent, newEvent);
+			const newEvent = this.updateEvent(storedEvent, { ...changeInfo.event });
 
 			await this.setCalendarEvents([
 				...this.calendarEvents.filter((event) => event!.id!.toString() !== eventId.toString()),
-				storedEvent,
+				newEvent,
 			]);
 
-			const findEvent = this.allEvents.find((event) => event.id.toString() === eventId.toString());
-			if (findEvent) {
-				await this.updateEvent(findEvent, storedEvent);
-			} else {
-				console.error('event not found!');
-			}
-
-			await this.setAllEvents([...this.allEvents]);
+			// const findEvent = this.allEvents.find((event) => event.id.toString() === eventId.toString());
+			// if (findEvent) {
+			// 	await this.updateEvent(findEvent, storedEvent);
+			// } else {
+			// 	console.error('event not found!');
+			// }
+			// await this.setAllEvents([...this.allEvents]);
 
 			return true;
 		}
@@ -623,29 +626,30 @@ export class EventStore {
 
 	@action
 	async setAllEvents(newAllEvents: SidebarEvent[] | CalendarEvent[]) {
-		if (this.tripName == '') return;
-
-		// if (containsDuplicates(newAllEvents.map((x: SidebarEvent | CalendarEvent) => x.id))){
-		//     // alert("error! contains duplicates!");
+		// deprecated
+		// if (this.tripName == '') return;
+		//
+		// // if (containsDuplicates(newAllEvents.map((x: SidebarEvent | CalendarEvent) => x.id))){
+		// //     // alert("error! contains duplicates!");
+		// // }
+		//
+		// this.allEvents = [...newAllEvents].map((x) => {
+		// 	if ('start' in x) {
+		// 		// @ts-ignore
+		// 		delete x.start;
+		// 	}
+		// 	if ('end' in x) {
+		// 		// @ts-ignore
+		// 		delete x.end;
+		// 	}
+		// 	return x;
+		// }) as AllEventsEvent[]; // todo check conversion
+		//
+		// // update local storage
+		// if (this.allEventsTripName === this.tripName) {
+		// 	return this.dataService.setAllEvents(this.allEvents, this.tripName);
 		// }
-
-		this.allEvents = [...newAllEvents].map((x) => {
-			if ('start' in x) {
-				// @ts-ignore
-				delete x.start;
-			}
-			if ('end' in x) {
-				// @ts-ignore
-				delete x.end;
-			}
-			return x;
-		}) as AllEventsEvent[]; // todo check conversion
-
-		// update local storage
-		if (this.allEventsTripName === this.tripName) {
-			return this.dataService.setAllEvents(this.allEvents, this.tripName);
-		}
-		return Promise.resolve();
+		// return Promise.resolve();
 	}
 
 	@action
@@ -654,7 +658,7 @@ export class EventStore {
 		const newEvents = { ...this.sidebarEvents };
 		const eventToCategory: any = {};
 		const eventIdToEvent: any = {};
-		this.allEvents.forEach((e) => {
+		this.allEventsComputed.forEach((e) => {
 			eventToCategory[e.id] = e.category;
 			eventIdToEvent[e.id] = e;
 		});
@@ -730,8 +734,22 @@ export class EventStore {
 	}
 
 	@action
+	autoOpenDistanceSidebarGroup() {
+		if (this.closedDistanceAutoOpened) {
+			return;
+		}
+		this.openSidebarGroup(SidebarGroups.DISTANCES);
+		this.distanceSectionAutoOpened = true;
+	}
+
+	@action
 	toggleSidebarGroups(groupKey: string) {
 		if (this.openSidebarGroups.has(groupKey)) {
+			// indicate user close it after it's automatically opened.
+			if (this.distanceSectionAutoOpened && groupKey === SidebarGroups.DISTANCES) {
+				this.closedDistanceAutoOpened = true;
+			}
+
 			this.openSidebarGroups.delete(groupKey);
 		} else {
 			this.openSidebarGroup(groupKey);
@@ -906,6 +924,46 @@ export class EventStore {
 		this.mapFiltersVisible = !this.mapFiltersVisible;
 	}
 
+	@action
+	setSelectedCalendarEvent(calendarEvent: CalendarEvent | undefined) {
+		// @ts-ignore
+		const location = calendarEvent?.location ?? calendarEvent?.extendedProps?.location;
+		if (!location) {
+			this.selectedCalendarEvent = undefined;
+			this.selectedCalendarEventCloseBy = undefined;
+		} else {
+			this.selectedCalendarEvent = calendarEvent;
+
+			apiGetNew(
+				`/distance/near/${coordinateToString({
+					lat: location.latitude!,
+					lng: location.longitude!,
+				})}`
+			).then((results) => {
+				const data = results.data;
+				const allLocations = this.allEventsLocationsWithDuplicates;
+				const top10WithDetails = data
+					.map((x: any) => {
+						const event = allLocations.find((y) => coordinateToString(y) === x.to);
+						x.distance = x.distance?.text;
+						x.duration = x.duration?.text;
+						if (event) {
+							return {
+								...x,
+								event,
+							};
+						} else {
+							return undefined;
+						}
+					})
+					.filter(Boolean)
+					.slice(0, 10);
+				this.selectedCalendarEventCloseBy = top10WithDetails;
+				this.autoOpenDistanceSidebarGroup();
+			});
+		}
+	}
+
 	// --- private functions ----------------------------------------------------
 
 	getJSCalendarEvents(): CalendarEvent[] {
@@ -917,7 +975,8 @@ export class EventStore {
 		// return toJS(this.sidebarEvents);
 	}
 
-	updateEvent(storedEvent: SidebarEvent | CalendarEvent | any, newEvent: SidebarEvent | CalendarEvent | any) {
+	updateEvent(_storedEvent: SidebarEvent | CalendarEvent | any, newEvent: SidebarEvent | CalendarEvent | any) {
+		const storedEvent = _.cloneDeep(_storedEvent);
 		storedEvent.title = newEvent.title;
 		storedEvent.allDay = newEvent.allDay;
 		storedEvent.start = newEvent.start ?? storedEvent.start;
@@ -935,7 +994,7 @@ export class EventStore {
 			: storedEvent.openingHours;
 
 		// add column 7
-		storedEvent.images = newEvent.images || storedEvent.images;
+		storedEvent.images = newEvent.images ?? storedEvent.images;
 
 		storedEvent.moreInfo = newEvent.moreInfo ?? storedEvent.moreInfo;
 
@@ -944,6 +1003,12 @@ export class EventStore {
 		if (millisecondsDiff > 0) {
 			storedEvent.duration = convertMsToHM(millisecondsDiff);
 		}
+
+		// todo check
+		storedEvent.preferredTime = newEvent.preferredTime ?? storedEvent.preferredTime;
+		storedEvent.category = newEvent.category ?? storedEvent.category;
+
+		return storedEvent;
 	}
 
 	updateSidebarEvent(storedEvent: SidebarEvent, newEvent: SidebarEvent) {
@@ -991,8 +1056,8 @@ export class EventStore {
 		this.eventIdBuffer++;
 
 		let minEventId = 0;
-		if (this.allEvents.length > 0) {
-			minEventId = Math.max(...this.allEvents.flat().map((x) => parseInt(x.id)));
+		if (this.allEventsComputed.length > 0) {
+			minEventId = Math.max(...this.allEventsComputed.flat().map((x) => parseInt(x.id)));
 		}
 
 		return (minEventId + 1 + this.eventIdBuffer).toString();

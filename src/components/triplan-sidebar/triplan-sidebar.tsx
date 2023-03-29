@@ -1,11 +1,20 @@
 import React, { CSSProperties, useContext } from 'react';
 import TranslateService from '../../services/translate-service';
-import { addLineBreaks, getClasses, isBasketball, isDessert, isFlight, isHotel, ucfirst } from '../../utils/utils';
+import {
+	addLineBreaks,
+	getClasses,
+	isBasketball,
+	isDessert,
+	isFlight,
+	isHotel,
+	toDistanceString,
+	ucfirst,
+} from '../../utils/utils';
 import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
-import { observer } from 'mobx-react';
+import { Observer, observer } from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import Button, { ButtonFlavor } from '../common/button/button';
@@ -151,7 +160,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 	const renderWarnings = () => {
 		const renderNoLocationEventsStatistics = () => {
-			const eventsWithNoLocationArr = eventStore.allEvents.filter((x) => {
+			const eventsWithNoLocationArr = eventStore.allEventsComputed.filter((x) => {
 				const eventHaveNoLocation = !x.location;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
@@ -191,7 +200,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		};
 
 		const renderNoOpeningHoursEventsStatistics = () => {
-			const eventsWithNoHoursArr = eventStore.allEvents.filter((x) => {
+			const eventsWithNoHoursArr = eventStore.allEventsComputed.filter((x) => {
 				const eventHaveNoHours = !x.openingHours;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
@@ -232,7 +241,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		const renderEventsWithTodoCompleteStatistics = () => {
 			const { taskKeywords } = ListViewService._initSummaryConfiguration();
-			let todoCompleteEvents: AllEventsEvent[] | string[] = eventStore.allEvents.filter((x) => {
+			let todoCompleteEvents: AllEventsEvent[] | string[] = eventStore.allEventsComputed.filter((x) => {
 				const { title, allDay, description = '' } = x;
 				const isTodoComplete = taskKeywords.find(
 					(k) =>
@@ -335,10 +344,74 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderDistances = () => {
+		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.TITLE');
+
+		const renderCloseTo = () => {
+			if (!eventStore.selectedCalendarEvent || !eventStore.selectedCalendarEventCloseBy?.length) {
+				return null;
+			}
+
+			// todo:
+			// 1 - render this block always. if there's no event, it will show no results.
+			// 2 - if there is event but no results, show appropriate message / try to check air distance?
+			// 3 - show a select that will allow the user to change selectedCalendarEvent from there.
+			// 4 - rename selectedCalendarEvent to selectedEventForCloseBy or something
+			// 5 - instead of ul and lis, render draggables that the user will be able to drag to the calendar
+			// 6 - make sure that dragging these will also remove the originals from the sidebar.
+			// 7 - add details about this event - already scheduled? sidebar? which category? etc.
+			// 8 - under each draggable put timing and distance
+
+			return (
+				<>
+					<div className="body-text-align padding-block-10 flex-col gap-8">
+						<span
+							dangerouslySetInnerHTML={{
+								__html: TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES', {
+									X: eventStore.selectedCalendarEvent.title,
+								}),
+							}}
+						/>
+						<ul className="padding-inline-20">
+							{eventStore.selectedCalendarEventCloseBy.map((x: any, idx: number) => (
+								<li key={`close-by-${idx}`}>
+									{`${x.event.eventName} - ${toDistanceString(
+										eventStore,
+										x,
+										true,
+										x.travelMode,
+										true
+									)}`}
+								</li>
+							))}
+						</ul>
+					</div>
+					<hr className="margin-block-2" />
+				</>
+			);
+		};
+
 		const shouldShowDistancesBlock =
 			Array.from(eventStore.distanceResults.values()).length > 0 &&
 			eventStore.allEventsLocationsWithDuplicates.length >= 2;
-		return shouldShowDistancesBlock ? <DistanceCalculator /> : null;
+		return shouldShowDistancesBlock ? (
+			<Observer>
+				{() => (
+					<>
+						<hr className={'margin-block-2'} />
+						{wrapWithSidebarGroup(
+							<>
+								{renderCloseTo()}
+								<DistanceCalculator />
+							</>,
+							'fa-map-signs',
+							SidebarGroups.DISTANCES,
+							groupTitle,
+							eventStore.allEventsLocations.length
+						)}
+					</>
+				)}
+			</Observer>
+		) : null;
 	};
 
 	const renderActions = () => {

@@ -514,5 +514,6 @@
 	"SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.PREFIX": "מסלול זה עדיין לא חושב,",
 	"SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX": "כדי לחשב אותו",
 	"DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER": "הזן כותרת",
-	"LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY": "אין פעילות בלוח השנה, הוסף כדי לקבל סיכום"
+	"LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY": "אין פעילות בלוח השנה, הוסף כדי לקבל סיכום",
+	"CLOSE_BY_ACTIVITIES": "פעילויות באזור של <u>{X}</u>:"
 }

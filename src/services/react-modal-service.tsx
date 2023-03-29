@@ -1510,14 +1510,14 @@ const ReactModalService = {
 			existingSidebarEvents[categoryId].push(currentEvent);
 			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			const allEventsEvent = {
-				...currentEvent,
-				category: categoryId.toString(),
-			};
-			await eventStore.setAllEvents([
-				...eventStore.allEvents.filter((x) => x.id !== currentEvent.id),
-				allEventsEvent,
-			]);
+			// const allEventsEvent = {
+			// 	...currentEvent,
+			// 	category: categoryId.toString(),
+			// };
+			// await eventStore.setAllEvents([
+			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
+			// 	allEventsEvent,
+			// ]);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -1700,14 +1700,14 @@ const ReactModalService = {
 				sidebarEvents[parseInt(category)] = sidebarEvents[parseInt(category)] || [];
 				sidebarEvents[parseInt(category)].push(currentEvent);
 				await eventStore.setSidebarEvents(sidebarEvents);
-				const allEventsEvent = {
-					...currentEvent,
-					category,
-				};
-				await eventStore.setAllEvents([
-					...eventStore.allEvents.filter((x) => x.id !== eventId),
-					allEventsEvent,
-				]);
+				// const allEventsEvent = {
+				// 	...currentEvent,
+				// 	category,
+				// };
+				// await eventStore.setAllEvents([
+				// 	...eventStore.allEventsComputed.filter((x) => x.id !== eventId),
+				// 	allEventsEvent,
+				// ]);
 
 				addToEventsToCategories(currentEvent);
 
@@ -1732,7 +1732,7 @@ const ReactModalService = {
 						moreInfo,
 						category,
 					} as SidebarEvent);
-					await eventStore.setAllEvents(eventStore.allEvents);
+					// await eventStore.setAllEvents(eventStore.allEvents);
 
 					const newSidebarEvents: Record<number, SidebarEvent[]> = {};
 					const existingSidebarEvents = eventStore.getJSSidebarEvents();
@@ -1905,10 +1905,10 @@ const ReactModalService = {
 			existingSidebarEvents[parseInt(category)].push(currentEvent);
 			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			await eventStore.setAllEvents([
-				...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
-				currentEvent,
-			]);
+			// await eventStore.setAllEvents([
+			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
+			// 	currentEvent,
+			// ]);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -2193,10 +2193,10 @@ const ReactModalService = {
 			await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 			addToEventsToCategories(currentEvent);
 
-			await eventStore.setAllEvents([
-				...eventStore.allEvents.filter((x) => x.id !== currentEvent.id),
-				{ ...currentEvent, category: categoryId },
-			]);
+			// await eventStore.setAllEvents([
+			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
+			// 	{ ...currentEvent, category: categoryId },
+			// ]);
 
 			// if we got sidebarEventData it means we're trying to add already existing event to the calendar.
 			// (it could be either by clicking on the calendar and choosing 'add from existing' or trying to add from the map)
@@ -2310,7 +2310,7 @@ const ReactModalService = {
 			await eventStore.setCalendarEvents([...newCalendarEvents]);
 
 			// delete from all events
-			await eventStore.setAllEvents([...newAllEvents]);
+			// await eventStore.setAllEvents([...newAllEvents]);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -2680,14 +2680,14 @@ const ReactModalService = {
 					...eventStore.calendarEvents.filter((x) => x.id !== eventId),
 					currentEvent,
 				]);
-				const allEventsEvent = {
-					...currentEvent,
-					category: categoryId.toString(),
-				};
-				await eventStore.setAllEvents([
-					...eventStore.allEvents.filter((x) => x.id !== eventId),
-					allEventsEvent,
-				]);
+				// const allEventsEvent = {
+				// 	...currentEvent,
+				// 	category: categoryId.toString(),
+				// };
+				// await eventStore.setAllEvents([
+				// 	...eventStore.allEventsComputed.filter((x) => x.id !== eventId),
+				// 	allEventsEvent,
+				// ]);
 				ReactModalService.internal.alertMessage(
 					eventStore,
 					'MODALS.UPDATED.TITLE',
@@ -2750,7 +2750,7 @@ const ReactModalService = {
 
 			// update all events
 			// @ts-ignore
-			await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
+			// await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
 		};
 
 		const onDeleteClick = () => {
@@ -2881,7 +2881,7 @@ const ReactModalService = {
 				ReactModalService.internal.disableOnConfirm();
 
 				await removeEventFromSidebarById(event.id);
-				await eventStore.setAllEvents(eventStore.allEvents.filter((x) => x.id !== event.id));
+				// await eventStore.setAllEvents(eventStore.allEventsComputed.filter((x) => x.id !== event.id));
 
 				ReactModalService.internal.closeModal(eventStore);
 			},
@@ -3306,10 +3306,10 @@ const ReactModalService = {
 										if (eventStore.isMobile) {
 											eventStore.setMobileViewMode(ViewMode.sidebar);
 											setTimeout(() => {
-												eventStore.openSidebarGroup(SidebarGroups.DISTANCES);
+												eventStore.autoOpenDistanceSidebarGroup();
 											}, 600);
 										} else {
-											eventStore.openSidebarGroup(SidebarGroups.DISTANCES);
+											eventStore.autoOpenDistanceSidebarGroup();
 										}
 									}
 								});

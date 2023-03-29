@@ -245,7 +245,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 	const renderWarnings = () => {
 		const renderNoLocationEventsStatistics = () => {
-			const eventsWithNoLocationArr = eventStore.allEvents.filter((x) => {
+			const eventsWithNoLocationArr = eventStore.allEventsComputed.filter((x) => {
 				const eventHaveNoLocation = !x.location;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
@@ -283,7 +283,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		};
 
 		const renderNoOpeningHoursEventsStatistics = () => {
-			const eventsWithNoHoursArr = eventStore.allEvents.filter((x) => {
+			const eventsWithNoHoursArr = eventStore.allEventsComputed.filter((x) => {
 				const eventHaveNoHours = !x.openingHours;
 				const eventIsInCalendar = eventStore.calendarEvents.find((y) => y.id === x.id);
 				const eventIsANote = x.allDay || (eventIsInCalendar && eventIsInCalendar.allDay); // in this case location is irrelevant.
@@ -322,7 +322,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 		const renderEventsWithTodoCompleteStatistics = () => {
 			const { taskKeywords } = ListViewService._initSummaryConfiguration();
-			let todoCompleteEvents = eventStore.allEvents.filter((x) => {
+			let todoCompleteEvents = eventStore.allEventsComputed.filter((x) => {
 				const { title, allDay, description = '' } = x;
 				const isTodoComplete = taskKeywords.find(
 					(k: string) =>

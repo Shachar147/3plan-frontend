@@ -165,6 +165,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// add it to our store (so it'll be updated on fullcalendar via calendarEvents prop)
 		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== id), calendarEvent]);
 
+		eventStore.setSelectedCalendarEvent(calendarEvent);
+
 		refreshSources();
 	};
 
@@ -190,6 +192,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			start: changeInfo.event.start,
 			end: changeInfo.event.end,
 		};
+
+		eventStore.setSelectedCalendarEvent(changeInfo.event);
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		return eventStore.changeEvent({ event: newEvent });
@@ -226,6 +230,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			shouldOpen = true;
 		}
 		// }
+
+		eventStore.setSelectedCalendarEvent(selectionInfo.event);
 
 		if (shouldOpen) {
 			ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);

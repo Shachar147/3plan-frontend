@@ -13,8 +13,6 @@ const UNKNOWN_DISTANCE_RESULT = 'N/A';
 const DistanceCalculator = () => {
 	const eventStore = useContext(eventStoreContext);
 
-	const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.TITLE');
-
 	const options = eventStore.allEventsLocationsWithDuplicates.map((x) => ({
 		label: x.eventName,
 		value: x,
@@ -62,7 +60,7 @@ const DistanceCalculator = () => {
 		);
 	};
 
-	const renderContent = () => (
+	return (
 		<div className="sidebar-distances-block">
 			{ReactModalRenderHelper.renderInputWithLabel(
 				eventStore,
@@ -102,27 +100,6 @@ const DistanceCalculator = () => {
 				<Observer>{() => renderFromToDistanceResult()}</Observer>
 			</div>
 		</div>
-	);
-
-	const distancesBlock = (
-		<Observer>
-			{() =>
-				wrapWithSidebarGroup(
-					renderContent(),
-					'fa-map-signs',
-					SidebarGroups.DISTANCES,
-					groupTitle,
-					eventStore.allEventsLocations.length
-				)
-			}
-		</Observer>
-	);
-
-	return (
-		<>
-			<hr className={'margin-block-2'} />
-			{distancesBlock}
-		</>
 	);
 };
 

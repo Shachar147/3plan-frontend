@@ -81,38 +81,38 @@ function MainPage(props: MainPageProps) {
 		}
 	}, [tripName, locale]);
 
-	// todo: remove once we'll remove allEvents from trip.
-	useEffect(() => {
-		// update idtoevent, idtocategory and allevents array
-		const arr = [...eventStore.allEventsComputed];
-		const idToEvent: Record<string, SidebarEvent> = {};
-		const idToCategory: Record<string, number> = {};
-
-		const sidebarEvents: Record<number, SidebarEvent[]> = eventStore.sidebarEvents;
-
-		Object.keys(sidebarEvents).map((category: string) => {
-			const categoryId = Number(category);
-			const categoryEvents: SidebarEvent[] = sidebarEvents[categoryId] ?? [];
-			categoryEvents.forEach((event) => {
-				if (event.priority) {
-					event.className = `priority-${event.priority}`;
-				}
-				const eventId: string = event.id;
-				idToEvent[eventId] = event;
-				idToCategory[eventId] = categoryId;
-			});
-		});
-
-		const existingIds = eventStore.allEventsComputed.map((e) => e.id.toString());
-		Object.keys(idToEvent).forEach((eventId) => {
-			if (existingIds.indexOf(eventId) === -1) {
-				arr.push({ ...idToEvent[eventId], category: idToCategory[eventId].toString() });
-			}
-		});
-
-		// ERROR HANDLING: todo add try/catch & show a message if fails
-		eventStore.setAllEvents(arr);
-	}, [eventStore.allEventsComputed]);
+	// // todo: remove once we'll remove allEvents from trip.
+	// useEffect(() => {
+	// 	// update idtoevent, idtocategory and allevents array
+	// 	const arr = [...eventStore.allEventsComputed];
+	// 	const idToEvent: Record<string, SidebarEvent> = {};
+	// 	const idToCategory: Record<string, number> = {};
+	//
+	// 	const sidebarEvents: Record<number, SidebarEvent[]> = eventStore.sidebarEvents;
+	//
+	// 	Object.keys(sidebarEvents).map((category: string) => {
+	// 		const categoryId = Number(category);
+	// 		const categoryEvents: SidebarEvent[] = sidebarEvents[categoryId] ?? [];
+	// 		categoryEvents.forEach((event) => {
+	// 			if (event.priority) {
+	// 				event.className = `priority-${event.priority}`;
+	// 			}
+	// 			const eventId: string = event.id;
+	// 			idToEvent[eventId] = event;
+	// 			idToCategory[eventId] = categoryId;
+	// 		});
+	// 	});
+	//
+	// 	const existingIds = eventStore.allEventsComputed.map((e) => e.id.toString());
+	// 	Object.keys(idToEvent).forEach((eventId) => {
+	// 		if (existingIds.indexOf(eventId) === -1) {
+	// 			arr.push({ ...idToEvent[eventId], category: idToCategory[eventId].toString() });
+	// 		}
+	// 	});
+	//
+	// 	// ERROR HANDLING: todo add try/catch & show a message if fails
+	// 	eventStore.setAllEvents(arr);
+	// }, [eventStore.allEventsComputed]);
 
 	// ERROR HANDLING: todo add try/catch & show a message if fails
 	function addEventToSidebar(event: any): boolean {
@@ -157,7 +157,7 @@ function MainPage(props: MainPageProps) {
 			...eventStore.calendarEvents.filter(
 				(calendarEvent) => calendarEvent?.id?.toString() !== eventId.toString()
 			),
-			eventStore.allEvents.find((e) => e.id.toString() === eventId.toString()),
+			eventStore.allEventsComputed.find((e) => e.id.toString() === eventId.toString()),
 		] as CalendarEvent[];
 		await eventStore.setCalendarEvents(newCalendarEvents);
 

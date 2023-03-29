@@ -290,7 +290,7 @@ const ImportService = {
 							// @ts-ignore
 							event['title'] = val;
 
-							if (eventStore.allEvents.find((e) => e.title === val)) {
+							if (eventStore.allEventsComputed.find((e) => e.title === val)) {
 								isValid = false;
 								const error = `${TranslateService.translate(
 									eventStore,

@@ -227,6 +227,14 @@ body {
 	padding-inline: 15px;
 }
 
+.padding-inline-20 {
+	padding-inline: 20px;
+}
+
+.padding-block-10 {
+	padding-block: 10px;
+}
+
 .padding-top-0 {
 	padding-top: 0 !important;
 }
@@ -294,6 +302,10 @@ body {
 /* margin */
 .margin-block-2 {
 	margin-block: 2px;
+}
+
+.margin-inline-0 {
+	margin-inline: 0;
 }
 
 .margin-top-5 {
@@ -904,5 +916,17 @@ body.rtl {
 		position: absolute;
 		top: 9px;
 		left: 10px;
+	}
+}
+
+body.ltr {
+	.body-text-align {
+		text-align: left;
+	}
+}
+
+body.rtl {
+	.body-text-align {
+		text-align: right;
 	}
 }
