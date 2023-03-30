@@ -96,7 +96,7 @@ const DistanceCalculator = () => {
 				'sidebar-distances-select-row'
 			)}
 
-			{from && to && (
+			{!!from && !!to && (
 				<div className="sidebar-distance-result" key={JSON.stringify(eventStore.modalValues)}>
 					<Observer>{() => renderFromToDistanceResult()}</Observer>
 				</div>
