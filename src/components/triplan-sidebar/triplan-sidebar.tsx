@@ -356,14 +356,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			// }
 
 			// todo:
-			// 1 - render this block always. if there's no event, it will show no results.
 			// 2 - if there is event but no results, show appropriate message / try to check air distance?
-			// 3 - show a select that will allow the user to change selectedCalendarEvent from there.
-			// 4 - rename selectedCalendarEvent to selectedEventForCloseBy or something
-			// 5 - instead of ul and lis, render draggables that the user will be able to drag to the calendar
-			// 6 - make sure that dragging these will also remove the originals from the sidebar.
 			// 7 - add details about this event - already scheduled? sidebar? which category? etc.
-			// 8 - under each draggable put timing and distance
+			// 9 - when moving between trips, need to lear selected nearby and its results too.
+			// 10 - style the details of the event better
 
 			const options = eventStore.allEventsComputed
 				.filter((x) => x.location?.latitude && x.location?.longitude)
