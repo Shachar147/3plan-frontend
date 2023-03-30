@@ -165,7 +165,9 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// add it to our store (so it'll be updated on fullcalendar via calendarEvents prop)
 		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== id), calendarEvent]);
 
-		eventStore.setSelectedEventForNearBy(calendarEvent);
+		if (!eventStore.distanceSectionAutoOpened) {
+			eventStore.setSelectedEventForNearBy(calendarEvent);
+		}
 
 		refreshSources();
 	};
@@ -193,7 +195,9 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			end: changeInfo.event.end,
 		};
 
-		eventStore.setSelectedEventForNearBy(newEvent); // changeInfo.event);
+		if (!eventStore.distanceSectionAutoOpened) {
+			eventStore.setSelectedEventForNearBy(newEvent); // changeInfo.event);
+		}
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		return eventStore.changeEvent({ event: newEvent });
@@ -231,7 +235,9 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 		// }
 
-		eventStore.setSelectedEventForNearBy(selectionInfo.event);
+		if (!eventStore.distanceSectionAutoOpened) {
+			eventStore.setSelectedEventForNearBy(selectionInfo.event);
+		}
 
 		if (shouldOpen) {
 			ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);

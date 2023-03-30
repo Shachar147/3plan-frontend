@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, useContext, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useState } from 'react';
 import { getClasses } from '../../../utils/utils';
 import Select from 'react-select';
 import TranslateService from '../../../services/translate-service';
@@ -35,6 +35,12 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 	const { wrapperClassName, readOnly, id, name, options, placeholderKey, modalValueName, maxMenuHeight } = props;
 	const initialValue = props.value ?? (eventStore.modalValues ? eventStore.modalValues[modalValueName] : undefined);
 	const [value, setValue] = useState(initialValue);
+
+	useEffect(() => {
+		if (modalValueName) {
+			setValue(eventStore.modalValues[modalValueName]);
+		}
+	}, [eventStore.modalValues?.[modalValueName]]);
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({

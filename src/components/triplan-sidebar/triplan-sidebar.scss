@@ -246,20 +246,28 @@
 
 	.nearby-places-results {
 		padding-inline-end: 5px;
-		max-height: 300px;
+		max-height: 350px;
 		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 
 		.nearby-result-distance-string {
 			font-size: 12px;
 			margin-bottom: 5px;
 
 			background-color: var(--black-bg);
-			border-radius: 18px;
+			border-radius: 10px;
 			color: var(--brown-gray);
 			margin-inline-start: 5px;
 			min-width: 280px;
-			padding-inline: 8px;
+			padding-inline: 16px;
+			padding-block: 4px;
 			display: flex;
+
+			//margin-top: -6px;
+			//border-top-left-radius: 0;
+			//border-top-right-radius: 0;
 		}
 	}
 }

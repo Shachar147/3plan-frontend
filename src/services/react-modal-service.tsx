@@ -2516,7 +2516,9 @@ const ReactModalService = {
 			console.error('event not found');
 			return;
 		}
-		eventStore.setSelectedEventForNearBy(found);
+		if (!eventStore.distanceSectionAutoOpened) {
+			eventStore.setSelectedEventForNearBy(found);
+		}
 
 		const currentEvent = { ...found };
 

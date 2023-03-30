@@ -741,6 +741,7 @@ export class EventStore {
 			return;
 		}
 		this.openSidebarGroup(SidebarGroups.DISTANCES);
+		this.openSidebarGroup(SidebarGroups.DISTANCES_NEARBY);
 		this.distanceSectionAutoOpened = true;
 	}
 
@@ -748,7 +749,10 @@ export class EventStore {
 	toggleSidebarGroups(groupKey: string) {
 		if (this.openSidebarGroups.has(groupKey)) {
 			// indicate user close it after it's automatically opened.
-			if (this.distanceSectionAutoOpened && groupKey === SidebarGroups.DISTANCES) {
+			if (
+				this.distanceSectionAutoOpened &&
+				[SidebarGroups.DISTANCES, SidebarGroups.DISTANCES_NEARBY].includes(groupKey as SidebarGroups)
+			) {
 				this.closedDistanceAutoOpened = true;
 			}
 
@@ -1107,7 +1111,8 @@ export class EventStore {
 
 	hasDistanceResultsOfCoordinate(coordinate: Coordinate): boolean {
 		const coordinateKey = coordinateToString(coordinate);
-		const found = Object.keys(this.distanceResults).find((x) => x.indexOf(coordinateKey) !== -1);
+		const hashMap = JSON.parse(JSON.stringify(this.distanceResults));
+		const found = Object.keys(hashMap).find((x) => x.indexOf(coordinateKey) !== -1);
 		return !!found;
 	}
 }

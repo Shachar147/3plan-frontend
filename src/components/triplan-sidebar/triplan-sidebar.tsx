@@ -420,6 +420,19 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				}
 			}
 
+			const nearByPlaces = eventStore.selectedEventNearByPlaces ?? [];
+			const scheduledNearByPlaces: any[] = [];
+			const unscheduledNearByPlaces: any[] = [];
+
+			nearByPlaces.forEach((info) => {
+				const calendarEvent = eventStore.calendarEvents.find((x) => x.id == info.event.id);
+				if (calendarEvent) {
+					scheduledNearByPlaces.push(info);
+				} else {
+					unscheduledNearByPlaces.push(info);
+				}
+			});
+
 			return (
 				<>
 					<div
@@ -428,23 +441,58 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						id={`nearby-places-${eventStore.selectedEventForNearBy}`}
 					>
 						{selectControl}
+						{eventStore.selectedEventForNearBy && (
+							<>
+								<hr className="margin-block-2 width-100-percents" />
+								{/*<span className="text-decoration-underline">*/}
+								{/*	{TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES', {*/}
+								{/*		X: eventStore.selectedEventForNearBy.title,*/}
+								{/*	})}*/}
+								{/*</span>*/}
+							</>
+						)}
 						{noResultsPlaceholder !== '' && (
 							<div className="no-nearby-placeholder">{noResultsPlaceholder}</div>
 						)}
-						{!!eventStore.selectedEventNearByPlaces?.length && (
+						{!!nearByPlaces.length && (
 							<>
-								<hr className="margin-block-2 width-100-percents" />
 								<div className="nearby-places-results external-events bright-scrollbar">
-									{eventStore.selectedEventNearByPlaces.map((x: any, idx: number) => (
-										<div className="nearby-result flex-col gap-3">
-											{renderEventDraggable(x.event, x.event.category, false)}
-											<span className="nearby-result-distance-string">
-												{calendarOrSidebarEventDetails(eventStore, x.event)}
-												<br />
-												{toDistanceString(eventStore, x, true, x.travelMode, true)}
-											</span>
-										</div>
-									))}
+									<div>
+										{renderLineWithText(
+											`${TranslateService.translate(eventStore, 'UNSCHEDULED_EVENTS')} (${
+												unscheduledNearByPlaces.length
+											})`
+										)}
+										{unscheduledNearByPlaces.map((x: any, idx: number) => {
+											const scheduledTo = calendarOrSidebarEventDetails(eventStore, x.event);
+											return (
+												<div className="nearby-result flex-col gap-3">
+													{renderEventDraggable(x.event, x.event.category, false)}
+													<span className="nearby-result-distance-string">
+														{scheduledTo && <br />}
+														{toDistanceString(eventStore, x, true, x.travelMode, true)}
+													</span>
+												</div>
+											);
+										})}
+									</div>
+									<div>
+										{renderLineWithText(
+											`${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS')} (${
+												scheduledNearByPlaces.length
+											})`
+										)}
+										{scheduledNearByPlaces.map((x: any, idx: number) => (
+											<div className="nearby-result flex-col gap-3">
+												{renderEventDraggable(x.event, x.event.category, false)}
+												<span className="nearby-result-distance-string">
+													{calendarOrSidebarEventDetails(eventStore, x.event)}
+													<br />
+													{toDistanceString(eventStore, x, true, x.travelMode, true)}
+												</span>
+											</div>
+										))}
+									</div>
 								</div>
 							</>
 						)}
@@ -477,7 +525,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 									<>{renderNearBy()}</>,
 									undefined,
 									SidebarGroups.DISTANCES_NEARBY,
-									TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES.EMPTY'),
+									TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES.GROUP_TITLE'),
 									eventStore.allEventsLocations.length // ?
 								)}
 								<hr className="margin-block-2 width-100-percents" />
@@ -1021,19 +1069,25 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
 				return (
 					<div key={`${categoryId}-${preferredHour}`}>
-						<div className={'preferred-time'}>
-							<div className={'preferred-time-divider'} style={{ maxWidth: '20px' }} />
-							<div className={'preferred-time-title'}>
-								{TranslateService.translate(eventStore, 'TIME')}:{' '}
-								{ucfirst(TranslateService.translate(eventStore, preferredHourString))} (
-								{preferredHoursHash[preferredHour].length})
-							</div>
-							<div className={'preferred-time-divider'} />
-						</div>
+						{renderLineWithText(
+							`${TranslateService.translate(eventStore, 'TIME')}: ${ucfirst(
+								TranslateService.translate(eventStore, preferredHourString)
+							)} (${preferredHoursHash[preferredHour].length})`
+						)}
 						<div>{renderPreferredHourEvents(categoryId, preferredHoursHash[preferredHour])}</div>
 					</div>
 				);
 			});
+	};
+
+	const renderLineWithText = (text: string) => {
+		return (
+			<div className={'preferred-time'}>
+				<div className={'preferred-time-divider'} style={{ maxWidth: '20px' }} />
+				<div className={'preferred-time-title'}>{text}</div>
+				<div className={'preferred-time-divider'} />
+			</div>
+		);
 	};
 
 	const sortByPriority = (a: SidebarEvent, b: SidebarEvent) => {
