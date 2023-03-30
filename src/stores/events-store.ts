@@ -112,8 +112,8 @@ export class EventStore {
 	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
 	@observable taskData: any = { progress: 0 };
 	@observable eventsWithDistanceProblems: any[] = [];
-	@observable selectedCalendarEvent: CalendarEvent | undefined = undefined;
-	@observable selectedCalendarEventCloseBy: any[] | undefined = undefined;
+	@observable selectedEventForNearBy: CalendarEvent | SidebarEvent | undefined = undefined;
+	@observable selectedEventNearByPlaces: any[] | undefined = undefined;
 	@observable distanceSectionAutoOpened: boolean = false;
 	@observable closedDistanceAutoOpened: boolean = false; // indicates user closing auto-opened distance section
 
@@ -925,14 +925,19 @@ export class EventStore {
 	}
 
 	@action
-	setSelectedCalendarEvent(calendarEvent: CalendarEvent | undefined) {
+	setSelectedEventForNearBy(calendarEvent: CalendarEvent | SidebarEvent | undefined) {
 		// @ts-ignore
 		const location = calendarEvent?.location ?? calendarEvent?.extendedProps?.location;
 		if (!location) {
-			this.selectedCalendarEvent = undefined;
-			this.selectedCalendarEventCloseBy = undefined;
+			this.selectedEventForNearBy = undefined;
+			this.selectedEventNearByPlaces = undefined;
+			this.modalValues['selectedCalendarEvent'] = undefined;
 		} else {
-			this.selectedCalendarEvent = calendarEvent;
+			this.selectedEventForNearBy = calendarEvent;
+			this.modalValues['selectedCalendarEvent'] = {
+				label: calendarEvent?.title,
+				value: calendarEvent?.id,
+			};
 
 			apiGetNew(
 				`/distance/near/${coordinateToString({
@@ -958,7 +963,7 @@ export class EventStore {
 					})
 					.filter(Boolean)
 					.slice(0, 10);
-				this.selectedCalendarEventCloseBy = top10WithDetails;
+				this.selectedEventNearByPlaces = top10WithDetails;
 				this.autoOpenDistanceSidebarGroup();
 			});
 		}

@@ -22,6 +22,7 @@ interface SelectInputProps {
 	modalValueName: string;
 	maxMenuHeight?: number;
 	onChange?: (value: any) => any;
+	onClear?: () => any;
 	removeDefaultClass?: boolean;
 	value?: any;
 	isClearable?: boolean;
@@ -54,12 +55,15 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 				options={options}
 				placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined}
 				value={value}
-				onChange={(data) => {
+				onChange={(data, triggeredAction) => {
 					runInAction(() => {
 						eventStore.modalValues[modalValueName] = data;
 					});
 					setValue(data);
-					if (props.onChange) {
+
+					if (triggeredAction.action === 'clear' && props.onClear) {
+						props.onClear();
+					} else if (props.onChange) {
 						props.onChange(data);
 					}
 				}}

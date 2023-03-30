@@ -206,6 +206,7 @@ export const ReactModalRenderHelper = {
 			maxMenuHeight?: number;
 			removeDefaultClass?: boolean;
 			onChange?: (data: any) => void;
+			onClear?: () => void;
 		},
 		wrapperClassName: string,
 		ref?: any
@@ -222,6 +223,7 @@ export const ReactModalRenderHelper = {
 				maxMenuHeight={extra.maxMenuHeight}
 				removeDefaultClass={extra.removeDefaultClass}
 				onChange={extra.onChange}
+				onClear={extra.onClear}
 			/>
 		);
 	},
@@ -2514,6 +2516,7 @@ const ReactModalService = {
 			console.error('event not found');
 			return;
 		}
+		eventStore.setSelectedEventForNearBy(found);
 
 		const currentEvent = { ...found };
 

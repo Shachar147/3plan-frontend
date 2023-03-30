@@ -23,7 +23,7 @@ import Button, { ButtonFlavor } from '../common/button/button';
 import * as _ from 'lodash';
 import { hotelColor, priorityToColor } from '../../utils/consts';
 import ListViewService from '../../services/list-view-service';
-import ReactModalService from '../../services/react-modal-service';
+import ReactModalService, { ReactModalRenderHelper } from '../../services/react-modal-service';
 import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { runInAction } from 'mobx';
 import DistanceCalculator from './distance-calculator/distance-calculator';
@@ -347,7 +347,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const renderDistances = () => {
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR.DISTANCES_BLOCK.TITLE');
 
-		const renderCloseTo = () => {
+		const renderNearBy = () => {
 			// if (!eventStore.selectedCalendarEvent || !eventStore.selectedCalendarEventCloseBy?.length) {
 			// 	return null;
 			// }
@@ -362,16 +362,42 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			// 7 - add details about this event - already scheduled? sidebar? which category? etc.
 			// 8 - under each draggable put timing and distance
 
+			const options = eventStore.allEventsComputed
+				.filter((x) => x.location?.latitude && x.location?.longitude)
+				.map((x) => ({
+					label: x.title,
+					value: x.id,
+				}));
+
+			const selectControl = ReactModalRenderHelper.renderSelectInput(
+				eventStore,
+				'selectedCalendarEvent',
+				{
+					options,
+					placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER',
+					onChange: (data: any) => {
+						const eventId = data.value;
+						const event = eventStore.allEventsComputed.find((x) => x.id == eventId);
+						eventStore.setSelectedEventForNearBy(event);
+					},
+					onClear: () => {
+						eventStore.setSelectedEventForNearBy(undefined);
+					},
+				},
+				'distance-nearby-selector',
+				undefined
+			);
+
 			let noResultsPlaceholder: string | React.ReactNode = '';
 
 			let blockTitle = TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES.EMPTY');
-			if (eventStore.selectedCalendarEvent) {
-				blockTitle = TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES', {
-					X: eventStore.selectedCalendarEvent.title,
-				});
+			if (eventStore.selectedEventForNearBy) {
+				// blockTitle = TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES', {
+				// 	X: eventStore.selectedEventForNearBy.title,
+				// });
 
-				if (!eventStore.selectedCalendarEventCloseBy?.length) {
-					const location = eventStore.selectedCalendarEvent!.location!;
+				if (!eventStore.selectedEventNearByPlaces?.length) {
+					const location = eventStore.selectedEventForNearBy!.location!;
 					const coordinate = { lat: location.latitude!, lng: location.longitude! };
 					if (eventStore.hasDistanceResultsOfCoordinate(coordinate)) {
 						noResultsPlaceholder = (
@@ -402,14 +428,19 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			return (
 				<>
-					<div className="body-text-align padding-block-10 flex-col gap-8">
+					<div
+						className="sidebar-distances-block nearby-places body-text-align padding-block-10 flex-col gap-8"
+						key={`nearby-places-${eventStore.selectedEventForNearBy}`}
+						id={`nearby-places-${eventStore.selectedEventForNearBy}`}
+					>
 						<span className="text-decoration-underline">{blockTitle}</span>
+						{selectControl}
 						{noResultsPlaceholder !== '' && (
 							<div className="no-nearby-placeholder">{noResultsPlaceholder}</div>
 						)}
-						{!!eventStore.selectedCalendarEventCloseBy?.length && (
+						{!!eventStore.selectedEventNearByPlaces?.length && (
 							<ul className="padding-inline-20">
-								{eventStore.selectedCalendarEventCloseBy.map((x: any, idx: number) => (
+								{eventStore.selectedEventNearByPlaces.map((x: any, idx: number) => (
 									<li key={`close-by-${idx}`}>
 										{`${x.event.eventName} - ${toDistanceString(
 											eventStore,
@@ -449,7 +480,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						<hr className={'margin-block-2'} />
 						{wrapWithSidebarGroup(
 							<>
-								{renderCloseTo()}
+								{renderNearBy()}
 								{renderDistanceCalculator()}
 							</>,
 							'fa-map-signs',
