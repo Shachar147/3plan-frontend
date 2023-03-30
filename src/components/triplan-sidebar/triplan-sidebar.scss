@@ -243,6 +243,25 @@
 		max-width: unset;
 		width: 100%;
 	}
+
+	.nearby-places-results {
+		padding-inline-end: 5px;
+		max-height: 300px;
+		overflow-y: auto;
+
+		.nearby-result-distance-string {
+			font-size: 12px;
+			margin-bottom: 5px;
+
+			background-color: var(--black-bg);
+			border-radius: 18px;
+			color: var(--brown-gray);
+			margin-inline-start: 5px;
+			min-width: 280px;
+			padding-inline: 8px;
+			display: flex;
+		}
+	}
 }
 
 body.rtl {

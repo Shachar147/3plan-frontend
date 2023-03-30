@@ -4,6 +4,7 @@ import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
 import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
 import { FLIGHT_KEYWORDS, HOTEL_KEYWORDS } from '../components/map-container/map-container';
+import { formatDate, formatTime, getDurationString, toDate } from './time-utils';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');
@@ -368,4 +369,21 @@ export function stringToCoordinate(coordinateStr: string): Coordinate | undefine
 		lat: Number(parts[0]),
 		lng: Number(parts[1]),
 	};
+}
+
+export function calendarOrSidebarEventDetails(eventStore: EventStore, event: SidebarEvent | CalendarEvent) {
+	const calendarEvent = eventStore.calendarEvents.find((x) => x.id === event.id);
+
+	if (calendarEvent) {
+		const dtStart = toDate(calendarEvent.start);
+		const dtEnd = toDate(calendarEvent.end);
+		const dt = formatDate(dtStart);
+		const startTime = dtStart?.toLocaleTimeString('en-US', { hour12: false });
+		const endTime = dtEnd?.toLocaleTimeString('en-US', { hour12: false });
+		const start = formatTime(startTime);
+		const end = formatTime(endTime);
+
+		return `${TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO')}: ${dt} ${end}-${start}`;
+	}
+	return TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED');
 }

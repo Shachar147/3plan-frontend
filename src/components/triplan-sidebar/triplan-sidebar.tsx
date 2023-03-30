@@ -3,6 +3,7 @@ import TranslateService from '../../services/translate-service';
 import {
 	addLineBreaks,
 	coordinateToString,
+	calendarOrSidebarEventDetails,
 	getClasses,
 	isBasketball,
 	isDessert,
@@ -43,6 +44,8 @@ export enum SidebarGroups {
 	RECOMMENDATIONS = 'RECOMMENDATIONS',
 	PRIORITIES_LEGEND = 'PRIORITIES_LEGEND',
 	DISTANCES = 'DISTANCES',
+	DISTANCES_NEARBY = 'DISTANCES_NEARBY',
+	DISTANCES_FROMTO = 'DISTANCES_FROMTO',
 }
 
 export const wrapWithSidebarGroup = (
@@ -390,12 +393,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			let noResultsPlaceholder: string | React.ReactNode = '';
 
-			let blockTitle = TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES.EMPTY');
 			if (eventStore.selectedEventForNearBy) {
-				// blockTitle = TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES', {
-				// 	X: eventStore.selectedEventForNearBy.title,
-				// });
-
 				if (!eventStore.selectedEventNearByPlaces?.length) {
 					const location = eventStore.selectedEventForNearBy!.location!;
 					const coordinate = { lat: location.latitude!, lng: location.longitude! };
@@ -433,25 +431,26 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						key={`nearby-places-${eventStore.selectedEventForNearBy}`}
 						id={`nearby-places-${eventStore.selectedEventForNearBy}`}
 					>
-						<span className="text-decoration-underline">{blockTitle}</span>
 						{selectControl}
 						{noResultsPlaceholder !== '' && (
 							<div className="no-nearby-placeholder">{noResultsPlaceholder}</div>
 						)}
 						{!!eventStore.selectedEventNearByPlaces?.length && (
-							<ul className="padding-inline-20">
-								{eventStore.selectedEventNearByPlaces.map((x: any, idx: number) => (
-									<li key={`close-by-${idx}`}>
-										{`${x.event.eventName} - ${toDistanceString(
-											eventStore,
-											x,
-											true,
-											x.travelMode,
-											true
-										)}`}
-									</li>
-								))}
-							</ul>
+							<>
+								<hr className="margin-block-2 width-100-percents" />
+								<div className="nearby-places-results external-events bright-scrollbar">
+									{eventStore.selectedEventNearByPlaces.map((x: any, idx: number) => (
+										<div className="nearby-result flex-col gap-3">
+											{renderEventDraggable(x.event, x.event.category, false)}
+											<span className="nearby-result-distance-string">
+												{calendarOrSidebarEventDetails(eventStore, x.event)}
+												<br />
+												{toDistanceString(eventStore, x, true, x.travelMode, true)}
+											</span>
+										</div>
+									))}
+								</div>
+							</>
 						)}
 					</div>
 					<hr className="margin-block-2" />
@@ -461,10 +460,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		const renderDistanceCalculator = () => {
 			return (
-				<div className="body-text-align padding-block-10 flex-col gap-8">
-					<span className="text-decoration-underline">
-						{TranslateService.translate(eventStore, 'DISTANCE_CALCULATOR.TITLE')}
-					</span>
+				<div className="body-text-alignflex-col gap-8">
 					<DistanceCalculator />
 				</div>
 			);
@@ -480,8 +476,23 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						<hr className={'margin-block-2'} />
 						{wrapWithSidebarGroup(
 							<>
-								{renderNearBy()}
-								{renderDistanceCalculator()}
+								<hr className="margin-block-2 width-100-percents" />
+								{wrapWithSidebarGroup(
+									<>{renderNearBy()}</>,
+									undefined,
+									SidebarGroups.DISTANCES_NEARBY,
+									TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES.EMPTY'),
+									eventStore.allEventsLocations.length // ?
+								)}
+								<hr className="margin-block-2 width-100-percents" />
+								{wrapWithSidebarGroup(
+									<>{renderDistanceCalculator()}</>,
+									undefined,
+									SidebarGroups.DISTANCES_FROMTO,
+									TranslateService.translate(eventStore, 'DISTANCE_CALCULATOR.TITLE'),
+									eventStore.allEventsLocations.length // ?
+								)}
+								<hr className="margin-block-2 width-100-percents" />
 							</>,
 							'fa-map-signs',
 							SidebarGroups.DISTANCES,
@@ -1069,78 +1080,82 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			});
 		return (
 			<div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-				{events.map((event) => (
-					<div
-						className={`fc-event priority-${event.priority}`}
-						title={event.title}
-						data-id={event.id}
-						data-duration={event.duration}
-						data-category={categoryId}
-						data-icon={event.icon}
-						data-description={event.description}
-						data-priority={event.priority}
-						data-preferred-time={event.preferredTime}
-						data-location={
-							Object.keys(event).includes('location') ? JSON.stringify(event.location) : undefined
-						}
-						data-opening-hours={
-							// used to be simply event.openingHours
-							Object.keys(event).includes('openingHours') ? JSON.stringify(event.openingHours) : undefined
-						}
-						data-images={event.images} // add column 3
-						data-more-info={event.moreInfo}
-						key={event.id}
-					>
-						<span className={'sidebar-event-icon flex-grow-0'}>
-							{event.icon || eventStore.categoriesIcons[categoryId]}
-						</span>
-						<span
-							className="sidebar-event-title-container"
-							title={'Edit'}
-							onClick={() => {
-								ReactModalService.openEditSidebarEventModal(
-									eventStore,
-									event,
-									removeEventFromSidebarById,
-									addToEventsToCategories
-								);
-							}}
-						>
-							<span className={'sidebar-event-title-text'}>{event.title}</span>
-							<span className={'sidebar-event-duration'}>
-								({getDurationString(eventStore, event.duration)})
-							</span>
-						</span>
-						<div
-							className="fc-duplicate-event"
-							onClick={() => {
-								ReactModalService.openDuplicateSidebarEventModal(eventStore, event);
-							}}
-						>
-							<img
-								title={TranslateService.translate(eventStore, 'DUPLICATE')}
-								alt={TranslateService.translate(eventStore, 'DUPLICATE')}
-								src="/images/duplicate.png"
-							/>
-						</div>
-						<a
-							title={TranslateService.translate(eventStore, 'DELETE')}
-							className={'fc-remove-event'}
-							onClick={() => {
-								ReactModalService.openDeleteSidebarEventModal(
-									eventStore,
-									removeEventFromSidebarById,
-									event
-								);
-							}}
-						>
-							X
-						</a>
-					</div>
-				))}
+				{events.map((event) => renderEventDraggable(event, categoryId))}
 			</div>
 		);
 	};
+
+	function renderEventDraggable(event: SidebarEvent, categoryId: number, fullActions: boolean = true) {
+		return (
+			<div
+				className={`fc-event priority-${event.priority}`}
+				title={event.title}
+				data-id={event.id}
+				data-duration={event.duration}
+				data-category={categoryId}
+				data-icon={event.icon}
+				data-description={event.description}
+				data-priority={event.priority}
+				data-preferred-time={event.preferredTime}
+				data-location={Object.keys(event).includes('location') ? JSON.stringify(event.location) : undefined}
+				data-opening-hours={
+					// used to be simply event.openingHours
+					Object.keys(event).includes('openingHours') ? JSON.stringify(event.openingHours) : undefined
+				}
+				data-images={event.images} // add column 3
+				data-more-info={event.moreInfo}
+				key={event.id}
+			>
+				<span className={'sidebar-event-icon flex-grow-0'}>
+					{event.icon || eventStore.categoriesIcons[categoryId]}
+				</span>
+				<span
+					className="sidebar-event-title-container"
+					title={'Edit'}
+					onClick={() => {
+						ReactModalService.openEditSidebarEventModal(
+							eventStore,
+							event,
+							removeEventFromSidebarById,
+							addToEventsToCategories
+						);
+					}}
+				>
+					<span className={'sidebar-event-title-text'}>{event.title}</span>
+					<span className={'sidebar-event-duration'}>({getDurationString(eventStore, event.duration)})</span>
+				</span>
+				{fullActions && (
+					<div
+						className="fc-duplicate-event"
+						onClick={() => {
+							ReactModalService.openDuplicateSidebarEventModal(eventStore, event);
+						}}
+					>
+						<img
+							title={TranslateService.translate(eventStore, 'DUPLICATE')}
+							alt={TranslateService.translate(eventStore, 'DUPLICATE')}
+							src="/images/duplicate.png"
+						/>
+					</div>
+				)}
+				{fullActions && (
+					<a
+						title={TranslateService.translate(eventStore, 'DELETE')}
+						className={'fc-remove-event'}
+						onClick={() => {
+							ReactModalService.openDeleteSidebarEventModal(
+								eventStore,
+								removeEventFromSidebarById,
+								event
+							);
+						}}
+					>
+						X
+					</a>
+				)}
+			</div>
+		);
+	}
 
 	function renderRecommendations() {
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.RECOMMENDATIONS');
