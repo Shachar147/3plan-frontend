@@ -5,8 +5,8 @@ import { DistanceResult } from '../../../utils/interfaces';
 import Button, { ButtonFlavor } from '../../common/button/button';
 import ReactModalService, { ReactModalRenderHelper } from '../../../services/react-modal-service';
 import { observer, Observer } from 'mobx-react';
-import { SidebarGroups, wrapWithSidebarGroup } from '../triplan-sidebar';
 import { eventStoreContext } from '../../../stores/events-store';
+import { GoogleTravelMode } from '../../../utils/enums';
 
 const UNKNOWN_DISTANCE_RESULT = 'N/A';
 
@@ -26,17 +26,31 @@ const DistanceCalculator = () => {
 			return null;
 		}
 
-		const distanceKey = getCoordinatesRangeKey(eventStore.travelMode, from.value, to.value);
+		const distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, from.value, to.value);
+		const distanceKey2 = getCoordinatesRangeKey(GoogleTravelMode.WALKING, from.value, to.value);
+		const distanceKey3 = getCoordinatesRangeKey(GoogleTravelMode.TRANSIT, from.value, to.value);
 
 		const distanceResult: DistanceResult | undefined = eventStore.distanceResults.has(distanceKey)
 			? eventStore.distanceResults.get(distanceKey)
 			: undefined;
+		const distanceResult2: DistanceResult | undefined = eventStore.distanceResults.has(distanceKey2)
+			? eventStore.distanceResults.get(distanceKey2)
+			: undefined;
+		const distanceResult3: DistanceResult | undefined = eventStore.distanceResults.has(distanceKey3)
+			? eventStore.distanceResults.get(distanceKey3)
+			: undefined;
 
 		const distanceString = distanceResult
-			? toDistanceString(eventStore, distanceResult, true, eventStore.travelMode, true)
-			: UNKNOWN_DISTANCE_RESULT;
+			? toDistanceString(eventStore, distanceResult, true, GoogleTravelMode.DRIVING, true)
+			: undefined;
+		const distanceString2 = distanceResult2
+			? toDistanceString(eventStore, distanceResult2, true, GoogleTravelMode.WALKING, true)
+			: undefined;
+		const distanceString3 = distanceResult3
+			? toDistanceString(eventStore, distanceResult3, true, GoogleTravelMode.TRANSIT, true)
+			: undefined;
 
-		if (distanceString === UNKNOWN_DISTANCE_RESULT) {
+		if (distanceString == undefined && distanceString2 == undefined && distanceString3 == undefined) {
 			return (
 				<div className="flex-col gap-8 sidebar-distances-block-result">
 					<div className="flex-row align-items-center">
@@ -55,7 +69,9 @@ const DistanceCalculator = () => {
 
 		return (
 			<div className="flex-col gap-8 sidebar-distances-block-result">
-				<div>{distanceString}</div>
+				{distanceString && <div>{distanceString}</div>}
+				{distanceString2 && <div>{distanceString2}</div>}
+				{distanceString3 && <div>{distanceString3}</div>}
 			</div>
 		);
 	};

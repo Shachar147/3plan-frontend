@@ -46,7 +46,7 @@ const GettingStartedPage = () => {
 	const renderForm = () => {
 		return (
 			<div
-				className={getClasses(['custom-dates-container'], eventStore.isListView && 'hidden')}
+				className={'custom-dates-container'}
 				style={{
 					backgroundColor: 'transparent',
 					border: 0,
