@@ -569,7 +569,7 @@ const ListViewService = {
 				let distanceToNextEvent = distanceKey
 					? eventStore.distanceResults.has(distanceKey)
 						? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, false, travelMode)
-						: TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
+						: '' //TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 					: '';
 
 				// disable google maps distance calc for now
@@ -785,7 +785,7 @@ const ListViewService = {
 			let distanceToNextEvent = distanceKey
 				? eventStore.distanceResults.has(distanceKey)
 					? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, false, travelMode)
-					: TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
+					: '' // TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 				: '';
 
 			// disable google maps distance calc for now
