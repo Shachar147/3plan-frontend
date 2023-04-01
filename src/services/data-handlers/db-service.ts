@@ -62,7 +62,7 @@ export class DBService implements BaseDataHandler {
 		const result: Record<string, DistanceResult> = {};
 
 		res.data.results.forEach((x: any) => {
-			const key = getCoordinatesRangeKey('DRIVING', stringToCoordinate(x.from)!, stringToCoordinate(x.to)!);
+			const key = getCoordinatesRangeKey(x.travelMode, stringToCoordinate(x.from)!, stringToCoordinate(x.to)!);
 
 			result[key] = {
 				from: x.from,

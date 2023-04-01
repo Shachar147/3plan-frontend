@@ -13,6 +13,8 @@ import _ from 'lodash';
 
 const destinationRoutesAddFromAndTo = true;
 
+const PREFER_WALKING_OVER_DRIVING_MINUTES_THRESHOLD = 20;
+
 const ListViewService = {
 	_getDayName: (dateStr: string, locale: string) => {
 		const date = new Date(dateStr);
@@ -559,7 +561,7 @@ const ListViewService = {
 							eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!
 								.duration_value! ||
 						eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value! <
-							10 * 60
+							PREFER_WALKING_OVER_DRIVING_MINUTES_THRESHOLD * 60
 					) {
 						distanceKey = distanceKey.replace('DRIVING', 'WALKING');
 						travelMode = GoogleTravelMode.WALKING;
@@ -569,7 +571,7 @@ const ListViewService = {
 				let distanceToNextEvent = distanceKey
 					? eventStore.distanceResults.has(distanceKey)
 						? toDistanceString(eventStore, eventStore.distanceResults.get(distanceKey)!, false, travelMode)
-						: '' //TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
+						: '' // TranslateService.translate(eventStore, 'CALCULATING_DISTANCE')
 					: '';
 
 				// disable google maps distance calc for now
@@ -775,7 +777,8 @@ const ListViewService = {
 				if (
 					eventStore.distanceResults.get(distanceKey)!.duration_value! >
 						eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value! ||
-					eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value! < 10 * 60
+					eventStore.distanceResults.get(distanceKey.replace('DRIVING', 'WALKING'))!.duration_value! <
+						PREFER_WALKING_OVER_DRIVING_MINUTES_THRESHOLD * 60
 				) {
 					distanceKey = distanceKey.replace('DRIVING', 'WALKING');
 					travelMode = GoogleTravelMode.WALKING;

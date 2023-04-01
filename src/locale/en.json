@@ -438,8 +438,8 @@
 	"SIDEBAR.DISTANCES_BLOCK.ROUTE_NOT_CALCULATED.SUFFIX": "to calculate it",
 	"LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY": "There are no activities in the calendar, add to get a summary",
 	"CLOSE_BY_ACTIVITIES": "Activities near {X}:",
-	"CLOSE_BY_ACTIVITIES.EMPTY": "Activities near:",
+	"CLOSE_BY_ACTIVITIES.GROUP_TITLE": "Activities near",
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER": "Oops, it seems like there are no nearby activities",
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER.NOT_CALCULATED": "Oops, it seems like you didn't ran distance calculation on this location yet",
-	"DISTANCE_CALCULATOR.TITLE": "Check Distance:"
+	"DISTANCE_CALCULATOR.TITLE": "Check Distance"
 }

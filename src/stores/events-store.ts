@@ -93,7 +93,9 @@ export class EventStore {
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
+
 	@observable forceUpdate = 0;
+	@observable forceSetDraggable = 0;
 
 	// map filters
 	@observable mapFiltersVisible: boolean = false;
@@ -739,6 +741,7 @@ export class EventStore {
 			return;
 		}
 		this.openSidebarGroup(SidebarGroups.DISTANCES);
+		this.openSidebarGroup(SidebarGroups.DISTANCES_NEARBY);
 		this.distanceSectionAutoOpened = true;
 	}
 
@@ -746,7 +749,10 @@ export class EventStore {
 	toggleSidebarGroups(groupKey: string) {
 		if (this.openSidebarGroups.has(groupKey)) {
 			// indicate user close it after it's automatically opened.
-			if (this.distanceSectionAutoOpened && groupKey === SidebarGroups.DISTANCES) {
+			if (
+				this.distanceSectionAutoOpened &&
+				[SidebarGroups.DISTANCES, SidebarGroups.DISTANCES_NEARBY].includes(groupKey as SidebarGroups)
+			) {
 				this.closedDistanceAutoOpened = true;
 			}
 
@@ -821,6 +827,12 @@ export class EventStore {
 					this.isLoading = false;
 				});
 			}
+
+			// reset them when switching trips
+			this.selectedEventForNearBy = undefined;
+			this.selectedEventNearByPlaces = [];
+			this.distanceSectionAutoOpened = false;
+			this.closedDistanceAutoOpened = false;
 
 			this.allEventsTripName = name;
 			runInAction(() => {
@@ -939,17 +951,29 @@ export class EventStore {
 				value: calendarEvent?.id,
 			};
 
-			apiGetNew(
-				`/distance/near/${coordinateToString({
-					lat: location.latitude!,
-					lng: location.longitude!,
-				})}`
-			).then((results) => {
+			const from: Coordinate = {
+				lat: location.latitude!,
+				lng: location.longitude!,
+			};
+
+			apiGetNew(`/distance/near/${coordinateToString(from)}`).then((results) => {
 				const data = results.data;
-				const allLocations = this.allEventsLocationsWithDuplicates;
-				const top10WithDetails = data
+				const allEventsWithLocation = this.allEventsComputed.filter(
+					(x) => x?.location?.latitude && x?.location?.longitude
+				);
+
+				const coordinateToEvent: Record<string, SidebarEvent | CalendarEvent> = {};
+				allEventsWithLocation.forEach((e) => {
+					const coordinate: Coordinate = {
+						lat: e.location!.latitude!,
+						lng: e.location!.longitude!,
+					};
+					coordinateToEvent[coordinateToString(coordinate)] = e;
+				});
+
+				const topEventsWithDetails = data
 					.map((x: any) => {
-						const event = allLocations.find((y) => coordinateToString(y) === x.to);
+						const event = coordinateToEvent[x.to];
 						x.distance = x.distance?.text;
 						x.duration = x.duration?.text;
 						if (event) {
@@ -963,10 +987,28 @@ export class EventStore {
 					})
 					.filter(Boolean)
 					.slice(0, 10);
-				this.selectedEventNearByPlaces = top10WithDetails;
+
+				topEventsWithDetails.forEach((x: any) => {
+					const otherTravelMode =
+						x.travelMode == GoogleTravelMode.DRIVING ? GoogleTravelMode.WALKING : GoogleTravelMode.DRIVING;
+
+					x.alternative = data.find(
+						(y: any) => x.from === y.from && x.to === y.to && y.travelMode == otherTravelMode
+					);
+				});
+
+				this.selectedEventNearByPlaces = topEventsWithDetails;
+
 				this.autoOpenDistanceSidebarGroup();
 			});
 		}
+
+		// to force re-define the draggables
+		setTimeout(() => {
+			runInAction(() => {
+				this.forceSetDraggable += 1;
+			});
+		}, 500);
 	}
 
 	// --- private functions ----------------------------------------------------
@@ -1086,7 +1128,8 @@ export class EventStore {
 
 	hasDistanceResultsOfCoordinate(coordinate: Coordinate): boolean {
 		const coordinateKey = coordinateToString(coordinate);
-		const found = Object.keys(this.distanceResults).find((x) => x.indexOf(coordinateKey) !== -1);
+		const hashMap = JSON.parse(JSON.stringify(this.distanceResults));
+		const found = Object.keys(hashMap).find((x) => x.indexOf(coordinateKey) !== -1);
 		return !!found;
 	}
 }
