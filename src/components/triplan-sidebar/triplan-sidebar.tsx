@@ -358,9 +358,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			// todo:
 			// 2 - if there is event but no results, show appropriate message / try to check air distance?
-			// 7 - add details about this event - already scheduled? sidebar? which category? etc.
-			// 9 - when moving between trips, need to lear selected nearby and its results too.
-			// 10 - style the details of the event better
+			// 9 - when moving between trips, need to clear selected nearby and its results too.
 
 			const options = eventStore.allEventsComputed
 				.filter((x) => x.location?.latitude && x.location?.longitude)
@@ -442,16 +440,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						id={`nearby-places-${eventStore.selectedEventForNearBy}`}
 					>
 						{selectControl}
-						{eventStore.selectedEventForNearBy && (
-							<>
-								<hr className="margin-block-2 width-100-percents" />
-								{/*<span className="text-decoration-underline">*/}
-								{/*	{TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES', {*/}
-								{/*		X: eventStore.selectedEventForNearBy.title,*/}
-								{/*	})}*/}
-								{/*</span>*/}
-							</>
-						)}
+						{eventStore.selectedEventForNearBy && <hr className="margin-block-2 width-100-percents" />}
 						{noResultsPlaceholder !== '' && (
 							<div className="no-nearby-placeholder">{noResultsPlaceholder}</div>
 						)}

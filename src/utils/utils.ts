@@ -386,5 +386,4 @@ export function calendarOrSidebarEventDetails(eventStore: EventStore, event: Sid
 		return `${TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO')}: ${dt} ${end}-${start}`;
 	}
 	return undefined;
-	// return TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO.UNSCHEDULED');
 }

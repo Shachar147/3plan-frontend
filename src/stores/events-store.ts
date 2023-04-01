@@ -828,6 +828,12 @@ export class EventStore {
 				});
 			}
 
+			// reset them when switching trips
+			this.selectedEventForNearBy = undefined;
+			this.selectedEventNearByPlaces = [];
+			this.distanceSectionAutoOpened = false;
+			this.closedDistanceAutoOpened = false;
+
 			this.allEventsTripName = name;
 			runInAction(() => {
 				this.distanceResults = observable.map(newDistanceResults);
