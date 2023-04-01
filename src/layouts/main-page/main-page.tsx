@@ -329,6 +329,7 @@ function MainPage(props: MainPageProps) {
 		return (
 			<TriplanSidebar
 				addToEventsToCategories={addToEventsToCategories}
+				addEventToSidebar={addEventToSidebar}
 				removeEventFromSidebarById={removeEventFromSidebarById}
 				customDateRange={eventStore.customDateRange}
 				setCustomDateRange={() => {

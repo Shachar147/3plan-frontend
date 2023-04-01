@@ -35,6 +35,7 @@ export interface TriplanSidebarProps {
 	customDateRange: DateRangeFormatted;
 	setCustomDateRange: (newRange: DateRangeFormatted) => void;
 	TriplanCalendarRef: React.MutableRefObject<HTMLDivElement>;
+	addEventToSidebar: (event: SidebarEvent) => boolean;
 }
 
 export enum SidebarGroups {
@@ -464,7 +465,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 											})`
 										)}
 										{unscheduledNearByPlaces.map((x: any, idx: number) => {
-											const scheduledTo = calendarOrSidebarEventDetails(eventStore, x.event);
 											return (
 												<div className="nearby-result cursor-pointer flex-col gap-3">
 													{renderEventDraggable(
@@ -493,10 +493,42 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 														<span>
 															{toDistanceString(eventStore, x, true, x.travelMode, true)}
 														</span>
+														{x.alternative && (
+															<span>
+																{toDistanceString(
+																	eventStore,
+																	x.alternative,
+																	true,
+																	x.alternative.travelMode,
+																	true
+																)}
+															</span>
+														)}
 														<span>
 															{calendarOrSidebarEventDetails(eventStore, x.event)}
 														</span>
-													</div>
+													</div>,
+													() => {
+														const calendarEvent = eventStore.calendarEvents.find(
+															(y) => y.id == x.event.id
+														)!;
+														if (typeof calendarEvent.start === 'string') {
+															calendarEvent.start = new Date(calendarEvent.start);
+														}
+														if (typeof calendarEvent.end === 'string') {
+															calendarEvent.end = new Date(calendarEvent.end);
+														}
+														ReactModalService.openEditCalendarEventModal(
+															eventStore,
+															props.addEventToSidebar,
+															{
+																event: {
+																	...calendarEvent,
+																	_def: calendarEvent,
+																},
+															}
+														);
+													}
 												)}
 											</div>
 										))}
@@ -1147,8 +1179,22 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		event: SidebarEvent,
 		categoryId: number,
 		fullActions: boolean = true,
-		eventTitleSuffix: React.ReactNode | string | undefined = undefined
+		eventTitleSuffix: React.ReactNode | string | undefined = undefined,
+		_onClick?: () => void
 	) {
+		const onClick = () => {
+			if (_onClick) {
+				_onClick();
+			} else {
+				ReactModalService.openEditSidebarEventModal(
+					eventStore,
+					event,
+					removeEventFromSidebarById,
+					addToEventsToCategories
+				);
+			}
+		};
+
 		return (
 			<div
 				className={`fc-event flex-col align-items-start priority-${event.priority}`}
@@ -1173,18 +1219,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					<span className={'sidebar-event-icon flex-grow-0'}>
 						{event.icon || eventStore.categoriesIcons[categoryId]}
 					</span>
-					<span
-						className="sidebar-event-title-container"
-						title={'Edit'}
-						onClick={() => {
-							ReactModalService.openEditSidebarEventModal(
-								eventStore,
-								event,
-								removeEventFromSidebarById,
-								addToEventsToCategories
-							);
-						}}
-					>
+					<span className="sidebar-event-title-container" title={'Edit'} onClick={onClick}>
 						<span className={'sidebar-event-title-text'}>{event.title}</span>
 						<span className={'sidebar-event-duration'}>
 							({getDurationString(eventStore, event.duration)})
@@ -1221,7 +1256,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					)}
 				</div>
 				{eventTitleSuffix != undefined ? (
-					<div className="flex-row align-items-start width-100-percents">{eventTitleSuffix}</div>
+					<div className="flex-row align-items-start width-100-percents" onClick={onClick}>
+						{eventTitleSuffix}
+					</div>
 				) : undefined}
 			</div>
 		);

@@ -64,7 +64,7 @@ export class DBService implements BaseDataHandler {
 		res.data.results.forEach((x: any) => {
 			const key = getCoordinatesRangeKey(x.travelMode, stringToCoordinate(x.from)!, stringToCoordinate(x.to)!);
 
-			console.log({ key, travelMode: x.travelMode });
+			// console.log({ key, travelMode: x.travelMode });
 
 			result[key] = {
 				from: x.from,

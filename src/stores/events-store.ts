@@ -981,7 +981,18 @@ export class EventStore {
 					})
 					.filter(Boolean)
 					.slice(0, 10);
+
+				topEventsWithDetails.forEach((x: any) => {
+					const otherTravelMode =
+						x.travelMode == GoogleTravelMode.DRIVING ? GoogleTravelMode.WALKING : GoogleTravelMode.DRIVING;
+
+					x.alternative = data.find(
+						(y: any) => x.from === y.from && x.to === y.to && y.travelMode == otherTravelMode
+					);
+				});
+
 				this.selectedEventNearByPlaces = topEventsWithDetails;
+
 				this.autoOpenDistanceSidebarGroup();
 			});
 		}
