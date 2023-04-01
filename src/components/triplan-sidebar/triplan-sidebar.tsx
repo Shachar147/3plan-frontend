@@ -466,12 +466,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 										{unscheduledNearByPlaces.map((x: any, idx: number) => {
 											const scheduledTo = calendarOrSidebarEventDetails(eventStore, x.event);
 											return (
-												<div className="nearby-result flex-col gap-3">
-													{renderEventDraggable(x.event, x.event.category, false)}
-													<span className="nearby-result-distance-string">
-														{scheduledTo && <br />}
-														{toDistanceString(eventStore, x, true, x.travelMode, true)}
-													</span>
+												<div className="nearby-result cursor-pointer flex-col gap-3">
+													{renderEventDraggable(
+														x.event,
+														x.event.category,
+														false,
+														toDistanceString(eventStore, x, true, x.travelMode, true)
+													)}
 												</div>
 											);
 										})}
@@ -483,13 +484,20 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 											})`
 										)}
 										{scheduledNearByPlaces.map((x: any, idx: number) => (
-											<div className="nearby-result flex-col gap-3">
-												{renderEventDraggable(x.event, x.event.category, false)}
-												<span className="nearby-result-distance-string">
-													{calendarOrSidebarEventDetails(eventStore, x.event)}
-													<br />
-													{toDistanceString(eventStore, x, true, x.travelMode, true)}
-												</span>
+											<div className="nearby-result cursor-pointer flex-col gap-3">
+												{renderEventDraggable(
+													x.event,
+													x.event.category,
+													false,
+													<div className="flex-col gap-5">
+														<span>
+															{toDistanceString(eventStore, x, true, x.travelMode, true)}
+														</span>
+														<span>
+															{calendarOrSidebarEventDetails(eventStore, x.event)}
+														</span>
+													</div>
+												)}
 											</div>
 										))}
 									</div>
@@ -1135,10 +1143,15 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
-	function renderEventDraggable(event: SidebarEvent, categoryId: number, fullActions: boolean = true) {
+	function renderEventDraggable(
+		event: SidebarEvent,
+		categoryId: number,
+		fullActions: boolean = true,
+		eventTitleSuffix: React.ReactNode | string | undefined = undefined
+	) {
 		return (
 			<div
-				className={`fc-event priority-${event.priority}`}
+				className={`fc-event flex-col align-items-start priority-${event.priority}`}
 				title={event.title}
 				data-id={event.id}
 				data-duration={event.duration}
@@ -1156,53 +1169,60 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				data-more-info={event.moreInfo}
 				key={event.id}
 			>
-				<span className={'sidebar-event-icon flex-grow-0'}>
-					{event.icon || eventStore.categoriesIcons[categoryId]}
-				</span>
-				<span
-					className="sidebar-event-title-container"
-					title={'Edit'}
-					onClick={() => {
-						ReactModalService.openEditSidebarEventModal(
-							eventStore,
-							event,
-							removeEventFromSidebarById,
-							addToEventsToCategories
-						);
-					}}
-				>
-					<span className={'sidebar-event-title-text'}>{event.title}</span>
-					<span className={'sidebar-event-duration'}>({getDurationString(eventStore, event.duration)})</span>
-				</span>
-				{fullActions && (
-					<div
-						className="fc-duplicate-event"
+				<div className="flex-row gap-5 align-items-start width-100-percents">
+					<span className={'sidebar-event-icon flex-grow-0'}>
+						{event.icon || eventStore.categoriesIcons[categoryId]}
+					</span>
+					<span
+						className="sidebar-event-title-container"
+						title={'Edit'}
 						onClick={() => {
-							ReactModalService.openDuplicateSidebarEventModal(eventStore, event);
-						}}
-					>
-						<img
-							title={TranslateService.translate(eventStore, 'DUPLICATE')}
-							alt={TranslateService.translate(eventStore, 'DUPLICATE')}
-							src="/images/duplicate.png"
-						/>
-					</div>
-				)}
-				{fullActions && (
-					<a
-						title={TranslateService.translate(eventStore, 'DELETE')}
-						className={'fc-remove-event'}
-						onClick={() => {
-							ReactModalService.openDeleteSidebarEventModal(
+							ReactModalService.openEditSidebarEventModal(
 								eventStore,
+								event,
 								removeEventFromSidebarById,
-								event
+								addToEventsToCategories
 							);
 						}}
 					>
-						X
-					</a>
-				)}
+						<span className={'sidebar-event-title-text'}>{event.title}</span>
+						<span className={'sidebar-event-duration'}>
+							({getDurationString(eventStore, event.duration)})
+						</span>
+					</span>
+					{fullActions && (
+						<div
+							className="fc-duplicate-event"
+							onClick={() => {
+								ReactModalService.openDuplicateSidebarEventModal(eventStore, event);
+							}}
+						>
+							<img
+								title={TranslateService.translate(eventStore, 'DUPLICATE')}
+								alt={TranslateService.translate(eventStore, 'DUPLICATE')}
+								src="/images/duplicate.png"
+							/>
+						</div>
+					)}
+					{fullActions && (
+						<a
+							title={TranslateService.translate(eventStore, 'DELETE')}
+							className={'fc-remove-event'}
+							onClick={() => {
+								ReactModalService.openDeleteSidebarEventModal(
+									eventStore,
+									removeEventFromSidebarById,
+									event
+								);
+							}}
+						>
+							X
+						</a>
+					)}
+				</div>
+				{eventTitleSuffix != undefined ? (
+					<div className="flex-row align-items-start width-100-percents">{eventTitleSuffix}</div>
+				) : undefined}
 			</div>
 		);
 	}
