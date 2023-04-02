@@ -1,6 +1,6 @@
 // @ts-ignore
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { getClasses, Loader, LOADER_DETAILS } from '../../utils/utils';
+import { getClasses, isHotelsCategory, Loader, LOADER_DETAILS } from '../../utils/utils';
 import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/timegrid/main.css';
@@ -118,17 +118,25 @@ function MainPage(props: MainPageProps) {
 	function addEventToSidebar(event: any): boolean {
 		const newEvents: Record<string, SidebarEvent[]> = _.cloneDeep(eventStore.sidebarEvents);
 
-		let category = eventStore.categories.find((id) => id === event.category)?.id?.toString();
-		if (!category) {
-			const findEvent = [...eventStore.allSidebarEvents, ...eventStore.calendarEvents].find(
-				(x) => x.id!.toString() === event.id.toString()
-			);
+		let categoryObject = eventStore.categories.find((c) => c.id === event.category);
+		if (!categoryObject) {
+			const findEvent = eventStore.allEventsComputed.find((x) => x.id!.toString() === event.id.toString());
 			if (findEvent) {
-				category = findEvent.category;
+				categoryObject = eventStore.categories.find((c) => c.id.toString() === findEvent.category.toString());
 			}
 		}
 
-		if (category != undefined) {
+		if (categoryObject != undefined) {
+			const category = categoryObject.id.toString();
+
+			if (isHotelsCategory(categoryObject)) {
+				debugger;
+				if (eventStore.allSidebarEvents.find((x) => x.title === event.title)) {
+					// no need to update.
+					return true;
+				}
+			}
+
 			delete event.start;
 			delete event.end;
 			newEvents[category] = newEvents[category] || [];

@@ -65,7 +65,8 @@
 
 .add-calendar-event-modal-choose-where{
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  //flex-direction: row;
   justify-content: center;
   gap:10px;
   width: 100% !important;

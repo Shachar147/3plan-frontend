@@ -2,9 +2,13 @@ import { GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority } from './
 import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
-import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent } from './interfaces';
+import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent, TriPlanCategory } from './interfaces';
 import { FLIGHT_KEYWORDS, HOTEL_KEYWORDS } from '../components/map-container/map-container';
-import { formatDate, formatTime, getDurationString, toDate } from './time-utils';
+import { formatDate, formatTime, toDate } from './time-utils';
+
+import jwt_decode from 'jwt-decode';
+import axios from 'axios';
+import { HOTELS_DESCRIPTION } from './defaults';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');
@@ -388,9 +392,6 @@ export function calendarOrSidebarEventDetails(eventStore: EventStore, event: Sid
 	return undefined;
 }
 
-import jwt_decode from 'jwt-decode';
-import axios from 'axios';
-
 export function getCurrentUsername(): string | null {
 	const token = axios.defaults.headers.Authorization?.toString().replace(`Bearer `, '');
 	if (!token) {
@@ -398,4 +399,8 @@ export function getCurrentUsername(): string | null {
 	}
 	const decodedToken: any = jwt_decode(token);
 	return decodedToken.username;
+}
+
+export function isHotelsCategory(category: TriPlanCategory) {
+	return category.description === HOTELS_DESCRIPTION;
 }

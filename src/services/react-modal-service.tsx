@@ -3,7 +3,7 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React, { useEffect } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import { getClasses, ucfirst } from '../utils/utils';
+import { getClasses, isHotelsCategory, ucfirst } from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -29,7 +29,7 @@ import ImportService from './import-service';
 import Slider from 'react-slick';
 
 // @ts-ignore
-import { DataServices, LocaleCode, lsTripNameToTripName } from './data-handlers/data-handler-base';
+import { AllEventsEvent, DataServices, LocaleCode, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 import LocationInput from '../components/inputs/location-input/location-input';
 import { apiGetNew, apiPost } from '../helpers/api';
@@ -2050,6 +2050,105 @@ const ReactModalService = {
 			customClass: getClasses('triplan-add-calendar-event-from-existing', settings.customClass),
 		});
 	},
+	openAddCalendarEventFromHotelsModal: (
+		eventStore: EventStore,
+		addToEventsToCategories: (value: any) => void,
+		info: any
+	) => {
+		const arr = eventStore.allEventsComputed.filter((x) =>
+			isHotelsCategory(eventStore.categories.find((y) => y.id.toString() === x.category.toString())!)
+		);
+
+		const uniqueHotels: Record<string, SidebarEvent | CalendarEvent> = {};
+		arr.forEach((x) => {
+			uniqueHotels[x.title] = x;
+		});
+
+		const allHotels = Object.values(uniqueHotels);
+
+		const pleaseChooseHotel = () => {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.PLEASE_SELECT_HOTEL',
+				'error'
+			);
+		};
+
+		const onConfirm = () => {
+			const selectedEvent = eventStore.modalValues['sidebar-hotel-to-add-to-calendar'];
+			const isOk = selectedEvent;
+
+			if (isOk) {
+				const initialData = allHotels.find((e) => Number(e.id) === Number(selectedEvent.value));
+
+				if (initialData) {
+					// create a new id to avoid deleting the hotel from the sidebar.
+					initialData.id = eventStore.createEventId();
+
+					// @ts-ignore
+					delete initialData.start;
+
+					// @ts-ignore
+					delete initialData.end;
+
+					ReactModalService.openAddCalendarEventNewModal(
+						eventStore,
+						addToEventsToCategories,
+						info,
+						initialData
+					);
+				} else {
+					pleaseChooseHotel();
+				}
+			} else {
+				pleaseChooseHotel();
+			}
+		};
+
+		const title = TranslateService.translate(eventStore, 'MODALS.ADD_HOTEL_TO_CALENDAR.TITLE');
+
+		const options: SelectInputOption[] = allHotels.map((e) => ({ value: e.id, label: e.title }));
+
+		const content = (
+			<Observer>
+				{() => (
+					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+						{ReactModalRenderHelper.renderSelectInput(
+							eventStore,
+							'sidebar-hotel-to-add-to-calendar',
+							{
+								options,
+								placeholderKey: 'SELECT_HOTEL_PLACEHOLDER',
+								removeDefaultClass: true,
+								maxMenuHeight: eventStore.isMobile ? 35 * 3 : undefined,
+							},
+							'add-hotel-from-sidebar-selector'
+						)}
+					</div>
+				)}
+			</Observer>
+		);
+
+		const settings = getDefaultSettings(eventStore);
+		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
+		ReactModalService.internal.openModal(eventStore, {
+			...settings,
+			title,
+			content,
+			onConfirm,
+			onCancel: () => {
+				// ReactModalService.internal.closeModal(eventStore);
+				if (eventStore.allSidebarEvents.length === 0) {
+					ReactModalService.openAddCalendarEventModal(eventStore, addToEventsToCategories, info);
+				} else {
+					ReactModalService.internal.closeModal(eventStore);
+				}
+			},
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SELECT'),
+			customClass: getClasses('triplan-add-calendar-event-from-existing', settings.customClass),
+		});
+	},
 	openAddCalendarEventModal: (eventStore: EventStore, addToEventsToCategories: (value: any) => void, info: any) => {
 		const title = TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CALENDAR.TITLE');
 
@@ -2073,6 +2172,18 @@ const ReactModalService = {
 								)
 							}
 							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_FROM_EXISTING')}
+						/>
+						<Button
+							flavor={ButtonFlavor.secondary}
+							// className={className}
+							onClick={() =>
+								ReactModalService.openAddCalendarEventFromHotelsModal(
+									eventStore,
+									addToEventsToCategories,
+									info
+								)
+							}
+							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_HOTEL')}
 						/>
 						<Button
 							flavor={ButtonFlavor.secondary}

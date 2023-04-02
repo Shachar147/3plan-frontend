@@ -450,7 +450,7 @@ export class EventStore {
 	}
 
 	@computed
-	get allSidebarEvents() {
+	get allSidebarEvents(): SidebarEvent[] {
 		return Object.values(this.sidebarEvents).flat();
 	}
 
