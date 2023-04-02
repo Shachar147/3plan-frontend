@@ -13,6 +13,7 @@ import { getClasses } from '../../../utils/utils';
 import { observer, Observer } from 'mobx-react';
 import { TriplanHeaderProps } from '../../triplan-header/triplan-header';
 import onClickOutside from 'react-onclickoutside';
+import ReactModalService from '../../../services/react-modal-service';
 
 const MobileNavbar = (options: TriplanHeaderProps) => {
 	const eventStore = useContext(eventStoreContext);
@@ -59,7 +60,10 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 				},
 				withLanguageSelector && {
 					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
-					path: '/language',
+					// path: '/language',
+					onClick: () => {
+						ReactModalService.openChangeLanguage(eventStore);
+					},
 					icon: 'fa-globe',
 					cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),
 				},

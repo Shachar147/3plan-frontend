@@ -14,7 +14,7 @@ import { EventApi, EventInput } from '@fullcalendar/react';
 import { getTimeStringFromDate, toDate } from './time-utils';
 import { buildCalendarEvent, CalendarEvent } from './interfaces';
 
-const renderLanguageSelector = (eventStore: EventStore) => {
+export const renderLanguageSelector = (eventStore: EventStore) => {
 	const options: any[] = [
 		{ label: TranslateService.translate(eventStore, 'ENGLISH').toString(), value: 'en' },
 		{ label: TranslateService.translate(eventStore, 'HEBREW').toString(), value: 'he' },

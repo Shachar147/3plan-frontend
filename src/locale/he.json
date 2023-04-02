@@ -519,5 +519,6 @@
 	"CLOSE_BY_ACTIVITIES.GROUP_TITLE": "פעילויות באזור",
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER": "אופס, נראה שאין מקומות באזור הפעילות שבחרת",
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER.NOT_CALCULATED": "אופס, נראה שעדיין לא חושבו מסלולים מהפעילות שבחרת,",
-	"DISTANCE_CALCULATOR.TITLE": "בדיקת מרחק"
+	"DISTANCE_CALCULATOR.TITLE": "בדיקת מרחק",
+	"CHOOSE_LANGUAGE.PLACEHOLDER": "בחר מהשפות הבאות..."
 }

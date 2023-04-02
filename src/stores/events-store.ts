@@ -137,7 +137,7 @@ export class EventStore {
 
 		// todo check if its not causing issues.
 		// for the admin view
-		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
+		// this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
 
 		this.init();
 	}
@@ -814,7 +814,8 @@ export class EventStore {
 				newDistanceResults = await DataServices.DBService.getDistanceResults(name);
 				runInAction(() => {
 					const { categories, allEvents, sidebarEvents, calendarEvents, dateRange } = tripData;
-					this.setCalendarLocalCode(calendarLocale || tripData.calendarLocale);
+					// this.setCalendarLocalCode(calendarLocale ?? tripData.calendarLocale);
+					this.setCalendarLocalCode(tripData.calendarLocale);
 					this.setSidebarEvents(sidebarEvents);
 					this.setCalendarEvents(calendarEvents);
 					this.customDateRange = dateRange;

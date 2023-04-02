@@ -156,9 +156,15 @@
 			min-width: unset;
 			height: 100vh;
 			min-height: max-content;
+			transition: width 0.3s ease-in-out;
 
 			.logo-container {
 				min-width: 200px !important;
+
+				&.up {
+					width: 45% !important;
+					min-width: 150px !important;
+				}
 			}
 		}
 
@@ -453,7 +459,7 @@
 	}
 
 	.main-part {
-		margin-top: 120px !important;
+		margin-top: 70px !important;
 	}
 
 	.main-page {
@@ -473,7 +479,7 @@
 
 	.create-new-trip-form {
 		position: relative;
-		top: -180px !important;
+		top: -150px !important;
 
 		.my-trips.bright-scrollbar {
 			max-height: 300px !important;
@@ -482,7 +488,7 @@
 
 	.main-part .up {
 		position: relative;
-		top: -190px !important;
+		top: -170px !important;
 	}
 
 	.mobile-header-search-container {

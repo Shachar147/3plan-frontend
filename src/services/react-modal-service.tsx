@@ -29,12 +29,14 @@ import ImportService from './import-service';
 import Slider from 'react-slick';
 
 // @ts-ignore
-import { DataServices, lsTripNameToTripName } from './data-handlers/data-handler-base';
+import { DataServices, LocaleCode, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 import LocationInput from '../components/inputs/location-input/location-input';
 import { apiGetNew, apiPost } from '../helpers/api';
 import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { LimitationsService } from '../utils/limitations';
+import { getViewSelectorOptions } from '../utils/ui-utils';
+import ToggleButton from '../components/toggle-button/toggle-button';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -3358,6 +3360,60 @@ const ReactModalService = {
 				});
 				ReactModalService.internal.closeModal(eventStore);
 			},
+		});
+	},
+
+	openChangeLanguage: (eventStore: EventStore) => {
+		const options: any[] = [
+			{ name: TranslateService.translate(eventStore, 'ENGLISH').toString(), key: 'en' },
+			{ name: TranslateService.translate(eventStore, 'HEBREW').toString(), key: 'he' },
+		];
+
+		const content = () => {
+			return (
+				<Observer>
+					{() => (
+						<div className="width-100-percents flex-row justify-content-center margin-top-10">
+							<ToggleButton
+								value={eventStore.calendarLocalCode}
+								onChange={(newVal) => {
+									eventStore.setCalendarLocalCode(newVal as unknown as LocaleCode);
+
+									const titleDom = document.querySelector('.sweet-alert.triplan-react-modal>h2');
+									const cancelDom = document.querySelector(
+										'.sweet-alert.triplan-react-modal>p>.btn-link.link-button'
+									);
+									if (titleDom) {
+										titleDom.textContent = TranslateService.translate(
+											eventStore,
+											'CHOOSE_LANGUAGE'
+										);
+									}
+									if (cancelDom) {
+										cancelDom.textContent = TranslateService.translate(eventStore, 'MODALS.CANCEL');
+									}
+
+									setTimeout(() => {
+										ReactModalService.internal.closeModal(eventStore);
+									}, 100);
+								}}
+								options={options}
+								useActiveButtons={false}
+								customStyle="white"
+							/>
+						</div>
+					)}
+				</Observer>
+			);
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE'),
+			type: 'controlled',
+			onConfirm: () => {},
+			content,
+			confirmBtnCssClass: 'display-none',
 		});
 	},
 };
