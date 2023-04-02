@@ -137,7 +137,7 @@ export class EventStore {
 
 		// todo check if its not causing issues.
 		// for the admin view
-		// this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
+		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
 
 		this.init();
 	}
@@ -693,6 +693,7 @@ export class EventStore {
 		// change body class name
 		this.initBodyLocaleClassName();
 
+		DataServices.LocalStorageService.setCalendarLocale(newCalendarLocalCode);
 		return this.dataService.setCalendarLocale(this.calendarLocalCode, this.tripName);
 	}
 
@@ -815,7 +816,9 @@ export class EventStore {
 				runInAction(() => {
 					const { categories, allEvents, sidebarEvents, calendarEvents, dateRange } = tripData;
 					// this.setCalendarLocalCode(calendarLocale ?? tripData.calendarLocale);
-					this.setCalendarLocalCode(tripData.calendarLocale);
+					// this.setCalendarLocalCode(tripData.calendarLocale);
+					this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
+
 					this.setSidebarEvents(sidebarEvents);
 					this.setCalendarEvents(calendarEvents);
 					this.customDateRange = dateRange;
