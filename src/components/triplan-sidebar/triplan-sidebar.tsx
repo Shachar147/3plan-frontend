@@ -555,7 +555,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 									undefined,
 									SidebarGroups.DISTANCES_NEARBY,
 									TranslateService.translate(eventStore, 'CLOSE_BY_ACTIVITIES.GROUP_TITLE'),
-									eventStore.allEventsLocations.length // ?
+									Math.max(100, eventStore.allEventsLocations.length) // ?
 								)}
 								<hr className="margin-block-2 width-100-percents" />
 								{wrapWithSidebarGroup(
@@ -563,7 +563,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 									undefined,
 									SidebarGroups.DISTANCES_FROMTO,
 									TranslateService.translate(eventStore, 'DISTANCE_CALCULATOR.TITLE'),
-									eventStore.allEventsLocations.length // ?
+									Math.max(100, eventStore.allEventsLocations.length) // ?
 								)}
 								<hr className="margin-block-2 width-100-percents" />
 							</>,

@@ -387,3 +387,15 @@ export function calendarOrSidebarEventDetails(eventStore: EventStore, event: Sid
 	}
 	return undefined;
 }
+
+import jwt_decode from 'jwt-decode';
+import axios from 'axios';
+
+export function getCurrentUsername(): string | null {
+	const token = axios.defaults.headers.Authorization?.toString().replace(`Bearer `, '');
+	if (!token) {
+		return null;
+	}
+	const decodedToken: any = jwt_decode(token);
+	return decodedToken.username;
+}

@@ -34,6 +34,7 @@ import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinde
 import LocationInput from '../components/inputs/location-input/location-input';
 import { apiGetNew, apiPost } from '../helpers/api';
 import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
+import { LimitationsService } from '../utils/limitations';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -3227,6 +3228,11 @@ const ReactModalService = {
 	},
 	// todo: consider moving some of the logic here to a deidcated distance service
 	openCalculateDistancesModal(eventStore: EventStore) {
+		// disable distance for other users for now.
+		if (!LimitationsService.distanceLimitations()) {
+			return;
+		}
+
 		const allLocations = eventStore.allEventsLocations;
 
 		var checkTaskStatus: NodeJS.Timeout | undefined;
