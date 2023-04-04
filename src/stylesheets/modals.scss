@@ -70,11 +70,18 @@
   justify-content: center;
   gap:10px;
   width: 100% !important;
+
+  align-items: center;
+
+  button {
+    width: max-content;
+  }
 }
 
 .triplan-add-calendar-event-from-existing {
   > div {
     z-index: 2 !important;
+    overflow:visible !important; /* for the select of the activity */
 
     .react-modal {
       min-height: unset;

@@ -2178,18 +2178,6 @@ const ReactModalService = {
 							flavor={ButtonFlavor.secondary}
 							// className={className}
 							onClick={() =>
-								ReactModalService.openAddCalendarEventFromHotelsModal(
-									eventStore,
-									addToEventsToCategories,
-									info
-								)
-							}
-							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_HOTEL')}
-						/>
-						<Button
-							flavor={ButtonFlavor.secondary}
-							// className={className}
-							onClick={() =>
 								ReactModalService.openAddCalendarEventNewModal(
 									eventStore,
 									addToEventsToCategories,
@@ -2197,6 +2185,18 @@ const ReactModalService = {
 								)
 							}
 							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_NEW')}
+						/>
+						<Button
+							flavor={ButtonFlavor.secondary}
+							// className={className}
+							onClick={() =>
+								ReactModalService.openAddCalendarEventFromHotelsModal(
+									eventStore,
+									addToEventsToCategories,
+									info
+								)
+							}
+							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_HOTEL')}
 						/>
 					</div>
 				)}
