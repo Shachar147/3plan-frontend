@@ -2930,7 +2930,7 @@ const ReactModalService = {
 			} else if (isChanged) {
 				const currentCategory = eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!;
 				const allOtherInstances = eventStore.allEventsComputed.filter(
-					(x) => x.category == categoryId && x.title == oldEvent.title && x.id !== oldEvent.id
+					(x) => x.category == categoryId && x.title.includes(oldEvent.title) && x.id !== oldEvent.id
 				);
 
 				if (isHotelsCategory(currentCategory) && allOtherInstances.length >= 1 && canBeMultiChanged) {
