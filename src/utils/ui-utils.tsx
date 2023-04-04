@@ -385,7 +385,7 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	if (calendarEvent.timingError) {
 		suggestedTime = ''; // irrelevant if there's timing error
 		timingError = `<div class="fc-event-suggested-time red-color">${calendarEvent.timingError}</div>`;
-		tooltip = timingError;
+		tooltip = alendarEvent.timingError;
 	}
 
 	return `<div title="${tooltip}">${icon} ${calendarEvent.title}</div>
