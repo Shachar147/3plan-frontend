@@ -120,6 +120,7 @@
 	"TRIP_SUMMARY.TITLE": "Trip Summary",
 	"TRIP_SUMMARY.TODO_COMPLETE": "Todo Complete",
 	"TRIP_SUMMARY.ORDERED": "Ordered!",
+	"MODALS.ADD_TO_CALENDAR.TITLE": "Add to Calendar",
 	"MODALS.ADD_EVENT_TO_CALENDAR.TITLE": "Add Activity to Calendar",
 	"MODALS.ADD_HOTEL_TO_CALENDAR.TITLE": "Add Hotel to Calendar",
 	"GENERAL_CATEGORY.TITLE": "General",

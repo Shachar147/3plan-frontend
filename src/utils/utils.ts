@@ -402,5 +402,5 @@ export function getCurrentUsername(): string | null {
 }
 
 export function isHotelsCategory(category: TriPlanCategory) {
-	return category.description === HOTELS_DESCRIPTION;
+	return category.description === HOTELS_DESCRIPTION || isMatching(category.title, HOTEL_KEYWORDS);
 }

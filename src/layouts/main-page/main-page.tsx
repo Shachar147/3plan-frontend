@@ -130,7 +130,6 @@ function MainPage(props: MainPageProps) {
 			const category = categoryObject.id.toString();
 
 			if (isHotelsCategory(categoryObject)) {
-				debugger;
 				if (eventStore.allSidebarEvents.find((x) => x.title === event.title)) {
 					// no need to update.
 					return true;

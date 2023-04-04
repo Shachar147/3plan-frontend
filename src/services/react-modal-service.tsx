@@ -2151,12 +2151,16 @@ const ReactModalService = {
 		});
 	},
 	openAddCalendarEventModal: (eventStore: EventStore, addToEventsToCategories: (value: any) => void, info: any) => {
-		const title = TranslateService.translate(eventStore, 'MODALS.ADD_EVENT_TO_CALENDAR.TITLE');
+		const title = TranslateService.translate(eventStore, 'MODALS.ADD_TO_CALENDAR.TITLE');
 
 		// if there are no sidebar events - open add new calendar modal.
 		if (eventStore.allSidebarEvents.length === 0) {
 			return ReactModalService.openAddCalendarEventNewModal(eventStore, addToEventsToCategories, info);
 		}
+
+		const hotels = eventStore.allEventsComputed.filter((x) =>
+			isHotelsCategory(eventStore.categories.find((y) => y.id.toString() === x.category.toString())!)
+		);
 
 		const content = (
 			<Observer>
@@ -2186,18 +2190,20 @@ const ReactModalService = {
 							}
 							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_NEW')}
 						/>
-						<Button
-							flavor={ButtonFlavor.secondary}
-							// className={className}
-							onClick={() =>
-								ReactModalService.openAddCalendarEventFromHotelsModal(
-									eventStore,
-									addToEventsToCategories,
-									info
-								)
-							}
-							text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_HOTEL')}
-						/>
+						{!!hotels.length && (
+							<Button
+								flavor={ButtonFlavor.secondary}
+								// className={className}
+								onClick={() =>
+									ReactModalService.openAddCalendarEventFromHotelsModal(
+										eventStore,
+										addToEventsToCategories,
+										info
+									)
+								}
+								text={TranslateService.translate(eventStore, 'MODALS.ADD_CALENDAR_EVENT.ADD_HOTEL')}
+							/>
+						)}
 					</div>
 				)}
 			</Observer>
