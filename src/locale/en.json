@@ -447,5 +447,8 @@
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER": "Oops, it seems like there are no nearby activities",
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER.NOT_CALCULATED": "Oops, it seems like you didn't ran distance calculation on this location yet",
 	"DISTANCE_CALCULATOR.TITLE": "Check Distance",
-	"CHOOSE_LANGUAGE.PLACEHOLDER": "Choose from the following languages..."
+	"CHOOSE_LANGUAGE.PLACEHOLDER": "Choose from the following languages...",
+	"GENERAL.YES": "Yes",
+	"GENERAL.NO": "No",
+	"NO.ONLY_THIS_INSTANCE": "No, update only this instance"
 }

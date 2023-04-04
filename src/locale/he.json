@@ -525,5 +525,8 @@
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER": "אופס, נראה שאין מקומות באזור הפעילות שבחרת",
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER.NOT_CALCULATED": "אופס, נראה שעדיין לא חושבו מסלולים מהפעילות שבחרת,",
 	"DISTANCE_CALCULATOR.TITLE": "בדיקת מרחק",
-	"CHOOSE_LANGUAGE.PLACEHOLDER": "בחר מהשפות הבאות..."
+	"CHOOSE_LANGUAGE.PLACEHOLDER": "בחר מהשפות הבאות...",
+	"GENERAL.YES": "כן",
+	"GENERAL.NO": "לא",
+	"NO.ONLY_THIS_INSTANCE": "לא, עדכן רק את המופע הזה"
 }
