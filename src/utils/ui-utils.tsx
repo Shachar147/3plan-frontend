@@ -187,6 +187,7 @@ const renderFilterTags = (eventStore: EventStore) => {
 		showOnlyEventsWithNoOpeningHours,
 		showOnlyEventsWithTodoComplete,
 		showOnlyEventsWithDistanceProblems,
+		showOnlyEventsWithOpeningHoursProblems,
 	} = eventStore;
 
 	if (
@@ -194,7 +195,8 @@ const renderFilterTags = (eventStore: EventStore) => {
 			showOnlyEventsWithNoLocation ||
 			showOnlyEventsWithNoOpeningHours ||
 			showOnlyEventsWithTodoComplete ||
-			showOnlyEventsWithDistanceProblems
+			showOnlyEventsWithDistanceProblems ||
+			showOnlyEventsWithOpeningHoursProblems
 		)
 	) {
 		return null;
@@ -202,6 +204,14 @@ const renderFilterTags = (eventStore: EventStore) => {
 
 	return (
 		<div className={'filter-tags-container'}>
+			{showOnlyEventsWithOpeningHoursProblems && (
+				<TriplanTag
+					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG')}
+					onDelete={() => {
+						eventStore.setShowOnlyEventsWithOpeningHoursProblems(false);
+					}}
+				/>
+			)}
 			{showOnlyEventsWithDistanceProblems && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG')}

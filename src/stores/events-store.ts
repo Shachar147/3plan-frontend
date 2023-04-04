@@ -80,6 +80,7 @@ export class EventStore {
 	@observable showOnlyEventsWithNoOpeningHours: boolean = false;
 	@observable showOnlyEventsWithTodoComplete: boolean = false;
 	@observable showOnlyEventsWithDistanceProblems: boolean = false;
+	@observable showOnlyEventsWithOpeningHoursProblems: boolean = false;
 	@observable calculatingDistance = 0;
 	@observable distanceResults = observable.map<string, DistanceResult>();
 	@observable travelMode = GoogleTravelMode.DRIVING;
@@ -115,6 +116,7 @@ export class EventStore {
 	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
 	@observable taskData: any = { progress: 0 };
 	@observable eventsWithDistanceProblems: any[] = [];
+	@observable eventsWithOpeningHoursProblems: any[] = [];
 	@observable selectedEventForNearBy: CalendarEvent | SidebarEvent | undefined = undefined;
 	@observable selectedEventNearByPlaces: any[] | undefined = undefined;
 	@observable distanceSectionAutoOpened: boolean = false;
@@ -211,6 +213,16 @@ export class EventStore {
 			});
 		}
 
+		if (this.showOnlyEventsWithOpeningHoursProblems) {
+			return filteredEvents.map((x) => {
+				x.timingError = this.eventsWithOpeningHoursProblems.find((e) => e.id == x.id)?.timingError;
+				x.className = x.className || '';
+				x.className = x.className.replaceAll(' red-background', '') + ' red-background';
+				return x;
+			});
+		}
+
+		const eventsWithOpeningHoursProblems: any[] = [];
 		const eventsWithWarnings: any[] = [];
 		const eventsWithProblems: any[] = [];
 
@@ -388,6 +400,7 @@ export class EventStore {
 						e.className = e.className || '';
 						e.className = e.className.replaceAll(' red-background', '') + ' red-background';
 						e.className += ' red-background';
+						eventsWithOpeningHoursProblems.push({ id: e.id, timingError: errorReason });
 					}
 				}
 
@@ -435,6 +448,7 @@ export class EventStore {
 
 			runInAction(() => {
 				this.eventsWithDistanceProblems = eventsWithProblems;
+				this.eventsWithOpeningHoursProblems = eventsWithOpeningHoursProblems;
 			});
 
 			return newEvents;
@@ -458,6 +472,9 @@ export class EventStore {
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
 				(this.showOnlyEventsWithDistanceProblems
 					? !!this.eventsWithDistanceProblems.find((x) => event.id == x.id)
+					: true) &&
+				(this.showOnlyEventsWithOpeningHoursProblems
+					? !!this.eventsWithOpeningHoursProblems.find((x) => event.id == x.id)
 					: true)
 		);
 
@@ -940,6 +957,11 @@ export class EventStore {
 	}
 
 	@action
+	toggleShowOnlyEventsWithOpeningHoursProblems() {
+		this.showOnlyEventsWithOpeningHoursProblems = !this.showOnlyEventsWithOpeningHoursProblems;
+	}
+
+	@action
 	setShowOnlyEventsWithNoLocation(newVal: boolean) {
 		this.showOnlyEventsWithNoLocation = newVal;
 	}
@@ -947,6 +969,11 @@ export class EventStore {
 	@action
 	setShowOnlyEventsWithDistanceProblems(newVal: boolean) {
 		this.showOnlyEventsWithDistanceProblems = newVal;
+	}
+
+	@action
+	setShowOnlyEventsWithOpeningHoursProblems(newVal: boolean) {
+		this.showOnlyEventsWithOpeningHoursProblems = newVal;
 	}
 
 	@action
