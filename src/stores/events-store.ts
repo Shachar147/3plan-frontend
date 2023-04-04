@@ -546,7 +546,7 @@ export class EventStore {
 	}
 
 	@computed
-	get allSidebarEvents() {
+	get allSidebarEvents(): SidebarEvent[] {
 		return Object.values(this.sidebarEvents).flat();
 	}
 
@@ -1134,8 +1134,8 @@ export class EventStore {
 
 	updateEvent(_storedEvent: SidebarEvent | CalendarEvent | any, newEvent: SidebarEvent | CalendarEvent | any) {
 		const storedEvent = _.cloneDeep(_storedEvent);
-		storedEvent.title = newEvent.title;
-		storedEvent.allDay = newEvent.allDay;
+		storedEvent.title = newEvent.title ?? storedEvent.title;
+		storedEvent.allDay = newEvent.allDay ?? storedEvent.allDay;
 		storedEvent.start = newEvent.start ?? storedEvent.start;
 		storedEvent.end = newEvent.end ?? storedEvent.end;
 		storedEvent.icon = newEvent.icon ?? storedEvent.icon;

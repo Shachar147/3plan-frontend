@@ -10,6 +10,8 @@ export const defaultEvents: Record<number, SidebarEvent[]> = {};
 
 export const defaultCalendarEvents = [];
 
+export const HOTELS_DESCRIPTION = 'CATEGORY.HOTELS.DESCRIPTION'; // identifier
+
 export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] => {
 	return [
 		{
@@ -28,7 +30,7 @@ export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] 
 			id: 3,
 			icon: '🏩',
 			title: TranslateService.translate(eventStore, 'CATEGORY.HOTELS'),
-			description: 'CATEGORY.HOTELS.DESCRIPTION',
+			description: HOTELS_DESCRIPTION,
 		},
 		{
 			id: 4,

@@ -11,6 +11,7 @@ import {
 	isHotel,
 	toDistanceString,
 	ucfirst,
+	isHotelsCategory,
 } from '../../utils/utils';
 import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
@@ -61,8 +62,10 @@ export const wrapWithSidebarGroup = (
 	const isOpen = eventStore.openSidebarGroups.has(groupKey);
 	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
 
+	const num = 100 * itemsCount + 90;
+
 	const openStyle = {
-		maxHeight: 100 * itemsCount + 90 + 'px',
+		maxHeight: num + 'px',
 		padding: '10px',
 		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
 	};
@@ -605,7 +608,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							'fa-map-signs',
 							SidebarGroups.DISTANCES,
 							groupTitle,
-							eventStore.allEventsLocations.length
+							Math.max(100, eventStore.allEventsLocations.length)
 						)}
 					</>
 				)}
@@ -985,7 +988,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					<div style={eventsStyle as unknown as CSSProperties}>
 						{renderCategoryEvents(triplanCategory.id)}
 						{renderNoItemsInCategoryPlaceholder(triplanCategory)}
-						{renderAddSidebarEventButton(triplanCategory.id)}
+						{renderAddSidebarEventButton(triplanCategory)}
 					</div>
 				</div>
 			);
@@ -1081,19 +1084,25 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		ReactModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
 	};
 
-	const renderAddSidebarEventButton = (categoryId: number) => (
-		<Button
-			flavor={ButtonFlavor.secondary}
-			style={{
-				width: '100%',
-				marginBlock: '10px',
-			}}
-			onClick={() => {
-				ReactModalService.openAddSidebarEventModal(eventStore, categoryId);
-			}}
-			text={TranslateService.translate(eventStore, 'ADD_EVENT.BUTTON_TEXT')}
-		/>
-	);
+	const renderAddSidebarEventButton = (category: TriPlanCategory) => {
+		const isHotel = isHotelsCategory(category);
+		return (
+			<Button
+				flavor={ButtonFlavor.secondary}
+				style={{
+					width: '100%',
+					marginBlock: '10px',
+				}}
+				onClick={() => {
+					ReactModalService.openAddSidebarEventModal(eventStore, category.id);
+				}}
+				text={TranslateService.translate(
+					eventStore,
+					isHotel ? 'ADD_HOTEL.BUTTON_TEXT' : 'ADD_EVENT.BUTTON_TEXT'
+				)}
+			/>
+		);
+	};
 
 	const renderCategoryEvents = (categoryId: number) => {
 		const categoryEvents = eventStore.getSidebarEvents[categoryId] || [];
