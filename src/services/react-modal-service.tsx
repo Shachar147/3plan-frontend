@@ -37,6 +37,7 @@ import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { LimitationsService } from '../utils/limitations';
 import { getViewSelectorOptions } from '../utils/ui-utils';
 import ToggleButton from '../components/toggle-button/toggle-button';
+import { all } from 'axios';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -2737,6 +2738,7 @@ const ReactModalService = {
 				images,
 				moreInfo, // add column 16
 				category: categoryId,
+				location,
 			};
 
 			// written like this since otherwise, editing without changing anything will reset location to nothing
@@ -2771,15 +2773,29 @@ const ReactModalService = {
 			const priorityChanged = originalEvent.priority !== currentEvent.priority;
 			const preferredTimeChanged = originalEvent.preferredTime !== currentEvent.preferredTime;
 			const descriptionChanged = originalEvent.description !== currentEvent.description;
-			const isLocationChanged = originalEvent.location != currentEvent.location;
+			const isLocationChanged =
+				JSON.stringify(originalEvent.location ?? {}) != JSON.stringify(currentEvent.location ?? {});
 			const oldCategory = eventStore.calendarEvents.find((e) => e.id === eventId)!.category;
 			const isCategoryChanged = oldCategory != categoryId;
 			const isOpeningHoursChanged = currentEvent.openingHours;
 			const isImagesChanged = originalEvent.images != currentEvent.images; // add column 12
 			const isMoreInfoChanged = originalEvent.moreInfo != currentEvent.moreInfo;
-			const isChanged =
+
+			const updates: string[] = [];
+			if (titleChanged) updates.push('title');
+			if (durationChanged) updates.push('duration');
+			if (iconChanged) updates.push('icon');
+			if (priorityChanged) updates.push('priority');
+			if (preferredTimeChanged) updates.push('preferredTime');
+			if (descriptionChanged) updates.push('description');
+			if (isLocationChanged) updates.push('location');
+			if (isOpeningHoursChanged) updates.push('openingHours');
+			if (isImagesChanged) updates.push('images');
+			if (isMoreInfoChanged) updates.push('moreInfo');
+
+			const isChanged = updates.length > 0;
+			const canBeMultiChanged =
 				titleChanged ||
-				durationChanged ||
 				iconChanged ||
 				priorityChanged ||
 				preferredTimeChanged ||
@@ -2791,7 +2807,10 @@ const ReactModalService = {
 
 			ReactModalService.internal.disableOnConfirm();
 
-			const _actuallyUpdate = async () => {
+			const _actuallyUpdate = async (
+				isHotel: boolean = false,
+				otherInstances: (SidebarEvent | CalendarEvent)[] | undefined = undefined
+			) => {
 				const isUpdated = await eventStore.changeEvent({
 					event: {
 						id: eventId,
@@ -2810,15 +2829,59 @@ const ReactModalService = {
 						moreInfo: currentEvent.moreInfo,
 					},
 				});
-				debugger;
+
+				let updateCount = 1;
+				if (otherInstances) {
+					const baseUpdateEvent: Record<string, any> = {};
+					updates.forEach((key) => {
+						if (key !== 'duration') {
+							// @ts-ignore
+							baseUpdateEvent[key] = currentEvent[key];
+						}
+					});
+
+					for (const event of otherInstances) {
+						if (
+							await eventStore.changeEvent({
+								event: {
+									...event,
+									...baseUpdateEvent,
+								},
+							})
+						) {
+							updateCount++;
+						}
+					}
+				}
+
 				if (isUpdated) {
-					ReactModalService.internal.alertMessage(
-						eventStore,
-						'MODALS.UPDATED.TITLE',
-						'MODALS.UPDATED_EVENT.CONTENT',
-						'success'
-					);
+					let title = 'MODALS.UPDATED.TITLE.FEMALE';
+					let content = 'MODALS.UPDATED_EVENT.CONTENT';
+					let contentParams;
+
+					if (isHotel) {
+						title = 'MODALS.UPDATED.TITLE';
+						content = 'MODALS.UPDATED_HOTEL.CONTENT';
+
+						if (otherInstances) {
+							title = 'MODALS.UPDATED.TITLE.PLURAL';
+							content = 'MODALS.UPDATED_HOTELS.CONTENT';
+							contentParams = {
+								X: updateCount,
+							};
+						}
+					}
+
+					ReactModalService.internal.alertMessage(eventStore, title, content, 'success', contentParams);
 				} else {
+					let title = 'MODALS.EDIT_EVENT_ERROR.CONTENT';
+					if (isHotel) {
+						title = 'MODALS.EDIT_HOTEL_ERROR.CONTENT';
+						if (otherInstances) {
+							title = 'MODALS.EDIT_HOTELS_ERROR.CONTENT';
+						}
+					}
+
 					ReactModalService.internal.alertMessage(
 						eventStore,
 						'MODALS.ERROR.TITLE',
@@ -2859,36 +2922,50 @@ const ReactModalService = {
 					'success'
 				);
 			} else if (isChanged) {
-				// if (isHotelsCategory(eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!)) {
-				// 	const allInstances = eventStore.allEventsComputed.filter(
-				// 		(x) => x.category == categoryId && x.title == title
-				// 	);
-				// 	if (allInstances.length > 1) {
-				// 		ReactModalService.internal.openModal(eventStore, {
-				// 			...getDefaultSettings(eventStore),
-				// 			title: 'Should Update All?',
-				// 			content: `There are ${
-				// 				allInstances.length - 1
-				// 			} other instances of this hotel\nDo you want to update all?`,
-				// 			cancelBtnText: TranslateService.translate(eventStore, 'NO.ONLY_THIS_INSTANCE'),
-				// 			confirmBtnText: TranslateService.translate(eventStore, 'GENERAL.YES'),
-				// 			confirmBtnCssClass: 'primary-button',
-				// 			onConfirm: async () => {
-				// 				alert('all!');
-				// 				// ReactModalService.internal.closeModal(eventStore);
-				// 			},
-				// 			onCancel: async () => {
-				// 				alert('only this one!');
-				// 				await _actuallyUpdate();
-				// 				// ReactModalService.internal.closeModal(eventStore);
-				// 			},
-				// 		});
-				//
-				// 		return true;
-				// 	}
-				// }
+				const currentCategory = eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!;
+				const allOtherInstances = eventStore.allEventsComputed.filter(
+					(x) => x.category == categoryId && x.title == oldEvent.title && x.id !== oldEvent.id
+				);
 
-				await _actuallyUpdate();
+				if (isHotelsCategory(currentCategory) && allOtherInstances.length >= 1 && canBeMultiChanged) {
+					ReactModalService.internal.openModal(
+						eventStore,
+						{
+							...getDefaultSettings(eventStore),
+							title: TranslateService.translate(eventStore, 'SHOULD_UPDATE_ALL.TITLE'),
+							content:
+								allOtherInstances.length == 1
+									? TranslateService.translate(eventStore, 'SHOULD_UPDATE_ALL.CONTENT.SINGLE', {
+											Y: TranslateService.translate(eventStore, 'HOTEL'),
+									  })
+									: TranslateService.translate(eventStore, 'SHOULD_UPDATE_ALL.CONTENT', {
+											X: allOtherInstances.length,
+											Y: TranslateService.translate(eventStore, 'HOTEL'),
+									  }),
+							cancelBtnText: TranslateService.translate(eventStore, 'NO.ONLY_THIS_INSTANCE'),
+							confirmBtnText: TranslateService.translate(eventStore, 'GENERAL.YES'),
+							confirmBtnCssClass: 'primary-button',
+							onConfirm: async () => {
+								ReactModalService.internal.closeModal(eventStore);
+								// alert('all!');
+								await _actuallyUpdate(true, allOtherInstances);
+								ReactModalService.internal.closeModal(eventStore);
+							},
+							onCancel: async () => {
+								// alert('only this one!');
+								ReactModalService.internal.closeModal(eventStore);
+								await _actuallyUpdate(true);
+								ReactModalService.internal.closeModal(eventStore);
+								// ReactModalService.internal.closeModal(eventStore);
+							},
+						},
+						true
+					);
+
+					return false;
+				} else {
+					await _actuallyUpdate();
+				}
 			}
 			return true;
 		};
@@ -2944,8 +3021,9 @@ const ReactModalService = {
 		};
 
 		const initialData = {
-			...info.event._def,
-			...info.event.extendedProps,
+			// ...info.event._def,
+			// ...info.event.extendedProps,
+			...found,
 			start: info.event.start,
 			end: info.event.end,
 			allDay: info.event.allDay,

@@ -55,8 +55,12 @@
 	"MODALS.REMOVE_EVENT_FROM_CALENDAR": "הסר פעילות מלוח השנה",
 	"MODALS.DUPLICATE_EVENT": "שכפל פעילות",
 	"MODALS.DELETE_SIDEBAR_EVENT.CONTENT": "האם אתה בטוח שברצונך למחוק את הפעילות הזאת?<br/>זוהי פעולה בלתי הפיכה",
-	"MODALS.UPDATED.TITLE": "עודכן!",
+	"MODALS.UPDATED.TITLE": "עודכן בהצלחה!",
+	"MODALS.UPDATED.TITLE.FEMALE": "עודכנה בהצלחה!",
+	"MODALS.UPDATED.TITLE.PLURAL": "עודכנו בהצלחה!",
+	"MODALS.UPDATED_HOTELS.CONTENT": "{X} מופעים של בית המלון עודכנו בהצלחה",
 	"MODALS.UPDATED_EVENT.CONTENT": "הפעילות עודכנה בהצלחה",
+	"MODALS.UPDATED_HOTEL.CONTENT": "בית המלון עודכן בהצלחה",
 	"MODALS.UPDATED_CATEGORY.CONTENT": "הקטגוריה עודכנה בהצלחה",
 	"MODALS.START_TIME": "זמן התחלה",
 	"MODALS.END_TIME": "זמן סיום",
@@ -84,6 +88,8 @@
 	"TEMPLATE_EXAMPLE.PRIORITY": "חובה",
 	"TEMPLATE_EXAMPLE.PREFERRED_TIME": "בוקר",
 	"MODALS.EDIT_EVENT_ERROR.CONTENT": "אופס, משהו השתבש :(<br>הפעילות שלך לא עודכנה.",
+	"MODALS.EDIT_HOTEL_ERROR.CONTENT": "אופס, משהו השתבש :(<br>בית המלון שלך לא עודכן.",
+	"MODALS.EDIT_HOTELS_ERROR.CONTENT":  "אופס, משהו השתבש :(<br>המופעים של בית המלון שלך לא עודכנו.",
 	"MODALS.IMPORT_EVENTS_ERROR.CONTENT": "אופס, משהו השתבש :(<br>לא הצלחנו לקרוא את הקובץ שהעלת.",
 	"IMPORT_EVENTS.TITLE3": "ייבוא פעילויות - אישור",
 	"IMPORT_EVENTS.CONFIRM.EVENTS_WILL_BE_ADDED": "פעילויות יתווספו",
@@ -528,5 +534,9 @@
 	"CHOOSE_LANGUAGE.PLACEHOLDER": "בחר מהשפות הבאות...",
 	"GENERAL.YES": "כן",
 	"GENERAL.NO": "לא",
-	"NO.ONLY_THIS_INSTANCE": "לא, עדכן רק את המופע הזה"
+	"NO.ONLY_THIS_INSTANCE": "לא, עדכן רק את המופע הזה",
+	"SHOULD_UPDATE_ALL.TITLE": "תרצה לעדכן את כולם?",
+	"SHOULD_UPDATE_ALL.CONTENT": "ישנם {X} מופעים נוספים של {Y} הזה\nתרצה לעדכן גם אותם?",
+	"SHOULD_UPDATE_ALL.CONTENT.SINGLE": "ישנו מופע נוסף של {Y} הזה\nתרצה לעדכן גם אותו?",
+	"HOTEL": "בית המלון"
 }

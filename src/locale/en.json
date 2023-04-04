@@ -45,7 +45,11 @@
 	"MODALS.DUPLICATE_EVENT": "Duplicate Activity",
 	"MODALS.DELETE_SIDEBAR_EVENT.CONTENT": "Are you sure you want to delete this activity?<br/>this action is irreversible",
 	"MODALS.UPDATED.TITLE": "Updated!",
+	"MODALS.UPDATED.TITLE.FEMALE": "Updated!",
+	"MODALS.UPDATED.TITLE.PLURAL": "Updated!",
 	"MODALS.UPDATED_EVENT.CONTENT": "Activity have been updated",
+	"MODALS.UPDATED_HOTEL.CONTENT": "Hotel have been updated",
+	"MODALS.UPDATED_HOTELS.CONTENT": "{X} instances of this hotel have been updated",
 	"MODALS.UPDATED_CATEGORY.CONTENT": "Category have been updated",
 	"MODALS.START_TIME": "Start Time",
 	"MODALS.END_TIME": "End Time",
@@ -73,6 +77,8 @@
 	"TEMPLATE_EXAMPLE.PRIORITY": "must",
 	"TEMPLATE_EXAMPLE.PREFERRED_TIME": "morning",
 	"MODALS.EDIT_EVENT_ERROR.CONTENT": "Oops something went wrong :(<br>Your activity have not been updated.",
+	"MODALS.EDIT_HOTEL_ERROR.CONTENT": "Oops something went wrong :(<br>Your hotel has not been updated.",
+	"MODALS.EDIT_HOTELS_ERROR.CONTENT": "Oops something went wrong :(<br>Your hotel instances have not been updated.",
 	"MODALS.IMPORT_EVENTS_ERROR.CONTENT": "Oops something went wrong :(<br>Couldn't read uploaded file.",
 	"IMPORT_EVENTS.TITLE3": "Import Activities - Confirm",
 	"IMPORT_EVENTS.CONFIRM.EVENTS_WILL_BE_ADDED": "activities will be added",
@@ -450,5 +456,9 @@
 	"CHOOSE_LANGUAGE.PLACEHOLDER": "Choose from the following languages...",
 	"GENERAL.YES": "Yes",
 	"GENERAL.NO": "No",
-	"NO.ONLY_THIS_INSTANCE": "No, update only this instance"
+	"NO.ONLY_THIS_INSTANCE": "No, update only this instance",
+	"SHOULD_UPDATE_ALL.TITLE": "Should Update All?",
+	"SHOULD_UPDATE_ALL.CONTENT.SINGLE": "There is another one instance of this {Y}\nDo you want to update it as well?",
+	"SHOULD_UPDATE_ALL.CONTENT": "There are {X} other instances of this {Y}\nDo you want to update all?",
+	"HOTEL": "hotel"
 }

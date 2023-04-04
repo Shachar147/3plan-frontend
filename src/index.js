@@ -272,6 +272,7 @@ const RootRouter = () => {
 		eventStore.modalValuesRefs[refKey] = useRef(null);
 	});
 
+	var forceUpdateTimeout;
 	window.setManualLocation = (className = 'location-input', variableName = 'selectedLocation', eventStore) => {
 		const address = document.querySelector(`.${className}`)?.value;
 
@@ -291,9 +292,13 @@ const RootRouter = () => {
 			eventStore.modalValues[variableName] = undefined;
 
 			if (lostCoordinate) {
-				runInAction(() => {
-					eventStore.forceUpdate += 1;
-				});
+				forceUpdateTimeout = setTimeout(forceUpdate, 2000);
+			}
+
+			// debounce
+			if (forceUpdateTimeout) {
+				clearTimeout(forceUpdateTimeout);
+				forceUpdateTimeout = setTimeout(forceUpdate, 2000);
 			}
 		}
 
@@ -302,6 +307,12 @@ const RootRouter = () => {
 		if (summaryDiv && summaryDiv.length > 0) {
 			summaryDiv[0].innerHTML = window.renderOpeningHours();
 		}
+	};
+
+	const forceUpdate = () => {
+		runInAction(() => {
+			eventStore.forceUpdate += 1;
+		});
 	};
 
 	window.toggleClosed = (day) => {
