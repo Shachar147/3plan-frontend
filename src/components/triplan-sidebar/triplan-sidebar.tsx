@@ -317,16 +317,51 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			) : null;
 		};
 
+		const renderEventsWithOpeningHoursProblemsStatistics = () => {
+			const eventsWithOpeningHoursProblems = eventStore.eventsWithOpeningHoursProblems;
+
+			const openingHoursProblemsEventsKey = eventStore.showOnlyEventsWithOpeningHoursProblems
+				? 'SHOW_ALL_EVENTS'
+				: 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS';
+
+			return !!eventsWithOpeningHoursProblems.length ? (
+				<div
+					className={getClasses(
+						['sidebar-statistics padding-inline-0'],
+						eventStore.showOnlyEventsWithOpeningHoursProblems && 'blue-color'
+					)}
+				>
+					<Button
+						icon={'fa-exclamation-triangle'}
+						text={`${eventsWithOpeningHoursProblems.length} ${TranslateService.translate(
+							eventStore,
+							'EVENTS_WITH_OPENING_HOURS_PROBLEMS'
+						)} (${TranslateService.translate(eventStore, openingHoursProblemsEventsKey)})`}
+						onClick={() => {
+							eventStore.toggleShowOnlyEventsWithOpeningHoursProblems();
+						}}
+						flavor={ButtonFlavor['movable-link']}
+						className={getClasses(
+							'red-color',
+							eventStore.showOnlyEventsWithOpeningHoursProblems && 'blue-color'
+						)}
+					/>
+				</div>
+			) : null;
+		};
+
 		const noLocationWarning = renderNoLocationEventsStatistics();
 		const noOpeningHoursWarning = renderNoOpeningHoursEventsStatistics();
 		const eventsWithTodoComplete = renderEventsWithTodoCompleteStatistics();
 		const eventsWithDistanceProblems = renderEventsWithDistanceProblemsStatistics();
+		const eventsWithOpeningHoursProblems = renderEventsWithOpeningHoursProblemsStatistics();
 		const numOfItems = [noLocationWarning, noOpeningHoursWarning].filter((x) => x != null).length;
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.WARNING');
 		const warningsBlock =
 			noLocationWarning || noOpeningHoursWarning
 				? wrapWithSidebarGroup(
 						<>
+							{eventsWithOpeningHoursProblems}
 							{eventsWithDistanceProblems}
 							{noLocationWarning}
 							{noOpeningHoursWarning}

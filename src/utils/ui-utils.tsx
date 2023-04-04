@@ -187,6 +187,7 @@ const renderFilterTags = (eventStore: EventStore) => {
 		showOnlyEventsWithNoOpeningHours,
 		showOnlyEventsWithTodoComplete,
 		showOnlyEventsWithDistanceProblems,
+		showOnlyEventsWithOpeningHoursProblems,
 	} = eventStore;
 
 	if (
@@ -194,7 +195,8 @@ const renderFilterTags = (eventStore: EventStore) => {
 			showOnlyEventsWithNoLocation ||
 			showOnlyEventsWithNoOpeningHours ||
 			showOnlyEventsWithTodoComplete ||
-			showOnlyEventsWithDistanceProblems
+			showOnlyEventsWithDistanceProblems ||
+			showOnlyEventsWithOpeningHoursProblems
 		)
 	) {
 		return null;
@@ -202,6 +204,14 @@ const renderFilterTags = (eventStore: EventStore) => {
 
 	return (
 		<div className={'filter-tags-container'}>
+			{showOnlyEventsWithOpeningHoursProblems && (
+				<TriplanTag
+					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG')}
+					onDelete={() => {
+						eventStore.setShowOnlyEventsWithOpeningHoursProblems(false);
+					}}
+				/>
+			)}
 			{showOnlyEventsWithDistanceProblems && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG')}
@@ -360,7 +370,8 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	// event.classNames = event.classNames.join(",").replace('locked','').split(",");
 
 	let suggestedTime = '';
-	// @ts-ignore
+	let timingError = '';
+
 	if (calendarEvent.suggestedEndTime) {
 		const dt = new Date(calendarEvent.suggestedEndTime.toString());
 		const leaveAtStr = `${TranslateService.translate(eventStore, 'LEAVE_AT')} ${getTimeStringFromDate(
@@ -369,6 +380,12 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 		suggestedTime = `<div class="fc-event-suggested-time">${leaveAtStr}</div>`;
 
 		tooltip = leaveAtStr;
+	}
+
+	if (calendarEvent.timingError) {
+		suggestedTime = ''; // irrelevant if there's timing error
+		timingError = `<div class="fc-event-suggested-time red-color">${calendarEvent.timingError}</div>`;
+		tooltip = timingError;
 	}
 
 	return `<div title="${tooltip}">${icon} ${calendarEvent.title}</div>
@@ -380,6 +397,7 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 						  }${calendarEvent.end ? '-' + getTimeStringFromDate(toDate(calendarEvent.end!)) : ''}</div>`
 				}
                 ${suggestedTime}
+				${timingError}
             `;
 };
 
