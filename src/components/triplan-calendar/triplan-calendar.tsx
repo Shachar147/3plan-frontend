@@ -353,7 +353,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			droppable={true}
 			plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
 			ref={calendarComponentRef}
-			events={eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents).map((x) => ({
+			events={eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents, eventStore).map((x) => ({
 				...x,
 				extendedProps: {
 					...x,

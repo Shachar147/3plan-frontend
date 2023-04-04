@@ -336,6 +336,8 @@ const RootRouter = () => {
 
 	window.renderOpeningHours = (openingHours = window.openingHours) => {
 		let content;
+		let isOldOpeningHours = false;
+
 		if (!openingHours) {
 			const noInfo = TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.NO_INFORMATION');
 			const noLocation = TranslateService.translate(
@@ -351,7 +353,13 @@ const RootRouter = () => {
 			content = Object.keys(openingHours)
 				.map((day) => {
 					if (is247) return '';
-					let when = `${openingHours[day].end} - ${openingHours[day].start}`;
+					let when = '';
+					if (openingHours[day].start && openingHours[day].end) {
+						isOldOpeningHours = true;
+						when = `${openingHours[day].start} - ${openingHours[day].end}`;
+					} else {
+						when = openingHours[day].map((x) => `${x.start} - ${x.end}`).join(', ');
+					}
 					if (when === '00:00 - 00:00') {
 						is247 = true;
 						return `<div>${TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.24_7')}</div>`;
@@ -400,8 +408,18 @@ const RootRouter = () => {
 			}
 		}
 
+		const oldHoursWarning = isOldOpeningHours
+			? `<div class='red-color white-space-pre font-size-10 margin-top-5'>${TranslateService.translate(
+					eventStore,
+					'NOTE.OLD_OPENING_HOURS'
+			  )}</div>`
+			: `<div class='gray-color white-space-pre font-size-10 margin-top-5'>${TranslateService.translate(
+					eventStore,
+					'NOTE.OPENING_HOURS_MAY_CHANGE'
+			  )}</div>`;
+
 		return `
-                <div class="opening-hours-details">${content}</div>
+                <div class="opening-hours-details">${content}${oldHoursWarning}</div>
             `;
 	};
 
@@ -420,6 +438,9 @@ const RootRouter = () => {
 			eventStore.modalValues['name'] = eventStore.modalValues['name'] ?? place.name;
 
 			// update images
+			if (eventStore.modalValues['images'] && eventStore.modalValues['images'].indexOf('maps.google') !== -1) {
+				eventStore.modalValues['images'] = undefined;
+			}
 			eventStore.modalValues['images'] =
 				eventStore.modalValues['images'] ?? place.photos.map((x) => x.getUrl()).join('\n');
 
@@ -579,6 +600,30 @@ const RootRouter = () => {
 		});
 	}
 
+	function transformOpeningHours(openingHours) {
+		const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+		const result = {};
+
+		for (const period of openingHours.periods) {
+			const open = period.open;
+			const close = period.close;
+
+			const openDay = days[open.day];
+			const closeDay = days[close.day];
+
+			if (!result[openDay]) {
+				result[openDay] = [];
+			}
+
+			result[openDay].push({
+				start: `${open.time.substr(0, 2)}:${open.time.substr(2)}`,
+				end: `${close.time.substr(0, 2)}:${close.time.substr(2)}`,
+			});
+		}
+
+		return result;
+	}
+
 	window.initLocationPicker = (
 		className = 'location-input',
 		variableName = 'selectedLocation',
@@ -594,27 +639,7 @@ const RootRouter = () => {
 			window.openingHours = undefined;
 			let openingHoursData = undefined;
 			if (place.opening_hours && place.opening_hours.periods) {
-				const opening_hours = place.opening_hours.periods;
-				openingHoursData = {};
-
-				const is247 = opening_hours.length === 1 && !opening_hours[0].close;
-
-				['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'].forEach((day, index) => {
-					const period = opening_hours[index];
-					if (period) {
-						const start = is247
-							? '00:00'
-							: padTo2Digits(period.open.hours) + ':' + padTo2Digits(period.open.minutes);
-						const end = is247
-							? '00:00'
-							: padTo2Digits(period.close.hours) + ':' + padTo2Digits(period.close.minutes);
-						openingHoursData[day] = {
-							start,
-							end,
-						};
-					}
-				});
-				window.openingHours = openingHoursData;
+				window.openingHours = openingHoursData = transformOpeningHours(place.opening_hours);
 
 				Object.keys(openingHoursData).forEach((day) => {
 					const start = document.getElementsByName('opening-hour-selector-' + day)[0];

@@ -32,6 +32,7 @@ import { DBService } from '../services/data-handlers/db-service';
 import { getUser } from '../helpers/auth';
 import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { apiGetNew, apiPost } from '../helpers/api';
+import TranslateService from '../services/translate-service';
 
 const defaultModalSettings = {
 	show: false,
@@ -79,6 +80,7 @@ export class EventStore {
 	@observable showOnlyEventsWithNoOpeningHours: boolean = false;
 	@observable showOnlyEventsWithTodoComplete: boolean = false;
 	@observable showOnlyEventsWithDistanceProblems: boolean = false;
+	@observable showOnlyEventsWithOpeningHoursProblems: boolean = false;
 	@observable calculatingDistance = 0;
 	@observable distanceResults = observable.map<string, DistanceResult>();
 	@observable travelMode = GoogleTravelMode.DRIVING;
@@ -114,6 +116,7 @@ export class EventStore {
 	@observable checkTaskStatus: NodeJS.Timeout | undefined; // interval
 	@observable taskData: any = { progress: 0 };
 	@observable eventsWithDistanceProblems: any[] = [];
+	@observable eventsWithOpeningHoursProblems: any[] = [];
 	@observable selectedEventForNearBy: CalendarEvent | SidebarEvent | undefined = undefined;
 	@observable selectedEventNearByPlaces: any[] | undefined = undefined;
 	@observable distanceSectionAutoOpened: boolean = false;
@@ -200,7 +203,7 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
-	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
+	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[], eventStore: EventStore): CalendarEvent[] => {
 		if (this.showOnlyEventsWithDistanceProblems) {
 			return filteredEvents.map((x) => {
 				x.suggestedEndTime = this.eventsWithDistanceProblems.find((e) => e.id == x.id)?.suggestedEndTime;
@@ -210,6 +213,16 @@ export class EventStore {
 			});
 		}
 
+		if (this.showOnlyEventsWithOpeningHoursProblems) {
+			return filteredEvents.map((x) => {
+				x.timingError = this.eventsWithOpeningHoursProblems.find((e) => e.id == x.id)?.timingError;
+				x.className = x.className || '';
+				x.className = x.className.replaceAll(' red-background', '') + ' red-background';
+				return x;
+			});
+		}
+
+		const eventsWithOpeningHoursProblems: any[] = [];
 		const eventsWithWarnings: any[] = [];
 		const eventsWithProblems: any[] = [];
 
@@ -312,6 +325,85 @@ export class EventStore {
 
 			const newEvents: CalendarEvent[] = [];
 			filteredEvents.forEach((e) => {
+				// check opening hours
+				let isValidToOpenHours = true;
+				let errorReason = '';
+				if (e.openingHours) {
+					if (
+						!(
+							Object.keys(e.openingHours).length == 1 &&
+							// @ts-ignore
+							e.openingHours['SUNDAY'] &&
+							// @ts-ignore
+							e.openingHours['SUNDAY']['start'] == '00:00'
+						)
+					) {
+						const eventStartDate = new Date(e.start);
+						const eventEndDate = new Date(e.end);
+						const options = { weekday: 'long' };
+
+						// @ts-ignore
+						const dayOfWeek = eventStartDate.toLocaleDateString('en-US', options);
+						// @ts-ignore
+						let openingHoursOnThisDay = e.openingHours[dayOfWeek.toUpperCase()];
+
+						if (!openingHoursOnThisDay) {
+							isValidToOpenHours = false;
+							errorReason = TranslateService.translate(eventStore, 'CLOSED_ON_THIS_DAY');
+						} else {
+							let isWithinHours = false;
+
+							// old opening hours support
+							if (!Array.isArray(openingHoursOnThisDay)) {
+								openingHoursOnThisDay = [openingHoursOnThisDay];
+							}
+							openingHoursOnThisDay.forEach((period: { start: string; end: string }) => {
+								const startTimeString = period.start;
+								let [hours, minutes] = startTimeString.split(':');
+								const dtStart = new Date(e.start);
+								dtStart.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+
+								const endTimeString = period.end;
+								[hours, minutes] = endTimeString.split(':');
+								const dtEnd = new Date(e.end);
+								dtEnd.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+								if (dtEnd.getTime() < dtStart.getTime()) {
+									dtEnd.setDate(dtEnd.getDate() + 1);
+								}
+
+								if (dtStart.getTime() > eventStartDate.getTime()) {
+									isWithinHours = false;
+									errorReason = TranslateService.translate(eventStore, 'INVALID_START_HOUR', {
+										X: startTimeString,
+									});
+								} else if (eventEndDate.getTime() > dtEnd.getTime()) {
+									isWithinHours = false;
+									errorReason = TranslateService.translate(eventStore, 'INVALID_END_HOUR', {
+										X: endTimeString,
+									});
+								}
+							});
+						}
+
+						// console.log({
+						// 	isValidToOpenHours,
+						// 	start: e.start,
+						// 	end: e.end,
+						// 	openingHours: openingHoursOnThisDay,
+						// 	errorReason,
+						// });
+					}
+
+					if (errorReason !== '') {
+						// console.log({ title: e.title, errorReason, start: e.start, end: e.end });
+						e.timingError = errorReason;
+						e.className = e.className || '';
+						e.className = e.className.replaceAll(' red-background', '') + ' red-background';
+						e.className += ' red-background';
+						eventsWithOpeningHoursProblems.push({ id: e.id, timingError: errorReason });
+					}
+				}
+
 				// newEvents.push(e);
 				if (eachEventAndItsDirections[e.id!]) {
 					let minStartDate = new Date(new Date().setFullYear(3000));
@@ -356,6 +448,7 @@ export class EventStore {
 
 			runInAction(() => {
 				this.eventsWithDistanceProblems = eventsWithProblems;
+				this.eventsWithOpeningHoursProblems = eventsWithOpeningHoursProblems;
 			});
 
 			return newEvents;
@@ -379,6 +472,9 @@ export class EventStore {
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
 				(this.showOnlyEventsWithDistanceProblems
 					? !!this.eventsWithDistanceProblems.find((x) => event.id == x.id)
+					: true) &&
+				(this.showOnlyEventsWithOpeningHoursProblems
+					? !!this.eventsWithOpeningHoursProblems.find((x) => event.id == x.id)
 					: true)
 		);
 
@@ -861,6 +957,11 @@ export class EventStore {
 	}
 
 	@action
+	toggleShowOnlyEventsWithOpeningHoursProblems() {
+		this.showOnlyEventsWithOpeningHoursProblems = !this.showOnlyEventsWithOpeningHoursProblems;
+	}
+
+	@action
 	setShowOnlyEventsWithNoLocation(newVal: boolean) {
 		this.showOnlyEventsWithNoLocation = newVal;
 	}
@@ -868,6 +969,11 @@ export class EventStore {
 	@action
 	setShowOnlyEventsWithDistanceProblems(newVal: boolean) {
 		this.showOnlyEventsWithDistanceProblems = newVal;
+	}
+
+	@action
+	setShowOnlyEventsWithOpeningHoursProblems(newVal: boolean) {
+		this.showOnlyEventsWithOpeningHoursProblems = newVal;
 	}
 
 	@action

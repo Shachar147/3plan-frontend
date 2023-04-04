@@ -13,6 +13,7 @@ interface FilterIndicationsProps {
 	showOnlyEventsWithTodoComplete?: boolean;
 	showOnlyEventsWithSpecificPriorities?: boolean;
 	showOnlyEventsWithDistanceProblems?: boolean;
+	showOnlyEventsWithOpeningHoursProblems?: boolean;
 }
 function FilterIndications(props: FilterIndicationsProps) {
 	const eventStore = useContext(eventStoreContext);
@@ -28,7 +29,11 @@ function FilterIndications(props: FilterIndicationsProps) {
 	const showOnlyEventsWithDistanceProblems =
 		props.showOnlyEventsWithDistanceProblems ?? eventStore.showOnlyEventsWithDistanceProblems;
 
+	const showOnlyEventsWithOpeningHoursProblems =
+		props.showOnlyEventsWithOpeningHoursProblems ?? eventStore.showOnlyEventsWithOpeningHoursProblems;
+
 	let totalFilters = 0;
+	if (showOnlyEventsWithOpeningHoursProblems) totalFilters += 1;
 	if (showOnlyEventsWithDistanceProblems) totalFilters += 1;
 	if (showOnlyEventsWithNoLocation) totalFilters += 1;
 	if (showOnlyEventsWithNoOpeningHours) totalFilters += 1;
@@ -40,6 +45,17 @@ function FilterIndications(props: FilterIndicationsProps) {
 	function renderSingleFilter() {
 		return (
 			<div className={getClasses('filter-tags-container flex-row gap-8', eventStore.isRtl && 'direction-rtl')}>
+				{showOnlyEventsWithOpeningHoursProblems && (
+					<TriplanTag
+						text={TranslateService.translate(
+							eventStore,
+							'SHOW_ONLY_EVENTS_WITH_OPENING_HOURS_PROBLEMS.FILTER_TAG'
+						)}
+						onDelete={() => {
+							eventStore.setShowOnlyEventsWithOpeningHoursProblems(false);
+						}}
+					/>
+				)}
 				{showOnlyEventsWithDistanceProblems && (
 					<TriplanTag
 						text={TranslateService.translate(
@@ -129,6 +145,7 @@ function FilterIndications(props: FilterIndicationsProps) {
 						totalFilters.toString()
 					)}
 					onDelete={() => {
+						eventStore.setShowOnlyEventsWithOpeningHoursProblems(false);
 						eventStore.setShowOnlyEventsWithDistanceProblems(false);
 						eventStore.setShowOnlyEventsWithNoOpeningHours(false);
 						eventStore.setShowOnlyEventsWithTodoComplete(false);

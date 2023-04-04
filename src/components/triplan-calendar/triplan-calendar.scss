@@ -134,9 +134,7 @@
 }
 
 .fc-remove-event {
-	/*position: absolute;*/
-	margin-top: 3px;
-	/*right: 5px;*/
+	margin-top: 0;
 	font-size: 12px;
 	opacity: 0.5;
 	cursor: pointer;
@@ -148,9 +146,6 @@
 
 .fc-duplicate-event img {
 	width: 12px;
-	/*position: absolute;*/
-	/*right: 15px;*/
-	/*top: 4px;*/
 	opacity: 0.5;
 	cursor: pointer;
 }

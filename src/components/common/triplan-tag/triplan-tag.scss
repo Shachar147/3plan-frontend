@@ -22,11 +22,25 @@
 	.triplan-tag-delete {
 		position: absolute;
 		left: 13px;
-		top: 10px;
+		top: 11px;
 		cursor: pointer;
 
 		&:hover {
 			opacity: 0.6;
+		}
+	}
+}
+
+body.ltr {
+	.triplan-tag {
+		.triplan-tag-text {
+			padding-inline-start: 20px;
+			padding-inline-end: 30px;
+		}
+
+		.triplan-tag-delete {
+			left: unset;
+			right: 13px;
 		}
 	}
 }
