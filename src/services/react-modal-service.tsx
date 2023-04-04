@@ -2942,16 +2942,16 @@ const ReactModalService = {
 											X: allOtherInstances.length,
 											Y: TranslateService.translate(eventStore, 'HOTEL'),
 									  }),
-							cancelBtnText: TranslateService.translate(eventStore, 'NO.ONLY_THIS_INSTANCE'),
-							confirmBtnText: TranslateService.translate(eventStore, 'GENERAL.YES'),
+							confirmBtnText: TranslateService.translate(eventStore, 'NO.ONLY_THIS_INSTANCE'),
+							cancelBtnText: TranslateService.translate(eventStore, 'GENERAL.YES'),
 							confirmBtnCssClass: 'primary-button',
-							onConfirm: async () => {
+							onCancel: async () => {
 								ReactModalService.internal.closeModal(eventStore);
 								// alert('all!');
 								await _actuallyUpdate(true, allOtherInstances);
 								ReactModalService.internal.closeModal(eventStore);
 							},
-							onCancel: async () => {
+							onConfirm: async () => {
 								// alert('only this one!');
 								ReactModalService.internal.closeModal(eventStore);
 								await _actuallyUpdate(true);
