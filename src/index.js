@@ -608,24 +608,7 @@ const RootRouter = () => {
 				start: `${open.time.substr(0, 2)}:${open.time.substr(2)}`,
 				end: `${close.time.substr(0, 2)}:${close.time.substr(2)}`,
 			});
-
-			// if (openDay !== closeDay && close.time != '0000') {
-			// 	if (!result[closeDay]) {
-			// 		result[closeDay] = [];
-			// 	}
-			//
-			// 	result[closeDay].push({
-			// 		start: '00:00',
-			// 		end: `${close.time.substr(0, 2)}:${close.time.substr(2)}`,
-			// 	});
-			// }
 		}
-
-		// for (const day of days) {
-		// 	if (!result[day]) {
-		// 		result[day] = [];
-		// 	}
-		// }
 
 		return result;
 	}
