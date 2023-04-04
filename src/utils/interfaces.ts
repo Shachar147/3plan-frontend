@@ -17,6 +17,7 @@ export interface CalendarEvent {
 	moreInfo?: string;
 	category: string; // category id
 	suggestedEndTime?: any;
+	timingError?: any;
 	className?: string;
 }
 
@@ -39,6 +40,7 @@ export function buildCalendarEvent(json: any): Partial<CalendarEvent> {
 		'category',
 		'suggestedEndTime',
 		'className',
+		'timingError',
 	];
 
 	const calendarEvent: Partial<CalendarEvent> = {};

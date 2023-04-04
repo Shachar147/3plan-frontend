@@ -360,7 +360,8 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	// event.classNames = event.classNames.join(",").replace('locked','').split(",");
 
 	let suggestedTime = '';
-	// @ts-ignore
+	let timingError = '';
+
 	if (calendarEvent.suggestedEndTime) {
 		const dt = new Date(calendarEvent.suggestedEndTime.toString());
 		const leaveAtStr = `${TranslateService.translate(eventStore, 'LEAVE_AT')} ${getTimeStringFromDate(
@@ -369,6 +370,12 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 		suggestedTime = `<div class="fc-event-suggested-time">${leaveAtStr}</div>`;
 
 		tooltip = leaveAtStr;
+	}
+
+	if (calendarEvent.timingError) {
+		suggestedTime = ''; // irrelevant if there's timing error
+		timingError = `<div class="fc-event-suggested-time red-color">${calendarEvent.timingError}</div>`;
+		tooltip = timingError;
 	}
 
 	return `<div title="${tooltip}">${icon} ${calendarEvent.title}</div>
@@ -380,6 +387,7 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 						  }${calendarEvent.end ? '-' + getTimeStringFromDate(toDate(calendarEvent.end!)) : ''}</div>`
 				}
                 ${suggestedTime}
+				${timingError}
             `;
 };
 

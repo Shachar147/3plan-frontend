@@ -442,5 +442,10 @@
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER": "Oops, it seems like there are no nearby activities",
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER.NOT_CALCULATED": "Oops, it seems like you didn't ran distance calculation on this location yet",
 	"DISTANCE_CALCULATOR.TITLE": "Check Distance",
-	"CHOOSE_LANGUAGE.PLACEHOLDER": "Choose from the following languages..."
+	"CHOOSE_LANGUAGE.PLACEHOLDER": "Choose from the following languages...",
+	"NOTE.OLD_OPENING_HOURS": "Pay attention! opening hours may not be up to date.\nTo fix this, try to remove the location and type it again.",
+	"NOTE.OPENING_HOURS_MAY_CHANGE": "Opening hours may not be accurate due to updates by the business.",
+	"CLOSED_ON_THIS_DAY": "Closed on this day",
+	"INVALID_START_HOUR": "Place opens at {X}",
+	"INVALID_END_HOUR": "Place closes at {X}"
 }

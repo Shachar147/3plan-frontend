@@ -520,5 +520,10 @@
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER": "אופס, נראה שאין מקומות באזור הפעילות שבחרת",
 	"NO_NEARBY_ACTIVITIES_PLACEHOLDER.NOT_CALCULATED": "אופס, נראה שעדיין לא חושבו מסלולים מהפעילות שבחרת,",
 	"DISTANCE_CALCULATOR.TITLE": "בדיקת מרחק",
-	"CHOOSE_LANGUAGE.PLACEHOLDER": "בחר מהשפות הבאות..."
+	"CHOOSE_LANGUAGE.PLACEHOLDER": "בחר מהשפות הבאות...",
+	"NOTE.OLD_OPENING_HOURS": "שים לב! שעות הפעילות עשויות להיות חלקיות או לא מדוייקות.\nבכדי לתקן זאת, נסו למחוק את המיקום ולהזין אותו מחדש",
+	"NOTE.OPENING_HOURS_MAY_CHANGE": "שים לב! הזמנים עשויים להיות לא מעודכנים ותמיד מומלץ להתעדכן באתר העסק",
+	"CLOSED_ON_THIS_DAY": "המקום סגור ביום הזה",
+	"INVALID_START_HOUR": "המקום נפתח ב {X}",
+	"INVALID_END_HOUR": "המקום נסגר ב {X}"
 }

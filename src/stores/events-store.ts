@@ -32,6 +32,7 @@ import { DBService } from '../services/data-handlers/db-service';
 import { getUser } from '../helpers/auth';
 import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { apiGetNew, apiPost } from '../helpers/api';
+import TranslateService from '../services/translate-service';
 
 const defaultModalSettings = {
 	show: false,
@@ -200,7 +201,7 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
-	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[]): CalendarEvent[] => {
+	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[], eventStore: EventStore): CalendarEvent[] => {
 		if (this.showOnlyEventsWithDistanceProblems) {
 			return filteredEvents.map((x) => {
 				x.suggestedEndTime = this.eventsWithDistanceProblems.find((e) => e.id == x.id)?.suggestedEndTime;
@@ -312,6 +313,84 @@ export class EventStore {
 
 			const newEvents: CalendarEvent[] = [];
 			filteredEvents.forEach((e) => {
+				// check opening hours
+				let isValidToOpenHours = true;
+				let errorReason = '';
+				if (e.openingHours) {
+					if (
+						!(
+							Object.keys(e.openingHours).length == 1 &&
+							// @ts-ignore
+							e.openingHours['SUNDAY'] &&
+							// @ts-ignore
+							e.openingHours['SUNDAY']['start'] == '00:00'
+						)
+					) {
+						const eventStartDate = new Date(e.start);
+						const eventEndDate = new Date(e.end);
+						const options = { weekday: 'long' };
+
+						// @ts-ignore
+						const dayOfWeek = eventStartDate.toLocaleDateString('en-US', options);
+						// @ts-ignore
+						let openingHoursOnThisDay = e.openingHours[dayOfWeek.toUpperCase()];
+
+						if (!openingHoursOnThisDay) {
+							isValidToOpenHours = false;
+							errorReason = TranslateService.translate(eventStore, 'CLOSED_ON_THIS_DAY');
+						} else {
+							let isWithinHours = false;
+
+							// old opening hours support
+							if (!Array.isArray(openingHoursOnThisDay)) {
+								openingHoursOnThisDay = [openingHoursOnThisDay];
+							}
+							openingHoursOnThisDay.forEach((period: { start: string; end: string }) => {
+								const startTimeString = period.start;
+								let [hours, minutes] = startTimeString.split(':');
+								const dtStart = new Date(e.start);
+								dtStart.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+
+								const endTimeString = period.end;
+								[hours, minutes] = endTimeString.split(':');
+								const dtEnd = new Date(e.end);
+								dtEnd.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+								if (dtEnd.getTime() < dtStart.getTime()) {
+									dtEnd.setDate(dtEnd.getDate() + 1);
+								}
+
+								if (dtStart.getTime() > eventStartDate.getTime()) {
+									isWithinHours = false;
+									errorReason = TranslateService.translate(eventStore, 'INVALID_START_HOUR', {
+										X: startTimeString,
+									});
+								} else if (eventEndDate.getTime() > dtEnd.getTime()) {
+									isWithinHours = false;
+									errorReason = TranslateService.translate(eventStore, 'INVALID_END_HOUR', {
+										X: endTimeString,
+									});
+								}
+							});
+						}
+
+						// console.log({
+						// 	isValidToOpenHours,
+						// 	start: e.start,
+						// 	end: e.end,
+						// 	openingHours: openingHoursOnThisDay,
+						// 	errorReason,
+						// });
+					}
+
+					if (errorReason !== '') {
+						// console.log({ title: e.title, errorReason, start: e.start, end: e.end });
+						e.timingError = errorReason;
+						e.className = e.className || '';
+						e.className = e.className.replaceAll(' red-background', '') + ' red-background';
+						e.className += ' red-background';
+					}
+				}
+
 				// newEvents.push(e);
 				if (eachEventAndItsDirections[e.id!]) {
 					let minStartDate = new Date(new Date().setFullYear(3000));
