@@ -172,6 +172,10 @@ function MyTrips() {
 
 	function renderTrip(trip: Trip | DBTrip) {
 		const tripName = trip.name;
+		// let tripName = trip.name;
+		// if (trip.id) {
+		// 	tripName = `#${trip.id} - ${tripName}`;
+		// }
 		const LSTripName = tripNameToLSTripName(tripName);
 		const dates = trip.dateRange;
 		const start = formatShortDateStringIsrael(dates.start!);
@@ -239,7 +243,9 @@ function MyTrips() {
 	function renderListOfTrips() {
 		return (
 			<div className="flex-column gap-10">
-				<div className="my-trips bright-scrollbar">{lsTrips.map(renderTrip)}</div>
+				<div className="my-trips bright-scrollbar">
+					{lsTrips.sort((a, b) => Number(b?.id ?? 0) - Number(a?.id ?? 0)).map(renderTrip)}
+				</div>
 				<Button
 					text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
 					flavor={ButtonFlavor.primary}

@@ -1261,6 +1261,7 @@ const ReactModalService = {
 							ReactModalRenderHelper.renderTextInput(eventStore, 'name', {
 								placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
 								id: 'new-name',
+								value: LSTripName,
 							}),
 							'border-top-gray border-bottom-gray padding-bottom-20'
 						)}
@@ -1359,6 +1360,7 @@ const ReactModalService = {
 							ReactModalRenderHelper.renderTextInput(eventStore, 'name', {
 								placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
 								id: 'new-name',
+								value: LSTripName,
 							}),
 							'border-top-gray border-bottom-gray padding-bottom-20'
 						)}
