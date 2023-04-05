@@ -36,10 +36,18 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 							start: value,
 							end: customDateRange.end!,
 						};
+
+						if (new Date(newCustomDateRange.end).getTime() < new Date(newCustomDateRange.start).getTime()) {
+							return;
+						}
+
 						setCustomDateRange(newCustomDateRange);
 						eventStore.setCustomDateRange(newCustomDateRange);
 						dataService.setDateRange(newCustomDateRange, eventStore.tripName);
-						TriplanCalendarRef?.current?.switchToCustomView();
+
+						if (!eventStore.isMobile) {
+							TriplanCalendarRef?.current?.switchToCustomView();
+						}
 					}}
 				/>
 				<i className={`fa fa-arrow-${arrowIcon} flex-row align-items-center dark-color`} aria-hidden="true" />
@@ -53,10 +61,18 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 							start: customDateRange.start!,
 							end: value,
 						};
+
+						if (new Date(newCustomDateRange.end).getTime() < new Date(newCustomDateRange.start).getTime()) {
+							return;
+						}
+
 						setCustomDateRange(newCustomDateRange);
 						eventStore.setCustomDateRange(newCustomDateRange);
 						dataService.setDateRange(newCustomDateRange, eventStore.tripName);
-						TriplanCalendarRef?.current?.switchToCustomView();
+
+						if (!eventStore.isMobile) {
+							TriplanCalendarRef?.current?.switchToCustomView();
+						}
 					}}
 				/>
 			</div>
