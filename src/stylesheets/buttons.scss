@@ -5,6 +5,8 @@ button {
 	border-radius: 20px;
 	min-height: 38px;
 	transition: background-color 0.3s ease-in-out;
+
+	user-select: none;
 }
 button:not(:disabled):hover {
 	border-color: #aaa;

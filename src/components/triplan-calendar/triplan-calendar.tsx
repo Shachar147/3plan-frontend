@@ -224,27 +224,17 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 	};
 
+	var openAddToCalendarDebounced: any = undefined;
 	const onCalendarSelect = (selectionInfo: any) => {
 		const shouldOpen = !eventStore.isMobile;
 		if (!shouldOpen) return;
-		// let shouldOpen = true;
-		// // if (eventStore.isMobile) {
-		// shouldOpen = false;
-		// if (!isDoubleClicked) {
-		// 	// console.log("not clicked yet!");
-		// 	setIsDoubleClicked(true);
-		// 	setTimeout(() => {
-		// 		// console.log("oops too long");
-		// 		setIsDoubleClicked(false);
-		// 	}, 1000);
-		// } else {
-		// 	// console.log("double clicked!");
-		// 	setIsDoubleClicked(false);
-		// 	shouldOpen = true;
-		// }
-		// // }
+		if (openAddToCalendarDebounced != undefined) return;
 
-		_onAddCalendar(selectionInfo);
+		// debounce
+		openAddToCalendarDebounced = setTimeout(() => {
+			openAddToCalendarDebounced = undefined;
+			_onAddCalendar(selectionInfo);
+		}, 300);
 	};
 
 	const _onAddCalendar = (selectionInfo: any) => {
