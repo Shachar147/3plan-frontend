@@ -61,18 +61,27 @@ button:disabled {
 		}
 	}
 }
-.secondary-button:not(:disabled):hover {
-	border: 1px solid var(--blue) !important;
+
+button.secondary-button:not(:disabled):hover {
+	border: 1px solid var(--blue);
 }
 
-.secondary-button.black {
-	color: var(--black) !important;
+button.secondary-button.black:not(:disabled):hover {
 	border: 1px solid var(--gray);
 }
 
-.secondary-button.black:hover {
-	/*border: 1px solid var(--black) !important;*/
-	border-color: #aaa !important;
+button.secondary-button {
+	&.black {
+		color: var(--black) !important;
+		border: 1px solid var(--gray);
+
+		&:not(:disabled):hover {
+			/*border: 1px solid var(--black) !important;*/
+			//border-color: #aaa !important;
+			//border: 1px solid var(--white) !important;
+			background-color: #f3f3f3 !important; // #eaeff4
+		}
+	}
 }
 
 .dangerous-button {

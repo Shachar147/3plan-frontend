@@ -2626,9 +2626,6 @@ const ReactModalService = {
 		});
 	},
 
-	// todo: fix isChanged detection (locationChanged) <- so if nothing changed, it will simply exist.
-	// todo: trigger 'do you want to update all other events with same name?' question if its a hotel. <- maybe not only hotels??
-	// todo: try to add hotels make sure it updates all of them. test also when theres only 1 instance
 	// todo: make flights and hotels un-deletable categories.
 	// todo: maybe add special properties to hotels and flights.
 	//  hotels - checkin and checkout dates? (and then it's scheduling it automatically)
