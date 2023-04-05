@@ -166,3 +166,27 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 	font-size: 20px;
 	max-width: 500px;
 }
+
+.mobile-add-calendar-event-button {
+	position: fixed;
+	z-index:999;
+	background-color: #0078D4; /* Outlook blue color */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	width: 56px;
+	height: 56px;
+	bottom: 70px;
+	left: 30px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+	color: white;
+	font-size: 50px;
+	font-weight: 200;
+	user-select: none;
+	cursor: pointer;
+
+	&:hover {
+		background-color: #004B8A;
+	}
+}

@@ -10,7 +10,14 @@ import { eventStoreContext } from '../../stores/events-store';
 import './triplan-calendar.scss';
 import { defaultTimedEventDuration } from '../../utils/defaults';
 import TranslateService from '../../services/translate-service';
-import { addDays, addHoursToDate, getDateRangeString, isTodayInDateRange, toDate } from '../../utils/time-utils';
+import {
+	addDays,
+	addHours,
+	addHoursToDate,
+	getDateRangeString,
+	isTodayInDateRange,
+	toDate,
+} from '../../utils/time-utils';
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
@@ -218,30 +225,41 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const onCalendarSelect = (selectionInfo: any) => {
-		let shouldOpen = true;
-		// if (eventStore.isMobile) {
-		shouldOpen = false;
-		if (!isDoubleClicked) {
-			// console.log("not clicked yet!");
-			setIsDoubleClicked(true);
-			setTimeout(() => {
-				// console.log("oops too long");
-				setIsDoubleClicked(false);
-			}, 1000);
-		} else {
-			// console.log("double clicked!");
-			setIsDoubleClicked(false);
-			shouldOpen = true;
-		}
+		const shouldOpen = !eventStore.isMobile;
+		if (!shouldOpen) return;
+		// let shouldOpen = true;
+		// // if (eventStore.isMobile) {
+		// shouldOpen = false;
+		// if (!isDoubleClicked) {
+		// 	// console.log("not clicked yet!");
+		// 	setIsDoubleClicked(true);
+		// 	setTimeout(() => {
+		// 		// console.log("oops too long");
+		// 		setIsDoubleClicked(false);
+		// 	}, 1000);
+		// } else {
+		// 	// console.log("double clicked!");
+		// 	setIsDoubleClicked(false);
+		// 	shouldOpen = true;
 		// }
+		// // }
 
+		_onAddCalendar(selectionInfo);
+	};
+
+	const _onAddCalendar = (selectionInfo: any) => {
 		if (!eventStore.distanceSectionAutoOpened) {
 			eventStore.setSelectedEventForNearBy(selectionInfo.event);
 		}
 
-		if (shouldOpen) {
-			ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
+		if (
+			selectionInfo.end &&
+			selectionInfo.start &&
+			selectionInfo.end.getTime() - selectionInfo.start.getTime() == 1800000
+		) {
+			selectionInfo.end = addHours(new Date(selectionInfo.start), 1);
 		}
+		ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
 	};
 
 	const renderEventContent = (info: EventContentArg) => {
@@ -293,12 +311,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		? {
 				left: '',
 				center: '',
-				right: `prev,next${today} dayGridMonth,timeGridThreeDay,timeGridDay`,
+				right: `prev,next${today} timeGridThreeDay,timeGridDay`,
 		  }
 		: {
 				left: `prev,next${today}`,
 				center: 'customTitle',
-				right: 'dayGridMonth,timeGridWeek,timeGridDay',
+				right: 'dayGridMonth,timeGridWeek,timeGridThreeDay,timeGridDay',
 		  };
 
 	const customButtons = {
@@ -322,72 +340,87 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		calendarComponentRef.current?.getApi().changeView('timeGridThreeDay');
 	};
 
+	const renderAddEventMobileButton = () => (
+		<div
+			className="mobile-add-calendar-event-button"
+			onClick={() => {
+				_onAddCalendar({});
+			}}
+		>
+			+
+		</div>
+	);
+
 	return (
-		<FullCalendar
-			initialView={'timeGridWeek'}
-			headerToolbar={headerToolbar}
-			titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
-			customButtons={customButtons}
-			views={{
-				timeGridThreeDay: {
-					type: 'timeGrid',
-					duration: { days: 3 },
-					buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.3_DAYS'),
-				},
-			}}
-			buttonText={buttonTexts}
-			allDayText={TranslateService.translate(eventStore, 'ALL_DAY_TEXT')}
-			weekText={TranslateService.translate(eventStore, 'WEEK_TEXT')}
-			scrollTime={'07:00'}
-			slotLabelFormat={{
-				hour: '2-digit',
-				minute: '2-digit',
-				omitZeroMinute: true,
-				meridiem: 'short',
-				hour12: false,
-			}}
-			rerenderDelay={10}
-			defaultTimedEventDuration={defaultTimedEventDuration}
-			eventDurationEditable={true}
-			editable={true}
-			droppable={true}
-			plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-			ref={calendarComponentRef}
-			events={eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents, eventStore).map((x) => ({
-				...x,
-				extendedProps: {
+		<>
+			<FullCalendar
+				initialView={'timeGridWeek'}
+				headerToolbar={headerToolbar}
+				titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
+				customButtons={customButtons}
+				views={{
+					timeGridThreeDay: {
+						type: 'timeGrid',
+						duration: { days: 3 },
+						buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.3_DAYS'),
+					},
+				}}
+				buttonText={buttonTexts}
+				allDayText={TranslateService.translate(eventStore, 'ALL_DAY_TEXT')}
+				weekText={TranslateService.translate(eventStore, 'WEEK_TEXT')}
+				scrollTime={'07:00'}
+				slotLabelFormat={{
+					hour: '2-digit',
+					minute: '2-digit',
+					omitZeroMinute: true,
+					meridiem: 'short',
+					hour12: false,
+				}}
+				rerenderDelay={10}
+				defaultTimedEventDuration={defaultTimedEventDuration}
+				eventDurationEditable={true}
+				editable={!eventStore.isMobile} // to prevent events from moving when scrolling
+				droppable={true}
+				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+				ref={calendarComponentRef}
+				events={eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents, eventStore).map((x) => ({
 					...x,
-				},
-				className: x.className ?? `priority-${x.priority}`,
-			}))}
-			eventReceive={onEventReceive}
-			eventClick={onEventClick}
-			eventChange={handleEventChange}
-			eventResizableFromStart={true}
-			locale={eventStore.calendarLocalCode}
-			direction={eventStore.getCurrentDirection()}
-			buttonIcons={false} // show the prev/next text
-			// weekNumbers={true}
-			navLinks={true} // can click day/week names to navigate views
-			dayMaxEvents={true} // allow "more" link when too many events
-			selectable={true}
-			select={onCalendarSelect}
-			eventContent={renderEventContent}
-			longPressDelay={5}
-			validRange={{
-				start: eventStore.customDateRange.start,
-				// end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
-				end: addDays(toDate(eventStore.customDateRange.end), 1),
-			}}
-			slotMinTime={'07:00'}
-			scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
-			dayHeaderFormat={{
-				/* show weekday and date in a format of Sunday 14.3 for example - always - on all views */
-				weekday: 'short',
-				day: 'numeric',
-				month: 'numeric',
-			}}
-		/>
+					extendedProps: {
+						...x,
+					},
+					className: x.className ?? `priority-${x.priority}`,
+					editable: !eventStore.isMobile,
+				}))}
+				eventReceive={onEventReceive}
+				eventClick={onEventClick}
+				eventChange={handleEventChange}
+				eventResizableFromStart={!eventStore.isMobile}
+				locale={eventStore.calendarLocalCode}
+				direction={eventStore.getCurrentDirection()}
+				buttonIcons={false} // show the prev/next text
+				// weekNumbers={true}
+				navLinks={true} // can click day/week names to navigate views
+				dayMaxEvents={true} // allow "more" link when too many events
+				selectable={!eventStore.isMobile}
+				select={onCalendarSelect}
+				eventContent={renderEventContent}
+				longPressDelay={5}
+				validRange={{
+					start: eventStore.customDateRange.start,
+					// end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
+					end: addDays(toDate(eventStore.customDateRange.end), 1),
+				}}
+				slotMinTime={'07:00'}
+				scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
+				dayHeaderFormat={{
+					/* show weekday and date in a format of Sunday 14.3 for example - always - on all views */
+					weekday: 'short',
+					day: 'numeric',
+					month: 'numeric',
+				}}
+			/>
+			{eventStore.isMobile && renderAddEventMobileButton()}
+		</>
 	);
 }
 
