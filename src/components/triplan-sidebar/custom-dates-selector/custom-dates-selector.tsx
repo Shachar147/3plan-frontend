@@ -50,9 +50,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 						eventStore.setCustomDateRange(newCustomDateRange);
 						dataService.setDateRange(newCustomDateRange, eventStore.tripName);
 
-						if (!eventStore.isMobile) {
-							TriplanCalendarRef?.current?.switchToCustomView();
-						}
+						TriplanCalendarRef?.current?.switchToCustomView();
 					}}
 				/>
 				<i className={`fa fa-arrow-${arrowIcon} flex-row align-items-center dark-color`} aria-hidden="true" />
@@ -79,9 +77,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 						eventStore.setCustomDateRange(newCustomDateRange);
 						dataService.setDateRange(newCustomDateRange, eventStore.tripName);
 
-						if (!eventStore.isMobile) {
-							TriplanCalendarRef?.current?.switchToCustomView();
-						}
+						TriplanCalendarRef?.current?.switchToCustomView();
 					}}
 				/>
 			</div>

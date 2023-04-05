@@ -126,6 +126,11 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const switchToCustomView = () => {
+		// added the condition of !isMobile. on mobile we do not want to display all the trip it just looks bad.
+		if (eventStore.isMobile) {
+			return false;
+		}
+
 		if (calendarComponentRef && calendarComponentRef.current) {
 			if (customDateRange && customDateRange.start && customDateRange.end) {
 				const dt = addHoursToDate(new Date(customDateRange.end), 24);
