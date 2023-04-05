@@ -21,6 +21,7 @@ import {
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
+import TriplanInfiniteCalendar from '../triplan-infinite-calendar/triplan-infinite-calendar';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -351,8 +352,24 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		</div>
 	);
 
+	let datePicker = undefined;
+	if (eventStore.isMobile) {
+		datePicker = (
+			<TriplanInfiniteCalendar start={eventStore.customDateRange.start} end={eventStore.customDateRange.end} />
+		);
+
+		return (
+			<div className="flex-col width-100-percents gap-20">
+				{datePicker}
+				<div></div>
+				{renderAddEventMobileButton()}
+			</div>
+		);
+	}
+
 	return (
-		<>
+		<div className="flex-col width-100-percents gap-20">
+			{datePicker}
 			<FullCalendar
 				initialView={'timeGridWeek'}
 				headerToolbar={headerToolbar}
@@ -420,7 +437,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				}}
 			/>
 			{eventStore.isMobile && renderAddEventMobileButton()}
-		</>
+		</div>
 	);
 }
 
