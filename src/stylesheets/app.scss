@@ -951,3 +951,13 @@ body.rtl {
 		text-align: right;
 	}
 }
+
+
+// remove autocomplete yellow background
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+	background-color: transparent;
+	-webkit-box-shadow: none;
+	-webkit-text-fill-color: inherit;
+}
