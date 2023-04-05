@@ -409,6 +409,10 @@ body {
 	transform: scaleX(-1);
 }
 
+.flip-y {
+	transform: scaleY(-1);
+}
+
 .flex-grow {
 	flex-grow: 1;
 }

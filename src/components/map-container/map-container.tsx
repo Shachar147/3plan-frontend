@@ -1289,6 +1289,36 @@ const MapContainer = (props: MapContainerProps) => {
 		);
 	}
 
+	function renderNoItemsOnMapPlaceholder() {
+		return (
+			<div className="no-items-on-map-placeholder">
+				{!eventStore.isMobile && (
+					<img className="no-items-on-map-placeholder-image" src={'/images/arrow-up-placeholder.png'} />
+				)}
+				<div className="no-items-on-map-placeholder-title main-font-heavy">
+					{TranslateService.translate(eventStore, 'NO_ITEMS_ON_MAP_PLACEHOLDER.TITLE')}
+				</div>
+				<div className="no-items-on-map-placeholder-content-bold">
+					{TranslateService.translate(
+						eventStore,
+						eventStore.isMobile
+							? 'NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1.MOBILE'
+							: 'NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1'
+					)}
+				</div>
+				<div className="no-items-on-map-placeholder-content">
+					{TranslateService.translate(eventStore, 'NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.2')}
+				</div>
+				{eventStore.isMobile && (
+					<img
+						className="no-items-on-map-placeholder-image flip-y"
+						src={'/images/arrow-up-placeholder.png'}
+					/>
+				)}
+			</div>
+		);
+	}
+
 	return (
 		<div
 			className={getClasses(
@@ -1297,9 +1327,14 @@ const MapContainer = (props: MapContainerProps) => {
 				eventStore.isMobile && 'resize-none'
 			)}
 		>
-			{renderMapFilters()}
+			{locations.length > 0 && renderMapFilters()}
 			<div className="map-header">
-				<div className={'map-search-location-input'}>
+				<div
+					className={getClasses(
+						'map-search-location-input',
+						locations.length == 0 && searchValue.length == 0 && 'with-blink-animation'
+					)}
+				>
 					<input
 						type="text"
 						className="map-header-location-input-search"
@@ -1332,6 +1367,7 @@ const MapContainer = (props: MapContainerProps) => {
 				</div>
 			</div>
 			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
+				{locations.length == 0 && renderNoItemsOnMapPlaceholder()}
 				<GoogleMapReact
 					bootstrapURLKeys={{
 						key: 'AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo',

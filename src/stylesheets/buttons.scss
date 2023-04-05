@@ -25,6 +25,11 @@ button:disabled {
 		box-shadow: none !important;
 	}
 
+	&.black {
+		background-color: var(--black) !important;
+		box-shadow: none !important;
+	}
+
 	&.disabled {
 		opacity: 0.4;
 	}

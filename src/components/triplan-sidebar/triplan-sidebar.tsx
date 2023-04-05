@@ -1066,10 +1066,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			}}
 		>
 			<Button
-				flavor={ButtonFlavor.primary}
+				flavor={eventStore.isMapView ? ButtonFlavor.secondary : ButtonFlavor.primary}
 				onClick={() => {
 					ReactModalService.openAddSidebarEventModal(eventStore, undefined);
 				}}
+				className={eventStore.isMapView ? 'black' : undefined}
 				style={{
 					width: '100%',
 				}}
