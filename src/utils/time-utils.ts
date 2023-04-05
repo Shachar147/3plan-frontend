@@ -5,6 +5,8 @@ import { EventStore } from '../stores/events-store';
 import { DateRangeFormatted } from '../services/data-handlers/data-handler-base';
 import ReactModalService from '../services/react-modal-service';
 
+export const MINUTES_IN_DAY = 1440;
+
 export function getDateRangeString(start: Date, end: Date) {
 	const startDay = start.getDate();
 	const endDay = end.getDate();
@@ -157,7 +159,9 @@ export function validateDateRange(
 	eventStore: EventStore,
 	start: string | undefined,
 	end: string | undefined,
-	limit_in_days: number = TRIP_MAX_SIZE_DAYS
+	limit_in_days: number = TRIP_MAX_SIZE_DAYS,
+	min_limit: number = 0,
+	min_limit_days_or_minutes: 'days' | 'minutes' = 'days'
 ): boolean {
 	if (!start) {
 		ReactModalService.internal.alertMessage(
@@ -196,6 +200,26 @@ export function validateDateRange(
 			'MODALS.ERROR.TOO_LONG_RANGE',
 			'error',
 			{ X: limit_in_days }
+		);
+		return false;
+	}
+
+	let min_limit_in_days = min_limit;
+	if (min_limit_days_or_minutes == 'minutes') {
+		min_limit_in_days = min_limit / MINUTES_IN_DAY;
+	}
+	const diff = new Date(end).getTime() - new Date(start).getTime();
+	if (diff < min_limit_in_days * 86400000) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.TOO_SHORT_RANGE',
+			'error',
+			{
+				X: diff / 60 / 1000,
+				Y: TranslateService.translate(eventStore, min_limit_days_or_minutes.toUpperCase()),
+				Z: min_limit,
+			}
 		);
 		return false;
 	}

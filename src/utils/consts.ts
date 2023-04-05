@@ -4,6 +4,7 @@ export const DEFAULT_EVENT_DURATION = 1;
 
 export const TRIP_MAX_SIZE_DAYS = 90;
 export const ACTIVITY_MAX_SIZE_DAYS = 1;
+export const ACTIVITY_MIN_SIZE_MINUTES = 10;
 
 export const priorityToColor: Record<string, string> = {
 	[TriplanPriority.must]: '#E06666FF',

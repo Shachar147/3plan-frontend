@@ -44,7 +44,7 @@ import { LimitationsService } from '../utils/limitations';
 import { getViewSelectorOptions } from '../utils/ui-utils';
 import ToggleButton from '../components/toggle-button/toggle-button';
 import { all } from 'axios';
-import { ACTIVITY_MAX_SIZE_DAYS } from '../utils/consts';
+import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -571,7 +571,9 @@ function _validateCalendarEventRequiredConditions(
 		return false;
 	}
 
-	if (!validateDateRange(eventStore, startDate, endDate, ACTIVITY_MAX_SIZE_DAYS)) {
+	if (
+		!validateDateRange(eventStore, startDate, endDate, ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES, 'minutes')
+	) {
 		return false;
 	}
 
@@ -3069,7 +3071,7 @@ const ReactModalService = {
 				modalValueName: 'irrelevant',
 				type: 'custom-group',
 				extra: {
-					customGroupClassName: 'actions',
+					customGroupClassName: getClasses('actions', eventStore.isEnglish && 'flex-column'),
 					content: [
 						{
 							settings: {

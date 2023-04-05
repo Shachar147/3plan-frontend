@@ -41,8 +41,8 @@
 	"MODALS.DUPLICATE": "Duplicate",
 	"MODALS.EDIT_EVENT": "Edit Activity",
 	"MODALS.REMOVE_EVENT": "Remove Activity",
-	"MODALS.REMOVE_EVENT_FROM_CALENDAR": "Remove activity from Calendar",
-	"MODALS.DUPLICATE_EVENT": "Duplicate Activity",
+	"MODALS.REMOVE_EVENT_FROM_CALENDAR": "Remove from Calendar",
+	"MODALS.DUPLICATE_EVENT": "Duplicate",
 	"MODALS.DELETE_SIDEBAR_EVENT.CONTENT": "Are you sure you want to delete this activity?<br/>this action is irreversible",
 	"MODALS.UPDATED.TITLE": "Updated!",
 	"MODALS.UPDATED.TITLE.FEMALE": "Updated!",
@@ -164,6 +164,7 @@
 	"GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP": "Choose a name to your trip",
 	"GETTING_STARTED_PAGE.FILL_IN_TRIP_NAME": "Please fill in trip name before clicking on this button",
 	"DAYS": "days",
+	"MINUTES": "minutes",
 	"CHECK_OUT_EXISTING_TRIPS": "Open my existing trips",
 	"MODALS.DELETE_TRIP.CONTENT": "Are you sure you want to delete this trip?<br/>this action is irreversible",
 	"EDIT_TRIP_MODAL.TITLE": "Edit Trip",
@@ -475,5 +476,6 @@
 	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1.MOBILE": "Use the search bar under the map to find places and add them quickly and easily!",
 	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.2": "Adding items from the map will automatically fill a lot of details on each place such as category, images, opening hours and more!\nAre you still here?",
 	"MODALS.ERROR.START_DATE_SMALLER": "Start date can't be smaller than the end date",
-	"MODALS.ERROR.TOO_LONG_RANGE": "Range too long.\nMax allowed length: {X} days."
+	"MODALS.ERROR.TOO_LONG_RANGE": "Range too long.\nMax allowed range: {X} days.",
+	"MODALS.ERROR.TOO_SHORT_RANGE": "Range too short.\nSelected range is: {X} {Y}.\nMin allowed range: {Z} {Y}."
 }

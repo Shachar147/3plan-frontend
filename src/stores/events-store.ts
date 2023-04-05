@@ -509,6 +509,16 @@ export class EventStore {
 	}
 
 	@computed
+	get isHebrew() {
+		return this.calendarLocalCode === 'he';
+	}
+
+	@computed
+	get isEnglish() {
+		return this.calendarLocalCode === 'en';
+	}
+
+	@computed
 	get getSidebarEvents(): Record<number, SidebarEvent[]> {
 		const toReturn: Record<number, SidebarEvent[]> = {};
 		Object.keys(this.sidebarEvents).forEach((category) => {
