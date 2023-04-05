@@ -27,6 +27,10 @@
 			flex-grow: 1;
 			flex-shrink: 0;
 			height: 38px !important;
+
+			// add border radius
+			border-radius: 18px;
+			padding-inline: 15px;
 		}
 
 		.clear-search {
