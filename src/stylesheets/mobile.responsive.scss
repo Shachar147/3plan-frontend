@@ -241,6 +241,12 @@
 
 				.textInput {
 					min-width: unset;
+
+					&:hover,
+					&:focus,
+					&:active {
+						background-color: white;
+					}
 				}
 			}
 		}
