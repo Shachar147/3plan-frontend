@@ -321,7 +321,7 @@ const ListViewService = {
 			const stillSameDay = lastDayTitle === dayTitle;
 			const sameStart = toDate(event.start).getTime() === lastStart;
 			const sameEnd = toDate(event.end).getTime() === lastEnd;
-			if (stillSameDay && sameStart && sameEnd) {
+			if (stillSameDay && sameStart && sameEnd && !event.allDay) {
 				calendarEventsPerDay[dayTitle].push(OR_ITEM_INDICATION);
 			}
 
@@ -338,7 +338,12 @@ const ListViewService = {
 				isNotLastItem && toDate(event.end).getTime() > toDate(sortedEvents[index + 1].start).getTime();
 			const currentItemEndsBeforeNextItemEnds =
 				isNotLastItem && toDate(event.end).getTime() < toDate(sortedEvents[index + 1].end).getTime();
-			if (isNotLastItem && currentItemEndsAfterNextItemStarts && currentItemEndsBeforeNextItemEnds) {
+			if (
+				isNotLastItem &&
+				currentItemEndsAfterNextItemStarts &&
+				currentItemEndsBeforeNextItemEnds &&
+				!event.allDay
+			) {
 				calendarEventsPerDay[dayTitle].push(OR_ITEM_INDICATION);
 			}
 
@@ -426,10 +431,11 @@ const ListViewService = {
 				// }
 
 				if (event.allDay) {
+					const arr = [event.title, ListViewService._formatDescription(event.description)].filter(
+						(x) => x && x.trim().length
+					);
 					summaryPerDay[dayTitle].push(
-						`<span style="color:${notesColor}; font-size:10px; font-weight:bold;">${ListViewService._formatDescription(
-							event.description
-						)}</span>`
+						`<span style="color:${notesColor}; font-size:10px; font-weight:bold;">${arr.join(' - ')}</span>`
 					);
 					return;
 				}
