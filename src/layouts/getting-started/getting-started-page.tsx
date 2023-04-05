@@ -14,6 +14,7 @@ import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import { TripDataSource } from '../../utils/enums';
 import { upsertTripProps } from '../../services/data-handlers/db-service';
+import { validateDateRange } from '../../utils/time-utils';
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -46,7 +47,7 @@ const GettingStartedPage = () => {
 	const renderForm = () => {
 		return (
 			<div
-				className={'custom-dates-container'}
+				className="custom-dates-container align-items-center"
 				style={{
 					backgroundColor: 'transparent',
 					border: 0,
@@ -74,23 +75,39 @@ const GettingStartedPage = () => {
 				<div className={'main-font font-size-20'}>
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
 				</div>
-				<div className={'custom-dates-line'}>
+				<div className={'custom-dates-line flex-row align-items-center'}>
 					<input
-						type={'date'}
+						type="date"
+						onKeyDown={(e) => {
+							e.preventDefault();
+							return false;
+						}}
 						value={customDateRange.start}
 						onChange={(e) => {
 							const value = e.target.value;
+							if (!validateDateRange(eventStore, value, customDateRange.end)) {
+								return;
+							}
 							setCustomDateRange({
 								start: value,
 								end: customDateRange.end,
 							});
 						}}
 					/>
+					{TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.UNTIL')}
 					<input
-						type={'date'}
+						type="date"
+						onKeyDown={(e) => {
+							e.preventDefault();
+							return false;
+						}}
 						value={customDateRange.end}
 						onChange={(e) => {
 							const value = e.target.value;
+							if (!validateDateRange(eventStore, customDateRange.start, value)) {
+								return;
+							}
+
 							setCustomDateRange({
 								start: customDateRange.start,
 								end: value,
@@ -103,6 +120,16 @@ const GettingStartedPage = () => {
 	};
 
 	async function createNewTrip(tripName: string) {
+		if (new Date(customDateRange.end).getTime() < new Date(customDateRange.start).getTime()) {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.START_DATE_SMALLER',
+				'error'
+			);
+			return;
+		}
+
 		const TripName = tripName.replace(/\s/gi, '-');
 
 		// local mode
@@ -195,10 +222,15 @@ const GettingStartedPage = () => {
 					<Button
 						text={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}
 						flavor={ButtonFlavor.primary}
-						disabled={tripName.length === 0}
+						disabled={
+							tripName.length === 0 ||
+							new Date(customDateRange.start).getTime() > new Date(customDateRange.end).getTime()
+						}
 						disabledReason={TranslateService.translate(
 							eventStore,
-							'GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST'
+							tripName.length === 0
+								? 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST'
+								: 'MODALS.ERROR.START_DATE_SMALLER'
 						)}
 						onClick={() => createNewTrip(tripName)}
 					/>

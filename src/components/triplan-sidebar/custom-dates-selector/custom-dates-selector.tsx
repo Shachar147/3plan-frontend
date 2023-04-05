@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 import { eventStoreContext } from '../../../stores/events-store';
 import Button, { ButtonFlavor } from '../../common/button/button';
 import DataServices, { DateRangeFormatted } from '../../../services/data-handlers/data-handler-base';
+import { validateDateRange } from '../../../utils/time-utils';
 
 export interface CustomDatesSelectorProps {
 	customDateRange: DateRangeFormatted;
@@ -25,9 +26,13 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 				!(eventStore.isCalendarView || eventStore.isCombinedView) && 'display-none'
 			)}
 		>
-			<div className={'custom-dates-line'}>
+			<div className="custom-dates-line">
 				<input
-					type={'date'}
+					type="date"
+					onKeyDown={(e) => {
+						e.preventDefault();
+						return false;
+					}}
 					key={`date-range-selector-${customDateRange.start}`}
 					value={customDateRange.start}
 					onChange={(e) => {
@@ -37,7 +42,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 							end: customDateRange.end!,
 						};
 
-						if (new Date(newCustomDateRange.end).getTime() < new Date(newCustomDateRange.start).getTime()) {
+						if (!validateDateRange(eventStore, newCustomDateRange.start, newCustomDateRange.end)) {
 							return;
 						}
 
@@ -52,7 +57,11 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 				/>
 				<i className={`fa fa-arrow-${arrowIcon} flex-row align-items-center dark-color`} aria-hidden="true" />
 				<input
-					type={'date'}
+					type="date"
+					onKeyDown={(e) => {
+						e.preventDefault();
+						return false;
+					}}
 					key={`date-range-selector-${customDateRange.end}`}
 					value={customDateRange.end}
 					onChange={(e) => {
@@ -62,7 +71,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 							end: value,
 						};
 
-						if (new Date(newCustomDateRange.end).getTime() < new Date(newCustomDateRange.start).getTime()) {
+						if (!validateDateRange(eventStore, newCustomDateRange.start, newCustomDateRange.end)) {
 							return;
 						}
 

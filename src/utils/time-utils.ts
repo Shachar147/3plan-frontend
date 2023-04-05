@@ -1,8 +1,9 @@
-import { DEFAULT_EVENT_DURATION } from './consts';
+import { DEFAULT_EVENT_DURATION, TRIP_MAX_SIZE_DAYS } from './consts';
 import { padTo2Digits } from './utils';
 import TranslateService from '../services/translate-service';
 import { EventStore } from '../stores/events-store';
 import { DateRangeFormatted } from '../services/data-handlers/data-handler-base';
+import ReactModalService from '../services/react-modal-service';
 
 export function getDateRangeString(start: Date, end: Date) {
 	const startDay = start.getDate();
@@ -150,4 +151,54 @@ export function isTodayInDateRange(customDateRange: DateRangeFormatted) {
 	const startTimestamp = new Date(new Date(customDateRange.start).setHours(0, 0, 0, 0)).getTime();
 
 	return startTimestamp <= todayTimestamp && todayTimestamp <= endTimestamp;
+}
+
+export function validateDateRange(
+	eventStore: EventStore,
+	start: string | undefined,
+	end: string | undefined,
+	limit_in_days: number = TRIP_MAX_SIZE_DAYS
+): boolean {
+	if (!start) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.START_DATE_CANT_BE_EMPTY',
+			'error'
+		);
+		return false;
+	}
+
+	if (!end) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.END_DATE_CANT_BE_EMPTY',
+			'error'
+		);
+		return false;
+	}
+
+	if (new Date(end).getTime() < new Date(start).getTime()) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.START_DATE_SMALLER',
+			'error'
+		);
+		return false;
+	}
+
+	if (new Date(end).getTime() - new Date(start).getTime() > limit_in_days * 86400) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.TOO_LONG_RANGE',
+			'error',
+			{ X: limit_in_days }
+		);
+		return false;
+	}
+
+	return true;
 }

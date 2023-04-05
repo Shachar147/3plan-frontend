@@ -59,6 +59,10 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 				className={getClasses(['datePickerInput'], className)}
 				ref={ref}
 				type="datetime-local"
+				onKeyDown={(e) => {
+					e.preventDefault();
+					return false;
+				}}
 				value={value}
 				onClick={() => {
 					onClick && onClick();
