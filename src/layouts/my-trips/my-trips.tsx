@@ -230,7 +230,12 @@ function MyTrips() {
 				key={trip.name}
 				className={classList}
 				onClick={() => {
-					eventStore.setTripName(tripName);
+					runInAction(() => {
+						// manually set loading before redirect to the page to prevent a bug of
+						// glimpse view of the previous trip before updating to this one.
+						eventStore.isLoading = true;
+						eventStore.setTripName(tripName);
+					});
 					navigate('/plan/' + tripName, {});
 				}}
 			>
