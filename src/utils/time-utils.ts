@@ -189,7 +189,7 @@ export function validateDateRange(
 		return false;
 	}
 
-	if (new Date(end).getTime() - new Date(start).getTime() > limit_in_days * 86400) {
+	if (new Date(end).getTime() - new Date(start).getTime() > limit_in_days * 86400000) {
 		ReactModalService.internal.alertMessage(
 			eventStore,
 			'MODALS.ERROR.TITLE',

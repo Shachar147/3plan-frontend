@@ -16,7 +16,13 @@ import {
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
 import { TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../utils/enums';
-import { convertMsToHM, formatDuration, getInputDateTimeValue, validateDuration } from '../utils/time-utils';
+import {
+	convertMsToHM,
+	formatDuration,
+	getInputDateTimeValue,
+	validateDateRange,
+	validateDuration,
+} from '../utils/time-utils';
 import SelectInput, { SelectInputOption } from '../components/inputs/select-input/select-input';
 import TextInput from '../components/inputs/text-input/text-input';
 import TextareaInput from '../components/inputs/textarea-input/textarea-input';
@@ -38,6 +44,7 @@ import { LimitationsService } from '../utils/limitations';
 import { getViewSelectorOptions } from '../utils/ui-utils';
 import ToggleButton from '../components/toggle-button/toggle-button';
 import { all } from 'axios';
+import { ACTIVITY_MAX_SIZE_DAYS } from '../utils/consts';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -516,6 +523,60 @@ const getDefaultSettings = (eventStore: EventStore) => {
 		},
 	};
 };
+
+function _validateCalendarEventRequiredConditions(
+	eventStore: EventStore,
+	startDate: string,
+	endDate: string,
+	title?: string,
+	categoryId?: string | number
+): boolean {
+	if (!title) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.TITLE_CANNOT_BE_EMPTY',
+			'error'
+		);
+		return false;
+	}
+
+	if (!categoryId) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.CATEGORY_CANT_BE_EMPTY',
+			'error'
+		);
+		return false;
+	}
+
+	if (!startDate) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.START_DATE_CANT_BE_EMPTY',
+			'error'
+		);
+		return false;
+	}
+
+	if (!endDate) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.END_DATE_CANT_BE_EMPTY',
+			'error'
+		);
+		return false;
+	}
+
+	if (!validateDateRange(eventStore, startDate, endDate, ACTIVITY_MAX_SIZE_DAYS)) {
+		return false;
+	}
+
+	return true;
+}
 
 const ReactModalService = {
 	internal: {
@@ -2271,43 +2332,7 @@ const ReactModalService = {
 			const millisecondsDiff = currentEvent.end - currentEvent.start;
 			currentEvent.duration = convertMsToHM(millisecondsDiff);
 
-			if (!title) {
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.ERROR.TITLE',
-					'MODALS.ERROR.TITLE_CANNOT_BE_EMPTY',
-					'error'
-				);
-				return false;
-			}
-
-			if (!categoryId) {
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.ERROR.TITLE',
-					'MODALS.ERROR.CATEGORY_CANT_BE_EMPTY',
-					'error'
-				);
-				return false;
-			}
-
-			if (!startDate) {
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.ERROR.TITLE',
-					'MODALS.ERROR.START_DATE_CANT_BE_EMPTY',
-					'error'
-				);
-				return false;
-			}
-
-			if (!endDate) {
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.ERROR.TITLE',
-					'MODALS.ERROR.END_DATE_CANT_BE_EMPTY',
-					'error'
-				);
+			if (!_validateCalendarEventRequiredConditions(eventStore, startDate, endDate, title, categoryId)) {
 				return false;
 			}
 
@@ -2760,13 +2785,7 @@ const ReactModalService = {
 			const millisecondsDiff = currentEvent.end - currentEvent.start;
 			currentEvent.duration = convertMsToHM(millisecondsDiff);
 
-			if (!title) {
-				ReactModalService.internal.alertMessage(
-					eventStore,
-					'MODALS.ERROR.TITLE',
-					'MODALS.ERROR.TITLE_CANNOT_BE_EMPTY',
-					'error'
-				);
+			if (!_validateCalendarEventRequiredConditions(eventStore, startDate, endDate, title, categoryId)) {
 				return false;
 			}
 
@@ -3008,8 +3027,6 @@ const ReactModalService = {
 		};
 
 		const onConfirm = async () => {
-			ReactModalService.internal.disableOnConfirm();
-
 			const event = {
 				...info.event._def,
 				id: info.event._def.publicId,
