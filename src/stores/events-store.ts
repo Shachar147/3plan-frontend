@@ -88,7 +88,7 @@ export class EventStore {
 	@observable secondModalSettings = defaultModalSettings;
 	@observable modalValuesRefs: any = {};
 	@observable createMode: boolean = false;
-	@observable listViewSummaryMode = ListViewSummaryMode.full;
+	@observable listViewSummaryMode = ListViewSummaryMode.noDescriptions;
 	@observable dataService: LocalStorageService | DBService;
 	modalValues: any = {};
 	@observable isLoading = false;

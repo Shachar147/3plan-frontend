@@ -177,14 +177,14 @@ function MainPage(props: MainPageProps) {
 			// 	// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true" />)
 			// },
 			{
-				key: ListViewSummaryMode.noDescriptions,
-				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS'),
+				key: ListViewSummaryMode.full,
+				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL'),
 				// icon: (<i className="fa fa-calendar black-color" aria-hidden="true" />),
 				// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true" />)
 			},
 			{
-				key: ListViewSummaryMode.full,
-				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL'),
+				key: ListViewSummaryMode.noDescriptions,
+				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS'),
 				// icon: (<i className="fa fa-calendar black-color" aria-hidden="true" />),
 				// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true" />)
 			},
