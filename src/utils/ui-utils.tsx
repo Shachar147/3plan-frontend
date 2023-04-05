@@ -254,12 +254,10 @@ export const getViewSelectorOptions = (
 ): OptionToggleButton[] => {
 	const baseArray = [
 		{
-			key: ViewMode.combined,
-			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.COMBINED_VIEW'),
-			icon: <i className="fa fa-compress black-color" aria-hidden="true" />,
-			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
-			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true" />,
-			desktopOnly: true,
+			key: ViewMode.map,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
+			icon: <i className="fa fa-map-o black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-map selected-color" aria-hidden="true" />,
 		},
 		{
 			key: ViewMode.calendar,
@@ -269,10 +267,12 @@ export const getViewSelectorOptions = (
 			iconActive: <i className="fa fa-calendar selected-color" aria-hidden="true" />,
 		},
 		{
-			key: ViewMode.map,
-			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
-			icon: <i className="fa fa-map-o black-color" aria-hidden="true" />,
-			iconActive: <i className="fa fa-map selected-color" aria-hidden="true" />,
+			key: ViewMode.combined,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.COMBINED_VIEW'),
+			icon: <i className="fa fa-compress black-color" aria-hidden="true" />,
+			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true" />,
+			desktopOnly: true,
 		},
 		{
 			key: ViewMode.list,

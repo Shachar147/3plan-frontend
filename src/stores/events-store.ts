@@ -67,7 +67,7 @@ export class EventStore {
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
-	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.combined);
+	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.map); // ViewMode.combined
 	@observable mobileViewMode = DataServices.LocalStorageService.getLastMobileViewMode(ViewMode.sidebar);
 	@observable hideCustomDates = this.viewMode == ViewMode.calendar;
 	@observable openCategories = observable.map<number, number>({});
