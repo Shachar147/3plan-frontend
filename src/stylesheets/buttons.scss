@@ -104,6 +104,8 @@ button.secondary-button {
 	align-items: center;
 	transition: all 0.3s ease-in-out;
 
+	text-align: start;
+
 	&.red-color {
 		color: var(--red);
 	}
