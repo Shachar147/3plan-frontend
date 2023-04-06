@@ -453,8 +453,13 @@ export const ReactModalRenderHelper = {
 						.replace(/\n^/, '')
 						.replace(/$\n/, '')
 						.split('\n') || [];
+
+				const hasImages = images && images.length > 0 && !(images.length === 1 && images[0] === '');
+
 				input = row.settings.extra.readOnly
-					? null
+					? !hasImages
+						? '-'
+						: null
 					: ReactModalRenderHelper.renderTextAreaInput(
 							eventStore,
 							row.settings.modalValueName,
@@ -473,7 +478,7 @@ export const ReactModalRenderHelper = {
 
 				return (
 					<div className="flex-column gap-10 images-input">
-						{images && images.length > 0 && !(images.length === 1 && images[0] === '') && (
+						{hasImages && (
 							<Slider {...sliderSettings}>
 								{images.map((image: string) => (
 									<img
@@ -733,6 +738,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.TITLE',
 					className: 'border-top-gray name-row',
+					showOnMinimized: modalsStore?.isViewMode ? false : undefined,
 				},
 				{
 					settings: {
@@ -847,7 +853,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.OPENING_HOURS',
 					className: 'border-top-gray opening-hours-row',
-					showOnMinimized: false,
+					showOnMinimized: modalsStore?.isViewMode ?? false,
 				},
 				{
 					settings: {
@@ -862,7 +868,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.IMAGES',
 					className: 'border-top-gray images-row',
-					showOnMinimized: false,
+					showOnMinimized: modalsStore?.isViewMode ?? false,
 				},
 				{
 					settings: {
@@ -886,7 +892,8 @@ const ReactModalService = {
 		getCalendarEventInputs: (
 			eventStore: EventStore,
 			initialData: Partial<{ categoryId?: number; location?: LocationData }> | Partial<SidebarEvent> | any = {},
-			modalsStore?: ModalsStore
+			modalsStore?: ModalsStore,
+			avoidLastLineClass?: boolean
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
@@ -933,6 +940,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.TITLE',
 					className: 'border-top-gray name-row',
+					showOnMinimized: modalsStore?.isViewMode ? false : undefined,
 				},
 			];
 			inputs.push(
@@ -1071,7 +1079,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.OPENING_HOURS',
 						className: 'border-top-gray opening-hours-row',
-						showOnMinimized: false,
+						showOnMinimized: modalsStore?.isViewMode ?? false,
 					},
 					{
 						settings: {
@@ -1086,7 +1094,8 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.IMAGES',
 						className: 'border-top-gray images-row',
-						showOnMinimized: false,
+						// showOnMinimized: false,
+						showOnMinimized: modalsStore?.isViewMode ?? false,
 					},
 					{
 						settings: {
@@ -1105,7 +1114,10 @@ const ReactModalService = {
 					},
 				]
 			);
-			inputs[inputs.length - 1].className += ' border-bottom-gray padding-bottom-20';
+
+			if (!avoidLastLineClass) {
+				inputs[inputs.length - 1].className += ' border-bottom-gray padding-bottom-20';
+			}
 			return inputs;
 		},
 		getModalValues: (eventStore: EventStore) => {
@@ -1931,7 +1943,10 @@ const ReactModalService = {
 					<div
 						className={getClasses(
 							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
-							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+							// eventStore.isModalMinimized && 'overflow-visible modal-minimized',
+							eventStore.isModalMinimized && 'modal-minimized',
+							eventStore.isModalMinimized && !modalsStore.isViewMode && 'overflow-visible',
+							modalsStore.isViewMode && 'view-mode'
 						)}
 						key={`edit-sidebar-event-modal-${eventStore.forceUpdate}`}
 					>
@@ -3128,7 +3143,7 @@ const ReactModalService = {
 			? `${TranslateService.translate(eventStore, 'MODALS.VIEW_EVENT')}: ${info.event.title}`
 			: `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
 
-		const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData, modalsStore);
+		const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData, modalsStore, true);
 
 		inputs.push({
 			settings: {
@@ -3174,7 +3189,10 @@ const ReactModalService = {
 					<div
 						className={getClasses(
 							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
-							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+							// eventStore.isModalMinimized && 'overflow-visible modal-minimized',
+							eventStore.isModalMinimized && 'modal-minimized',
+							eventStore.isModalMinimized && !modalsStore.isViewMode && 'overflow-visible',
+							modalsStore.isViewMode && 'view-mode'
 						)}
 						key={`add-calendar-event-modal-existing-${eventStore.forceUpdate}`}
 					>

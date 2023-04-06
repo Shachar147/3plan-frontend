@@ -123,4 +123,34 @@
   .show-hide-more-row {
     order: 7;
   }
+
+  &.view-mode {
+    .images-row {
+      order: 1;
+    }
+    .name-row {
+      order: 2;
+    }
+    .location-row{
+      order: 3;
+    }
+    .category-row {
+      order: 4;
+    }
+    .start-time-row {
+      order: 5;
+    }
+    .end-time-row {
+      order: 6;
+    }
+    .opening-hours-row {
+      order: 7;
+    }
+    .actions-row {
+      order: 9;
+    }
+    .show-hide-more-row {
+      order: 10;
+    }
+  }
 }

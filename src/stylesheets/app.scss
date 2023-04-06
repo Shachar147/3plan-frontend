@@ -539,6 +539,10 @@ div[class$='-control'] {
 	font-size: 18px;
 	font-weight: 300;
 	padding-top: 20px;
+
+	label {
+		margin-bottom: 0;
+	}
 }
 
 .border-top-gray {
