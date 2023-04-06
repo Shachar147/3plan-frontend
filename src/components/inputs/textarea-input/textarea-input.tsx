@@ -39,33 +39,39 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
 		},
 	}));
 
-	return (
-		<div className={getClasses('triplan-textarea-input', wrapperClassName)}>
-			<textarea
-				rows={rows || 3}
-				id={id}
-				name={name}
-				className={getClasses(['textAreaInput'], className)}
-				ref={ref}
-				onChange={(e) => {
-					setValue(e.target.value);
-					runInAction(() => {
-						eventStore.modalValues[modalValueName] = e.target.value;
-					});
-					props.onChange && props.onChange(e);
-				}}
-				placeholder={
-					placeholder
-						? placeholder
-						: placeholderKey
-						? TranslateService.translate(eventStore, placeholderKey)
-						: undefined
-				}
-				disabled={props.readOnly}
-				value={value}
-			/>
-		</div>
+	const readOnlyRows = props.readOnly ? value?.split('\n')?.length ?? 2 : undefined;
+
+	const content = props.readOnly ? (
+		<div className="white-space-pre-line">{value ?? '-'}</div>
+	) : (
+		<textarea
+			rows={readOnlyRows ? Math.max(readOnlyRows, 2) : rows ?? 3}
+			id={id}
+			name={name}
+			className={getClasses(['textAreaInput'], className)}
+			ref={ref}
+			onChange={(e) => {
+				setValue(e.target.value);
+				runInAction(() => {
+					eventStore.modalValues[modalValueName] = e.target.value;
+				});
+				props.onChange && props.onChange(e);
+			}}
+			placeholder={
+				props.readOnly
+					? '-'
+					: placeholder
+					? placeholder
+					: placeholderKey
+					? TranslateService.translate(eventStore, placeholderKey)
+					: undefined
+			}
+			disabled={props.readOnly}
+			value={value}
+		/>
 	);
+
+	return <div className={getClasses('triplan-textarea-input', wrapperClassName)}>{content}</div>;
 }
 
 export default observer(forwardRef<TextAreaInputRef, TextAreaInputProps>(TextAreaInput));

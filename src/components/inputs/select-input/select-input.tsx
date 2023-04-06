@@ -49,34 +49,38 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 		},
 	}));
 
-	return (
-		<div className={getClasses(!props.removeDefaultClass && 'triplan-selector', wrapperClassName)}>
-			<Select
-				ref={ref}
-				isClearable={props.isClearable ?? !readOnly}
-				isSearchable={!readOnly}
-				isDisabled={readOnly}
-				id={id}
-				name={name}
-				options={options}
-				placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined}
-				value={value}
-				onChange={(data, triggeredAction) => {
-					runInAction(() => {
-						eventStore.modalValues[modalValueName] = data;
-					});
-					setValue(data);
+	const content = props.readOnly ? (
+		value?.label ?? '-'
+	) : (
+		<Select
+			ref={ref}
+			isClearable={props.isClearable ?? !readOnly}
+			isSearchable={!readOnly}
+			isDisabled={readOnly}
+			id={id}
+			name={name}
+			options={options}
+			placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined}
+			value={value}
+			onChange={(data, triggeredAction) => {
+				runInAction(() => {
+					eventStore.modalValues[modalValueName] = data;
+				});
+				setValue(data);
 
-					if (triggeredAction.action === 'clear' && props.onClear) {
-						props.onClear();
-					} else if (props.onChange) {
-						props.onChange(data);
-					}
-				}}
-				maxMenuHeight={maxMenuHeight || 45 * 5}
-				styles={SELECT_STYLE}
-			/>
-		</div>
+				if (triggeredAction.action === 'clear' && props.onClear) {
+					props.onClear();
+				} else if (props.onChange) {
+					props.onChange(data);
+				}
+			}}
+			maxMenuHeight={maxMenuHeight || 45 * 5}
+			styles={SELECT_STYLE}
+		/>
+	);
+
+	return (
+		<div className={getClasses(!props.removeDefaultClass && 'triplan-selector', wrapperClassName)}>{content}</div>
 	);
 }
 

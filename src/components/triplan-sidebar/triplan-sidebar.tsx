@@ -29,6 +29,7 @@ import ReactModalService, { ReactModalRenderHelper } from '../../services/react-
 import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { runInAction } from 'mobx';
 import DistanceCalculator from './distance-calculator/distance-calculator';
+import { modalsStoreContext } from '../../stores/modals-store';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -109,6 +110,7 @@ export const wrapWithSidebarGroup = (
 
 const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const eventStore = useContext(eventStoreContext);
+	const modalsStore = useContext(modalsStoreContext);
 	const {
 		removeEventFromSidebarById,
 		addToEventsToCategories,
@@ -551,6 +553,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 														if (typeof calendarEvent.end === 'string') {
 															calendarEvent.end = new Date(calendarEvent.end);
 														}
+														modalsStore.switchToViewMode();
 														ReactModalService.openEditCalendarEventModal(
 															eventStore,
 															props.addEventToSidebar,
@@ -559,7 +562,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 																	...calendarEvent,
 																	_def: calendarEvent,
 																},
-															}
+															},
+															modalsStore
 														);
 													}
 												)}
@@ -1229,11 +1233,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			if (_onClick) {
 				_onClick();
 			} else {
+				modalsStore.switchToViewMode();
 				ReactModalService.openEditSidebarEventModal(
 					eventStore,
 					event,
 					removeEventFromSidebarById,
-					addToEventsToCategories
+					addToEventsToCategories,
+					modalsStore
 				);
 			}
 		};

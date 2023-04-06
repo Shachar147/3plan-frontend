@@ -96,14 +96,18 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 				props.onChange && props.onChange(e);
 			}}
 			placeholder={
-				placeholder
+				props.readOnly
+					? '-'
+					: placeholder
 					? placeholder
 					: placeholderKey
 					? TranslateService.translate(eventStore, placeholderKey)
 					: undefined
 			}
 			autoComplete={autoComplete}
-			disabled={disabled || props.readOnly}
+			// disabled={disabled || props.readOnly}
+			readOnly={props.readOnly}
+			disabled={disabled}
 			style={style}
 			data-testid={dataTestId}
 		/>

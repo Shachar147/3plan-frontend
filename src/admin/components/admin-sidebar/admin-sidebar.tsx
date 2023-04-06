@@ -15,9 +15,10 @@ import { adminStoreContext } from '../../stores/admin-store';
 import { TriplanTinderApiService } from '../../services/triplan-tinder-api-service';
 import { CreateInstagramItemsResult, DownloadMediaResult, FixItemsResult } from '../../helpers/interfaces';
 import { runInAction } from 'mobx';
+import { modalsStoreContext } from '../../../stores/modals-store';
 
 export interface TriplanAdminSidebarProps {
-	removeEventFromSidebarById: (eventId: string) => Record<number, SidebarEvent[]>;
+	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
 	addToEventsToCategories: (event: SidebarEvent) => void;
 }
 
@@ -31,6 +32,7 @@ enum SidebarGroups {
 
 const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 	const eventStore = useContext(eventStoreContext);
+	const modalsStore = useContext(modalsStoreContext);
 	const adminStore = useContext(adminStoreContext);
 	const { removeEventFromSidebarById, addToEventsToCategories } = props;
 
@@ -844,11 +846,13 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							className="sidebar-event-title-container"
 							title={'Edit'}
 							onClick={() => {
+								// modalsStore.switchToViewMode();
 								ReactModalService.openEditSidebarEventModal(
 									eventStore,
 									event,
 									removeEventFromSidebarById,
-									addToEventsToCategories
+									addToEventsToCategories,
+									modalsStore
 								);
 							}}
 						>

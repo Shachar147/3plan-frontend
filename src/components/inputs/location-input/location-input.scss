@@ -29,3 +29,10 @@ body.rtl {
     }
   }
 }
+
+.show-on-map-link {
+  font-size: 14px;
+  color: var(--blue) !important;
+  cursor: pointer;
+  padding-inline: 0;
+}

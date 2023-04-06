@@ -3,6 +3,8 @@ import { getClasses } from '../../../utils/utils';
 import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
 import { observer } from 'mobx-react';
+import { formatDateString } from '../../../utils/defaults';
+import { formatFromISODateString } from '../../../utils/time-utils';
 
 interface DatePickerProps {
 	modalValueName: string;
@@ -51,44 +53,51 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 		},
 	}));
 
-	return (
-		<div className={getClasses('triplan-date-picker-input', wrapperClassName)}>
-			<input
-				id={id}
-				name={name}
-				className={getClasses(['datePickerInput'], className)}
-				ref={ref}
-				type="datetime-local"
-				onKeyDown={(e) => {
-					e.preventDefault();
-					return false;
-				}}
-				value={value}
-				onClick={() => {
-					onClick && onClick();
-				}}
-				onKeyUp={() => {
-					onKeyUp && onKeyUp();
-				}}
-				onChange={(e) => {
-					setValue(e.target.value);
-					eventStore.modalValues[modalValueName] = e.target.value;
-				}}
-				// causing problems in mobile:
-				// placeholder={
-				// 	placeholder
-				// 		? placeholder
-				// 		: placeholderKey
-				// 		? TranslateService.translate(eventStore, placeholderKey)
-				// 		: undefined
-				// }
-				autoComplete={autoComplete}
-				min={enforceMinMax ? `${eventStore.customDateRange.start}T00:00` : undefined}
-				max={enforceMinMax ? `${eventStore.customDateRange.end}T23:59` : undefined}
-				data-value={!eventStore.isMobile ? 'disabled' : value ?? 'empty'}
-			/>
-		</div>
+	const content = props.readOnly ? (
+		value ? (
+			formatFromISODateString(value)
+		) : (
+			'-'
+		)
+	) : (
+		<input
+			id={id}
+			name={name}
+			className={getClasses(['datePickerInput'], className)}
+			ref={ref}
+			type="datetime-local"
+			onKeyDown={(e) => {
+				e.preventDefault();
+				return false;
+			}}
+			value={value}
+			onClick={() => {
+				onClick && onClick();
+			}}
+			onKeyUp={() => {
+				onKeyUp && onKeyUp();
+			}}
+			onChange={(e) => {
+				setValue(e.target.value);
+				eventStore.modalValues[modalValueName] = e.target.value;
+			}}
+			// causing problems in mobile:
+			// placeholder={
+			// 	placeholder
+			// 		? placeholder
+			// 		: placeholderKey
+			// 		? TranslateService.translate(eventStore, placeholderKey)
+			// 		: undefined
+			// }
+			autoComplete={autoComplete}
+			min={enforceMinMax ? `${eventStore.customDateRange.start}T00:00` : undefined}
+			max={enforceMinMax ? `${eventStore.customDateRange.end}T23:59` : undefined}
+			data-value={!eventStore.isMobile ? 'disabled' : value ?? 'empty'}
+			readOnly={props.readOnly}
+		/>
 	);
+
+	return <div className={getClasses('triplan-date-picker-input', wrapperClassName)}>{content}</div>;
 }
 
 export default observer(forwardRef<DatePickerRef, DatePickerProps>(DatePicker));

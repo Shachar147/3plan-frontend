@@ -14,6 +14,7 @@ export interface IconSelectorProps {
 	modalValueName: string;
 	disabled?: boolean;
 	className?: string;
+	readOnly?: boolean;
 }
 const IconSelector = (props: IconSelectorProps, ref: any) => {
 	const optionsList = icons.map((icon) => ({
@@ -38,25 +39,27 @@ const IconSelector = (props: IconSelectorProps, ref: any) => {
 		}
 	};
 
-	return (
-		<div className={'icon-selector'}>
-			<Select
-				isClearable
-				isSearchable
-				id={props.id}
-				name={props.name}
-				options={optionsList}
-				placeholder={TranslateService.translate(eventStore, 'SELECT_ICON_PLACEHOLDER')}
-				value={selectedOption}
-				onChange={handleSelect}
-				maxMenuHeight={42 * 3}
-				styles={SELECT_STYLE}
-				ref={ref}
-				isDisabled={props.disabled}
-				className={props.className}
-			/>
-		</div>
+	const content = props.readOnly ? (
+		selectedOption?.label ?? '-'
+	) : (
+		<Select
+			isClearable
+			isSearchable
+			id={props.id}
+			name={props.name}
+			options={optionsList}
+			placeholder={TranslateService.translate(eventStore, 'SELECT_ICON_PLACEHOLDER')}
+			value={selectedOption}
+			onChange={handleSelect}
+			maxMenuHeight={42 * 3}
+			styles={SELECT_STYLE}
+			ref={ref}
+			isDisabled={props.disabled || props.readOnly}
+			className={props.className}
+		/>
 	);
+
+	return <div className={'icon-selector'}>{content}</div>;
 };
 
 export default React.forwardRef(IconSelector);

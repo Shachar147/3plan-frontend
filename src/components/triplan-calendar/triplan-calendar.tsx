@@ -21,6 +21,7 @@ import {
 import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
+import { modalsStoreContext } from '../../stores/modals-store';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -42,6 +43,8 @@ export interface TriPlanCalendarRef {
 
 function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRef>) {
 	const eventStore = useContext(eventStoreContext);
+	const modalsStore = useContext(modalsStoreContext);
+
 	const [draggables, setDraggables] = useState<any[]>([]);
 	const calendarComponentRef = useRef<FullCalendar>(null);
 	const { customDateRange } = props;
@@ -185,7 +188,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const onEventClick = (info: any) => {
-		ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info);
+		modalsStore.switchToViewMode();
+		ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info, modalsStore);
 	};
 
 	const handleEventChange = async (changeInfo: any) => {

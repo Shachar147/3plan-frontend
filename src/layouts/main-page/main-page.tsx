@@ -26,6 +26,7 @@ import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector';
 import _ from 'lodash';
+import { runInAction } from 'mobx';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -35,6 +36,7 @@ function MainPage(props: MainPageProps) {
 	const { createMode } = props;
 	const [eventsToCategories, setEventsToCategories] = useState<Record<string, string>>(defaultEventsToCategories);
 	const TriplanCalendarRef = useRef<any>(null);
+	const MapContainerRef = useRef<any>(null);
 	const TriplanCalendarContainerRef = useRef<HTMLDivElement>(null);
 	const eventStore = useContext(eventStoreContext);
 	const { tripName = eventStore.tripName, locale = eventStore.calendarLocalCode } = useParams();
@@ -71,6 +73,15 @@ function MainPage(props: MainPageProps) {
 		fetchCalendarEvents();
 		setIsFetchingData(false);
 	}, [fetchCalendarEvents]);
+
+	useEffect(() => {
+		if (eventStore.mapContainerRef == null && MapContainerRef.current) {
+			runInAction(() => {
+				eventStore.mapContainerRef = MapContainerRef;
+				// alert('here!');
+			});
+		}
+	}, [MapContainerRef.current, eventStore.viewMode]);
 
 	useEffect(() => {
 		eventStore.setTripName(tripName, locale as LocaleCode, createMode);
@@ -238,7 +249,7 @@ function MainPage(props: MainPageProps) {
 					}}
 					key={`combined-${JSON.stringify(eventStore.allEventsFilteredComputed)}`}
 				>
-					<MapContainer isCombined addToEventsToCategories={addToEventsToCategories} />
+					<MapContainer ref={MapContainerRef} isCombined addToEventsToCategories={addToEventsToCategories} />
 				</div>
 			);
 		}
@@ -258,7 +269,9 @@ function MainPage(props: MainPageProps) {
 				}}
 				key={JSON.stringify(eventStore.allEventsFilteredComputed)}
 			>
-				<Observer>{() => <MapContainer addToEventsToCategories={addToEventsToCategories} />}</Observer>
+				<Observer>
+					{() => <MapContainer ref={MapContainerRef} addToEventsToCategories={addToEventsToCategories} />}
+				</Observer>
 			</div>
 		);
 	}

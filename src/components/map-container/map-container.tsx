@@ -1,4 +1,13 @@
-import React, { ReactElement, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+	forwardRef,
+	ReactElement,
+	Ref,
+	useContext,
+	useEffect,
+	useImperativeHandle,
+	useMemo,
+	useState,
+} from 'react';
 // @ts-ignore
 import GoogleMapReact from 'google-map-react';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
@@ -11,12 +20,12 @@ import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority
 import {
 	BuildEventUrl,
 	getClasses,
-	getCurrentUsername,
 	isBasketball,
 	isDessert,
 	isFlight,
 	isHotel,
 	isMatching,
+	sleep,
 } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
@@ -128,7 +137,12 @@ interface MapContainerProps {
 	addToEventsToCategories: (event: SidebarEvent) => void;
 }
 
-const MapContainer = (props: MapContainerProps) => {
+export interface MapContainerRef {
+	getAllMarkers: (searchString: string) => any[];
+	showEventOnMap: (eventId: number) => void;
+}
+
+function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	const [searchValue, setSearchValue] = useState('');
 	const [searchCoordinatesSearchValue, setSearchCoordinatesSearchValue] = useState(''); // keeps searchValue that matches current search coordinates
 	const [searchCoordinates, setSearchCoordinates] = useState<any[]>([]);
@@ -536,6 +550,14 @@ const MapContainer = (props: MapContainerProps) => {
 			return refMarker;
 		};
 		markers = coordinates && coordinates.map((coordinate) => initMarkerFromCoordinate(coordinate));
+
+		if (eventStore.showEventOnMap) {
+			const eventId: number = eventStore.showEventOnMap!;
+			eventStore.showEventOnMap = null;
+			setTimeout(() => {
+				showEventOnMap(eventId);
+			}, 1500);
+		}
 	};
 
 	const initMap = (map: any, maps: any) => {
@@ -867,10 +889,24 @@ const MapContainer = (props: MapContainerProps) => {
 		);
 		for (let i = 0; i < allEvents.length; i++) {
 			const event = allEvents[i];
-			const marker = markers.find((x) => event.id.toString() === x.eventId.toString());
+			const marker = markers.find((x: any) => event.id.toString() === x.eventId.toString());
 			visibleItems.push({ event, marker });
 		}
 		return visibleItems.sort((a, b) => (a.event.title > b.event.title ? 1 : -1));
+	};
+
+	// make our ref know our functions, so we can use them outside.
+	useImperativeHandle(ref, () => ({
+		getAllMarkers: getAllMarkers,
+		showEventOnMap: showEventOnMap,
+	}));
+
+	const showEventOnMap = async (eventId: number) => {
+		const allMarkers = getAllMarkers('');
+		const found = allMarkers.find((m: any) => Number(m.event.id) == eventId);
+		if (found) {
+			onVisibleItemClick(found.event, found.marker);
+		}
 	};
 
 	const updateVisibleMarkers = () => {
@@ -1414,6 +1450,6 @@ const MapContainer = (props: MapContainerProps) => {
 			{eventStore.isMobile && renderVisibleItemsPane()}
 		</div>
 	);
-};
+}
 
-export default observer(MapContainer);
+export default observer(forwardRef<MapContainerRef, MapContainerProps>(MapContainer));
