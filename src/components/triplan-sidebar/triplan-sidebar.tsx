@@ -363,7 +363,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const numOfItems = [noLocationWarning, noOpeningHoursWarning].filter((x) => x != null).length;
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.WARNING');
 		const warningsBlock =
-			noLocationWarning || noOpeningHoursWarning
+			noLocationWarning ||
+			noOpeningHoursWarning ||
+			eventsWithTodoComplete ||
+			eventsWithDistanceProblems ||
+			eventsWithOpeningHoursProblems
 				? wrapWithSidebarGroup(
 						<div className="flex-column gap-4">
 							{eventsWithOpeningHoursProblems}
