@@ -272,6 +272,7 @@
 	"REPEAT_PASSWORD": "Repeat Password",
 	"USERNAME_EMPTY": "Username can't be empty",
 	"PASSWORD_EMPTY": "Password can't be empty",
+	"TRIP_NAME_EMPTY": "Trip name can't be empty",
 	"PASSWORDS_NOT_MATCH": "Passwords do not match",
 	"LOGGED_IN_SUCCESSFULLY": "Logged in successfully!",
 	"REGISTERED_SUCCESSFULLY": "Registered successfully!",

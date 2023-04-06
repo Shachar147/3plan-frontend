@@ -677,6 +677,14 @@ body.ltr {
 	}
 }
 
+.red-border {
+	border-color: var(--red) !important;
+
+	&:focus-visible{
+		outline: 1px solid var(--red);
+	}
+}
+
 .max-width-250 {
 	max-width: 250px;
 }
