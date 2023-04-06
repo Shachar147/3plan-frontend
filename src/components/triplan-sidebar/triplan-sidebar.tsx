@@ -553,6 +553,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 														if (typeof calendarEvent.end === 'string') {
 															calendarEvent.end = new Date(calendarEvent.end);
 														}
+														modalsStore.switchToViewMode();
 														ReactModalService.openEditCalendarEventModal(
 															eventStore,
 															props.addEventToSidebar,
@@ -561,7 +562,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 																	...calendarEvent,
 																	_def: calendarEvent,
 																},
-															}
+															},
+															modalsStore
 														);
 													}
 												)}
@@ -1231,9 +1233,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			if (_onClick) {
 				_onClick();
 			} else {
-				runInAction(() => {
-					modalsStore.switchToViewMode();
-				});
+				modalsStore.switchToViewMode();
 				ReactModalService.openEditSidebarEventModal(
 					eventStore,
 					event,

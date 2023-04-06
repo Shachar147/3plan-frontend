@@ -524,6 +524,12 @@ body.rtl {
 	}
 }
 
+/* prevent -Input block from going over the value itself or the placeholder */
+div[class$='-singleValue'],
+div[id^='react-select-'][id$='-placeholder'] {
+	z-index: 99;
+}
+
 div[class$='-control'] {
 	box-shadow: unset !important;
 	border-color: #d6d6d6 !important;
@@ -911,7 +917,7 @@ input[type='text'] {
 
 input[type="datetime-local"],
 input[type="datetime-local"] {
-	content: "" !important;
+	// content: "" !important;
 }
 
 input[type="datetime-local"][data-value="empty"]:before {
@@ -924,7 +930,7 @@ input[type="datetime-local"][data-value="empty"]:before {
 body.rtl {
 	input[type="datetime-local"]:focus:before,
 	input[type="datetime-local"]:valid:before {
-		content: "" !important;
+		// content: "" !important;
 	}
 
 	input[type="datetime-local"][data-value="empty"]:before {
@@ -975,8 +981,29 @@ input:-webkit-autofill:active  {
 	background-clip: content-box !important;
 }
 
+// readonly
 textarea:read-only,
 input:read-only {
 	border: 0 !important;
 	background-color: white !important;
+}
+
+// do not outline date picker it looks weird
+.datePickerInput {
+	outline: none !important;
+}
+
+// make modals input fit to the end of the row.
+.triplan-date-picker-input,
+.triplan-textarea-input,
+.triplan-text-input {
+	display: flex;
+	flex: 1 1 0;
+	input, textarea {
+		width: 100%;
+		max-width: unset !important;
+	}
+}
+.triplan-selector {
+	max-width: unset;
 }

@@ -4,6 +4,7 @@ import TranslateService from '../services/translate-service';
 import { EventStore } from '../stores/events-store';
 import { DateRangeFormatted } from '../services/data-handlers/data-handler-base';
 import ReactModalService from '../services/react-modal-service';
+import moment from 'moment/moment';
 
 export const MINUTES_IN_DAY = 1440;
 
@@ -252,3 +253,14 @@ export function validateDateRange(
 
 	return true;
 }
+
+/***
+ * format ISO date string into a readable format
+ * @param inputDateString - example: 2023-04-22T09:30:00
+ *
+ * returns date in a readable format for example: 22/04/2023, 09:30
+ */
+export const formatFromISODateString = (inputDateString: string): string => {
+	const momentObj = moment(inputDateString);
+	return momentObj.format('DD/MM/YYYY, HH:mm');
+};

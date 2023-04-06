@@ -885,7 +885,8 @@ const ReactModalService = {
 		},
 		getCalendarEventInputs: (
 			eventStore: EventStore,
-			initialData: Partial<{ categoryId?: number; location?: LocationData }> | Partial<SidebarEvent> | any = {}
+			initialData: Partial<{ categoryId?: number; location?: LocationData }> | Partial<SidebarEvent> | any = {},
+			modalsStore?: ModalsStore
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
@@ -909,6 +910,7 @@ const ReactModalService = {
 						extra: {
 							id: 'new-icon',
 							value: initialData?.icon,
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.ICON',
@@ -926,6 +928,7 @@ const ReactModalService = {
 								'MODALS.PLACEHOLDER.PREFIX'
 							)} ${TranslateService.translate(eventStore, 'MODALS.TITLE')}`,
 							value: initialData?.title,
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.TITLE',
@@ -946,6 +949,7 @@ const ReactModalService = {
 								)} ${TranslateService.translate(eventStore, 'MODALS.START_TIME')}`,
 								value: getInputDateTimeValue(initialData?.start),
 								enforceMinMax: true,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.START_TIME',
@@ -963,6 +967,7 @@ const ReactModalService = {
 								)} ${TranslateService.translate(eventStore, 'MODALS.END_TIME')}`,
 								value: getInputDateTimeValue(initialData?.end),
 								enforceMinMax: true,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.END_TIME',
@@ -980,6 +985,7 @@ const ReactModalService = {
 							extra: {
 								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
 								value: initialData?.category,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.CATEGORY',
@@ -993,6 +999,7 @@ const ReactModalService = {
 							extra: {
 								placeholderKey: 'MODALS.DESCRIPTION_PLACEHOLDER',
 								value: initialData.description,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.DESCRIPTION',
@@ -1007,6 +1014,7 @@ const ReactModalService = {
 							extra: {
 								value: initialData?.priority ?? TriplanPriority.unset,
 								maxMenuHeight: 45 * 4,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.PRIORITY',
@@ -1021,6 +1029,7 @@ const ReactModalService = {
 							extra: {
 								value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
 								maxMenuHeight: 45 * 4,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.PREFERRED_TIME',
@@ -1043,6 +1052,7 @@ const ReactModalService = {
 								onKeyUp: setManualLocation,
 								autoComplete: 'off',
 								placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.LOCATION',
@@ -1056,6 +1066,7 @@ const ReactModalService = {
 							type: 'opening-hours',
 							extra: {
 								value: initialData.openingHours,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.OPENING_HOURS',
@@ -1070,6 +1081,7 @@ const ReactModalService = {
 							extra: {
 								placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
 								value: initialData.images,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.IMAGES',
@@ -1084,6 +1096,7 @@ const ReactModalService = {
 							extra: {
 								placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 								value: initialData.moreInfo,
+								readOnly: modalsStore?.isViewMode,
 							},
 						},
 						textKey: 'MODALS.MORE_INFO',
@@ -1892,10 +1905,8 @@ const ReactModalService = {
 		window.openingHours = initialData.openingHours || undefined;
 
 		const onConfirm = async () => {
-			if (modalsStore.isViewMode) {
-				runInAction(() => {
-					modalsStore.switchToEditMode();
-				});
+			if (modalsStore?.isViewMode) {
+				modalsStore.switchToEditMode();
 				ReactModalService.openEditSidebarEventModal(
 					eventStore,
 					event,
@@ -1909,7 +1920,7 @@ const ReactModalService = {
 			}
 		};
 
-		const title = modalsStore.isViewMode
+		const title = modalsStore?.isViewMode
 			? `${TranslateService.translate(eventStore, 'MODALS.VIEW_EVENT')}: ${event.title}`
 			: `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${event.title}`;
 		const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, initialData, modalsStore);
@@ -1935,7 +1946,7 @@ const ReactModalService = {
 		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(eventStore, {
 			...settings,
-			confirmBtnText: modalsStore.isViewMode
+			confirmBtnText: modalsStore?.isViewMode
 				? TranslateService.translate(eventStore, 'MODALS.EDIT')
 				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
 			title,
@@ -2706,7 +2717,8 @@ const ReactModalService = {
 	openEditCalendarEventModal: (
 		eventStore: EventStore,
 		addEventToSidebar: (event: SidebarEvent) => boolean,
-		info: any
+		info: any,
+		modalsStore: ModalsStore
 	) => {
 		ReactModalService.internal.resetWindowVariables(eventStore);
 
@@ -3073,18 +3085,23 @@ const ReactModalService = {
 		};
 
 		const onConfirm = async () => {
-			const event = {
-				...info.event._def,
-				id: info.event._def.publicId,
-				...info.event,
-				...info.event.extendedProps,
-				start: new Date(info.event.start),
-				end: new Date(info.event.end),
-			};
+			if (modalsStore?.isViewMode) {
+				modalsStore.switchToEditMode();
+				ReactModalService.openEditCalendarEventModal(eventStore, addEventToSidebar, info, modalsStore);
+			} else {
+				const event = {
+					...info.event._def,
+					id: info.event._def.publicId,
+					...info.event,
+					...info.event.extendedProps,
+					start: new Date(info.event.start),
+					end: new Date(info.event.end),
+				};
 
-			const isOk = await handleEditEventResult(eventStore, addEventToSidebar, event);
-			if (isOk) {
-				ReactModalService.internal.closeModal(eventStore);
+				const isOk = await handleEditEventResult(eventStore, addEventToSidebar, event);
+				if (isOk) {
+					ReactModalService.internal.closeModal(eventStore);
+				}
 			}
 		};
 
@@ -3106,9 +3123,12 @@ const ReactModalService = {
 		// @ts-ignore
 		eventStore.modalValues['selectedLocation'] = window.selectedLocation;
 		eventStore.modalValues['openingHours'] = currentEvent.openingHours;
-		const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
 
-		const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData);
+		const title = modalsStore?.isViewMode
+			? `${TranslateService.translate(eventStore, 'MODALS.VIEW_EVENT')}: ${info.event.title}`
+			: `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
+
+		const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData, modalsStore);
 
 		inputs.push({
 			settings: {
@@ -3170,6 +3190,9 @@ const ReactModalService = {
 		ReactModalService.internal.openModal(eventStore, {
 			...settings,
 			title,
+			confirmBtnText: modalsStore?.isViewMode
+				? TranslateService.translate(eventStore, 'MODALS.EDIT')
+				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
 			content,
 			onConfirm,
 		});
