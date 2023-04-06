@@ -45,6 +45,7 @@ import { getViewSelectorOptions } from '../utils/ui-utils';
 import ToggleButton from '../components/toggle-button/toggle-button';
 import { all } from 'axios';
 import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
+import { ModalsStore } from '../stores/modals-store';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -88,6 +89,7 @@ export const ReactModalRenderHelper = {
 			onKeyUp?: () => any;
 			onClick?: () => any;
 			value?: string;
+			readOnly?: boolean;
 		},
 		ref?: any
 	) => {
@@ -107,6 +109,7 @@ export const ReactModalRenderHelper = {
 					placeholder={extra.placeholder}
 					placeholderKey={extra.placeholderKey}
 					autoComplete={extra.autoComplete}
+					readOnly={extra.readOnly}
 				/>
 			);
 		}
@@ -122,6 +125,7 @@ export const ReactModalRenderHelper = {
 				placeholder={extra.placeholder}
 				placeholderKey={extra.placeholderKey}
 				autoComplete={extra.autoComplete}
+				readOnly={extra.readOnly}
 			/>
 		);
 	},
@@ -186,7 +190,14 @@ export const ReactModalRenderHelper = {
 	renderTextAreaInput: (
 		eventStore: EventStore,
 		modalValueName: string,
-		extra: { rows?: number; placeholderKey?: string; placeholder?: string; id?: string; value?: string },
+		extra: {
+			rows?: number;
+			placeholderKey?: string;
+			placeholder?: string;
+			id?: string;
+			value?: string;
+			readOnly?: boolean;
+		},
 		ref?: any
 	) => {
 		if (extra.value && !eventStore.modalValues[modalValueName]) {
@@ -202,6 +213,7 @@ export const ReactModalRenderHelper = {
 				modalValueName={modalValueName}
 				placeholder={extra.placeholder}
 				placeholderKey={extra.placeholderKey}
+				readOnly={extra.readOnly}
 			/>
 		);
 	},
@@ -403,6 +415,7 @@ export const ReactModalRenderHelper = {
 						value={row.settings.extra.value}
 						onChange={(data) => (eventStore.modalValues[row.settings.modalValueName] = data)}
 						ref={row.settings.ref}
+						readOnly={row.settings.extra.readOnly}
 					/>
 				);
 				break;
@@ -672,7 +685,8 @@ const ReactModalService = {
 		},
 		getSidebarEventInputs: (
 			eventStore: EventStore,
-			initialData: Partial<{ categoryId?: number; location?: LocationData }> | Partial<SidebarEvent> | any = {}
+			initialData: Partial<{ categoryId?: number; location?: LocationData }> | Partial<SidebarEvent> | any = {},
+			modalsStore?: ModalsStore
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
@@ -696,6 +710,7 @@ const ReactModalService = {
 						extra: {
 							id: 'new-icon',
 							value: initialData?.icon,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.ICON',
@@ -713,6 +728,7 @@ const ReactModalService = {
 								'MODALS.PLACEHOLDER.PREFIX'
 							)} ${TranslateService.translate(eventStore, 'MODALS.TITLE')}`,
 							value: initialData?.title,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.TITLE',
@@ -726,6 +742,7 @@ const ReactModalService = {
 						extra: {
 							placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
 							value: initialData?.category,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.CATEGORY',
@@ -739,6 +756,7 @@ const ReactModalService = {
 						extra: {
 							placeholderKey: 'MODALS.DESCRIPTION_PLACEHOLDER',
 							value: initialData.description,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.DESCRIPTION',
@@ -758,6 +776,7 @@ const ReactModalService = {
 							)} ${TranslateService.translate(eventStore, 'MODALS.DURATION')}`,
 							// placeholder: defaultTimedEventDuration,
 							value: initialData?.duration ?? defaultTimedEventDuration,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.DURATION',
@@ -772,6 +791,7 @@ const ReactModalService = {
 						extra: {
 							value: initialData?.priority ?? TriplanPriority.unset,
 							maxMenuHeight: 45 * 4,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.PRIORITY',
@@ -786,6 +806,7 @@ const ReactModalService = {
 						extra: {
 							value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
 							maxMenuHeight: 45 * 4,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.PREFERRED_TIME',
@@ -808,6 +829,7 @@ const ReactModalService = {
 							onKeyUp: setManualLocation,
 							autoComplete: 'off',
 							placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.LOCATION',
@@ -820,6 +842,7 @@ const ReactModalService = {
 						type: 'opening-hours',
 						extra: {
 							value: initialData.openingHours,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.OPENING_HOURS',
@@ -834,6 +857,7 @@ const ReactModalService = {
 						extra: {
 							placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
 							value: initialData.images,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.IMAGES',
@@ -848,6 +872,7 @@ const ReactModalService = {
 						extra: {
 							placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 							value: initialData.moreInfo,
+							readOnly: modalsStore?.viewOrEdit == 'view',
 						},
 					},
 					textKey: 'MODALS.MORE_INFO',
@@ -1660,7 +1685,8 @@ const ReactModalService = {
 		eventStore: EventStore,
 		event: SidebarEvent,
 		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
-		addToEventsToCategories: (value: any) => void
+		addToEventsToCategories: (value: any) => void,
+		modalsStore: ModalsStore
 	) => {
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleEditSidebarEventResult = async (eventStore: EventStore, originalEvent: SidebarEvent) => {
@@ -1871,7 +1897,7 @@ const ReactModalService = {
 		};
 
 		const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${event.title}`;
-		const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, initialData);
+		const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, initialData, modalsStore);
 
 		const content = (
 			<Observer>

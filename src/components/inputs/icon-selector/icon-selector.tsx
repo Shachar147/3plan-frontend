@@ -14,6 +14,7 @@ export interface IconSelectorProps {
 	modalValueName: string;
 	disabled?: boolean;
 	className?: string;
+	readOnly?: boolean;
 }
 const IconSelector = (props: IconSelectorProps, ref: any) => {
 	const optionsList = icons.map((icon) => ({
@@ -52,7 +53,7 @@ const IconSelector = (props: IconSelectorProps, ref: any) => {
 				maxMenuHeight={42 * 3}
 				styles={SELECT_STYLE}
 				ref={ref}
-				isDisabled={props.disabled}
+				isDisabled={props.disabled || props.readOnly}
 				className={props.className}
 			/>
 		</div>
