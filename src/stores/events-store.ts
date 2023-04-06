@@ -356,48 +356,47 @@ export class EventStore {
 						const b = Array.isArray(a) ? a[0] : a;
 						const is247 = b.start == '00:00' && b.end == '00:00';
 
-						let openingHoursOnThisDay = is247
-							? // @ts-ignore
-							  e.openingHours['SUNDAY']
-							: // @ts-ignore
-							  e.openingHours[dayOfWeek.toUpperCase()];
+						if (!is247) {
+							// @ts-ignore
+							let openingHoursOnThisDay = e.openingHours[dayOfWeek.toUpperCase()];
 
-						if (!openingHoursOnThisDay) {
-							isValidToOpenHours = false;
-							errorReason = TranslateService.translate(eventStore, 'CLOSED_ON_THIS_DAY');
-						} else {
-							let isWithinHours = false;
+							if (!openingHoursOnThisDay) {
+								isValidToOpenHours = false;
+								errorReason = TranslateService.translate(eventStore, 'CLOSED_ON_THIS_DAY');
+							} else {
+								let isWithinHours = false;
 
-							// old opening hours support
-							if (!Array.isArray(openingHoursOnThisDay)) {
-								openingHoursOnThisDay = [openingHoursOnThisDay];
+								// old opening hours support
+								if (!Array.isArray(openingHoursOnThisDay)) {
+									openingHoursOnThisDay = [openingHoursOnThisDay];
+								}
+								openingHoursOnThisDay.forEach((period: { start: string; end: string }) => {
+									const startTimeString = period.start;
+									let [hours, minutes] = startTimeString.split(':');
+									const dtStart = new Date(e.start);
+									dtStart.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+
+									const endTimeString = period.end;
+									[hours, minutes] = endTimeString.split(':');
+									const dtEnd = new Date(e.end);
+									dtEnd.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+									if (dtEnd.getTime() < dtStart.getTime()) {
+										dtEnd.setDate(dtEnd.getDate() + 1);
+									}
+
+									if (dtStart.getTime() > eventStartDate.getTime()) {
+										isWithinHours = false;
+										errorReason = TranslateService.translate(eventStore, 'INVALID_START_HOUR', {
+											X: startTimeString,
+										});
+									} else if (eventEndDate.getTime() > dtEnd.getTime()) {
+										isWithinHours = false;
+										errorReason = TranslateService.translate(eventStore, 'INVALID_END_HOUR', {
+											X: endTimeString,
+										});
+									}
+								});
 							}
-							openingHoursOnThisDay.forEach((period: { start: string; end: string }) => {
-								const startTimeString = period.start;
-								let [hours, minutes] = startTimeString.split(':');
-								const dtStart = new Date(e.start);
-								dtStart.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-
-								const endTimeString = period.end;
-								[hours, minutes] = endTimeString.split(':');
-								const dtEnd = new Date(e.end);
-								dtEnd.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-								if (dtEnd.getTime() < dtStart.getTime()) {
-									dtEnd.setDate(dtEnd.getDate() + 1);
-								}
-
-								if (dtStart.getTime() > eventStartDate.getTime()) {
-									isWithinHours = false;
-									errorReason = TranslateService.translate(eventStore, 'INVALID_START_HOUR', {
-										X: startTimeString,
-									});
-								} else if (eventEndDate.getTime() > dtEnd.getTime()) {
-									isWithinHours = false;
-									errorReason = TranslateService.translate(eventStore, 'INVALID_END_HOUR', {
-										X: endTimeString,
-									});
-								}
-							});
 						}
 
 						// console.log({
