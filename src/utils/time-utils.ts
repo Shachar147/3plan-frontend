@@ -161,46 +161,55 @@ export function validateDateRange(
 	end: string | undefined,
 	limit_in_days: number = TRIP_MAX_SIZE_DAYS,
 	min_limit: number = 0,
-	min_limit_days_or_minutes: 'days' | 'minutes' = 'days'
+	min_limit_days_or_minutes: 'days' | 'minutes' = 'days',
+	showErrorPopups: boolean = true
 ): boolean {
 	if (!start) {
-		ReactModalService.internal.alertMessage(
-			eventStore,
-			'MODALS.ERROR.TITLE',
-			'MODALS.ERROR.START_DATE_CANT_BE_EMPTY',
-			'error'
-		);
+		if (showErrorPopups) {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.START_DATE_CANT_BE_EMPTY',
+				'error'
+			);
+		}
 		return false;
 	}
 
 	if (!end) {
-		ReactModalService.internal.alertMessage(
-			eventStore,
-			'MODALS.ERROR.TITLE',
-			'MODALS.ERROR.END_DATE_CANT_BE_EMPTY',
-			'error'
-		);
+		if (showErrorPopups) {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.END_DATE_CANT_BE_EMPTY',
+				'error'
+			);
+		}
 		return false;
 	}
 
 	if (new Date(end).getTime() < new Date(start).getTime()) {
-		ReactModalService.internal.alertMessage(
-			eventStore,
-			'MODALS.ERROR.TITLE',
-			'MODALS.ERROR.START_DATE_SMALLER',
-			'error'
-		);
+		if (showErrorPopups) {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.START_DATE_SMALLER',
+				'error'
+			);
+		}
 		return false;
 	}
 
 	if (new Date(end).getTime() - new Date(start).getTime() > limit_in_days * 86400000) {
-		ReactModalService.internal.alertMessage(
-			eventStore,
-			'MODALS.ERROR.TITLE',
-			'MODALS.ERROR.TOO_LONG_RANGE',
-			'error',
-			{ X: limit_in_days }
-		);
+		if (showErrorPopups) {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.TOO_LONG_RANGE',
+				'error',
+				{ X: limit_in_days }
+			);
+		}
 		return false;
 	}
 
@@ -210,17 +219,19 @@ export function validateDateRange(
 	}
 	const diff = new Date(end).getTime() - new Date(start).getTime();
 	if (diff < min_limit_in_days * 86400000) {
-		ReactModalService.internal.alertMessage(
-			eventStore,
-			'MODALS.ERROR.TITLE',
-			'MODALS.ERROR.TOO_SHORT_RANGE',
-			'error',
-			{
-				X: diff / 60 / 1000,
-				Y: TranslateService.translate(eventStore, min_limit_days_or_minutes.toUpperCase()),
-				Z: min_limit,
-			}
-		);
+		if (showErrorPopups) {
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.TOO_SHORT_RANGE',
+				'error',
+				{
+					X: diff / 60 / 1000,
+					Y: TranslateService.translate(eventStore, min_limit_days_or_minutes.toUpperCase()),
+					Z: min_limit,
+				}
+			);
+		}
 		return false;
 	}
 

@@ -297,8 +297,6 @@ body.ltr {
 		max-width: 200px;
 		min-width: 100px;
 		margin-bottom: 30px;
-
-		filter: sepia(100%) hue-rotate(190deg) saturate(900%);
 	}
 
 	.no-items-on-map-placeholder-title {
@@ -323,7 +321,6 @@ body.rtl {
 
 @keyframes blink {
 	50% {
-		//border: 1px solid var(--blue);
 		 opacity: 0;
 	}
 }

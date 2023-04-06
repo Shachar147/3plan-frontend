@@ -677,6 +677,14 @@ body.ltr {
 	}
 }
 
+.red-border {
+	border-color: var(--red) !important;
+
+	&:focus-visible{
+		outline: 1px solid var(--red);
+	}
+}
+
 .max-width-250 {
 	max-width: 250px;
 }
@@ -956,8 +964,9 @@ body.rtl {
 // remove autocomplete yellow background
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-	background-color: transparent;
-	-webkit-box-shadow: none;
-	-webkit-text-fill-color: inherit;
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active  {
+	-webkit-box-shadow: 0 0 0 60px #fafafa inset !important;
+	background-color: #fafafa !important;
+	background-clip: content-box !important;
 }

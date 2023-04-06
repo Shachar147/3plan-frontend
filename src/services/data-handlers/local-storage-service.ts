@@ -74,6 +74,10 @@ export class LocalStorageService implements BaseDataHandler {
 		return trips;
 	}
 
+	async getTripsShort(eventStore: EventStore) {
+		return this.getTrips(eventStore);
+	}
+
 	getAllEvents(eventStore: EventStore, tripName?: string, createMode?: boolean): AllEventsEvent[] {
 		if (!tripName) return [];
 

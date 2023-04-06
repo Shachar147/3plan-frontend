@@ -51,7 +51,7 @@ function MyTrips() {
 		setIsLoadingTrips(true);
 		setError(undefined);
 		dataService
-			.getTrips(eventStore)
+			.getTripsShort(eventStore)
 			.then((trips: Trip[]) => {
 				setLsTrips(trips);
 				setIsLoadingTrips(false);
