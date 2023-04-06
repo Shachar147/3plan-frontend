@@ -31,10 +31,12 @@ export function apiGetPromise(self, url) {
 	});
 }
 
-async function handleUnauthorizedError(error, url) {
+async function handleUnauthorizedError(error, url, redirectUnautirhized = true) {
 	if (error?.response?.status === 401) {
-		if (!unAuthorizedRoutes.find((route) => url.indexOf(route) !== -1)) {
-			window.location.href = '/login';
+		if (redirectUnautirhized) {
+			if (!unAuthorizedRoutes.find((route) => url.indexOf(route) !== -1)) {
+				window.location.href = '/login';
+			}
 			return true;
 		}
 	}
@@ -60,7 +62,7 @@ export async function apiGetNew(url, data) {
 		});
 }
 
-export async function apiPost(url, data) {
+export async function apiPost(url, data, redirectUnautirhized = true) {
 	return await axios
 		.post(getServerAddress() + url, data, {
 			headers: {
@@ -71,7 +73,7 @@ export async function apiPost(url, data) {
 			return res;
 		})
 		.catch(async (error) => {
-			const isUnauthorized = await handleUnauthorizedError(error, url);
+			const isUnauthorized = await handleUnauthorizedError(error, url, redirectUnautirhized);
 			if (!isUnauthorized) {
 				throw error;
 			}
