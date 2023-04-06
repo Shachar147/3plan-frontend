@@ -86,6 +86,7 @@ export const ReactModalRenderHelper = {
 			onClick?: () => any;
 			value?: string;
 			readOnly?: boolean;
+			eventId?: number;
 		},
 		ref?: any
 	) => {
@@ -107,6 +108,8 @@ export const ReactModalRenderHelper = {
 					autoComplete={extra.autoComplete}
 					readOnly={extra.readOnly}
 					disabled={extra.readOnly} // otherwise we can change location via google maps
+					showOnMapLink={extra.readOnly}
+					eventId={extra.eventId}
 				/>
 			);
 		}
@@ -691,7 +694,9 @@ const ReactModalService = {
 		getSidebarEventInputs: (
 			eventStore: EventStore,
 			initialData: Partial<{ categoryId?: number; location?: LocationData }> | Partial<SidebarEvent> | any = {},
-			modalsStore?: ModalsStore
+			modalsStore?: ModalsStore,
+			avoidLastLineClass?: boolean,
+			eventId?: number
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
@@ -836,6 +841,7 @@ const ReactModalService = {
 							autoComplete: 'off',
 							placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
 							readOnly: modalsStore?.isViewMode,
+							eventId: eventId,
 						},
 					},
 					textKey: 'MODALS.LOCATION',
@@ -886,14 +892,17 @@ const ReactModalService = {
 					showOnMinimized: false,
 				},
 			];
-			inputs[inputs.length - 1].className += ' border-bottom-gray padding-bottom-20';
+			if (!avoidLastLineClass) {
+				inputs[inputs.length - 1].className += ' border-bottom-gray padding-bottom-20';
+			}
 			return inputs;
 		},
 		getCalendarEventInputs: (
 			eventStore: EventStore,
 			initialData: Partial<{ categoryId?: number; location?: LocationData }> | Partial<SidebarEvent> | any = {},
 			modalsStore?: ModalsStore,
-			avoidLastLineClass?: boolean
+			avoidLastLineClass?: boolean,
+			eventId?: number
 		) => {
 			const initLocation = () => {
 				// @ts-ignore
@@ -1061,6 +1070,7 @@ const ReactModalService = {
 								autoComplete: 'off',
 								placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
 								readOnly: modalsStore?.isViewMode,
+								eventId: eventId,
 							},
 						},
 						textKey: 'MODALS.LOCATION',
@@ -1184,7 +1194,7 @@ const ReactModalService = {
 				moreInfo,
 			};
 		},
-		closeModal: (eventStore: EventStore, modalsStore?: ModalsStore) => {
+		closeModal: (eventStore: EventStore) => {
 			runInAction(() => {
 				if (eventStore.secondModalSettings?.show) {
 					eventStore.secondModalSettings.show = false;
@@ -1935,7 +1945,13 @@ const ReactModalService = {
 		const title = modalsStore?.isViewMode
 			? `${TranslateService.translate(eventStore, 'MODALS.VIEW_EVENT')}: ${event.title}`
 			: `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${event.title}`;
-		const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, initialData, modalsStore);
+		const inputs = ReactModalService.internal.getSidebarEventInputs(
+			eventStore,
+			initialData,
+			modalsStore,
+			true,
+			Number(event.id)
+		);
 
 		const content = (
 			<Observer>
@@ -3143,7 +3159,13 @@ const ReactModalService = {
 			? `${TranslateService.translate(eventStore, 'MODALS.VIEW_EVENT')}: ${info.event.title}`
 			: `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${info.event.title}`;
 
-		const inputs = ReactModalService.internal.getCalendarEventInputs(eventStore, initialData, modalsStore, true);
+		const inputs = ReactModalService.internal.getCalendarEventInputs(
+			eventStore,
+			initialData,
+			modalsStore,
+			true,
+			info.event.id
+		);
 
 		inputs.push({
 			settings: {

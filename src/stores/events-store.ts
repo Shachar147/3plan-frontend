@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import React, { createContext } from 'react';
 import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
@@ -31,8 +31,9 @@ import { LocalStorageService } from '../services/data-handlers/local-storage-ser
 import { DBService } from '../services/data-handlers/db-service';
 import { getUser } from '../helpers/auth';
 import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
-import { apiGetNew, apiPost } from '../helpers/api';
+import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
+import { MapContainerRef } from '../components/map-container/map-container';
 
 const defaultModalSettings = {
 	show: false,
@@ -121,6 +122,10 @@ export class EventStore {
 	@observable selectedEventNearByPlaces: any[] | undefined = undefined;
 	@observable distanceSectionAutoOpened: boolean = false;
 	@observable closedDistanceAutoOpened: boolean = false; // indicates user closing auto-opened distance section
+
+	// for show on map link
+	@observable mapContainerRef: React.MutableRefObject<MapContainerRef> | null = null;
+	showEventOnMap: number | null = null;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();

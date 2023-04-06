@@ -563,6 +563,11 @@ div[class$='-control'] {
 	font-family: GaretBook, Heebo, Arial;
 	font-size: 18px;
 	font-weight: 300;
+
+	// no need of a padding if we're on readonly mode on which we do not show it as a input (no border etc)
+	&:read-only {
+		padding-inline: 0;
+	}
 }
 
 .textInput,
