@@ -91,8 +91,8 @@
 					transition: all 0.3s ease-in-out;
 
 					&::-webkit-input-placeholder, /* Edge */
-          &:-ms-input-placeholder, /* Internet Explorer 10-11 */
-          &::placeholder {
+          			&:-ms-input-placeholder, /* Internet Explorer 10-11 */
+          			&::placeholder {
 						color: rgba(0, 0, 0, 0.2) !important;
 					}
 
@@ -140,4 +140,8 @@ body {
 			}
 		}
 	}
+}
+
+input {
+	background-color: white !important;
 }
