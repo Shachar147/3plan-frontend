@@ -12,9 +12,10 @@ import ReactModalService from '../../services/react-modal-service';
 import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
-import { TripDataSource } from '../../utils/enums';
+import { TripDataSource, ViewMode } from '../../utils/enums';
 import { upsertTripProps } from '../../services/data-handlers/db-service';
 import { validateDateRange } from '../../utils/time-utils';
+import { DEFAULT_VIEW_MODE_FOR_NEW_TRIPS } from '../../utils/consts';
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -134,6 +135,8 @@ const GettingStartedPage = () => {
 
 		// local mode
 		if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
+			eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+			eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
 			eventStore.setCustomDateRange(customDateRange);
 			eventStore.dataService.setDateRange(customDateRange, TripName);
 			navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
@@ -147,16 +150,28 @@ const GettingStartedPage = () => {
 				calendarEvents: defaultCalendarEvents,
 				categories: getDefaultCategories(eventStore),
 			};
+
+			// backup
+			let { viewMode, mobileViewMode } = eventStore;
+
 			// @ts-ignore
 			await DataServices.DBService.createTrip(
 				tripData,
 				(res: any) => {
+					// switch to map view as  the default view.
+					eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+					eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+
 					eventStore.setCustomDateRange(customDateRange);
 					eventStore.dataService.setDateRange(customDateRange, TripName);
 					navigate(`/plan/${res.data.name}`);
 					// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 				},
 				(e) => {
+					// restore to backup
+					eventStore.setViewMode(viewMode);
+					eventStore.setMobileViewMode(mobileViewMode);
+
 					if (e.response.data.statusCode === 409) {
 						ReactModalService.internal.alertMessage(
 							eventStore,
