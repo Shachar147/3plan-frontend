@@ -1,6 +1,6 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService, { TranslationParams } from './translate-service';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
 import { getClasses, isHotelsCategory, ucfirst } from '../utils/utils';
@@ -34,16 +34,12 @@ import ImportService from './import-service';
 // @ts-ignore
 import Slider from 'react-slick';
 
-// @ts-ignore
-import { AllEventsEvent, DataServices, LocaleCode, lsTripNameToTripName } from './data-handlers/data-handler-base';
+import { DataServices, LocaleCode, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../layouts/main-page/modals/places-tinder/places-tinder';
 import LocationInput from '../components/inputs/location-input/location-input';
 import { apiGetNew, apiPost } from '../helpers/api';
-import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { LimitationsService } from '../utils/limitations';
-import { getViewSelectorOptions } from '../utils/ui-utils';
 import ToggleButton from '../components/toggle-button/toggle-button';
-import { all } from 'axios';
 import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
 import { ModalsStore } from '../stores/modals-store';
 

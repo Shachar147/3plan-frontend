@@ -82,6 +82,21 @@ export function formatDuration(duration: string) {
 	return convertMsToHM(milliseconds);
 }
 
+export function getEndDate(start: Date | string, duration: string) {
+	let dt = start;
+	if (typeof dt == 'string') {
+		dt = new Date(dt);
+	}
+	const hours = parseInt(duration.split(':')[0]);
+	const minutes = parseInt(duration.split(':')[1]);
+	const milliseconds = minutes * 60000 + hours * 3600000;
+	const result = new Date(dt.getTime() + milliseconds);
+	if (typeof start == 'string') {
+		return result.toISOString();
+	}
+	return result;
+}
+
 export function formatTime(timeString: string) {
 	const parts = timeString.replace(' PM', '').replace(' AM', '').split(':');
 
