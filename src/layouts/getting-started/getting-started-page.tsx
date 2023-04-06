@@ -14,12 +14,15 @@ import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import { TripDataSource } from '../../utils/enums';
 import { upsertTripProps } from '../../services/data-handlers/db-service';
+import { validateDateRange } from '../../utils/time-utils';
+import { DEFAULT_VIEW_MODE_FOR_NEW_TRIPS, TRIP_MAX_SIZE_DAYS } from '../../utils/consts';
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
 	const [applyFadeIn, setApplyFadeIn] = useState(false);
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
+	const [errors, setErrors] = useState<Record<string, boolean>>({});
 
 	useHandleWindowResize();
 
@@ -43,10 +46,23 @@ const GettingStartedPage = () => {
 		eventStore.dataService.setCalendarLocale(eventStore.calendarLocalCode);
 	}, [eventStore.calendarLocalCode]);
 
+	function updateErrorsOnDateChange(start: string, end: string) {
+		// means user already clicked on submit at least once.
+		if (Object.keys(errors).length) {
+			const isValid = validateDateRange(eventStore, start, end, undefined, undefined, undefined, false);
+
+			setErrors({
+				...errors,
+				start: !isValid,
+				end: !isValid,
+			});
+		}
+	}
+
 	const renderForm = () => {
 		return (
 			<div
-				className={'custom-dates-container'}
+				className="custom-dates-container align-items-center"
 				style={{
 					backgroundColor: 'transparent',
 					border: 0,
@@ -68,15 +84,27 @@ const GettingStartedPage = () => {
 						onChange={(e) => {
 							const value = e.target.value;
 							setTripName(value);
+
+							if (errors['title']) {
+								setErrors({
+									...errors,
+									title: value.length == 0,
+								});
+							}
 						}}
+						className={getClasses(errors['title'] && 'red-border')}
 					/>
 				</div>
 				<div className={'main-font font-size-20'}>
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
 				</div>
-				<div className={'custom-dates-line'}>
+				<div className={'custom-dates-line flex-row align-items-center'}>
 					<input
-						type={'date'}
+						type="date"
+						onKeyDown={(e) => {
+							e.preventDefault();
+							return false;
+						}}
 						value={customDateRange.start}
 						onChange={(e) => {
 							const value = e.target.value;
@@ -84,10 +112,17 @@ const GettingStartedPage = () => {
 								start: value,
 								end: customDateRange.end,
 							});
+							updateErrorsOnDateChange(value, customDateRange.end);
 						}}
+						className={getClasses(errors['start'] && 'red-border')}
 					/>
+					{TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.UNTIL')}
 					<input
-						type={'date'}
+						type="date"
+						onKeyDown={(e) => {
+							e.preventDefault();
+							return false;
+						}}
 						value={customDateRange.end}
 						onChange={(e) => {
 							const value = e.target.value;
@@ -95,7 +130,9 @@ const GettingStartedPage = () => {
 								start: customDateRange.start,
 								end: value,
 							});
+							updateErrorsOnDateChange(customDateRange.start, value);
 						}}
+						className={getClasses(errors['end'] && 'red-border')}
 					/>
 				</div>
 			</div>
@@ -103,10 +140,50 @@ const GettingStartedPage = () => {
 	};
 
 	async function createNewTrip(tripName: string) {
+		const areDatesValid = validateDateRange(eventStore, customDateRange.start, customDateRange.end);
+		errors.start = !areDatesValid;
+		errors.end = !areDatesValid;
+
+		if (tripName.length == 0) {
+			ReactModalService.internal.alertMessage(eventStore, 'MODALS.ERROR.TITLE', 'TRIP_NAME_EMPTY', 'error');
+			setErrors({
+				...errors,
+				title: true,
+			});
+			return;
+		}
+
+		if (!areDatesValid) {
+			setErrors({
+				...errors,
+				start: true,
+				end: true,
+			});
+			return;
+		}
+
+		if (new Date(customDateRange.end).getTime() < new Date(customDateRange.start).getTime()) {
+			setErrors({
+				start: true,
+				end: true,
+			});
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.START_DATE_SMALLER',
+				'error'
+			);
+			return;
+		}
+
+		setErrors({});
+
 		const TripName = tripName.replace(/\s/gi, '-');
 
 		// local mode
 		if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
+			eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+			eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
 			eventStore.setCustomDateRange(customDateRange);
 			eventStore.dataService.setDateRange(customDateRange, TripName);
 			navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
@@ -120,17 +197,32 @@ const GettingStartedPage = () => {
 				calendarEvents: defaultCalendarEvents,
 				categories: getDefaultCategories(eventStore),
 			};
+
+			// backup
+			let { viewMode, mobileViewMode } = eventStore;
+
 			// @ts-ignore
 			await DataServices.DBService.createTrip(
 				tripData,
 				(res: any) => {
+					// switch to map view as  the default view.
+					eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+					eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+
 					eventStore.setCustomDateRange(customDateRange);
 					eventStore.dataService.setDateRange(customDateRange, TripName);
 					navigate(`/plan/${res.data.name}`);
 					// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 				},
 				(e) => {
+					// restore to backup
+					eventStore.setViewMode(viewMode);
+					eventStore.setMobileViewMode(mobileViewMode);
+
 					if (e.response.data.statusCode === 409) {
+						setErrors({
+							title: true,
+						});
 						ReactModalService.internal.alertMessage(
 							eventStore,
 							'MODALS.ERROR.TITLE',
@@ -195,11 +287,16 @@ const GettingStartedPage = () => {
 					<Button
 						text={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}
 						flavor={ButtonFlavor.primary}
-						disabled={tripName.length === 0}
-						disabledReason={TranslateService.translate(
-							eventStore,
-							'GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST'
-						)}
+						// disabled={
+						// 	tripName.length === 0 ||
+						// 	new Date(customDateRange.start).getTime() > new Date(customDateRange.end).getTime()
+						// }
+						// disabledReason={TranslateService.translate(
+						// 	eventStore,
+						// 	tripName.length === 0
+						// 		? 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST'
+						// 		: 'MODALS.ERROR.START_DATE_SMALLER'
+						// )}
 						onClick={() => createNewTrip(tripName)}
 					/>
 					<Button

@@ -196,7 +196,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						text={`${eventsWithNoLocation.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_NO_LOCATION'
-						)} (${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
+						)}${separator}(${TranslateService.translate(eventStore, eventsWithNoLocationKey)})`}
 						onClick={() => {
 							eventStore.toggleShowOnlyEventsWithNoLocation();
 						}}
@@ -236,7 +236,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						text={`${eventsWithNoHours.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_NO_OPENING_HOURS'
-						)} (${TranslateService.translate(eventStore, eventsWithNoHoursKey)})`}
+						)}${separator}(${TranslateService.translate(eventStore, eventsWithNoHoursKey)})`}
 						onClick={() => {
 							eventStore.toggleShowOnlyEventsWithNoOpeningHours();
 						}}
@@ -279,7 +279,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						text={`${todoCompleteEvents.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_TODO_COMPLETE'
-						)} (${TranslateService.translate(eventStore, todoCompleteEventsKey)})`}
+						)}${separator}(${TranslateService.translate(eventStore, todoCompleteEventsKey)})`}
 						onClick={() => {
 							eventStore.toggleShowOnlyEventsWithTodoComplete();
 						}}
@@ -309,7 +309,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						text={`${eventsWithDistanceProblems.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_DISTANCE_PROBLEMS'
-						)} (${TranslateService.translate(eventStore, distanceProblemsEventsKey)})`}
+						)}${separator}(${TranslateService.translate(eventStore, distanceProblemsEventsKey)})`}
 						onClick={() => {
 							eventStore.toggleShowOnlyEventsWithDistanceProblems();
 						}}
@@ -321,6 +321,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		};
 
 		const renderEventsWithOpeningHoursProblemsStatistics = () => {
+			const uniqueSeparator = eventStore.isMobile ? '\n' : ' ';
 			const eventsWithOpeningHoursProblems = eventStore.eventsWithOpeningHoursProblems;
 
 			const openingHoursProblemsEventsKey = eventStore.showOnlyEventsWithOpeningHoursProblems
@@ -339,7 +340,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						text={`${eventsWithOpeningHoursProblems.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_OPENING_HOURS_PROBLEMS'
-						)} (${TranslateService.translate(eventStore, openingHoursProblemsEventsKey)})`}
+						)}${uniqueSeparator}(${TranslateService.translate(eventStore, openingHoursProblemsEventsKey)})`}
 						onClick={() => {
 							eventStore.toggleShowOnlyEventsWithOpeningHoursProblems();
 						}}
@@ -353,6 +354,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			) : null;
 		};
 
+		const separator = eventStore.isEnglish ? '\n' : ' ';
 		const noLocationWarning = renderNoLocationEventsStatistics();
 		const noOpeningHoursWarning = renderNoOpeningHoursEventsStatistics();
 		const eventsWithTodoComplete = renderEventsWithTodoCompleteStatistics();
@@ -363,13 +365,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const warningsBlock =
 			noLocationWarning || noOpeningHoursWarning
 				? wrapWithSidebarGroup(
-						<>
+						<div className="flex-column gap-4">
 							{eventsWithOpeningHoursProblems}
 							{eventsWithDistanceProblems}
 							{noLocationWarning}
 							{noOpeningHoursWarning}
 							{eventsWithTodoComplete}
-						</>,
+						</div>,
 						'fa-exclamation-triangle',
 						SidebarGroups.WARNINGS,
 						groupTitle,
@@ -681,6 +683,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderPrioritiesLegend = () => {
+		const separator = eventStore.isEnglish ? '\n' : ' ';
+
 		const getTotalHotelsAmount = () => {
 			const allEvents = eventStore.allEventsComputed;
 			let totalHotelsInCalendar = 0;
@@ -760,10 +764,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					return (
 						<div className={'sidebar-statistics'} key={`sidebar-statistics-for-${priorityText}`}>
 							<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }} />
-							<div>
+							<div className="white-space-pre">
 								{`${total} ${prefix} `}
 								<span>{translatedPriority}</span>
-								{` (${total - totalInCalendar} ${notInCalendar})`}
+								{`${separator}(${total - totalInCalendar} ${notInCalendar})`}
 							</div>
 						</div>
 					);
@@ -779,17 +783,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						<div>
 							{`${totalHotels} `}
 							<span>{translatedHotels}</span>
-							{` (${totalHotels - totalHotelsInCalendar} ${notInCalendar})`}
+							{`${separator}(${totalHotels - totalHotelsInCalendar} ${notInCalendar})`}
 						</div>
 					</div>
 				</>
 			);
 
 			return (
-				<>
+				<div className="flex-column gap-4">
 					{priorities}
 					{custom}
-				</>
+				</div>
 			);
 		};
 
@@ -1066,10 +1070,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			}}
 		>
 			<Button
-				flavor={ButtonFlavor.primary}
+				flavor={eventStore.isMapView ? ButtonFlavor.secondary : ButtonFlavor.primary}
 				onClick={() => {
 					ReactModalService.openAddSidebarEventModal(eventStore, undefined);
 				}}
+				className={eventStore.isMapView ? 'black' : undefined}
 				style={{
 					width: '100%',
 				}}

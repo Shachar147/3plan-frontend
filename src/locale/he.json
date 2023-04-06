@@ -174,6 +174,7 @@
 	"GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP": "בחר שם לטיול",
 	"GETTING_STARTED_PAGE.FILL_IN_TRIP_NAME": "אנא מלאו את שם הטיול לפני הלחיצה על כפתור זה",
 	"DAYS": "ימים",
+	"MINUTES": "דקות",
 	"CHECK_OUT_EXISTING_TRIPS": "צפה בטיולים הקיימים שלך",
 	"MODALS.DELETE_TRIP.CONTENT": "האם אתה בטוח שאתה רוצה למחוק את הטיול הזה?<br/>זוהי פעולה בלתי הפיכה",
 	"EDIT_TRIP_MODAL.TITLE": "ערוך טיול",
@@ -279,13 +280,13 @@
 	"REPEAT_PASSWORD": "סיסמא בשנית",
 	"USERNAME_EMPTY": "שם המשתמש לא יכול להיות ריק",
 	"PASSWORD_EMPTY": "הסיסמא לא יכולה להיות ריקה",
+	"TRIP_NAME_EMPTY": "שם הטיול לא יכול להיות ריק",
 	"PASSWORDS_NOT_MATCH": "הסיסמאות לא תואמות",
 	"LOGGED_IN_SUCCESSFULLY": "התחברת בהצלחה!",
 	"REGISTERED_SUCCESSFULLY": "נרשמת בהצלחה!",
 	"CONTINUE_AS_GUEST": "היכנס ללא משתמש",
 	"CONTINUE_AS_GUEST_MODAL_CONTENT": "במידה ותבחר להיכנס ללא משתמש, הטיולים שתיצור יהיו זמינים אך ורק מהמחשב ממנו התחברת כרגע.<br>במידה ותחליט להירשם בהמשך, תוכל לסנכרן את הטיולים למשתמש שלך ולצפות בהם מכל מכשיר",
 	"MODALS.ERROR.TRIP_NOT_EXIST": "אופס, הטיול שניסית לגשת אליו לא קיים",
-
 	"LEAVE_AT": "צא ב",
 	"TO_ARRIVE_ON_TIME": "כדי להגיע בזמן",
 	"BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL": "סיכום מלא",
@@ -548,5 +549,12 @@
 	"NOTE.OPENING_HOURS_MAY_CHANGE": "שים לב! הזמנים עשויים להיות לא מעודכנים ותמיד מומלץ להתעדכן באתר העסק",
 	"CLOSED_ON_THIS_DAY": "המקום סגור ביום הזה",
 	"INVALID_START_HOUR": "המקום נפתח ב {X}",
-	"INVALID_END_HOUR": "המקום נסגר ב {X}"
+	"INVALID_END_HOUR": "המקום נסגר ב {X}",
+	"NO_ITEMS_ON_MAP_PLACEHOLDER.TITLE": "אין לך מקומות במפה!",
+	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1": "השתמש בשורת החיפוש שמעל המפה על מנת להוסיף פעילויות בקלות ובמהירות!",
+	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1.MOBILE": "השתמש בשורת החיפוש שמתחת למפה על מנת להוסיף פעילויות בקלות ובמהירות!",
+	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.2": "הוספת פעילויות דרך המפה תמלא לך אוטומטית מידע חשוב על הפעילויות שתוסיף כמו קטגוריה, תמונות, שעות פעילות ועוד ותחסוך לך זמן יקר!\nאתה עדיין כאן?",
+	"MODALS.ERROR.START_DATE_SMALLER": "תאריך ההתחלה לא יכול להיות קטן מתאריך הסיום",
+	"MODALS.ERROR.TOO_LONG_RANGE": "הטווח שנבחר ארוך מדי.\nהזמן המקסימלי המותר הוא: {X} ימים.",
+	"MODALS.ERROR.TOO_SHORT_RANGE": "הטווח שנבחר קצר מדי.\nהטווח שנבחר הוא: {X} {Y}, בעוד שהמינימום המותר הוא: {Z} {Y}."
 }

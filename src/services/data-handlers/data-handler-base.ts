@@ -14,6 +14,7 @@ export interface Trip {
 	calendarEvents: CalendarEvent[];
 	allEvents: AllEventsEvent[];
 	calendarLocale: LocaleCode;
+	id?: number; // for my trips page
 }
 
 export interface DBTrip extends Trip {

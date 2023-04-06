@@ -605,6 +605,17 @@ const RootRouter = () => {
 		const result = {};
 
 		for (const period of openingHours.periods) {
+			// open always
+			if (!period.close) {
+				result['SUNDAY'] = [
+					{
+						start: `00:00`,
+						end: `00:00`,
+					},
+				];
+				break;
+			}
+
 			const open = period.open;
 			const close = period.close;
 

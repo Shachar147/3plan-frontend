@@ -392,7 +392,12 @@ body {
 }
 
 .flex-row {
-	display: flex !important;
+	display: flex; //  !important <- not good. if something needs it, need to understand why.
+	flex-direction: row;
+}
+
+.fa.flex-row {
+	display: flex;
 	flex-direction: row;
 }
 
@@ -407,6 +412,10 @@ body {
 
 .flip-x {
 	transform: scaleX(-1);
+}
+
+.flip-y {
+	transform: scaleY(-1);
 }
 
 .flex-grow {
@@ -665,6 +674,14 @@ body.ltr {
 
 	.fc-event, .fc-event-main {
 		background-color: var(--invalid-red-background) !important;
+	}
+}
+
+.red-border {
+	border-color: var(--red) !important;
+
+	&:focus-visible{
+		outline: 1px solid var(--red);
 	}
 }
 
@@ -941,4 +958,14 @@ body.rtl {
 	.body-text-align {
 		text-align: right;
 	}
+}
+
+
+// remove autocomplete yellow background
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+	background-color: transparent;
+	-webkit-box-shadow: none;
+	-webkit-text-fill-color: inherit;
 }

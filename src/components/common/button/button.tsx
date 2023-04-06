@@ -38,7 +38,7 @@ const Button = (props: ButtonProps) => (
 	>
 		{props.image && <img alt={''} src={props.image} height={props.imageHeight} />}
 		{props.icon && <i className={`fa ${props.icon}`} aria-hidden="true" />}
-		{props.text}
+		<span className="white-space-pre">{props.text}</span>
 	</button>
 );
 

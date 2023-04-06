@@ -5,6 +5,8 @@ button {
 	border-radius: 20px;
 	min-height: 38px;
 	transition: background-color 0.3s ease-in-out;
+
+	user-select: none;
 }
 button:not(:disabled):hover {
 	border-color: #aaa;
@@ -22,6 +24,11 @@ button:disabled {
 
 	&.red {
 		background-color: var(--red) !important;
+		box-shadow: none !important;
+	}
+
+	&.black {
+		background-color: var(--black) !important;
 		box-shadow: none !important;
 	}
 
@@ -54,18 +61,27 @@ button:disabled {
 		}
 	}
 }
-.secondary-button:not(:disabled):hover {
-	border: 1px solid var(--blue) !important;
+
+button.secondary-button:not(:disabled):hover {
+	border: 1px solid var(--blue);
 }
 
-.secondary-button.black {
-	color: var(--black) !important;
+button.secondary-button.black:not(:disabled):hover {
 	border: 1px solid var(--gray);
 }
 
-.secondary-button.black:hover {
-	/*border: 1px solid var(--black) !important;*/
-	border-color: #aaa !important;
+button.secondary-button {
+	&.black {
+		color: var(--black) !important;
+		border: 1px solid var(--gray);
+
+		&:not(:disabled):hover {
+			/*border: 1px solid var(--black) !important;*/
+			//border-color: #aaa !important;
+			//border: 1px solid var(--white) !important;
+			background-color: #f3f3f3 !important; // #eaeff4
+		}
+	}
 }
 
 .dangerous-button {
@@ -87,6 +103,8 @@ button:disabled {
 	gap: 5px;
 	align-items: center;
 	transition: all 0.3s ease-in-out;
+
+	text-align: start;
 
 	&.red-color {
 		color: var(--red);

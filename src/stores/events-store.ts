@@ -67,7 +67,7 @@ export class EventStore {
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
-	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.combined);
+	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.map); // ViewMode.combined
 	@observable mobileViewMode = DataServices.LocalStorageService.getLastMobileViewMode(ViewMode.sidebar);
 	@observable hideCustomDates = this.viewMode == ViewMode.calendar;
 	@observable openCategories = observable.map<number, number>({});
@@ -344,8 +344,16 @@ export class EventStore {
 
 						// @ts-ignore
 						const dayOfWeek = eventStartDate.toLocaleDateString('en-US', options);
+
 						// @ts-ignore
-						let openingHoursOnThisDay = e.openingHours[dayOfWeek.toUpperCase()];
+						const a = e.openingHours['SUNDAY'];
+						const is247 = a[0].start == '00:00' && a[0].end == '00:00';
+
+						let openingHoursOnThisDay = is247
+							// @ts-ignore
+							? e.openingHours["SUNDAY"]
+							: // @ts-ignore
+							  e.openingHours[dayOfWeek.toUpperCase()];
 
 						if (!openingHoursOnThisDay) {
 							isValidToOpenHours = false;
@@ -506,6 +514,16 @@ export class EventStore {
 	@computed
 	get isCombinedView() {
 		return this.isMobile ? false : this.viewMode === ViewMode.combined;
+	}
+
+	@computed
+	get isHebrew() {
+		return this.calendarLocalCode === 'he';
+	}
+
+	@computed
+	get isEnglish() {
+		return this.calendarLocalCode === 'en';
 	}
 
 	@computed

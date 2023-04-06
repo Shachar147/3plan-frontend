@@ -59,6 +59,10 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 				className={getClasses(['datePickerInput'], className)}
 				ref={ref}
 				type="datetime-local"
+				onKeyDown={(e) => {
+					e.preventDefault();
+					return false;
+				}}
 				value={value}
 				onClick={() => {
 					onClick && onClick();
@@ -70,13 +74,14 @@ function DatePicker(props: DatePickerProps, ref: Ref<DatePickerRef> | any) {
 					setValue(e.target.value);
 					eventStore.modalValues[modalValueName] = e.target.value;
 				}}
-				placeholder={
-					placeholder
-						? placeholder
-						: placeholderKey
-						? TranslateService.translate(eventStore, placeholderKey)
-						: undefined
-				}
+				// causing problems in mobile:
+				// placeholder={
+				// 	placeholder
+				// 		? placeholder
+				// 		: placeholderKey
+				// 		? TranslateService.translate(eventStore, placeholderKey)
+				// 		: undefined
+				// }
 				autoComplete={autoComplete}
 				min={enforceMinMax ? `${eventStore.customDateRange.start}T00:00` : undefined}
 				max={enforceMinMax ? `${eventStore.customDateRange.end}T23:59` : undefined}

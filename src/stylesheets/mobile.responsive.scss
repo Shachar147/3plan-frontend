@@ -649,6 +649,16 @@
 	.sidebar-event-title-container {
 		flex-flow: row wrap;
 	}
+
+	.no-items-on-map-placeholder {
+		justify-content: flex-end;
+		padding-bottom: 30px;
+
+		.no-items-on-map-placeholder-image {
+			margin-top: 30px;
+			margin-bottom: 0;
+		}
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {
