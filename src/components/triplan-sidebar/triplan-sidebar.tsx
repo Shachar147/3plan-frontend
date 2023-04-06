@@ -1231,6 +1231,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			if (_onClick) {
 				_onClick();
 			} else {
+				runInAction(() => {
+					modalsStore.switchToViewMode();
+				});
 				ReactModalService.openEditSidebarEventModal(
 					eventStore,
 					event,

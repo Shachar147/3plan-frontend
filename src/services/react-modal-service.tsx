@@ -106,6 +106,7 @@ export const ReactModalRenderHelper = {
 					placeholderKey={extra.placeholderKey}
 					autoComplete={extra.autoComplete}
 					readOnly={extra.readOnly}
+					disabled={extra.readOnly} // otherwise we can change location via google maps
 				/>
 			);
 		}
@@ -163,6 +164,7 @@ export const ReactModalRenderHelper = {
 			value?: string;
 			disabled?: boolean;
 			enforceMinMax?: boolean;
+			readOnly?: boolean;
 		},
 		ref?: any
 	) => {
@@ -178,7 +180,7 @@ export const ReactModalRenderHelper = {
 				modalValueName={modalValueName}
 				placeholder={extra.placeholder}
 				placeholderKey={extra.placeholderKey}
-				readOnly={extra.disabled}
+				readOnly={extra.disabled || extra.readOnly}
 				enforceMinMax={extra.enforceMinMax}
 			/>
 		);
@@ -451,12 +453,14 @@ export const ReactModalRenderHelper = {
 						.replace(/\n^/, '')
 						.replace(/$\n/, '')
 						.split('\n') || [];
-				input = ReactModalRenderHelper.renderTextAreaInput(
-					eventStore,
-					row.settings.modalValueName,
-					row.settings.extra,
-					row.settings.ref
-				);
+				input = row.settings.extra.readOnly
+					? null
+					: ReactModalRenderHelper.renderTextAreaInput(
+							eventStore,
+							row.settings.modalValueName,
+							row.settings.extra,
+							row.settings.ref
+					  );
 
 				const sliderSettings = {
 					dots: true,
@@ -706,7 +710,7 @@ const ReactModalService = {
 						extra: {
 							id: 'new-icon',
 							value: initialData?.icon,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.ICON',
@@ -724,7 +728,7 @@ const ReactModalService = {
 								'MODALS.PLACEHOLDER.PREFIX'
 							)} ${TranslateService.translate(eventStore, 'MODALS.TITLE')}`,
 							value: initialData?.title,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.TITLE',
@@ -738,7 +742,7 @@ const ReactModalService = {
 						extra: {
 							placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
 							value: initialData?.category,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.CATEGORY',
@@ -752,7 +756,7 @@ const ReactModalService = {
 						extra: {
 							placeholderKey: 'MODALS.DESCRIPTION_PLACEHOLDER',
 							value: initialData.description,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.DESCRIPTION',
@@ -772,7 +776,7 @@ const ReactModalService = {
 							)} ${TranslateService.translate(eventStore, 'MODALS.DURATION')}`,
 							// placeholder: defaultTimedEventDuration,
 							value: initialData?.duration ?? defaultTimedEventDuration,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.DURATION',
@@ -787,7 +791,7 @@ const ReactModalService = {
 						extra: {
 							value: initialData?.priority ?? TriplanPriority.unset,
 							maxMenuHeight: 45 * 4,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.PRIORITY',
@@ -802,7 +806,7 @@ const ReactModalService = {
 						extra: {
 							value: initialData.preferredTime ?? TriplanEventPreferredTime.unset,
 							maxMenuHeight: 45 * 4,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.PREFERRED_TIME',
@@ -825,7 +829,7 @@ const ReactModalService = {
 							onKeyUp: setManualLocation,
 							autoComplete: 'off',
 							placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.LOCATION',
@@ -838,7 +842,7 @@ const ReactModalService = {
 						type: 'opening-hours',
 						extra: {
 							value: initialData.openingHours,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.OPENING_HOURS',
@@ -853,7 +857,7 @@ const ReactModalService = {
 						extra: {
 							placeholderKey: 'MODALS.IMAGES_PLACEHOLDER',
 							value: initialData.images,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.IMAGES',
@@ -868,7 +872,7 @@ const ReactModalService = {
 						extra: {
 							placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 							value: initialData.moreInfo,
-							readOnly: modalsStore?.viewOrEdit == 'view',
+							readOnly: modalsStore?.isViewMode,
 						},
 					},
 					textKey: 'MODALS.MORE_INFO',
@@ -1155,7 +1159,7 @@ const ReactModalService = {
 				moreInfo,
 			};
 		},
-		closeModal: (eventStore: EventStore) => {
+		closeModal: (eventStore: EventStore, modalsStore?: ModalsStore) => {
 			runInAction(() => {
 				if (eventStore.secondModalSettings?.show) {
 					eventStore.secondModalSettings.show = false;
@@ -1888,11 +1892,26 @@ const ReactModalService = {
 		window.openingHours = initialData.openingHours || undefined;
 
 		const onConfirm = async () => {
-			await handleEditSidebarEventResult(eventStore, event);
-			ReactModalService.internal.closeModal(eventStore);
+			if (modalsStore.isViewMode) {
+				runInAction(() => {
+					modalsStore.switchToEditMode();
+				});
+				ReactModalService.openEditSidebarEventModal(
+					eventStore,
+					event,
+					removeEventFromSidebarById,
+					addToEventsToCategories,
+					modalsStore
+				);
+			} else {
+				await handleEditSidebarEventResult(eventStore, event);
+				ReactModalService.internal.closeModal(eventStore);
+			}
 		};
 
-		const title = `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${event.title}`;
+		const title = modalsStore.isViewMode
+			? `${TranslateService.translate(eventStore, 'MODALS.VIEW_EVENT')}: ${event.title}`
+			: `${TranslateService.translate(eventStore, 'MODALS.EDIT_EVENT')}: ${event.title}`;
 		const inputs = ReactModalService.internal.getSidebarEventInputs(eventStore, initialData, modalsStore);
 
 		const content = (
@@ -1916,6 +1935,9 @@ const ReactModalService = {
 		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
 		ReactModalService.internal.openModal(eventStore, {
 			...settings,
+			confirmBtnText: modalsStore.isViewMode
+				? TranslateService.translate(eventStore, 'MODALS.EDIT')
+				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
 			title,
 			content,
 			onConfirm,

@@ -689,6 +689,10 @@ body.ltr {
 	max-width: 250px;
 }
 
+.max-height-250 {
+	max-height: 250px;
+}
+
 .align-items-start {
 	align-items: self-start;
 }
@@ -969,4 +973,10 @@ input:-webkit-autofill:active  {
 	-webkit-box-shadow: 0 0 0 60px #fafafa inset !important;
 	background-color: #fafafa !important;
 	background-clip: content-box !important;
+}
+
+textarea:read-only,
+input:read-only {
+	border: 0 !important;
+	background-color: white !important;
 }

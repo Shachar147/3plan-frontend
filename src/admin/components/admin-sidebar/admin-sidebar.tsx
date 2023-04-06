@@ -846,6 +846,9 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							className="sidebar-event-title-container"
 							title={'Edit'}
 							onClick={() => {
+								// runInAction(() => {
+								// 	modalsStore.switchToViewMode();
+								// });
 								ReactModalService.openEditSidebarEventModal(
 									eventStore,
 									event,
