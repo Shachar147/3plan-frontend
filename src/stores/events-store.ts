@@ -354,7 +354,7 @@ export class EventStore {
 						// @ts-ignore
 						const a = e.openingHours['SUNDAY'];
 						const b = Array.isArray(a) ? a[0] : a;
-						const is247 = b.start == '00:00' && b.end == '00:00';
+						const is247 = b && b.start == '00:00' && b.end == '00:00';
 
 						if (!is247) {
 							// @ts-ignore
