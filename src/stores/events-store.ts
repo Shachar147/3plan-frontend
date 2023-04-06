@@ -13,7 +13,7 @@ import {
 	TriplanPriority,
 	ViewMode,
 } from '../utils/enums';
-import { addDays, convertMsToHM, toDate } from '../utils/time-utils';
+import { addDays, convertMsToHM, getEndDate, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -235,6 +235,12 @@ export class EventStore {
 			const extractDetails = (event: CalendarEvent) => {
 				const location = event.location?.address;
 				const title = event.title;
+
+				// not sure how we got into this siutation need to check
+				if (event.start && event.duration && !event.end) {
+					// @ts-ignore
+					event.end = getEndDate(event.start, event.duration);
+				}
 				const startDate = new Date(event.start!.toString());
 				const endDate = event.allDay
 					? addDays(new Date(event.start!.toString()), 1)
@@ -347,11 +353,12 @@ export class EventStore {
 
 						// @ts-ignore
 						const a = e.openingHours['SUNDAY'];
-						const is247 = a[0].start == '00:00' && a[0].end == '00:00';
+						const b = Array.isArray(a) ? a[0] : a;
+						const is247 = b.start == '00:00' && b.end == '00:00';
 
 						let openingHoursOnThisDay = is247
-							// @ts-ignore
-							? e.openingHours["SUNDAY"]
+							? // @ts-ignore
+							  e.openingHours['SUNDAY']
 							: // @ts-ignore
 							  e.openingHours[dayOfWeek.toUpperCase()];
 
