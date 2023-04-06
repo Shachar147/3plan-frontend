@@ -97,6 +97,15 @@ export class DBService implements BaseDataHandler {
 		return trips;
 	}
 
+	async getTripsShort(eventStore: EventStore): Promise<Trip[]> {
+		const res: any = await apiGetPromise(this, '/trip/short');
+		const trips: Trip[] = [];
+		res.data.data.forEach((x: any) => {
+			trips.push(x as Trip);
+		});
+		return trips;
+	}
+
 	// --- SET ------------------------------------------------------------------------------
 	async setAllEvents(allEvents: AllEventsEvent[], tripName: string) {
 		return await apiPut(`/trip/name/${tripName}`, { allEvents });

@@ -1129,7 +1129,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						return x;
 					})
 					.filter(
-						(x) => x.preferredTime != undefined && x.preferredTime.toString() === preferredHour.toString()
+						(x: any) =>
+							x.preferredTime != undefined && x.preferredTime.toString() === preferredHour.toString()
 					)
 					.sort(sortByPriority);
 			});
