@@ -561,6 +561,7 @@ function _validateCalendarEventRequiredConditions(
 			'MODALS.ERROR.TITLE_CANNOT_BE_EMPTY',
 			'error'
 		);
+
 		return false;
 	}
 

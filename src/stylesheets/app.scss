@@ -1059,15 +1059,43 @@ input:read-only {
 		user-select: none;
 	}
 
+	input,
+	textarea,
+	.icon-selector div[class$='-control'],
+	.triplan-selector div[class$='-control'],
+	select {
+		div[id^='react-select-'][id$='-placeholder'],
+		&::placeholder {
+			color: #CCCCCC;
+		}
+	}
+
 	input[type="text"] {
 		&:focus,
 		&:active {
-			border-bottom: 1px solid var(--gray) !important;
+			// border-bottom: 1px solid var(--gray) !important;
+			//border: 1px solid var(--gray) !important;
+			border: 1px solid #ccc !important;
 		}
 	}
 
 	textarea {
-		background-color: #fafafa !important;
+		//background-color: #fafafa !important;
+
+		&:focus,
+		&:active {
+			//border: 1px solid var(--gray) !important;
+			border: 1px solid #ccc !important;
+		}
+	}
+	.triplan-selector,
+	.icon-selector {
+		input[type="text"] {
+			&:focus,
+			&:active {
+				border: 0 !important;
+			}
+		}
 	}
 }
 
