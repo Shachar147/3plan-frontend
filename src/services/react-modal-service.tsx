@@ -198,6 +198,7 @@ export const ReactModalRenderHelper = {
 			id?: string;
 			value?: string;
 			readOnly?: boolean;
+			showAsLink?: boolean; // more info
 		},
 		ref?: any
 	) => {
@@ -215,6 +216,7 @@ export const ReactModalRenderHelper = {
 				placeholder={extra.placeholder}
 				placeholderKey={extra.placeholderKey}
 				readOnly={extra.readOnly}
+				showAsLink={extra.showAsLink}
 			/>
 		);
 	},
@@ -888,6 +890,7 @@ const ReactModalService = {
 							placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 							value: initialData.moreInfo,
 							readOnly: modalsStore?.isViewMode,
+							showAsLink: true,
 						},
 					},
 					textKey: 'MODALS.MORE_INFO',
@@ -923,18 +926,27 @@ const ReactModalService = {
 			const inputs: any[] = [
 				{
 					settings: {
-						modalValueName: 'icon',
-						ref: eventStore.modalValuesRefs['icon'],
-						type: 'icon-selector',
+						modalValueName: 'location',
+						ref: eventStore.modalValuesRefs['location'],
+						type: 'text',
 						extra: {
-							id: 'new-icon',
-							value: initialData?.icon,
+							className: 'location-input',
+							value:
+								eventStore.modalValues['selectedLocation'] ||
+								initialData.location ||
+								selectedLocation ||
+								'',
+							onClick: initLocation,
+							onKeyUp: setManualLocation,
+							autoComplete: 'off',
+							placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
 							readOnly: modalsStore?.isViewMode,
+							eventId: eventId,
 						},
 					},
-					textKey: 'MODALS.ICON',
-					className: 'border-top-gray icon-row',
-					showOnMinimized: false,
+					textKey: 'MODALS.LOCATION',
+					className: 'border-top-gray location-row',
+					showOnMinimized: true,
 				},
 				{
 					settings: {
@@ -953,6 +965,20 @@ const ReactModalService = {
 					textKey: 'MODALS.TITLE',
 					className: 'border-top-gray name-row',
 					showOnMinimized: modalsStore?.isViewMode ? false : undefined,
+				},
+				{
+					settings: {
+						modalValueName: 'category',
+						ref: eventStore.modalValuesRefs['category'],
+						type: 'category-selector',
+						extra: {
+							placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
+							value: initialData?.category,
+							readOnly: modalsStore?.isViewMode,
+						},
+					},
+					textKey: 'MODALS.CATEGORY',
+					className: 'border-top-gray category-row',
 				},
 			];
 			inputs.push(
@@ -997,20 +1023,6 @@ const ReactModalService = {
 			);
 			inputs.push(
 				...[
-					{
-						settings: {
-							modalValueName: 'category',
-							ref: eventStore.modalValuesRefs['category'],
-							type: 'category-selector',
-							extra: {
-								placeholderKey: 'ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER',
-								value: initialData?.category,
-								readOnly: modalsStore?.isViewMode,
-							},
-						},
-						textKey: 'MODALS.CATEGORY',
-						className: 'border-top-gray category-row',
-					},
 					{
 						settings: {
 							modalValueName: 'description',
@@ -1058,27 +1070,18 @@ const ReactModalService = {
 					},
 					{
 						settings: {
-							modalValueName: 'location',
-							ref: eventStore.modalValuesRefs['location'],
-							type: 'text',
+							modalValueName: 'icon',
+							ref: eventStore.modalValuesRefs['icon'],
+							type: 'icon-selector',
 							extra: {
-								className: 'location-input',
-								value:
-									eventStore.modalValues['selectedLocation'] ||
-									initialData.location ||
-									selectedLocation ||
-									'',
-								onClick: initLocation,
-								onKeyUp: setManualLocation,
-								autoComplete: 'off',
-								placeholder: `${TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}`,
+								id: 'new-icon',
+								value: initialData?.icon,
 								readOnly: modalsStore?.isViewMode,
-								eventId: eventId,
 							},
 						},
-						textKey: 'MODALS.LOCATION',
-						className: 'border-top-gray location-row',
-						showOnMinimized: true,
+						textKey: 'MODALS.ICON',
+						className: 'border-top-gray icon-row',
+						showOnMinimized: false,
 					},
 					{
 						settings: {
@@ -1119,6 +1122,7 @@ const ReactModalService = {
 								placeholderKey: 'MODALS.MORE_INFO_PLACEHOLDER',
 								value: initialData.moreInfo,
 								readOnly: modalsStore?.isViewMode,
+								showAsLink: true,
 							},
 						},
 						textKey: 'MODALS.MORE_INFO',

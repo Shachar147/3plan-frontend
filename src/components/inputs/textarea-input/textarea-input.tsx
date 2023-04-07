@@ -22,6 +22,8 @@ interface TextAreaInputProps {
 	onChange?: (e: any) => void;
 	value?: string;
 	readOnly?: boolean;
+
+	showAsLink?: boolean; // for more info
 }
 export interface TextAreaInputRef {
 	getValue(): string;
@@ -41,8 +43,17 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
 
 	const readOnlyRows = props.readOnly ? value?.split('\n')?.length ?? 2 : undefined;
 
+	const textOrLink =
+		props.showAsLink && value ? (
+			<a href={value} target={'_blank'}>
+				{TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE')}
+			</a>
+		) : (
+			value ?? '-'
+		);
+
 	const content = props.readOnly ? (
-		<div className="white-space-pre-line">{value ?? '-'}</div>
+		<div className="white-space-pre-line">{textOrLink}</div>
 	) : (
 		<textarea
 			rows={readOnlyRows ? Math.max(readOnlyRows, 2) : rows ?? 3}
