@@ -459,16 +459,18 @@ export const ReactModalRenderHelper = {
 
 				const hasImages = images && images.length > 0 && !(images.length === 1 && images[0] === '');
 
-				input = row.settings.extra.readOnly
-					? !hasImages
-						? '-'
-						: null
-					: ReactModalRenderHelper.renderTextAreaInput(
-							eventStore,
-							row.settings.modalValueName,
-							row.settings.extra,
-							row.settings.ref
-					  );
+				input = row.settings.extra.readOnly ? (
+					!hasImages ? (
+						<div className="width-100-percents">-</div>
+					) : null
+				) : (
+					ReactModalRenderHelper.renderTextAreaInput(
+						eventStore,
+						row.settings.modalValueName,
+						row.settings.extra,
+						row.settings.ref
+					)
+				);
 
 				const sliderSettings = {
 					dots: true,

@@ -1348,7 +1348,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	}
 
 	return (
-		<div className={'external-events-container bright-scrollbar'}>
+		<div
+			className={getClasses(
+				'external-events-container bright-scrollbar',
+				!eventStore.isMobile && eventStore.viewMode,
+				!eventStore.isMobile && 'pc'
+			)}
+		>
 			{renderCustomDates()}
 			<div>
 				<div

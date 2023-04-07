@@ -863,6 +863,9 @@ export class EventStore {
 
 	@action
 	autoOpenDistanceSidebarGroup() {
+		// disable this feature for now, it's annoying.
+		return;
+
 		if (this.closedDistanceAutoOpened) {
 			return;
 		}

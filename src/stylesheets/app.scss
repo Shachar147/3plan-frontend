@@ -312,6 +312,14 @@ body {
 	margin-inline: 0;
 }
 
+.margin-top-2 {
+	margin-top: 2px;
+}
+
+.margin-top-3 {
+	margin-top: 3px;
+}
+
 .margin-top-5 {
 	margin-top: 5px;
 }
@@ -774,6 +782,12 @@ a.disabled {
 }
 
 .images-input {
+
+	// make it be aligned center
+	display: flex;
+	flex: 1 1 0;
+	align-items: center;
+
 	.image-gallery-left-nav,
 	.image-gallery-right-nav {
 		display: none;
@@ -838,6 +852,14 @@ a.disabled {
 
 .text-align-center {
 	text-align: center;
+}
+
+.text-align-left {
+	text-align: left;
+}
+
+.text-align-right {
+	text-align: right;
 }
 
 a.text-decoration-none {
@@ -1015,4 +1037,55 @@ input:read-only {
 }
 .triplan-selector {
 	max-width: unset;
+}
+
+// style inputs
+.input-with-label {
+
+	input,
+	textarea,
+	select,
+	.icon-selector div[class$='-control'],
+	.triplan-selector div[class$='-control']{
+		border-top: 0 !important;
+		border-left: 0 !important;
+		border-right: 0 !important;
+		border-radius: 0 !important;
+		border-bottom: 0 !important;
+		//border-color: var(--blue-gray) !important;
+		//color: var(--blue-gray) !important;
+		color: #3a4654 !important;
+		//font-size: 20px !important;
+		user-select: none;
+	}
+
+	input[type="text"] {
+		&:focus,
+		&:active {
+			border-bottom: 1px solid var(--gray) !important;
+		}
+	}
+
+	textarea {
+		background-color: #fafafa !important;
+	}
+}
+
+.images-row {
+	.triplan-textarea-input {
+		width: 100%;
+	}
+}
+
+// limit the views to 100vh minus the header and the gaps around it, to make the whole view appear without window scroll.
+// this way sidebar and the main content will have their own scrolls.
+// added only to pc.
+.external-events-container.pc{
+	&:not(.combined) {
+		max-height: calc(100vh - 180px) !important;
+	}
+}
+.calender-container.pc,
+.list-container.pc {
+	max-height: calc(100vh - 180px) !important;
 }

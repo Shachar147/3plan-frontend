@@ -604,6 +604,11 @@
 		}
 		div[class$='ValueContainer'],
 		.opening-hours-details,
+		.triplan-textarea-input,
+		.triplan-text-input,
+		.triplan-selector,
+		.triplan-date-picker-input,
+		.location-input-container,
 		input,
 		select,
 		textarea {
@@ -658,6 +663,57 @@
 			margin-top: 30px;
 			margin-bottom: 0;
 		}
+	}
+
+	// image gallery on mobile - prevent it from being cut off.
+	.slick-list,
+	.slick-slide,
+	.slick-dots{
+		 max-width: 150px !important;
+		//max-width: CALC(100% - 30px);
+	}
+
+	.slider-image {
+		max-width: 125px !important;
+	}
+	.slick-slide {
+		display: flex !important;
+		justify-content: center;
+		align-items: center;
+		//background-color: red;
+		height: 150px;
+	}
+
+	.slick-dots {
+		// overflow: hidden;
+		li {
+			margin: 0 !important;
+		}
+	}
+	.slick-prev,
+	.slick-next {
+		background-color: white;
+		width:30px;
+		height: 30px;
+		z-index:99;
+	}
+
+	.slick-prev {
+		left: 0 !important;
+	}
+	.slick-next {
+		right: 0 !important;
+	}
+
+	.opening-hours-details, .opening-hours-note {
+		white-space:pre-line;
+		word-break: break-word;
+	}
+
+	.location-input {
+		//min-width: unset !important;
+		width: 100% !important;
+		max-width: 100% !important;
 	}
 }
 

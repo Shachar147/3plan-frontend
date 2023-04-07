@@ -410,11 +410,11 @@ const RootRouter = () => {
 		}
 
 		const oldHoursWarning = isOldOpeningHours
-			? `<div class='red-color white-space-pre font-size-10 margin-top-5'>${TranslateService.translate(
+			? `<div class='red-color opening-hours-note white-space-pre font-size-10 margin-top-5'>${TranslateService.translate(
 					eventStore,
 					'NOTE.OLD_OPENING_HOURS'
 			  )}</div>`
-			: `<div class='gray-color white-space-pre font-size-10 margin-top-5'>${TranslateService.translate(
+			: `<div class='gray-color opening-hours-note white-space-pre font-size-10 margin-top-5'>${TranslateService.translate(
 					eventStore,
 					'NOTE.OPENING_HOURS_MAY_CHANGE'
 			  )}</div>`;

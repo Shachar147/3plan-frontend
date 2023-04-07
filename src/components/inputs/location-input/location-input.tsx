@@ -25,18 +25,31 @@ function LocationInput(props: LocationInputProps, ref: Ref<TextInputRef> | any) 
 		setShowIcon(shouldShow);
 	}, [eventStore.forceUpdate]);
 
+	const address = eventStore.modalValues[props.modalValueName]?.address ?? '-';
+
+	const content = props.readOnly ? (
+		<div className="flex-row gap-4 text-align-left align-items-start">
+			<div>{address}</div>
+			{showIcon && (
+				<i data-testid={`data-test-id-${props.modalValueName}`} className={`fa fa-map-marker margin-top-3`} />
+			)}
+		</div>
+	) : (
+		<TextInput
+			id={`location-${eventStore.forceUpdate}`}
+			{...props}
+			value={eventStore.modalValues[props.modalValueName]?.address}
+			icon={showIcon ? 'fa fa-map-marker' : undefined}
+		/>
+	);
+
 	return (
 		<div
 			className="location-input-container flex-column"
 			key={`location-input-${eventStore.modalValues[props.modalValueName]?.address}`}
 		>
-			<TextInput
-				id={`location-${eventStore.forceUpdate}`}
-				{...props}
-				value={eventStore.modalValues[props.modalValueName]?.address}
-				icon={showIcon ? 'fa fa-map-marker' : undefined}
-			/>
-			{props.showOnMapLink && props.eventId && (
+			{content}
+			{props.showOnMapLink && props.eventId && showIcon && (
 				<Button
 					flavor={ButtonFlavor.link}
 					className="show-on-map-link"

@@ -898,7 +898,13 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 	};
 
 	return (
-		<div className={'external-events-container bright-scrollbar'}>
+		<div
+			className={getClasses(
+				'external-events-container bright-scrollbar',
+				!eventStore.isMobile && eventStore.viewMode,
+				!eventStore.isMobile && 'pc'
+			)}
+		>
 			<div>
 				<div
 					className={'flex-row gap-10 sticky-0'}

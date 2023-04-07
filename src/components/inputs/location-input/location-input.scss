@@ -18,6 +18,11 @@
 
   input.location-input {
     padding-inline-end: 27px !important;
+
+    &:read-only {
+      color: black !important;
+      opacity: 1 !important;
+    }
   }
 }
 

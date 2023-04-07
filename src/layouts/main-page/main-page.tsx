@@ -207,7 +207,8 @@ function MainPage(props: MainPageProps) {
 			<div
 				className={getClasses(
 					['list-container flex-1-1-0'],
-					!eventStore.isListView && 'opacity-0 position-absolute'
+					!eventStore.isListView && 'opacity-0 position-absolute',
+					!eventStore.isMobile && 'pc'
 				)}
 			>
 				<div className="list-view-mode-selector" key={`list-view-summary-mode-${eventStore.calendarLocalCode}`}>
@@ -262,7 +263,7 @@ function MainPage(props: MainPageProps) {
 					!shouldShow && 'display-none'
 				)}
 				style={{
-					height: 'CALC(100vh - 120px)',
+					height: 'CALC(100vh - 180px)',
 					minHeight: '260px',
 					resize: 'vertical',
 					overflow: 'auto',
@@ -278,7 +279,7 @@ function MainPage(props: MainPageProps) {
 
 	function renderCombinedView() {
 		return (
-			<div className="content-container width-100-percents flex-col gap-20">
+			<div className="combined-container width-100-percents flex-col gap-20">
 				{renderMapView()}
 				{renderCalendarView()}
 			</div>
@@ -312,7 +313,8 @@ function MainPage(props: MainPageProps) {
 			<div
 				className={getClasses(
 					['calender-container bright-scrollbar flex-1-1-0'],
-					!shouldDisplay && 'opacity-0 position-absolute'
+					!shouldDisplay && 'opacity-0 position-absolute',
+					!eventStore.isMobile && 'pc'
 				)}
 				ref={TriplanCalendarContainerRef}
 			>
