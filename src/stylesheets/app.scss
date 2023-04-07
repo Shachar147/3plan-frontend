@@ -62,19 +62,23 @@ body {
 }
 
 .fc-scroller::-webkit-scrollbar,
-.bright-scrollbar::-webkit-scrollbar {
+.bright-scrollbar::-webkit-scrollbar,
+textarea::-webkit-scrollbar,
+{
 	width: 10px;
 }
 
 .fc-scroller::-webkit-scrollbar-track,
-.bright-scrollbar::-webkit-scrollbar-track {
+.bright-scrollbar::-webkit-scrollbar-track,
+textarea::-webkit-scrollbar-track{
 	width: 15px;
 	background-color: #fafafa;
 	border-color: #dcdcdc;
 }
 
 .fc-scroller::-webkit-scrollbar-thumb,
-.bright-scrollbar::-webkit-scrollbar-thumb {
+.bright-scrollbar::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-thumb{
 	background-color: rgba(224, 224, 224, 0.5);
 	border-radius: 16px;
 	width: 6px;
@@ -453,6 +457,10 @@ body {
 
 .cursor-pointer {
 	cursor: pointer;
+}
+
+.cursor-grab {
+	cursor: grab;
 }
 
 .gap-2 {
@@ -1047,16 +1055,20 @@ input:read-only {
 	select,
 	.icon-selector div[class$='-control'],
 	.triplan-selector div[class$='-control']{
+
 		border-top: 0 !important;
 		border-left: 0 !important;
 		border-right: 0 !important;
 		border-radius: 0 !important;
 		border-bottom: 0 !important;
+
 		//border-color: var(--blue-gray) !important;
 		//color: var(--blue-gray) !important;
 		color: #3a4654 !important;
 		//font-size: 20px !important;
 		user-select: none;
+
+		// background-color: #fafafa !important;
 	}
 
 	input[type="text"] {
@@ -1088,4 +1100,8 @@ input:read-only {
 .calender-container.pc,
 .list-container.pc {
 	max-height: calc(100vh - 180px) !important;
+}
+
+textarea {
+	min-height: 60px;
 }

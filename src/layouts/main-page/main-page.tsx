@@ -27,6 +27,7 @@ import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header
 import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector';
 import _ from 'lodash';
 import { runInAction } from 'mobx';
+import SwipeableComponent from '../../components/swipable-component/swipable-component';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -280,8 +281,9 @@ function MainPage(props: MainPageProps) {
 	function renderCombinedView() {
 		return (
 			<div className="combined-container width-100-percents flex-col gap-20">
-				{renderMapView()}
-				{renderCalendarView()}
+				<SwipeableComponent div1Content={renderMapView()} div2Content={renderCalendarView() ?? <></>} />
+				{/*{renderMapView()}*/}
+				{/*{renderCalendarView()}*/}
 			</div>
 		);
 	}
