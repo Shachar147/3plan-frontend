@@ -28,6 +28,7 @@ import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-s
 import _ from 'lodash';
 import { runInAction } from 'mobx';
 import { getWebSocketsServerAddress } from '../../config/config';
+import { getUserId } from '../../helpers/auth';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -51,7 +52,7 @@ function MainPage(props: MainPageProps) {
 	// sockets - listen to server updates and update the data on all tabs.
 	useEffect(() => {
 		// Connect to the WebSocket server
-		const socket = new WebSocket(getWebSocketsServerAddress()); // Replace with your WebSocket server URL
+		const socket = new WebSocket(`${getWebSocketsServerAddress()}?uid=${getUserId()}`);
 
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {

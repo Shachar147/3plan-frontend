@@ -20,6 +20,15 @@ export function getUser() {
 	return undefined;
 }
 
+export function getUserId() {
+	const token = getToken();
+	if (token) {
+		const decodedPayload: { id?: string } = jwtDecode(token);
+		return decodedPayload.id;
+	}
+	return undefined;
+}
+
 export function isLoggedOn() {
 	// if (isDefined(Cookies.get('token')) && Cookies.get('token') !== ""){
 	//     let isLoggedOn = true;
