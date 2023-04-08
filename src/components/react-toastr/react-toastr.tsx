@@ -11,10 +11,8 @@ const Toast: React.FC<ToastProps> = ({ message, duration = 3000, show: _show = f
 	const [show, setShow] = useState(_show);
 
 	useEffect(() => {
-		console.log('here');
 		setShow(_show);
 		const timer = setTimeout(() => {
-			console.log('there');
 			setShow(false);
 		}, duration);
 		return () => clearTimeout(timer);
