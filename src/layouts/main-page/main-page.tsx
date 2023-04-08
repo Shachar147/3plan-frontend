@@ -53,14 +53,11 @@ function MainPage(props: MainPageProps) {
 		// Connect to the WebSocket server
 		const socket = new WebSocket(getWebSocketsServerAddress()); // Replace with your WebSocket server URL
 
-		console.log('aaa');
-
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {
 			// Parse the received data
 			const data = JSON.parse(event.data);
-
-			console.log('Here!', data);
+			console.log('here', data);
 		});
 
 		// Close the WebSocket connection when the component unmounts
