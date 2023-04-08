@@ -194,7 +194,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		info.event.remove();
 
 		// add it to our store (so it'll be updated on fullcalendar via calendarEvents prop)
-		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== id), calendarEvent]);
+		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id != id), calendarEvent]);
 
 		if (!eventStore.distanceSectionAutoOpened) {
 			eventStore.setSelectedEventForNearBy(calendarEvent);
