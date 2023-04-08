@@ -25,6 +25,7 @@ import {
 	DateRangeFormatted,
 	LocaleCode,
 	lsTripNameToTripName,
+	Trip,
 } from '../services/data-handlers/data-handler-base';
 import ListViewService from '../services/list-view-service';
 import { LocalStorageService } from '../services/data-handlers/local-storage-service';
@@ -725,7 +726,7 @@ export class EventStore {
 	}
 
 	@action
-	async setCalendarEvents(newCalenderEvents: CalendarEvent[]) {
+	async setCalendarEvents(newCalenderEvents: CalendarEvent[], updateServer: boolean = true) {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
@@ -735,13 +736,20 @@ export class EventStore {
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
 		this.allowRemoveAllCalendarEvents = false;
 		const defaultEvents = this.getJSCalendarEvents() as CalendarEvent[]; // todo: make sure this conversion not fucking things up
-		return this.dataService.setCalendarEvents(defaultEvents, this.tripName);
+
+		if (updateServer) {
+			return this.dataService.setCalendarEvents(defaultEvents, this.tripName);
+		}
+		return true;
 	}
 
 	@action
-	async setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>) {
+	async setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>, updateServer: boolean = true) {
 		this.sidebarEvents = newSidebarEvents;
-		return this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
+		if (updateServer) {
+			return this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
+		}
+		return true;
 	}
 
 	@action
@@ -812,14 +820,17 @@ export class EventStore {
 	}
 
 	@action
-	setCalendarLocalCode(newCalendarLocalCode: LocaleCode) {
+	setCalendarLocalCode(newCalendarLocalCode: LocaleCode, updateServer: boolean = true) {
 		this.calendarLocalCode = newCalendarLocalCode;
 
 		// change body class name
 		this.initBodyLocaleClassName();
 
 		DataServices.LocalStorageService.setCalendarLocale(newCalendarLocalCode);
-		return this.dataService.setCalendarLocale(this.calendarLocalCode, this.tripName);
+		if (updateServer) {
+			return this.dataService.setCalendarLocale(this.calendarLocalCode, this.tripName);
+		}
+		return true;
 	}
 
 	@action
@@ -941,18 +952,8 @@ export class EventStore {
 				this.isLoading = true;
 				const tripData = await DataServices.DBService.getTripData(name);
 				newDistanceResults = await DataServices.DBService.getDistanceResults(name);
-				runInAction(() => {
-					const { categories, allEvents, sidebarEvents, calendarEvents, dateRange } = tripData;
-					// this.setCalendarLocalCode(calendarLocale ?? tripData.calendarLocale);
-					// this.setCalendarLocalCode(tripData.calendarLocale);
-					this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
 
-					this.setSidebarEvents(sidebarEvents);
-					this.setCalendarEvents(calendarEvents);
-					this.customDateRange = dateRange;
-					this.allEvents = allEvents;
-					this.categories = categories;
-				});
+				this.updateTripData(tripData);
 
 				await this.waitIfNeeded(startTime);
 				runInAction(() => {
@@ -971,6 +972,20 @@ export class EventStore {
 				this.distanceResults = observable.map(newDistanceResults);
 			});
 		}
+	}
+
+	@action
+	updateTripData(tripData: Trip) {
+		const { categories, allEvents, sidebarEvents, calendarEvents, dateRange } = tripData;
+		// this.setCalendarLocalCode(calendarLocale ?? tripData.calendarLocale);
+		// this.setCalendarLocalCode(tripData.calendarLocale);
+		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale(), false);
+
+		this.setSidebarEvents(sidebarEvents, false);
+		this.setCalendarEvents(calendarEvents, false);
+		this.customDateRange = dateRange;
+		this.allEvents = allEvents;
+		this.categories = categories;
 	}
 
 	@action
