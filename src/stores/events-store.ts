@@ -17,7 +17,7 @@ import { addDays, convertMsToHM, getEndDate, toDate } from '../utils/time-utils'
 
 // @ts-ignore
 import _ from 'lodash';
-import { coordinateToString, getCoordinatesRangeKey, lockOrderedEvents } from '../utils/utils';
+import { coordinateToString, generate_uuidv4, getCoordinatesRangeKey, lockOrderedEvents } from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
 import {
 	AllEventsEvent,
@@ -128,14 +128,17 @@ export class EventStore {
 	@observable mapContainerRef: React.MutableRefObject<MapContainerRef> | null = null;
 	showEventOnMap: number | null = null;
 
+	toastrClearTimeout: NodeJS.Timeout | null = null;
 	@observable toastrSettings: {
 		show: boolean;
 		message: string;
 		duration: number;
+		key?: string;
 	} = {
 		show: false,
 		message: '',
 		duration: 3000,
+		key: generate_uuidv4(),
 	};
 
 	constructor() {
@@ -1306,14 +1309,21 @@ export class EventStore {
 			show: true,
 			duration,
 			message,
+			key: generate_uuidv4(),
 		};
 
-		setTimeout(() => {
-			this.toastrSettings = {
-				show: false,
-				message: '',
-				duration: 3000,
-			};
+		if (this.toastrClearTimeout) {
+			clearTimeout(this.toastrClearTimeout);
+		}
+
+		this.toastrClearTimeout = setTimeout(() => {
+			runInAction(() => {
+				this.toastrSettings = {
+					show: false,
+					message: '',
+					duration: 3000,
+				};
+			});
 		}, duration + 100);
 	}
 }
