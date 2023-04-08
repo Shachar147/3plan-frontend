@@ -61,6 +61,8 @@ function MainPage(props: MainPageProps) {
 			// Parse the received data
 			const data = JSON.parse(event.data);
 			console.log('here', data);
+
+			eventStore.updateTripData(data);
 		});
 
 		// Close the WebSocket connection when the component unmounts
