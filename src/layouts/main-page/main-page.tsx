@@ -52,7 +52,9 @@ function MainPage(props: MainPageProps) {
 	// sockets - listen to server updates and update the data on all tabs.
 	useEffect(() => {
 		// Connect to the WebSocket server
-		const socket = new WebSocket(`${getWebSocketsServerAddress()}?uid=${getUserId()}`);
+		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}`;
+		console.log({ url });
+		const socket = new WebSocket(url);
 
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {

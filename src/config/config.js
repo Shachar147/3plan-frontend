@@ -10,10 +10,11 @@ export function getServerAddress() {
 	}
 }
 
+// todo: check that it'll work on heroku (!!)
 export function getWebSocketsServerAddress() {
 	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
 	if (mode && mode.trim() === 'development') {
-		return 'ws://localhost:8080';
+		return 'ws://localhost:3001';
 	} else {
 		return 'ws://triplan-server.herokuapp.com';
 	}
