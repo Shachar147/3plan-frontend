@@ -1,0 +1,19 @@
+.toastr-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 16px;
+  text-align: center;
+  z-index:999999999;
+
+  .toast {
+    padding-block: 5px !important;
+    padding-inline: 10px !important;
+    transition: all 0.3s ease-in-out;
+    text-align: center;
+
+    &.show {
+      opacity: 0.7 !important;
+    }
+  }
+}

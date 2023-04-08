@@ -128,6 +128,16 @@ export class EventStore {
 	@observable mapContainerRef: React.MutableRefObject<MapContainerRef> | null = null;
 	showEventOnMap: number | null = null;
 
+	@observable toastrSettings: {
+		show: boolean;
+		message: string;
+		duration: number;
+	} = {
+		show: false,
+		message: '',
+		duration: 3000,
+	};
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {
@@ -1288,6 +1298,23 @@ export class EventStore {
 		const hashMap = JSON.parse(JSON.stringify(this.distanceResults));
 		const found = Object.keys(hashMap).find((x) => x.indexOf(coordinateKey) !== -1);
 		return !!found;
+	}
+
+	@action
+	showToastr(message: string, duration: number = 3000) {
+		this.toastrSettings = {
+			show: true,
+			duration,
+			message,
+		};
+
+		setTimeout(() => {
+			this.toastrSettings = {
+				show: false,
+				message: '',
+				duration: 3000,
+			};
+		}, duration + 100);
 	}
 }
 

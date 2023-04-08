@@ -29,6 +29,7 @@ import _ from 'lodash';
 import { runInAction } from 'mobx';
 import { getWebSocketsServerAddress } from '../../config/config';
 import { getUserId } from '../../helpers/auth';
+import Toast from '../../components/react-toastr/react-toastr';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -61,6 +62,8 @@ function MainPage(props: MainPageProps) {
 			// Parse the received data
 			const data = JSON.parse(event.data);
 			console.log('here', data);
+
+			eventStore.showToastr(TranslateService.translate(eventStore, 'UPDATED_ON_SERVER'), 1000);
 
 			eventStore.updateTripData(data);
 		});
@@ -399,31 +402,34 @@ function MainPage(props: MainPageProps) {
 	};
 
 	return (
-		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
-			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
-				<TriplanHeaderWrapper
-					{...headerProps}
-					currentMobileView={eventStore.mobileViewMode}
-					showTripName={true}
-				/>
-			</div>
-			<div className={'main-layout-container'}>
-				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
-					{eventStore.isLoading || isFetchingData || !eventStore.tripName?.length ? (
-						renderLoading()
-					) : (
-						<>
-							{renderSidebar()}
-							{eventStore.isMapView && renderMapView(eventStore.isMapView)}
-							{eventStore.isListView && renderListView()}
-							{eventStore.isCalendarView && renderCalendarView()}
-							{eventStore.isCombinedView && renderCombinedView()}
-						</>
-					)}
+		<>
+			<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
+				<div className="padding-inline-8 flex-column align-items-center justify-content-center">
+					<TriplanHeaderWrapper
+						{...headerProps}
+						currentMobileView={eventStore.mobileViewMode}
+						showTripName={true}
+					/>
 				</div>
+				<div className={'main-layout-container'}>
+					<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
+						{eventStore.isLoading || isFetchingData || !eventStore.tripName?.length ? (
+							renderLoading()
+						) : (
+							<>
+								{renderSidebar()}
+								{eventStore.isMapView && renderMapView(eventStore.isMapView)}
+								{eventStore.isListView && renderListView()}
+								{eventStore.isCalendarView && renderCalendarView()}
+								{eventStore.isCombinedView && renderCombinedView()}
+							</>
+						)}
+					</div>
+				</div>
+				{eventStore.isMobile && renderMobileFooterNavigator()}
 			</div>
-			{eventStore.isMobile && renderMobileFooterNavigator()}
-		</div>
+			<Toast {...eventStore.toastrSettings} />
+		</>
 	);
 }
 
