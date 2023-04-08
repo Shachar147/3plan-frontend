@@ -1,7 +1,7 @@
 .toastr-container {
   position: fixed;
   bottom: 0;
-  left: 0;
+  inset-inline-end: 0;
   padding: 16px;
   text-align: center;
   z-index:999999999;
