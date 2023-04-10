@@ -54,7 +54,7 @@ function MainPage(props: MainPageProps) {
 	useEffect(() => {
 		// Connect to the WebSocket server
 		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}`;
-		// console.log({ url });
+		console.log({ webSocketsUrl: url });
 		const socket = new WebSocket(url);
 
 		// Listen for messages from the server

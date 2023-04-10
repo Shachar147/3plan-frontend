@@ -111,20 +111,7 @@
 		margin-inline-end: 3px;
 		flex: 1 1 0;
 		max-width: max-content;
-		//flex-basis: content;
-		//flex-grow: 1;
-		//word-break: break-all;
-		//background-color: green !important;
-		//min-width: unset !important;
 		width: max-content !important;
-		////min-width: max-content;
-		////white-space: nowrap;
-		//
-		//
-		////flex-grow: 1; /* Allow the text to expand if there's not enough space */
-		//overflow: hidden; /* Hide overflowed text if it exceeds the container width */
-		//text-overflow: ellipsis; /* Show ellipsis (...) for truncated text */
-		//white-space: nowrap; /* Prevent line breaks for long text */
 	}
 
 	.sidebar-event-duration {
@@ -132,15 +119,10 @@
 		max-width: max-content;
 		flex-shrink: 1;
 		min-width: 0;
-		//background-color:red;
 	}
 
 	.sidebar-event-icon {
 		margin-inline-end: 3px;
-	}
-
-	.sidebar-event-duration {
-		//min-width: fit-content;
 	}
 }
 
