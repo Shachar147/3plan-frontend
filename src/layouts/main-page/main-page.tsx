@@ -69,14 +69,18 @@ function MainPage(props: MainPageProps) {
 			// Parse the received data
 			const data = JSON.parse(event.data);
 
-			debugger;
+			const tripData = JSON.parse(data.message);
+			if (eventStore.tripName == tripData.name) {
+				console.log('new message', tripData);
 
-			if (eventStore.tripName == data.tripName) {
-				console.log('new message', data);
+				const { updatedBySocketId } = data;
+				const isItMe = updatedBySocketId == axios.defaults.headers['sid'];
+				const toastrKey = isItMe ? 'SAVED_SUCCESSFULLY' : 'UPDATED_ON_SERVER';
+				const toastrIcon = isItMe ? 'icons8-done.gif' : 'icons8-error.gif';
+				const toastrDuration = isItMe ? 1500 : 5000;
+				eventStore.showToastr(TranslateService.translate(eventStore, toastrKey), toastrIcon, toastrDuration);
 
-				eventStore.showToastr(TranslateService.translate(eventStore, 'UPDATED_ON_SERVER'), 1000);
-
-				eventStore.updateTripData(data);
+				eventStore.updateTripData(tripData);
 
 				if (eventStore.isMobile) {
 					TriplanCalendarRef.current?.setMobileDefaultView();

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './react-toastr.scss';
+import { getClasses } from '../../utils/utils';
 
 interface ToastProps {
 	message: string;
 	duration?: number;
+	icon?: string;
 	show?: boolean;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, duration = 3000, show: _show = false }) => {
+const Toast: React.FC<ToastProps> = ({ message, duration = 3000, show: _show = false, icon }) => {
 	const [show, setShow] = useState(_show);
 
 	useEffect(() => {
@@ -19,11 +21,11 @@ const Toast: React.FC<ToastProps> = ({ message, duration = 3000, show: _show = f
 	}, [duration, _show]);
 
 	return (
-		<div className="toastr-container">
-			<div className={`toast ${show ? 'show' : ''}`}>
+		<div className={getClasses('toastr-container', show && 'show')}>
+			<div className={getClasses('toast', show && 'show')}>
 				<div className="flex-row gap-4">
 					{message}
-					<img src={'/images/icons8-done.gif'} height={20} />
+					<img src={`/images/${icon ?? 'icons8-done.gif'}`} height={20} />
 				</div>
 			</div>
 		</div>

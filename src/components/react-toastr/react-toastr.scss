@@ -1,10 +1,14 @@
 .toastr-container {
   position: fixed;
   bottom: 0;
-  right: 0;
+  right: -100%;
   padding: 16px;
   text-align: center;
   z-index:999999999;
+
+  &.show {
+    right: 0;
+  }
 
   .toast {
     padding-block: 5px !important;
@@ -21,6 +25,10 @@
 body.rtl {
   .toastr-container {
     right: unset;
-    left: 0;
+    left: -100%;
+
+    &.show {
+      left: 0;
+    }
   }
 }
