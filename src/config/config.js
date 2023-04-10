@@ -12,7 +12,7 @@ export function getServerAddress() {
 
 // todo: check that it'll work on heroku (!!)
 export function getWebSocketsServerAddress() {
-	return getServerAddress().replace('http://', 'ws://').replace('https://', 'ws://');
+	return getServerAddress().replace('http://', 'ws://').replace('https://', 'wss://');
 }
 
 export function getTinderServerAddress() {
