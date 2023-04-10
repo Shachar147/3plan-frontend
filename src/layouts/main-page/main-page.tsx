@@ -62,7 +62,7 @@ function MainPage(props: MainPageProps) {
 			// Parse the received data
 			const data = JSON.parse(event.data);
 
-			if (eventStore.tripName == data.tripName) {
+			if (eventStore.tripName == data.name) {
 				console.log('new message', data);
 
 				eventStore.showToastr(TranslateService.translate(eventStore, 'UPDATED_ON_SERVER'), 1000);
