@@ -1,6 +1,6 @@
 // @ts-ignore
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { getClasses, isHotelsCategory, Loader, LOADER_DETAILS } from '../../utils/utils';
+import { createCookie, generate_uuidv4, getClasses, isHotelsCategory, Loader, LOADER_DETAILS } from '../../utils/utils';
 import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/timegrid/main.css';
@@ -52,10 +52,16 @@ function MainPage(props: MainPageProps) {
 
 	// sockets - listen to server updates and update the data on all tabs.
 	useEffect(() => {
+		// Creating websocket id
+		const socket_id = generate_uuidv4();
+
 		// Connect to the WebSocket server
-		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}`;
+		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}&sid=${socket_id}`;
 		console.log({ webSocketsUrl: url });
 		const socket = new WebSocket(url);
+
+		// keep a uuid of this socket, to be able to know for each change we made if we're the ones that did it or not.
+		createCookie('ws-socket-id', socket_id);
 
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {
