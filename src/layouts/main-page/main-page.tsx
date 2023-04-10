@@ -28,8 +28,9 @@ import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-s
 import _ from 'lodash';
 import { runInAction } from 'mobx';
 import { getWebSocketsServerAddress } from '../../config/config';
-import { getUserId } from '../../helpers/auth';
+import { getToken, getUserId } from '../../helpers/auth';
 import Toast from '../../components/react-toastr/react-toastr';
+import axios from 'axios';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -61,12 +62,14 @@ function MainPage(props: MainPageProps) {
 		const socket = new WebSocket(url);
 
 		// keep a uuid of this socket, to be able to know for each change we made if we're the ones that did it or not.
-		createCookie('ws-socket-id', socket_id);
+		axios.defaults.headers['ws-socket-id'] = socket_id;
 
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {
 			// Parse the received data
 			const data = JSON.parse(event.data);
+
+			debugger;
 
 			if (eventStore.tripName == data.tripName) {
 				console.log('new message', data);
