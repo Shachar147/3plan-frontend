@@ -61,14 +61,17 @@ function MainPage(props: MainPageProps) {
 		socket.addEventListener('message', (event: MessageEvent) => {
 			// Parse the received data
 			const data = JSON.parse(event.data);
-			console.log('new message', data);
 
-			eventStore.showToastr(TranslateService.translate(eventStore, 'UPDATED_ON_SERVER'), 1000);
+			if (eventStore.tripName == data.tripName) {
+				console.log('new message', data);
 
-			eventStore.updateTripData(data);
+				eventStore.showToastr(TranslateService.translate(eventStore, 'UPDATED_ON_SERVER'), 1000);
 
-			if (eventStore.isMobile) {
-				TriplanCalendarRef.current?.setMobileDefaultView();
+				eventStore.updateTripData(data);
+
+				if (eventStore.isMobile) {
+					TriplanCalendarRef.current?.setMobileDefaultView();
+				}
 			}
 		});
 
