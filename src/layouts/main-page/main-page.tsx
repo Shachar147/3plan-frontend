@@ -62,7 +62,7 @@ function MainPage(props: MainPageProps) {
 		const socket = new WebSocket(url);
 
 		// keep a uuid of this socket, to be able to know for each change we made if we're the ones that did it or not.
-		axios.defaults.headers['ws-socket-id'] = socket_id;
+		axios.defaults.headers['sid'] = socket_id;
 
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {
