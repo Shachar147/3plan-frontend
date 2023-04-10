@@ -54,18 +54,22 @@ function MainPage(props: MainPageProps) {
 	useEffect(() => {
 		// Connect to the WebSocket server
 		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}`;
-		console.log({ url });
+		// console.log({ url });
 		const socket = new WebSocket(url);
 
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {
 			// Parse the received data
 			const data = JSON.parse(event.data);
-			console.log('here', data);
+			console.log('new message', data);
 
 			eventStore.showToastr(TranslateService.translate(eventStore, 'UPDATED_ON_SERVER'), 1000);
 
 			eventStore.updateTripData(data);
+
+			if (eventStore.isMobile) {
+				TriplanCalendarRef.current?.setMobileDefaultView();
+			}
 		});
 
 		// Close the WebSocket connection when the component unmounts
