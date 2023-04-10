@@ -78,6 +78,7 @@ function MainPage(props: MainPageProps) {
 				const toastrKey = isItMe ? 'SAVED_SUCCESSFULLY' : 'UPDATED_ON_SERVER';
 				const toastrIcon = isItMe ? 'icons8-done.gif' : 'icons8-error.gif';
 				const toastrDuration = isItMe ? 1500 : 5000;
+
 				eventStore.showToastr(TranslateService.translate(eventStore, toastrKey), toastrIcon, toastrDuration);
 
 				eventStore.updateTripData(tripData);
