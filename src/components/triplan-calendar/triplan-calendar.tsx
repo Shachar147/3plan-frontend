@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { buildCalendarEvent, CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
 import FullCalendar, { EventContentArg } from '@fullcalendar/react';
@@ -49,6 +49,22 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	const calendarComponentRef = useRef<FullCalendar>(null);
 	const { customDateRange } = props;
 	const [isDoubleClicked, setIsDoubleClicked] = useState(false);
+
+	const _events = useMemo(() => {
+		return eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents, eventStore).map((x) => ({
+			...x,
+			extendedProps: {
+				...x,
+			},
+			className: x.className ?? `priority-${x.priority}`,
+			editable: !eventStore.isMobile,
+		}));
+	}, [eventStore.filteredCalendarEvents, eventStore.isMobile]);
+
+	useEffect(() => {
+		// for every change in _events, refresh the sources. to prevent the bug of the duplication.
+		refreshSources();
+	}, [_events]);
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({
@@ -178,7 +194,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		info.event.remove();
 
 		// add it to our store (so it'll be updated on fullcalendar via calendarEvents prop)
-		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id !== id), calendarEvent]);
+		eventStore.setCalendarEvents([...eventStore.calendarEvents.filter((x) => x.id != id), calendarEvent]);
 
 		if (!eventStore.distanceSectionAutoOpened) {
 			eventStore.setSelectedEventForNearBy(calendarEvent);
@@ -220,7 +236,6 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const refreshSources = () => {
-		// todo - check if we still need this function. if not - remove
 		if (calendarComponentRef.current) {
 			calendarComponentRef.current
 				.getApi()
@@ -229,7 +244,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 					item.remove();
 				});
 
-			calendarComponentRef.current.getApi().addEventSource(eventStore.calendarEvents);
+			calendarComponentRef.current.getApi().addEventSource(_events);
 		}
 	};
 
@@ -382,14 +397,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				droppable={true}
 				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
 				ref={calendarComponentRef}
-				events={eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents, eventStore).map((x) => ({
-					...x,
-					extendedProps: {
-						...x,
-					},
-					className: x.className ?? `priority-${x.priority}`,
-					editable: !eventStore.isMobile,
-				}))}
+				events={_events}
 				eventReceive={onEventReceive}
 				eventClick={onEventClick}
 				eventChange={handleEventChange}

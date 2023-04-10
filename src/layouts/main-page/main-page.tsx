@@ -7,7 +7,7 @@ import '@fullcalendar/timegrid/main.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './main-page.scss';
 
-import TriplanCalendar, { TriPlanCalendarRef } from '../../components/triplan-calendar/triplan-calendar';
+import TriplanCalendar from '../../components/triplan-calendar/triplan-calendar';
 import { eventStoreContext } from '../../stores/events-store';
 import { Observer, observer } from 'mobx-react';
 import { defaultEventsToCategories } from '../../utils/defaults';
@@ -27,6 +27,9 @@ import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header
 import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector';
 import _ from 'lodash';
 import { runInAction } from 'mobx';
+import { getWebSocketsServerAddress } from '../../config/config';
+import { getUserId } from '../../helpers/auth';
+import Toast from '../../components/react-toastr/react-toastr';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -46,6 +49,34 @@ function MainPage(props: MainPageProps) {
 	const [defaultCalendarEvents, setDefaultCalendarEvents] = useState<CalendarEvent[]>([]);
 
 	useHandleWindowResize();
+
+	// sockets - listen to server updates and update the data on all tabs.
+	useEffect(() => {
+		// Connect to the WebSocket server
+		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}`;
+		console.log({ webSocketsUrl: url });
+		const socket = new WebSocket(url);
+
+		// Listen for messages from the server
+		socket.addEventListener('message', (event: MessageEvent) => {
+			// Parse the received data
+			const data = JSON.parse(event.data);
+			console.log('new message', data);
+
+			eventStore.showToastr(TranslateService.translate(eventStore, 'UPDATED_ON_SERVER'), 1000);
+
+			eventStore.updateTripData(data);
+
+			if (eventStore.isMobile) {
+				TriplanCalendarRef.current?.setMobileDefaultView();
+			}
+		});
+
+		// Close the WebSocket connection when the component unmounts
+		return () => {
+			socket.close();
+		};
+	}, []);
 
 	useEffect(() => {
 		if (TriplanCalendarRef && TriplanCalendarRef.current) {
@@ -91,39 +122,6 @@ function MainPage(props: MainPageProps) {
 			eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(tripName));
 		}
 	}, [tripName, locale]);
-
-	// // todo: remove once we'll remove allEvents from trip.
-	// useEffect(() => {
-	// 	// update idtoevent, idtocategory and allevents array
-	// 	const arr = [...eventStore.allEventsComputed];
-	// 	const idToEvent: Record<string, SidebarEvent> = {};
-	// 	const idToCategory: Record<string, number> = {};
-	//
-	// 	const sidebarEvents: Record<number, SidebarEvent[]> = eventStore.sidebarEvents;
-	//
-	// 	Object.keys(sidebarEvents).map((category: string) => {
-	// 		const categoryId = Number(category);
-	// 		const categoryEvents: SidebarEvent[] = sidebarEvents[categoryId] ?? [];
-	// 		categoryEvents.forEach((event) => {
-	// 			if (event.priority) {
-	// 				event.className = `priority-${event.priority}`;
-	// 			}
-	// 			const eventId: string = event.id;
-	// 			idToEvent[eventId] = event;
-	// 			idToCategory[eventId] = categoryId;
-	// 		});
-	// 	});
-	//
-	// 	const existingIds = eventStore.allEventsComputed.map((e) => e.id.toString());
-	// 	Object.keys(idToEvent).forEach((eventId) => {
-	// 		if (existingIds.indexOf(eventId) === -1) {
-	// 			arr.push({ ...idToEvent[eventId], category: idToCategory[eventId].toString() });
-	// 		}
-	// 	});
-	//
-	// 	// ERROR HANDLING: todo add try/catch & show a message if fails
-	// 	eventStore.setAllEvents(arr);
-	// }, [eventStore.allEventsComputed]);
 
 	// ERROR HANDLING: todo add try/catch & show a message if fails
 	function addEventToSidebar(event: any): boolean {
@@ -408,31 +406,34 @@ function MainPage(props: MainPageProps) {
 	};
 
 	return (
-		<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
-			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
-				<TriplanHeaderWrapper
-					{...headerProps}
-					currentMobileView={eventStore.mobileViewMode}
-					showTripName={true}
-				/>
-			</div>
-			<div className={'main-layout-container'}>
-				<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
-					{eventStore.isLoading || isFetchingData || !eventStore.tripName?.length ? (
-						renderLoading()
-					) : (
-						<>
-							{renderSidebar()}
-							{eventStore.isMapView && renderMapView(eventStore.isMapView)}
-							{eventStore.isListView && renderListView()}
-							{eventStore.isCalendarView && renderCalendarView()}
-							{eventStore.isCombinedView && renderCombinedView()}
-						</>
-					)}
+		<>
+			<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
+				<div className="padding-inline-8 flex-column align-items-center justify-content-center">
+					<TriplanHeaderWrapper
+						{...headerProps}
+						currentMobileView={eventStore.mobileViewMode}
+						showTripName={true}
+					/>
 				</div>
+				<div className={'main-layout-container'}>
+					<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
+						{eventStore.isLoading || isFetchingData || !eventStore.tripName?.length ? (
+							renderLoading()
+						) : (
+							<>
+								{renderSidebar()}
+								{eventStore.isMapView && renderMapView(eventStore.isMapView)}
+								{eventStore.isListView && renderListView()}
+								{eventStore.isCalendarView && renderCalendarView()}
+								{eventStore.isCombinedView && renderCombinedView()}
+							</>
+						)}
+					</div>
+				</div>
+				{eventStore.isMobile && renderMobileFooterNavigator()}
 			</div>
-			{eventStore.isMobile && renderMobileFooterNavigator()}
-		</div>
+			<Toast {...eventStore.toastrSettings} />
+		</>
 	);
 }
 

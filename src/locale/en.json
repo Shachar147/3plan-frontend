@@ -481,5 +481,6 @@
 	"MODALS.ERROR.START_DATE_SMALLER": "Start date can't be smaller than the end date",
 	"MODALS.ERROR.TOO_LONG_RANGE": "Range too long.\nMax allowed range: {X} days.",
 	"MODALS.ERROR.TOO_SHORT_RANGE": "Range too short.\nSelected range is: {X} {Y}.\nMin allowed range: {Z} {Y}.",
-	"SHOW_ON_MAP": "Show on map"
+	"SHOW_ON_MAP": "Show on map",
+	"UPDATED_ON_SERVER": "Saved successfully"
 }

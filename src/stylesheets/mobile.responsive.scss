@@ -715,6 +715,14 @@
 		width: 100% !important;
 		max-width: 100% !important;
 	}
+
+	.toastr-container {
+		.toast {
+			&.show {
+				opacity: 1 !important;
+			}
+		}
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {
