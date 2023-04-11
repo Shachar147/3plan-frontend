@@ -385,36 +385,66 @@ export class EventStore {
 								isValidToOpenHours = false;
 								errorReason = TranslateService.translate(eventStore, 'CLOSED_ON_THIS_DAY');
 							} else {
-								let isWithinHours = false;
-
 								// old opening hours support
 								if (!Array.isArray(openingHoursOnThisDay)) {
 									openingHoursOnThisDay = [openingHoursOnThisDay];
 								}
+
+								let isWithinHours = false;
+								// check if there's a valid period on that day
 								openingHoursOnThisDay.forEach((period: { start: string; end: string }) => {
-									const startTimeString = period.start;
-									let [hours, minutes] = startTimeString.split(':');
-									const dtStart = new Date(e.start);
-									dtStart.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+									if (!isWithinHours) {
+										// dtstart
+										const startTimeString = period.start;
+										let [hours, minutes] = startTimeString.split(':');
+										const dtStart = new Date(e.start);
+										dtStart.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
 
-									const endTimeString = period.end;
-									[hours, minutes] = endTimeString.split(':');
-									const dtEnd = new Date(e.end);
-									dtEnd.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-									if (dtEnd.getTime() < dtStart.getTime()) {
-										dtEnd.setDate(dtEnd.getDate() + 1);
-									}
+										// dt end
+										const endTimeString = period.end;
+										[hours, minutes] = endTimeString.split(':');
+										const dtEnd = new Date(e.end);
+										dtEnd.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+										if (dtEnd.getTime() < dtStart.getTime()) {
+											dtEnd.setDate(dtEnd.getDate() + 1);
+										}
 
-									if (dtStart.getTime() > eventStartDate.getTime()) {
-										isWithinHours = false;
-										errorReason = TranslateService.translate(eventStore, 'INVALID_START_HOUR', {
-											X: startTimeString,
-										});
-									} else if (eventEndDate.getTime() > dtEnd.getTime()) {
-										isWithinHours = false;
-										errorReason = TranslateService.translate(eventStore, 'INVALID_END_HOUR', {
-											X: endTimeString,
-										});
+										// is invalid due to start time
+										if (dtStart.getTime() > eventStartDate.getTime()) {
+											isWithinHours = false;
+											if (openingHoursOnThisDay.length == 1) {
+												errorReason = TranslateService.translate(
+													eventStore,
+													'INVALID_START_HOUR',
+													{
+														X: startTimeString,
+													}
+												);
+											} else {
+												errorReason = TranslateService.translate(eventStore, 'INVALID_HOURS');
+											}
+										}
+										// is invalid due to end time
+										else if (eventEndDate.getTime() > dtEnd.getTime()) {
+											isWithinHours = false;
+
+											if (openingHoursOnThisDay.length == 1) {
+												errorReason = TranslateService.translate(
+													eventStore,
+													'INVALID_END_HOUR',
+													{
+														X: endTimeString,
+													}
+												);
+											} else {
+												errorReason = TranslateService.translate(eventStore, 'INVALID_HOURS');
+											}
+										}
+										// means it's valid
+										else {
+											isWithinHours = true;
+											errorReason = '';
+										}
 									}
 								});
 							}
@@ -435,7 +465,10 @@ export class EventStore {
 						e.className = e.className || '';
 						e.className = e.className.replaceAll(' red-background', '') + ' red-background';
 						e.className += ' red-background';
+						console.log({ id: e.id, timingError: errorReason });
 						eventsWithOpeningHoursProblems.push({ id: e.id, timingError: errorReason });
+					} else {
+						e.timingError = '';
 					}
 				}
 

@@ -474,6 +474,7 @@
 	"CLOSED_ON_THIS_DAY": "Closed on this day",
 	"INVALID_START_HOUR": "Place opens at {X}",
 	"INVALID_END_HOUR": "Place closes at {X}",
+	"INVALID_HOURS": "Place is closed on these hours",
 	"NO_ITEMS_ON_MAP_PLACEHOLDER.TITLE": "There are no items on your map!",
 	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1": "Use the search bar above the map to find places and add them quickly and easily!",
 	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1.MOBILE": "Use the search bar under the map to find places and add them quickly and easily!",

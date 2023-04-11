@@ -552,6 +552,7 @@
 	"CLOSED_ON_THIS_DAY": "המקום סגור ביום הזה",
 	"INVALID_START_HOUR": "המקום נפתח ב {X}",
 	"INVALID_END_HOUR": "המקום נסגר ב {X}",
+	"INVALID_HOURS": "המקום סגור בשעות אלה",
 	"NO_ITEMS_ON_MAP_PLACEHOLDER.TITLE": "אין לך מקומות במפה!",
 	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1": "השתמש בשורת החיפוש שמעל המפה על מנת להוסיף פעילויות בקלות ובמהירות!",
 	"NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1.MOBILE": "השתמש בשורת החיפוש שמתחת למפה על מנת להוסיף פעילויות בקלות ובמהירות!",
