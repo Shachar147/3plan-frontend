@@ -412,21 +412,3 @@ export function generate_uuidv4() {
 		return uuid.toString(16);
 	});
 }
-
-export function createCookie(name: string, value: any, days?: number) {
-	const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
-	let expires;
-	if (days) {
-		const date = new Date();
-		date.setTime(date.getTime() + days * MILLISECONDS_IN_DAY);
-		expires = '; expires=' + date.toUTCString();
-	} else {
-		expires = '';
-	}
-	document.cookie = name + '=' + value + expires + '; path=/';
-}
-
-// Function to delete a cookie by name
-export function deleteCookie(name: string) {
-	document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-}

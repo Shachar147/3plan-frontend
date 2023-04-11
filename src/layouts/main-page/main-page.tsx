@@ -1,6 +1,6 @@
 // @ts-ignore
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { createCookie, generate_uuidv4, getClasses, isHotelsCategory, Loader, LOADER_DETAILS } from '../../utils/utils';
+import { generate_uuidv4, getClasses, isHotelsCategory, Loader, LOADER_DETAILS } from '../../utils/utils';
 import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/timegrid/main.css';
