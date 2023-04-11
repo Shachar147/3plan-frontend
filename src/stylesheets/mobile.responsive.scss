@@ -69,7 +69,7 @@
 		.main-page {
 			// make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
 			.fc-view-harness {
-				min-height: 1775px !important;
+				min-height: 1820px !important;
 			}
 
 			.fc-scroller {
@@ -508,6 +508,14 @@
 	}
 
 	.main-page {
+		.mobile-header-search-container {
+			&.search-closed {
+				margin-top: 20px;
+			}
+		}
+	}
+
+	.main-page {
 		.main-page-calendar-view {
 			.custom-dates-line {
 				input[type='date'] {
@@ -722,6 +730,47 @@
 				opacity: 1 !important;
 			}
 		}
+	}
+
+	.list-container {
+		.list-view-mode-selector {
+			display: flex;
+			justify-content: center;
+		}
+	}
+
+	.main-layout-container {
+		&.list {
+			padding-bottom: 0 !important;
+
+			.main-layout {
+				padding-inline: 0;
+				width: 100%;
+				padding-block: 0;
+				background-color: transparent;
+
+				.list-container {
+					padding-bottom: 0 !important;
+					margin-bottom: 0 !important;
+					.list-view-mode-selector {
+						border-radius: 10px;
+					}
+				}
+			}
+
+			.list-view-day-title.position-sticky {
+				padding-inline: 5px;
+				margin-right: -5px;
+
+				height: 66px;
+				display: flex;
+				align-items: flex-end;
+			}
+		}
+	}
+
+	.trip-summary {
+		max-height: CALC(100vh - 155px);
 	}
 }
 

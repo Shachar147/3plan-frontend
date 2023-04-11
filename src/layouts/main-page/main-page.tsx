@@ -432,7 +432,12 @@ function MainPage(props: MainPageProps) {
 						showTripName={true}
 					/>
 				</div>
-				<div className={'main-layout-container'}>
+				<div
+					className={getClasses(
+						'main-layout-container',
+						eventStore.isMobile ? eventStore.mobileViewMode : eventStore.viewMode
+					)}
+				>
 					<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
 						{eventStore.isLoading || isFetchingData || !eventStore.tripName?.length ? (
 							renderLoading()

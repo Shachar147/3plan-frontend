@@ -1017,6 +1017,8 @@ const ListViewService = {
 		};
 
 		const FullSummary = () => {
+			// const divider = eventStore.isMobile ? '<br/><hr/>' : '<br/><hr/><br/>';
+			const divider = '<br/><hr/>';
 			return `
         <div style="max-width: 990px;">
             <h3><b><u>${tripSummaryTitle}</b></u></h3>
@@ -1029,7 +1031,7 @@ const ListViewService = {
                     ${summaryPerDay[dayTitle].join('<br/>').replaceAll('<br/><br/>', '<br/>')}
                 `;
 				})
-				.join('<br/><hr/><br/>')}
+				.join(divider)}
         </div>
     `;
 		};

@@ -328,6 +328,10 @@ body {
 	margin-top: 10px;
 }
 
+.margin-top-20 {
+	margin-top: 20px;
+}
+
 .margin-top-40 {
 	margin-top: 40px;
 }
@@ -1113,7 +1117,14 @@ input:read-only {
 		max-height: calc(100vh - 180px) !important;
 	}
 }
+
 .calender-container.pc,
 .list-container.pc {
 	max-height: calc(100vh - 180px) !important;
+}
+
+.combined-container {
+	.calender-container.pc {
+		max-height: unset !important;
+	}
 }

@@ -899,6 +899,11 @@ export class EventStore {
 	@action
 	setMobileViewMode(viewMode: ViewMode) {
 		this.mobileViewMode = viewMode;
+		if (viewMode == ViewMode.list) {
+			document.getElementById('root')!.classList.add('overflow-hidden');
+		} else {
+			document.getElementById('root')!.classList.remove('overflow-hidden');
+		}
 	}
 
 	@action
@@ -1115,6 +1120,7 @@ export class EventStore {
 	@action
 	setIsMobile(isMobile: boolean) {
 		this.isMobile = isMobile;
+		this.isSearchOpen = !isMobile; // by default - closed on mobile to have more screen space.
 	}
 
 	@action
