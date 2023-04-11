@@ -560,5 +560,6 @@
 	"MODALS.ERROR.TOO_LONG_RANGE": "הטווח שנבחר ארוך מדי.\nהזמן המקסימלי המותר הוא: {X} ימים.",
 	"MODALS.ERROR.TOO_SHORT_RANGE": "הטווח שנבחר קצר מדי.\nהטווח שנבחר הוא: {X} {Y}, בעוד שהמינימום המותר הוא: {Z} {Y}.",
 	"SHOW_ON_MAP": "הצג במפה",
-	"UPDATED_ON_SERVER": "נשמר בהצלחה"
+	"UPDATED_ON_SERVER": "עודכן מהשרת",
+	"SAVED_SUCCESSFULLY": "נשמר בהצלחה"
 }

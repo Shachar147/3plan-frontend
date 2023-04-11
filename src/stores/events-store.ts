@@ -133,10 +133,12 @@ export class EventStore {
 		show: boolean;
 		message: string;
 		duration: number;
+		icon?: string;
 		key?: string;
 	} = {
 		show: false,
 		message: '',
+		icon: 'icons-8-done.gif',
 		duration: 3000,
 		key: generate_uuidv4(),
 	};
@@ -1304,11 +1306,12 @@ export class EventStore {
 	}
 
 	@action
-	showToastr(message: string, duration: number = 3000) {
+	showToastr(message: string, icon: string = 'icons-8-done.gif', duration: number = 3000) {
 		this.toastrSettings = {
 			show: true,
 			duration,
 			message,
+			icon,
 			key: generate_uuidv4(),
 		};
 
@@ -1321,6 +1324,7 @@ export class EventStore {
 				this.toastrSettings = {
 					show: false,
 					message: '',
+					icon: 'icons-8-done.gif',
 					duration: 3000,
 				};
 			});

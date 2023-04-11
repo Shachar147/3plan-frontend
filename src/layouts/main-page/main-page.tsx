@@ -1,6 +1,6 @@
 // @ts-ignore
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { getClasses, isHotelsCategory, Loader, LOADER_DETAILS } from '../../utils/utils';
+import { generate_uuidv4, getClasses, isHotelsCategory, Loader, LOADER_DETAILS } from '../../utils/utils';
 import '@fullcalendar/core/main.css';
 import '@fullcalendar/daygrid/main.css';
 import '@fullcalendar/timegrid/main.css';
@@ -28,8 +28,9 @@ import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-s
 import _ from 'lodash';
 import { runInAction } from 'mobx';
 import { getWebSocketsServerAddress } from '../../config/config';
-import { getUserId } from '../../helpers/auth';
+import { getToken, getUserId } from '../../helpers/auth';
 import Toast from '../../components/react-toastr/react-toastr';
+import axios from 'axios';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -52,22 +53,35 @@ function MainPage(props: MainPageProps) {
 
 	// sockets - listen to server updates and update the data on all tabs.
 	useEffect(() => {
+		// Creating client id
+		const client_id = generate_uuidv4();
+
 		// Connect to the WebSocket server
-		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}`;
+		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}&cid=${client_id}`;
 		console.log({ webSocketsUrl: url });
 		const socket = new WebSocket(url);
+
+		// keep a uuid of this client, to be able to know for each change we made if we're the ones that did it or not.
+		axios.defaults.headers['cid'] = client_id;
 
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {
 			// Parse the received data
 			const data = JSON.parse(event.data);
 
-			if (eventStore.tripName == data.name) {
-				console.log('new message', data);
+			const tripData = JSON.parse(data.message);
+			if (eventStore.tripName == tripData.name) {
+				console.log('new message', tripData);
 
-				eventStore.showToastr(TranslateService.translate(eventStore, 'UPDATED_ON_SERVER'), 1000);
+				const { initiatedByClientId } = data;
+				const isItMe = initiatedByClientId == axios.defaults.headers['cid'];
+				const toastrKey = isItMe ? 'SAVED_SUCCESSFULLY' : 'UPDATED_ON_SERVER';
+				const toastrIcon = isItMe ? 'icons8-done.gif' : 'icons8-error.gif';
+				const toastrDuration = isItMe ? 1500 : 5000;
 
-				eventStore.updateTripData(data);
+				eventStore.showToastr(TranslateService.translate(eventStore, toastrKey), toastrIcon, toastrDuration);
+
+				eventStore.updateTripData(tripData);
 
 				if (eventStore.isMobile) {
 					TriplanCalendarRef.current?.setMobileDefaultView();
