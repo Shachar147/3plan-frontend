@@ -53,16 +53,16 @@ function MainPage(props: MainPageProps) {
 
 	// sockets - listen to server updates and update the data on all tabs.
 	useEffect(() => {
-		// Creating websocket id
-		const socket_id = generate_uuidv4();
+		// Creating client id
+		const client_id = generate_uuidv4();
 
 		// Connect to the WebSocket server
-		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}&sid=${socket_id}`;
+		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}&cid=${client_id}`;
 		console.log({ webSocketsUrl: url });
 		const socket = new WebSocket(url);
 
-		// keep a uuid of this socket, to be able to know for each change we made if we're the ones that did it or not.
-		axios.defaults.headers['sid'] = socket_id;
+		// keep a uuid of this client, to be able to know for each change we made if we're the ones that did it or not.
+		axios.defaults.headers['cid'] = client_id;
 
 		// Listen for messages from the server
 		socket.addEventListener('message', (event: MessageEvent) => {
@@ -73,8 +73,8 @@ function MainPage(props: MainPageProps) {
 			if (eventStore.tripName == tripData.name) {
 				console.log('new message', tripData);
 
-				const { updatedBySocketId } = data;
-				const isItMe = updatedBySocketId == axios.defaults.headers['sid'];
+				const { initiatedByClientId } = data;
+				const isItMe = initiatedByClientId == axios.defaults.headers['cid'];
 				const toastrKey = isItMe ? 'SAVED_SUCCESSFULLY' : 'UPDATED_ON_SERVER';
 				const toastrIcon = isItMe ? 'icons8-done.gif' : 'icons8-error.gif';
 				const toastrDuration = isItMe ? 1500 : 5000;
