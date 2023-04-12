@@ -107,8 +107,7 @@ export function formatTime(timeString: string) {
 export function getInputDateTimeValue(eventStore: EventStore, date?: Date, startDate?: string): string {
 	if (!date) {
 		if (startDate) {
-			// todo fix: timezone issue
-			return addHours(new Date(startDate.split('T')[0]), 1)
+			return addHours(new Date(startDate + 'Z'), 1)
 				.toISOString()
 				.slice(0, 16);
 		}

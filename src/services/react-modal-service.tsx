@@ -607,7 +607,6 @@ function _validateCalendarEventRequiredConditions(
 	}
 
 	if (new Date(startDate).getTime() < new Date(`${eventStore.customDateRange.start}T00:00`).getTime()) {
-		debugger;
 		ReactModalService.internal.alertMessage(
 			eventStore,
 			'MODALS.ERROR.TITLE',
@@ -948,7 +947,6 @@ const ReactModalService = {
 			const selectedLocation = window.selectedLocation;
 
 			const startDate = getInputDateTimeValue(eventStore, initialData?.start);
-			debugger;
 			const endDate = getInputDateTimeValue(eventStore, initialData?.end, startDate);
 
 			const inputs: any[] = [
@@ -2267,7 +2265,7 @@ const ReactModalService = {
 			const isOk = selectedEvent;
 
 			if (isOk) {
-				let initialData = allHotels.find((e) => Number(e.id) === Number(selectedEvent.value));
+				const initialData = allHotels.find((e) => Number(e.id) === Number(selectedEvent.value));
 
 				if (initialData) {
 					// create a new id to avoid deleting the hotel from the sidebar.
