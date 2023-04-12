@@ -98,6 +98,7 @@ export class EventStore {
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
+	@observable didChangeSearchOpenState = false;
 
 	@observable forceUpdate = 0;
 	@observable forceSetDraggable = 0;

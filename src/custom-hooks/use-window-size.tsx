@@ -47,7 +47,9 @@ export function useHandleWindowResize() {
 			}
 
 			// by default - closed on mobile to have more screen space.
-			eventStore.setIsSearchOpen(!isMobile);
+			if (!eventStore.didChangeSearchOpenState) {
+				eventStore.setIsSearchOpen(!isMobile);
+			}
 
 			eventStore.setIsMobile(isMobile);
 		});

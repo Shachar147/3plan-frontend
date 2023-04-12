@@ -70,6 +70,14 @@ function MyTrips() {
 				setApplyFadeIn(true);
 			}, 200);
 		}, 500);
+
+		document.getElementById('root')!.classList.add('overflow-hidden');
+		document.getElementById('root')!.classList.add('height-100vh');
+
+		return () => {
+			document.getElementById('root')!.classList.remove('overflow-hidden');
+			document.getElementById('root')!.classList.remove('height-100vh');
+		};
 	}, []);
 
 	useEffect(() => {

@@ -14,6 +14,7 @@ import { observer, Observer } from 'mobx-react';
 import { TriplanHeaderProps } from '../../triplan-header/triplan-header';
 import onClickOutside from 'react-onclickoutside';
 import ReactModalService from '../../../services/react-modal-service';
+import { runInAction } from 'mobx';
 
 const MobileNavbar = (options: TriplanHeaderProps) => {
 	const eventStore = useContext(eventStoreContext);
@@ -43,10 +44,13 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
 					onClick: () => {
 						const isOpen = !eventStore.isSearchOpen;
-						eventStore.setIsSearchOpen(isOpen);
-						if (!isOpen) {
-							eventStore.setSearchValue('');
-						}
+						runInAction(() => {
+							eventStore.setIsSearchOpen(isOpen);
+							eventStore.didChangeSearchOpenState = true;
+							if (!isOpen) {
+								eventStore.setSearchValue('');
+							}
+						});
 					},
 					icon: 'fa-search',
 					// @ts-ignore
