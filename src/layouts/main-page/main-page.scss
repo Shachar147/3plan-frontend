@@ -33,22 +33,26 @@
 	position: relative;
 }
 
-.list-container .list-view-mode-selector {
-	position: absolute;
-	right: unset;
-	left: 10px;
-	z-index: 5000;
+.list-container {
+	.list-view-mode-selector {
+		position: absolute;
+		right: unset;
+		left: 10px;
+		z-index: 5000;
 
-	// making sure it has a white background so when scrolling we won't see scrolled info (background will cover it)
-	width: CALC(100% - 25px);
-	direction: ltr;
-	background-color: white;
-	padding-block: 10px 20px;
+		// making sure it has a white background so when scrolling we won't see scrolled info (background will cover it)
+		width: CALC(100% - 25px);
+		direction: ltr;
+		background-color: white;
+		padding-block: 10px 20px;
+	}
 }
 
 body.rtl {
-	.list-container .list-view-mode-selector {
-		direction: rtl;
+	.list-container {
+		.list-view-mode-selector {
+			direction: rtl;
+		}
 	}
 }
 
@@ -61,8 +65,12 @@ body.rtl {
 	align-content: baseline;
 }
 
-.list-container .list-view-mode-selector .multiple-options-toggle-button.white {
-	height: 33px !important;
+.list-container {
+	.list-view-mode-selector {
+		.multiple-options-toggle-button.white {
+			height: 33px !important;
+		}
+	}
 }
 
 .header .end-side {

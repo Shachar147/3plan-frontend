@@ -104,8 +104,21 @@ export function formatTime(timeString: string) {
 	return padTo2Digits(parseInt(parts[0])) + ':' + padTo2Digits(parseInt(parts[1]));
 }
 
-export function getInputDateTimeValue(date?: Date): string | undefined {
-	if (!date) return undefined;
+export function getInputDateTimeValue(eventStore: EventStore, date?: Date, startDate?: string): string {
+	if (!date) {
+		if (startDate) {
+			return addHours(new Date(startDate + 'Z'), 1)
+				.toISOString()
+				.slice(0, 16);
+		}
+		// find the first available hour:
+		else if (eventStore.mostAvailableSlotInView && eventStore.mostAvailableSlotInView.start) {
+			return eventStore.mostAvailableSlotInView.start.toISOString().slice(0, 16);
+		}
+
+		// get first available hour
+		return new Date(eventStore.customDateRange.start).toISOString().slice(0, 16);
+	}
 	return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('.')[0];
 }
 

@@ -7,6 +7,7 @@ import MobileHeader from '../mobile-header/mobile-header';
 import TriplanSearch from './triplan-search/triplan-search';
 import { ViewMode } from '../../utils/enums';
 import TranslateService from '../../services/translate-service';
+import { getClasses } from '../../utils/utils';
 
 interface TriplanHeaderWrapperProps extends TriplanHeaderProps {
 	currentMobileView?: ViewMode;
@@ -36,7 +37,12 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 		return (
 			<>
 				<MobileHeader {...props} withSearch={withSearch} showTripName={showTripName} />
-				<div className="mobile-header-search-container">
+				<div
+					className={getClasses(
+						'mobile-header-search-container',
+						!eventStore.isSearchOpen && 'search-closed'
+					)}
+				>
 					{withSearch && (
 						<TriplanSearch
 							isHidden={!eventStore.isSearchOpen}

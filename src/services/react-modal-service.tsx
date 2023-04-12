@@ -17,6 +17,7 @@ import {
 } from '../utils/interfaces';
 import { TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../utils/enums';
 import {
+	addHoursToDate,
 	convertMsToHM,
 	formatDuration,
 	getInputDateTimeValue,
@@ -172,7 +173,9 @@ export const ReactModalRenderHelper = {
 		ref?: any
 	) => {
 		if (extra.value && !eventStore.modalValues[modalValueName]) {
-			eventStore.modalValues[modalValueName] = extra.value;
+			runInAction(() => {
+				eventStore.modalValues[modalValueName] = extra.value;
+			});
 		}
 
 		return (
@@ -603,6 +606,26 @@ function _validateCalendarEventRequiredConditions(
 		return false;
 	}
 
+	if (new Date(startDate).getTime() < new Date(`${eventStore.customDateRange.start}T00:00`).getTime()) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.START_DATE_OUT_OF_RANGE',
+			'error'
+		);
+		return false;
+	}
+
+	if (new Date(endDate).getTime() > new Date(`${eventStore.customDateRange.end}T23:59`).getTime()) {
+		ReactModalService.internal.alertMessage(
+			eventStore,
+			'MODALS.ERROR.TITLE',
+			'MODALS.ERROR.END_DATE_OUT_OF_RANGE',
+			'error'
+		);
+		return false;
+	}
+
 	return true;
 }
 
@@ -923,6 +946,9 @@ const ReactModalService = {
 			// @ts-ignore
 			const selectedLocation = window.selectedLocation;
 
+			const startDate = getInputDateTimeValue(eventStore, initialData?.start);
+			const endDate = getInputDateTimeValue(eventStore, initialData?.end, startDate);
+
 			const inputs: any[] = [
 				{
 					settings: {
@@ -993,7 +1019,7 @@ const ReactModalService = {
 									eventStore,
 									'MODALS.PLACEHOLDER.PREFIX'
 								)} ${TranslateService.translate(eventStore, 'MODALS.START_TIME')}`,
-								value: getInputDateTimeValue(initialData?.start),
+								value: startDate,
 								enforceMinMax: true,
 								readOnly: modalsStore?.isViewMode,
 							},
@@ -1011,7 +1037,7 @@ const ReactModalService = {
 									eventStore,
 									'MODALS.PLACEHOLDER.PREFIX'
 								)} ${TranslateService.translate(eventStore, 'MODALS.END_TIME')}`,
-								value: getInputDateTimeValue(initialData?.end),
+								value: endDate,
 								enforceMinMax: true,
 								readOnly: modalsStore?.isViewMode,
 							},

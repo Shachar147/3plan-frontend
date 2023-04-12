@@ -15,10 +15,12 @@ export interface Trip {
 	allEvents: AllEventsEvent[];
 	calendarLocale: LocaleCode;
 	id?: number; // for my trips page
+	lastUpdateAt?: string;
 }
 
 export interface DBTrip extends Trip {
 	id: number;
+	lastUpdateAt: string;
 }
 
 export interface DateRange {

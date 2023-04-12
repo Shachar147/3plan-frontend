@@ -249,7 +249,13 @@ function MyTrips() {
 		return (
 			<div className="flex-column gap-10">
 				<div className="my-trips bright-scrollbar">
-					{lsTrips.sort((a, b) => Number(b?.id ?? 0) - Number(a?.id ?? 0)).map(renderTrip)}
+					{lsTrips
+						.sort((a, b) => {
+							const b_timestamp = b.lastUpdateAt ? new Date(b.lastUpdateAt).getTime() : 0;
+							const a_timestamp = a.lastUpdateAt ? new Date(a.lastUpdateAt).getTime() : 0;
+							return b_timestamp - a_timestamp;
+						})
+						.map(renderTrip)}
 				</div>
 				<Button
 					text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}

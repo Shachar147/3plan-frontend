@@ -1,7 +1,7 @@
 import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { buildCalendarEvent, CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
-import FullCalendar, { EventContentArg } from '@fullcalendar/react';
+import FullCalendar, { EventApi, EventContentArg } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
@@ -22,6 +22,7 @@ import ReactModalService from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
+import { runInAction } from 'mobx';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -39,6 +40,10 @@ export interface TriPlanCalendarRef {
 	refreshSources: () => void;
 	switchToCustomView: () => boolean;
 	setMobileDefaultView: () => void;
+	mostAvailableSlotOnView: () => {
+		start: Date | null;
+		end: Date | null;
+	};
 }
 
 function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRef>) {
@@ -71,6 +76,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		refreshSources: refreshSources,
 		switchToCustomView: switchToCustomView,
 		setMobileDefaultView: setMobileDefaultView,
+		mostAvailableSlotOnView: mostAvailableSlotOnView,
 	}));
 
 	useEffect(() => {
@@ -364,6 +370,107 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			+
 		</div>
 	);
+
+	const getEventsInView = () => {
+		if (!calendarComponentRef.current) {
+			return [];
+		}
+
+		// Access the calendar object via the ref
+		const calendar = calendarComponentRef.current.getApi();
+
+		// Get the current view's start and end dates
+		const view = calendar.view;
+		const viewStartDate = new Date(view.activeStart.setHours(9)); // view.activeStart;
+		const viewEndDate = view.activeEnd;
+
+		// Get all events in the current view
+		const eventsInView: EventApi[] = calendar.getEvents().filter((event) => {
+			// Filter events based on their start and end dates
+			const eventStartDate = event.start!;
+			const eventEndDate = event.end! || event.start!; // Use start date as end date for single-day events
+			return eventStartDate >= viewStartDate && eventEndDate <= viewEndDate;
+		});
+
+		return eventsInView;
+	};
+
+	const mostAvailableSlotOnView = (): { start: Date | null; end: Date | null } => {
+		const MIN_START_HOUR = 8;
+		if (!calendarComponentRef.current) {
+			return {
+				start: null,
+				end: null,
+			};
+		}
+
+		// Access the calendar object via the ref
+		const calendar = calendarComponentRef.current.getApi();
+		const view = calendar.view;
+		const viewStartDate = new Date(view.activeStart.setHours(MIN_START_HOUR)); // view.activeStart;
+		const viewEndDate = view.activeEnd;
+		const eventsInView = getEventsInView();
+
+		// Sort events by their start time
+		eventsInView.sort(function (a, b) {
+			// @ts-ignore
+			return a.start - b.start;
+		});
+
+		let mostAvailableSlotStart: Date = viewStartDate;
+		let mostAvailableSlotEnd: Date = viewEndDate;
+		let foundSlot = false;
+
+		// Loop through events to find the most available slot
+		for (let i = 0; i < eventsInView.length; i++) {
+			const currentEvent = eventsInView[i];
+			const nextEvent = eventsInView[i + 1];
+
+			if (nextEvent) {
+				// Calculate the gap between the current event's end and the next event's start
+				const gapStart: Date = currentEvent.end!;
+				const gapEnd: Date = nextEvent.start!;
+
+				// Update the most available slot if the current gap is larger
+				// @ts-ignore
+				if (
+					!foundSlot ||
+					gapEnd.getTime() - gapStart.getTime() >
+						mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime()
+				) {
+					console.log({
+						gapStart,
+						gapEnd,
+						gap: gapEnd.getTime() - gapStart.getTime(),
+						prevGap: mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime(),
+					});
+
+					mostAvailableSlotStart = gapStart;
+					mostAvailableSlotEnd = gapEnd;
+					foundSlot = true;
+				}
+			}
+		}
+
+		// alert('Most available slot start:' + mostAvailableSlotStart);
+		// alert('Most available slot end:' + mostAvailableSlotEnd);
+
+		// dates are currently in the client's timezone and we want them in utc.
+		const offset = new Date().getTimezoneOffset() / 60;
+		const dtUTC = addHours(new Date(mostAvailableSlotStart), -1 * offset);
+		const dtEndUTC = addHours(new Date(mostAvailableSlotEnd), -1 * offset);
+
+		return {
+			start: dtUTC,
+			end: dtEndUTC,
+		};
+	};
+
+	useEffect(() => {
+		runInAction(() => {
+			eventStore.mostAvailableSlotInView = mostAvailableSlotOnView();
+		});
+	}, [calendarComponentRef.current, eventStore.calendarEvents, getEventsInView()]);
 
 	return (
 		<>

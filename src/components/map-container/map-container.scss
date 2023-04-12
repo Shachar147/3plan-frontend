@@ -70,7 +70,8 @@
 		//height: 270px;
 		//min-height: 270px;
 		min-height : 120px;
-		max-height: 50%;
+		//max-height: 50%;
+		max-height: CALC(100% - 10px);
 		resize: vertical;
 		overflow: auto;
 
@@ -113,7 +114,8 @@
 		}
 
 		.visible-items-fc-events {
-			max-height: 200px;
+			//max-height: 200px;
+			max-height: 100%;
 			overflow: auto;
 			padding-inline: 5px;
 

@@ -35,6 +35,7 @@ import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
+import { TriPlanCalendarRef } from '../components/triplan-calendar/triplan-calendar';
 
 const defaultModalSettings = {
 	show: false,
@@ -92,7 +93,7 @@ export class EventStore {
 	@observable createMode: boolean = false;
 	@observable listViewSummaryMode = ListViewSummaryMode.noDescriptions;
 	@observable dataService: LocalStorageService | DBService;
-	modalValues: any = {};
+	@observable modalValues: any = {};
 	@observable isLoading = false;
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
@@ -142,6 +143,8 @@ export class EventStore {
 		duration: 3000,
 		key: generate_uuidv4(),
 	};
+
+	@observable mostAvailableSlotInView: { start: Date | null; end: Date | null } | null = null;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -899,6 +902,11 @@ export class EventStore {
 	@action
 	setMobileViewMode(viewMode: ViewMode) {
 		this.mobileViewMode = viewMode;
+		if (viewMode == ViewMode.list) {
+			document.getElementById('root')!.classList.add('overflow-hidden');
+		} else {
+			document.getElementById('root')!.classList.remove('overflow-hidden');
+		}
 	}
 
 	@action
@@ -969,7 +977,7 @@ export class EventStore {
 
 	@action
 	async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean) {
-		const existingTrips = await this.dataService.getTrips(this);
+		const existingTrips = await this.dataService.getTripsShort(this);
 
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
@@ -1115,6 +1123,7 @@ export class EventStore {
 	@action
 	setIsMobile(isMobile: boolean) {
 		this.isMobile = isMobile;
+		this.isSearchOpen = !isMobile; // by default - closed on mobile to have more screen space.
 	}
 
 	@action

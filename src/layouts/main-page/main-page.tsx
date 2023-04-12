@@ -28,7 +28,7 @@ import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-s
 import _ from 'lodash';
 import { runInAction } from 'mobx';
 import { getWebSocketsServerAddress } from '../../config/config';
-import { getToken, getUserId } from '../../helpers/auth';
+import { getUserId } from '../../helpers/auth';
 import Toast from '../../components/react-toastr/react-toastr';
 import axios from 'axios';
 
@@ -432,7 +432,12 @@ function MainPage(props: MainPageProps) {
 						showTripName={true}
 					/>
 				</div>
-				<div className={'main-layout-container'}>
+				<div
+					className={getClasses(
+						'main-layout-container',
+						eventStore.isMobile ? eventStore.mobileViewMode : eventStore.viewMode
+					)}
+				>
 					<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
 						{eventStore.isLoading || isFetchingData || !eventStore.tripName?.length ? (
 							renderLoading()
