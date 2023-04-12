@@ -14,6 +14,7 @@ import {
 	addDays,
 	addHours,
 	addHoursToDate,
+	areDatesOnDifferentDays,
 	getDateRangeString,
 	isTodayInDateRange,
 	toDate,
@@ -429,7 +430,11 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			if (nextEvent) {
 				// Calculate the gap between the current event's end and the next event's start
 				const gapStart: Date = currentEvent.end!;
-				const gapEnd: Date = nextEvent.start!;
+				let gapEnd: Date = nextEvent.start!;
+
+				if (areDatesOnDifferentDays(currentEvent.end!, nextEvent.start!)) {
+					gapEnd = new Date(new Date(currentEvent.end!.toISOString()).setHours(23, 59));
+				}
 
 				// Update the most available slot if the current gap is larger
 				// @ts-ignore
