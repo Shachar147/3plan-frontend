@@ -35,6 +35,7 @@ import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
+import { TriPlanCalendarRef } from '../components/triplan-calendar/triplan-calendar';
 
 const defaultModalSettings = {
 	show: false,
@@ -142,6 +143,8 @@ export class EventStore {
 		duration: 3000,
 		key: generate_uuidv4(),
 	};
+
+	@observable firstAvailableSlot: { start: Date | null; end: Date | null } | null = null;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
