@@ -40,10 +40,10 @@ export interface TriPlanCalendarRef {
 	refreshSources: () => void;
 	switchToCustomView: () => boolean;
 	setMobileDefaultView: () => void;
-	// mostAvailableSlotOnView: () => {
-	// 	start: Date | null;
-	// 	end: Date | null;
-	// };
+	mostAvailableSlotOnView: () => {
+		start: Date | null;
+		end: Date | null;
+	};
 }
 
 function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRef>) {
@@ -396,96 +396,83 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const mostAvailableSlotOnView = (): { start: Date | null; end: Date | null } => {
+		const MIN_START_HOUR = 8;
 		if (!calendarComponentRef.current) {
 			return {
 				start: null,
 				end: null,
 			};
 		}
+
 		// Access the calendar object via the ref
 		const calendar = calendarComponentRef.current.getApi();
+		const view = calendar.view;
+		const viewStartDate = new Date(view.activeStart.setHours(MIN_START_HOUR)); // view.activeStart;
+		const viewEndDate = view.activeEnd;
+		const eventsInView = getEventsInView();
 
-		// Function to calculate the most available slot
-		const getMostAvailableSlot = (): { start: Date | null; end: Date | null } => {
-			// Get the current view's start and end dates
-			const view = calendar.view;
-			const viewStartDate = new Date(view.activeStart.setHours(9)); // view.activeStart;
-			const viewEndDate = view.activeEnd;
+		// Sort events by their start time
+		eventsInView.sort(function (a, b) {
+			// @ts-ignore
+			return a.start - b.start;
+		});
 
-			// Get all events in the current view
-			const eventsInView: EventApi[] = calendar.getEvents().filter((event) => {
-				// Filter events based on their start and end dates
-				const eventStartDate = event.start!;
-				const eventEndDate = event.end! || event.start!; // Use start date as end date for single-day events
-				return eventStartDate >= viewStartDate && eventEndDate <= viewEndDate;
-			});
+		let mostAvailableSlotStart: Date = viewStartDate;
+		let mostAvailableSlotEnd: Date = viewEndDate;
+		let foundSlot = false;
 
-			// Sort events by their start time
-			eventsInView.sort(function (a, b) {
+		// Loop through events to find the most available slot
+		for (let i = 0; i < eventsInView.length; i++) {
+			const currentEvent = eventsInView[i];
+			const nextEvent = eventsInView[i + 1];
+
+			if (nextEvent) {
+				// Calculate the gap between the current event's end and the next event's start
+				const gapStart: Date = currentEvent.end!;
+				const gapEnd: Date = nextEvent.start!;
+
+				// Update the most available slot if the current gap is larger
 				// @ts-ignore
-				return a.start - b.start;
-			});
+				if (
+					!foundSlot ||
+					gapEnd.getTime() - gapStart.getTime() >
+						mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime()
+				) {
+					console.log({
+						gapStart,
+						gapEnd,
+						gap: gapEnd.getTime() - gapStart.getTime(),
+						prevGap: mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime(),
+					});
 
-			let mostAvailableSlotStart: Date = viewStartDate;
-			let mostAvailableSlotEnd: Date = viewEndDate;
-			let foundSlot = false;
-
-			// Loop through events to find the most available slot
-			for (let i = 0; i < eventsInView.length; i++) {
-				const currentEvent = eventsInView[i];
-				const nextEvent = eventsInView[i + 1];
-
-				if (nextEvent) {
-					// Calculate the gap between the current event's end and the next event's start
-					const gapStart: Date = currentEvent.end!;
-					const gapEnd: Date = nextEvent.start!;
-
-					// Update the most available slot if the current gap is larger
-					// @ts-ignore
-					if (
-						!foundSlot ||
-						gapEnd.getTime() - gapStart.getTime() >
-							mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime()
-					) {
-						console.log({
-							gapStart,
-							gapEnd,
-							gap: gapEnd.getTime() - gapStart.getTime(),
-							prevGap: mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime(),
-						});
-
-						mostAvailableSlotStart = gapStart;
-						mostAvailableSlotEnd = gapEnd;
-						foundSlot = true;
-					}
+					mostAvailableSlotStart = gapStart;
+					mostAvailableSlotEnd = gapEnd;
+					foundSlot = true;
 				}
 			}
+		}
 
-			// alert('Most available slot start:' + mostAvailableSlotStart);
-			// alert('Most available slot end:' + mostAvailableSlotEnd);
+		// alert('Most available slot start:' + mostAvailableSlotStart);
+		// alert('Most available slot end:' + mostAvailableSlotEnd);
 
-			const offset = new Date().getTimezoneOffset() / 60;
-			const dtUTC = addHours(new Date(mostAvailableSlotStart), -1 * offset);
-			const dtEndUTC = addHours(new Date(mostAvailableSlotEnd), -1 * offset);
+		// dates are currently in the client's timezone and we want them in utc.
+		const offset = new Date().getTimezoneOffset() / 60;
+		const dtUTC = addHours(new Date(mostAvailableSlotStart), -1 * offset);
+		const dtEndUTC = addHours(new Date(mostAvailableSlotEnd), -1 * offset);
 
-			return {
-				start: dtUTC,
-				end: dtEndUTC,
-			};
+		return {
+			start: dtUTC,
+			end: dtEndUTC,
 		};
-
-		return getMostAvailableSlot();
 	};
 
 	useEffect(() => {
 		const { start, end } = mostAvailableSlotOnView();
-
+		// alert('Most available slot start:' + start);
+		// alert('Most available slot end:' + end);
 		runInAction(() => {
 			eventStore.firstAvailableSlot = { start, end };
 		});
-
-		// alert('Most available slot start:' + start);
-		// alert('Most available slot end:' + end);
 	}, [calendarComponentRef.current, eventStore.calendarEvents, getEventsInView()]);
 
 	return (
