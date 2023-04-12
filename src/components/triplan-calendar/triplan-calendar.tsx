@@ -471,7 +471,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// alert('Most available slot start:' + start);
 		// alert('Most available slot end:' + end);
 		runInAction(() => {
-			eventStore.firstAvailableSlot = { start, end };
+			eventStore.mostAvailableSlotInView = { start, end };
 		});
 	}, [calendarComponentRef.current, eventStore.calendarEvents, getEventsInView()]);
 

@@ -112,11 +112,8 @@ export function getInputDateTimeValue(eventStore: EventStore, date?: Date, start
 				.slice(0, 16);
 		}
 		// find the first available hour:
-		else if (eventStore.firstAvailableSlot) {
-			const dtStart: Date | null = eventStore.firstAvailableSlot.start;
-			if (dtStart) {
-				return dtStart.toISOString().slice(0, 16);
-			}
+		else if (eventStore.mostAvailableSlotInView && eventStore.mostAvailableSlotInView.start) {
+			return eventStore.mostAvailableSlotInView.start.toISOString().slice(0, 16);
 		}
 
 		// get first available hour

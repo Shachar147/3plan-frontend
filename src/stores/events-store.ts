@@ -144,7 +144,7 @@ export class EventStore {
 		key: generate_uuidv4(),
 	};
 
-	@observable firstAvailableSlot: { start: Date | null; end: Date | null } | null = null;
+	@observable mostAvailableSlotInView: { start: Date | null; end: Date | null } | null = null;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
