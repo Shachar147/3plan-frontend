@@ -770,7 +770,8 @@
 	}
 
 	.trip-summary {
-		max-height: CALC(100vh - 155px);
+		max-height: CALC(100vh - 125px);
+		margin-bottom: 60px;
 	}
 }
 

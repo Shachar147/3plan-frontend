@@ -92,7 +92,7 @@ export class EventStore {
 	@observable createMode: boolean = false;
 	@observable listViewSummaryMode = ListViewSummaryMode.noDescriptions;
 	@observable dataService: LocalStorageService | DBService;
-	modalValues: any = {};
+	@observable modalValues: any = {};
 	@observable isLoading = false;
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
@@ -974,7 +974,7 @@ export class EventStore {
 
 	@action
 	async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean) {
-		const existingTrips = await this.dataService.getTrips(this);
+		const existingTrips = await this.dataService.getTripsShort(this);
 
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
