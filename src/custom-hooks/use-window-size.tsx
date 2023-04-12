@@ -45,6 +45,10 @@ export function useHandleWindowResize() {
 					DataServices.LocalStorageService.getLastMobileViewMode(eventStore.mobileViewMode)
 				);
 			}
+
+			// by default - closed on mobile to have more screen space.
+			eventStore.setIsSearchOpen(!isMobile);
+
 			eventStore.setIsMobile(isMobile);
 		});
 	}, [windowResolution]);
