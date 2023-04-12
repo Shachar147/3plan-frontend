@@ -96,6 +96,11 @@ function MainPage(props: MainPageProps) {
 	}, []);
 
 	useEffect(() => {
+		// by default - closed on mobile to have more screen space.
+		eventStore.setIsSearchOpen(!eventStore.isMobile);
+	}, []);
+
+	useEffect(() => {
 		if (TriplanCalendarRef && TriplanCalendarRef.current) {
 			TriplanCalendarRef.current.switchToCustomView();
 		}

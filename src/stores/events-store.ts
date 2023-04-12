@@ -1123,7 +1123,6 @@ export class EventStore {
 	@action
 	setIsMobile(isMobile: boolean) {
 		this.isMobile = isMobile;
-		this.isSearchOpen = !isMobile; // by default - closed on mobile to have more screen space.
 	}
 
 	@action
