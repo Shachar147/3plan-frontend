@@ -481,18 +481,21 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	}, [calendarComponentRef.current, eventStore.calendarEvents, getEventsInView()]);
 
 	// if changed to timeGridAllDays, change start date
-	// working but takes a lot of resources I assume:
-	// useEffect(() => {
-	// 	const intervalId = setInterval(() => {
-	// 		const view = calendarComponentRef.current?.getApi().view;
-	// 		if (view && view.type === 'timeGridAllDays') {
-	// 			calendarComponentRef.current?.getApi().gotoDate(new Date(eventStore.customDateRange.start)); // Replace with the date you want to reset to
-	// 		}
-	// 	}, 1000);
-	// 	return () => {
-	// 		clearInterval(intervalId);
-	// 	};
-	// }, []);
+	useEffect(() => {
+		const handleAllDaysViewSelect = () => {
+			calendarComponentRef.current?.getApi().gotoDate(new Date(eventStore.customDateRange.start)); // Replace with the date you want to reset to
+		};
+
+		document
+			.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
+			?.addEventListener('click', handleAllDaysViewSelect);
+
+		return () => {
+			document
+				.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
+				?.removeEventListener('click', handleAllDaysViewSelect);
+		};
+	}, []);
 
 	useEffect(() => {}, []);
 
