@@ -37,20 +37,24 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 	const loginText = TranslateService.translate(eventStore, 'LOGIN');
 	const logoutText = `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`;
 
+	const toggleSearch = () => {
+		const isOpen = !eventStore.isSearchOpen;
+		runInAction(() => {
+			eventStore.setIsSearchOpen(isOpen);
+			eventStore.didChangeSearchOpenState = true;
+			if (!isOpen) {
+				eventStore.setSearchValue('');
+			}
+		});
+	};
+
 	const SidebarData: any[] = useMemo(
 		() =>
 			[
 				withSearch && {
 					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
 					onClick: () => {
-						const isOpen = !eventStore.isSearchOpen;
-						runInAction(() => {
-							eventStore.setIsSearchOpen(isOpen);
-							eventStore.didChangeSearchOpenState = true;
-							if (!isOpen) {
-								eventStore.setSearchValue('');
-							}
-						});
+						toggleSearch();
 					},
 					icon: 'fa-search',
 					// @ts-ignore
@@ -117,7 +121,14 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 			{() => (
 				<>
 					{/* All the icons now are white */}
-					<div className="mobile-navbar">
+					<div className="mobile-navbar flex-row gap-10 align-items-center justify-content-center">
+						{withSearch && (
+							<i
+								className={getClasses('fa fa-search', eventStore.isSearchOpen && 'blue-color')}
+								onClick={() => toggleSearch()}
+							/>
+						)}
+
 						<Link to="#" className="menu-bars">
 							<HamburgerIcon className={'black-background'} />
 						</Link>

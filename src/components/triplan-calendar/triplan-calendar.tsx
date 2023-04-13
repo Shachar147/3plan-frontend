@@ -1,7 +1,7 @@
 import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { buildCalendarEvent, CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
-import FullCalendar, { EventApi, EventContentArg } from '@fullcalendar/react';
+import FullCalendar, { EventApi, EventContentArg, ViewMountArg } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
@@ -13,7 +13,6 @@ import TranslateService from '../../services/translate-service';
 import {
 	addDays,
 	addHours,
-	addHoursToDate,
 	areDatesOnDifferentDays,
 	getDateRangeString,
 	isTodayInDateRange,
@@ -159,17 +158,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 		if (calendarComponentRef && calendarComponentRef.current) {
 			if (customDateRange && customDateRange.start && customDateRange.end) {
-				const dt = addHoursToDate(new Date(customDateRange.end), 24);
-				const year = dt.getFullYear();
-				const month = dt.getMonth() < 9 ? `0${dt.getMonth() + 1}` : dt.getMonth() + 1;
-				const day = dt.getDate();
-
-				// @ts-ignore
-				calendarComponentRef.current.getApi().changeView('timeGrid', {
-					start: customDateRange.start,
-					end: [year, month, day].join('-'),
-				});
-
+				calendarComponentRef.current.getApi().changeView('timeGridAllDays');
 				return true;
 			}
 		}
@@ -337,7 +326,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		: {
 				left: `prev,next${today}`,
 				center: 'customTitle',
-				right: 'dayGridMonth,timeGridWeek,timeGridThreeDay,timeGridDay',
+				right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridAllDays',
 		  };
 
 	const customButtons = {
@@ -479,6 +468,29 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		});
 	}, [calendarComponentRef.current, eventStore.calendarEvents, getEventsInView()]);
 
+	// if changed to timeGridAllDays, change start date
+	const handleAllDaysViewSelect = () => {
+		calendarComponentRef.current?.getApi().gotoDate(new Date(eventStore.customDateRange.start)); // Replace with the date you want to reset to
+	};
+	useEffect(() => {
+		document
+			.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
+			?.addEventListener('click', handleAllDaysViewSelect);
+
+		return () => {
+			document
+				.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
+				?.removeEventListener('click', handleAllDaysViewSelect);
+		};
+	}, []);
+
+	useEffect(() => {
+		const view = calendarComponentRef.current?.getApi().view;
+		if (view && view.type === 'timeGridAllDays') {
+			handleAllDaysViewSelect();
+		}
+	}, [eventStore.customDateRange]);
+
 	return (
 		<>
 			<FullCalendar
@@ -491,6 +503,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 						type: 'timeGrid',
 						duration: { days: 3 },
 						buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.3_DAYS'),
+					},
+					timeGridAllDays: {
+						type: 'timeGrid',
+						duration: { days: eventStore.tripTotalDaysNum },
+						buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.ALL_DAYS'),
+						visibleRange: eventStore.customDateRange,
 					},
 				}}
 				buttonText={buttonTexts}
@@ -529,7 +547,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				validRange={{
 					start: eventStore.customDateRange.start,
 					// end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
-					end: addDays(toDate(eventStore.customDateRange.end), 1),
+					end: addDays(toDate(eventStore.customDateRange.end), 0), // addDays(toDate(eventStore.customDateRange.end), 1),
 				}}
 				slotMinTime={'07:00'}
 				scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */

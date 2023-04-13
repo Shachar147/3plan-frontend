@@ -81,20 +81,6 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 					}}
 				/>
 			</div>
-			{!eventStore.isMobile && (
-				<div className={'custom-dates-submit'}>
-					<Button
-						flavor={ButtonFlavor.secondary}
-						className={'black'}
-						onClick={() => {
-							if (TriplanCalendarRef && TriplanCalendarRef.current) {
-								TriplanCalendarRef.current.switchToCustomView();
-							}
-						}}
-						text={TranslateService.translate(eventStore, 'CUSTOM_DATES.CHANGE_DATES')}
-					/>
-				</div>
-			)}
 		</div>
 	);
 };

@@ -71,6 +71,7 @@
 		//min-height: 270px;
 		min-height : 120px;
 		//max-height: 50%;
+		height: 50%;
 		max-height: CALC(100% - 10px);
 		resize: vertical;
 		overflow: auto;
@@ -345,6 +346,12 @@ body.rtl {
 		animation-duration: 2s;
 		animation-delay: 3s;
 		animation-iteration-count: infinite;
-	;
 	}
+}
+
+.pc-map-view-selection-container {
+	display: flex;
+	flex: 1 1 0;
+	min-width: 0;
+	justify-content: flex-end;
 }

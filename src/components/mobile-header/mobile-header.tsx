@@ -2,11 +2,11 @@ import MobileNavbar from './mobile-navbar/mobile-navbar';
 import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import { TriplanHeaderProps } from '../triplan-header/triplan-header';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './mobile-header.scss';
 import { eventStoreContext } from '../../stores/events-store';
 import { getClasses } from '../../utils/utils';
-import TranslateService from '../../services/translate-service';
+import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 
 interface MobileHeaderProps extends TriplanHeaderProps {
 	showTripName?: boolean;
@@ -16,7 +16,6 @@ interface MobileHeaderProps extends TriplanHeaderProps {
 function MobileHeader(options: MobileHeaderProps) {
 	const { withLogo = false, showTripName } = options;
 	const eventStore = useContext(eventStoreContext);
-	const navigate = useNavigate();
 
 	const homeUrl = options.adminMode ? '/admin' : '/';
 
@@ -34,24 +33,15 @@ function MobileHeader(options: MobileHeaderProps) {
 						)}
 					</div>
 
+					{showTripName && (
+						<EllipsisWithTooltip placement="bottom">{eventStore.tripName}</EllipsisWithTooltip>
+					)}
+
 					<div className="flex-row align-items-center gap-15">
 						<MobileNavbar {...options} isSearchOpen={eventStore.isSearchOpen} />
 					</div>
 				</div>
 			</div>
-			{showTripName && (
-				<div className="mobile-header-trip-name">
-					{/*<a*/}
-					{/*	onClick={() => {*/}
-					{/*		navigate('/my-trips');*/}
-					{/*	}}*/}
-					{/*>*/}
-					{/*	{TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}*/}
-					{/*</a>*/}
-					{/*{' > '}*/}
-					{eventStore.tripName}
-				</div>
-			)}
 		</div>
 	);
 }

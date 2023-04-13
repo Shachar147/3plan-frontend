@@ -1314,6 +1314,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	}
 
 	function renderRecommendations() {
+		return null; // disabled for now
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.RECOMMENDATIONS');
 		const recomendationsBlock = wrapWithSidebarGroup(
 			<>
