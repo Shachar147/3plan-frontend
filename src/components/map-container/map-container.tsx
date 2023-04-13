@@ -1156,6 +1156,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				>
 					{renderFilterButton()}
 					{renderCalculateDistancesButton()}
+					{!eventStore.isMobile && (
+						<div className={'pc-map-view-selection-container'}>{renderMapViewSelection()}</div>
+					)}
 				</div>
 				{eventStore.mapFiltersVisible ? (
 					<div className="flex-col actual-filters-container">
@@ -1169,7 +1172,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 							<div className="flex-row gap-16 flex-1-1-0 flex-wrap-reverse justify-content-center">
 								{renderPrioritiesFilters()}
 								{renderScheduledOrNotFilters()}
-								{renderMapViewSelection()}
+								{eventStore.isMobile && renderMapViewSelection()}
 							</div>
 						</div>
 						<hr className="margin-block-2" />
