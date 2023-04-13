@@ -734,6 +734,18 @@ export class EventStore {
 		).map((x) => JSON.parse(x));
 	}
 
+	@computed
+	get tripTotalDaysNum() {
+		return (
+			parseInt(
+				(
+					(new Date(this.customDateRange.end).getTime() - new Date(this.customDateRange.start).getTime()) /
+					86400000
+				).toString()
+			) + 1
+		);
+	}
+
 	// --- actions --------------------------------------------------------------
 	@action
 	setHideCustomDates(hide: boolean) {
