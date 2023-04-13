@@ -481,11 +481,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	}, [calendarComponentRef.current, eventStore.calendarEvents, getEventsInView()]);
 
 	// if changed to timeGridAllDays, change start date
+	const handleAllDaysViewSelect = () => {
+		calendarComponentRef.current?.getApi().gotoDate(new Date(eventStore.customDateRange.start)); // Replace with the date you want to reset to
+	};
 	useEffect(() => {
-		const handleAllDaysViewSelect = () => {
-			calendarComponentRef.current?.getApi().gotoDate(new Date(eventStore.customDateRange.start)); // Replace with the date you want to reset to
-		};
-
 		document
 			.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
 			?.addEventListener('click', handleAllDaysViewSelect);
@@ -497,7 +496,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		};
 	}, []);
 
-	useEffect(() => {}, []);
+	useEffect(() => {
+		const view = calendarComponentRef.current?.getApi().view;
+		if (view && view.type === 'timeGridAllDays') {
+			handleAllDaysViewSelect();
+		}
+	}, [eventStore.customDateRange]);
 
 	return (
 		<>
