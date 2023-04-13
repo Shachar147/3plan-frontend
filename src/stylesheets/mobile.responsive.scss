@@ -504,7 +504,7 @@
 		text-align: center;
 		width: 100%;
 		margin-bottom: 10px;
-		margin-top: 20px; // changed from 20 to 40 due to "youre looking at TRIPNAME" line
+		margin-top: 20px;
 	}
 
 	.main-page {
@@ -760,7 +760,6 @@
 
 			.list-view-day-title.position-sticky {
 				padding-inline: 5px;
-				margin-right: -5px;
 
 				height: 66px;
 				display: flex;
@@ -770,13 +769,15 @@
 	}
 
 	.trip-summary {
-		max-height: CALC(100vh - 125px);
+		//max-height: CALC(100vh - 125px);
 		//margin-bottom: 60px;
+		height: 100% !important;
 		background-color: white;
 	}
 
 	.main-page.list {
-		height: CALC(100vh - 120px) !important; // minus header and footer which are fixed
+		height: CALC(100vh - 240px) !important; // minus header and footer which are fixed
+		//background-color:red !important;
 
 		.main-layout-container.list {
 			flex: 1 1 0 !important;

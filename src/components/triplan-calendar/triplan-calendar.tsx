@@ -158,19 +158,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 		if (calendarComponentRef && calendarComponentRef.current) {
 			if (customDateRange && customDateRange.start && customDateRange.end) {
-				// const dt = addHoursToDate(new Date(customDateRange.end), 24);
-				// const year = dt.getFullYear();
-				// const month = dt.getMonth() < 9 ? `0${dt.getMonth() + 1}` : dt.getMonth() + 1;
-				// const day = dt.getDate();
-				//
-				// // @ts-ignore
-				// calendarComponentRef.current.getApi().changeView('timeGrid', {
-				// 	start: customDateRange.start,
-				// 	end: [year, month, day].join('-'),
-				// });
-
 				calendarComponentRef.current.getApi().changeView('timeGridAllDays');
-
 				return true;
 			}
 		}
