@@ -424,7 +424,10 @@ function MainPage(props: MainPageProps) {
 
 	return (
 		<>
-			<div className="main-page" key={JSON.stringify(eventStore.customDateRange)}>
+			<div
+				className={getClasses('main-page', eventStore.mobileViewMode)}
+				key={JSON.stringify(eventStore.customDateRange)}
+			>
 				<div className="padding-inline-8 flex-column align-items-center justify-content-center">
 					<TriplanHeaderWrapper
 						{...headerProps}

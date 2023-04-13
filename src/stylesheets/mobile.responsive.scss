@@ -775,7 +775,7 @@
 		background-color: white;
 	}
 
-	.main-page {
+	.main-page.list {
 		height: CALC(100vh - 120px) !important; // minus header and footer which are fixed
 
 		.main-layout-container.list {
