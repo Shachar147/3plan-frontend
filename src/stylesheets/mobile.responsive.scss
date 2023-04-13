@@ -776,8 +776,7 @@
 	}
 
 	.main-page.list {
-		height: CALC(100vh - 240px) !important; // minus header and footer which are fixed
-		//background-color:red !important;
+		height: CALC(100svh - 130px) !important; // minus header and footer which are fixed
 
 		.main-layout-container.list {
 			flex: 1 1 0 !important;
