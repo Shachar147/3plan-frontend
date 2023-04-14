@@ -23,7 +23,7 @@ import { DateRangeFormatted } from '../../services/data-handlers/data-handler-ba
 import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
-import DraggableList from '../draggable-list/dtaggable-list';
+import DraggableList from '../draggable-list/draggable-list';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];

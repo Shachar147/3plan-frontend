@@ -1,5 +1,4 @@
 .triplan-draggable-list-container {
-  //max-width: 500px;
   margin: 0 auto;
 
 
@@ -31,22 +30,15 @@ body.rtl {
 
 .triplan-draggable-list-item {
   flex: 0 0 auto;
-  //background-color: #f8f8f8;
-  //border: 1px solid #ccc;
   border-radius: 4px;
   padding: 2.5px;
   margin-right: 0;
   cursor: move !important;
   user-select: none;
-
-  //width: 142px;
   flex-grow: 1;
 
-  position: relative;
   i {
     font-size: 10px;
-    //position: absolute;
-    //left: -5px;
   }
 
   &:not(:hover){
