@@ -473,50 +473,79 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	// if changed to timeGridAllDays, change start date
 	const handleAllDaysViewSelect = () => {
 		calendarComponentRef.current?.getApi().gotoDate(new Date(eventStore.customDateRange.start)); // Replace with the date you want to reset to
-
-		runInAction(() => {
-			eventStore.isSwitchDaysEnabled = true;
-		});
 	};
-	useEffect(() => {
-		document
-			.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
-			?.addEventListener('click', handleAllDaysViewSelect);
 
-		document.getElementsByClassName('fc-dayGridMonth-button')?.[0]?.addEventListener('click', disAllowSwitchDays);
-		document.getElementsByClassName('fc-timeGridWeek-button')?.[0]?.addEventListener('click', disAllowSwitchDays);
-		document.getElementsByClassName('fc-timeGridDay-button')?.[0]?.addEventListener('click', disAllowSwitchDays);
+	const handleViewChange = () => {
+		setTimeout(() => {
+			if (!calendarComponentRef.current) {
+				return;
+			}
+
+			const calendarApi = calendarComponentRef.current.getApi();
+			const view = calendarApi.view;
+			let { activeStart: start, activeEnd: end, currentStart, currentEnd } = view;
+			end = addHours(end, -24);
+			currentEnd = addHours(currentEnd, -24);
+
+			// alert('start is: ' + start + ' end is : ' + end);
+			// alert('start is: ' + currentStart + ' end is : ' + currentEnd);
+
+			// if (eventStore.isMobile) {
+			// 	updateAllowSwitchDays(false);
+			// } else {
+			if (view.type == 'timeGridAllDays') {
+				// alert('all days!');
+				handleAllDaysViewSelect();
+			}
+
+			runInAction(() => {
+				eventStore.activeStart = start;
+				eventStore.activeEnd = end;
+				eventStore.currentStart = currentStart;
+				eventStore.currentEnd = currentEnd;
+			});
+
+			updateAllowSwitchDays(view.type !== 'timeGridDay' && view.type !== 'dayGridMonth');
+			// }
+		}, 100);
+	};
+
+	useEffect(() => {
+		const viewChangeClasses = [
+			'fc-timeGridAllDays-button',
+			'fc-timeGridThreeDay-button',
+			'fc-dayGridMonth-button',
+			'fc-timeGridWeek-button',
+			'fc-timeGridDay-button',
+			'fc-next-button',
+			'fc-prev-button',
+		];
+
+		viewChangeClasses.forEach((clsName) => {
+			document.getElementsByClassName(clsName)?.[0]?.addEventListener('click', handleViewChange);
+		});
 
 		return () => {
-			document
-				.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
-				?.removeEventListener('click', handleAllDaysViewSelect);
-
-			document
-				.getElementsByClassName('fc-dayGridMonth-button')?.[0]
-				?.removeEventListener('click', disAllowSwitchDays);
-			document
-				.getElementsByClassName('fc-timeGridWeek-button')?.[0]
-				?.removeEventListener('click', disAllowSwitchDays);
-			document
-				.getElementsByClassName('fc-timeGridDay-button')?.[0]
-				?.removeEventListener('click', disAllowSwitchDays);
+			viewChangeClasses.forEach((clsName) => {
+				document.getElementsByClassName(clsName)?.[0]?.removeEventListener('click', handleViewChange);
+			});
 		};
 	}, []);
 
-	const disAllowSwitchDays = () => {
+	const updateAllowSwitchDays = (isEnabled: boolean) => {
 		runInAction(() => {
-			eventStore.isSwitchDaysEnabled = false;
+			eventStore.isSwitchDaysEnabled = isEnabled;
 		});
 	};
 
 	useEffect(() => {
-		const view = calendarComponentRef.current?.getApi().view;
-		if (view && view.type === 'timeGridAllDays') {
-			handleAllDaysViewSelect();
-		} else {
-			disAllowSwitchDays();
-		}
+		handleViewChange();
+		// const view = calendarComponentRef.current?.getApi().view;
+		// if (view && view.type === 'timeGridAllDays') {
+		// 	handleAllDaysViewSelect();
+		// } else {
+		// 	disAllowSwitchDays();
+		// }
 	}, [eventStore.customDateRange]);
 
 	return (

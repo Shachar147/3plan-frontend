@@ -794,9 +794,12 @@
 		}
 	}
 
-	// since on mobile the switch days option is disabled.
 	.fc .fc-toolbar.fc-header-toolbar {
-		margin-bottom: 1.5em !important;
+
+		//// since on mobile the switch days option is disabled.
+		//margin-bottom: 1.5em !important;
+
+		margin-bottom: 40px !important;
 	}
 }
 
