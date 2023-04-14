@@ -490,11 +490,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			// alert('start is: ' + start + ' end is : ' + end);
 			// alert('start is: ' + currentStart + ' end is : ' + currentEnd);
 
-			// if (eventStore.isMobile) {
-			// 	updateAllowSwitchDays(false);
-			// } else {
 			if (view.type == 'timeGridAllDays') {
-				// alert('all days!');
 				handleAllDaysViewSelect();
 			}
 
@@ -506,7 +502,6 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			});
 
 			updateAllowSwitchDays(view.type !== 'timeGridDay' && view.type !== 'dayGridMonth');
-			// }
 		}, 100);
 	};
 
@@ -540,12 +535,6 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	useEffect(() => {
 		handleViewChange();
-		// const view = calendarComponentRef.current?.getApi().view;
-		// if (view && view.type === 'timeGridAllDays') {
-		// 	handleAllDaysViewSelect();
-		// } else {
-		// 	disAllowSwitchDays();
-		// }
 	}, [eventStore.customDateRange]);
 
 	return (

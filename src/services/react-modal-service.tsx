@@ -3868,28 +3868,20 @@ const ReactModalService = {
 				if (formatDate(dtStart) == draggedItem.text) {
 					const start = new Date(dtStart.setFullYear(dt.getFullYear(), dt.getMonth(), dt.getDate()));
 
-					const end = new Date(dtEnd.setFullYear(dt.getFullYear(), dt.getMonth(), dt.getDate()));
-
 					// @ts-ignore
 					event.start = typeof event.start == 'string' ? start.toISOString() : start;
 
 					// @ts-ignore
-					// event.end = typeof event.end == 'string' ? end.toISOString() : end;
 					event.end = getEndDate(event.start, event.duration);
 				} else if (formatDate(dtStart) == item.text) {
 					const start = new Date(
 						dtStart.setFullYear(draggedDt.getFullYear(), draggedDt.getMonth(), draggedDt.getDate())
 					);
 
-					// const end = new Date(
-					// 	dtEnd.setFullYear(draggedDt.getFullYear(), draggedDt.getMonth(), draggedDt.getDate())
-					// );
-
 					// @ts-ignore
 					event.start = typeof event.start == 'string' ? start.toISOString() : start;
 
 					// @ts-ignore
-					// event.end = typeof event.end == 'string' ? end.toISOString() : end;
 					event.end = getEndDate(event.start, event.duration);
 				}
 

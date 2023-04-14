@@ -11,9 +11,8 @@ import TranslateService from '../../services/translate-service';
 // list of cursor, each representing a day in our calendar
 const DraggableList = () => {
 	const eventStore = useContext(eventStoreContext);
-	const startDate = eventStore.currentStart!; // eventStore.customDateRange.start;
+	const startDate = eventStore.currentStart!;
 	const allDays = [];
-	// for (let i = 0; i < eventStore.tripTotalDaysNum; i++) {
 	for (let i = 0; i < eventStore.tripTotalCurrentDaysNum; i++) {
 		allDays.push({
 			id: i,
@@ -25,7 +24,6 @@ const DraggableList = () => {
 
 	useEffect(() => {
 		const allDays = [];
-		// for (let i = 0; i < eventStore.tripTotalDaysNum; i++) {
 		for (let i = 0; i < eventStore.tripTotalCurrentDaysNum; i++) {
 			allDays.push({
 				id: i,
