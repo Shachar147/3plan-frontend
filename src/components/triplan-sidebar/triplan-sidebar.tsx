@@ -615,7 +615,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								)}
 								<hr className="margin-block-2 width-100-percents" />
 							</>,
-							'fa-map-signs',
+							undefined,
+							// 'fa-map-signs',
 							SidebarGroups.DISTANCES,
 							groupTitle,
 							Math.max(100, eventStore.allEventsLocations.length)
