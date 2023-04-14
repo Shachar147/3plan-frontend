@@ -241,9 +241,10 @@ export const ReactModalRenderHelper = {
 			onClear?: () => void;
 		},
 		wrapperClassName: string,
-		ref?: any
+		ref?: any,
+		wrap?: boolean
 	) => {
-		return (
+		const selectControl = (
 			<SelectInput
 				ref={ref}
 				readOnly={extra.readOnly}
@@ -258,6 +259,11 @@ export const ReactModalRenderHelper = {
 				onClear={extra.onClear}
 			/>
 		);
+
+		if (!wrap) {
+			return selectControl;
+		}
+		return <div className="input-with-label padding-top-0 font-size-14">{selectControl}</div>;
 	},
 	renderCategorySelector: (
 		eventStore: EventStore,

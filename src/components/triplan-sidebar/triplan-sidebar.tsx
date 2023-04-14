@@ -429,7 +429,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					},
 				},
 				'distance-nearby-selector',
-				undefined
+				undefined,
+				true
 			);
 
 			let noResultsPlaceholder: string | React.ReactNode = '';
@@ -574,7 +575,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							</>
 						)}
 					</div>
-					<hr className="margin-block-2" />
 				</>
 			);
 		};
