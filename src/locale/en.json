@@ -489,7 +489,8 @@
 	"MODALS.ERROR.START_DATE_OUT_OF_RANGE": "Start date can't be out of trip date range",
 	"MODALS.ERROR.END_DATE_OUT_OF_RANGE": "End date can't be out of trip date range",
 	"SWITCH_DAYS": "Switch days",
-	"SWITCH_DAYS.CONTENT": "You're about to replace all the activities that are on date {X} to be on date {Y} and vice versa.\n\nIs that what you wanted to do?",
+	"SWITCH_DAYS.CONTENT": "You're about to replace all the activities that are on date {X} to be on date {Y} and vice versa.\n\nIs it what you try to do?",
 	"SWITCH_DAYS_SUCCESS_MODAL.TITLE": "Switched successfully!",
-	"SWITCH_DAYS_SUCCESS_MODAL.CONTENT": "All the activities from dates {X} and {Y} are successfully switched"
+	"SWITCH_DAYS_SUCCESS_MODAL.CONTENT": "All the activities from dates {X} and {Y} are successfully switched",
+	"DRAG_TO_SWITCH_DAYS": "Drag right/left to perform a complete days switch"
 }

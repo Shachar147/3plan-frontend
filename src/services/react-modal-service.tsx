@@ -3901,16 +3901,19 @@ const ReactModalService = {
 			await eventStore.setCalendarEvents(updatedEvents, false);
 
 			ReactModalService.internal.closeModal(eventStore);
-			ReactModalService.internal.alertMessage(
-				eventStore,
-				'SWITCH_DAYS_SUCCESS_MODAL.TITLE',
-				'SWITCH_DAYS_SUCCESS_MODAL.CONTENT',
-				'success',
-				{
-					X: draggedItem.text,
-					Y: item.text,
-				}
-			);
+
+			setTimeout(() => {
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'SWITCH_DAYS_SUCCESS_MODAL.TITLE',
+					'SWITCH_DAYS_SUCCESS_MODAL.CONTENT',
+					'success',
+					{
+						X: draggedItem.text,
+						Y: item.text,
+					}
+				);
+			}, 1);
 		};
 
 		const content = () => {

@@ -6,6 +6,7 @@ import { CalendarEvent } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import ReactModalService from '../../services/react-modal-service';
+import TranslateService from '../../services/translate-service';
 
 const DraggableList = () => {
 	const eventStore = useContext(eventStoreContext);
@@ -82,7 +83,12 @@ const DraggableList = () => {
 						onDrop={(event) => handleDrop(event, index)}
 					>
 						{/*{item.text}*/}
-						<i className="fa fa-arrows" aria-hidden="true" />
+						<i
+							className="fa fa-arrows"
+							aria-hidden="true"
+							title={TranslateService.translate(eventStore, 'DRAG_TO_SWITCH_DAYS')}
+						/>
+						{/*<img src={'/images/switch-days.png'} width={50} />*/}
 						{/*<i className="fa fa-exchange" aria-hidden="true" />*/}
 					</li>
 				))}
