@@ -70,7 +70,7 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
 					// path: '/language',
 					onClick: () => {
-						ReactModalService.openChangeLanguage(eventStore);
+						ReactModalService.openChangeLanguageModal(eventStore);
 					},
 					icon: 'fa-globe',
 					cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),

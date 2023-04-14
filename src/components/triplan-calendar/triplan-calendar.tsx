@@ -23,6 +23,7 @@ import { DateRangeFormatted } from '../../services/data-handlers/data-handler-ba
 import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
+import DraggableList from '../draggable-list/dtaggable-list';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -395,7 +396,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 
 		// Access the calendar object via the ref
-		const calendar = calendarComponentRef.current.getApi();
+		const calendar = calendarComponentRef.current!.getApi();
 		const view = calendar.view;
 		const viewStartDate = new Date(view.activeStart.setHours(MIN_START_HOUR)); // view.activeStart;
 		const viewEndDate = view.activeEnd;
@@ -418,11 +419,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 			if (nextEvent) {
 				// Calculate the gap between the current event's end and the next event's start
-				const gapStart: Date = currentEvent.end!;
-				let gapEnd: Date = nextEvent.start!;
+				const gapStart: Date =
+					typeof currentEvent.end! == 'string' ? new Date(currentEvent.end!) : currentEvent.end!;
+				let gapEnd: Date = typeof nextEvent.start! == 'string' ? new Date(nextEvent.start!) : nextEvent.start!;
 
-				if (areDatesOnDifferentDays(currentEvent.end!, nextEvent.start!)) {
-					gapEnd = new Date(new Date(currentEvent.end!.toISOString()).setHours(23, 59));
+				if (areDatesOnDifferentDays(gapStart, gapEnd)) {
+					gapEnd = new Date(new Date(gapStart.toISOString()).setHours(23, 59));
 				}
 
 				// Update the most available slot if the current gap is larger
@@ -471,28 +473,55 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	// if changed to timeGridAllDays, change start date
 	const handleAllDaysViewSelect = () => {
 		calendarComponentRef.current?.getApi().gotoDate(new Date(eventStore.customDateRange.start)); // Replace with the date you want to reset to
+
+		runInAction(() => {
+			eventStore.isSwitchDaysEnabled = true;
+		});
 	};
 	useEffect(() => {
 		document
 			.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
 			?.addEventListener('click', handleAllDaysViewSelect);
 
+		document.getElementsByClassName('fc-dayGridMonth-button')?.[0]?.addEventListener('click', disAllowSwitchDays);
+		document.getElementsByClassName('fc-timeGridWeek-button')?.[0]?.addEventListener('click', disAllowSwitchDays);
+		document.getElementsByClassName('fc-timeGridDay-button')?.[0]?.addEventListener('click', disAllowSwitchDays);
+
 		return () => {
 			document
 				.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
 				?.removeEventListener('click', handleAllDaysViewSelect);
+
+			document
+				.getElementsByClassName('fc-dayGridMonth-button')?.[0]
+				?.removeEventListener('click', disAllowSwitchDays);
+			document
+				.getElementsByClassName('fc-timeGridWeek-button')?.[0]
+				?.removeEventListener('click', disAllowSwitchDays);
+			document
+				.getElementsByClassName('fc-timeGridDay-button')?.[0]
+				?.removeEventListener('click', disAllowSwitchDays);
 		};
 	}, []);
+
+	const disAllowSwitchDays = () => {
+		runInAction(() => {
+			eventStore.isSwitchDaysEnabled = false;
+		});
+	};
 
 	useEffect(() => {
 		const view = calendarComponentRef.current?.getApi().view;
 		if (view && view.type === 'timeGridAllDays') {
 			handleAllDaysViewSelect();
+		} else {
+			disAllowSwitchDays();
 		}
 	}, [eventStore.customDateRange]);
 
 	return (
-		<>
+		<div className={'flex-col width-100-percents position-relative'}>
+			{eventStore.isSwitchDaysEnabled && <DraggableList />}
 			<FullCalendar
 				initialView={'timeGridWeek'}
 				headerToolbar={headerToolbar}
@@ -559,7 +588,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				}}
 			/>
 			{eventStore.isMobile && renderAddEventMobileButton()}
-		</>
+		</div>
 	);
 }
 

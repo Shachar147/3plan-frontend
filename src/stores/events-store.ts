@@ -146,6 +146,7 @@ export class EventStore {
 	};
 
 	@observable mostAvailableSlotInView: { start: Date | null; end: Date | null } | null = null;
+	@observable isSwitchDaysEnabled: boolean = true;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -1136,6 +1137,10 @@ export class EventStore {
 	@action
 	setIsMobile(isMobile: boolean) {
 		this.isMobile = isMobile;
+
+		if (isMobile) {
+			this.isSwitchDaysEnabled = false;
+		}
 	}
 
 	@action

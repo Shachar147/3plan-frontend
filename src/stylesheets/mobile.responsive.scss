@@ -793,6 +793,11 @@
 			}
 		}
 	}
+
+	// since on mobile the switch days option is disabled.
+	.fc .fc-toolbar.fc-header-toolbar {
+		margin-bottom: 1.5em !important;
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {

@@ -1,0 +1,59 @@
+.triplan-draggable-list-container {
+  //max-width: 500px;
+  margin: 0 auto;
+
+
+  position: absolute;
+  top: 50px;
+  text-align: center;
+  width: CALC(100% - 50px);
+  align-items: center;
+  display: inline-table !important;
+}
+
+.triplan-draggable-list {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  //padding-inline-start: 50px;
+  justify-content: space-between;
+
+  gap: 5px;
+}
+
+body.rtl {
+  .triplan-draggable-list {
+    direction: rtl;
+  }
+}
+
+.triplan-draggable-list-item {
+  flex: 0 0 auto;
+  //background-color: #f8f8f8;
+  //border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 2.5px;
+  margin-right: 0;
+  cursor: move !important;
+  user-select: none;
+
+  //width: 142px;
+  flex-grow: 1;
+
+  position: relative;
+  i {
+    font-size: 10px;
+    //position: absolute;
+    //left: -5px;
+  }
+
+  &:not(:hover){
+    color: var(--gray);
+  }
+}
+
+.triplan-draggable-list-item:active {
+  background-color: #eee;
+}

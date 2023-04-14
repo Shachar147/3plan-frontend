@@ -19,7 +19,9 @@ import { TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } 
 import {
 	addHoursToDate,
 	convertMsToHM,
+	formatDate,
 	formatDuration,
+	getEndDate,
 	getInputDateTimeValue,
 	validateDateRange,
 	validateDuration,
@@ -43,6 +45,7 @@ import { LimitationsService } from '../utils/limitations';
 import ToggleButton from '../components/toggle-button/toggle-button';
 import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
 import { ModalsStore } from '../stores/modals-store';
+import _ from 'lodash';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -3770,7 +3773,7 @@ const ReactModalService = {
 		});
 	},
 
-	openChangeLanguage: (eventStore: EventStore) => {
+	openChangeLanguageModal: (eventStore: EventStore) => {
 		const options: any[] = [
 			{ name: TranslateService.translate(eventStore, 'ENGLISH').toString(), key: 'en' },
 			{ name: TranslateService.translate(eventStore, 'HEBREW').toString(), key: 'he' },
@@ -3821,6 +3824,115 @@ const ReactModalService = {
 			onConfirm: () => {},
 			content,
 			confirmBtnCssClass: 'display-none',
+		});
+	},
+
+	openSwitchDaysModal: (eventStore: EventStore, item: any, draggedItem: any) => {
+		const onConfirm = async () => {
+			const dtEvents = eventStore.calendarEvents.filter((e) => formatDate(new Date(e.start)) == item.text);
+			const draggedDtEvents = eventStore.calendarEvents.filter(
+				(e) => formatDate(new Date(e.start)) == draggedItem.text
+			);
+
+			console.log({
+				text: item.text,
+				events: dtEvents
+					.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+					.map((x) => x.title),
+			});
+
+			console.log({
+				text: draggedItem.text,
+				events: draggedDtEvents
+					.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+					.map((x) => x.title),
+			});
+
+			const dt = item.date;
+			const draggedDt = draggedItem.date;
+
+			const updatedEvents: CalendarEvent[] = [];
+
+			const temp = _.cloneDeep(eventStore.calendarEvents);
+			temp.forEach((event) => {
+				const dtStart = new Date(event.start);
+				const dtEnd = new Date(event.end);
+
+				if (event.allDay) {
+					// temporary
+					updatedEvents.push(event);
+					return;
+				}
+
+				console.log({ dtStart, format: formatDate(dtStart), text: draggedItem.text });
+				if (formatDate(dtStart) == draggedItem.text) {
+					const start = new Date(dtStart.setFullYear(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+
+					const end = new Date(dtEnd.setFullYear(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+
+					// @ts-ignore
+					event.start = typeof event.start == 'string' ? start.toISOString() : start;
+
+					// @ts-ignore
+					// event.end = typeof event.end == 'string' ? end.toISOString() : end;
+					event.end = getEndDate(event.start, event.duration);
+				} else if (formatDate(dtStart) == item.text) {
+					const start = new Date(
+						dtStart.setFullYear(draggedDt.getFullYear(), draggedDt.getMonth(), draggedDt.getDate())
+					);
+
+					// const end = new Date(
+					// 	dtEnd.setFullYear(draggedDt.getFullYear(), draggedDt.getMonth(), draggedDt.getDate())
+					// );
+
+					// @ts-ignore
+					event.start = typeof event.start == 'string' ? start.toISOString() : start;
+
+					// @ts-ignore
+					// event.end = typeof event.end == 'string' ? end.toISOString() : end;
+					event.end = getEndDate(event.start, event.duration);
+				}
+
+				updatedEvents.push(event);
+			});
+
+			console.log({ temp, updatedEvents, calendarEvents: eventStore.calendarEvents });
+
+			await eventStore.setCalendarEvents(updatedEvents, false);
+
+			ReactModalService.internal.closeModal(eventStore);
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'SWITCH_DAYS_SUCCESS_MODAL.TITLE',
+				'SWITCH_DAYS_SUCCESS_MODAL.CONTENT',
+				'success',
+				{
+					X: draggedItem.text,
+					Y: item.text,
+				}
+			);
+		};
+
+		const content = () => {
+			return (
+				<div className={'white-space-pre-line'}>
+					{TranslateService.translate(eventStore, 'SWITCH_DAYS.CONTENT', {
+						X: draggedItem.text,
+						Y: item.text,
+					})}
+				</div>
+			);
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'SWITCH_DAYS'),
+			type: 'controlled',
+			onConfirm: () => {
+				onConfirm();
+			},
+			content,
+			confirmBtnText: TranslateService.translate(eventStore, 'GENERAL.YES'),
 		});
 	},
 };
