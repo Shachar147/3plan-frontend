@@ -146,6 +146,11 @@ export class EventStore {
 	};
 
 	@observable mostAvailableSlotInView: { start: Date | null; end: Date | null } | null = null;
+	@observable isSwitchDaysEnabled: boolean = true;
+	@observable activeStart: Date | null = null;
+	@observable activeEnd: Date | null = null;
+	@observable currentStart: Date | null = null;
+	@observable currentEnd: Date | null = null;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -746,6 +751,22 @@ export class EventStore {
 		);
 	}
 
+	@computed
+	get tripTotalActiveDaysNum() {
+		if (!this.activeStart || !this.activeEnd) {
+			return 0;
+		}
+		return parseInt(((this.activeEnd.getTime() - this.activeStart.getTime()) / 86400000).toString()) + 1;
+	}
+
+	@computed
+	get tripTotalCurrentDaysNum() {
+		if (!this.currentStart || !this.currentEnd) {
+			return 0;
+		}
+		return parseInt(((this.currentEnd.getTime() - this.currentStart.getTime()) / 86400000).toString()) + 1;
+	}
+
 	// --- actions --------------------------------------------------------------
 	@action
 	setHideCustomDates(hide: boolean) {
@@ -1136,6 +1157,10 @@ export class EventStore {
 	@action
 	setIsMobile(isMobile: boolean) {
 		this.isMobile = isMobile;
+
+		if (isMobile) {
+			this.isSwitchDaysEnabled = false;
+		}
 	}
 
 	@action

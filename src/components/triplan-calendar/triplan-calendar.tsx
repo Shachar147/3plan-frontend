@@ -23,6 +23,7 @@ import { DateRangeFormatted } from '../../services/data-handlers/data-handler-ba
 import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
+import DraggableList from '../draggable-list/draggable-list';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -395,7 +396,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 
 		// Access the calendar object via the ref
-		const calendar = calendarComponentRef.current.getApi();
+		const calendar = calendarComponentRef.current!.getApi();
 		const view = calendar.view;
 		const viewStartDate = new Date(view.activeStart.setHours(MIN_START_HOUR)); // view.activeStart;
 		const viewEndDate = view.activeEnd;
@@ -418,11 +419,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 			if (nextEvent) {
 				// Calculate the gap between the current event's end and the next event's start
-				const gapStart: Date = currentEvent.end!;
-				let gapEnd: Date = nextEvent.start!;
+				const gapStart: Date =
+					typeof currentEvent.end! == 'string' ? new Date(currentEvent.end!) : currentEvent.end!;
+				let gapEnd: Date = typeof nextEvent.start! == 'string' ? new Date(nextEvent.start!) : nextEvent.start!;
 
-				if (areDatesOnDifferentDays(currentEvent.end!, nextEvent.start!)) {
-					gapEnd = new Date(new Date(currentEvent.end!.toISOString()).setHours(23, 59));
+				if (areDatesOnDifferentDays(gapStart, gapEnd)) {
+					gapEnd = new Date(new Date(gapStart.toISOString()).setHours(23, 59));
 				}
 
 				// Update the most available slot if the current gap is larger
@@ -472,27 +474,72 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	const handleAllDaysViewSelect = () => {
 		calendarComponentRef.current?.getApi().gotoDate(new Date(eventStore.customDateRange.start)); // Replace with the date you want to reset to
 	};
+
+	const handleViewChange = () => {
+		setTimeout(() => {
+			if (!calendarComponentRef.current) {
+				return;
+			}
+
+			const calendarApi = calendarComponentRef.current.getApi();
+			const view = calendarApi.view;
+			let { activeStart: start, activeEnd: end, currentStart, currentEnd } = view;
+			end = addHours(end, -24);
+			currentEnd = addHours(currentEnd, -24);
+
+			// alert('start is: ' + start + ' end is : ' + end);
+			// alert('start is: ' + currentStart + ' end is : ' + currentEnd);
+
+			if (view.type == 'timeGridAllDays') {
+				handleAllDaysViewSelect();
+			}
+
+			runInAction(() => {
+				eventStore.activeStart = start;
+				eventStore.activeEnd = end;
+				eventStore.currentStart = currentStart;
+				eventStore.currentEnd = currentEnd;
+			});
+
+			updateAllowSwitchDays(view.type !== 'timeGridDay' && view.type !== 'dayGridMonth');
+		}, 100);
+	};
+
 	useEffect(() => {
-		document
-			.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
-			?.addEventListener('click', handleAllDaysViewSelect);
+		const viewChangeClasses = [
+			'fc-timeGridAllDays-button',
+			'fc-timeGridThreeDay-button',
+			'fc-dayGridMonth-button',
+			'fc-timeGridWeek-button',
+			'fc-timeGridDay-button',
+			'fc-next-button',
+			'fc-prev-button',
+		];
+
+		viewChangeClasses.forEach((clsName) => {
+			document.getElementsByClassName(clsName)?.[0]?.addEventListener('click', handleViewChange);
+		});
 
 		return () => {
-			document
-				.getElementsByClassName('fc-timeGridAllDays-button')?.[0]
-				?.removeEventListener('click', handleAllDaysViewSelect);
+			viewChangeClasses.forEach((clsName) => {
+				document.getElementsByClassName(clsName)?.[0]?.removeEventListener('click', handleViewChange);
+			});
 		};
 	}, []);
 
+	const updateAllowSwitchDays = (isEnabled: boolean) => {
+		runInAction(() => {
+			eventStore.isSwitchDaysEnabled = isEnabled;
+		});
+	};
+
 	useEffect(() => {
-		const view = calendarComponentRef.current?.getApi().view;
-		if (view && view.type === 'timeGridAllDays') {
-			handleAllDaysViewSelect();
-		}
+		handleViewChange();
 	}, [eventStore.customDateRange]);
 
 	return (
-		<>
+		<div className={'flex-col width-100-percents position-relative'}>
+			{eventStore.isSwitchDaysEnabled && <DraggableList />}
 			<FullCalendar
 				initialView={'timeGridWeek'}
 				headerToolbar={headerToolbar}
@@ -559,7 +606,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				}}
 			/>
 			{eventStore.isMobile && renderAddEventMobileButton()}
-		</>
+		</div>
 	);
 }
 

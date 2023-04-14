@@ -565,5 +565,10 @@
 	"UPDATED_ON_SERVER": "עודכן מהשרת",
 	"SAVED_SUCCESSFULLY": "נשמר בהצלחה",
 	"MODALS.ERROR.START_DATE_OUT_OF_RANGE": "תאריך ההתחלה לא יכול להיות מחוץ לטווח התאריכים של הטיול",
-	"MODALS.ERROR.END_DATE_OUT_OF_RANGE": "תאריך הסיום לא יכול להיות מחוץ לטווח התאריכים של הטיול"
+	"MODALS.ERROR.END_DATE_OUT_OF_RANGE": "תאריך הסיום לא יכול להיות מחוץ לטווח התאריכים של הטיול",
+	"SWITCH_DAYS": "החלפת ימים",
+	"SWITCH_DAYS.CONTENT": "פעולה זו תחליף בין כל הפעילויות שבתאריך {X} וכל הפעילויות שבתאריך {Y} (ולהפך).\n\nהאם זה מה שברצונך לעשות?",
+	"SWITCH_DAYS_SUCCESS_MODAL.TITLE": "הפעילויות הוחלפו בהצלחה!",
+	"SWITCH_DAYS_SUCCESS_MODAL.CONTENT": "כל הפעילויות בתאריכים {X} ו-{Y} הוחלפו בהצלחה",
+	"DRAG_TO_SWITCH_DAYS": "גרור ימינה/שמאלה כדי לבצע החלפה בין ימים שלמים"
 }
