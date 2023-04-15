@@ -31,6 +31,7 @@ import { getWebSocketsServerAddress } from '../../config/config';
 import { getUserId } from '../../helpers/auth';
 import Toast from '../../components/react-toastr/react-toastr';
 import axios from 'axios';
+import { BiEventsService } from '../../services/bi-events.service';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -244,12 +245,17 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function reportMapRenderedEvent() {
+		BiEventsService.reportEvent('google_map:rendered', `${eventStore.viewMode}-view`, eventStore.isMobile);
+	}
+
 	function renderMapView(shouldShow: boolean = true) {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.map) {
 			shouldShow = false;
 		}
 
 		if (!eventStore.isMobile && eventStore.viewMode === ViewMode.combined) {
+			reportMapRenderedEvent();
 			return (
 				<div
 					className={getClasses(
@@ -269,6 +275,8 @@ function MainPage(props: MainPageProps) {
 				</div>
 			);
 		}
+
+		reportMapRenderedEvent();
 
 		return (
 			<div

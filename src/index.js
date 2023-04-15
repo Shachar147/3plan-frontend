@@ -43,6 +43,7 @@ import {
 	TOURIST_KEYWORDS,
 } from './components/map-container/map-container';
 import { apiPost } from './helpers/api';
+import { BiEventsService } from './services/bi-events.service';
 
 // Dubai
 // Namos / Twiggy?
@@ -443,7 +444,17 @@ const RootRouter = () => {
 				eventStore.modalValues['images'] = undefined;
 			}
 			eventStore.modalValues['images'] =
-				eventStore.modalValues['images'] ?? place.photos.map((x) => x.getUrl()).join('\n');
+				eventStore.modalValues['images'] ??
+				place.photos
+					.map((x, idx) => {
+						BiEventsService.reportEvent(
+							'google_places:get_photo',
+							`${place.name}#${idx}`,
+							eventStore.isMobile
+						);
+						return x.getUrl();
+					})
+					.join('\n');
 
 			// update more info link
 			eventStore.modalValues['more-info'] =
@@ -645,8 +656,31 @@ const RootRouter = () => {
 		const autoCompleteRef = document.querySelector(`.${className}`);
 		const autocomplete = new google.maps.places.Autocomplete(autoCompleteRef);
 
+		// Add an event listener to the Autocomplete instance for 'input' event
+		const inputElement = document.getElementsByClassName(className)[0];
+		inputElement.addEventListener('keyup', (e) => {
+			// e.preventDefault();
+			// const a = autoCompleteRef;
+			// debugger;
+			// console.log(e.key);
+			if (e.key != 'Backspace') {
+				BiEventsService.reportEvent('google_map:place_searched', className, eventStore.isMobile, {
+					value: autoCompleteRef.value,
+				});
+			}
+		});
+		inputElement.addEventListener('keydown', (e) => {
+			// const a = autoCompleteRef;
+			// debugger;
+			// BiEventsService.reportEvent('google_map:place_searched', className, eventStore.isMobile, {
+			// 	value: autoCompleteRef.value,
+			// });
+		});
+
 		google.maps.event.addListener(autocomplete, 'place_changed', function () {
 			let place = autocomplete.getPlace();
+
+			BiEventsService.reportEvent('google_map:place_changed', className, eventStore.isMobile);
 
 			window.openingHours = undefined;
 			let openingHoursData = undefined;
