@@ -245,13 +245,17 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function reportMapRenderedEvent() {
+		BiEventsService.reportEvent('google_map:rendered', `${eventStore.viewMode}-view`, eventStore.isMobile);
+	}
+
 	function renderMapView(shouldShow: boolean = true) {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.map) {
 			shouldShow = false;
 		}
 
 		if (!eventStore.isMobile && eventStore.viewMode === ViewMode.combined) {
-			BiEventsService.reportEvent('map:rendered', `${eventStore.viewMode}-view`, eventStore.isMobile);
+			reportMapRenderedEvent();
 			return (
 				<div
 					className={getClasses(
@@ -272,11 +276,7 @@ function MainPage(props: MainPageProps) {
 			);
 		}
 
-		BiEventsService.reportEvent(
-			'map:rendered',
-			`${eventStore.isMobile ? eventStore.mobileViewMode : eventStore.viewMode}-view`,
-			eventStore.isMobile
-		);
+		reportMapRenderedEvent();
 
 		return (
 			<div
