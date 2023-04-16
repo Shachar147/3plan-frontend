@@ -182,6 +182,7 @@ button.secondary-button {
 		&:first-child {
 			border-top-left-radius: 20px !important;
 			border-bottom-left-radius: 20px !important;
+			border-right: 0 !important;
 		}
 
 		&:last-child {
@@ -199,11 +200,13 @@ body.rtl {
 			&:last-child {
 				border-top-left-radius: 20px !important;
 				border-bottom-left-radius: 20px !important;
+				border-right: 0 !important;
 			}
 
 			&:first-child {
 				border-top-right-radius: 20px !important;
 				border-bottom-right-radius: 20px !important;
+				border-right: 1px solid #ccc !important;
 			}
 		}
 	}

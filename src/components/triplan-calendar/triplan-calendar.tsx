@@ -484,8 +484,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			const calendarApi = calendarComponentRef.current.getApi();
 			const view = calendarApi.view;
 			let { activeStart: start, activeEnd: end, currentStart, currentEnd } = view;
-			end = addHours(end, -24);
-			currentEnd = addHours(currentEnd, -24);
+			// const timezoneHours = new Date().getTimezoneOffset() / 60;
+			// console.log({ timezoneHours });
+			// end = addHours(end, timezoneHours);
+			// currentEnd = addHours(currentEnd, timezoneHours);
+			// start = addHours(start, timezoneHours);
+			// currentStart = addHours(currentStart, timezoneHours);
 
 			// alert('start is: ' + start + ' end is : ' + end);
 			// alert('start is: ' + currentStart + ' end is : ' + currentEnd);

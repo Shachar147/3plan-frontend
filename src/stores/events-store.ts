@@ -13,7 +13,7 @@ import {
 	TriplanPriority,
 	ViewMode,
 } from '../utils/enums';
-import { addDays, convertMsToHM, getEndDate, toDate } from '../utils/time-utils';
+import { addDays, convertMsToHM, formatDate, getEndDate, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -749,6 +749,17 @@ export class EventStore {
 				).toString()
 			) + 1
 		);
+	}
+
+	@computed
+	get tripDaysArray() {
+		const arr = [];
+		let currDt = new Date(this.customDateRange.start);
+		while (currDt.getTime() <= new Date(this.customDateRange.end).getTime()) {
+			arr.push(formatDate(currDt));
+			currDt = addDays(currDt, 1);
+		}
+		return arr;
 	}
 
 	@computed

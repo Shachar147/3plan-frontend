@@ -761,9 +761,8 @@
 			.list-view-day-title.position-sticky {
 				padding-inline: 5px;
 
-				height: 66px;
-				display: flex;
-				align-items: flex-end;
+				width: CALC(100vw - 80px);
+				margin-left: -5px;
 			}
 		}
 	}
@@ -796,6 +795,13 @@
 
 	.fc .fc-toolbar.fc-header-toolbar {
 		margin-bottom: 40px !important;
+	}
+
+	body.rtl {
+		.list-view-day-title.position-sticky {
+			margin-left: unset !important;
+			margin-right: -5px;
+		}
 	}
 }
 
