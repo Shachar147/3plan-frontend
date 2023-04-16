@@ -3676,6 +3676,7 @@ const ReactModalService = {
 				from: allLocations,
 				to: allLocations,
 				tripName: eventStore.tripName,
+				isMobile: eventStore.isMobile,
 			});
 
 			const taskId = result.data.taskId;
