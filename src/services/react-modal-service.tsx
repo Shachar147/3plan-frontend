@@ -3868,11 +3868,14 @@ const ReactModalService = {
 			temp.forEach((event) => {
 				const dtStart = new Date(event.start);
 				const dtEnd = new Date(event.end);
+				let duration = event.duration;
 
 				if (event.allDay) {
 					// temporary
-					updatedEvents.push(event);
-					return;
+					// updatedEvents.push(event);
+					// return;
+					// debugger;
+					duration = '24:00';
 				}
 
 				console.log({ dtStart, format: formatDate(dtStart), text: draggedItem.text });
@@ -3883,7 +3886,7 @@ const ReactModalService = {
 					event.start = typeof event.start == 'string' ? start.toISOString() : start;
 
 					// @ts-ignore
-					event.end = getEndDate(event.start, event.duration);
+					event.end = getEndDate(event.start, duration);
 				} else if (formatDate(dtStart) == item.text) {
 					const start = new Date(
 						dtStart.setFullYear(draggedDt.getFullYear(), draggedDt.getMonth(), draggedDt.getDate())
@@ -3893,7 +3896,7 @@ const ReactModalService = {
 					event.start = typeof event.start == 'string' ? start.toISOString() : start;
 
 					// @ts-ignore
-					event.end = getEndDate(event.start, event.duration);
+					event.end = getEndDate(event.start, duration);
 				}
 
 				updatedEvents.push(event);
