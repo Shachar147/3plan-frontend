@@ -33,6 +33,7 @@ import Toast from '../../components/react-toastr/react-toastr';
 import axios from 'axios';
 import { BiEventsService } from '../../services/bi-events.service';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
+import { formatDate } from '../../utils/time-utils';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -52,9 +53,15 @@ function MainPage(props: MainPageProps) {
 	const [defaultCalendarEvents, setDefaultCalendarEvents] = useState<CalendarEvent[]>([]);
 
 	// list view on mobile
-	const [currentListViewPage, setCurrentListViewPage] = useState(0);
+	const todayIndex = eventStore.tripDaysArray.indexOf(formatDate(new Date()));
+	console.log({ todayIndex, today: formatDate(new Date()), arr: eventStore.tripDaysArray });
+	const [currentListViewPage, setCurrentListViewPage] = useState(Math.max(todayIndex, 0));
 
 	useHandleWindowResize();
+
+	useEffect(() => {
+		setCurrentListViewPage(todayIndex);
+	}, [todayIndex]);
 
 	// sockets - listen to server updates and update the data on all tabs.
 	useEffect(() => {
@@ -229,6 +236,8 @@ function MainPage(props: MainPageProps) {
 
 			const backIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-right' : 'fa-chevron-left';
 			const nextIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-left' : 'fa-chevron-right';
+
+			console.log(currentListViewPage);
 
 			const navigation = (
 				<div className="flex-row buttons-group align-items-center justify-content-center position-relative margin-top-5 margin-bottom-2">
