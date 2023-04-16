@@ -54,7 +54,6 @@ function MainPage(props: MainPageProps) {
 
 	// list view on mobile
 	const todayIndex = eventStore.tripDaysArray.indexOf(formatDate(new Date()));
-	console.log({ todayIndex, today: formatDate(new Date()), arr: eventStore.tripDaysArray });
 	const [currentListViewPage, setCurrentListViewPage] = useState(Math.max(todayIndex, 0));
 
 	useHandleWindowResize();
@@ -236,8 +235,6 @@ function MainPage(props: MainPageProps) {
 
 			const backIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-right' : 'fa-chevron-left';
 			const nextIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-left' : 'fa-chevron-right';
-
-			console.log(currentListViewPage);
 
 			const navigation = (
 				<div className="flex-row buttons-group align-items-center justify-content-center position-relative margin-top-5 margin-bottom-2">
