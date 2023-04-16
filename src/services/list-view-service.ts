@@ -961,7 +961,7 @@ const ListViewService = {
 		}
 		return summaryPerDay;
 	},
-	buildHTMLSummary: (eventStore: EventStore) => {
+	buildHTMLSummary: (eventStore: EventStore, returnArray?: boolean) => {
 		let calendarEvents = eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents, eventStore); // used to be calendarEvents but now it also considering search and filters
 		const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
 
@@ -1016,6 +1016,20 @@ const ListViewService = {
         `;
 		};
 
+		const getSummaryPerDayHTMLArray = () => {
+			return Object.keys(summaryPerDay).map((dayTitle) => {
+				const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : '';
+				return `
+                    <div class="list-view-day-title position-sticky background-white"><div><b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span></div></div>
+                    ${summaryPerDay[dayTitle].join('<br/>').replaceAll('<br/><br/>', '<br/>')}
+                `;
+			});
+		};
+
+		if (returnArray) {
+			return getSummaryPerDayHTMLArray();
+		}
+
 		const FullSummary = () => {
 			// const divider = eventStore.isMobile ? '<br/><hr/>' : '<br/><hr/><br/>';
 			const divider = '<br/><hr/>';
@@ -1023,15 +1037,7 @@ const ListViewService = {
         <div style="max-width: 990px;">
             <h3><b><u>${tripSummaryTitle}</b></u></h3>
             <b>${noItemsPlaceholder}</b>
-            ${Object.keys(summaryPerDay)
-				.map((dayTitle) => {
-					const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : '';
-					return `
-                    <div class="list-view-day-title position-sticky background-white"><div><b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span></div></div>
-                    ${summaryPerDay[dayTitle].join('<br/>').replaceAll('<br/><br/>', '<br/>')}
-                `;
-				})
-				.join(divider)}
+            ${getSummaryPerDayHTMLArray().join(divider)}
         </div>
     `;
 		};

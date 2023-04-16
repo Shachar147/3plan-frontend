@@ -32,6 +32,7 @@ import { getUserId } from '../../helpers/auth';
 import Toast from '../../components/react-toastr/react-toastr';
 import axios from 'axios';
 import { BiEventsService } from '../../services/bi-events.service';
+import Button, { ButtonFlavor } from '../../components/common/button/button';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -49,6 +50,9 @@ function MainPage(props: MainPageProps) {
 
 	const [isFetchingData, setIsFetchingData] = useState(false);
 	const [defaultCalendarEvents, setDefaultCalendarEvents] = useState<CalendarEvent[]>([]);
+
+	// list view on mobile
+	const [currentListViewPage, setCurrentListViewPage] = useState(0);
 
 	useHandleWindowResize();
 
@@ -219,6 +223,63 @@ function MainPage(props: MainPageProps) {
 
 		const onChange = (newVal: string) => eventStore.setListViewSummaryMode(newVal);
 
+		let content = null;
+		if (eventStore.isMobile) {
+			const arr = ListViewService.buildHTMLSummary(eventStore, true);
+			// const randomIndex = Math.floor(Math.random() * arr.length);
+
+			const backIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-right' : 'fa-chevron-left';
+			const nextIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-left' : 'fa-chevron-right';
+
+			const navigation = (
+				<div className="flex-row buttons-group align-items-center justify-content-center position-relative margin-top-5 margin-bottom-2">
+					<Button
+						flavor={ButtonFlavor.secondary}
+						onClick={() => {
+							if (currentListViewPage - 1 >= 0) {
+								setCurrentListViewPage(currentListViewPage - 1);
+							}
+						}}
+						disabled={currentListViewPage <= 0}
+						text={TranslateService.translate(eventStore, 'NAVIGATION.BACK')}
+						icon={backIcon}
+						className={'black flex-row gap-5 align-items-center justify-content-center'}
+					/>
+					<Button
+						flavor={ButtonFlavor.secondary}
+						onClick={() => {
+							if (currentListViewPage + 1 <= arr.length - 1) {
+								setCurrentListViewPage(currentListViewPage + 1);
+							}
+						}}
+						disabled={currentListViewPage >= arr.length - 1}
+						text={TranslateService.translate(eventStore, 'NAVIGATION.NEXT')}
+						icon={nextIcon}
+						className={'black flex-row gap-5 align-items-center justify-content-center'}
+						iconPosition={'end'}
+					/>
+				</div>
+			);
+
+			content = (
+				<div className={'trip-summary bright-scrollbar padding-top-60'}>
+					<div className="flex-col gap-5">
+						{navigation}
+						<div dangerouslySetInnerHTML={{ __html: arr[currentListViewPage] }} />{' '}
+					</div>
+				</div>
+			);
+		} else {
+			content = !eventStore.isMobile && (
+				<div
+					className={'trip-summary bright-scrollbar padding-top-60'}
+					dangerouslySetInnerHTML={{
+						__html: eventStore.isListView ? (ListViewService.buildHTMLSummary(eventStore) as string) : '',
+					}}
+				/>
+			);
+		}
+
 		return (
 			<div
 				className={getClasses(
@@ -235,12 +296,7 @@ function MainPage(props: MainPageProps) {
 						customStyle="white"
 					/>
 				</div>
-				<div
-					className={'trip-summary bright-scrollbar padding-top-60'}
-					dangerouslySetInnerHTML={{
-						__html: eventStore.isListView ? ListViewService.buildHTMLSummary(eventStore) : '',
-					}}
-				/>
+				{content}
 			</div>
 		);
 	}
