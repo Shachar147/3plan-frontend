@@ -66,7 +66,6 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 		},
 		withLanguageSelector && {
 			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
-			// path: '/language',
 			onClick: () => {
 				ReactModalService.openChangeLanguageModal(eventStore);
 			},

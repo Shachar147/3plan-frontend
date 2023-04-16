@@ -226,7 +226,6 @@ function MainPage(props: MainPageProps) {
 		let content = null;
 		if (eventStore.isMobile) {
 			const arr = ListViewService.buildHTMLSummary(eventStore, true);
-			// const randomIndex = Math.floor(Math.random() * arr.length);
 
 			const backIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-right' : 'fa-chevron-left';
 			const nextIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-left' : 'fa-chevron-right';
