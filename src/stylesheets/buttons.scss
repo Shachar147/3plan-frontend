@@ -173,3 +173,38 @@ button.secondary-button {
 	color: white !important;
 	border: 1px solid var(--dark-gray) !important;
 }
+
+
+.buttons-group {
+	button {
+		border-radius: 0 !important;
+
+		&:first-child {
+			border-top-left-radius: 20px !important;
+			border-bottom-left-radius: 20px !important;
+		}
+
+		&:last-child {
+			border-top-right-radius: 20px !important;
+			border-bottom-right-radius: 20px !important;
+		}
+	}
+}
+
+body.rtl {
+	.buttons-group {
+		button {
+			border-radius: 0 !important;
+
+			&:last-child {
+				border-top-left-radius: 20px !important;
+				border-bottom-left-radius: 20px !important;
+			}
+
+			&:first-child {
+				border-top-right-radius: 20px !important;
+				border-bottom-right-radius: 20px !important;
+			}
+		}
+	}
+}

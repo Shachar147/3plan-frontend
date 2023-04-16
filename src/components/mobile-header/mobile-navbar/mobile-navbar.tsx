@@ -48,36 +48,31 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 		});
 	};
 
-	const SidebarData: any[] = useMemo(
-		() =>
-			[
-				withSearch && {
-					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
-					onClick: () => {
-						toggleSearch();
-					},
-					icon: 'fa-search',
-					// @ts-ignore
-					cName: getClasses('nav-text', options.isSearchOpen && 'active'),
-				},
-				withMyTrips && {
-					title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
-					path: '/my-trips',
-					icon: 'fa-street-view',
-					cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active'),
-				},
-				withLanguageSelector && {
-					title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
-					// path: '/language',
-					onClick: () => {
-						ReactModalService.openChangeLanguageModal(eventStore);
-					},
-					icon: 'fa-globe',
-					cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),
-				},
-			].filter(Boolean),
-		[eventStore.isSearchOpen, withSearch]
-	);
+	const SidebarData: any[] = [
+		withSearch && {
+			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
+			onClick: () => {
+				toggleSearch();
+			},
+			icon: 'fa-search',
+			// @ts-ignore
+			cName: getClasses('nav-text', options.isSearchOpen && 'active'),
+		},
+		withMyTrips && {
+			title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
+			path: '/my-trips',
+			icon: 'fa-street-view',
+			cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active'),
+		},
+		withLanguageSelector && {
+			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
+			onClick: () => {
+				ReactModalService.openChangeLanguageModal(eventStore);
+			},
+			icon: 'fa-globe',
+			cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),
+		},
+	].filter(Boolean);
 
 	const logoutLink = withLoginLogout && {
 		title: isLoggedIn ? logoutText : loginText,

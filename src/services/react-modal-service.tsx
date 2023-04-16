@@ -3813,6 +3813,10 @@ const ReactModalService = {
 									setTimeout(() => {
 										ReactModalService.internal.closeModal(eventStore);
 									}, 100);
+
+									setTimeout(() => {
+										window.location.reload();
+									}, 200);
 								}}
 								options={options}
 								useActiveButtons={false}
