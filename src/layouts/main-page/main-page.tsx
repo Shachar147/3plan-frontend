@@ -59,7 +59,7 @@ function MainPage(props: MainPageProps) {
 	useHandleWindowResize();
 
 	useEffect(() => {
-		setCurrentListViewPage(todayIndex);
+		setCurrentListViewPage(Math.max(todayIndex, 0));
 	}, [todayIndex]);
 
 	// sockets - listen to server updates and update the data on all tabs.
