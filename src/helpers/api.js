@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getServerAddress } from '../config/config';
+import { getToken } from './auth';
 
 const unAuthorizedRoutes = ['signin'];
 
@@ -25,9 +26,11 @@ export function apiGet(self, url, onSuccess, onError, onFinish) {
 		});
 }
 
-export function apiGetPromise(self, url) {
+export function apiGetPromise(self, url, handleUnAuthorized = true) {
 	return axios.get(getServerAddress() + url).catch((error) => {
-		handleUnauthorizedError(error, url);
+		if (handleUnAuthorized) {
+			handleUnauthorizedError(error, url);
+		}
 	});
 }
 

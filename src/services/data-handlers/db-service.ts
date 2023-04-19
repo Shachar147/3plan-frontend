@@ -5,6 +5,8 @@ import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, Trip }
 import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
 import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
+import axios from 'axios';
+import { getToken } from '../../helpers/auth';
 
 export interface upsertTripProps {
 	name?: string;
@@ -104,6 +106,16 @@ export class DBService implements BaseDataHandler {
 			trips.push(x as Trip);
 		});
 		return trips;
+	}
+
+	async getUserStats(): Promise<any[]> {
+		if (!axios.defaults.headers.Authorization) {
+			const token = getToken();
+			axios.defaults.headers.Authorization = `Bearer ${token}`;
+		}
+
+		const res: any = await apiGetPromise(this, '/statistics', false);
+		return res.data;
 	}
 
 	// --- SET ------------------------------------------------------------------------------

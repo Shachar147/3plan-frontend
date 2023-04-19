@@ -1,8 +1,9 @@
 import { createContext } from 'react';
 import { TriplanTinderApiService } from '../services/triplan-tinder-api-service';
 import { action, computed, observable, runInAction } from 'mobx';
-import { TinderItem } from '../helpers/interfaces';
+import { GetPlacesByDestinationResult, TinderItem } from '../helpers/interfaces';
 import { AdminViewMode, ViewMode } from '../../utils/enums';
+import DataServices from '../../services/data-handlers/data-handler-base';
 
 export class AdminStore {
 	@observable hasInit: boolean = false;
@@ -16,6 +17,7 @@ export class AdminStore {
 	@observable isDownloading: boolean = false;
 	@observable isFixing: boolean = false;
 	@observable isScraping: boolean = false;
+	@observable userStats = observable.array<any[]>([]);
 
 	constructor() {
 		this.init();
@@ -23,9 +25,15 @@ export class AdminStore {
 
 	// --- init -------------------------------------------------
 	init() {
-		TriplanTinderApiService.getPlacesByDestination().then((results) => {
+		const promises = [TriplanTinderApiService.getPlacesByDestination(), DataServices.DBService.getUserStats()];
+		Promise.all(promises).then((results) => {
+			// @ts-ignore
+			const places: GetPlacesByDestinationResult = results[0];
+			// @ts-ignore
+			const stats: any[] = results[1];
 			runInAction(() => {
-				this.placesByDestination = observable.map<string, TinderItem[]>(results?.data);
+				this.placesByDestination = observable.map<string, TinderItem[]>(places?.data);
+				this.userStats = observable.array<any[]>(stats);
 				this.hasInit = true;
 			});
 		});

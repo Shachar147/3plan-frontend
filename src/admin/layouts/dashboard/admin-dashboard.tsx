@@ -13,12 +13,28 @@ import AdminDashboardWrapper from '../a-dashboard-wrapper/a-dashboard-wrapper';
 import { eventStoreContext } from '../../../stores/events-store';
 import DestinationSlider from '../../components/destinations-slider/destination-slider';
 import TriplanSearch from '../../../components/triplan-header/triplan-search/triplan-search';
+import { formatDateString } from '../../../utils/defaults';
 
 function AdminDashboard() {
 	const adminStore = useContext(adminStoreContext);
 	const eventStore = useContext(eventStoreContext);
 
-	function renderContent() {
+	function wrapBlockWithTitle(titleKey: string, children: React.ReactNode) {
+		const blockTitle = (
+			<div className="font-weight-bold text-align-center width-100-percents font-size-20">
+				{TranslateService.translate(eventStore, titleKey)}
+			</div>
+		);
+
+		return (
+			<div className="flex-col gap-10">
+				{blockTitle}
+				{children}
+			</div>
+		);
+	}
+
+	const renderTinderWidget = () => {
 		if (adminStore.placesByDestination.size === 0) {
 			return (
 				<div className="no-destinations-placeholder">{TranslateService.translate(eventStore, 'NO_ITEMS')}</div>
@@ -59,6 +75,97 @@ function AdminDashboard() {
 					<TriplanSearch isHidden={false} />
 				</div>
 				<DestinationSlider />
+			</div>
+		);
+	};
+
+	function renderUserStats() {
+		let columns: string[] = [
+			'name',
+			'num_of_categories',
+			'scheduled_events',
+			'sidebar_events',
+			'userId',
+			'username',
+			'lastUpdateAt',
+		];
+
+		if (eventStore.isMobile) {
+			columns = ['lastUpdateAt', 'num_of_categories', 'scheduled_events', 'sidebar_events', 'userId'];
+			return (
+				<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
+					<table>
+						<tbody>
+							{adminStore.userStats.map((row: any) => (
+								<>
+									<tr>
+										<td>
+											<b>
+												{row['username']} - {row['name']}
+											</b>
+										</td>
+									</tr>
+									{columns.map((col: any) => (
+										<>
+											<tr>
+												<td>
+													{`${TranslateService.translate(eventStore, col)}: `}
+													{!row[col]
+														? '-'
+														: col == 'lastUpdateAt'
+														? new Date(row[col])
+																.toISOString()
+																.split('.')[0]
+																.replace('T', ', ')
+														: row[col]}
+												</td>
+											</tr>
+											<tr>
+												<td />
+											</tr>
+										</>
+									))}
+								</>
+							))}
+						</tbody>
+					</table>
+				</div>
+			);
+		}
+
+		return (
+			<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
+				<table>
+					<thead>
+						{columns.map((x) => (
+							<th>{TranslateService.translate(eventStore, x)}</th>
+						))}
+					</thead>
+					<tbody>
+						{adminStore.userStats.map((row: any) => (
+							<tr>
+								{columns.map((col: any) => (
+									<td>
+										{!row[col]
+											? '-'
+											: col == 'lastUpdateAt'
+											? new Date(row[col]).toISOString().split('.')[0].replace('T', ', ')
+											: row[col]}
+									</td>
+								))}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		);
+	}
+
+	function renderContent() {
+		return (
+			<div className="flex-col gap-10">
+				{wrapBlockWithTitle('ADMIN_DASHBOARD.USER_STATS.TITLE', renderUserStats())}
+				{wrapBlockWithTitle('ADMIN_DASHBOARD.TINDER_WIDGET.TITLE', renderTinderWidget())}
 			</div>
 		);
 	}

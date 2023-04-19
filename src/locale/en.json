@@ -492,5 +492,7 @@
 	"SWITCH_DAYS.CONTENT": "You're about to replace all the activities that are on date {X} to be on date {Y} and vice versa.\n\nIs it what you try to do?",
 	"SWITCH_DAYS_SUCCESS_MODAL.TITLE": "Switched successfully!",
 	"SWITCH_DAYS_SUCCESS_MODAL.CONTENT": "All the activities from dates {X} and {Y} are successfully switched",
-	"DRAG_TO_SWITCH_DAYS": "Drag right/left to perform a complete days switch"
+	"DRAG_TO_SWITCH_DAYS": "Drag right/left to perform a complete days switch",
+	"ADMIN_DASHBOARD.TINDER_WIDGET.TITLE": "Manage Suggested Places",
+	"ADMIN_DASHBOARD.USER_STATS.TITLE": "Users Stats"
 }
