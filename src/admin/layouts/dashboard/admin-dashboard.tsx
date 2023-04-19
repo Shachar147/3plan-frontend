@@ -96,37 +96,39 @@ function AdminDashboard() {
 				<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
 					<table>
 						<tbody>
-							{adminStore.userStats.map((row: any) => (
-								<>
-									<tr>
-										<td>
-											<b>
-												{row['username']} - {row['name']}
-											</b>
-										</td>
-									</tr>
-									{columns.map((col: any) => (
-										<>
-											<tr>
-												<td>
-													{`${TranslateService.translate(eventStore, col)}: `}
-													{!row[col]
-														? '-'
-														: col == 'lastUpdateAt'
-														? new Date(row[col])
-																.toISOString()
-																.split('.')[0]
-																.replace('T', ', ')
-														: row[col]}
-												</td>
-											</tr>
-											<tr>
-												<td />
-											</tr>
-										</>
-									))}
-								</>
-							))}
+							{adminStore.userStats
+								.filter((a: any) => a['lastUpdateAt'])
+								.map((row: any) => (
+									<>
+										<tr>
+											<td>
+												<b>
+													{row['username']} - {row['name']}
+												</b>
+											</td>
+										</tr>
+										{columns.map((col: any) => (
+											<>
+												<tr>
+													<td>
+														{`${TranslateService.translate(eventStore, col)}: `}
+														{!row[col]
+															? '-'
+															: col == 'lastUpdateAt'
+															? new Date(row[col])
+																	.toISOString()
+																	.split('.')[0]
+																	.replace('T', ', ')
+															: row[col]}
+													</td>
+												</tr>
+												<tr>
+													<td />
+												</tr>
+											</>
+										))}
+									</>
+								))}
 						</tbody>
 					</table>
 				</div>
