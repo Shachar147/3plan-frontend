@@ -803,6 +803,13 @@
 			margin-right: -5px;
 		}
 	}
+
+	// admin side
+	.a-dashboard-wrapper {
+		.external-events-container {
+			display: none;
+		}
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {
