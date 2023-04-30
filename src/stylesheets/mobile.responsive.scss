@@ -485,7 +485,7 @@
 
 	.create-new-trip-form {
 		position: relative;
-		top: -150px !important;
+		top: -130px !important;
 
 		.my-trips.bright-scrollbar {
 			max-height: 300px !important;
@@ -494,7 +494,7 @@
 
 	.main-part .up {
 		position: relative;
-		top: -170px !important;
+		top: -150px !important;
 	}
 
 	.mobile-header-search-container {
@@ -808,6 +808,15 @@
 	.a-dashboard-wrapper {
 		.external-events-container {
 			display: none;
+		}
+	}
+
+	// landing page mobile improvements
+	.landing-page-layout.landing-page {
+		height: 100vh !important;
+
+		.main-part {
+			margin-top: 5px !important;
 		}
 	}
 }

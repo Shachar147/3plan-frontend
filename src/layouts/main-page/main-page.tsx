@@ -236,7 +236,7 @@ function MainPage(props: MainPageProps) {
 			const backIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-right' : 'fa-chevron-left';
 			const nextIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-left' : 'fa-chevron-right';
 
-			const navigation = (
+			let navigation: React.ReactNode | null = (
 				<div className="flex-row buttons-group align-items-center justify-content-center position-relative margin-top-5 margin-bottom-2">
 					<Button
 						flavor={ButtonFlavor.secondary}
@@ -266,11 +266,16 @@ function MainPage(props: MainPageProps) {
 				</div>
 			);
 
+			if (arr.length <= 1) {
+				navigation = null;
+			}
+
 			content = (
 				<div className={'trip-summary bright-scrollbar padding-top-60'}>
 					<div className="flex-col gap-5">
 						{navigation}
-						<div dangerouslySetInnerHTML={{ __html: arr[currentListViewPage] }} />{' '}
+						<div dangerouslySetInnerHTML={{ __html: arr[currentListViewPage] }} />
+						{arr[currentListViewPage]?.length > 0 ? navigation : null}
 					</div>
 				</div>
 			);

@@ -25,7 +25,7 @@ const LandingPage = () => {
 	}, [eventStore.calendarLocalCode]);
 
 	return (
-		<div className={'landing-page-layout'}>
+		<div className={'landing-page-layout landing-page'}>
 			<TriplanHeaderWrapper />
 			<div className={'main-part'}>
 				<div className={'plan-your-trip-header main-font'}>
