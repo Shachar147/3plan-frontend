@@ -13,6 +13,7 @@ import TranslateService from '../../services/translate-service';
 import {
 	addDays,
 	addHours,
+	addSeconds,
 	areDatesOnDifferentDays,
 	getDateRangeString,
 	isTodayInDateRange,
@@ -160,6 +161,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		if (calendarComponentRef && calendarComponentRef.current) {
 			if (customDateRange && customDateRange.start && customDateRange.end) {
 				calendarComponentRef.current.getApi().changeView('timeGridAllDays');
+				handleViewChange();
 				return true;
 			}
 		}
@@ -499,10 +501,14 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			}
 
 			runInAction(() => {
+				end = addSeconds(end, -1); // cause the end is always the next day at 00:00
+				// alert('here!' + end.toISOString());
+
 				eventStore.activeStart = start;
 				eventStore.activeEnd = end;
 				eventStore.currentStart = currentStart;
 				eventStore.currentEnd = currentEnd;
+				eventStore.calendarViewType = view.type;
 			});
 
 			updateAllowSwitchDays(view.type !== 'timeGridDay' && view.type !== 'dayGridMonth');

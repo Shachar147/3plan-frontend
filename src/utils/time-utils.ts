@@ -171,6 +171,11 @@ export function addHours(dt: Date, hours: number): Date {
 	return dt;
 }
 
+export function addSeconds(dt: Date, seconds: number): Date {
+	dt.setSeconds(dt.getSeconds() + seconds);
+	return dt;
+}
+
 export function fullCalendarFormatDate(dt: Date) {
 	const parts = dt.toLocaleDateString().replace(/\//gi, '-').split('-');
 	return [parts[2], padTo2Digits(Number(parts[0])), padTo2Digits(Number(parts[1]))].join('-');

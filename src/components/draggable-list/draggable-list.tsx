@@ -93,19 +93,20 @@ const DraggableList = () => {
 					isInRange(item.date) ? (
 						<li
 							key={item.id}
-							className="triplan-draggable-list-item"
+							className="triplan-draggable-list-item flex-row gap-4 align-items-center justify-content-center"
 							draggable
 							onDragStart={(event) => handleDragStart(event, index)}
 							onDragOver={(event) => handleDragOver(event, index)}
 							onDragLeave={(event) => handleDragLeave(event, index)}
 							onDrop={(event) => handleDrop(event, index)}
 						>
-							{/*{item.text}*/}
+							<span>{item.text.split('/').slice(0, 2).join('/')}</span>
 							<i
 								className="fa fa-arrows"
 								aria-hidden="true"
 								title={TranslateService.translate(eventStore, 'DRAG_TO_SWITCH_DAYS')}
 							/>
+
 							{/*<img src={'/images/switch-days.png'} width={50} />*/}
 							{/*<i className="fa fa-exchange" aria-hidden="true" />*/}
 						</li>

@@ -3904,7 +3904,7 @@ const ReactModalService = {
 
 			console.log({ temp, updatedEvents, calendarEvents: eventStore.calendarEvents });
 
-			await eventStore.setCalendarEvents(updatedEvents, false);
+			await eventStore.setCalendarEvents(updatedEvents, true);
 
 			ReactModalService.internal.closeModal(eventStore);
 

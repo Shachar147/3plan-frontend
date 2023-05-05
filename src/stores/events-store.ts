@@ -151,6 +151,7 @@ export class EventStore {
 	@observable activeEnd: Date | null = null;
 	@observable currentStart: Date | null = null;
 	@observable currentEnd: Date | null = null;
+	@observable calendarViewType: string | null = null;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -767,7 +768,7 @@ export class EventStore {
 		if (!this.activeStart || !this.activeEnd) {
 			return 0;
 		}
-		return parseInt(((this.activeEnd.getTime() - this.activeStart.getTime()) / 86400000).toString()) + 1;
+		return parseInt(((this.activeEnd.getTime() - this.activeStart.getTime()) / 86400000).toString()); // + 1;
 	}
 
 	@computed
@@ -775,7 +776,7 @@ export class EventStore {
 		if (!this.currentStart || !this.currentEnd) {
 			return 0;
 		}
-		return parseInt(((this.currentEnd.getTime() - this.currentStart.getTime()) / 86400000).toString()) + 1;
+		return parseInt(((this.currentEnd.getTime() - this.currentStart.getTime()) / 86400000).toString()); // + 1
 	}
 
 	// --- actions --------------------------------------------------------------
