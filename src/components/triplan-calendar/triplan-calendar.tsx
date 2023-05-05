@@ -511,7 +511,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				eventStore.calendarViewType = view.type;
 			});
 
-			updateAllowSwitchDays(view.type !== 'timeGridDay' && view.type !== 'dayGridMonth');
+			updateAllowSwitchDays(!eventStore.isMobile && view.type !== 'timeGridDay' && view.type !== 'dayGridMonth');
 		}, 100);
 	};
 

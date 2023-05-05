@@ -11,7 +11,7 @@ import ReactModalService from '../../services/react-modal-service';
 import DataServices, { DBTrip, Trip, tripNameToLSTripName } from '../../services/data-handlers/data-handler-base';
 import ToggleButton from '../../components/toggle-button/toggle-button';
 import { TripDataSource } from '../../utils/enums';
-import { getUser } from '../../helpers/auth';
+import { getToken, getUser, isLoggedOn } from '../../helpers/auth';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatShortDateStringIsrael, getAmountOfDays } from '../../utils/time-utils';
 import { runInAction } from 'mobx';
@@ -108,12 +108,22 @@ function MyTrips() {
 			>
 				<img src={noTripsPlaceholderIcon} className="opacity-0-1" />
 				{getNoTripPlaceholderText()}
-				<Button
-					text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
-					flavor={ButtonFlavor.primary}
-					className="padding-inline-15"
-					onClick={() => navigate('/getting-started')}
-				/>
+				<div className="flex-row gap-8">
+					<Button
+						text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
+						flavor={ButtonFlavor.primary}
+						className="padding-inline-15"
+						onClick={() => navigate('/getting-started')}
+					/>
+					{!isLoggedOn() && (
+						<Button
+							text={TranslateService.translate(eventStore, 'LOGIN')}
+							flavor={ButtonFlavor.secondary}
+							className="padding-inline-15"
+							onClick={() => navigate('/login')}
+						/>
+					)}
+				</div>
 			</div>
 		);
 	}
