@@ -106,6 +106,8 @@
 .sidebar-event-title-container {
 	display: flex;
 	width: 100%;
+	flex: 1 1 0;
+	min-width: 0;
 
 	.sidebar-event-title-text {
 		margin-inline-end: 3px;

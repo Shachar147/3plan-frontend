@@ -3902,7 +3902,7 @@ const ReactModalService = {
 				updatedEvents.push(event);
 			});
 
-			console.log({ temp, updatedEvents, calendarEvents: eventStore.calendarEvents });
+			// console.log({ temp, updatedEvents, calendarEvents: eventStore.calendarEvents });
 
 			await eventStore.setCalendarEvents(updatedEvents, true);
 
