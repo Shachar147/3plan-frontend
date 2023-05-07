@@ -233,4 +233,12 @@ export class DBService implements BaseDataHandler {
 	async duplicateTrip(_eventStore: EventStore, tripName: string, newTripName: string) {
 		return await apiPost(`/trip/duplicate`, { name: tripName, newName: newTripName });
 	}
+
+	async lockTrip(tripName: string) {
+		return await apiPut(`/trip/lock/name/${tripName}`, {});
+	}
+
+	async unlockTrip(tripName: string) {
+		return await apiPut(`/trip/unlock/name/${tripName}`, {});
+	}
 }

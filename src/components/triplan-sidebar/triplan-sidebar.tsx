@@ -162,9 +162,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					eventStore.isTripLocked ? 'UNLOCK_TRIP.BUTTON_TEXT' : 'LOCK_TRIP.BUTTON_TEXT'
 				)}
 				onClick={() => {
-					runInAction(() => {
-						eventStore.isTripLocked = !eventStore.isTripLocked;
-					});
+					eventStore.toggleTripLocked();
 				}}
 				flavor={ButtonFlavor['movable-link']}
 			/>

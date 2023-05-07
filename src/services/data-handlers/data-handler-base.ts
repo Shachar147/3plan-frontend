@@ -14,6 +14,7 @@ export interface Trip {
 	calendarEvents: CalendarEvent[];
 	allEvents: AllEventsEvent[];
 	calendarLocale: LocaleCode;
+	isLocked?: boolean;
 	id?: number; // for my trips page
 	lastUpdateAt?: string;
 }

@@ -1080,7 +1080,7 @@ export class EventStore {
 
 	@action
 	updateTripData(tripData: Trip) {
-		const { categories, allEvents, sidebarEvents, calendarEvents, dateRange } = tripData;
+		const { categories, allEvents, sidebarEvents, calendarEvents, dateRange, isLocked } = tripData;
 		// this.setCalendarLocalCode(calendarLocale ?? tripData.calendarLocale);
 		// this.setCalendarLocalCode(tripData.calendarLocale);
 		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale(), false);
@@ -1090,6 +1090,7 @@ export class EventStore {
 		this.customDateRange = dateRange;
 		this.allEvents = allEvents;
 		this.categories = categories;
+		this.isTripLocked = !!isLocked;
 	}
 
 	@action
@@ -1274,6 +1275,16 @@ export class EventStore {
 				this.forceSetDraggable += 1;
 			});
 		}, 500);
+	}
+
+	@action
+	async toggleTripLocked() {
+		if (this.isTripLocked) {
+			await this.dataService.unlockTrip(this.tripName);
+		} else {
+			await this.dataService.lockTrip(this.tripName);
+		}
+		// this.isTripLocked = !this.isTripLocked;
 	}
 
 	// --- private functions ----------------------------------------------------

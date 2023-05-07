@@ -80,7 +80,6 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			eventStore.calendarEvents = eventStore.calendarEvents.map((x: CalendarEvent) =>
 				lockOrderedEvents(eventStore, x)
 			);
-			debugger;
 		});
 	}, [eventStore.isTripLocked]);
 
