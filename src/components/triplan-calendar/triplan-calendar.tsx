@@ -25,7 +25,7 @@ import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
 import DraggableList from '../draggable-list/draggable-list';
-import { lockOrderedEvents } from '../../utils/utils';
+import { lockEvents } from '../../utils/utils';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -76,10 +76,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	useEffect(() => {
 		runInAction(() => {
-			// lock ordered events
-			eventStore.calendarEvents = eventStore.calendarEvents.map((x: CalendarEvent) =>
-				lockOrderedEvents(eventStore, x)
-			);
+			eventStore.calendarEvents = eventStore.calendarEvents.map((x: CalendarEvent) => lockEvents(eventStore, x));
 		});
 	}, [eventStore.isTripLocked]);
 
@@ -566,10 +563,6 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	useEffect(() => {
 		handleViewChange();
 	}, [eventStore.customDateRange]);
-
-	// todo complete:
-	// save it to db
-	// auto lock trips if end date already passed.
 
 	return (
 		<div className={'flex-col width-100-percents position-relative'}>

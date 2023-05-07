@@ -17,7 +17,7 @@ import { addDays, convertMsToHM, formatDate, getEndDate, toDate } from '../utils
 
 // @ts-ignore
 import _ from 'lodash';
-import { coordinateToString, generate_uuidv4, getCoordinatesRangeKey, lockOrderedEvents } from '../utils/utils';
+import { coordinateToString, generate_uuidv4, getCoordinatesRangeKey, lockEvents } from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
 import {
 	AllEventsEvent,
@@ -829,7 +829,7 @@ export class EventStore {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
-		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(this, x));
+		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockEvents(this, x));
 
 		// update local storage
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
@@ -1091,6 +1091,19 @@ export class EventStore {
 		this.allEvents = allEvents;
 		this.categories = categories;
 		this.isTripLocked = !!isLocked;
+
+		// if trip end date already passed, auto-lock it.
+		// after it was auto-locked once, do not auto-lock it again (if the user decided to unlock it, leave it unlocked)
+		const key = 'auto-locked-' + this.tripName;
+		if (!isLocked) {
+			if (new Date().getTime() > new Date(dateRange.end).getTime()) {
+				console.log('passed time', new Date().getTime() - new Date(dateRange.end).getTime());
+				if (!localStorage.getItem(key)) {
+					this.dataService.lockTrip(this.tripName);
+					localStorage.setItem(key, '1');
+				}
+			}
+		}
 	}
 
 	@action

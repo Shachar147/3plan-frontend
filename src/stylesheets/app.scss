@@ -1160,3 +1160,7 @@ input:read-only {
 	margin-inline: 30px;
 	margin-block: 8px;
 }
+
+.fa-filter + span {
+	display: none;
+}

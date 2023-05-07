@@ -307,10 +307,11 @@ export function containsDuplicates(array: any[]) {
 	return array.length !== new Set(array).size;
 }
 
-export function lockOrderedEvents(eventStore: EventStore, calendarEvent: CalendarEvent) {
-	const isOrdered = isEventAlreadyOrdered(calendarEvent) || eventStore.isTripLocked;
+export function lockEvents(eventStore: EventStore, calendarEvent: CalendarEvent) {
+	const isOrdered = isEventAlreadyOrdered(calendarEvent);
+	const isTripLocked = eventStore.isTripLocked;
 
-	if (isOrdered) {
+	if (isOrdered || isTripLocked) {
 		// @ts-ignore
 		calendarEvent.editable = false;
 		// @ts-ignore
