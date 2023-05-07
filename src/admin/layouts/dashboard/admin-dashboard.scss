@@ -32,6 +32,9 @@
 }
 
 .no-destinations-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding-inline-start: 20px;
 }
 

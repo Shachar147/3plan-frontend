@@ -580,6 +580,8 @@
 	"userId": "מספר משתמש",
 	"username": "שם משתמש",
 	"lastUpdateAt": "עודכן לאחרונה ב",
+	"lastLoginAt": "המשתמש התחבר לאחרונה ב",
+	"numOfLogins": "כמות הפעמים שמשתמש זה התחבר",
 	"LOCK_TRIP.BUTTON_TEXT": "נעל את הטיול לשינויים",
 	"UNLOCK_TRIP.BUTTON_TEXT": "הוצא את הטיול מנעילה",
 	"TRIP_IS_LOCKED": "הטיול נעול לשינויים",
