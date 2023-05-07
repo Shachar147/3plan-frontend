@@ -2025,7 +2025,7 @@ const ReactModalService = {
 			title,
 			content,
 			onConfirm,
-			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : undefined,
+			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
 		});
 	},
 	openDuplicateSidebarEventModal: (eventStore: EventStore, event: SidebarEvent) => {
@@ -3280,7 +3280,7 @@ const ReactModalService = {
 				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
 			content,
 			onConfirm,
-			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : undefined,
+			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
 		});
 	},
 	openDeleteSidebarEventModal: (
