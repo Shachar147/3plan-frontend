@@ -25,6 +25,7 @@ import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
 import DraggableList from '../draggable-list/draggable-list';
+import { lockOrderedEvents } from '../../utils/utils';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -64,7 +65,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				...x,
 			},
 			className: x.className ?? `priority-${x.priority}`,
-			editable: !eventStore.isMobile,
+			editable: !eventStore.isMobile && !eventStore.isTripLocked,
 		}));
 	}, [eventStore.filteredCalendarEvents, eventStore.isMobile]);
 
@@ -72,6 +73,16 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// for every change in _events, refresh the sources. to prevent the bug of the duplication.
 		refreshSources();
 	}, [_events]);
+
+	useEffect(() => {
+		runInAction(() => {
+			// lock ordered events
+			eventStore.calendarEvents = eventStore.calendarEvents.map((x: CalendarEvent) =>
+				lockOrderedEvents(eventStore, x)
+			);
+			debugger;
+		});
+	}, [eventStore.isTripLocked]);
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({
@@ -96,18 +107,20 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		draggables.forEach((d) => d.destroy());
 
 		const draggablesArr: any[] = [];
-		let elements = document.getElementsByClassName('external-events');
-		Array.from(elements).forEach((draggableEl: any) => {
-			draggablesArr.push(
-				new Draggable(draggableEl, {
-					itemSelector: '.fc-event',
-					eventData: getEventData,
-				})
-			);
-		});
+		if (!eventStore.isTripLocked) {
+			let elements = document.getElementsByClassName('external-events');
+			Array.from(elements).forEach((draggableEl: any) => {
+				draggablesArr.push(
+					new Draggable(draggableEl, {
+						itemSelector: '.fc-event',
+						eventData: getEventData,
+					})
+				);
+			});
+		}
 
 		setDraggables(draggablesArr);
-	}, [props.categories, eventStore.allEventsFilteredComputed, eventStore.forceSetDraggable]);
+	}, [props.categories, eventStore.allEventsFilteredComputed, eventStore.forceSetDraggable, eventStore.isTripLocked]);
 
 	useEffect(() => {
 		calendarComponentRef.current!.render();
@@ -173,6 +186,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// on event recieved (dropped) - keep its category and delete it from the sidebar.
 		if (!eventStore) return;
 
+		if (eventStore.isTripLocked) {
+			return;
+		}
+
 		// callback
 		props.onEventReceive && props.onEventReceive(info.event.id);
 
@@ -213,6 +230,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// const hoursToAdd = changeInfo.event._instance.range.start.getTimezoneOffset() / 60;
 		// const dtStart = addHours(changeInfo.event._instance.range.start, hoursToAdd);
 		// const dtEnd = addHours(changeInfo.event._instance.range.end, hoursToAdd);
+
+		if (eventStore.isTripLocked) {
+			return;
+		}
 
 		const newEvent = {
 			...changeInfo.event._def,
@@ -547,9 +568,14 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		handleViewChange();
 	}, [eventStore.customDateRange]);
 
+	// todos:
+	// save it to db
+	// do not allow to edit events when its on lock
+	// do not allow to drag from sidebar to calendar when its on lock
+
 	return (
 		<div className={'flex-col width-100-percents position-relative'}>
-			{eventStore.isSwitchDaysEnabled && <DraggableList />}
+			{eventStore.isSwitchDaysEnabled && !eventStore.isTripLocked && <DraggableList />}
 			<FullCalendar
 				initialView={'timeGridWeek'}
 				headerToolbar={headerToolbar}
@@ -581,23 +607,23 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				}}
 				rerenderDelay={10}
 				defaultTimedEventDuration={defaultTimedEventDuration}
-				eventDurationEditable={true}
-				editable={!eventStore.isMobile} // to prevent events from moving when scrolling
-				droppable={true}
+				eventDurationEditable={!eventStore.isTripLocked}
+				editable={!eventStore.isMobile && !eventStore.isTripLocked} // to prevent events from moving when scrolling
+				droppable={!eventStore.isTripLocked}
 				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
 				ref={calendarComponentRef}
 				events={_events}
 				eventReceive={onEventReceive}
 				eventClick={onEventClick}
 				eventChange={handleEventChange}
-				eventResizableFromStart={!eventStore.isMobile}
+				eventResizableFromStart={!eventStore.isMobile && !eventStore.isTripLocked}
 				locale={eventStore.calendarLocalCode}
 				direction={eventStore.getCurrentDirection()}
 				buttonIcons={false} // show the prev/next text
 				// weekNumbers={true}
 				navLinks={true} // can click day/week names to navigate views
 				dayMaxEvents={true} // allow "more" link when too many events
-				selectable={!eventStore.isMobile}
+				selectable={!eventStore.isMobile && !eventStore.isTripLocked}
 				select={onCalendarSelect}
 				eventContent={renderEventContent}
 				longPressDelay={5}

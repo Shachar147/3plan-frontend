@@ -130,6 +130,8 @@ export class EventStore {
 	@observable mapContainerRef: React.MutableRefObject<MapContainerRef> | null = null;
 	showEventOnMap: number | null = null;
 
+	@observable isTripLocked: boolean = false;
+
 	toastrClearTimeout: NodeJS.Timeout | null = null;
 	@observable toastrSettings: {
 		show: boolean;
@@ -827,7 +829,7 @@ export class EventStore {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
-		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(x));
+		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(this, x));
 
 		// update local storage
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;

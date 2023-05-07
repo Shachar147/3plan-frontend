@@ -2025,6 +2025,7 @@ const ReactModalService = {
 			title,
 			content,
 			onConfirm,
+			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : undefined,
 		});
 	},
 	openDuplicateSidebarEventModal: (eventStore: EventStore, event: SidebarEvent) => {
@@ -3209,43 +3210,45 @@ const ReactModalService = {
 			info.event.id
 		);
 
-		inputs.push({
-			settings: {
-				modalValueName: 'irrelevant',
-				type: 'custom-group',
-				extra: {
-					customGroupClassName: getClasses('actions', eventStore.isEnglish && 'flex-column'),
-					content: [
-						{
-							settings: {
-								type: 'button',
-								extra: {
-									onClick: onDeleteClick,
-									flavor: ButtonFlavor.primary,
-									className: 'red',
+		if (!eventStore.isTripLocked) {
+			inputs.push({
+				settings: {
+					modalValueName: 'irrelevant',
+					type: 'custom-group',
+					extra: {
+						customGroupClassName: getClasses('actions', eventStore.isEnglish && 'flex-column'),
+						content: [
+							{
+								settings: {
+									type: 'button',
+									extra: {
+										onClick: onDeleteClick,
+										flavor: ButtonFlavor.primary,
+										className: 'red',
+									},
 								},
+								textKey: 'MODALS.REMOVE_EVENT_FROM_CALENDAR',
+								// className: 'border-top-gray'
 							},
-							textKey: 'MODALS.REMOVE_EVENT_FROM_CALENDAR',
-							// className: 'border-top-gray'
-						},
-						{
-							settings: {
-								type: 'button',
-								extra: {
-									onClick: onDuplicateClick,
-									flavor: ButtonFlavor.secondary,
-									className: 'black',
+							{
+								settings: {
+									type: 'button',
+									extra: {
+										onClick: onDuplicateClick,
+										flavor: ButtonFlavor.secondary,
+										className: 'black',
+									},
 								},
+								textKey: 'MODALS.DUPLICATE_EVENT',
+								// className: 'border-top-gray'
 							},
-							textKey: 'MODALS.DUPLICATE_EVENT',
-							// className: 'border-top-gray'
-						},
-					],
+						],
+					},
 				},
-			},
-			textKey: 'MODALS.ACTIONS',
-			className: 'border-top-gray actions-row',
-		} as any);
+				textKey: 'MODALS.ACTIONS',
+				className: 'border-top-gray actions-row',
+			} as any);
+		}
 
 		const content = (
 			<Observer>
@@ -3277,6 +3280,7 @@ const ReactModalService = {
 				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
 			content,
 			onConfirm,
+			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : undefined,
 		});
 	},
 	openDeleteSidebarEventModal: (

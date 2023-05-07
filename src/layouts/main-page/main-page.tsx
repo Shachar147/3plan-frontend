@@ -496,6 +496,20 @@ function MainPage(props: MainPageProps) {
 		withMyTrips: true,
 	};
 
+	function renderTripIsLockedHeaderLine() {
+		return (
+			<div
+				className={getClasses(
+					'trip-is-locked-header gap-8',
+					eventStore.calendarLocalCode == 'he' ? 'flex-row-reverse' : 'flex-row'
+				)}
+			>
+				<i className={'fa fa-lock'} />
+				{TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED')}
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<div
@@ -509,6 +523,7 @@ function MainPage(props: MainPageProps) {
 						showTripName={true}
 					/>
 				</div>
+				{eventStore.isTripLocked && renderTripIsLockedHeaderLine()}
 				<div
 					className={getClasses(
 						'main-layout-container',

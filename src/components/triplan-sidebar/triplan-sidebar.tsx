@@ -125,17 +125,24 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				TriplanCalendarRef={TriplanCalendarRef}
 				customDateRange={customDateRange}
 				setCustomDateRange={setCustomDateRange}
+				disabled={eventStore.isTripLocked}
 			/>
 		);
 	};
 
 	const renderClearAll = () => {
-		const isDisabled = eventStore.calendarEvents.length === 0;
+		let isDisabled = eventStore.calendarEvents.length === 0;
+		let disabledReason = undefined;
+		if (eventStore.isTripLocked) {
+			isDisabled = true;
+			disabledReason = TranslateService.translate(eventStore, 'TRIP_IS_LOCKED');
+		}
 		return (
 			<Button
 				disabled={isDisabled}
 				icon={'fa-trash'}
 				text={TranslateService.translate(eventStore, 'CLEAR_CALENDAR_EVENTS.BUTTON_TEXT')}
+				disabledReason={disabledReason}
 				onClick={() => {
 					ReactModalService.openConfirmModal(eventStore, eventStore.clearCalendarEvents.bind(eventStore));
 				}}
@@ -144,8 +151,32 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
+	const renderLockTrip = () => {
+		const isDisabled = eventStore.calendarEvents.length === 0;
+		return (
+			<Button
+				disabled={isDisabled}
+				icon={eventStore.isTripLocked ? 'fa-unlock-alt' : 'fa-lock'}
+				text={TranslateService.translate(
+					eventStore,
+					eventStore.isTripLocked ? 'UNLOCK_TRIP.BUTTON_TEXT' : 'LOCK_TRIP.BUTTON_TEXT'
+				)}
+				onClick={() => {
+					runInAction(() => {
+						eventStore.isTripLocked = !eventStore.isTripLocked;
+					});
+				}}
+				flavor={ButtonFlavor['movable-link']}
+			/>
+		);
+	};
+
 	const renderImportButtons = () => {
 		if (eventStore.isMobile) return;
+
+		const isDisabled = eventStore.isTripLocked;
+		const disabledReason = isDisabled ? TranslateService.translate(eventStore, 'TRIP_IS_LOCKED') : undefined;
+
 		return (
 			<>
 				<Button
@@ -155,6 +186,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						ReactModalService.openImportEventsModal(eventStore);
 					}}
 					flavor={ButtonFlavor['movable-link']}
+					disabled={isDisabled}
+					disabledReason={disabledReason}
 				/>
 				<Button
 					icon={'fa-upload'}
@@ -163,6 +196,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						ReactModalService.openImportEventsStepTwoModal(eventStore);
 					}}
 					flavor={ButtonFlavor['movable-link']}
+					disabled={isDisabled}
+					disabledReason={disabledReason}
 				/>
 			</>
 		);
@@ -635,6 +670,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const actionsBlock = wrapWithSidebarGroup(
 			<>
 				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
+				{renderLockTrip()}
 				{renderImportButtons()}
 			</>,
 			undefined,
@@ -978,7 +1014,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						</div>
 						<div style={editIconStyle}>
 							<i
-								className="fa fa-pencil-square-o"
+								className={getClasses(
+									'fa fa-pencil-square-o',
+									eventStore.isTripLocked && 'display-none'
+								)}
 								aria-hidden="true"
 								onClick={(e) => {
 									e.preventDefault();
@@ -987,7 +1026,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								}}
 							/>
 							<i
-								className="fa fa-trash-o"
+								className={getClasses('fa fa-trash-o', eventStore.isTripLocked && 'display-none')}
 								style={{ position: 'relative', top: '-1px' }}
 								aria-hidden="true"
 								onClick={(e) => {
@@ -1065,6 +1104,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					width: '100%',
 				}}
 				text={TranslateService.translate(eventStore, 'ADD_CATEGORY.BUTTON_TEXT')}
+				disabled={eventStore.isTripLocked}
+				disabledReason={
+					eventStore.isTripLocked ? TranslateService.translate(eventStore, 'TRIP_IS_LOCKED') : undefined
+				}
+				icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
 			/>
 		</div>
 	);
@@ -1088,8 +1132,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					width: '100%',
 				}}
 				text={TranslateService.translate(eventStore, 'ADD_EVENT.BUTTON_TEXT')}
-				disabled={eventStore.categories.length === 0}
-				disabledReason={TranslateService.translate(eventStore, 'DISABLED_REASON.THERE_ARE_NO_CATEGORIES')}
+				disabled={eventStore.categories.length === 0 || eventStore.isTripLocked}
+				disabledReason={
+					eventStore.isTripLocked
+						? TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')
+						: TranslateService.translate(eventStore, 'DISABLED_REASON.THERE_ARE_NO_CATEGORIES')
+				}
+				icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
 			/>
 		</div>
 	);
@@ -1114,6 +1163,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					eventStore,
 					isHotel ? 'ADD_HOTEL.BUTTON_TEXT' : 'ADD_EVENT.BUTTON_TEXT'
 				)}
+				icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
+				disabled={eventStore.isTripLocked}
+				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
 			/>
 		);
 	};
@@ -1277,7 +1329,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					</span>
 					{fullActions && (
 						<div
-							className="fc-duplicate-event"
+							className={getClasses('fc-duplicate-event', eventStore.isTripLocked && 'display-none')}
 							onClick={() => {
 								ReactModalService.openDuplicateSidebarEventModal(eventStore, event);
 							}}
@@ -1292,7 +1344,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					{fullActions && (
 						<a
 							title={TranslateService.translate(eventStore, 'DELETE')}
-							className={'fc-remove-event'}
+							className={getClasses('fc-remove-event', eventStore.isTripLocked && 'display-none')}
 							onClick={() => {
 								ReactModalService.openDeleteSidebarEventModal(
 									eventStore,

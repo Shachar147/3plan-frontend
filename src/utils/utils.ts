@@ -307,34 +307,45 @@ export function containsDuplicates(array: any[]) {
 	return array.length !== new Set(array).size;
 }
 
-export function lockOrderedEvents(calendarEvent: CalendarEvent) {
-	// const isOrdered = isEventAlreadyOrdered(calendarEvent);
-	// if (isOrdered) {
-	// 	// @ts-ignore
-	// 	calendarEvent.editable = false;
-	// 	// @ts-ignore
-	// 	calendarEvent.durationEditable = false;
-	// 	// @ts-ignore
-	// 	calendarEvent.disableDragging = true;
-	// 	// @ts-ignore
-	// 	calendarEvent.classNames = calendarEvent.className
-	// 		? `${calendarEvent.className.toString().replace(' locked', '')} locked`
-	// 		: 'locked';
-	// } else {
-	// 	// @ts-ignore
-	// 	calendarEvent.editable = true;
-	// 	// @ts-ignore
-	// 	calendarEvent.durationEditable = true;
-	// 	// @ts-ignore
-	// 	calendarEvent.disableDragging = false;
-	// 	// @ts-ignore
-	// 	console.log(calendarEvent.classNames);
-	// 	// try {
-	// 	//     calendarEvent.classNames = calendarEvent.classNames ? calendarEvent.classNames.replaceAll(/\s*locked/ig, '') : undefined;
-	// 	// } catch {
-	// 	//     console.error("error");
-	// 	// }
-	// }
+export function lockOrderedEvents(eventStore: EventStore, calendarEvent: CalendarEvent) {
+	const isOrdered = isEventAlreadyOrdered(calendarEvent) || eventStore.isTripLocked;
+
+	if (isOrdered) {
+		// @ts-ignore
+		calendarEvent.editable = false;
+		// @ts-ignore
+		calendarEvent.durationEditable = false;
+		// @ts-ignore
+		calendarEvent.disableDragging = true;
+		// @ts-ignore
+		calendarEvent.classNames = calendarEvent.className
+			? `${calendarEvent.className.toString().replace(' locked', '')} locked`
+			: 'locked';
+	} else {
+		// @ts-ignore
+		calendarEvent.editable = true;
+		// @ts-ignore
+		calendarEvent.durationEditable = true;
+		// @ts-ignore
+		calendarEvent.disableDragging = false;
+		// @ts-ignore
+		console.log(calendarEvent.classNames);
+
+		try {
+			calendarEvent.className = calendarEvent.className
+				? calendarEvent.className.replaceAll(' locked', '')
+				: undefined;
+
+			// @ts-ignore
+			calendarEvent.classNames = calendarEvent.classNames
+				? // @ts-ignore
+				  calendarEvent.classNames.replaceAll(' locked', '')
+				: undefined;
+		} catch {
+			console.error('error');
+		}
+	}
+
 	return calendarEvent;
 }
 

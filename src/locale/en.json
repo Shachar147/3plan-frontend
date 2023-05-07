@@ -494,5 +494,9 @@
 	"SWITCH_DAYS_SUCCESS_MODAL.CONTENT": "All the activities from dates {X} and {Y} are successfully switched",
 	"DRAG_TO_SWITCH_DAYS": "Drag right/left to perform a complete days switch",
 	"ADMIN_DASHBOARD.TINDER_WIDGET.TITLE": "Manage Suggested Places",
-	"ADMIN_DASHBOARD.USER_STATS.TITLE": "Users Stats"
+	"ADMIN_DASHBOARD.USER_STATS.TITLE": "Users Stats",
+	"LOCK_TRIP.BUTTON_TEXT": "Lock Trip",
+	"UNLOCK_TRIP.BUTTON_TEXT": "Unlock Trip",
+	"TRIP_IS_LOCKED": "Trip is locked",
+	"NOTE.TRIP_IS_LOCKED": "Please note that this trip is locked. to change that, go to Actions section on the menu."
 }

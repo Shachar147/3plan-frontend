@@ -10,6 +10,13 @@ button {
 
 	// prevent double click on button from being interrupted as zoom in on mobile
 	touch-action: manipulation;
+
+
+	// for icons
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
 }
 button:not(:disabled):hover {
 	border-color: #aaa;
