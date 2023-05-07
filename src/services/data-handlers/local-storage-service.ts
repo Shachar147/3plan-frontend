@@ -203,6 +203,11 @@ export class LocalStorageService implements BaseDataHandler {
 		// return JSON.parse(localStorage.getItem(key)) || {};
 	}
 
+	getIsLocked(tripName?: string) {
+		const key = tripName ? [LS_IS_TRIP_LOCKED, tripName].join('-') : LS_IS_TRIP_LOCKED;
+		return localStorage.getItem(key) == '1';
+	}
+
 	// --- SET ------------------------------------------------------------------------------
 	setAllEvents(allEvents: AllEventsEvent[], tripName: string): void {
 		const key = tripName ? [LS_ALL_EVENTS, tripName].join('-') : LS_ALL_EVENTS;

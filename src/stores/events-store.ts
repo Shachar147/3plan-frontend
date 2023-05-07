@@ -1048,10 +1048,16 @@ export class EventStore {
 				this.setCalendarLocalCode(calendarLocale || DataServices.LocalStorageService.getCalendarLocale(name));
 				this.setSidebarEvents(DataServices.LocalStorageService.getSidebarEvents(name));
 				this.setCalendarEvents(DataServices.LocalStorageService.getCalendarEvents(name));
-				this.customDateRange = DataServices.LocalStorageService.getDateRange(name);
+				const dateRange = DataServices.LocalStorageService.getDateRange(name);
+				this.customDateRange = dateRange;
 				this.allEvents = DataServices.LocalStorageService.getAllEvents(this, name);
 				this.categories = DataServices.LocalStorageService.getCategories(this, name);
 				newDistanceResults = await DataServices.LocalStorageService.getDistanceResults(name);
+
+				const isLocked = DataServices.LocalStorageService.getIsLocked(name);
+				this.isTripLocked = isLocked;
+				this.lockTripIfAlreadyOver(isLocked, dateRange.end);
+				this.isTripLocked = DataServices.LocalStorageService.getIsLocked(name);
 			} else {
 				this.isLoading = true;
 				const tripData = await DataServices.DBService.getTripData(name);
@@ -1092,12 +1098,16 @@ export class EventStore {
 		this.categories = categories;
 		this.isTripLocked = !!isLocked;
 
+		this.lockTripIfAlreadyOver(!!isLocked, dateRange.end);
+	}
+
+	lockTripIfAlreadyOver(isLocked: boolean, endDate: string) {
 		// if trip end date already passed, auto-lock it.
 		// after it was auto-locked once, do not auto-lock it again (if the user decided to unlock it, leave it unlocked)
 		const key = 'auto-locked-' + this.tripName;
 		if (!isLocked) {
-			if (new Date().getTime() > new Date(dateRange.end).getTime()) {
-				console.log('passed time', new Date().getTime() - new Date(dateRange.end).getTime());
+			if (new Date().getTime() > new Date(endDate).getTime()) {
+				console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
 				if (!localStorage.getItem(key)) {
 					this.dataService.lockTrip(this.tripName);
 					localStorage.setItem(key, '1');
@@ -1297,7 +1307,10 @@ export class EventStore {
 		} else {
 			await this.dataService.lockTrip(this.tripName);
 		}
-		// this.isTripLocked = !this.isTripLocked;
+
+		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
+			this.isTripLocked = !this.isTripLocked;
+		}
 	}
 
 	// --- private functions ----------------------------------------------------

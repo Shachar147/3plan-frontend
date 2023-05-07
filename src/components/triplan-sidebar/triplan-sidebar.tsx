@@ -152,10 +152,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderLockTrip = () => {
-		const isDisabled = eventStore.calendarEvents.length === 0;
+		// const isDisabled = eventStore.calendarEvents.length === 0;
 		return (
 			<Button
-				disabled={isDisabled}
+				// disabled={isDisabled}
 				icon={eventStore.isTripLocked ? 'fa-unlock-alt' : 'fa-lock'}
 				text={TranslateService.translate(
 					eventStore,
