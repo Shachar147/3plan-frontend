@@ -632,7 +632,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 					month: 'numeric',
 				}}
 			/>
-			{eventStore.isMobile && renderAddEventMobileButton()}
+			{eventStore.isMobile && !eventStore.isTripLocked && renderAddEventMobileButton()}
 		</div>
 	);
 }
