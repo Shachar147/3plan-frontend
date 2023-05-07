@@ -88,10 +88,20 @@ function AdminDashboard() {
 			'userId',
 			'username',
 			'lastUpdateAt',
+			'lastLoginAt',
+			'numOfLogins',
 		];
 
 		if (eventStore.isMobile) {
-			columns = ['lastUpdateAt', 'num_of_categories', 'scheduled_events', 'sidebar_events', 'userId'];
+			columns = [
+				'lastUpdateAt',
+				'num_of_categories',
+				'scheduled_events',
+				'sidebar_events',
+				'userId',
+				'lastLoginAt',
+				'numOfLogins',
+			];
 			return (
 				<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
 					<table>
@@ -165,7 +175,7 @@ function AdminDashboard() {
 
 	function renderContent() {
 		return (
-			<div className="flex-col gap-10">
+			<div className="flex-col gap-30">
 				{wrapBlockWithTitle('ADMIN_DASHBOARD.USER_STATS.TITLE', renderUserStats())}
 				{wrapBlockWithTitle('ADMIN_DASHBOARD.TINDER_WIDGET.TITLE', renderTinderWidget())}
 			</div>

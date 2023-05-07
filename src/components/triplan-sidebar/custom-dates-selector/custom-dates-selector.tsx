@@ -10,6 +10,7 @@ export interface CustomDatesSelectorProps {
 	customDateRange: DateRangeFormatted;
 	setCustomDateRange: (newRange: DateRangeFormatted) => void;
 	TriplanCalendarRef?: React.MutableRefObject<any>;
+	disabled?: boolean;
 }
 
 const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
@@ -52,6 +53,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 
 						TriplanCalendarRef?.current?.switchToCustomView();
 					}}
+					disabled={props.disabled}
 				/>
 				<i className={`fa fa-arrow-${arrowIcon} flex-row align-items-center dark-color`} aria-hidden="true" />
 				<input
@@ -79,6 +81,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 
 						TriplanCalendarRef?.current?.switchToCustomView();
 					}}
+					disabled={props.disabled}
 				/>
 			</div>
 		</div>

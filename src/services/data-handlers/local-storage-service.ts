@@ -13,6 +13,7 @@ import {
 	LS_CUSTOM_DATE_RANGE,
 	LS_DATA_SOURCE,
 	LS_DISTANCE_RESULTS,
+	LS_IS_TRIP_LOCKED,
 	LS_SIDEBAR_EVENTS,
 } from '../../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
@@ -202,6 +203,11 @@ export class LocalStorageService implements BaseDataHandler {
 		// return JSON.parse(localStorage.getItem(key)) || {};
 	}
 
+	getIsLocked(tripName?: string) {
+		const key = tripName ? [LS_IS_TRIP_LOCKED, tripName].join('-') : LS_IS_TRIP_LOCKED;
+		return localStorage.getItem(key) == '1';
+	}
+
 	// --- SET ------------------------------------------------------------------------------
 	setAllEvents(allEvents: AllEventsEvent[], tripName: string): void {
 		const key = tripName ? [LS_ALL_EVENTS, tripName].join('-') : LS_ALL_EVENTS;
@@ -232,6 +238,16 @@ export class LocalStorageService implements BaseDataHandler {
 	setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string): void {
 		const key = tripName ? [LS_SIDEBAR_EVENTS, tripName].join('-') : LS_SIDEBAR_EVENTS;
 		localStorage.setItem(key, JSON.stringify(sidebarEvents));
+	}
+
+	async lockTrip(tripName: string) {
+		const key = tripName ? [LS_IS_TRIP_LOCKED, tripName].join('-') : LS_IS_TRIP_LOCKED;
+		localStorage.setItem(key, '1');
+	}
+
+	async unlockTrip(tripName: string) {
+		const key = tripName ? [LS_IS_TRIP_LOCKED, tripName].join('-') : LS_IS_TRIP_LOCKED;
+		localStorage.setItem(key, '0');
 	}
 
 	async setTripName(tripName: string, newTripName: string) {

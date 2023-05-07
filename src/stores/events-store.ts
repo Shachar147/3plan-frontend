@@ -17,7 +17,7 @@ import { addDays, convertMsToHM, formatDate, getEndDate, toDate } from '../utils
 
 // @ts-ignore
 import _ from 'lodash';
-import { coordinateToString, generate_uuidv4, getCoordinatesRangeKey, lockOrderedEvents } from '../utils/utils';
+import { coordinateToString, generate_uuidv4, getCoordinatesRangeKey, lockEvents } from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
 import {
 	AllEventsEvent,
@@ -129,6 +129,8 @@ export class EventStore {
 	// for show on map link
 	@observable mapContainerRef: React.MutableRefObject<MapContainerRef> | null = null;
 	showEventOnMap: number | null = null;
+
+	@observable isTripLocked: boolean = false;
 
 	toastrClearTimeout: NodeJS.Timeout | null = null;
 	@observable toastrSettings: {
@@ -827,7 +829,7 @@ export class EventStore {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
-		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockOrderedEvents(x));
+		this.calendarEvents = this.calendarEvents.map((x: CalendarEvent) => lockEvents(this, x));
 
 		// update local storage
 		if (this.calendarEvents.length === 0 && !this.allowRemoveAllCalendarEvents) return;
@@ -1046,10 +1048,16 @@ export class EventStore {
 				this.setCalendarLocalCode(calendarLocale || DataServices.LocalStorageService.getCalendarLocale(name));
 				this.setSidebarEvents(DataServices.LocalStorageService.getSidebarEvents(name));
 				this.setCalendarEvents(DataServices.LocalStorageService.getCalendarEvents(name));
-				this.customDateRange = DataServices.LocalStorageService.getDateRange(name);
+				const dateRange = DataServices.LocalStorageService.getDateRange(name);
+				this.customDateRange = dateRange;
 				this.allEvents = DataServices.LocalStorageService.getAllEvents(this, name);
 				this.categories = DataServices.LocalStorageService.getCategories(this, name);
 				newDistanceResults = await DataServices.LocalStorageService.getDistanceResults(name);
+
+				const isLocked = DataServices.LocalStorageService.getIsLocked(name);
+				this.isTripLocked = isLocked;
+				this.lockTripIfAlreadyOver(isLocked, dateRange.end);
+				this.isTripLocked = DataServices.LocalStorageService.getIsLocked(name);
 			} else {
 				this.isLoading = true;
 				const tripData = await DataServices.DBService.getTripData(name);
@@ -1078,7 +1086,7 @@ export class EventStore {
 
 	@action
 	updateTripData(tripData: Trip) {
-		const { categories, allEvents, sidebarEvents, calendarEvents, dateRange } = tripData;
+		const { categories, allEvents, sidebarEvents, calendarEvents, dateRange, isLocked } = tripData;
 		// this.setCalendarLocalCode(calendarLocale ?? tripData.calendarLocale);
 		// this.setCalendarLocalCode(tripData.calendarLocale);
 		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale(), false);
@@ -1088,6 +1096,24 @@ export class EventStore {
 		this.customDateRange = dateRange;
 		this.allEvents = allEvents;
 		this.categories = categories;
+		this.isTripLocked = !!isLocked;
+
+		this.lockTripIfAlreadyOver(!!isLocked, dateRange.end);
+	}
+
+	lockTripIfAlreadyOver(isLocked: boolean, endDate: string) {
+		// if trip end date already passed, auto-lock it.
+		// after it was auto-locked once, do not auto-lock it again (if the user decided to unlock it, leave it unlocked)
+		const key = 'auto-locked-' + this.tripName;
+		if (!isLocked) {
+			if (new Date().getTime() > new Date(endDate).getTime()) {
+				console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
+				if (!localStorage.getItem(key)) {
+					this.dataService.lockTrip(this.tripName);
+					localStorage.setItem(key, '1');
+				}
+			}
+		}
 	}
 
 	@action
@@ -1272,6 +1298,19 @@ export class EventStore {
 				this.forceSetDraggable += 1;
 			});
 		}, 500);
+	}
+
+	@action
+	async toggleTripLocked() {
+		if (this.isTripLocked) {
+			await this.dataService.unlockTrip(this.tripName);
+		} else {
+			await this.dataService.lockTrip(this.tripName);
+		}
+
+		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
+			this.isTripLocked = !this.isTripLocked;
+		}
 	}
 
 	// --- private functions ----------------------------------------------------

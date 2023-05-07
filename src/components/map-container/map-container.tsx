@@ -1130,6 +1130,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					text={TranslateService.translate(eventStore, 'CALCULATE_DISTANCE')}
 					onClick={() => ReactModalService.openCalculateDistancesModal(eventStore)}
 					className="calculate-distances-button brown"
+					disabled={eventStore.isTripLocked}
+					disabledReason={
+						eventStore.isTripLocked ? TranslateService.translate(eventStore, 'TRIP_IS_LOCKED') : undefined
+					}
+					icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
 				/>
 			);
 		}
@@ -1376,7 +1381,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				>
 					<input
 						type="text"
-						className="map-header-location-input-search"
+						className={getClasses(
+							'map-header-location-input-search',
+							eventStore.isTripLocked && 'display-none'
+						)}
 						onClick={() =>
 							// @ts-ignore
 							window.initLocationPicker(

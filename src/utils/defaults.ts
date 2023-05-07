@@ -172,6 +172,7 @@ export const LS_CALENDAR_LOCALE = 'triplan-calendar-locale';
 export const LS_DISTANCE_RESULTS = 'triplan-distance-results';
 export const LS_CUSTOM_DATE_RANGE = 'triplan-custom-date-range';
 export const LS_DATA_SOURCE = 'triplan-data-source';
+export const LS_IS_TRIP_LOCKED = 'triplan-is-trip-locked';
 
 export function getLocalStorageKeys() {
 	return {
@@ -182,5 +183,6 @@ export function getLocalStorageKeys() {
 		LS_CALENDAR_LOCALE,
 		LS_CUSTOM_DATE_RANGE,
 		LS_DISTANCE_RESULTS,
+		LS_IS_TRIP_LOCKED,
 	};
 }

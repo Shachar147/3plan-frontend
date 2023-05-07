@@ -652,8 +652,12 @@ body.ltr {
 }
 
 .fc-event.locked {
-	/*filter: grayscale(50%);*/
-	/*opacity: 0.8;*/
+	filter: grayscale(50%);
+	cursor: default !important;
+
+	.fc-event-main {
+		cursor: default !important;
+	}
 }
 
 .file-upload-container {
@@ -1143,4 +1147,20 @@ input:read-only {
 	.calender-container.pc {
 		max-height: unset !important;
 	}
+}
+
+.trip-is-locked-header {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 33px;
+	background-color: #fcf9f1;
+	border-radius: 18px;
+	text-align: center;
+	margin-inline: 30px;
+	margin-block: 8px;
+}
+
+.fa-filter + span {
+	display: none;
 }

@@ -7,6 +7,7 @@ import { TripDataSource } from '../../utils/enums';
 import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
 import axios from 'axios';
 import { getToken } from '../../helpers/auth';
+import _ from 'lodash';
 
 export interface upsertTripProps {
 	name?: string;
@@ -124,7 +125,15 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
-		return await apiPut(`/trip/name/${tripName}`, { calendarEvents });
+		const arr = _.cloneDeep(calendarEvents);
+		arr.map((x) => {
+			x.className = x.className?.replace(' locked', '');
+
+			// @ts-ignore
+			x.classNames = x.classNames.replace(' locked', '');
+		});
+
+		return await apiPut(`/trip/name/${tripName}`, { calendarEvents: arr });
 	}
 
 	async setCalendarLocale(calendarLocale: LocaleCode, tripName?: string) {
@@ -223,5 +232,13 @@ export class DBService implements BaseDataHandler {
 
 	async duplicateTrip(_eventStore: EventStore, tripName: string, newTripName: string) {
 		return await apiPost(`/trip/duplicate`, { name: tripName, newName: newTripName });
+	}
+
+	async lockTrip(tripName: string) {
+		return await apiPut(`/trip/lock/name/${tripName}`, {});
+	}
+
+	async unlockTrip(tripName: string) {
+		return await apiPut(`/trip/unlock/name/${tripName}`, {});
 	}
 }

@@ -819,6 +819,20 @@
 			margin-top: 5px !important;
 		}
 	}
+
+	.trip-is-locked-header {
+		border-radius: 30px;
+		margin-inline: 15px;
+		padding: 8px;
+		padding-inline: 16px;
+		text-align: left;
+	}
+
+	body.rtl {
+		.trip-is-locked-header {
+			text-align: right;
+		}
+	}
 }
 
 @media only screen and (max-height: 600px) and (orientation: landscape) {
