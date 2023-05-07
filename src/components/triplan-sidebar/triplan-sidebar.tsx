@@ -669,8 +669,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS');
 		const actionsBlock = wrapWithSidebarGroup(
 			<>
-				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
 				{renderLockTrip()}
+				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
 				{renderImportButtons()}
 			</>,
 			undefined,

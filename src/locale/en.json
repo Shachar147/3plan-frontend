@@ -498,5 +498,5 @@
 	"LOCK_TRIP.BUTTON_TEXT": "Lock Trip",
 	"UNLOCK_TRIP.BUTTON_TEXT": "Unlock Trip",
 	"TRIP_IS_LOCKED": "Trip is locked",
-	"NOTE.TRIP_IS_LOCKED": "Please note that this trip is locked. to change that, go to Actions section on the menu."
+	"NOTE.TRIP_IS_LOCKED": "Please note that this trip is locked. to change that, go to Actions section on the menu and click on \"ֿֿ{X}\""
 }

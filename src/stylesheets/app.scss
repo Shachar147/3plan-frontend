@@ -1153,7 +1153,7 @@ input:read-only {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 33px;
+	min-height: 33px;
 	background-color: #fcf9f1;
 	border-radius: 18px;
 	text-align: center;

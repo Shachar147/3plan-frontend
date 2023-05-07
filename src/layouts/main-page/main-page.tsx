@@ -505,7 +505,9 @@ function MainPage(props: MainPageProps) {
 				)}
 			>
 				<i className={'fa fa-lock'} />
-				{TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED')}
+				{TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED', {
+					X: TranslateService.translate(eventStore, 'UNLOCK_TRIP.BUTTON_TEXT'),
+				})}
 			</div>
 		);
 	}

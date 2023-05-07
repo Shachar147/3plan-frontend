@@ -568,10 +568,9 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		handleViewChange();
 	}, [eventStore.customDateRange]);
 
-	// todos:
+	// todo complete:
 	// save it to db
-	// do not allow to edit events when its on lock
-	// do not allow to drag from sidebar to calendar when its on lock
+	// auto lock trips if end date already passed.
 
 	return (
 		<div className={'flex-col width-100-percents position-relative'}>
