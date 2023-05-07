@@ -32,7 +32,6 @@
 		"mobx-react": "^6.2.2",
 		"moment": "^2.29.4",
 		"prettier": "^2.8.1",
-		"puppeteer": "^18.1.0",
 		"react": "16.8.6",
 		"react-bootstrap-sweetalert": "^5.2.0",
 		"react-dom": "16.8.6",
