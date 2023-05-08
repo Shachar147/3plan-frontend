@@ -11,7 +11,47 @@
 	width: fit-content;
 	max-width: 490px;
 	min-width: 400px;
+
+	transition: max-width 0.3s ease-in-out;
+
+	.minimize-sidebar-container {
+		button {
+			transition: all 0.3s ease-in-out;
+		}
+	}
+
+	&.sidebar-minimized {
+		min-width: 0 !important;
+		max-width: 0 !important;
+		width: 0 !important;
+		padding: 0 !important;
+
+		+ .minimize-sidebar-container {
+			font-size: 12px;
+			position: absolute;
+			left: 15px;
+			margin-top: 6px;
+
+			button {
+				background-color: #fafafa !important;
+				min-width: 25px !important;
+				min-height: 25px !important;
+			}
+		}
+	}
 }
+
+body.rtl {
+	.external-events-container {
+		&.sidebar-minimized {
+			+ .minimize-sidebar-container {
+				left: unset;
+				right: 15px;
+			}
+		}
+	}
+}
+
 .custom-dates-container {
 	display: flex;
 	flex-direction: column;

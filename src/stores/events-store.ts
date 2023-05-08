@@ -155,6 +155,8 @@ export class EventStore {
 	@observable currentEnd: Date | null = null;
 	@observable calendarViewType: string | null = null;
 
+	@observable isSidebarMinimized: boolean = false;
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {
@@ -1380,6 +1382,22 @@ export class EventStore {
 			return 'rtl';
 		} else {
 			return 'ltr';
+		}
+	}
+
+	getCurrentDirectionStart() {
+		if (this.calendarLocalCode === 'he') {
+			return 'right';
+		} else {
+			return 'left';
+		}
+	}
+
+	getCurrentDirectionEnd() {
+		if (this.calendarLocalCode === 'he') {
+			return 'left';
+		} else {
+			return 'right';
 		}
 	}
 

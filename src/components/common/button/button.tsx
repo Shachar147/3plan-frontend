@@ -22,6 +22,7 @@ export interface ButtonProps {
 	imageHeight?: number;
 
 	iconPosition?: 'start' | 'end';
+	tooltip?: string;
 }
 
 const Button = (props: ButtonProps) => {
@@ -39,11 +40,11 @@ const Button = (props: ButtonProps) => {
 			}}
 			disabled={props.disabled}
 			style={props.style}
-			title={props.disabled && props.disabledReason ? props.disabledReason : undefined}
+			title={props.disabled && props.disabledReason ? props.disabledReason : props.tooltip}
 		>
 			{props.image && <img alt={''} src={props.image} height={props.imageHeight} />}
 			{props.icon && iconPosition == 'start' && <i className={`fa ${props.icon}`} aria-hidden="true" />}
-			<span className="white-space-pre">{props.text}</span>
+			{props.text && props.text.length && <span className="white-space-pre">{props.text}</span>}
 			{props.icon && iconPosition == 'end' && <i className={`fa ${props.icon}`} aria-hidden="true" />}
 		</button>
 	);
