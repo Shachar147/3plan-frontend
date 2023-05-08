@@ -1,0 +1,39 @@
+.login-page{
+  display: flex;
+  flex-direction: row-reverse;
+  height: 100vh;
+
+  .login-page-form {
+    width: 416px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .login-page-main-content {
+      height: fit-content;
+      padding: 24px;
+
+      input {
+        border: 1px solid #c2c4cc;
+        height: 48px;
+        border-radius: 6px;
+        font-size: 1.4rem;
+        padding-inline: 14px;
+        color: #131415;
+      }
+    }
+  }
+
+  .login-page-image {
+    display: flex;
+    flex: 1 1 0;
+    background-color: #131415;
+  }
+}
+
+//body.rtl {
+//  .login-page {
+//    flex-direction: row;
+//  }
+//}
