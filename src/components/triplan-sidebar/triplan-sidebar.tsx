@@ -1111,6 +1111,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		</div>
 	);
 
+	const isMapViewAndNoEventsYet = eventStore.isMapView && eventStore.calendarEvents.length == 0;
 	const renderAddEventButton = () => (
 		<div
 			style={{
@@ -1121,11 +1122,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			}}
 		>
 			<Button
-				flavor={eventStore.isMapView ? ButtonFlavor.secondary : ButtonFlavor.primary}
+				flavor={isMapViewAndNoEventsYet ? ButtonFlavor.secondary : ButtonFlavor.primary}
 				onClick={() => {
 					ReactModalService.openAddSidebarEventModal(eventStore, undefined);
 				}}
-				className={eventStore.isMapView ? 'black' : undefined}
+				className={isMapViewAndNoEventsYet ? 'black' : undefined}
 				style={{
 					width: '100%',
 				}}
@@ -1140,6 +1141,42 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			/>
 		</div>
 	);
+
+	const renderMinimizeExpandSidebarButton = () => {
+		if (eventStore.isMobile) {
+			return null;
+		}
+
+		const direction = eventStore.isSidebarMinimized
+			? eventStore.getCurrentDirectionEnd()
+			: eventStore.getCurrentDirectionStart();
+
+		return (
+			<div
+				style={{
+					display: 'flex',
+					maxHeight: '40px',
+				}}
+				className="align-items-center justify-content-center minimize-sidebar-container"
+			>
+				<Button
+					flavor={ButtonFlavor.secondary}
+					onClick={() => {
+						runInAction(() => {
+							eventStore.isSidebarMinimized = !eventStore.isSidebarMinimized;
+						});
+					}}
+					tooltip={TranslateService.translate(
+						eventStore,
+						eventStore.isSidebarMinimized ? 'MAXIMIZE_SIDEBAR' : 'MINIMIZE_SIDEBAR'
+					)}
+					className={getClasses('black', 'min-width-38')}
+					icon={`fa-angle-double-${direction}`}
+					text={''} /* :after     content: '\26F6'; */
+				/>
+			</div>
+		);
+	};
 
 	const onEditCategory = (categoryId: number) => {
 		ReactModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
@@ -1400,36 +1437,41 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	}
 
 	return (
-		<div
-			className={getClasses(
-				'external-events-container bright-scrollbar',
-				!eventStore.isMobile && eventStore.viewMode,
-				!eventStore.isMobile && 'pc'
-			)}
-		>
-			{renderCustomDates()}
-			<div>
-				<div
-					className={'flex-row gap-10 sticky-0'}
-					style={{ backgroundColor: '#f2f5f8', zIndex: 1, minHeight: 50 }}
-				>
-					{renderAddEventButton()}
-					{renderAddCategoryButton()}
-				</div>
+		<>
+			<div
+				className={getClasses(
+					'external-events-container bright-scrollbar',
+					!eventStore.isMobile && eventStore.viewMode,
+					!eventStore.isMobile && 'pc',
+					eventStore.isSidebarMinimized && 'sidebar-minimized'
+				)}
+			>
+				{renderCustomDates()}
 				<div>
-					{renderWarnings()}
-					{renderDistances()}
-					{renderActions()}
-					{renderRecommendations()}
-					{renderCalendarSidebarStatistics()}
-					{renderPrioritiesLegend()}
-					<hr className={'margin-block-2'} />
-					{/*<div className={"spacer margin-top-40"}/>*/}
-					<hr style={{ marginBlock: '20px 10px' }} />
-					{renderCategories()}
+					<div
+						className={'flex-row gap-10 sticky-0'}
+						style={{ backgroundColor: '#f2f5f8', zIndex: 1, minHeight: 50 }}
+					>
+						{renderMinimizeExpandSidebarButton()}
+						{renderAddEventButton()}
+						{renderAddCategoryButton()}
+					</div>
+					<div>
+						{renderWarnings()}
+						{renderDistances()}
+						{renderActions()}
+						{renderRecommendations()}
+						{renderCalendarSidebarStatistics()}
+						{renderPrioritiesLegend()}
+						<hr className={'margin-block-2'} />
+						{/*<div className={"spacer margin-top-40"}/>*/}
+						<hr style={{ marginBlock: '20px 10px' }} />
+						{renderCategories()}
+					</div>
 				</div>
 			</div>
-		</div>
+			{eventStore.isSidebarMinimized && renderMinimizeExpandSidebarButton()}
+		</>
 	);
 };
 

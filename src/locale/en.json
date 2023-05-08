@@ -507,5 +507,7 @@
 	"sidebar_events":  "Sidebar Events",
 	"userId":  "User ID",
 	"username":  "User Name",
-	"lastUpdateAt": "Last Updated At"
+	"lastUpdateAt": "Last Updated At",
+	"MINIMIZE_SIDEBAR": "Minimize sidebar",
+	"MAXIMIZE_SIDEBAR": "Maximize sidebar"
 }
