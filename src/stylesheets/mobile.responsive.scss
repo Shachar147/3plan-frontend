@@ -835,6 +835,16 @@
 	}
 }
 
+@media only screen and (max-height: 500px){
+	/* Mobile keyboard is opened: */
+	.login-page .logo-container, .register-page .logo-container {
+		min-width: 160px !important;
+		max-width: 160px !important;
+		//width: 40% !important;
+		padding-top: 60px;
+	}
+}
+
 @media only screen and (max-height: 600px) and (orientation: landscape) {
 	/* For mobiles on landspace: */
 	.please-rotate-your-phone {
