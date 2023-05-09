@@ -124,7 +124,7 @@ function AdminDashboard() {
 														{`${TranslateService.translate(eventStore, col)}: `}
 														{!row[col]
 															? '-'
-															: col == 'lastUpdateAt'
+															: col == 'lastUpdateAt' || col == 'lastLoginAt'
 															? new Date(row[col])
 																	.toISOString()
 																	.split('.')[0]
@@ -160,7 +160,7 @@ function AdminDashboard() {
 									<td>
 										{!row[col]
 											? '-'
-											: col == 'lastUpdateAt'
+											: col == 'lastUpdateAt' || col == 'lastLoginAt'
 											? new Date(row[col]).toISOString().split('.')[0].replace('T', ', ')
 											: row[col]}
 									</td>
