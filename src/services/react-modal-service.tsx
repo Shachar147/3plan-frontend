@@ -2719,7 +2719,7 @@ const ReactModalService = {
 				await eventStore.setCalendarEvents([...updatedCalenderEvents]);
 
 				// remove from fullcalendar store
-				TriplanCalendarRef.current.refreshSources();
+				TriplanCalendarRef.current?.refreshSources();
 
 				ReactModalService.internal.alertMessage(
 					eventStore,

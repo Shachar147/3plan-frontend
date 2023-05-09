@@ -130,7 +130,7 @@ export class DBService implements BaseDataHandler {
 			x.className = x.className?.replace(' locked', '');
 
 			// @ts-ignore
-			x.classNames = x.classNames.replace(' locked', '');
+			x.classNames = x.classNames?.replace(' locked', '');
 		});
 
 		return await apiPut(`/trip/name/${tripName}`, { calendarEvents: arr });
