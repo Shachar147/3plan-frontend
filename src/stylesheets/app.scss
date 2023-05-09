@@ -887,7 +887,7 @@ a.text-decoration-none {
 }
 
 .text-decoration-underline {
-	text-decoration: underline;
+	text-decoration: underline !important;
 }
 
 input[type='text'] {
@@ -1163,4 +1163,7 @@ input:read-only {
 
 .fa-filter + span {
 	display: none;
+}
+.min-height-20 {
+	min-height:20px;
 }

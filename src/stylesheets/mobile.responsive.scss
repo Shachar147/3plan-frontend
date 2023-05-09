@@ -826,6 +826,13 @@
 		padding: 8px;
 		padding-inline: 16px;
 		text-align: left;
+		width: CALC(100% - 30px);
+		align-items: start;
+
+		i {
+			padding-top: 3.5px;
+		}
+
 	}
 
 	body.rtl {

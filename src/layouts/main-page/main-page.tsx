@@ -500,17 +500,39 @@ function MainPage(props: MainPageProps) {
 		if (eventStore.isMobile && eventStore.isListView) {
 			return null;
 		}
+
+		const text = eventStore.isMobile
+			? TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED.SHORT')
+			: TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED');
+
+		const linkText = eventStore.isMobile
+			? TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED.SHORT.LINK')
+			: TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE');
+
 		return (
 			<div
 				className={getClasses(
 					'trip-is-locked-header gap-8',
-					eventStore.calendarLocalCode == 'he' ? 'flex-row-reverse' : 'flex-row'
+					eventStore.calendarLocalCode == 'he' ? 'direction-rtl' : 'flex-row'
 				)}
 			>
 				<i className={'fa fa-lock'} />
-				{TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED', {
-					X: TranslateService.translate(eventStore, 'UNLOCK_TRIP.BUTTON_TEXT'),
-				})}
+				<div
+					className={getClasses(
+						'align-items-center justify-content-center',
+						eventStore.isMobile ? 'flex-col' : 'flex-row'
+					)}
+				>
+					{text}
+					<Button
+						flavor={ButtonFlavor.link}
+						className={'text-decoration-underline min-height-20'}
+						onClick={() => {
+							eventStore.toggleTripLocked();
+						}}
+						text={linkText}
+					/>
+				</div>
 			</div>
 		);
 	}
