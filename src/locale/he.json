@@ -587,5 +587,7 @@
 	"TRIP_IS_LOCKED": "הטיול נעול לשינויים",
 	"NOTE.TRIP_IS_LOCKED": "שים לב, טיול זה נעול לשינויים. כדי לשנות זאת, לך ל״פעולות״ בתפריט ולחץ על ״{X}״",
 	"MINIMIZE_SIDEBAR": "הסתר את התפריט",
-	"MAXIMIZE_SIDEBAR": "הצג את התפריט"
+	"MAXIMIZE_SIDEBAR": "הצג את התפריט",
+	"MOBILE_NAVBAR.ADMIN_SIDE": "למערכת הניהול",
+	"MOBILE_NAVBAR.USER_SIDE": "חזרה לצד המשתמש"
 }

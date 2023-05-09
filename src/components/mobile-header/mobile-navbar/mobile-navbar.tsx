@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo } from 'react';
 
 // ROUTING
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // STYLES
 import './mobile-navbar.scss';
@@ -15,9 +15,11 @@ import { TriplanHeaderProps } from '../../triplan-header/triplan-header';
 import onClickOutside from 'react-onclickoutside';
 import ReactModalService from '../../../services/react-modal-service';
 import { runInAction } from 'mobx';
+import useIsAdmin from '../../../custom-hooks/use-is-admin';
 
 const MobileNavbar = (options: TriplanHeaderProps) => {
 	const eventStore = useContext(eventStoreContext);
+	const navigate = useNavigate();
 
 	// There are no instances, only the single Menu function, so if we
 	// need "properties" that are externally accessible, we'll need to
@@ -37,6 +39,8 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 	const loginText = TranslateService.translate(eventStore, 'LOGIN');
 	const logoutText = `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`;
 
+	const isAdmin = useIsAdmin();
+
 	const toggleSearch = () => {
 		const isOpen = !eventStore.isSearchOpen;
 		runInAction(() => {
@@ -48,31 +52,68 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 		});
 	};
 
-	const SidebarData: any[] = [
-		withSearch && {
-			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
+	function renderSwitchToAdmin(isAdmin: boolean) {
+		const isOnAdminPanel = window.location.href.indexOf('/admin') !== -1;
+		const isOnLoginPage = window.location.href.indexOf('/login') !== -1;
+
+		if (!isAdmin) {
+			// alert('here not admin');
+			return null;
+		}
+		if (isOnLoginPage) {
+			// alert('here, on login page');
+			return null;
+		}
+		if (!isOnAdminPanel) {
+			return {
+				title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.ADMIN_SIDE'),
+				onClick: () => {
+					navigate('/admin');
+				},
+				icon: 'fa-star',
+				cName: getClasses('nav-text', isOnAdminPanel && 'active'),
+			};
+		}
+
+		return {
+			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.USER_SIDE'),
 			onClick: () => {
-				toggleSearch();
+				navigate('/');
 			},
-			icon: 'fa-search',
-			// @ts-ignore
-			cName: getClasses('nav-text', options.isSearchOpen && 'active'),
-		},
-		withMyTrips && {
-			title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
-			path: '/my-trips',
-			icon: 'fa-street-view',
-			cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active'),
-		},
-		withLanguageSelector && {
-			title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
-			onClick: () => {
-				ReactModalService.openChangeLanguageModal(eventStore);
+			icon: 'fa-user',
+			cName: getClasses('nav-text', !isOnAdminPanel && 'active'),
+		};
+	}
+
+	const SidebarData: any[] = useMemo(() => {
+		// alert('here' + isAdmin);
+		return [
+			withSearch && {
+				title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH'),
+				onClick: () => {
+					toggleSearch();
+				},
+				icon: 'fa-search',
+				// @ts-ignore
+				cName: getClasses('nav-text', options.isSearchOpen && 'active'),
 			},
-			icon: 'fa-globe',
-			cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),
-		},
-	].filter(Boolean);
+			withMyTrips && {
+				title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
+				path: '/my-trips',
+				icon: 'fa-street-view',
+				cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active'),
+			},
+			withLanguageSelector && {
+				title: TranslateService.translate(eventStore, 'MOBILE_NAVBAR.CHANGE_LANGUAGE'),
+				onClick: () => {
+					ReactModalService.openChangeLanguageModal(eventStore);
+				},
+				icon: 'fa-globe',
+				cName: getClasses('nav-text', window.location.href.indexOf('/language') !== -1 && 'active'),
+			},
+			renderSwitchToAdmin(isAdmin),
+		].filter(Boolean);
+	}, [isAdmin]);
 
 	const logoutLink = withLoginLogout && {
 		title: isLoggedIn ? logoutText : loginText,

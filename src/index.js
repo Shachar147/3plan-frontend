@@ -44,6 +44,7 @@ import {
 } from './components/map-container/map-container';
 import { apiPost } from './helpers/api';
 import { BiEventsService } from './services/bi-events.service';
+import useIsAdmin from './custom-hooks/use-is-admin';
 
 // Dubai
 // Namos / Twiggy?
@@ -832,25 +833,7 @@ const RootRouter = () => {
 		return window.location.href.indexOf('localhost') !== -1 || window.location.href.indexOf('0.0.0.0') !== -1;
 	}
 
-	const [isAdmin, setIsAdmin] = useState(false);
-
-	useEffect(() => {
-		const checkAdminStatus = async () => {
-			// Your async logic to check if user is an admin
-			const response = await _isAdmin();
-			setIsAdmin(response); // Update state with the result
-		};
-		checkAdminStatus();
-	}, []);
-
-	const _isAdmin = async () => {
-		try {
-			await apiPost('/auth/isAdmin', {}, false);
-			return true;
-		} catch {
-			return false;
-		}
-	};
+	const isAdmin = useIsAdmin();
 
 	return (
 		<>

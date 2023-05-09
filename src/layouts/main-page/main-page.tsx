@@ -497,6 +497,9 @@ function MainPage(props: MainPageProps) {
 	};
 
 	function renderTripIsLockedHeaderLine() {
+		if (eventStore.isMobile && eventStore.isListView) {
+			return null;
+		}
 		return (
 			<div
 				className={getClasses(
