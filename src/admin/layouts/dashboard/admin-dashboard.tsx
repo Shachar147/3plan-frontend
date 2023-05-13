@@ -14,6 +14,7 @@ import { eventStoreContext } from '../../../stores/events-store';
 import DestinationSlider from '../../components/destinations-slider/destination-slider';
 import TriplanSearch from '../../../components/triplan-header/triplan-search/triplan-search';
 import { formatDateString } from '../../../utils/defaults';
+import { addHours } from '../../../utils/time-utils';
 
 function AdminDashboard() {
 	const adminStore = useContext(adminStoreContext);
@@ -79,29 +80,11 @@ function AdminDashboard() {
 		);
 	};
 
-	function renderUserStats() {
-		let columns: string[] = [
-			'name',
-			'num_of_categories',
-			'scheduled_events',
-			'sidebar_events',
-			'userId',
-			'username',
-			'lastUpdateAt',
-			'lastLoginAt',
-			'numOfLogins',
-		];
+	function renderTripStats() {
+		let columns: string[] = ['name', 'num_of_categories', 'scheduled_events', 'sidebar_events', 'username'];
 
 		if (eventStore.isMobile) {
-			columns = [
-				'lastUpdateAt',
-				'num_of_categories',
-				'scheduled_events',
-				'sidebar_events',
-				'userId',
-				'lastLoginAt',
-				'numOfLogins',
-			];
+			columns = ['lastUpdateAt', 'num_of_categories', 'scheduled_events', 'sidebar_events', 'userId'];
 			return (
 				<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
 					<table>
@@ -145,6 +128,8 @@ function AdminDashboard() {
 			);
 		}
 
+		const offset = -1 * (new Date().getTimezoneOffset() / 60);
+
 		return (
 			<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
 				<table>
@@ -161,7 +146,94 @@ function AdminDashboard() {
 										{!row[col]
 											? '-'
 											: col == 'lastUpdateAt' || col == 'lastLoginAt'
-											? new Date(row[col]).toISOString().split('.')[0].replace('T', ', ')
+											? addHours(new Date(row[col]), offset)
+													.toISOString()
+													.split('.')[0]
+													.replace('T', ', ')
+											: row[col]}
+									</td>
+								))}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		);
+	}
+
+	function renderUserStats() {
+		let columns: string[] = ['userId', 'username', 'lastUpdateAt', 'lastLoginAt', 'numOfLogins'];
+
+		const stats: Record<number, any> = {};
+
+		adminStore.userStats.forEach((row: any) => {
+			const userId = row['userId'];
+			stats[userId] = row;
+		});
+
+		if (eventStore.isMobile) {
+			columns = ['userId', 'lastLoginAt', 'numOfLogins'];
+			return (
+				<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
+					<table>
+						<tbody>
+							{Object.values(stats).map((row: any) => (
+								<>
+									<tr>
+										<td>
+											<b>{row['username']}</b>
+										</td>
+									</tr>
+									{columns.map((col: any) => (
+										<>
+											<tr>
+												<td>
+													{`${TranslateService.translate(eventStore, col)}: `}
+													{!row[col]
+														? '-'
+														: col == 'lastUpdateAt' || col == 'lastLoginAt'
+														? new Date(row[col])
+																.toISOString()
+																.split('.')[0]
+																.replace('T', ', ')
+														: row[col]}
+												</td>
+											</tr>
+											<tr>
+												<td />
+											</tr>
+										</>
+									))}
+								</>
+							))}
+						</tbody>
+					</table>
+				</div>
+			);
+		}
+
+		const offset = -1 * (new Date().getTimezoneOffset() / 60);
+
+		return (
+			<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
+				<table>
+					<thead>
+						{columns.map((x) => (
+							<th>{TranslateService.translate(eventStore, x)}</th>
+						))}
+					</thead>
+					<tbody>
+						{adminStore.userStats.map((row: any) => (
+							<tr>
+								{columns.map((col: any) => (
+									<td>
+										{!row[col]
+											? '-'
+											: col == 'lastUpdateAt' || col == 'lastLoginAt'
+											? addHours(new Date(row[col]), offset)
+													.toISOString()
+													.split('.')[0]
+													.replace('T', ', ')
 											: row[col]}
 									</td>
 								))}
@@ -176,6 +248,7 @@ function AdminDashboard() {
 	function renderContent() {
 		return (
 			<div className="flex-col gap-30">
+				{wrapBlockWithTitle('ADMIN_DASHBOARD.TRIP_STATS.TITLE', renderTripStats())}
 				{wrapBlockWithTitle('ADMIN_DASHBOARD.USER_STATS.TITLE', renderUserStats())}
 				{wrapBlockWithTitle('ADMIN_DASHBOARD.TINDER_WIDGET.TITLE', renderTinderWidget())}
 			</div>

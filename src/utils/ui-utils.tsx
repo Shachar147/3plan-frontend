@@ -75,8 +75,11 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
 			<div className="start-side">
 				<div className="choose-language main-font">
 					<a>
-						{/*<i className="fa fa-globe darkest-blue-color" aria-hidden="true" />*/}
-						<img alt="" src={'/images/landing-page/icons/choose-lang.png'} />
+						<img
+							className="choose-language-image"
+							alt=""
+							src={'/images/landing-page/icons/choose-lang.png'}
+						/>
 						{TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
 					</a>
 					{renderLanguageSelector(eventStore)}

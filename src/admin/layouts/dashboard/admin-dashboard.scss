@@ -43,3 +43,16 @@ body.rtl {
     direction: rtl;
   }
 }
+
+body.admin-side {
+  #root {
+    height: fit-content !important;
+
+    .max-height-250 {
+      max-height: 150px !important;
+    }
+    .main-page {
+      height: fit-content !important;
+    }
+  }
+}

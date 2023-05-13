@@ -1167,3 +1167,19 @@ input:read-only {
 .min-height-20 {
 	min-height:20px;
 }
+
+body.admin-side {
+	background-color: #d3efff !important;
+
+	.mobile-header, .mobile-header .mobile-navbar, .mobile-header .mobile-trip-name {
+		background-color: #c4e1f1 !important;
+	}
+
+	#root {
+		height: CALC(100vh - 50px);
+
+		.max-height-250 {
+			max-height: 350px !important;
+		}
+	}
+}

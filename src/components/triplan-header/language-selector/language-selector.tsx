@@ -19,7 +19,7 @@ function LanguageSelector() {
 	return (
 		<div className={getClasses('language-selector main-font', currentLanguage.direction)}>
 			<div className="language-selector-label">
-				<img alt="" src={'/images/landing-page/icons/choose-lang.png'} />
+				<img alt="" className="choose-language-image" src={'/images/landing-page/icons/choose-lang.png'} />
 				<div className="language-selector-choose-language-label">
 					{TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
 				</div>

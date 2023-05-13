@@ -4,6 +4,14 @@ import { apiPost } from '../helpers/api';
 const useIsAdmin = () => {
 	const [isAdmin, setIsAdmin] = useState(false);
 
+	function updateBodyClass() {
+		if (window.location.href.indexOf('admin') !== -1) {
+			document.querySelector('body')?.classList.add('admin-side');
+		} else {
+			document.querySelector('body')?.classList.remove('admin-side');
+		}
+	}
+
 	useEffect(() => {
 		const checkAdminStatus = async () => {
 			try {
@@ -13,6 +21,7 @@ const useIsAdmin = () => {
 				setIsAdmin(false);
 			}
 		};
+		updateBodyClass();
 		checkAdminStatus();
 	}, []);
 
