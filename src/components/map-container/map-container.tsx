@@ -1336,29 +1336,16 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	function renderNoItemsOnMapPlaceholder() {
 		return (
 			<div className="no-items-on-map-placeholder">
-				{!eventStore.isMobile && (
-					<img className="no-items-on-map-placeholder-image" src={'/images/arrow-up-placeholder.png'} />
-				)}
+				<img className="no-items-on-map-placeholder-image" src={'/images/arrow-up-placeholder.png'} />
 				<div className="no-items-on-map-placeholder-title main-font-heavy">
 					{TranslateService.translate(eventStore, 'NO_ITEMS_ON_MAP_PLACEHOLDER.TITLE')}
 				</div>
 				<div className="no-items-on-map-placeholder-content-bold">
-					{TranslateService.translate(
-						eventStore,
-						eventStore.isMobile
-							? 'NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1.MOBILE'
-							: 'NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1'
-					)}
+					{TranslateService.translate(eventStore, 'NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.1')}
 				</div>
 				<div className="no-items-on-map-placeholder-content">
 					{TranslateService.translate(eventStore, 'NO_ITEMS_ON_MAP_PLACEHOLDER.CONTENT.2')}
 				</div>
-				{eventStore.isMobile && (
-					<img
-						className="no-items-on-map-placeholder-image flip-y"
-						src={'/images/arrow-up-placeholder.png'}
-					/>
-				)}
 			</div>
 		);
 	}
@@ -1456,9 +1443,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 						/>
 					))}
 				</GoogleMapReact>
-				{!eventStore.isMobile && renderVisibleItemsPane()}
+				{!eventStore.isMobile && locations.length > 0 && renderVisibleItemsPane()}
 			</div>
-			{eventStore.isMobile && renderVisibleItemsPane()}
+			{eventStore.isMobile && locations.length > 0 && renderVisibleItemsPane()}
 		</div>
 	);
 }
