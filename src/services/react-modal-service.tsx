@@ -844,7 +844,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.PRIORITY',
 					className: 'border-top-gray priority-row',
-					showOnMinimized: false,
+					showOnMinimized: true,
 				},
 				{
 					settings: {
@@ -1086,7 +1086,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.PRIORITY',
 						className: 'border-top-gray priority-row',
-						showOnMinimized: false,
+						showOnMinimized: true,
 					},
 					{
 						settings: {

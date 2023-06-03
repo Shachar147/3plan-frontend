@@ -117,11 +117,14 @@
   .end-time-row {
     order: 5;
   }
-  .actions-row {
+  .priority-row {
     order: 6;
   }
-  .show-hide-more-row {
+  .actions-row {
     order: 7;
+  }
+  .show-hide-more-row {
+    order: 8;
   }
 
   &.view-mode {
