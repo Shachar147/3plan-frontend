@@ -436,9 +436,9 @@
 			}
 		}
 
-		.map-header {
-			order :2;
-		}
+		//.map-header {
+		//	order :2;
+		//}
 	}
 
 	.login-page,
@@ -664,7 +664,7 @@
 	}
 
 	.no-items-on-map-placeholder {
-		justify-content: flex-end;
+		justify-content: flex-start;
 		padding-bottom: 30px;
 
 		.no-items-on-map-placeholder-image {
@@ -839,6 +839,11 @@
 		.trip-is-locked-header {
 			text-align: right;
 		}
+	}
+
+	.google-map-react {
+		// for no-items-on-map-placeholder when clicking on input and keyboard appears
+		overflow-y: hidden;
 	}
 }
 
