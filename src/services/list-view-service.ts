@@ -644,9 +644,21 @@ const ListViewService = {
 					summaryPerDay[dayTitle].push('');
 				}
 
+				const navigationUrl = BuildEventUrl(event.location ?? event.extendedProps?.location);
+				const navigation =
+					eventStore.listViewShowNavigateTo && navigationUrl
+						? `<a target='_blank' href='${navigationUrl}' title='${TranslateService.translate(
+								eventStore,
+								'NAVIGATE_TO',
+								{
+									to: event.title!,
+								}
+						  )}' class='navigate-to' ><img src="/images/navigation.png"/></a>`
+						: '';
+
 				summaryPerDay[dayTitle].push(`
                     <span class="eventRow${rowClass}" style="${rowStyle}" data-eventId="${event.id}">
-                        ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}${orderedIndication}</span>${description}
+                        ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}${orderedIndication}${navigation}</span>${description}
                     </span>
                 `);
 

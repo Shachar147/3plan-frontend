@@ -40,11 +40,20 @@
 		left: 10px;
 		z-index: 5000;
 
+		display: flex;
+		gap: 10px;
+
 		// making sure it has a white background so when scrolling we won't see scrolled info (background will cover it)
 		width: CALC(100% - 25px);
 		direction: ltr;
 		background-color: white;
 		padding-block: 10px 20px;
+
+		.list-view-checkbox-options {
+			display: flex;
+			padding: 5px;
+			gap: 5px;
+		}
 	}
 }
 
@@ -52,6 +61,10 @@ body.rtl {
 	.list-container {
 		.list-view-mode-selector {
 			direction: rtl;
+
+			.list-view-checkbox-options {
+				direction: rtl;
+			}
 		}
 	}
 }
@@ -469,5 +482,20 @@ body.rtl {
 body.rtl {
 	.mobile-trip-name {
 		direction: rtl;
+	}
+}
+
+a.navigate-to {
+	margin-inline: 4px;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+
+	img {
+		width: 14px;
+		height: 14px;
+	}
+
+	&:hover {
+		opacity: 0.8;
 	}
 }

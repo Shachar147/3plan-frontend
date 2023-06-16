@@ -73,7 +73,7 @@ export const DESSERTS_KEYWORDS = [
 	'עוגייה',
 	'ice cream',
 ];
-export const FOOD_KEYWORDS = ['food', 'restaurant', 'אוכל', 'מסעדת', 'מסעדות', 'cafe', 'קפה'];
+export const FOOD_KEYWORDS = ['food', 'restaurant', 'אוכל', 'מסעדת', 'מסעדות', 'cafe', 'קפה', 'steak'];
 export const STORE_KEYWORDS = ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'];
 export const FLIGHT_KEYWORDS = ['flight', 'טיסה', 'airport', 'שדה תעופה', 'שדה התעופה', 'טיסות'];
 export const HOTEL_KEYWORDS = ['hotel', 'מלון'];

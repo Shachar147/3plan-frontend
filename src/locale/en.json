@@ -514,5 +514,7 @@
 	"MINIMIZE_SIDEBAR": "Minimize sidebar",
 	"MAXIMIZE_SIDEBAR": "Maximize sidebar",
 	"MOBILE_NAVBAR.ADMIN_SIDE": "Admin Side",
-	"MOBILE_NAVBAR.USER_SIDE": "User Side"
+	"MOBILE_NAVBAR.USER_SIDE": "User Side",
+	"SHOW_NAVIGATE_TO": "Show Navigate To",
+	"NAVIGATE_TO": "Navigate to {to}"
 }

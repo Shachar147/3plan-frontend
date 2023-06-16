@@ -305,6 +305,18 @@ function MainPage(props: MainPageProps) {
 						options={options}
 						customStyle="white"
 					/>
+					<label className="list-view-checkbox-options">
+						<input
+							type="checkbox"
+							checked={eventStore.listViewShowNavigateTo}
+							onChange={(e) => {
+								runInAction(() => {
+									eventStore.listViewShowNavigateTo = e.target.checked;
+								});
+							}}
+						/>
+						{TranslateService.translate(eventStore, 'SHOW_NAVIGATE_TO')}
+					</label>
 				</div>
 				{content}
 			</div>

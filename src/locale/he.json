@@ -592,5 +592,7 @@
 	"MINIMIZE_SIDEBAR": "הסתר את התפריט",
 	"MAXIMIZE_SIDEBAR": "הצג את התפריט",
 	"MOBILE_NAVBAR.ADMIN_SIDE": "למערכת הניהול",
-	"MOBILE_NAVBAR.USER_SIDE": "חזרה לצד המשתמש"
+	"MOBILE_NAVBAR.USER_SIDE": "חזרה לצד המשתמש",
+	"SHOW_NAVIGATE_TO": "הצג נווט אל",
+	"NAVIGATE_TO": "נווט אל {to}"
 }
