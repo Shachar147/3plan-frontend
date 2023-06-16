@@ -1205,6 +1205,35 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
+	const renderShareTripButton = () => {
+		return (
+			<div className="flex-col align-items-center justify-content-center">
+				<b>{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.TITLE')}</b>
+				<span className="white-space-pre-line text-align-center width-100-percents opacity-0-5">
+					{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.CONTENT')}
+				</span>
+				<Button
+					flavor={ButtonFlavor.link}
+					className={'black'}
+					// style={{
+					// 	width: '100%',
+					// 	marginBlock: '10px',
+					// }}
+					style={{
+						width: '100%',
+					}}
+					onClick={() => {
+						alert('here');
+					}}
+					text={TranslateService.translate(eventStore, 'INVITE_LINK')}
+					icon={'fa-users'}
+					disabled={eventStore.isTripLocked} // todo complete - disabled if you aren't the owner of the trip
+					disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')} // todo complete - disabled if you aren't the owner of the trip
+				/>
+			</div>
+		);
+	};
+
 	const renderCategoryEvents = (categoryId: number) => {
 		const categoryEvents = eventStore.getSidebarEvents[categoryId] || [];
 
@@ -1467,6 +1496,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{/*<div className={"spacer margin-top-40"}/>*/}
 						<hr style={{ marginBlock: '20px 10px' }} />
 						{renderCategories()}
+						<hr style={{ marginBlock: '20px 10px' }} />
+						{renderShareTripButton()}
 					</div>
 				</div>
 			</div>

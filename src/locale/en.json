@@ -515,6 +515,9 @@
 	"MAXIMIZE_SIDEBAR": "Maximize sidebar",
 	"MOBILE_NAVBAR.ADMIN_SIDE": "Admin Side",
 	"MOBILE_NAVBAR.USER_SIDE": "User Side",
-	"SHOW_NAVIGATE_TO": "Show Navigate To",
-	"NAVIGATE_TO": "Navigate to {to}"
+	"SHOW_NAVIGATE_TO": "Show \"navigate to\" button",
+	"NAVIGATE_TO": "Navigate to {to}",
+	"INVITE_LINK": "Invite Link",
+	"SHARE_TRIP.DESCRIPTION.TITLE": "Planning trips is better together!",
+	"SHARE_TRIP.DESCRIPTION.CONTENT": "Send invites to more people\nBuild together the perfect trip for you!\nPay attention, joining user will have management and editing permissions"
 }
