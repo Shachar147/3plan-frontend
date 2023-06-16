@@ -1,4 +1,4 @@
-import { GoogleTravelMode, TriplanEventPreferredTime, TriplanPriority } from './enums';
+import { GoogleTravelMode, InputValidation, TriplanEventPreferredTime, TriplanPriority } from './enums';
 import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
@@ -423,4 +423,21 @@ export function generate_uuidv4() {
 			v = c == 'x' ? uuid : (uuid & 0x3) | 0x8;
 		return uuid.toString(16);
 	});
+}
+
+export function validateInput(value: string, validation?: InputValidation) {
+	if (!validation) {
+		return true;
+	}
+
+	switch (validation) {
+		case InputValidation.link:
+			const validStarts = ['http://', 'https://', 'www.'];
+			return (
+				(validStarts.find((s) => value.startsWith(s)) || validStarts.find((s) => s.indexOf(value) === 0)) &&
+				value.indexOf(' ') == -1
+			);
+		default:
+			return true;
+	}
 }

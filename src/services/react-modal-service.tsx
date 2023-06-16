@@ -15,7 +15,7 @@ import {
 	SidebarEvent,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
-import { TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../utils/enums';
+import { InputValidation, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../utils/enums';
 import {
 	addHoursToDate,
 	convertMsToHM,
@@ -205,6 +205,7 @@ export const ReactModalRenderHelper = {
 			value?: string;
 			readOnly?: boolean;
 			showAsLink?: boolean; // more info
+			validation?: InputValidation;
 		},
 		ref?: any
 	) => {
@@ -223,6 +224,7 @@ export const ReactModalRenderHelper = {
 				placeholderKey={extra.placeholderKey}
 				readOnly={extra.readOnly}
 				showAsLink={extra.showAsLink}
+				validation={extra.validation}
 			/>
 		);
 	},
@@ -923,6 +925,7 @@ const ReactModalService = {
 							value: initialData.moreInfo,
 							readOnly: modalsStore?.isViewMode,
 							showAsLink: true,
+							validation: InputValidation.link,
 						},
 					},
 					textKey: 'MODALS.MORE_INFO',
@@ -1158,6 +1161,7 @@ const ReactModalService = {
 								value: initialData.moreInfo,
 								readOnly: modalsStore?.isViewMode,
 								showAsLink: true,
+								validation: InputValidation.link,
 							},
 						},
 						textKey: 'MODALS.MORE_INFO',

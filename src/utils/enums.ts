@@ -60,3 +60,7 @@ export function getEnumKey(enumObj: any, value: any) {
 		}
 	}
 }
+
+export enum InputValidation {
+	link = 'link',
+}

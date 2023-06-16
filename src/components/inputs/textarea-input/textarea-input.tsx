@@ -1,9 +1,10 @@
 import React, { forwardRef, Ref, useContext, useImperativeHandle, useState } from 'react';
-import { getClasses } from '../../../utils/utils';
+import { getClasses, validateInput } from '../../../utils/utils';
 import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
 import { observer } from 'mobx-react';
 import { runInAction } from 'mobx';
+import { InputValidation } from '../../../utils/enums';
 
 interface TextAreaInputProps {
 	modalValueName: string;
@@ -24,6 +25,8 @@ interface TextAreaInputProps {
 	readOnly?: boolean;
 
 	showAsLink?: boolean; // for more info
+
+	validation?: InputValidation;
 }
 export interface TextAreaInputRef {
 	getValue(): string;
@@ -62,6 +65,11 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
 			className={getClasses(['textAreaInput'], className)}
 			ref={ref}
 			onChange={(e) => {
+				if (!validateInput(e.target.value, props.validation)) {
+					e.target.value = value ?? '';
+					return false;
+				}
+
 				setValue(e.target.value);
 				runInAction(() => {
 					eventStore.modalValues[modalValueName] = e.target.value;
