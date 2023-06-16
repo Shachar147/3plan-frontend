@@ -735,7 +735,13 @@
 	.list-container {
 		.list-view-mode-selector {
 			display: flex;
-			justify-content: center;
+			flex-direction: column;
+			align-items: center;
+			gap: 2px;
+
+			.list-view-checkbox-options {
+				display: none;
+			}
 		}
 	}
 

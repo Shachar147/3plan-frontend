@@ -92,6 +92,7 @@ export class EventStore {
 	@observable modalValuesRefs: any = {};
 	@observable createMode: boolean = false;
 	@observable listViewSummaryMode = ListViewSummaryMode.noDescriptions;
+	@observable listViewShowNavigateTo = false;
 	@observable dataService: LocalStorageService | DBService;
 	@observable modalValues: any = {};
 	@observable isLoading = false;
@@ -1200,6 +1201,7 @@ export class EventStore {
 
 		if (isMobile) {
 			this.isSwitchDaysEnabled = false;
+			this.listViewShowNavigateTo = true;
 		}
 	}
 
