@@ -594,5 +594,6 @@
 	"MOBILE_NAVBAR.ADMIN_SIDE": "למערכת הניהול",
 	"MOBILE_NAVBAR.USER_SIDE": "חזרה לצד המשתמש",
 	"SHOW_NAVIGATE_TO": "הצג נווט אל",
-	"NAVIGATE_TO": "נווט אל {to}"
+	"NAVIGATE_TO": "נווט אל {to}",
+	"SIDEBAR_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש בתפריט"
 }

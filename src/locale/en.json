@@ -516,5 +516,6 @@
 	"MOBILE_NAVBAR.ADMIN_SIDE": "Admin Side",
 	"MOBILE_NAVBAR.USER_SIDE": "User Side",
 	"SHOW_NAVIGATE_TO": "Show Navigate To",
-	"NAVIGATE_TO": "Navigate to {to}"
+	"NAVIGATE_TO": "Navigate to {to}",
+	"SIDEBAR_SEARCH_PLACEHOLDER": "Enter search keywords"
 }

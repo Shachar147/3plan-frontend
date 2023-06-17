@@ -331,3 +331,11 @@ body.rtl {
 		text-align: right;
 	}
 }
+
+.sidebar-search-container {
+	margin-bottom: 15px;
+	.search-container {
+		width: 100%;
+		max-width: unset;
+	}
+}
