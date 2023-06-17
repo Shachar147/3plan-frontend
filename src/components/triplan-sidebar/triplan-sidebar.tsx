@@ -30,6 +30,7 @@ import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers
 import { runInAction } from 'mobx';
 import DistanceCalculator from './distance-calculator/distance-calculator';
 import { modalsStoreContext } from '../../stores/modals-store';
+import TriplanSearch from '../triplan-header/triplan-search/triplan-search';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -857,6 +858,18 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
+	function renderSearch() {
+		return (
+			<div className="sidebar-search-container flex-row width-100-percents">
+				<TriplanSearch
+					value={eventStore.sidebarSearchValue}
+					onChange={(val) => eventStore.setSidebarSearchValue(val)}
+					placeholder={TranslateService.translate(eventStore, 'SIDEBAR_SEARCH_PLACEHOLDER')}
+				/>
+			</div>
+		);
+	}
+
 	const renderCategories = () => {
 		const renderExpandCollapse = () => {
 			const eyeIcon = eventStore.hideEmptyCategories || eventStore.isFiltered ? 'fa-eye' : 'fa-eye-slash';
@@ -1063,7 +1076,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								eventStore.setShowOnlyEventsWithNoLocation(false);
 								eventStore.setShowOnlyEventsWithNoOpeningHours(false);
 								eventStore.setShowOnlyEventsWithTodoComplete(false);
-								window.location.reload(); // to reload the search component
+
+								setTimeout(() => {
+									for (let i = 0; i < document.getElementsByName('fc-search').length; i++) {
+										// @ts-ignore
+										document.getElementsByName('fc-search')[i].value = '';
+									}
+								}, 100);
 							});
 						}}
 					>
@@ -1076,6 +1095,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		return (
 			<>
 				{renderExpandCollapse()}
+				{renderSearch()}
 				{totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
 				{categoriesBlock}
 				{totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}

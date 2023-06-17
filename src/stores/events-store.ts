@@ -70,6 +70,7 @@ export class EventStore {
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
+	@observable sidebarSearchValue = '';
 	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.map); // ViewMode.combined
 	@observable mobileViewMode = DataServices.LocalStorageService.getLastMobileViewMode(ViewMode.sidebar);
 	@observable hideCustomDates = this.viewMode == ViewMode.calendar;
@@ -601,6 +602,17 @@ export class EventStore {
 		return this.calendarLocalCode === 'en';
 	}
 
+	_isEventMatchingSearch(event: SidebarEvent, searchValue: string) {
+		// eventStore.sidebarSearchValue
+		return (
+			event.title!.toLowerCase().indexOf(searchValue.toLowerCase()) > -1 ||
+			(event.description && event.description.toLowerCase().indexOf(searchValue.toLowerCase()) > -1) ||
+			(event.location &&
+				event.location.address &&
+				event.location.address.toLowerCase().indexOf(searchValue.toLowerCase()) > -1)
+		);
+	}
+
 	@computed
 	get getSidebarEvents(): Record<number, SidebarEvent[]> {
 		const toReturn: Record<number, SidebarEvent[]> = {};
@@ -609,12 +621,8 @@ export class EventStore {
 				.map((x) => toJS(x))
 				.filter(
 					(event) =>
-						(event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 ||
-							(event.description &&
-								event.description.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) ||
-							(event.location &&
-								event.location.address &&
-								event.location.address.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1)) &&
+						this._isEventMatchingSearch(event, this.searchValue) &&
+						this._isEventMatchingSearch(event, this.sidebarSearchValue) &&
 						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
@@ -679,6 +687,7 @@ export class EventStore {
 	get isFiltered(): boolean {
 		return (
 			!!this.searchValue?.length ||
+			!!this.sidebarSearchValue?.length ||
 			this.showOnlyEventsWithNoLocation ||
 			this.showOnlyEventsWithNoOpeningHours ||
 			this.showOnlyEventsWithTodoComplete
@@ -938,6 +947,11 @@ export class EventStore {
 	@action
 	setSearchValue(value: string) {
 		this.searchValue = value;
+	}
+
+	@action
+	setSidebarSearchValue(value: string) {
+		this.sidebarSearchValue = value;
 	}
 
 	@action
