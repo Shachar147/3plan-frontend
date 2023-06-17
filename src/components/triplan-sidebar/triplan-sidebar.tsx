@@ -1073,6 +1073,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						onClick={() => {
 							runInAction(() => {
 								eventStore.setSearchValue('');
+								eventStore.setSidebarSearchValue('');
 								eventStore.setShowOnlyEventsWithNoLocation(false);
 								eventStore.setShowOnlyEventsWithNoOpeningHours(false);
 								eventStore.setShowOnlyEventsWithTodoComplete(false);
