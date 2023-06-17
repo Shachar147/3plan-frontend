@@ -116,7 +116,13 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 
 		setDraggables(draggablesArr);
-	}, [props.categories, eventStore.allEventsFilteredComputed, eventStore.forceSetDraggable, eventStore.isTripLocked]);
+	}, [
+		props.categories,
+		eventStore.allEventsFilteredComputed,
+		eventStore.forceSetDraggable,
+		eventStore.isTripLocked,
+		eventStore.sidebarSearchValue,
+	]);
 
 	useEffect(() => {
 		calendarComponentRef.current!.render();
