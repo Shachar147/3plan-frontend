@@ -1209,6 +1209,14 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	}, []);
 
 	function renderVisibleItemsPane() {
+		// todo remove: try to fix the fact that if the same day have the same location twice, we see '1', '2', '4'.
+		// if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
+		// 	console.log({
+		// 		day: eventStore.mapViewDayFilter,
+		// 		calendarEvents: eventStore.calendarEvents,
+		// 	});
+		// }
+
 		return (
 			<div
 				className={getClasses(
