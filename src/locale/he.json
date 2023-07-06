@@ -259,6 +259,7 @@
 	"SIDEBAR_GROUPS.GROUP_TITLE.RECOMMENDATIONS": "המלצות",
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "אז כמה פעילויות כבר משובצות?",
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT": "סטטיסטיקות",
+	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.DETAILS": "דבר אליי במספרים",
 	"SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "מקרא צבעים וכמויות",
 	"NO_DISPLAYED_CATEGORIES": "אין קטגוריות להציג",
 	"SELECT_ICON_PLACEHOLDER": "הקלד כדי לחפש",
@@ -601,5 +602,10 @@
 	"ils": "שקל",
 	"aed": "דירהאם",
 	"usd": "דולר",
-	"eur": "יורו"
+	"eur": "יורו",
+	"ils_sign": "₪",
+	"aed_sign": "AED",
+	"usd_sign": "$",
+	"eur_sign": "€",
+	"ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES": "עלות משוערת לפי הפעילויות המשובצות:"
 }

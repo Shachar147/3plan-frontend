@@ -441,3 +441,15 @@ export function validateInput(value: string, validation?: InputValidation) {
 			return true;
 	}
 }
+
+export function locationToString(location?: LocationData): string {
+	if (location) {
+		if (location.latitude && location.longitude) {
+			return location.latitude + ',' + location.longitude;
+		}
+		if (location.address) {
+			return location.address;
+		}
+	}
+	return '';
+}

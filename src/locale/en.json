@@ -377,6 +377,7 @@
 	"X_CATEGORY_ERRORS": "{X} without category",
 	"ADMIN_SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "So, how many activities already verified?",
 	"ADMIN_SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT": "Statistics",
+	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.DETAILS": "Talk to me in numbers",
 	"ADMIN_VERIFIED_ACTIVITIES": "Verified activities",
 	"ADMIN_UNVERIFIED_ACTIVITIES": "Unverified activities",
 	"ADMIN_SIDEBAR.DOWNLOAD_BUTTON_TEXT": "Download Media",
@@ -519,5 +520,10 @@
 	"MOBILE_NAVBAR.USER_SIDE": "User Side",
 	"SHOW_NAVIGATE_TO": "Show Navigate To",
 	"NAVIGATE_TO": "Navigate to {to}",
-	"SIDEBAR_SEARCH_PLACEHOLDER": "Enter search keywords"
+	"SIDEBAR_SEARCH_PLACEHOLDER": "Enter search keywords",
+	"ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES": "Estimated Price of Scheduled Activities:",
+	"ils_sign": "₪",
+	"aed_sign": "AED",
+	"usd_sign": "$",
+	"eur_sign": "€"
 }
