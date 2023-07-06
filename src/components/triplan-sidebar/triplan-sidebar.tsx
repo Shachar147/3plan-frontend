@@ -1370,6 +1370,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					Object.keys(event).includes('openingHours') ? JSON.stringify(event.openingHours) : undefined
 				}
 				data-images={event.images} // add column 3
+				data-price={event.price}
+				data-currency={event.currency}
 				data-more-info={event.moreInfo}
 				key={event.id}
 			>

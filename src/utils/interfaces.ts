@@ -1,4 +1,4 @@
-import { TriplanEventPreferredTime, TriplanPriority } from './enums';
+import { TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from './enums';
 
 export interface CalendarEvent {
 	title: string;
@@ -14,6 +14,8 @@ export interface CalendarEvent {
 	location?: LocationData;
 	openingHours?: WeeklyOpeningHoursData;
 	images?: string; // add column 8
+	price?: number;
+	currency?: TriplanCurrency;
 	moreInfo?: string;
 	category: string; // category id
 	suggestedEndTime?: any;
@@ -68,6 +70,8 @@ export interface SidebarEvent {
 	openingHours?: WeeklyOpeningHoursData;
 	images?: string; // add column 9
 	moreInfo?: string;
+	price?: number;
+	currency?: TriplanCurrency;
 }
 
 export interface TriPlanCategory {

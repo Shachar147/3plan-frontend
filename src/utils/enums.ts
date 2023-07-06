@@ -1,3 +1,10 @@
+export enum TriplanCurrency {
+	eur = 'eur',
+	usd = 'usd',
+	ils = 'ils',
+	aed = 'aed',
+}
+
 export enum TriplanPriority {
 	must = 1, // pink
 	high = 10, // purple?

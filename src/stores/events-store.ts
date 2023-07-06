@@ -1363,6 +1363,9 @@ export class EventStore {
 		// add column 7
 		storedEvent.images = newEvent.images ?? storedEvent.images;
 
+		storedEvent.price = newEvent.price ?? storedEvent.price;
+		storedEvent.currency = newEvent.currency ?? storedEvent.currency;
+
 		storedEvent.moreInfo = newEvent.moreInfo ?? storedEvent.moreInfo;
 
 		// @ts-ignore
@@ -1390,6 +1393,8 @@ export class EventStore {
 			? newEvent.openingHours
 			: storedEvent.openingHours;
 		storedEvent.images = newEvent.images; // add column 6
+		storedEvent.price = newEvent.price;
+		storedEvent.currency = newEvent.currency;
 		storedEvent.moreInfo = newEvent.moreInfo;
 	}
 

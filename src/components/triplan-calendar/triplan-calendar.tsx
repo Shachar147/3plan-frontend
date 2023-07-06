@@ -140,6 +140,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		let location = eventEl.getAttribute('data-location');
 		let openingHours = eventEl.getAttribute('data-opening-hours');
 		let images = eventEl.getAttribute('data-images'); // add column 1
+		let price = eventEl.getAttribute('data-price');
+		let currency = eventEl.getAttribute('data-currency');
 
 		let moreInfo = eventEl.getAttribute('data-more-info');
 
@@ -157,6 +159,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			openingHours: openingHours ? JSON.parse(openingHours) : undefined,
 			images, // add column 2
 			moreInfo,
+			price,
+			currency,
 		};
 
 		return {

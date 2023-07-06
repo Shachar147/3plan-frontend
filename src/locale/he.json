@@ -381,6 +381,8 @@
 	"NAVIGATION.NEXT": "הבא",
 	"MODALS.IMAGES": "תמונות",
 	"MODALS.IMAGES_PLACEHOLDER": "השתמשו בשדה זה כדי להוסיף תמונות לפעילות זו. תמונה אחת בכל שורה",
+	"MODALS.PRICE": "מחיר",
+	"MODALS.CURRENCY": "מטבע",
 	"MORE_INFO": "מידע נוסף",
 	"MODALS.MORE_INFO_PLACEHOLDER": "השתמשו בשדה זה כדי להוסיף לינק למידע נוסף על פעילות זו או לינק להזמנה",
 	"MODALS.MORE_INFO": "מידע נוסף",
@@ -595,5 +597,9 @@
 	"MOBILE_NAVBAR.USER_SIDE": "חזרה לצד המשתמש",
 	"SHOW_NAVIGATE_TO": "הצג נווט אל",
 	"NAVIGATE_TO": "נווט אל {to}",
-	"SIDEBAR_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש בתפריט"
+	"SIDEBAR_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש בתפריט",
+	"ils": "שקל",
+	"aed": "דירהאם",
+	"usd": "דולר",
+	"eur": "יורו"
 }
