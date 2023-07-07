@@ -720,6 +720,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			const errors: string[] = [];
 			// @ts-ignore
 			const priceList: Record<TriplanCurrency, number> = {};
+
+			// @ts-ignore
+			const unscheduledPriceList: Record<TriplanCurrency, number> = {};
+
 			const seen: Record<string, { price: number; currency: TriplanCurrency }> = {};
 			eventStore.calendarEvents
 				.filter((e) => e.price && e.currency)
@@ -758,8 +762,48 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					}
 				});
 
+			eventStore.allSidebarEvents
+				.filter((e) => e.price && e.currency)
+				.forEach((e) => {
+					const { currency } = e;
+					const price = e.price ? Number(e.price) : 0;
+
+					if (price == null || currency == null) {
+						return;
+					}
+					const locKey = locationToString(e.location);
+
+					// if already seen
+					if ((locKey.length && seen[locKey]) || seen[e.title]) {
+						const prevDetails = locKey.length ? seen[locKey] : seen[e.title];
+						if (prevDetails.currency != currency) {
+							errors.push(
+								`[sidebar] ${e.title} - currency changed [${prevDetails.currency}, ${currency}]`
+							);
+						}
+						if (prevDetails.price != price) {
+							errors.push(`[sidebar] ${e.title} - price changed [${prevDetails.price}, ${price}]`);
+
+							// take the highest price
+							if (prevDetails.currency == currency && prevDetails.price < price) {
+								unscheduledPriceList[currency] = unscheduledPriceList[currency] || 0;
+								unscheduledPriceList[currency] += price - prevDetails.price;
+							}
+						}
+					} else {
+						seen[locKey.length ? locKey : e.title] = {
+							price,
+							currency,
+						};
+
+						unscheduledPriceList[currency] = unscheduledPriceList[currency] || 0;
+						unscheduledPriceList[currency] += price;
+					}
+				});
+
 			return {
 				priceList,
+				unscheduledPriceList,
 				errors,
 			};
 		};
@@ -1008,40 +1052,50 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			);
 		};
 
+		// todo complete - add event with price and currency - not saving them.
+		// todo complete - edit sidebar event setting price and currency - not working
+		// todo complete - update all events - do not update ALL events with the price/currency. especially currency.
+
 		const renderPriceList = () => {
-			const { priceList, errors } = getEstimatedPrice();
-			const title = TranslateService.translate(eventStore, 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES');
-			if (errors.length > 0) {
-				console.log(errors);
+			const { priceList, unscheduledPriceList, errors } = getEstimatedPrice();
+
+			function getContent(priceList: Record<TriplanCurrency, number>, titleKey: string) {
+				const title = TranslateService.translate(eventStore, titleKey);
+				if (errors.length > 0) {
+					console.log(errors);
+				}
+
+				const isMultiCurrencies = Object.keys(priceList).length > 1;
+
+				const pricesSections = Object.keys(priceList).map((currency) => (
+					<div className="font-weight-bold">
+						{priceList[currency as TriplanCurrency]}{' '}
+						{TranslateService.translate(eventStore, `${currency}_sign`)}
+					</div>
+				));
+
+				return (
+					<div className="flex-col gap-4">
+						<div className="flex-row gap-8 align-items-center">
+							<i className="fa fa-money" aria-hidden="true" />{' '}
+							{TranslateService.translate(eventStore, title)}
+							{!isMultiCurrencies && ' ' && pricesSections}
+						</div>
+						{isMultiCurrencies && (
+							<div className="flex-row gap-4 margin-inline-start-25">
+								{pricesSections.map((x, i) => (i > 0 ? <>+ {x}</> : x))}
+							</div>
+						)}
+					</div>
+				);
 			}
 
-			console.log({
-				priceList,
-			});
-
-			// todo complete - add event with price and currency - not saving them.
-			// todo complete - update all events - do not update ALL events with the price/currency. especially currency.
-
-			const isMultiCurrencies = Object.keys(priceList).length > 1;
-
-			const pricesSections = Object.keys(priceList).map((currency) => (
-				<div className={getClasses(isMultiCurrencies ? 'margin-inline-start-25' : 'font-weight-bold')}>
-					{priceList[currency as TriplanCurrency]}{' '}
-					{TranslateService.translate(eventStore, `${currency}_sign`)}
-				</div>
-			));
-
 			return (
-				<div>
-					<div className={'sidebar-statistics margin-block-5'} key={`sidebar-statistics-money-title`}>
-						<div className="flex-col gap-4">
-							<div className="flex-row gap-8 align-items-center">
-								<i className="fa fa-money" aria-hidden="true" />{' '}
-								{TranslateService.translate(eventStore, title)}
-								{!isMultiCurrencies && ' ' && pricesSections}
-							</div>
-							{isMultiCurrencies && pricesSections}
-						</div>
+				<div className={'sidebar-statistics margin-block-10'} key={`sidebar-statistics-money-title`}>
+					<div className="flex-col gap-8">
+						{getContent(priceList, 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES')}
+						{Object.keys(unscheduledPriceList).length > 0 &&
+							getContent(unscheduledPriceList, 'ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES')}
 					</div>
 				</div>
 			);
