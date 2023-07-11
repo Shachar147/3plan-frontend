@@ -2074,9 +2074,11 @@ const ReactModalService = {
 									description,
 									location,
 									openingHours,
-									images,
+									images, // add column 14
 									moreInfo,
 									category,
+									price,
+									currency,
 								} as SidebarEvent);
 							}
 							newSidebarEvents[categoryId].push(_event);

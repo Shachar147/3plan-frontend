@@ -43,6 +43,8 @@ export function buildCalendarEvent(json: any): Partial<CalendarEvent> {
 		'suggestedEndTime',
 		'className',
 		'timingError',
+		'price', // add column 14
+		'currency',
 	];
 
 	const calendarEvent: Partial<CalendarEvent> = {};
