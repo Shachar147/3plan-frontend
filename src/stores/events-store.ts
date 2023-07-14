@@ -864,10 +864,15 @@ export class EventStore {
 	}
 
 	@action
-	setCategories(newCategories: TriPlanCategory[]) {
-		const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
-		this.categories = newCategoriesSorted;
-		return this.dataService.setCategories(newCategoriesSorted, this.tripName);
+	setCategories(newCategories: TriPlanCategory[], sort: boolean = true) {
+		if (sort) {
+			const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
+			this.categories = newCategoriesSorted;
+			return this.dataService.setCategories(newCategoriesSorted, this.tripName);
+		} else {
+			this.categories = newCategories;
+			return this.dataService.setCategories(newCategories, this.tripName);
+		}
 	}
 
 	@action

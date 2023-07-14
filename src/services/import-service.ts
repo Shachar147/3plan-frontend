@@ -405,7 +405,7 @@ const ImportService = {
 		let categoriesImported = false;
 		let eventsImported = false;
 		if (info.categoriesToAdd.length > 0) {
-			eventStore.setCategories([...eventStore.categories, ...info.categoriesToAdd]);
+			eventStore.setCategories([...eventStore.categories, ...info.categoriesToAdd], false);
 			categoriesImported = true;
 		}
 		if (info.eventsToAdd.length > 0) {
