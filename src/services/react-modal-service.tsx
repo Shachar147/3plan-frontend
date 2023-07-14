@@ -2906,18 +2906,6 @@ const ReactModalService = {
 
 				await eventStore.setCategories(newCategories, false);
 
-				// await eventStore.setCategories(
-				// 	[
-				// 		...eventStore.categories.filter((c) => c.id.toString() !== categoryId.toString()),
-				// 		{
-				// 			id: categoryId,
-				// 			title: newName,
-				// 			icon: newIcon,
-				// 		},
-				// 	],
-				// 	false
-				// );
-
 				// update our store
 				const updatedCalenderEvents = [...eventStore.getJSCalendarEvents()];
 				updatedCalenderEvents.forEach((e) => {
@@ -2979,18 +2967,21 @@ const ReactModalService = {
 					type: 'select',
 					extra: {
 						id: 'category-order',
-						placeholderKey: 'MODALS.CATEGORY.ORDER',
+						placeholderKey: 'MODALS.CATEGORY.SHOW_AFTER',
 						value: eventStore.categories.findIndex((c) => c.id == category.id),
 					},
 					options: [
 						...eventStore.categories.map((c, idx) => ({
 							value: idx,
-							label: idx + 1,
+							label:
+								idx > 0
+									? eventStore.categories[idx - 1].title
+									: TranslateService.translate(eventStore, 'PUSH_TO_START'),
 						})),
 					],
 					wrapperClassName: 'category-order-selector',
 				},
-				textKey: 'MODALS.CATEGORY.ORDER',
+				textKey: 'MODALS.CATEGORY.SHOW_AFTER',
 				className: 'border-top-gray border-bottom-gray padding-bottom-20',
 			},
 		];
