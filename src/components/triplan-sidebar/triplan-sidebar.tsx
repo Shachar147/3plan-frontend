@@ -1065,23 +1065,29 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					console.log(errors);
 				}
 
+				const isUnknown = Object.keys(priceList).length == 0;
 				const isMultiCurrencies = Object.keys(priceList).length > 1;
 
-				const pricesSections = Object.keys(priceList).map((currency) => (
-					<div className="font-weight-bold">
-						{priceList[currency as TriplanCurrency]}{' '}
-						{TranslateService.translate(eventStore, `${currency}_sign`)}
-					</div>
-				));
+				const shouldShowPriceInline = isUnknown || !isMultiCurrencies;
+				const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
+
+				const pricesSections = isUnknown
+					? [<div className="font-weight-bold">{unknownText}</div>]
+					: Object.keys(priceList).map((currency) => (
+							<div className="font-weight-bold">
+								{priceList[currency as TriplanCurrency]}{' '}
+								{TranslateService.translate(eventStore, `${currency}_sign`)}
+							</div>
+					  ));
 
 				return (
 					<div className="flex-col gap-4">
 						<div className="flex-row gap-8 align-items-center">
 							<i className="fa fa-money" aria-hidden="true" />{' '}
 							{TranslateService.translate(eventStore, title)}
-							{!isMultiCurrencies && ' ' && pricesSections}
+							{shouldShowPriceInline && ' ' && pricesSections}
 						</div>
-						{isMultiCurrencies && (
+						{!shouldShowPriceInline && (
 							<div className="flex-row gap-4 margin-inline-start-25">
 								{pricesSections.map((x, i) => (i > 0 ? <>+ {x}</> : x))}
 							</div>
@@ -1094,8 +1100,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				<div className={'sidebar-statistics margin-block-10'} key={`sidebar-statistics-money-title`}>
 					<div className="flex-col gap-8">
 						{getContent(priceList, 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES')}
-						{Object.keys(unscheduledPriceList).length > 0 &&
-							getContent(unscheduledPriceList, 'ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES')}
 					</div>
 				</div>
 			);

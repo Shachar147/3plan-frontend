@@ -529,5 +529,6 @@
 	"ils_sign": "₪",
 	"aed_sign": "AED",
 	"usd_sign": "$",
-	"eur_sign": "€"
+	"eur_sign": "€",
+	"UNKNOWN_PRICE": "?"
 }
