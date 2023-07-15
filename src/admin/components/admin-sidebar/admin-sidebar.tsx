@@ -839,6 +839,8 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						}
 						data-opening-hours={event.openingHours}
 						data-images={event.images} // add column 3
+						data-price={event.price}
+						data-currency={event.currency}
 						data-more-info={event.moreInfo}
 						key={event.id}
 					>

@@ -306,6 +306,9 @@
 	"NAVIGATION.NEXT": "Next",
 	"MODALS.IMAGES": "Images",
 	"MODALS.IMAGES_PLACEHOLDER": "Use this field to add images for this activity. One picture in a line.",
+	"MODALS.PRICE": "Price",
+	"MODALS.CURRENCY": "Currency",
+	"MODALS.CATEGORY.SHOW_AFTER": "Show After",
 	"MORE_INFO": "More info",
 	"MODALS.MORE_INFO_PLACEHOLDER": "Use this field to add more info about this activity / link to order.",
 	"MODALS.MORE_INFO": "More Info",
@@ -375,6 +378,7 @@
 	"X_CATEGORY_ERRORS": "{X} without category",
 	"ADMIN_SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "So, how many activities already verified?",
 	"ADMIN_SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT": "Statistics",
+	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.DETAILS": "Talk to me in numbers",
 	"ADMIN_VERIFIED_ACTIVITIES": "Verified activities",
 	"ADMIN_UNVERIFIED_ACTIVITIES": "Unverified activities",
 	"ADMIN_SIDEBAR.DOWNLOAD_BUTTON_TEXT": "Download Media",
@@ -517,5 +521,13 @@
 	"MOBILE_NAVBAR.USER_SIDE": "User Side",
 	"SHOW_NAVIGATE_TO": "Show Navigate To",
 	"NAVIGATE_TO": "Navigate to {to}",
-	"SIDEBAR_SEARCH_PLACEHOLDER": "Enter search keywords"
+	"SIDEBAR_SEARCH_PLACEHOLDER": "Enter search keywords",
+	"ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES": "Estimated Price:",
+	"ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES": "Estimated Price (Unscheduled):",
+	"PUSH_TO_START": "Top of the list",
+	"MODALS.CATEGORY.ORDER": "Order",
+	"ils_sign": "₪",
+	"aed_sign": "AED",
+	"usd_sign": "$",
+	"eur_sign": "€"
 }

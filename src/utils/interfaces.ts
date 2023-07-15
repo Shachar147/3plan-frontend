@@ -1,4 +1,4 @@
-import { TriplanEventPreferredTime, TriplanPriority } from './enums';
+import { TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from './enums';
 
 export interface CalendarEvent {
 	title: string;
@@ -14,6 +14,8 @@ export interface CalendarEvent {
 	location?: LocationData;
 	openingHours?: WeeklyOpeningHoursData;
 	images?: string; // add column 8
+	price?: number;
+	currency?: TriplanCurrency;
 	moreInfo?: string;
 	category: string; // category id
 	suggestedEndTime?: any;
@@ -41,6 +43,8 @@ export function buildCalendarEvent(json: any): Partial<CalendarEvent> {
 		'suggestedEndTime',
 		'className',
 		'timingError',
+		'price', // add column 14
+		'currency',
 	];
 
 	const calendarEvent: Partial<CalendarEvent> = {};
@@ -68,6 +72,8 @@ export interface SidebarEvent {
 	openingHours?: WeeklyOpeningHoursData;
 	images?: string; // add column 9
 	moreInfo?: string;
+	price?: number;
+	currency?: TriplanCurrency;
 }
 
 export interface TriPlanCategory {

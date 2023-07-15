@@ -312,12 +312,20 @@ body {
 	margin-block: 5px;
 }
 
+.margin-block-10 {
+	margin-block: 10px;
+}
+
 .margin-inline-0 {
 	margin-inline: 0;
 }
 
 .margin-inline-10 {
 	margin-inline: 10px;
+}
+
+.margin-inline-start-25 {
+	margin-inline-start: 25px;
 }
 
 .margin-top-2 {
@@ -930,6 +938,10 @@ input[type='text'] {
 
 .height-100vh {
 	height: 100vh;
+}
+
+.bold {
+	font-weight: bold;
 }
 
 .font-weight-bold {

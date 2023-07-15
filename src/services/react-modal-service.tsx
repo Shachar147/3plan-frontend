@@ -15,7 +15,14 @@ import {
 	SidebarEvent,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
-import { InputValidation, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../utils/enums';
+import {
+	InputValidation,
+	TripDataSource,
+	TriplanCurrency,
+	TriplanEventPreferredTime,
+	TriplanPriority,
+	ViewMode,
+} from '../utils/enums';
 import {
 	addHoursToDate,
 	convertMsToHM,
@@ -91,6 +98,7 @@ export const ReactModalRenderHelper = {
 			value?: string;
 			readOnly?: boolean;
 			eventId?: number;
+			type?: 'text' | 'number';
 		},
 		ref?: any
 	) => {
@@ -130,6 +138,7 @@ export const ReactModalRenderHelper = {
 				placeholderKey={extra.placeholderKey}
 				autoComplete={extra.autoComplete}
 				readOnly={extra.readOnly}
+				type={extra.type}
 			/>
 		);
 	},
@@ -352,6 +361,76 @@ export const ReactModalRenderHelper = {
 			ref
 		);
 	},
+	renderSelector: (
+		eventStore: EventStore,
+		modalValueName: string,
+		extra: { id?: string; name?: string; value: any },
+		options: { value: string; label: string }[],
+		wrapperClassName: string = 'triplan-selector',
+		ref?: any
+	) => {
+		if (!eventStore.modalValues[modalValueName]) {
+			const selectedOption = options.find((option) => option.value == extra.value?.toString());
+			eventStore.modalValues[modalValueName] = selectedOption;
+		}
+
+		return ReactModalRenderHelper.renderSelectInput(
+			eventStore,
+			modalValueName,
+			{ ...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER' },
+			wrapperClassName,
+			ref
+		);
+	},
+	renderCurrencySelector: (
+		eventStore: EventStore,
+		modalValueName: string,
+		extra: { id?: string; name?: string; value: any },
+		ref?: any
+	) => {
+		const values = Object.keys(TriplanCurrency);
+		const keys = Object.values(TriplanCurrency);
+
+		const order = [TriplanCurrency.ils, TriplanCurrency.usd, TriplanCurrency.eur, TriplanCurrency.aed];
+
+		const options = Object.values(TriplanCurrency)
+			.filter((x) => Number.isNaN(Number(x)))
+			.map((val, index) => ({
+				value: values[index],
+				label: TranslateService.translate(eventStore, keys[index].toString()),
+			}))
+			.sort((a, b) => {
+				let A = order.indexOf(Number(a.value) as unknown as TriplanCurrency);
+				let B = order.indexOf(Number(b.value) as unknown as TriplanCurrency);
+
+				if (A === -1) {
+					A = 999;
+				}
+				if (B === -1) {
+					B = 999;
+				}
+
+				if (A > B) {
+					return 1;
+				} else if (A < B) {
+					return -1;
+				}
+				return 0;
+			});
+
+		if (!eventStore.modalValues[modalValueName]) {
+			const selectedOption = options.find((option) => option.value == extra.value?.toString());
+			eventStore.modalValues[modalValueName] = selectedOption;
+		}
+
+		return ReactModalRenderHelper.renderSelectInput(
+			eventStore,
+			modalValueName,
+			{ ...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER' },
+			'currency-selector',
+			ref
+		);
+	},
 	renderPreferredTimeSelector: (
 		eventStore: EventStore,
 		modalValueName: string,
@@ -389,6 +468,14 @@ export const ReactModalRenderHelper = {
 					eventStore,
 					row.settings.modalValueName,
 					row.settings.extra,
+					row.settings.ref
+				);
+				break;
+			case 'number':
+				input = ReactModalRenderHelper.renderTextInput(
+					eventStore,
+					row.settings.modalValueName,
+					{ ...row.settings.extra, type: 'number' },
 					row.settings.ref
 				);
 				break;
@@ -449,6 +536,24 @@ export const ReactModalRenderHelper = {
 					eventStore,
 					row.settings.modalValueName,
 					row.settings.extra,
+					row.settings.ref
+				);
+				break;
+			case 'currency-selector':
+				input = ReactModalRenderHelper.renderCurrencySelector(
+					eventStore,
+					row.settings.modalValueName,
+					row.settings.extra,
+					row.settings.ref
+				);
+				break;
+			case 'select':
+				input = ReactModalRenderHelper.renderSelector(
+					eventStore,
+					row.settings.modalValueName,
+					row.settings.extra,
+					row.settings.options,
+					row.settings.wrapped,
 					row.settings.ref
 				);
 				break;
@@ -917,6 +1022,36 @@ const ReactModalService = {
 				},
 				{
 					settings: {
+						modalValueName: 'price',
+						ref: eventStore.modalValuesRefs['price'],
+						type: 'number',
+						extra: {
+							placeholderKey: 'MODALS.PRICE',
+							value: initialData.price,
+							readOnly: modalsStore?.isViewMode,
+						},
+					},
+					textKey: 'MODALS.PRICE',
+					className: 'border-top-gray price-row',
+					showOnMinimized: modalsStore?.isViewMode ?? false,
+				},
+				{
+					settings: {
+						modalValueName: 'currency',
+						ref: eventStore.modalValuesRefs['currency'],
+						type: 'currency-selector',
+						extra: {
+							placeholderKey: 'MODALS.CURRENCY',
+							value: initialData.currency,
+							readOnly: modalsStore?.isViewMode,
+						},
+					},
+					textKey: 'MODALS.CURRENCY',
+					className: 'border-top-gray currency-row',
+					showOnMinimized: modalsStore?.isViewMode ?? false,
+				},
+				{
+					settings: {
 						modalValueName: 'more-info',
 						ref: eventStore.modalValuesRefs['more-info'],
 						type: 'textarea',
@@ -1153,6 +1288,36 @@ const ReactModalService = {
 					},
 					{
 						settings: {
+							modalValueName: 'price',
+							ref: eventStore.modalValuesRefs['price'],
+							type: 'number',
+							extra: {
+								placeholderKey: 'MODALS.PRICE',
+								value: initialData.price,
+								readOnly: modalsStore?.isViewMode,
+							},
+						},
+						textKey: 'MODALS.PRICE',
+						className: 'border-top-gray price-row',
+						showOnMinimized: modalsStore?.isViewMode ?? false,
+					},
+					{
+						settings: {
+							modalValueName: 'currency',
+							ref: eventStore.modalValuesRefs['currency'],
+							type: 'currency-selector',
+							extra: {
+								placeholderKey: 'MODALS.CURRENCY',
+								value: initialData.currency,
+								readOnly: modalsStore?.isViewMode,
+							},
+						},
+						textKey: 'MODALS.CURRENCY',
+						className: 'border-top-gray currency-row',
+						showOnMinimized: modalsStore?.isViewMode ?? false,
+					},
+					{
+						settings: {
 							modalValueName: 'more-info',
 							ref: eventStore.modalValuesRefs['more-info'],
 							type: 'textarea',
@@ -1212,6 +1377,9 @@ const ReactModalService = {
 			// @ts-ignore
 			const images = eventStore.modalValues.images; // add column 10
 
+			const price = eventStore.modalValues.price;
+			const currency = eventStore.modalValues.currency?.value;
+
 			const moreInfo = eventStore.modalValues.moreInfo || eventStore.modalValues['more-info'];
 
 			// -------------------------------------------------
@@ -1238,6 +1406,8 @@ const ReactModalService = {
 				endDate,
 				images,
 				moreInfo,
+				price,
+				currency, // add column 10
 			};
 		},
 		closeModal: (eventStore: EventStore) => {
@@ -1303,14 +1473,17 @@ const ReactModalService = {
 			if (isOk) {
 				runInAction(async () => {
 					ReactModalService.internal.disableOnConfirm();
-					await eventStore.setCategories([
-						...eventStore.categories,
-						{
-							id: eventStore.createCategoryId(),
-							title: newName,
-							icon: newIcon,
-						},
-					]);
+					await eventStore.setCategories(
+						[
+							...eventStore.categories,
+							{
+								id: eventStore.createCategoryId(),
+								title: newName,
+								icon: newIcon,
+							},
+						],
+						false
+					);
 
 					ReactModalService.internal.closeModal(eventStore);
 				});
@@ -1791,6 +1964,8 @@ const ReactModalService = {
 				location,
 				openingHours,
 				images,
+				price, // add column 14
+				currency,
 				moreInfo,
 			} = ReactModalService.internal.getModalValues(eventStore);
 
@@ -1807,6 +1982,8 @@ const ReactModalService = {
 				images,
 				category,
 				moreInfo,
+				price, // add column 14
+				currency,
 			};
 
 			const isDurationValid = validateDuration(duration);
@@ -1844,6 +2021,8 @@ const ReactModalService = {
 			const isCategoryChanged = oldCategory != category;
 			const isLocationChanged = originalEvent.location != currentEvent.location;
 			const isImagesChanged = originalEvent.images != currentEvent.images; // add column 11
+			const isPriceChanged =
+				originalEvent.price != currentEvent.price || originalEvent.currency != currentEvent.currency;
 			const isMoreInfoChanged = originalEvent.moreInfo != currentEvent.moreInfo;
 			const isChanged =
 				titleChanged ||
@@ -1854,6 +2033,7 @@ const ReactModalService = {
 				isDescriptionChanged ||
 				isLocationChanged ||
 				isImagesChanged ||
+				isPriceChanged || // add column 11
 				isMoreInfoChanged;
 
 			ReactModalService.internal.disableOnConfirm();
@@ -1905,6 +2085,8 @@ const ReactModalService = {
 						location,
 						openingHours,
 						images, // add column 14
+						price,
+						currency,
 						moreInfo,
 						category,
 					} as SidebarEvent);
@@ -1926,9 +2108,11 @@ const ReactModalService = {
 									description,
 									location,
 									openingHours,
-									images,
+									images, // add column 14
 									moreInfo,
 									category,
+									price,
+									currency,
 								} as SidebarEvent);
 							}
 							newSidebarEvents[categoryId].push(_event);
@@ -2049,6 +2233,8 @@ const ReactModalService = {
 				images,
 				moreInfo,
 				category,
+				price,
+				currency, // add column 15
 			} = ReactModalService.internal.getModalValues(eventStore);
 
 			const currentEvent = {
@@ -2062,6 +2248,8 @@ const ReactModalService = {
 				location,
 				openingHours,
 				images, // add column 15
+				price,
+				currency,
 				moreInfo,
 				category,
 			} as SidebarEvent;
@@ -2443,6 +2631,8 @@ const ReactModalService = {
 				endDate,
 				images,
 				moreInfo,
+				price,
+				currency, // add column 16
 			} = ReactModalService.internal.getModalValues(eventStore);
 
 			const currentEvent = {
@@ -2461,6 +2651,8 @@ const ReactModalService = {
 				openingHours,
 				images,
 				moreInfo, // add column 16
+				price,
+				currency,
 			} as CalendarEvent;
 
 			// @ts-ignore
@@ -2584,7 +2776,7 @@ const ReactModalService = {
 			await eventStore.setSidebarEvents(newSidebarEvents);
 
 			// delete from categories
-			await eventStore.setCategories([...newCategories]);
+			await eventStore.setCategories([...newCategories], false);
 
 			// delete from calendar
 			if (newCalendarEvents.length === 0) {
@@ -2652,12 +2844,16 @@ const ReactModalService = {
 		const onConfirm = async () => {
 			const oldIcon = category.icon;
 			const oldName = categoryName;
+			const oldOrder = eventStore.categories.findIndex((c) => c.id.toString() === categoryId.toString());
 
 			// @ts-ignore
 			const newIcon = eventStore.modalValues.icon?.label;
 
 			// @ts-ignore
 			const newName = eventStore.modalValues.name;
+
+			// @ts-ignore
+			const order = eventStore.modalValues.categoryOrder;
 
 			let isOk = true;
 
@@ -2684,7 +2880,8 @@ const ReactModalService = {
 
 			const iconChanged = oldIcon !== newIcon;
 			const titleChanged = oldName !== newName;
-			const isChanged = titleChanged || iconChanged;
+			const orderChanged = oldOrder !== order;
+			const isChanged = titleChanged || iconChanged || orderChanged;
 
 			if (isChanged) {
 				// validate title not already exist
@@ -2700,14 +2897,14 @@ const ReactModalService = {
 
 				ReactModalService.internal.disableOnConfirm();
 
-				await eventStore.setCategories([
-					...eventStore.categories.filter((c) => c.id.toString() !== categoryId.toString()),
-					{
-						id: categoryId,
-						title: newName,
-						icon: newIcon,
-					},
-				]);
+				const newCategories = eventStore.categories.filter((c) => c.id !== categoryId);
+				newCategories.splice(order.value, 0, {
+					id: categoryId,
+					title: newName,
+					icon: newIcon,
+				});
+
+				await eventStore.setCategories(newCategories, false);
 
 				// update our store
 				const updatedCalenderEvents = [...eventStore.getJSCalendarEvents()];
@@ -2761,6 +2958,30 @@ const ReactModalService = {
 					},
 				},
 				textKey: 'MODALS.TITLE',
+				className: 'border-top-gray border-bottom-gray padding-bottom-20',
+			},
+			{
+				settings: {
+					modalValueName: 'categoryOrder',
+					ref: eventStore.modalValuesRefs['categoryOrder'],
+					type: 'select',
+					extra: {
+						id: 'category-order',
+						placeholderKey: 'MODALS.CATEGORY.SHOW_AFTER',
+						value: eventStore.categories.findIndex((c) => c.id == category.id),
+					},
+					options: [
+						...eventStore.categories.map((c, idx) => ({
+							value: idx,
+							label:
+								idx > 0
+									? eventStore.categories[idx - 1].title
+									: TranslateService.translate(eventStore, 'PUSH_TO_START'),
+						})),
+					],
+					wrapperClassName: 'category-order-selector',
+				},
+				textKey: 'MODALS.CATEGORY.SHOW_AFTER',
 				className: 'border-top-gray border-bottom-gray padding-bottom-20',
 			},
 		];
@@ -2885,6 +3106,8 @@ const ReactModalService = {
 				endDate,
 				images,
 				moreInfo,
+				price,
+				currency, // add column 16
 			} = ReactModalService.internal.getModalValues(eventStore);
 
 			// @ts-ignore
@@ -2903,6 +3126,8 @@ const ReactModalService = {
 				description,
 				images,
 				moreInfo, // add column 16
+				price,
+				currency,
 				category: categoryId,
 				location,
 			};
@@ -2939,6 +3164,9 @@ const ReactModalService = {
 			const isCategoryChanged = oldCategory != categoryId;
 			const isOpeningHoursChanged = currentEvent.openingHours;
 			const isImagesChanged = originalEvent.images != currentEvent.images; // add column 12
+			const isPriceChanged =
+				originalEvent.price != currentEvent.price || originalEvent.currency != currentEvent.currency;
+
 			const isMoreInfoChanged = originalEvent.moreInfo != currentEvent.moreInfo;
 
 			const updates: string[] = [];
@@ -2952,6 +3180,10 @@ const ReactModalService = {
 			if (isOpeningHoursChanged) updates.push('openingHours');
 			if (isImagesChanged) updates.push('images');
 			if (isMoreInfoChanged) updates.push('moreInfo');
+			if (isPriceChanged) {
+				updates.push('price');
+				updates.push('currency');
+			} // add column 12
 
 			const isChanged = updates.length > 0;
 			const canBeMultiChanged =
@@ -2963,7 +3195,8 @@ const ReactModalService = {
 				isLocationChanged ||
 				isOpeningHoursChanged ||
 				isImagesChanged ||
-				isMoreInfoChanged;
+				isMoreInfoChanged ||
+				isPriceChanged; // add column 12
 
 			ReactModalService.internal.disableOnConfirm();
 
@@ -2986,6 +3219,8 @@ const ReactModalService = {
 						openingHours: currentEvent.openingHours,
 						category: categoryId,
 						images: currentEvent.images, // add column 13
+						price: currentEvent.price,
+						currency: currentEvent.currency,
 						moreInfo: currentEvent.moreInfo,
 					},
 				});
