@@ -1100,6 +1100,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				<div className={'sidebar-statistics margin-block-10'} key={`sidebar-statistics-money-title`}>
 					<div className="flex-col gap-8">
 						{getContent(priceList, 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES')}
+						{getContent(unscheduledPriceList, 'ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES')}
 					</div>
 				</div>
 			);

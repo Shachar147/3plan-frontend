@@ -1788,6 +1788,8 @@ const ReactModalService = {
 				openingHours,
 				images,
 				moreInfo,
+				price,
+				currency, // add column 16
 			} = ReactModalService.internal.getModalValues(eventStore);
 
 			// @ts-ignore
@@ -1820,6 +1822,8 @@ const ReactModalService = {
 				images,
 				category: categoryId,
 				moreInfo,
+				price,
+				currency, // add column 16
 			} as SidebarEvent;
 
 			const isDurationValid =
