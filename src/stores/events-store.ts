@@ -603,7 +603,38 @@ export class EventStore {
 	}
 
 	_isEventMatchingSearch(event: SidebarEvent, searchValue: string) {
-		// eventStore.sidebarSearchValue
+		// priority search - if user typed a name of priority, search by it.
+		let prioritySearch = undefined;
+		const priorities = Object.keys(TriplanPriority).filter((x) => Number.isNaN(Number(x)));
+		priorities.forEach((priority) => {
+			if (
+				searchValue.toLowerCase() === priority ||
+				searchValue.toLowerCase() === TranslateService.translate(this, priority)
+			) {
+				prioritySearch = priority;
+			}
+		});
+		if (prioritySearch) {
+			// @ts-ignore
+			return event.priority == TriplanPriority[prioritySearch];
+		}
+
+		// preferred time search - if user typed a name of preferred time, search by it.
+		let preferredTimeSearch = undefined;
+		const preferredTimes = Object.keys(TriplanEventPreferredTime).filter((x) => Number.isNaN(Number(x)));
+		preferredTimes.forEach((preferredTime) => {
+			if (
+				searchValue.toLowerCase() === preferredTime ||
+				searchValue.toLowerCase() === TranslateService.translate(this, preferredTime)
+			) {
+				preferredTimeSearch = preferredTime;
+			}
+		});
+		if (preferredTimeSearch) {
+			// @ts-ignore
+			return event.preferredTime == TriplanEventPreferredTime[preferredTimeSearch];
+		}
+
 		return (
 			event.title!.toLowerCase().indexOf(searchValue.toLowerCase()) > -1 ||
 			(event.description && event.description.toLowerCase().indexOf(searchValue.toLowerCase()) > -1) ||
@@ -864,10 +895,15 @@ export class EventStore {
 	}
 
 	@action
-	setCategories(newCategories: TriPlanCategory[]) {
-		const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
-		this.categories = newCategoriesSorted;
-		return this.dataService.setCategories(newCategoriesSorted, this.tripName);
+	setCategories(newCategories: TriPlanCategory[], sort: boolean = true) {
+		if (sort) {
+			const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
+			this.categories = newCategoriesSorted;
+			return this.dataService.setCategories(newCategoriesSorted, this.tripName);
+		} else {
+			this.categories = newCategories;
+			return this.dataService.setCategories(newCategories, this.tripName);
+		}
 	}
 
 	@action

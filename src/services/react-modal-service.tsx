@@ -361,6 +361,27 @@ export const ReactModalRenderHelper = {
 			ref
 		);
 	},
+	renderSelector: (
+		eventStore: EventStore,
+		modalValueName: string,
+		extra: { id?: string; name?: string; value: any },
+		options: { value: string; label: string }[],
+		wrapperClassName: string = 'triplan-selector',
+		ref?: any
+	) => {
+		if (!eventStore.modalValues[modalValueName]) {
+			const selectedOption = options.find((option) => option.value == extra.value?.toString());
+			eventStore.modalValues[modalValueName] = selectedOption;
+		}
+
+		return ReactModalRenderHelper.renderSelectInput(
+			eventStore,
+			modalValueName,
+			{ ...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER' },
+			wrapperClassName,
+			ref
+		);
+	},
 	renderCurrencySelector: (
 		eventStore: EventStore,
 		modalValueName: string,
@@ -523,6 +544,16 @@ export const ReactModalRenderHelper = {
 					eventStore,
 					row.settings.modalValueName,
 					row.settings.extra,
+					row.settings.ref
+				);
+				break;
+			case 'select':
+				input = ReactModalRenderHelper.renderSelector(
+					eventStore,
+					row.settings.modalValueName,
+					row.settings.extra,
+					row.settings.options,
+					row.settings.wrapped,
 					row.settings.ref
 				);
 				break;
@@ -1442,14 +1473,17 @@ const ReactModalService = {
 			if (isOk) {
 				runInAction(async () => {
 					ReactModalService.internal.disableOnConfirm();
-					await eventStore.setCategories([
-						...eventStore.categories,
-						{
-							id: eventStore.createCategoryId(),
-							title: newName,
-							icon: newIcon,
-						},
-					]);
+					await eventStore.setCategories(
+						[
+							...eventStore.categories,
+							{
+								id: eventStore.createCategoryId(),
+								title: newName,
+								icon: newIcon,
+							},
+						],
+						false
+					);
 
 					ReactModalService.internal.closeModal(eventStore);
 				});
@@ -2742,7 +2776,7 @@ const ReactModalService = {
 			await eventStore.setSidebarEvents(newSidebarEvents);
 
 			// delete from categories
-			await eventStore.setCategories([...newCategories]);
+			await eventStore.setCategories([...newCategories], false);
 
 			// delete from calendar
 			if (newCalendarEvents.length === 0) {
@@ -2810,12 +2844,16 @@ const ReactModalService = {
 		const onConfirm = async () => {
 			const oldIcon = category.icon;
 			const oldName = categoryName;
+			const oldOrder = eventStore.categories.findIndex((c) => c.id.toString() === categoryId.toString());
 
 			// @ts-ignore
 			const newIcon = eventStore.modalValues.icon?.label;
 
 			// @ts-ignore
 			const newName = eventStore.modalValues.name;
+
+			// @ts-ignore
+			const order = eventStore.modalValues.categoryOrder;
 
 			let isOk = true;
 
@@ -2842,7 +2880,8 @@ const ReactModalService = {
 
 			const iconChanged = oldIcon !== newIcon;
 			const titleChanged = oldName !== newName;
-			const isChanged = titleChanged || iconChanged;
+			const orderChanged = oldOrder !== order;
+			const isChanged = titleChanged || iconChanged || orderChanged;
 
 			if (isChanged) {
 				// validate title not already exist
@@ -2858,14 +2897,14 @@ const ReactModalService = {
 
 				ReactModalService.internal.disableOnConfirm();
 
-				await eventStore.setCategories([
-					...eventStore.categories.filter((c) => c.id.toString() !== categoryId.toString()),
-					{
-						id: categoryId,
-						title: newName,
-						icon: newIcon,
-					},
-				]);
+				const newCategories = eventStore.categories.filter((c) => c.id !== categoryId);
+				newCategories.splice(order.value, 0, {
+					id: categoryId,
+					title: newName,
+					icon: newIcon,
+				});
+
+				await eventStore.setCategories(newCategories, false);
 
 				// update our store
 				const updatedCalenderEvents = [...eventStore.getJSCalendarEvents()];
@@ -2919,6 +2958,30 @@ const ReactModalService = {
 					},
 				},
 				textKey: 'MODALS.TITLE',
+				className: 'border-top-gray border-bottom-gray padding-bottom-20',
+			},
+			{
+				settings: {
+					modalValueName: 'categoryOrder',
+					ref: eventStore.modalValuesRefs['categoryOrder'],
+					type: 'select',
+					extra: {
+						id: 'category-order',
+						placeholderKey: 'MODALS.CATEGORY.SHOW_AFTER',
+						value: eventStore.categories.findIndex((c) => c.id == category.id),
+					},
+					options: [
+						...eventStore.categories.map((c, idx) => ({
+							value: idx,
+							label:
+								idx > 0
+									? eventStore.categories[idx - 1].title
+									: TranslateService.translate(eventStore, 'PUSH_TO_START'),
+						})),
+					],
+					wrapperClassName: 'category-order-selector',
+				},
+				textKey: 'MODALS.CATEGORY.SHOW_AFTER',
 				className: 'border-top-gray border-bottom-gray padding-bottom-20',
 			},
 		];
