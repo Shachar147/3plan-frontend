@@ -633,7 +633,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 					// end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
 					end: addDays(toDate(eventStore.customDateRange.end), 0), // addDays(toDate(eventStore.customDateRange.end), 1),
 				}}
-				slotMinTime={'07:00'}
+				slotMinTime={'04:00'}
 				scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
 				dayHeaderFormat={{
 					/* show weekday and date in a format of Sunday 14.3 for example - always - on all views */
