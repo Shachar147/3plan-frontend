@@ -14,12 +14,12 @@
 // mark all the hours until 07:00 included in darker light to indicate its still early.
 .fc-timegrid-slots tbody tr:first-child td,
 .fc-timegrid-slots tbody tr:nth-child(2) td
-	//, .fc-timegrid-slots tbody tr:nth-child(3) td,
-	//.fc-timegrid-slots tbody tr:nth-child(4) td,
-	//.fc-timegrid-slots tbody tr:nth-child(5) td,
-	//.fc-timegrid-slots tbody tr:nth-child(6) td,
-	//.fc-timegrid-slots tbody tr:nth-child(7) td,
-	//.fc-timegrid-slots tbody tr:nth-child(8) td,
+, .fc-timegrid-slots tbody tr:nth-child(3) td,
+.fc-timegrid-slots tbody tr:nth-child(4) td,
+.fc-timegrid-slots tbody tr:nth-child(5) td,
+.fc-timegrid-slots tbody tr:nth-child(6) td,
+.fc-timegrid-slots tbody tr:nth-child(7) td,
+.fc-timegrid-slots tbody tr:nth-child(8) td
 	//.fc-timegrid-slots tbody tr:nth-child(9) td,
 	//.fc-timegrid-slots tbody tr:nth-child(10) td,
 	//.fc-timegrid-slots tbody tr:nth-child(11) td,
