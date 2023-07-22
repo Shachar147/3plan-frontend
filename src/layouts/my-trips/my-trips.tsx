@@ -11,7 +11,7 @@ import ReactModalService from '../../services/react-modal-service';
 import DataServices, { DBTrip, Trip, tripNameToLSTripName } from '../../services/data-handlers/data-handler-base';
 import ToggleButton from '../../components/toggle-button/toggle-button';
 import { TripDataSource } from '../../utils/enums';
-import { getToken, getUser, isLoggedOn } from '../../helpers/auth';
+import { getUser, isLoggedOn } from '../../helpers/auth';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatShortDateStringIsrael, getAmountOfDays } from '../../utils/time-utils';
 import { runInAction } from 'mobx';
@@ -42,6 +42,10 @@ function MyTrips() {
 	const [error, setError] = useState<any>(undefined);
 	const [isLoadingTrips, setIsLoadingTrips] = useState(false);
 
+	const [showHidden, setShowHidden] = useState(false);
+
+	const [reloadCounter, setReloadCounter] = useState(0);
+
 	const dataService = useMemo(() => DataServices.getService(dataSource), [dataSource]);
 
 	useHandleWindowResize();
@@ -60,7 +64,7 @@ function MyTrips() {
 				setError(error);
 				setIsLoadingTrips(false);
 			});
-	}, [dataService, dataSource]);
+	}, [dataService, dataSource, reloadCounter]);
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -188,6 +192,27 @@ function MyTrips() {
 		ReactModalService.openDeleteTripModal(eventStore, LSTripName, dataSource);
 	}
 
+	function onHideUnhideTrip(e: any, LSTripName: any) {
+		e.preventDefault();
+		e.stopPropagation();
+		if (showHidden) {
+			const tripName = LSTripName.replaceAll('-', ' ');
+
+			DataServices.DBService.unHideTripByName(tripName)
+				.then(() => {
+					setReloadCounter(reloadCounter + 1);
+				})
+				.catch(() => {
+					ReactModalService.internal.openOopsErrorModal(eventStore);
+				});
+		} else {
+			ReactModalService.openHideTripModal(eventStore, LSTripName, dataSource, () =>
+				setReloadCounter(reloadCounter + 1)
+			);
+		}
+		// ReactModalService.openDeleteTripModal(eventStore, LSTripName, dataSource);
+	}
+
 	function renderTrip(trip: Trip | DBTrip) {
 		const tripName = trip.name;
 		// let tripName = trip.name;
@@ -231,13 +256,26 @@ function MyTrips() {
 					<i
 						className="fa fa-pencil-square-o"
 						aria-hidden="true"
+						title={TranslateService.translate(eventStore, 'EDIT_TRIP_MODAL.TITLE')}
 						onClick={(e) => onEditTrip(e, LSTripName)}
 					/>
-					<i className="fa fa-files-o" aria-hidden="true" onClick={(e) => onDuplicateTrip(e, LSTripName)} />
+					<i
+						className="fa fa-files-o"
+						aria-hidden="true"
+						title={TranslateService.translate(eventStore, 'DUPLICATE_TRIP_MODAL.TITLE')}
+						onClick={(e) => onDuplicateTrip(e, LSTripName)}
+					/>
 					<i
 						className="fa fa-trash-o position-relative top--1"
 						aria-hidden="true"
+						title={TranslateService.translate(eventStore, 'DELETE_TRIP')}
 						onClick={(e) => onDeleteTrip(e, LSTripName)}
+					/>
+					<i
+						className={getClasses('fa', showHidden ? 'fa-eye' : 'fa-eye-slash')}
+						aria-hidden="true"
+						title={TranslateService.translate(eventStore, showHidden ? 'UNHIDE_TRIP' : 'HIDE_TRIP')}
+						onClick={(e) => onHideUnhideTrip(e, LSTripName)}
 					/>
 				</div>
 			);
@@ -264,16 +302,38 @@ function MyTrips() {
 	}
 
 	function renderListOfTrips() {
+		const hiddenTripsEnabled = dataSource === 'DB';
+
+		const filteredList = lsTrips.filter((x) => (hiddenTripsEnabled ? !!x.isHidden == showHidden : true));
+
 		return (
 			<div className="flex-column gap-10">
 				<div className="my-trips bright-scrollbar">
-					{lsTrips
+					{filteredList
 						.sort((a, b) => {
 							const b_timestamp = b.lastUpdateAt ? new Date(b.lastUpdateAt).getTime() : 0;
 							const a_timestamp = a.lastUpdateAt ? new Date(a.lastUpdateAt).getTime() : 0;
 							return b_timestamp - a_timestamp;
 						})
 						.map(renderTrip)}
+					{hiddenTripsEnabled && filteredList.length == 0 && showHidden && (
+						<div className="width-100-percents text-align-center padding-block-5 background-white">
+							{TranslateService.translate(eventStore, 'NO_HIDDEN_TRIPS')}
+						</div>
+					)}
+					{hiddenTripsEnabled && (
+						<Button
+							onClick={() => {
+								setShowHidden(!showHidden);
+							}}
+							flavor={ButtonFlavor.link}
+							className="width-100-percents text-align-center"
+							text={TranslateService.translate(
+								eventStore,
+								showHidden ? 'SHOW_TRIPS_LIST' : 'SHOW_HIDDEN_TRIPS_LIST'
+							)}
+						/>
+					)}
 				</div>
 				<Button
 					text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}

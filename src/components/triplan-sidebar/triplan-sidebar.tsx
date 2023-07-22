@@ -12,8 +12,9 @@ import {
 	toDistanceString,
 	ucfirst,
 	isHotelsCategory,
+	locationToString,
 } from '../../utils/utils';
-import { TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
+import { TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
@@ -30,6 +31,7 @@ import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers
 import { runInAction } from 'mobx';
 import DistanceCalculator from './distance-calculator/distance-calculator';
 import { modalsStoreContext } from '../../stores/modals-store';
+import TriplanSearch from '../triplan-header/triplan-search/triplan-search';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -57,13 +59,14 @@ export const wrapWithSidebarGroup = (
 	groupKey: string,
 	groupTitle: string,
 	itemsCount: number,
-	textColor: string = 'inherit'
+	textColor: string = 'inherit',
+	maxHeight?: number
 ) => {
 	const eventStore = useContext(eventStoreContext);
 	const isOpen = eventStore.openSidebarGroups.has(groupKey);
 	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
 
-	const num = 100 * itemsCount + 90;
+	const num = maxHeight ?? 100 * itemsCount + 90;
 
 	const openStyle = {
 		maxHeight: num + 'px',
@@ -685,10 +688,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderCalendarSidebarStatistics = () => {
-		const groupTitleKey = eventStore.isMobile
-			? 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT'
-			: 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS';
+		// const groupTitleKey = eventStore.isMobile
+		// 	? 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT'
+		// 	: 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS';
+		const groupTitleKey = 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.DETAILS';
 		const groupTitle = TranslateService.translate(eventStore, groupTitleKey);
+
+		const separator = eventStore.isEnglish ? '\n' : ' ';
 
 		const calendarSidebarStatistics = (
 			<>
@@ -710,23 +716,97 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			</>
 		);
 
-		const statsBlock = wrapWithSidebarGroup(
-			calendarSidebarStatistics,
-			undefined,
-			SidebarGroups.CALENDAR_STATISTICS,
-			groupTitle,
-			2
-		);
-		return (
-			<>
-				<hr className={'margin-block-2'} />
-				{statsBlock}
-			</>
-		);
-	};
+		const getEstimatedPrice = () => {
+			const errors: string[] = [];
+			// @ts-ignore
+			const priceList: Record<TriplanCurrency, number> = {};
 
-	const renderPrioritiesLegend = () => {
-		const separator = eventStore.isEnglish ? '\n' : ' ';
+			// @ts-ignore
+			const unscheduledPriceList: Record<TriplanCurrency, number> = {};
+
+			const seen: Record<string, { price: number; currency: TriplanCurrency }> = {};
+			eventStore.calendarEvents
+				.filter((e) => e.price && e.currency)
+				.forEach((e) => {
+					const { currency } = e;
+					const price = e.price ? Number(e.price) : 0;
+
+					if (price == null || currency == null) {
+						return;
+					}
+					const locKey = locationToString(e.location);
+
+					// if already seen
+					if ((locKey.length && seen[locKey]) || seen[e.title]) {
+						const prevDetails = locKey.length ? seen[locKey] : seen[e.title];
+						if (prevDetails.currency != currency) {
+							errors.push(`${e.title} - currency changed [${prevDetails.currency}, ${currency}]`);
+						}
+						if (prevDetails.price != price) {
+							errors.push(`${e.title} - price changed [${prevDetails.price}, ${price}]`);
+
+							// take the highest price
+							if (prevDetails.currency == currency && prevDetails.price < price) {
+								priceList[currency] = priceList[currency] || 0;
+								priceList[currency] += price - prevDetails.price;
+							}
+						}
+					} else {
+						seen[locKey.length ? locKey : e.title] = {
+							price,
+							currency,
+						};
+
+						priceList[currency] = priceList[currency] || 0;
+						priceList[currency] += price;
+					}
+				});
+
+			eventStore.allSidebarEvents
+				.filter((e) => e.price && e.currency)
+				.forEach((e) => {
+					const { currency } = e;
+					const price = e.price ? Number(e.price) : 0;
+
+					if (price == null || currency == null) {
+						return;
+					}
+					const locKey = locationToString(e.location);
+
+					// if already seen
+					if ((locKey.length && seen[locKey]) || seen[e.title]) {
+						const prevDetails = locKey.length ? seen[locKey] : seen[e.title];
+						if (prevDetails.currency != currency) {
+							errors.push(
+								`[sidebar] ${e.title} - currency changed [${prevDetails.currency}, ${currency}]`
+							);
+						}
+						if (prevDetails.price != price) {
+							errors.push(`[sidebar] ${e.title} - price changed [${prevDetails.price}, ${price}]`);
+
+							// take the highest price
+							if (prevDetails.currency == currency && prevDetails.price < price) {
+								unscheduledPriceList[currency] = unscheduledPriceList[currency] || 0;
+								unscheduledPriceList[currency] += price - prevDetails.price;
+							}
+						}
+					} else {
+						seen[locKey.length ? locKey : e.title] = {
+							price,
+							currency,
+						};
+
+						unscheduledPriceList[currency] = unscheduledPriceList[currency] || 0;
+						unscheduledPriceList[currency] += price;
+					}
+				});
+
+			return {
+				priceList,
+				unscheduledPriceList,
+				errors,
+			};
+		};
 
 		const getTotalHotelsAmount = () => {
 			const allEvents = eventStore.allEventsComputed;
@@ -758,6 +838,138 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			}).length;
 
 			return { totalHotels, totalHotelsInCalendar };
+		};
+
+		const renderPrioritiesLegend = () => {
+			const getTotalHotelsAmount = () => {
+				const allEvents = eventStore.allEventsComputed;
+				let totalHotelsInCalendar = 0;
+				const totalHotels = allEvents.filter((x) => {
+					const categoryId = x.category ?? eventStore.categories[0]?.id;
+					if (!x.category) {
+						console.error(`event somehow don't have any category, ${x}`);
+					}
+
+					let categoryTitle: string = eventStore.categories[0]?.title;
+					if (!Number.isNaN(categoryId)) {
+						const categoryObject = eventStore.categories.find(
+							(x) => x.id.toString() == categoryId.toString()
+						);
+						if (categoryObject) {
+							categoryTitle = categoryObject.title;
+						}
+					}
+
+					const isMatching =
+						!(
+							isDessert(categoryTitle, x.title!) ||
+							isBasketball(categoryTitle, x.title!) ||
+							isFlight(categoryTitle, x.title!)
+						) && isHotel(categoryTitle, x.title!);
+
+					const calendarEvent = eventStore.calendarEvents.find((c) => c.id == x.id);
+					if (isMatching && calendarEvent) totalHotelsInCalendar++;
+					return isMatching;
+				}).length;
+
+				return { totalHotels, totalHotelsInCalendar };
+			};
+
+			const renderPrioritiesStatistics = () => {
+				const eventsByPriority: Record<string, SidebarEvent[] & CalendarEvent[]> = {};
+				const allEvents = eventStore.allEventsComputed;
+
+				allEvents.forEach((iter) => {
+					const priority = iter.priority || TriplanPriority.unset;
+					eventsByPriority[priority] = eventsByPriority[priority] || [];
+
+					// @ts-ignore
+					eventsByPriority[priority].push(iter);
+				});
+
+				const calendarEventsByPriority: Record<string, SidebarEvent[]> = {};
+				eventStore.calendarEvents.forEach((iter) => {
+					const priority = iter.priority || TriplanPriority.unset;
+					calendarEventsByPriority[priority] = calendarEventsByPriority[priority] || [];
+					calendarEventsByPriority[priority].push(iter as SidebarEvent);
+				});
+
+				const getPriorityTotalEvents = (priorityVal: string) => {
+					const priority = priorityVal as unknown as TriplanPriority;
+					return eventsByPriority[priority] ? eventsByPriority[priority].length : 0;
+				};
+
+				const priorities = Object.keys(TriplanPriority)
+					.filter((x) => !Number.isNaN(Number(x)))
+					.sort((a, b) => getPriorityTotalEvents(b) - getPriorityTotalEvents(a))
+					.map((priorityVal) => {
+						const priority = priorityVal as unknown as TriplanPriority;
+						const priorityText = TriplanPriority[priority];
+
+						const total = getPriorityTotalEvents(priorityVal);
+						const totalInCalendar = calendarEventsByPriority[priority]
+							? calendarEventsByPriority[priority].length
+							: 0;
+						const notInCalendar = TranslateService.translate(eventStore, 'NOT_IN_CALENDAR');
+						const prefix = TranslateService.translate(eventStore, 'EVENTS_ON_PRIORITY');
+
+						const color = priorityToColor[priority];
+
+						const translatedPriority = TranslateService.translate(eventStore, priorityText)
+							.replace('עדיפות ', '')
+							.replace(' priority', '');
+
+						return (
+							<div className={'sidebar-statistics'} key={`sidebar-statistics-for-${priorityText}`}>
+								<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }} />
+								<div className="white-space-pre">
+									{`${total} ${prefix} `}
+									<span>{translatedPriority}</span>
+									{`${separator}(${total - totalInCalendar} ${notInCalendar})`}
+								</div>
+							</div>
+						);
+					});
+
+				const notInCalendar = TranslateService.translate(eventStore, 'NOT_IN_CALENDAR');
+				const { totalHotels, totalHotelsInCalendar } = getTotalHotelsAmount();
+				const translatedHotels = TranslateService.translate(eventStore, 'HOTELS');
+				const custom = (
+					<>
+						<div className={'sidebar-statistics'} key={`sidebar-statistics-for-hotels`}>
+							<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: `#${hotelColor}` }} />
+							<div>
+								{`${totalHotels} `}
+								<span>{translatedHotels}</span>
+								{`${separator}(${totalHotels - totalHotelsInCalendar} ${notInCalendar})`}
+							</div>
+						</div>
+					</>
+				);
+
+				return (
+					<div className="flex-column gap-4">
+						{priorities}
+						{custom}
+					</div>
+				);
+			};
+
+			const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND');
+			const prioritiesBlock = wrapWithSidebarGroup(
+				<>{renderPrioritiesStatistics()}</>,
+				undefined,
+				SidebarGroups.PRIORITIES_LEGEND,
+				groupTitle,
+				Object.keys(TriplanPriority).length
+			);
+
+			return (
+				<>
+					<hr className={'margin-block-2'} />
+					{prioritiesBlock}
+				</>
+			);
 		};
 
 		const renderPrioritiesStatistics = () => {
@@ -840,22 +1052,94 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			);
 		};
 
-		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND');
-		const prioritiesBlock = wrapWithSidebarGroup(
-			<>{renderPrioritiesStatistics()}</>,
-			undefined,
-			SidebarGroups.PRIORITIES_LEGEND,
-			groupTitle,
-			Object.keys(TriplanPriority).length
-		);
+		// todo complete - add event with price and currency - not saving them.
+		// todo complete - edit sidebar event setting price and currency - not working
+		// todo complete - update all events - do not update ALL events with the price/currency. especially currency.
 
+		const renderPriceList = () => {
+			const { priceList, unscheduledPriceList, errors } = getEstimatedPrice();
+
+			function getContent(priceList: Record<TriplanCurrency, number>, titleKey: string) {
+				const title = TranslateService.translate(eventStore, titleKey);
+				if (errors.length > 0) {
+					console.log(errors);
+				}
+
+				const isUnknown = Object.keys(priceList).length == 0;
+				const isMultiCurrencies = Object.keys(priceList).length > 1;
+
+				const shouldShowPriceInline = isUnknown || !isMultiCurrencies;
+				const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
+
+				const pricesSections = isUnknown
+					? [<div className="font-weight-bold">{unknownText}</div>]
+					: Object.keys(priceList).map((currency) => (
+							<div className="font-weight-bold">
+								{priceList[currency as TriplanCurrency]}{' '}
+								{TranslateService.translate(eventStore, `${currency}_sign`)}
+							</div>
+					  ));
+
+				return (
+					<div className="flex-col gap-4">
+						<div className="flex-row gap-8 align-items-center">
+							<i className="fa fa-money" aria-hidden="true" />{' '}
+							{TranslateService.translate(eventStore, title)}
+							{shouldShowPriceInline && ' ' && pricesSections}
+						</div>
+						{!shouldShowPriceInline && (
+							<div className="flex-row gap-4 margin-inline-start-25">
+								{pricesSections.map((x, i) => (i > 0 ? <>+ {x}</> : x))}
+							</div>
+						)}
+					</div>
+				);
+			}
+
+			return (
+				<div className={'sidebar-statistics margin-block-10'} key={`sidebar-statistics-money-title`}>
+					<div className="flex-col gap-8">
+						{getContent(priceList, 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES')}
+						{getContent(unscheduledPriceList, 'ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES')}
+					</div>
+				</div>
+			);
+		};
+
+		const statsBlock = wrapWithSidebarGroup(
+			<>
+				{calendarSidebarStatistics}
+				<hr className={'margin-block-2'} />
+				{renderPriceList()}
+				<hr className={'margin-block-2'} />
+				{renderPrioritiesStatistics()}
+			</>,
+			undefined,
+			SidebarGroups.CALENDAR_STATISTICS,
+			groupTitle,
+			2,
+			undefined,
+			480
+		);
 		return (
 			<>
 				<hr className={'margin-block-2'} />
-				{prioritiesBlock}
+				{statsBlock}
 			</>
 		);
 	};
+
+	function renderSearch() {
+		return (
+			<div className="sidebar-search-container flex-row width-100-percents">
+				<TriplanSearch
+					value={eventStore.sidebarSearchValue}
+					onChange={(val) => eventStore.setSidebarSearchValue(val)}
+					placeholder={TranslateService.translate(eventStore, 'SIDEBAR_SEARCH_PLACEHOLDER')}
+				/>
+			</div>
+		);
+	}
 
 	const renderCategories = () => {
 		const renderExpandCollapse = () => {
@@ -1060,10 +1344,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						onClick={() => {
 							runInAction(() => {
 								eventStore.setSearchValue('');
+								eventStore.setSidebarSearchValue('');
 								eventStore.setShowOnlyEventsWithNoLocation(false);
 								eventStore.setShowOnlyEventsWithNoOpeningHours(false);
 								eventStore.setShowOnlyEventsWithTodoComplete(false);
-								window.location.reload(); // to reload the search component
+
+								setTimeout(() => {
+									for (let i = 0; i < document.getElementsByName('fc-search').length; i++) {
+										// @ts-ignore
+										document.getElementsByName('fc-search')[i].value = '';
+									}
+								}, 100);
 							});
 						}}
 					>
@@ -1076,6 +1367,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		return (
 			<>
 				{renderExpandCollapse()}
+				{renderSearch()}
 				{totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
 				{categoriesBlock}
 				{totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
@@ -1378,6 +1670,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					Object.keys(event).includes('openingHours') ? JSON.stringify(event.openingHours) : undefined
 				}
 				data-images={event.images} // add column 3
+				data-price={event.price}
+				data-currency={event.currency}
 				data-more-info={event.moreInfo}
 				key={event.id}
 			>
@@ -1491,8 +1785,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{renderActions()}
 						{renderRecommendations()}
 						{renderCalendarSidebarStatistics()}
-						{renderPrioritiesLegend()}
-						<hr className={'margin-block-2'} />
+						{/*{renderPrioritiesLegend()}*/}
+						{/*<hr className={'margin-block-2'} />*/}
 						{/*<div className={"spacer margin-top-40"}/>*/}
 						<hr style={{ marginBlock: '20px 10px' }} />
 						{renderCategories()}

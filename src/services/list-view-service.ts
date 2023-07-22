@@ -525,7 +525,7 @@ const ListViewService = {
 				let taskIndication = taskKeywords.find(
 					(x) =>
 						title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 ||
-						description?.toLowerCase().indexOf(x.toLowerCase()) !== -1
+						event.description?.toLowerCase().indexOf(x.toLowerCase()) !== -1
 				)
 					? `<span style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>`
 					: '';
@@ -533,7 +533,7 @@ const ListViewService = {
 				const orderedIndication = orderedKeywords.find(
 					(x) =>
 						title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 ||
-						description?.toLowerCase().indexOf(x.toLowerCase()) !== -1
+						event.description?.toLowerCase().indexOf(x.toLowerCase()) !== -1
 				)
 					? `<span style="font-size: 22px; padding-inline: 5px; color:${orderedColor}; font-weight:bold;">&nbsp;<u>${ordered}</u></span>`
 					: '';
@@ -545,7 +545,7 @@ const ListViewService = {
 					!noOrderKeywords.find(
 						(x) =>
 							title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 ||
-							description?.toLowerCase().indexOf(x.toLowerCase()) !== -1
+							event.description?.toLowerCase().indexOf(x.toLowerCase()) !== -1
 					)
 				) {
 					taskIndication = '';

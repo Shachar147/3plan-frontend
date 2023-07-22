@@ -9,7 +9,7 @@
 
 	padding-inline-end: 10px;
 	width: fit-content;
-	max-width: 490px;
+	max-width: 420px; // max-width: 490px;
 	min-width: 400px;
 
 	transition: max-width 0.3s ease-in-out;
@@ -329,5 +329,13 @@ body.rtl {
 
 	.sidebar-distance-result {
 		text-align: right;
+	}
+}
+
+.sidebar-search-container {
+	margin-bottom: 15px;
+	.search-container {
+		width: 100%;
+		max-width: unset;
 	}
 }

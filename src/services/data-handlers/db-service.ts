@@ -196,6 +196,14 @@ export class DBService implements BaseDataHandler {
 		);
 	}
 
+	async hideTripByName(tripName: string) {
+		return await apiPut(`/trip/hide/name/${tripName}`, {});
+	}
+
+	async unHideTripByName(tripName: string) {
+		return await apiPut(`/trip/unhide/name/${tripName}`, {});
+	}
+
 	async createTrip(
 		data: upsertTripProps,
 		successCallback?: (res: any) => void,

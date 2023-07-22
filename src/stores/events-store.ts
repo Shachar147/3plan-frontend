@@ -70,6 +70,7 @@ export class EventStore {
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
 	@observable searchValue = '';
+	@observable sidebarSearchValue = '';
 	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.map); // ViewMode.combined
 	@observable mobileViewMode = DataServices.LocalStorageService.getLastMobileViewMode(ViewMode.sidebar);
 	@observable hideCustomDates = this.viewMode == ViewMode.calendar;
@@ -601,6 +602,48 @@ export class EventStore {
 		return this.calendarLocalCode === 'en';
 	}
 
+	_isEventMatchingSearch(event: SidebarEvent, searchValue: string) {
+		// priority search - if user typed a name of priority, search by it.
+		let prioritySearch = undefined;
+		const priorities = Object.keys(TriplanPriority).filter((x) => Number.isNaN(Number(x)));
+		priorities.forEach((priority) => {
+			if (
+				searchValue.toLowerCase() === priority ||
+				searchValue.toLowerCase() === TranslateService.translate(this, priority)
+			) {
+				prioritySearch = priority;
+			}
+		});
+		if (prioritySearch) {
+			// @ts-ignore
+			return event.priority == TriplanPriority[prioritySearch];
+		}
+
+		// preferred time search - if user typed a name of preferred time, search by it.
+		let preferredTimeSearch = undefined;
+		const preferredTimes = Object.keys(TriplanEventPreferredTime).filter((x) => Number.isNaN(Number(x)));
+		preferredTimes.forEach((preferredTime) => {
+			if (
+				searchValue.toLowerCase() === preferredTime ||
+				searchValue.toLowerCase() === TranslateService.translate(this, preferredTime)
+			) {
+				preferredTimeSearch = preferredTime;
+			}
+		});
+		if (preferredTimeSearch) {
+			// @ts-ignore
+			return event.preferredTime == TriplanEventPreferredTime[preferredTimeSearch];
+		}
+
+		return (
+			event.title!.toLowerCase().indexOf(searchValue.toLowerCase()) > -1 ||
+			(event.description && event.description.toLowerCase().indexOf(searchValue.toLowerCase()) > -1) ||
+			(event.location &&
+				event.location.address &&
+				event.location.address.toLowerCase().indexOf(searchValue.toLowerCase()) > -1)
+		);
+	}
+
 	@computed
 	get getSidebarEvents(): Record<number, SidebarEvent[]> {
 		const toReturn: Record<number, SidebarEvent[]> = {};
@@ -609,12 +652,8 @@ export class EventStore {
 				.map((x) => toJS(x))
 				.filter(
 					(event) =>
-						(event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 ||
-							(event.description &&
-								event.description.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) ||
-							(event.location &&
-								event.location.address &&
-								event.location.address.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1)) &&
+						this._isEventMatchingSearch(event, this.searchValue) &&
+						this._isEventMatchingSearch(event, this.sidebarSearchValue) &&
 						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
@@ -679,6 +718,7 @@ export class EventStore {
 	get isFiltered(): boolean {
 		return (
 			!!this.searchValue?.length ||
+			!!this.sidebarSearchValue?.length ||
 			this.showOnlyEventsWithNoLocation ||
 			this.showOnlyEventsWithNoOpeningHours ||
 			this.showOnlyEventsWithTodoComplete
@@ -855,10 +895,15 @@ export class EventStore {
 	}
 
 	@action
-	setCategories(newCategories: TriPlanCategory[]) {
-		const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
-		this.categories = newCategoriesSorted;
-		return this.dataService.setCategories(newCategoriesSorted, this.tripName);
+	setCategories(newCategories: TriPlanCategory[], sort: boolean = true) {
+		if (sort) {
+			const newCategoriesSorted = newCategories.sort((a, b) => a.id - b.id);
+			this.categories = newCategoriesSorted;
+			return this.dataService.setCategories(newCategoriesSorted, this.tripName);
+		} else {
+			this.categories = newCategories;
+			return this.dataService.setCategories(newCategories, this.tripName);
+		}
 	}
 
 	@action
@@ -938,6 +983,11 @@ export class EventStore {
 	@action
 	setSearchValue(value: string) {
 		this.searchValue = value;
+	}
+
+	@action
+	setSidebarSearchValue(value: string) {
+		this.sidebarSearchValue = value;
 	}
 
 	@action
@@ -1349,6 +1399,9 @@ export class EventStore {
 		// add column 7
 		storedEvent.images = newEvent.images ?? storedEvent.images;
 
+		storedEvent.price = newEvent.price ?? storedEvent.price;
+		storedEvent.currency = newEvent.currency ?? storedEvent.currency;
+
 		storedEvent.moreInfo = newEvent.moreInfo ?? storedEvent.moreInfo;
 
 		// @ts-ignore
@@ -1376,6 +1429,8 @@ export class EventStore {
 			? newEvent.openingHours
 			: storedEvent.openingHours;
 		storedEvent.images = newEvent.images; // add column 6
+		storedEvent.price = newEvent.price;
+		storedEvent.currency = newEvent.currency;
 		storedEvent.moreInfo = newEvent.moreInfo;
 	}
 

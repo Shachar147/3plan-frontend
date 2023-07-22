@@ -150,14 +150,17 @@ function PlacesTinder(props: PlacesTinderProps) {
 			categoryId = existingCategory[0].id;
 		} else {
 			categoryId = eventStore.createCategoryId();
-			eventStore.setCategories([
-				...eventStore.categories,
-				{
-					id: categoryId,
-					title: currentPlace['category'],
-					icon: '',
-				},
-			]);
+			eventStore.setCategories(
+				[
+					...eventStore.categories,
+					{
+						id: categoryId,
+						title: currentPlace['category'],
+						icon: '',
+					},
+				],
+				false
+			);
 		}
 
 		let description = currentPlace.description || '';

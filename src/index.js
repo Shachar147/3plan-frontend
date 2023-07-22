@@ -447,7 +447,7 @@ const RootRouter = () => {
 			eventStore.modalValues['images'] =
 				eventStore.modalValues['images'] ??
 				place.photos
-					.map((x, idx) => {
+					?.map((x, idx) => {
 						BiEventsService.reportEvent(
 							'google_places:get_photo',
 							`${place.name}#${idx}`,
@@ -455,7 +455,7 @@ const RootRouter = () => {
 						);
 						return x.getUrl();
 					})
-					.join('\n');
+					?.join('\n');
 
 			// update more info link
 			eventStore.modalValues['more-info'] =
