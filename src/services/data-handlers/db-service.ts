@@ -204,6 +204,14 @@ export class DBService implements BaseDataHandler {
 		return await apiPut(`/trip/unhide/name/${tripName}`, {});
 	}
 
+	async createInviteLink(tripName: string, canWrite: boolean) {
+		return await apiPost(`/shared-trips/create-invite-link`, {
+			tripName,
+			canRead: true,
+			canWrite,
+		});
+	}
+
 	async createTrip(
 		data: upsertTripProps,
 		successCallback?: (res: any) => void,

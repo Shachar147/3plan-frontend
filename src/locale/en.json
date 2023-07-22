@@ -540,6 +540,14 @@
 	"SHOW_NAVIGATE_TO": "Show \"navigate to\" button",
 	"NAVIGATE_TO": "Navigate to {to}",
 	"INVITE_LINK": "Invite Link",
+	"SHARE_TRIP": "Share Trip",
 	"SHARE_TRIP.DESCRIPTION.TITLE": "Planning trips is better together!",
-	"SHARE_TRIP.DESCRIPTION.CONTENT": "Send invites to more people\nBuild together the perfect trip for you!\nPay attention, joining user will have management and editing permissions"
+	"SHARE_TRIP.DESCRIPTION.CONTENT": "Send invites to more people\nBuild together the perfect trip for you!",
+	"MODALS.SHARE_TRIP.CONTENT": "Send invites to more people and build together the perfect trip for you!\n\nPermissions:",
+	"MODALS.SHARE_TRIP.STEP2.CONTENT": "Link will be available for {X} minutes\n\nPlease be careful with whom you sending it to",
+	"SHARE_TRIP.SELECT_PERMISSIONS": "Select Permissions",
+	"PERMISSIONS.READ": "View Only",
+	"PERMISSIONS.READ_WRITE": "View & Edit",
+	"CREATE_INVITE_LINK": "Create Invite Link",
+	"COPY": "Copy"
 }

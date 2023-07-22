@@ -673,6 +673,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				{renderLockTrip()}
 				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
 				{renderImportButtons()}
+				{renderShareTripButton()}
 			</>,
 			undefined,
 			SidebarGroups.ACTIONS,
@@ -1497,32 +1498,31 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
-	const renderShareTripButton = () => {
+	const renderShareTripPlaceholder = () => {
 		return (
 			<div className="flex-col align-items-center justify-content-center">
 				<b>{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.TITLE')}</b>
 				<span className="white-space-pre-line text-align-center width-100-percents opacity-0-5">
 					{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.CONTENT')}
 				</span>
-				<Button
-					flavor={ButtonFlavor.link}
-					className={'black'}
-					// style={{
-					// 	width: '100%',
-					// 	marginBlock: '10px',
-					// }}
-					style={{
-						width: '100%',
-					}}
-					onClick={() => {
-						alert('here');
-					}}
-					text={TranslateService.translate(eventStore, 'INVITE_LINK')}
-					icon={'fa-users'}
-					disabled={eventStore.isTripLocked} // todo complete - disabled if you aren't the owner of the trip
-					disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')} // todo complete - disabled if you aren't the owner of the trip
-				/>
+				{renderShareTripButton(false, 'width-100-percents')}
 			</div>
+		);
+	};
+
+	const renderShareTripButton = (isMoveable: boolean = true, className?: string, textKey: string = 'SHARE_TRIP') => {
+		return (
+			<Button
+				flavor={isMoveable ? ButtonFlavor['movable-link'] : ButtonFlavor.link}
+				className={getClasses('black', className)}
+				onClick={() => {
+					ReactModalService.openShareTripModal(eventStore);
+				}}
+				text={TranslateService.translate(eventStore, textKey)}
+				icon={'fa-users'}
+				disabled={eventStore.isTripLocked} // todo complete - disabled if you aren't the owner of the trip
+				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')} // todo complete - disabled if you aren't the owner of the trip
+			/>
 		);
 	};
 
@@ -1791,7 +1791,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						<hr style={{ marginBlock: '20px 10px' }} />
 						{renderCategories()}
 						<hr style={{ marginBlock: '20px 10px' }} />
-						{renderShareTripButton()}
+						{renderShareTripPlaceholder()}
 					</div>
 				</div>
 			</div>

@@ -53,6 +53,7 @@ import ToggleButton from '../components/toggle-button/toggle-button';
 import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
 import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
+import CopyInput from '../components/common/copy-input/copy-input';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -245,11 +246,13 @@ export const ReactModalRenderHelper = {
 			placeholderKey?: string;
 			id?: string;
 			name?: string;
+			value?: any;
 			readOnly?: boolean;
 			maxMenuHeight?: number;
 			removeDefaultClass?: boolean;
 			onChange?: (data: any) => void;
 			onClear?: () => void;
+			isClearable?: boolean;
 		},
 		wrapperClassName: string,
 		ref?: any,
@@ -262,12 +265,14 @@ export const ReactModalRenderHelper = {
 				id={extra.id}
 				name={extra.name}
 				options={extra.options}
+				value={extra.value != undefined ? extra.options.find((o) => o.value == extra.value) : undefined}
 				placeholderKey={extra.placeholderKey}
 				modalValueName={modalValueName}
 				maxMenuHeight={extra.maxMenuHeight}
 				removeDefaultClass={extra.removeDefaultClass}
 				onChange={extra.onChange}
 				onClear={extra.onClear}
+				isClearable={extra.isClearable ?? true}
 			/>
 		);
 
@@ -1804,6 +1809,102 @@ const ReactModalService = {
 					);
 					return;
 				}
+			},
+		});
+	},
+	openShareTripModal: (eventStore: EventStore) => {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const options = [
+			{ value: 0, label: TranslateService.translate(eventStore, 'PERMISSIONS.READ') },
+			{ value: 1, label: TranslateService.translate(eventStore, 'PERMISSIONS.READ_WRITE') },
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'SHARE_TRIP')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.SHARE_TRIP.CONTENT'),
+						}}
+					/>
+					{ReactModalRenderHelper.renderSelectInput(
+						eventStore,
+						'share-trip-choose-permissions',
+						{
+							options,
+							placeholderKey: 'SHARE_TRIP.SELECT_PERMISSIONS',
+							removeDefaultClass: true,
+							value: 0,
+							isClearable: false,
+							maxMenuHeight: eventStore.isMobile ? 35 * 2 : undefined,
+						},
+						'add-event-from-sidebar-selector'
+					)}
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'CREATE_INVITE_LINK'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource === TripDataSource.DB) {
+					await DataServices.DBService.createInviteLink(
+						tripName,
+						!!eventStore.modalValues['share-trip-choose-permissions']?.value
+					)
+						.then((response) => {
+							const { inviteLink: token } = response.data;
+							const host = window.location.host;
+							const inviteLink = `http://${host}/inviteLink?token=${token}`;
+							ReactModalService.openShareTripStepTwoModal(eventStore, inviteLink);
+						})
+						.catch(() => {
+							ReactModalService.internal.openOopsErrorModal(eventStore);
+						});
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
+	},
+	openShareTripStepTwoModal: (eventStore: EventStore, inviteLink: string) => {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		ReactModalService.internal.closeModal(eventStore);
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'SHARE_TRIP')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.SHARE_TRIP.STEP2.CONTENT', {
+								X: 10,
+							}),
+						}}
+					/>
+					<CopyInput eventStore={eventStore} value={inviteLink} />
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'CREATE_INVITE_LINK'),
+			confirmBtnCssClass: 'primary-button display-none',
+			onConfirm: async () => {},
+			onCancel: () => {
+				// todo complete: fix bug - open share trip, step 2, close, try to open it again will crash. open modal will crash generally.
+
+				window.location.reload();
 			},
 		});
 	},

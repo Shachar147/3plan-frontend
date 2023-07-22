@@ -908,6 +908,15 @@ input[type='text'] {
 	}
 }
 
+.outline-none {
+	outline: none;
+	&:hover,
+	&:focus,
+	&:active {
+		outline: none;
+	}
+}
+
 .direction-rtl {
 	direction: rtl;
 }

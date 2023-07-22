@@ -622,6 +622,14 @@
 	"SHOW_NAVIGATE_TO": "הצג כפתור נווט אל",
 	"NAVIGATE_TO": "נווט אל {to}",
 	"INVITE_LINK": "קישור הזמנה",
+	"SHARE_TRIP": "שתף טיול",
 	"SHARE_TRIP.DESCRIPTION.TITLE": "מתכננים טיול טוב יותר ביחד!",
-	"SHARE_TRIP.DESCRIPTION.CONTENT": "שלחו הזמנת הצטרפות לאנשים נוספים\nובנו יחד את הטיול המושלם עבורכם!\nשימו לב, ההצטרפות לטיול מקנה למצטרף יכולת עריכה וניהול"
+	"SHARE_TRIP.DESCRIPTION.CONTENT": "שלחו הזמנת הצטרפות לאנשים נוספים\nובנו יחד את הטיול המושלם עבורכם!",
+	"MODALS.SHARE_TRIP.STEP2.CONTENT": "הלינק יהיה תקף ל{X} דקות\n\nאנא היזהרו בשיתוף הלינק, שיתופו יקנה הרשאות על הטיול שלכם",
+	"MODALS.SHARE_TRIP.CONTENT": "שלחו הזמנת הצטרפות לאנשים נוספים ובנו יחד את הטיול המושלם עבורכם!\n\nבחרו את ההרשאות שתרצו שיהיו למי שיצטרף:",
+	"SHARE_TRIP.SELECT_PERMISSIONS": "בחרו הרשאות",
+	"PERMISSIONS.READ": "צפייה בלבד",
+	"PERMISSIONS.READ_WRITE": "צפייה ועריכה",
+	"CREATE_INVITE_LINK": "צור קישור הזמנה",
+	"COPY": "העתק"
 }
