@@ -179,6 +179,7 @@
 	"MINUTES": "דקות",
 	"CHECK_OUT_EXISTING_TRIPS": "צפה בטיולים הקיימים שלך",
 	"MODALS.DELETE_TRIP.CONTENT": "האם אתה בטוח שאתה רוצה למחוק את הטיול הזה?<br/>זוהי פעולה בלתי הפיכה",
+	"MODALS.HIDE_TRIP.CONTENT": "הסתרה של הטיול תעלים אותו מהרשימה הרגילה<br/>ותעביר אותו לרשימה נפרדת של כל הטיולים המוסתרים.<br/><br/>כדי להגיע לרשימה הזו, גללו עד לסוף רשימת הטיולים ולחצו על <b>{X}</b>",
 	"EDIT_TRIP_MODAL.TITLE": "ערוך טיול",
 	"MODALS.ERROR.TRIP_NAME_ALREADY_EXIST": "טיול עם השם הזה כבר קיים",
 	"MODALS.UPDATED_TRIP.CONTENT": "הטיול עודכן בהצלחה",
@@ -612,5 +613,12 @@
 	"ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES": "עלות משוערת לפי הפעילויות הלא המשובצות:",
 	"PUSH_TO_START": "מקם בראש הרשימה",
 	"MODALS.CATEGORY.ORDER": "מיקום",
-	"UNKNOWN_PRICE": "?"
+	"UNKNOWN_PRICE": "?",
+	"SHOW_TRIPS_LIST": "חזרה לרשימה הרגילה",
+	"SHOW_HIDDEN_TRIPS_LIST": "הצג טיולים מוסתרים",
+	"NO_HIDDEN_TRIPS": "אין טיולים מוסתרים",
+	"DELETE_TRIP": "מחק טיול",
+	"HIDE_TRIP": "הסתר טיול",
+	"UNHIDE_TRIP": "בטל הסתרה של טיול",
+	"ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS": "אופס! הפעולה שניסית לבצע לא נתמכת עבור טיולים לוקאליים"
 }

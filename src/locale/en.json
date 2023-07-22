@@ -530,5 +530,13 @@
 	"aed_sign": "AED",
 	"usd_sign": "$",
 	"eur_sign": "€",
-	"UNKNOWN_PRICE": "?"
+	"UNKNOWN_PRICE": "?",
+	"SHOW_TRIPS_LIST": "Back to trips list",
+	"SHOW_HIDDEN_TRIPS_LIST": "Show hidden",
+	"NO_HIDDEN_TRIPS": "There are no hidden trips",
+	"DELETE_TRIP": "Delete Trip",
+	"HIDE_TRIP": "Hide Trip",
+	"UNHIDE_TRIP": "Un-Hide Trip",
+	"MODALS.HIDE_TRIP.CONTENT": "Hiding this trip will remove it from the list of trips<br/>and move it to a separate list of all hidden trips.<br/><br/>To view it, scroll down in the list of trips and click on <b>{X}</b>",
+	"ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS": "Oops! this action is not supported on local trips"
 }
