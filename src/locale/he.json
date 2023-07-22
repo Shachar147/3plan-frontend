@@ -618,7 +618,7 @@
 	"DELETE_TRIP": "מחק טיול",
 	"HIDE_TRIP": "הסתר טיול",
 	"UNHIDE_TRIP": "בטל הסתרה של טיול",
-	"ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS": "אופס! הפעולה שניסית לבצע לא נתמכת עבור טיולים לוקאליים"
+	"ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS": "אופס! הפעולה שניסית לבצע לא נתמכת עבור טיולים לוקאליים",
 	"SHOW_NAVIGATE_TO": "הצג כפתור נווט אל",
 	"NAVIGATE_TO": "נווט אל {to}",
 	"INVITE_LINK": "קישור הזמנה",
