@@ -69,7 +69,7 @@
 		.main-page {
 			// make the whole calendar appear on mobile without scroll + disable fullcalendar inner scroll
 			.fc-view-harness {
-				min-height: 1820px !important;
+				min-height: 2080px !important;
 			}
 
 			.fc-scroller {
@@ -263,7 +263,7 @@
 		}
 	}
 	.my-trips-trip-name {
-		max-width: CALC(100% - 170px) !important;
+		max-width: CALC(100% - 217px) !important;
 	}
 	#amount-of-days {
 		display: none;

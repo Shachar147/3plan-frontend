@@ -1759,6 +1759,54 @@ const ReactModalService = {
 			},
 		});
 	},
+	openHideTripModal: (
+		eventStore: EventStore,
+		LSTripName: string,
+		tripDataSource: TripDataSource,
+		onConfirm?: () => void
+	) => {
+		const tripName = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'HIDE_TRIP')}: ${tripName}`,
+			content: (
+				<div
+					dangerouslySetInnerHTML={{
+						__html: TranslateService.translate(eventStore, 'MODALS.HIDE_TRIP.CONTENT', {
+							X: TranslateService.translate(eventStore, 'SHOW_HIDDEN_TRIPS_LIST'),
+						}),
+					}}
+				/>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'HIDE_TRIP'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				if (tripDataSource === TripDataSource.DB) {
+					await DataServices.DBService.hideTripByName(tripName)
+						.then(() => {
+							if (onConfirm) {
+								onConfirm();
+								ReactModalService.internal.closeModal(eventStore);
+							} else {
+								window.location.reload();
+							}
+						})
+						.catch(() => {
+							ReactModalService.internal.openOopsErrorModal(eventStore);
+						});
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
+	},
 	openAddSidebarEventModal: (
 		eventStore: EventStore,
 		categoryId?: number,
