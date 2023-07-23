@@ -1135,7 +1135,9 @@ export class EventStore {
 				this.canWrite = sharedTrip.canWrite;
 
 				// @ts-ignore
-				this.isTripLocked = !sharedTrip.canWrite;
+				if (!sharedTrip.canWrite) {
+					this.isTripLocked = false;
+				}
 			} else {
 				this.canRead = true;
 				this.canWrite = true;
@@ -1176,7 +1178,9 @@ export class EventStore {
 			this.canWrite = tripData.canWrite;
 
 			// @ts-ignore
-			this.isTripLocked = !tripData.canWrite;
+			if (!sharedTrip.canWrite) {
+				this.isTripLocked = false;
+			}
 		}
 
 		this.lockTripIfAlreadyOver(!!isLocked, dateRange.end);

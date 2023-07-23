@@ -272,7 +272,7 @@ function MyTrips() {
 		function renderTripActions() {
 			return (
 				<div className="trips-list-trip-actions">
-					{canWrite && (
+					{!isSharedTrip && (
 						<i
 							className="fa fa-pencil-square-o"
 							aria-hidden="true"
