@@ -4,18 +4,23 @@ import { DataServices } from '../../services/data-handlers/data-handler-base';
 import ReactModalService from '../../services/react-modal-service';
 import { eventStoreContext } from '../../stores/events-store';
 import { runInAction } from 'mobx';
+import LoadingComponent from '../../components/loading/loading-component';
+import TranslateService from '../../services/translate-service';
+import { LOADER_DETAILS } from '../../utils/utils';
 
 function InviteLink() {
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
 
+	const loaderDetails = LOADER_DETAILS();
+
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const token = searchParams.get('token');
 
-	// todo complete: try to use the invite link. if it's working, redirect user to the trip page.
+	// Try to use the invite link. if it's working, redirect user to the trip page.
 	// otherwise - show error message.
-	// if the same user that did the invite try to use it, either show error or simply redirect him.
+	// if the same user that did the invite try to use it, simply redirect him.
 	useEffect(() => {
 		if (!token) {
 			return;
@@ -38,8 +43,13 @@ function InviteLink() {
 			});
 	}, [token]);
 
-	// todo remove:
-	return <div>{token}</div>;
+	return (
+		<LoadingComponent
+			title={TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE')}
+			message={TranslateService.translate(eventStore, 'LOADING_TRIP_PLACEHOLDER')}
+			loaderDetails={loaderDetails}
+		/>
+	);
 }
 
 export default InviteLink;

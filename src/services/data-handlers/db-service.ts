@@ -91,6 +91,7 @@ export class DBService implements BaseDataHandler {
 		return res.data as Trip;
 	}
 
+	// unused
 	async getTrips(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		const res: any = await apiGetPromise(this, '/trip/');
 		const trips: Trip[] = [];
@@ -98,6 +99,15 @@ export class DBService implements BaseDataHandler {
 			trips.push(x as Trip);
 		});
 		return { trips, sharedTrips: [] };
+	}
+
+	async getCollaborators(eventStore: EventStore): Promise<any[]> {
+		const res: any = await apiGetPromise(this, `/shared-trips/collaborators/name/${eventStore.tripName}`);
+		const collaborators: any[] = [];
+		res.data.forEach((x: any) => {
+			collaborators.push(x);
+		});
+		return collaborators;
 	}
 
 	async getTripsShort(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {

@@ -1,20 +1,19 @@
-import React, { CSSProperties, useContext } from 'react';
+import React, { CSSProperties, useContext, useMemo } from 'react';
 import TranslateService from '../../services/translate-service';
 import {
 	addLineBreaks,
-	coordinateToString,
 	calendarOrSidebarEventDetails,
 	getClasses,
 	isBasketball,
 	isDessert,
 	isFlight,
 	isHotel,
-	toDistanceString,
-	ucfirst,
 	isHotelsCategory,
 	locationToString,
+	toDistanceString,
+	ucfirst,
 } from '../../utils/utils';
-import { TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
+import { TripDataSource, TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
@@ -32,6 +31,8 @@ import { runInAction } from 'mobx';
 import DistanceCalculator from './distance-calculator/distance-calculator';
 import { modalsStoreContext } from '../../stores/modals-store';
 import TriplanSearch from '../triplan-header/triplan-search/triplan-search';
+import { DBService } from '../../services/data-handlers/db-service';
+import useAsyncMemo from '../../custom-hooks/use-async-memo';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -121,6 +122,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		setCustomDateRange,
 		TriplanCalendarRef,
 	} = props;
+
+	const fetchCollaborators = async (): Promise<any[]> => {
+		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
+			const data = await (eventStore.dataService as DBService).getCollaborators(eventStore);
+			return data;
+		}
+		return [];
+	};
+
+	// const { data: collaborators, loading, error } = useAsyncMemo<any[]>(fetchCollaborators, [eventStore.dataService]);
+	const { data: collaborators, loading, error } = useAsyncMemo<any[]>(() => fetchCollaborators(), []);
 
 	const renderCustomDates = () => {
 		return (
@@ -1504,12 +1516,14 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		// todo complete - show here the list of existing collaborators and their permissions and allow to change that.
 		// (give them permissions / delete their permissions)
 		// todo complete - make sure that if his tab is still opened and he lost his permissions and try to update - that it fails on the backend.
+
 		return (
 			<div className="flex-col align-items-center justify-content-center">
 				<b>{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.TITLE')}</b>
 				<span className="white-space-pre-line text-align-center width-100-percents opacity-0-5">
 					{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.CONTENT')}
 				</span>
+				<div className="flex-col gap-4">{collaborators?.map((x) => x.username)}</div>
 				{renderShareTripButton(false, 'width-100-percents')}
 			</div>
 		);
@@ -1525,8 +1539,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				}}
 				text={TranslateService.translate(eventStore, textKey)}
 				icon={'fa-users'}
-				disabled={eventStore.isSharedTrip} // todo complete - disabled if you aren't the owner of the trip
-				disabledReason={TranslateService.translate(eventStore, 'ONLY_TRIP_OWNER_CAN_SHARE_TRIP')} // todo complete - disabled if you aren't the owner of the trip
+				disabled={eventStore.isSharedTrip}
+				disabledReason={TranslateService.translate(eventStore, 'ONLY_TRIP_OWNER_CAN_SHARE_TRIP')}
 			/>
 		);
 	};
@@ -1535,7 +1549,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const categoryEvents = eventStore.getSidebarEvents[categoryId] || [];
 
 		const preferredHoursHash: Record<string, SidebarEvent[]> = {};
-		// console.log(Object.keys(TriplanEventPreferredTime).filter((x) => !Number.isNaN(Number(x))));
+
 		Object.keys(TriplanEventPreferredTime)
 			.filter((x) => !Number.isNaN(Number(x)))
 			.forEach((preferredHour) => {
