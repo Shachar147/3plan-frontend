@@ -1517,8 +1517,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderShareTripPlaceholder = () => {
-		// todo complete - show here the list of existing collaborators and their permissions and allow to change that.
-		// (give them permissions / delete their permissions)
 		// todo complete - make sure that if his tab is still opened and he lost his permissions and try to update - that it fails on the backend.
 
 		const renderCollaborator = (collaborator: any) => {
