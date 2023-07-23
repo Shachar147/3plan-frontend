@@ -111,20 +111,23 @@
   .category-row {
     order: 3;
   }
-  .start-time-row {
+  .description-row {
     order: 4;
   }
-  .end-time-row {
+  .start-time-row {
     order: 5;
   }
-  .priority-row {
+  .end-time-row {
     order: 6;
   }
-  .actions-row {
+  .priority-row {
     order: 7;
   }
-  .show-hide-more-row {
+  .actions-row {
     order: 8;
+  }
+  .show-hide-more-row {
+    order: 9;
   }
 
   &.view-mode {
@@ -140,14 +143,17 @@
     .category-row {
       order: 4;
     }
-    .start-time-row {
+    .description-row {
       order: 5;
     }
-    .end-time-row {
+    .start-time-row {
       order: 6;
     }
-    .opening-hours-row {
+    .end-time-row {
       order: 7;
+    }
+    .opening-hours-row {
+      order: 8;
     }
     .actions-row {
       order: 9;

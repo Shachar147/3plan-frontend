@@ -921,7 +921,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.DESCRIPTION',
 					className: 'border-top-gray description-row',
-					showOnMinimized: false,
+					showOnMinimized: true,
 				},
 				{
 					settings: {
@@ -1038,7 +1038,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.PRICE',
 					className: 'border-top-gray price-row',
-					showOnMinimized: modalsStore?.isViewMode ?? false,
+					showOnMinimized: false, // modalsStore?.isViewMode ?? false,
 				},
 				{
 					settings: {
@@ -1053,7 +1053,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.CURRENCY',
 					className: 'border-top-gray currency-row',
-					showOnMinimized: modalsStore?.isViewMode ?? false,
+					showOnMinimized: false, // modalsStore?.isViewMode ?? false,
 				},
 				{
 					settings: {
@@ -1214,7 +1214,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.DESCRIPTION',
 						className: 'border-top-gray description-row',
-						showOnMinimized: false,
+						showOnMinimized: true,
 					},
 					{
 						settings: {
@@ -1304,7 +1304,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.PRICE',
 						className: 'border-top-gray price-row',
-						showOnMinimized: modalsStore?.isViewMode ?? false,
+						showOnMinimized: false, // modalsStore?.isViewMode ?? false,
 					},
 					{
 						settings: {
@@ -1319,7 +1319,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.CURRENCY',
 						className: 'border-top-gray currency-row',
-						showOnMinimized: modalsStore?.isViewMode ?? false,
+						showOnMinimized: false, // modalsStore?.isViewMode ?? false,
 					},
 					{
 						settings: {
@@ -2312,7 +2312,10 @@ const ReactModalService = {
 
 		const onConfirm = async () => {
 			if (modalsStore?.isViewMode) {
-				modalsStore.switchToEditMode();
+				runInAction(() => {
+					eventStore.isModalMinimized = false;
+					modalsStore.switchToEditMode();
+				});
 				ReactModalService.openEditSidebarEventModal(
 					eventStore,
 					event,
@@ -3553,7 +3556,10 @@ const ReactModalService = {
 
 		const onConfirm = async () => {
 			if (modalsStore?.isViewMode) {
-				modalsStore.switchToEditMode();
+				runInAction(() => {
+					eventStore.isModalMinimized = false;
+					modalsStore.switchToEditMode();
+				});
 				ReactModalService.openEditCalendarEventModal(eventStore, addEventToSidebar, info, modalsStore);
 			} else {
 				const event = {
