@@ -310,4 +310,10 @@ export class DBService implements BaseDataHandler {
 			}
 		);
 	}
+
+	async changeCollaboratorPermissions(permissionsId: any, canWrite: boolean) {
+		return await apiPut(`/shared-trips/${permissionsId}`, {
+			canWrite,
+		});
+	}
 }

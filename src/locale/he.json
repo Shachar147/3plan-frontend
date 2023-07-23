@@ -117,6 +117,7 @@
 	"ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER": "הזן שם קטגוריה...",
 	"MODALS.CREATE.TITLE": "ווהו!",
 	"MODALS.CREATE_CATEGORY.CONTENT": "הקטגוריה נוצרה בהצלחה",
+	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT": "ההרשאות שונו בהצלחה",
 	"MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST": "קטגוריה עם השם הזה כבר קיימת",
 	"MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY": "שם הקטגוריה לא יכול להיות ריק",
 	"MODALS.LOCATION": "מיקום",
@@ -627,7 +628,7 @@
 	"SHARE_TRIP": "שתף טיול",
 	"SHARE_TRIP.DESCRIPTION.TITLE": "מתכננים טיול טוב יותר ביחד!",
 	"SHARE_TRIP.DESCRIPTION.CONTENT": "שלחו הזמנת הצטרפות לאנשים נוספים\nובנו יחד את הטיול המושלם עבורכם!",
-	"MODALS.SHARE_TRIP.STEP2.CONTENT": "הלינק יהיה תקף ל{X} דקות\n\nאנא היזהרו בשיתוף הלינק, שיתופו יקנה הרשאות על הטיול שלכם",
+	"MODALS.SHARE_TRIP.STEP2.CONTENT": "הלינק יהיה לשימוש חד פעמי ותקף ל{X} דקות\n\nאנא היזהרו בשיתוף הלינק, שיתופו יקנה הרשאות על הטיול שלכם",
 	"MODALS.SHARE_TRIP.CONTENT": "שלחו הזמנת הצטרפות לאנשים נוספים ובנו יחד את הטיול המושלם עבורכם!\n\nבחרו את ההרשאות שתרצו שיהיו למי שיצטרף:",
 	"SHARE_TRIP.SELECT_PERMISSIONS": "בחרו הרשאות",
 	"PERMISSIONS.READ": "צפייה בלבד",
@@ -643,5 +644,7 @@
 	"DELETE_COLLABORATOR_PERMISSIONS": "במידה ותמשיך, {name} יוסר מרשימת השותפים לתכנון הטיול.<br/>הוא/היא לא יוכלו יותר {action}טיול הזה.",
 	"VIEW_AND_EDIT": "לצפות ולערוך את ה",
 	"VIEW": "לצפות ב",
-	"CONTINUE_ANYWAY": "המשך בכל זאת"
+	"CONTINUE_ANYWAY": "המשך בכל זאת",
+	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CONTENT": "שנו ל <b>{name}</b> את הרשאות השיתוף על טיול זה:",
+	"UPDATE_PERMISSIONS": "עדכן הרשאות"
 }

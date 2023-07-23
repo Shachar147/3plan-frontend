@@ -3712,7 +3712,8 @@ const ReactModalService = {
 		titleKey = 'MODALS.ARE_YOU_SURE',
 		contentKey = 'MODALS.ARE_YOU_SURE.CONTENT',
 		continueKey = 'MODALS.CONTINUE',
-		contentParams?: TranslationParams
+		contentParams?: TranslationParams,
+		confirmBtnCssClass?: string
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
@@ -3726,7 +3727,7 @@ const ReactModalService = {
 			),
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, continueKey),
-			confirmBtnCssClass: 'primary-button',
+			confirmBtnCssClass: getClasses('primary-button', confirmBtnCssClass),
 			onConfirm: async () => {
 				await callback();
 
@@ -4375,8 +4376,87 @@ const ReactModalService = {
 			{
 				name: collaborator.username,
 				action: TranslateService.translate(eventStore, collaborator.canWrite ? 'VIEW_AND_EDIT' : 'VIEW'),
-			}
+			},
+			'red'
 		);
+	},
+	openChangeCollaboratorPermissionsModal(eventStore: EventStore, collaborator: any) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const options = [
+			{ value: 0, label: TranslateService.translate(eventStore, 'PERMISSIONS.READ') },
+			{ value: 1, label: TranslateService.translate(eventStore, 'PERMISSIONS.READ_WRITE') },
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'SHARE_TRIP')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(
+								eventStore,
+								'MODALS.EDIT_COLLABORATOR_PERMISSIONS.CONTENT',
+								{
+									name: collaborator.username,
+								}
+							),
+						}}
+					/>
+					{ReactModalRenderHelper.renderSelectInput(
+						eventStore,
+						'share-trip-choose-permissions',
+						{
+							options,
+							placeholderKey: 'SHARE_TRIP.SELECT_PERMISSIONS',
+							removeDefaultClass: true,
+							value: collaborator.canWrite ? 1 : 0,
+							isClearable: false,
+							maxMenuHeight: eventStore.isMobile ? 35 * 2 : undefined,
+						},
+						'add-event-from-sidebar-selector'
+					)}
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'UPDATE_PERMISSIONS'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource === TripDataSource.DB) {
+					DataServices.DBService.changeCollaboratorPermissions(
+						collaborator.permissionsId,
+						!!eventStore.modalValues['share-trip-choose-permissions']?.value
+					)
+						.then(() => {
+							ReactModalService.internal.closeModal(eventStore);
+							runInAction(() => {
+								eventStore.reloadCollaboratorsCounter += 1;
+							});
+
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.CREATE.TITLE',
+								'MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT',
+								'success'
+							);
+						})
+						.catch(() => {
+							ReactModalService.internal.openOopsErrorModal(eventStore);
+						});
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
 	},
 };
 

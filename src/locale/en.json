@@ -549,7 +549,8 @@
 	"SHARE_TRIP.DESCRIPTION.TITLE": "Planning trips is better together!",
 	"SHARE_TRIP.DESCRIPTION.CONTENT": "Send invites to more people\nBuild together the perfect trip for you!",
 	"MODALS.SHARE_TRIP.CONTENT": "Send invites to more people and build together the perfect trip for you!\n\nPermissions:",
-	"MODALS.SHARE_TRIP.STEP2.CONTENT": "Link will be available for {X} minutes\n\nPlease be careful with whom you sending it to",
+	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CONTENT": "Change <b>{name}</b> Collaborator Permissions on this trip:",
+	"MODALS.SHARE_TRIP.STEP2.CONTENT": "Link will be available for 1 use and for {X} minutes\n\nPlease be careful with whom you sending it to",
 	"SHARE_TRIP.SELECT_PERMISSIONS": "Select Permissions",
 	"PERMISSIONS.READ": "View Only",
 	"PERMISSIONS.READ_WRITE": "View & Edit",
@@ -561,5 +562,7 @@
 	"CAN_VIEW": "Can view",
 	"CAN_EDIT": "Can edit",
 	"CHANGE_PERMISSIONS": "Change Permissions",
-	"CONTINUE_ANYWAY": "Continue Anyway"
+	"CONTINUE_ANYWAY": "Continue Anyway",
+	"UPDATE_PERMISSIONS": "Update Permissions",
+	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT": "Collaborator permissions updated successfully!"
 }

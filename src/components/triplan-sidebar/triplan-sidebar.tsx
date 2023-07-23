@@ -1549,7 +1549,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							flavor={ButtonFlavor.link}
 							text={TranslateService.translate(eventStore, 'CHANGE_PERMISSIONS')}
 							onClick={() => {
-								// ReactModalService.openChangeCollaboratorPermissionsModal(eventStore, collaborator.permissionsId);
+								ReactModalService.openChangeCollaboratorPermissionsModal(eventStore, collaborator);
 							}}
 						/>
 						<Button
