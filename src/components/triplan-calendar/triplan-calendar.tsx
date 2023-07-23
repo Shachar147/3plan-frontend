@@ -464,12 +464,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 						mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime()
 				) {
 					if (gapStart.getHours() > MIN_START_HOUR) {
-						console.log({
-							gapStart,
-							gapEnd,
-							gap: gapEnd.getTime() - gapStart.getTime(),
-							prevGap: mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime(),
-						});
+						// console.log({
+						// 	gapStart,
+						// 	gapEnd,
+						// 	gap: gapEnd.getTime() - gapStart.getTime(),
+						// 	prevGap: mostAvailableSlotEnd.getTime() - mostAvailableSlotStart.getTime(),
+						// });
 
 						mostAvailableSlotStart = gapStart;
 						mostAvailableSlotEnd = gapEnd;

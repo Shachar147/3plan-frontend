@@ -78,6 +78,7 @@ export class EventStore {
 	@observable openSidebarGroups = observable.map<string, number>({});
 	@observable hideEmptyCategories: boolean = false;
 	@observable tripName: string = '';
+	@observable tripId: number = 0;
 	@observable isSharedTrip: boolean = false;
 	@observable canRead: boolean = true;
 	@observable canWrite: boolean = true;
@@ -1145,10 +1146,14 @@ export class EventStore {
 				this.isTripLocked = isLocked;
 				this.lockTripIfAlreadyOver(isLocked, dateRange.end);
 				this.isTripLocked = DataServices.LocalStorageService.getIsLocked(name);
+
+				this.tripId = 0;
 			} else {
 				this.isLoading = true;
 				const tripData = await DataServices.DBService.getTripData(name);
 				newDistanceResults = await DataServices.DBService.getDistanceResults(name);
+
+				this.tripId = tripData.id ?? 0;
 
 				this.updateTripData(tripData);
 

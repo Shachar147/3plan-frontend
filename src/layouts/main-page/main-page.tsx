@@ -68,7 +68,7 @@ function MainPage(props: MainPageProps) {
 		const client_id = generate_uuidv4();
 
 		// Connect to the WebSocket server
-		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}&cid=${client_id}`;
+		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}&cid=${client_id}&tid=${eventStore.tripId}`;
 		console.log({ webSocketsUrl: url });
 		const socket = new WebSocket(url);
 
@@ -104,7 +104,7 @@ function MainPage(props: MainPageProps) {
 		return () => {
 			socket.close();
 		};
-	}, []);
+	}, [eventStore.tripId]);
 
 	useEffect(() => {
 		if (TriplanCalendarRef && TriplanCalendarRef.current) {
