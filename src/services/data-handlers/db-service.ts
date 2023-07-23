@@ -1,7 +1,7 @@
 import { EventStore } from '../../stores/events-store';
 import { LS_DISTANCE_RESULTS } from '../../utils/defaults';
 import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
-import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, Trip } from './data-handler-base';
+import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, SharedTrip, Trip } from './data-handler-base';
 import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
 import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
@@ -91,22 +91,27 @@ export class DBService implements BaseDataHandler {
 		return res.data as Trip;
 	}
 
-	async getTrips(eventStore: EventStore): Promise<Trip[]> {
+	async getTrips(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		const res: any = await apiGetPromise(this, '/trip/');
 		const trips: Trip[] = [];
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);
 		});
-		return trips;
+		return { trips, sharedTrips: [] };
 	}
 
-	async getTripsShort(eventStore: EventStore): Promise<Trip[]> {
+	async getTripsShort(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		const res: any = await apiGetPromise(this, '/trip/short');
 		const trips: Trip[] = [];
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);
 		});
-		return trips;
+
+		const sharedTrips: SharedTrip[] = [];
+		res.data.sharedTrips.forEach((x: any) => {
+			sharedTrips.push(x as SharedTrip);
+		});
+		return { trips, sharedTrips };
 	}
 
 	async getUserStats(): Promise<any[]> {
@@ -209,6 +214,12 @@ export class DBService implements BaseDataHandler {
 			tripName,
 			canRead: true,
 			canWrite,
+		});
+	}
+
+	async useInviteLink(token: string) {
+		return await apiPost(`/shared-trips/use-invite-link`, {
+			token,
 		});
 	}
 

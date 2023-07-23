@@ -631,5 +631,6 @@
 	"PERMISSIONS.READ": "צפייה בלבד",
 	"PERMISSIONS.READ_WRITE": "צפייה ועריכה",
 	"CREATE_INVITE_LINK": "צור קישור הזמנה",
-	"COPY": "העתק"
+	"COPY": "העתק",
+	"ONLY_TRIP_OWNER_CAN_SHARE_TRIP": "רק יוצר הטיול יכול לשתף אותו עם אנשים נוספים"
 }

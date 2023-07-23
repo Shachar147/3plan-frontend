@@ -1520,8 +1520,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				}}
 				text={TranslateService.translate(eventStore, textKey)}
 				icon={'fa-users'}
-				disabled={eventStore.isTripLocked} // todo complete - disabled if you aren't the owner of the trip
-				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')} // todo complete - disabled if you aren't the owner of the trip
+				disabled={eventStore.isSharedTrip} // todo complete - disabled if you aren't the owner of the trip
+				disabledReason={TranslateService.translate(eventStore, 'ONLY_TRIP_OWNER_CAN_SHARE_TRIP')} // todo complete - disabled if you aren't the owner of the trip
 			/>
 		);
 	};

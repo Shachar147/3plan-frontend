@@ -20,6 +20,11 @@ export interface Trip {
 	lastUpdateAt?: string;
 }
 
+export interface SharedTrip extends Trip {
+	canRead: boolean;
+	canWrite: boolean;
+}
+
 export interface DBTrip extends Trip {
 	id: number;
 	lastUpdateAt: string;
@@ -41,7 +46,7 @@ export interface AllEventsEvent extends SidebarEvent {
 }
 
 export interface BaseDataHandler {
-	getTrips: (eventStore: EventStore) => Promise<Trip[]>;
+	getTrips: (eventStore: EventStore) => Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }>;
 	setTripName: (tripName: string, newTripName: string) => any;
 	setDateRange: (dateRange: DateRangeFormatted, tripName: string) => void;
 	setCategories: (categories: TriPlanCategory[], tripName: string) => void;

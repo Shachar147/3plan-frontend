@@ -78,6 +78,7 @@ export class EventStore {
 	@observable openSidebarGroups = observable.map<string, number>({});
 	@observable hideEmptyCategories: boolean = false;
 	@observable tripName: string = '';
+	@observable isSharedTrip: boolean = false;
 	@observable allEventsTripName: string = '';
 	@observable customDateRange: DateRangeFormatted = defaultDateRange(); // -
 	@observable showOnlyEventsWithNoLocation: boolean = false;
@@ -1078,7 +1079,8 @@ export class EventStore {
 
 	@action
 	async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean) {
-		const existingTrips = await this.dataService.getTripsShort(this);
+		const { trips, sharedTrips } = await this.dataService.getTripsShort(this);
+		const existingTrips = [...trips, ...sharedTrips];
 
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
@@ -1123,6 +1125,8 @@ export class EventStore {
 					this.isLoading = false;
 				});
 			}
+
+			this.isSharedTrip = !!sharedTrips.find((s) => s.name === name);
 
 			// reset them when switching trips
 			this.selectedEventForNearBy = undefined;

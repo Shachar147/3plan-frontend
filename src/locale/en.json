@@ -549,5 +549,6 @@
 	"PERMISSIONS.READ": "View Only",
 	"PERMISSIONS.READ_WRITE": "View & Edit",
 	"CREATE_INVITE_LINK": "Create Invite Link",
-	"COPY": "Copy"
+	"COPY": "Copy",
+	"ONLY_TRIP_OWNER_CAN_SHARE_TRIP": "Only trip owner can share the trip to other people"
 }

@@ -8,7 +8,12 @@ import { observer } from 'mobx-react';
 import { renderFooterLine } from '../../utils/ui-utils';
 import { getClasses } from '../../utils/utils';
 import ReactModalService from '../../services/react-modal-service';
-import DataServices, { DBTrip, Trip, tripNameToLSTripName } from '../../services/data-handlers/data-handler-base';
+import DataServices, {
+	DBTrip,
+	SharedTrip,
+	Trip,
+	tripNameToLSTripName,
+} from '../../services/data-handlers/data-handler-base';
 import ToggleButton from '../../components/toggle-button/toggle-button';
 import { TripDataSource } from '../../utils/enums';
 import { getUser, isLoggedOn } from '../../helpers/auth';
@@ -20,6 +25,7 @@ import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
+import { DBService } from '../../services/data-handlers/db-service';
 
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
 
@@ -38,6 +44,7 @@ function MyTrips() {
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
 	const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
+	const [sharedTrips, setSharedTrips] = useState<SharedTrip[]>([]);
 
 	const [error, setError] = useState<any>(undefined);
 	const [isLoadingTrips, setIsLoadingTrips] = useState(false);
@@ -52,12 +59,16 @@ function MyTrips() {
 
 	useEffect(() => {
 		setLsTrips([]);
+		setSharedTrips([]);
 		setIsLoadingTrips(true);
 		setError(undefined);
+
 		dataService
 			.getTripsShort(eventStore)
-			.then((trips: Trip[]) => {
+			.then((result) => {
+				const { trips, sharedTrips } = result;
 				setLsTrips(trips);
+				setSharedTrips(sharedTrips);
 				setIsLoadingTrips(false);
 			})
 			.catch((error) => {
@@ -304,7 +315,9 @@ function MyTrips() {
 	function renderListOfTrips() {
 		const hiddenTripsEnabled = dataSource === 'DB';
 
-		const filteredList = lsTrips.filter((x) => (hiddenTripsEnabled ? !!x.isHidden == showHidden : true));
+		const filteredList = [...lsTrips, ...sharedTrips].filter((x) =>
+			hiddenTripsEnabled ? !!x.isHidden == showHidden : true
+		);
 
 		return (
 			<div className="flex-column gap-10">
@@ -348,7 +361,7 @@ function MyTrips() {
 	function renderForm() {
 		if (error) return returnErrorPlaceholder();
 		if (isLoadingTrips) return renderLoadingTrips();
-		return lsTrips.length === 0 ? renderNoTripsPlaceholder() : renderListOfTrips();
+		return lsTrips.length + sharedTrips.length === 0 ? renderNoTripsPlaceholder() : renderListOfTrips();
 	}
 
 	function renderDataSourceSelector() {

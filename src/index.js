@@ -21,7 +21,6 @@ import { runInAction } from 'mobx';
 import { getCoordinatesRangeKey, isMatching, padTo2Digits } from './utils/utils';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Observer } from 'mobx-react';
-import PrivateRoute from './PrivateRoute';
 import RegisterPage from './layouts/register-page/register-page';
 import LogoutPage from './layouts/logout-page/logout-page';
 import { getToken, getUser } from './helpers/auth';
@@ -42,9 +41,9 @@ import {
 	STORE_KEYWORDS,
 	TOURIST_KEYWORDS,
 } from './components/map-container/map-container';
-import { apiPost } from './helpers/api';
 import { BiEventsService } from './services/bi-events.service';
 import useIsAdmin from './custom-hooks/use-is-admin';
+import InviteLink from './layouts/invite-link/invite-link';
 
 // Dubai
 // Namos / Twiggy?
@@ -853,6 +852,7 @@ const RootRouter = () => {
 					<Route path="/plan/:tripName/:locale" element={<MainPage />} />
 					<Route path="/plan/:tripName/" element={<MainPage />} />
 					<Route path="/plan" element={<MainPage />} />
+					<Route path="/inviteLink" element={<InviteLink />} />
 					<Route path="/theme" element={<ThemeExample />} />
 					<Route path="/language" element={<MobileLanguageSelectorPage />} />
 

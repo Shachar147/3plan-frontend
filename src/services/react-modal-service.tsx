@@ -1857,10 +1857,11 @@ const ReactModalService = {
 						!!eventStore.modalValues['share-trip-choose-permissions']?.value
 					)
 						.then((response) => {
-							const { inviteLink: token } = response.data;
+							const { inviteLink: data, expiredAt } = response.data;
+							const { inviteLink: token } = data;
 							const host = window.location.host;
 							const inviteLink = `http://${host}/inviteLink?token=${token}`;
-							ReactModalService.openShareTripStepTwoModal(eventStore, inviteLink);
+							ReactModalService.openShareTripStepTwoModal(eventStore, inviteLink, expiredAt);
 						})
 						.catch(() => {
 							ReactModalService.internal.openOopsErrorModal(eventStore);
@@ -1877,7 +1878,7 @@ const ReactModalService = {
 			},
 		});
 	},
-	openShareTripStepTwoModal: (eventStore: EventStore, inviteLink: string) => {
+	openShareTripStepTwoModal: (eventStore: EventStore, inviteLink: string, expiredAt: number) => {
 		const tripName = eventStore.tripName.replaceAll('-', ' ');
 
 		ReactModalService.internal.closeModal(eventStore);
@@ -1890,7 +1891,7 @@ const ReactModalService = {
 						className="white-space-pre-line"
 						dangerouslySetInnerHTML={{
 							__html: TranslateService.translate(eventStore, 'MODALS.SHARE_TRIP.STEP2.CONTENT', {
-								X: 10,
+								X: expiredAt,
 							}),
 						}}
 					/>
