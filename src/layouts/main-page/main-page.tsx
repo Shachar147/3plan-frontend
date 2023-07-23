@@ -151,6 +151,19 @@ function MainPage(props: MainPageProps) {
 		}
 	}, [tripName, locale]);
 
+	useEffect(() => {
+		let interval: NodeJS.Timeout;
+		if (eventStore.isSharedTrip) {
+			console.log('started shared trip interval');
+			interval = setInterval(() => eventStore.verifyUserHavePermissionsOnTrip(tripName, createMode), 5000);
+		}
+
+		return () => {
+			console.log('stopped shared trip interval');
+			clearInterval(interval);
+		};
+	}, [eventStore.isSharedTrip]);
+
 	// ERROR HANDLING: todo add try/catch & show a message if fails
 	function addEventToSidebar(event: any): boolean {
 		const newEvents: Record<string, SidebarEvent[]> = _.cloneDeep(eventStore.sidebarEvents);

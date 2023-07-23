@@ -1081,6 +1081,33 @@ export class EventStore {
 		this.hideEmptyCategories = hide;
 	}
 
+	async verifyUserHavePermissionsOnTrip(name: string, createMode?: boolean) {
+		const { trips, sharedTrips } = await this.dataService.getTripsShort(this);
+		const existingTrips = [...trips, ...sharedTrips];
+
+		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
+			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
+			setTimeout(() => {
+				window.location.href = '/my-trips';
+				localStorage.removeItem([LS_CALENDAR_LOCALE, name].join('-'));
+				localStorage.removeItem([LS_SIDEBAR_EVENTS, name].join('-'));
+			}, 3000);
+		} else {
+			const sharedTrip = sharedTrips.find((s) => s.name === name);
+			this.isSharedTrip = !!sharedTrip;
+			if (!!sharedTrip) {
+				this.canRead = sharedTrip.canRead;
+				this.canWrite = sharedTrip.canWrite;
+
+				// @ts-ignore
+				this.isTripLocked ||= !sharedTrip.canWrite;
+			} else {
+				this.canRead = true;
+				this.canWrite = true;
+			}
+		}
+	}
+
 	@action
 	async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean) {
 		const { trips, sharedTrips } = await this.dataService.getTripsShort(this);

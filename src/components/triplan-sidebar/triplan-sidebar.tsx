@@ -1517,8 +1517,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	const renderShareTripPlaceholder = () => {
-		// todo complete - make sure that if his tab is still opened and he lost his permissions and try to update - that it fails on the backend.
-
 		const renderCollaborator = (collaborator: any) => {
 			return (
 				<div className="triplan-collaborator space-between padding-inline-8">
