@@ -138,8 +138,8 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 		<div className={getClasses('multiple-options-toggle-button', customStyle && customStyle)} ref={containerRef}>
 			<div
 				className={getClasses(
-					'multiple-options-toggle-button-items-container',
-					eventStore.isRtl && 'flex-row-reverse'
+					'multiple-options-toggle-button-items-container'
+					// eventStore.isRtl && 'flex-row-reverse'
 				)}
 			>
 				{props.options.map(renderOption)}

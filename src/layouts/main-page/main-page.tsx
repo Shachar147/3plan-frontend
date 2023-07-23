@@ -513,13 +513,19 @@ function MainPage(props: MainPageProps) {
 			return null;
 		}
 
-		const text = eventStore.isMobile
+		let text = eventStore.isMobile
 			? TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED.SHORT')
 			: TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED');
 
 		const linkText = eventStore.isMobile
 			? TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED.SHORT.LINK')
 			: TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE');
+
+		if (!eventStore.canWrite) {
+			text = eventStore.isMobile
+				? TranslateService.translate(eventStore, 'NOTE.SHARED_TRIP_IS_LOCKED.SHORT')
+				: TranslateService.translate(eventStore, 'NOTE.SHARED_TRIP_IS_LOCKED');
+		}
 
 		return (
 			<div
@@ -536,14 +542,16 @@ function MainPage(props: MainPageProps) {
 					)}
 				>
 					{text}
-					<Button
-						flavor={ButtonFlavor.link}
-						className={'text-decoration-underline min-height-20'}
-						onClick={() => {
-							eventStore.toggleTripLocked();
-						}}
-						text={linkText}
-					/>
+					{eventStore.canWrite && (
+						<Button
+							flavor={ButtonFlavor.link}
+							className={'text-decoration-underline min-height-20'}
+							onClick={() => {
+								eventStore.toggleTripLocked();
+							}}
+							text={linkText}
+						/>
+					)}
 				</div>
 			</div>
 		);

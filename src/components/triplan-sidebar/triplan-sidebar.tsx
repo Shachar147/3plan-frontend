@@ -168,6 +168,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					eventStore.toggleTripLocked();
 				}}
 				flavor={ButtonFlavor['movable-link']}
+				disabled={!eventStore.canWrite}
+				disabledReason={TranslateService.translate(eventStore, 'NOTE.SHARED_TRIP_IS_LOCKED')}
 			/>
 		);
 	};
@@ -1790,8 +1792,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{/*<div className={"spacer margin-top-40"}/>*/}
 						<hr style={{ marginBlock: '20px 10px' }} />
 						{renderCategories()}
-						<hr style={{ marginBlock: '20px 10px' }} />
-						{renderShareTripPlaceholder()}
+						{!eventStore.isSharedTrip && <hr style={{ marginBlock: '20px 10px' }} />}
+						{!eventStore.isSharedTrip && renderShareTripPlaceholder()}
 					</div>
 				</div>
 			</div>

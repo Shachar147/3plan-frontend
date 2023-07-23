@@ -592,6 +592,8 @@
 	"UNLOCK_TRIP.BUTTON_TEXT": "הוצא את הטיול מנעילה",
 	"TRIP_IS_LOCKED": "הטיול נעול לשינויים",
 	"NOTE.TRIP_IS_LOCKED": "שים לב, טיול זה נעול לשינויים. כדי לשנות זאת,",
+	"NOTE.SHARED_TRIP_IS_LOCKED": "שים לב, טיול זה שותף איתך לצפייה בלבד ועל כן הוא נעול לשינויים.",
+	"NOTE.SHARED_TRIP_IS_LOCKED.SHORT": "שים לב, טיול זה נעול לשינויים.",
 	"NOTE.TRIP_IS_LOCKED.SHORT": "שים לב, טיול זה נעול לשינויים.",
 	"NOTE.TRIP_IS_LOCKED.SHORT.LINK": "לחץ כאן כדי לשנות זאת",
 	"MINIMIZE_SIDEBAR": "הסתר את התפריט",
@@ -632,5 +634,6 @@
 	"PERMISSIONS.READ_WRITE": "צפייה ועריכה",
 	"CREATE_INVITE_LINK": "צור קישור הזמנה",
 	"COPY": "העתק",
-	"ONLY_TRIP_OWNER_CAN_SHARE_TRIP": "רק יוצר הטיול יכול לשתף אותו עם אנשים נוספים"
+	"ONLY_TRIP_OWNER_CAN_SHARE_TRIP": "רק יוצר הטיול יכול לשתף אותו עם אנשים נוספים",
+	"SHARED_TRIP": "טיול משותף"
 }

@@ -79,6 +79,8 @@ export class EventStore {
 	@observable hideEmptyCategories: boolean = false;
 	@observable tripName: string = '';
 	@observable isSharedTrip: boolean = false;
+	@observable canRead: boolean = true;
+	@observable canWrite: boolean = true;
 	@observable allEventsTripName: string = '';
 	@observable customDateRange: DateRangeFormatted = defaultDateRange(); // -
 	@observable showOnlyEventsWithNoLocation: boolean = false;
@@ -1126,7 +1128,18 @@ export class EventStore {
 				});
 			}
 
-			this.isSharedTrip = !!sharedTrips.find((s) => s.name === name);
+			const sharedTrip = sharedTrips.find((s) => s.name === name);
+			this.isSharedTrip = !!sharedTrip;
+			if (!!sharedTrip) {
+				this.canRead = sharedTrip.canRead;
+				this.canWrite = sharedTrip.canWrite;
+
+				// @ts-ignore
+				this.isTripLocked = !sharedTrip.canWrite;
+			} else {
+				this.canRead = true;
+				this.canWrite = true;
+			}
 
 			// reset them when switching trips
 			this.selectedEventForNearBy = undefined;
@@ -1154,6 +1167,17 @@ export class EventStore {
 		this.allEvents = allEvents;
 		this.categories = categories;
 		this.isTripLocked = !!isLocked;
+
+		if ('canRead' in Object.keys(tripData) || 'canWrite' in Object.keys(tripData)) {
+			// @ts-ignore
+			this.canRead = tripData.canRead;
+
+			// @ts-ignore
+			this.canWrite = tripData.canWrite;
+
+			// @ts-ignore
+			this.isTripLocked = !tripData.canWrite;
+		}
 
 		this.lockTripIfAlreadyOver(!!isLocked, dateRange.end);
 	}

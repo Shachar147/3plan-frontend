@@ -504,6 +504,8 @@
 	"UNLOCK_TRIP.BUTTON_TEXT": "Unlock Trip",
 	"TRIP_IS_LOCKED": "Trip is locked",
 	"NOTE.TRIP_IS_LOCKED": "Please note that this trip is locked. to change that,",
+	"NOTE.SHARED_TRIP_IS_LOCKED": "Please note that this trip shared with you with view only permissions.",
+	"NOTE.SHARED_TRIP_IS_LOCKED.SHORT": "Please note that this trip is locked.",
 	"NOTE.TRIP_IS_LOCKED.SHORT": "Please note that this trip is locked.",
 	"NOTE.TRIP_IS_LOCKED.SHORT.LINK": "click here to change that",
 	"lastLoginAt": "Last logged in at",
@@ -550,5 +552,6 @@
 	"PERMISSIONS.READ_WRITE": "View & Edit",
 	"CREATE_INVITE_LINK": "Create Invite Link",
 	"COPY": "Copy",
-	"ONLY_TRIP_OWNER_CAN_SHARE_TRIP": "Only trip owner can share the trip to other people"
+	"ONLY_TRIP_OWNER_CAN_SHARE_TRIP": "Only trip owner can share the trip to other people",
+	"SHARED_TRIP": "Shared Trip"
 }
