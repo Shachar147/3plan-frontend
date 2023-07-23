@@ -1096,6 +1096,7 @@ export class EventStore {
 			const sharedTrip = sharedTrips.find((s) => s.name === name);
 			this.isSharedTrip = !!sharedTrip;
 			if (!!sharedTrip) {
+				this.isTripLocked = !!sharedTrip.isLocked;
 				this.canRead = sharedTrip.canRead;
 				this.canWrite = sharedTrip.canWrite;
 
