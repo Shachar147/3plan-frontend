@@ -1,4 +1,4 @@
-import React, { CSSProperties, useContext, useMemo } from 'react';
+import React, { CSSProperties, useContext } from 'react';
 import TranslateService from '../../services/translate-service';
 import {
 	addLineBreaks,
@@ -14,10 +14,9 @@ import {
 	ucfirst,
 } from '../../utils/utils';
 import { TripDataSource, TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
-import { getDurationString } from '../../utils/time-utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
-import { Observer, observer } from 'mobx-react';
+import { observer, Observer } from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import Button, { ButtonFlavor } from '../common/button/button';
@@ -33,6 +32,7 @@ import { modalsStoreContext } from '../../stores/modals-store';
 import TriplanSearch from '../triplan-header/triplan-search/triplan-search';
 import { DBService } from '../../services/data-handlers/db-service';
 import useAsyncMemo from '../../custom-hooks/use-async-memo';
+import { getDurationString } from '../../utils/time-utils';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -132,7 +132,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	// const { data: collaborators, loading, error } = useAsyncMemo<any[]>(fetchCollaborators, [eventStore.dataService]);
-	const { data: collaborators, loading, error } = useAsyncMemo<any[]>(() => fetchCollaborators(), []);
+	const {
+		data: collaborators,
+		loading,
+		error,
+	} = useAsyncMemo<any[]>(() => fetchCollaborators(), [eventStore.reloadCollaboratorsCounter]);
 
 	const renderCustomDates = () => {
 		return (
@@ -1517,14 +1521,64 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		// (give them permissions / delete their permissions)
 		// todo complete - make sure that if his tab is still opened and he lost his permissions and try to update - that it fails on the backend.
 
+		const renderCollaborator = (collaborator: any) => {
+			return (
+				<div className="triplan-collaborator space-between padding-inline-8">
+					<div className="flex-row gap-8 align-items-center">
+						<i className="fa fa-users" aria-hidden="true" />
+						<div className="collaborator-name">{collaborator.username}</div>
+						<div className="collaborator-permissions-icons flex-row gap-8 align-items-center">
+							{collaborator.canRead && (
+								<i
+									className="fa fa-eye"
+									title={TranslateService.translate(eventStore, 'CAN_VIEW')}
+									aria-hidden="true"
+								/>
+							)}
+							{collaborator.canWrite && (
+								<i
+									className="fa fa-pencil"
+									title={TranslateService.translate(eventStore, 'CAN_EDIT')}
+									aria-hidden="true"
+								/>
+							)}
+						</div>
+					</div>
+					<div className="collaborator-permissions flex-row gap-8">
+						<Button
+							flavor={ButtonFlavor.link}
+							text={TranslateService.translate(eventStore, 'CHANGE_PERMISSIONS')}
+							onClick={() => {
+								// ReactModalService.openChangeCollaboratorPermissionsModal(eventStore, collaborator.permissionsId);
+							}}
+						/>
+						<Button
+							flavor={ButtonFlavor.link}
+							text={'X'}
+							onClick={() => {
+								ReactModalService.openDeleteCollaboratorPermissionsModal(eventStore, collaborator);
+							}}
+						/>
+					</div>
+				</div>
+			);
+		};
+
 		return (
 			<div className="flex-col align-items-center justify-content-center">
 				<b>{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.TITLE')}</b>
 				<span className="white-space-pre-line text-align-center width-100-percents opacity-0-5">
 					{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.CONTENT')}
 				</span>
-				<div className="flex-col gap-4">{collaborators?.map((x) => x.username)}</div>
 				{renderShareTripButton(false, 'width-100-percents')}
+				{!!collaborators?.length && (
+					<div className="flex-col align-items-center justify-content-center margin-block-10 width-100-percents">
+						<b>{TranslateService.translate(eventStore, 'COLLABORATORS.TITLE')}</b>
+						<div className="flex-col gap-4 width-100-percents justify-content-center margin-top-10">
+							{collaborators?.map(renderCollaborator)}
+						</div>
+					</div>
+				)}
 			</div>
 		);
 	};

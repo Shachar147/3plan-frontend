@@ -162,6 +162,8 @@ export class EventStore {
 
 	@observable isSidebarMinimized: boolean = false;
 
+	@observable reloadCollaboratorsCounter: number = 0;
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {

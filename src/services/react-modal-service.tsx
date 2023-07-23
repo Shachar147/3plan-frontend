@@ -4341,6 +4341,43 @@ const ReactModalService = {
 			confirmBtnText: TranslateService.translate(eventStore, 'GENERAL.YES'),
 		});
 	},
+	openDeleteCollaboratorPermissionsModal(eventStore: EventStore, collaborator: any) {
+		return ReactModalService.openConfirmModal(
+			eventStore,
+			() => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource === TripDataSource.DB) {
+					DataServices.DBService.deleteCollaboratorPermissions(
+						collaborator.permissionsId,
+						() => {
+							ReactModalService.internal.closeModal(eventStore);
+							runInAction(() => {
+								eventStore.reloadCollaboratorsCounter += 1;
+							});
+						},
+						() => {
+							ReactModalService.internal.openOopsErrorModal(eventStore);
+						}
+					);
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+			'MODALS.ARE_YOU_SURE',
+			'DELETE_COLLABORATOR_PERMISSIONS',
+			'CONTINUE_ANYWAY',
+			{
+				name: collaborator.username,
+				action: TranslateService.translate(eventStore, collaborator.canWrite ? 'VIEW_AND_EDIT' : 'VIEW'),
+			}
+		);
+	},
 };
 
 export default ReactModalService;

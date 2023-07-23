@@ -635,5 +635,13 @@
 	"CREATE_INVITE_LINK": "צור קישור הזמנה",
 	"COPY": "העתק",
 	"ONLY_TRIP_OWNER_CAN_SHARE_TRIP": "רק יוצר הטיול יכול לשתף אותו עם אנשים נוספים",
-	"SHARED_TRIP": "טיול משותף"
+	"SHARED_TRIP": "טיול משותף",
+	"COLLABORATORS.TITLE": "שותפים לתכנון:",
+	"CAN_VIEW": "יכול לצפות",
+	"CAN_EDIT": "יכול לערוך",
+	"CHANGE_PERMISSIONS": "שנה הרשאות",
+	"DELETE_COLLABORATOR_PERMISSIONS": "במידה ותמשיך, {name} יוסר מרשימת השותפים לתכנון הטיול.<br/>הוא/היא לא יוכלו יותר {action}טיול הזה.",
+	"VIEW_AND_EDIT": "לצפות ולערוך את ה",
+	"VIEW": "לצפות ב",
+	"CONTINUE_ANYWAY": "המשך בכל זאת"
 }

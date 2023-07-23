@@ -278,4 +278,36 @@ export class DBService implements BaseDataHandler {
 	async unlockTrip(tripName: string) {
 		return await apiPut(`/trip/unlock/name/${tripName}`, {});
 	}
+
+	async deleteCollaboratorPermissions(
+		permissionsId: any,
+		successCallback?: (res: any) => void,
+		errorCallback?: (error: any, error_retry: number) => void,
+		finallyCallback?: () => void
+	) {
+		await apiDelete(
+			this,
+			`/shared-trips/${permissionsId}`,
+			async function (res: any) {
+				if (successCallback) {
+					successCallback(res);
+				}
+			},
+			function (error: any, error_retry: number) {
+				// console.log(error);
+				// let req_error = error.message;
+				// if (error.message.indexOf("401") !== -1) { req_error = UNAUTHORIZED_ERROR; }
+				// if (error.message.indexOf("400") !== -1) { req_error = `Oops, failed saving this game.` }
+
+				if (errorCallback) {
+					errorCallback(error, error_retry);
+				}
+			},
+			function () {
+				if (finallyCallback) {
+					finallyCallback();
+				}
+			}
+		);
+	}
 }
