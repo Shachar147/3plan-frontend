@@ -38,6 +38,7 @@ function InviteLink() {
 			});
 	}, [token]);
 
+	// todo remove:
 	return <div>{token}</div>;
 }
 
