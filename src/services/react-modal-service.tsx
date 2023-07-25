@@ -3,7 +3,7 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import { getClasses, isHotelsCategory, ucfirst } from '../utils/utils';
+import { getClasses, getCurrentUsername, isHotelsCategory, ucfirst } from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -24,10 +24,12 @@ import {
 	ViewMode,
 } from '../utils/enums';
 import {
+	addHours,
 	addHoursToDate,
 	convertMsToHM,
 	formatDate,
 	formatDuration,
+	formatFromISODateString,
 	getEndDate,
 	getInputDateTimeValue,
 	validateDateRange,
@@ -4462,6 +4464,56 @@ const ReactModalService = {
 					return;
 				}
 			},
+		});
+	},
+	openSeeHistoryDetails(eventStore: EventStore, historyRow: any, fullTitle: string) {
+		const offset = -1 * (new Date().getTimezoneOffset() / 60);
+		const updatedAt = addHours(new Date(historyRow.updatedAt), offset);
+
+		const isYou = historyRow.updatedBy == getCurrentUsername();
+
+		const when = formatFromISODateString(updatedAt.toISOString());
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'VIEW_HISTORY'),
+			type: 'controlled',
+			onConfirm: () => {},
+			// content: () => fullTitle,
+			content: () => (
+				<table className="border-solid-table">
+					<tr>
+						<td>{TranslateService.translate(eventStore, 'WHO')}</td>
+						<td>{isYou ? TranslateService.translate(eventStore, 'YOU') : historyRow.updatedBy}</td>
+					</tr>
+					<tr>
+						<td>{TranslateService.translate(eventStore, 'WHAT')}</td>
+						<td>
+							{TranslateService.translate(
+								eventStore,
+								isYou ? historyRow.action + 'You' : historyRow.action,
+								{
+									eventName: historyRow.eventName,
+								}
+							)}
+						</td>
+					</tr>
+					<tr>
+						<td>{TranslateService.translate(eventStore, 'BEFORE')}</td>
+						<td>{historyRow.actionParams.was}</td>
+					</tr>
+					<tr>
+						<td>{TranslateService.translate(eventStore, 'AFTER')}</td>
+						<td>{historyRow.actionParams.now}</td>
+					</tr>
+					<tr>
+						<td>{TranslateService.translate(eventStore, 'UPDATED_AT')}</td>
+						<td>{when}</td>
+					</tr>
+				</table>
+			),
+			confirmBtnCssClass: 'display-none',
+			confirmBtnText: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CANCEL'),
 		});
 	},
 };

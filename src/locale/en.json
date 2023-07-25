@@ -578,5 +578,12 @@
 	"changedEventDurationAndTiming": "Changed Event {eventName} Timing and Duration",
 	"changedEventDurationAndTimingYou": "You Changed Event {eventName} Timing and Duration",
 	"changedEventDurationAndTimingFull": "{who} Changed Event {eventName} Timing and Duration from {was} to {now}",
-	"changedEventDurationAndTimingFullYou": "You Changed Event {eventName} Timing and Duration from {was} to {now}"
+	"changedEventDurationAndTimingFullYou": "You Changed Event {eventName} Timing and Duration from {was} to {now}",
+	"VIEW_HISTORY": "View History",
+	"WHO": "Who?",
+	"YOU": "You",
+	"WHAT": "What?",
+	"BEFORE": "Before",
+	"AFTER": "After",
+	"UPDATED_AT": "Updated at"
 }

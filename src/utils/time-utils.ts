@@ -278,9 +278,10 @@ export function validateDateRange(
  *
  * returns date in a readable format for example: 22/04/2023, 09:30
  */
-export const formatFromISODateString = (inputDateString: string): string => {
+export const formatFromISODateString = (inputDateString: string, withComma: boolean = true): string => {
 	const momentObj = moment(inputDateString);
-	return momentObj.format('DD/MM/YYYY, HH:mm');
+	const format = withComma ? 'DD/MM/YYYY, HH:mm' : 'DD/MM/YYYY HH:mm';
+	return momentObj.format(format);
 };
 
 export const formatTimeFromISODateString = (inputDateString: string): string => {

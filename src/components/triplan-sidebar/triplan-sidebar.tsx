@@ -1625,8 +1625,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			return (
 				<div
-					className="triplan-history space-between padding-inline-8 gap-8 align-items-center"
+					className="triplan-history space-between padding-inline-8 gap-8 align-items-center cursor-pointer"
 					title={fullTitle}
+					onClick={() => {
+						ReactModalService.openSeeHistoryDetails(eventStore, historyRow, fullTitle);
+					}}
 				>
 					<i className="fa fa-clock-o" aria-hidden="true" />
 					<div className="history-when flex-row gap-8">{when}</div>

@@ -1216,3 +1216,27 @@ body.admin-side {
 		}
 	}
 }
+
+table{
+	&.border-solid-table {
+		border: 1px solid;
+		display: table;
+
+		tr {
+			display: table-row;
+			th, td {
+				display: table-cell;
+				border: 1px solid;
+
+				&:first-child {
+					min-width: 100px;
+					font-weight: bold;
+				}
+
+				&:not(:first-child) {
+					width: 100%;
+				}
+			}
+		}
+	}
+}

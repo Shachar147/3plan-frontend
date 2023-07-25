@@ -354,8 +354,8 @@ export class DBService implements BaseDataHandler {
 			...changeInfo.oldEvent,
 			allDay: changeInfo.oldEvent.allDay,
 			hasEnd: !changeInfo.oldEvent.allDay,
-			start: formatFromISODateString(changeInfo.oldEvent.start.toISOString()),
-			end: formatFromISODateString(changeInfo.oldEvent.end.toISOString()),
+			start: formatFromISODateString(changeInfo.oldEvent.start.toISOString(), false),
+			end: formatFromISODateString(changeInfo.oldEvent.end.toISOString(), false),
 		};
 
 		const updated = {
@@ -364,8 +364,8 @@ export class DBService implements BaseDataHandler {
 			...changeInfo.event,
 			allDay: changeInfo.event.allDay,
 			hasEnd: !changeInfo.event.allDay,
-			start: formatFromISODateString(changeInfo.event.start.toISOString()),
-			end: formatFromISODateString(changeInfo.event.end.toISOString()),
+			start: formatFromISODateString(changeInfo.event.start.toISOString(), false),
+			end: formatFromISODateString(changeInfo.event.end.toISOString(), false),
 			duration: convertMsToHM(changeInfo.event.end - changeInfo.event.start),
 		};
 
