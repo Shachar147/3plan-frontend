@@ -1625,22 +1625,18 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			return (
 				<div
-					className="triplan-collaborator space-between padding-inline-8 gap-8 align-items-center"
+					className="triplan-history space-between padding-inline-8 gap-8 align-items-center"
 					title={fullTitle}
 				>
 					<i className="fa fa-clock-o" aria-hidden="true" />
-					<div className="collaborator-permissions flex-row gap-8">{when}</div>
+					<div className="history-when flex-row gap-8">{when}</div>
 					<div className="flex-row gap-4 align-items-center flex-1-1-0 min-width-0">
 						{historyRow.updatedBy !== getCurrentUsername() && (
-							<div className="collaborator-name">{historyRow.updatedBy}</div>
+							<div className="history-updated-by">{historyRow.updatedBy}</div>
 						)}
-						<div className="collaborator-permissions-icons flex-row gap-8 align-items-center flex-1-1-0 min-width-0 text-align-start">
+						<div className="history-title flex-row align-items-center flex-1-1-0 min-width-0 text-align-start">
 							<EllipsisWithTooltip>{title}</EllipsisWithTooltip>
 						</div>
-						{/*/!*<div className="collaborator-name">{historyRow.updatedBy}</div>*!/*/}
-						{/*<div className="collaborator-permissions-icons flex-row gap-8 align-items-center flex-1-1-0 min-width-0 text-align-start">*/}
-						{/*	{fullTitle}*/}
-						{/*</div>*/}
 					</div>
 				</div>
 			);
