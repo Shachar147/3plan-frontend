@@ -35,7 +35,6 @@ import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
-import { TriPlanCalendarRef } from '../components/triplan-calendar/triplan-calendar';
 
 const defaultModalSettings = {
 	show: false,
@@ -164,6 +163,7 @@ export class EventStore {
 	@observable isSidebarMinimized: boolean = false;
 
 	@observable reloadCollaboratorsCounter: number = 0;
+	@observable reloadHistoryCounter: number = 0;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -837,7 +837,7 @@ export class EventStore {
 	}
 
 	@action
-	async changeEvent(changeInfo: any) {
+	async changeEvent(changeInfo: any, logHistoryData?: any) {
 		const eventId = changeInfo.event.id;
 		const storedEvent = this.calendarEvents.find((e) => e.id == eventId);
 		if (storedEvent) {
@@ -847,6 +847,16 @@ export class EventStore {
 				...this.calendarEvents.filter((event) => event!.id!.toString() !== eventId.toString()),
 				newEvent,
 			]);
+
+			if (logHistoryData && this.dataService.getDataSourceName() == TripDataSource.DB) {
+				(this.dataService as DBService).logHistoryOnEventChange(
+					this,
+					this.tripId,
+					logHistoryData,
+					eventId,
+					storedEvent.title
+				);
+			}
 
 			// const findEvent = this.allEvents.find((event) => event.id.toString() === eventId.toString());
 			// if (findEvent) {

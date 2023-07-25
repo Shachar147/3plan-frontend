@@ -283,6 +283,11 @@ export const formatFromISODateString = (inputDateString: string): string => {
 	return momentObj.format('DD/MM/YYYY, HH:mm');
 };
 
+export const formatTimeFromISODateString = (inputDateString: string): string => {
+	const momentObj = moment(inputDateString);
+	return momentObj.format('HH:mm');
+};
+
 export function areDatesOnDifferentDays(date1: Date, date2: Date) {
 	return (
 		date1.getFullYear() !== date2.getFullYear() ||

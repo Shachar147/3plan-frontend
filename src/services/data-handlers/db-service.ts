@@ -1,13 +1,22 @@
 import { EventStore } from '../../stores/events-store';
 import { LS_DISTANCE_RESULTS } from '../../utils/defaults';
-import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
+import {
+	buildCalendarEvent,
+	CalendarEvent,
+	DistanceResult,
+	SidebarEvent,
+	TripActions,
+	TriPlanCategory,
+} from '../../utils/interfaces';
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, SharedTrip, Trip } from './data-handler-base';
 import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
-import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
+import { getCoordinatesRangeKey, jsonDiff, stringToCoordinate } from '../../utils/utils';
 import axios from 'axios';
 import { getToken } from '../../helpers/auth';
 import _ from 'lodash';
+import { convertMsToHM, formatFromISODateString } from '../../utils/time-utils';
+import { runInAction } from 'mobx';
 
 export interface upsertTripProps {
 	name?: string;
@@ -314,6 +323,74 @@ export class DBService implements BaseDataHandler {
 	async changeCollaboratorPermissions(permissionsId: any, canWrite: boolean) {
 		return await apiPut(`/shared-trips/${permissionsId}`, {
 			canWrite,
+		});
+	}
+
+	async getHistory(tripId: number, limit: number = 30) {
+		const res: any = await apiGetPromise(this, `/history/by-trip/${tripId}/${limit}`);
+		return res.data;
+	}
+
+	async logHistory(tripId: number, action: string, actionParams?: object, eventId?: number, eventName?: string) {
+		return await apiPost('/history', {
+			tripId,
+			action,
+			actionParams,
+			eventId,
+			eventName,
+		});
+	}
+
+	logHistoryOnEventChange(
+		eventStore: EventStore,
+		tripId: number,
+		changeInfo: any,
+		eventId?: number,
+		eventName?: string
+	) {
+		const original = {
+			...changeInfo.oldEvent._def,
+			...changeInfo.oldEvent.extendedProps,
+			...changeInfo.oldEvent,
+			allDay: changeInfo.oldEvent.allDay,
+			hasEnd: !changeInfo.oldEvent.allDay,
+			start: formatFromISODateString(changeInfo.oldEvent.start.toISOString()),
+			end: formatFromISODateString(changeInfo.oldEvent.end.toISOString()),
+		};
+
+		const updated = {
+			...changeInfo.event._def,
+			...changeInfo.event.extendedProps,
+			...changeInfo.event,
+			allDay: changeInfo.event.allDay,
+			hasEnd: !changeInfo.event.allDay,
+			start: formatFromISODateString(changeInfo.event.start.toISOString()),
+			end: formatFromISODateString(changeInfo.event.end.toISOString()),
+			duration: convertMsToHM(changeInfo.event.end - changeInfo.event.start),
+		};
+
+		const diff = jsonDiff(buildCalendarEvent(original), buildCalendarEvent(updated));
+
+		// console.log({
+		// 	diff,
+		// 	original: buildCalendarEvent(original),
+		// 	updated: buildCalendarEvent(updated),
+		// });
+
+		let action: TripActions = TripActions.changedEvent;
+		if ('start' in diff || 'end' in diff) {
+			if ('duration' in diff) {
+				console.log('changed duration and timing');
+				action = TripActions.changedEventDurationAndTiming;
+			} else {
+				action = TripActions.changedEventTiming;
+			}
+		}
+
+		this.logHistory(tripId, action, diff, eventId, eventName).then(() => {
+			runInAction(() => {
+				eventStore.reloadHistoryCounter += 1;
+			});
 		});
 	}
 }

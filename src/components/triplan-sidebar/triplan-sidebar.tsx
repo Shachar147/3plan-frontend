@@ -4,6 +4,7 @@ import {
 	addLineBreaks,
 	calendarOrSidebarEventDetails,
 	getClasses,
+	getCurrentUsername,
 	isBasketball,
 	isDessert,
 	isFlight,
@@ -32,7 +33,10 @@ import { modalsStoreContext } from '../../stores/modals-store';
 import TriplanSearch from '../triplan-header/triplan-search/triplan-search';
 import { DBService } from '../../services/data-handlers/db-service';
 import useAsyncMemo from '../../custom-hooks/use-async-memo';
-import { getDurationString } from '../../utils/time-utils';
+import { addHours, formatDate, formatTimeFromISODateString, getDurationString } from '../../utils/time-utils';
+
+// @ts-ignore
+import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -132,11 +136,24 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	// const { data: collaborators, loading, error } = useAsyncMemo<any[]>(fetchCollaborators, [eventStore.dataService]);
-	const {
-		data: collaborators,
-		loading,
-		error,
-	} = useAsyncMemo<any[]>(() => fetchCollaborators(), [eventStore.reloadCollaboratorsCounter]);
+	const { data: collaborators } = useAsyncMemo<any[]>(
+		() => fetchCollaborators(),
+		[eventStore.reloadCollaboratorsCounter]
+	);
+
+	const fetchHistory = async (): Promise<any[]> => {
+		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
+			const data = await (eventStore.dataService as DBService).getHistory(eventStore.tripId);
+			return data.history;
+		}
+		return [];
+	};
+
+	// const { data: collaborators, loading, error } = useAsyncMemo<any[]>(fetchCollaborators, [eventStore.dataService]);
+	const { data: historyRecords } = useAsyncMemo<any[]>(() => {
+		console.log('fetching!', eventStore.reloadHistoryCounter);
+		return fetchHistory();
+	}, [eventStore.reloadHistoryCounter]);
 
 	const renderCustomDates = () => {
 		return (
@@ -1579,6 +1596,71 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
+	const renderTripHistory = () => {
+		const renderHistory = (historyRow: any) => {
+			const offset = -1 * (new Date().getTimezoneOffset() / 60);
+
+			const updatedAt = addHours(new Date(historyRow.updatedAt), offset);
+			const now = addHours(new Date(), offset);
+
+			const when =
+				formatDate(updatedAt) == formatDate(now)
+					? formatTimeFromISODateString(updatedAt.toISOString())
+					: formatDate(now);
+
+			const title = TranslateService.translate(
+				eventStore,
+				historyRow.updatedBy !== getCurrentUsername() ? historyRow.action : historyRow.action + 'You',
+				{
+					eventName: historyRow.eventName,
+				}
+			);
+
+			const fullTitle =
+				historyRow.updatedBy !== getCurrentUsername()
+					? TranslateService.translate(eventStore, historyRow.action + 'Full', {
+							who: historyRow.updatedBy,
+							eventName: historyRow.eventName,
+					  })
+					: title;
+
+			return (
+				<div
+					className="triplan-collaborator space-between padding-inline-8 gap-8 align-items-center"
+					title={fullTitle}
+				>
+					<i className="fa fa-clock-o" aria-hidden="true" />
+					<div className="collaborator-permissions flex-row gap-8">{when}</div>
+					<div className="flex-row gap-4 align-items-center flex-1-1-0 min-width-0">
+						{historyRow.updatedBy !== getCurrentUsername() && (
+							<div className="collaborator-name">{historyRow.updatedBy}</div>
+						)}
+						<div className="collaborator-permissions-icons flex-row gap-8 align-items-center flex-1-1-0 min-width-0 text-align-start">
+							<EllipsisWithTooltip>{title}</EllipsisWithTooltip>
+						</div>
+						{/*/!*<div className="collaborator-name">{historyRow.updatedBy}</div>*!/*/}
+						{/*<div className="collaborator-permissions-icons flex-row gap-8 align-items-center flex-1-1-0 min-width-0 text-align-start">*/}
+						{/*	{fullTitle}*/}
+						{/*</div>*/}
+					</div>
+				</div>
+			);
+		};
+
+		return (
+			<div className="flex-col align-items-center justify-content-center" key={eventStore.reloadHistoryCounter}>
+				<b>
+					{TranslateService.translate(eventStore, 'RECENT_CHANGES', {
+						count: historyRecords?.length?.toString() ?? '0',
+					})}
+				</b>
+				<div className="flex-col gap-4 width-100-percents justify-content-center margin-top-10">
+					{historyRecords?.map(renderHistory)}
+				</div>
+			</div>
+		);
+	};
+
 	const renderShareTripButton = (isMoveable: boolean = true, className?: string, textKey: string = 'SHARE_TRIP') => {
 		return (
 			<Button
@@ -1861,6 +1943,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{renderCategories()}
 						{!eventStore.isSharedTrip && <hr style={{ marginBlock: '20px 10px' }} />}
 						{!eventStore.isSharedTrip && renderShareTripPlaceholder()}
+
+						{!!historyRecords?.length && <hr style={{ marginBlock: '20px 10px' }} />}
+						{!!historyRecords?.length && renderTripHistory()}
 					</div>
 				</div>
 			</div>

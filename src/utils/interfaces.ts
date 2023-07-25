@@ -124,3 +124,9 @@ export interface DistanceResult {
 	distance: string;
 	duration_value: number;
 }
+
+export enum TripActions {
+	changedEventDurationAndTiming = 'changedEventDurationAndTiming',
+	changedEventTiming = 'changedEventTiming',
+	changedEvent = 'changedEvent',
+}

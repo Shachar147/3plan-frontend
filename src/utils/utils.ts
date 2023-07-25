@@ -329,8 +329,6 @@ export function lockEvents(eventStore: EventStore, calendarEvent: CalendarEvent)
 		calendarEvent.durationEditable = true;
 		// @ts-ignore
 		calendarEvent.disableDragging = false;
-		// @ts-ignore
-		console.log(calendarEvent.classNames);
 
 		try {
 			calendarEvent.className = calendarEvent.className
@@ -452,4 +450,16 @@ export function locationToString(location?: LocationData): string {
 		}
 	}
 	return '';
+}
+
+export function jsonDiff(obj1: object, obj2: object): any {
+	const ret: Record<any, any> = {};
+	for (const i in obj2) {
+		// @ts-ignore
+		if (!obj1.hasOwnProperty(i) || obj2[i] !== obj1[i]) {
+			// @ts-ignore
+			ret[i] = { was: obj1[i], now: obj2[i] };
+		}
+	}
+	return ret;
 }

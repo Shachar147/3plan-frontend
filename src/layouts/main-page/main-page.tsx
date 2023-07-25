@@ -84,6 +84,13 @@ function MainPage(props: MainPageProps) {
 			if (eventStore.tripName == tripData.name) {
 				console.log('new message', tripData);
 
+				setTimeout(() => {
+					runInAction(() => {
+						eventStore.reloadHistoryCounter += 1;
+						console.log('hereee');
+					});
+				}, 2000);
+
 				const { initiatedByClientId } = data;
 				const isItMe = initiatedByClientId == axios.defaults.headers['cid'];
 				const toastrKey = isItMe ? 'SAVED_SUCCESSFULLY' : 'UPDATED_ON_SERVER';

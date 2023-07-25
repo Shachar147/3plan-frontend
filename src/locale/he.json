@@ -647,5 +647,15 @@
 	"VIEW": "לצפות ב",
 	"CONTINUE_ANYWAY": "המשך בכל זאת",
 	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CONTENT": "שנו ל <b>{name}</b> את הרשאות השיתוף על טיול זה:",
-	"UPDATE_PERMISSIONS": "עדכן הרשאות"
+	"UPDATE_PERMISSIONS": "עדכן הרשאות",
+	"RECENT_CHANGES": "{count} השינויים האחרונים:",
+	"changedEvent": "עדכן את {eventName}",
+	"changedEventYou": "עדכנת את {eventName}",
+	"changedEventFull": "{who} עדכן את {eventName}",
+	"changedEventTiming": "עדכן את התזמון של {eventName}",
+	"changedEventTimingYou": "עדכנת את התזמון של {eventName}",
+	"changedEventTimingFull": "{who} עדכן תזמון של הפעילות {eventName}",
+	"changedEventDurationAndTiming": "עדכן את התזמון והאורך של {eventName}",
+	"changedEventDurationAndTimingYou": "עדכנת את התזמון והאורך של {eventName}",
+	"changedEventDurationAndTimingFull": "{who} עדכן} את התזמון והאורך של {eventName}"
 }

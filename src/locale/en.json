@@ -565,5 +565,15 @@
 	"CHANGE_PERMISSIONS": "Change Permissions",
 	"CONTINUE_ANYWAY": "Continue Anyway",
 	"UPDATE_PERMISSIONS": "Update Permissions",
-	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT": "Collaborator permissions updated successfully!"
+	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT": "Collaborator permissions updated successfully!",
+	"RECENT_CHANGES": "{count} Recent Changes:",
+	"changedEvent": "Changed Event {eventName}",
+	"changedEventYou": "You Changed Event {eventName}",
+	"changedEventFull": "{who} Changed Event {eventName}",
+	"changedEventTiming": "Changed Event {eventName} Timing",
+	"changedEventTimingYou": "You Changed Event {eventName} Timing",
+	"changedEventTimingFull": "{who} Changed Event {eventName} Timing",
+	"changedEventDurationAndTiming": "Changed Event {eventName} Timing and Duration",
+	"changedEventDurationAndTimingYou": "You Changed Event {eventName} Timing and Duration",
+	"changedEventDurationAndTimingFull": "{who} Changed Event {eventName} Timing and Duration"
 }
