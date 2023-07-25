@@ -1087,7 +1087,12 @@ export class EventStore {
 		const existingTrips = [...trips, ...sharedTrips];
 
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
-			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
+			ReactModalService.internal.alertMessage(
+				this,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.TRIP_NOT_EXIST_MAYBE_SHARED',
+				'error'
+			);
 			setTimeout(() => {
 				window.location.href = '/my-trips';
 				localStorage.removeItem([LS_CALENDAR_LOCALE, name].join('-'));

@@ -284,6 +284,7 @@
 	"VIEW_AND_EDIT": "view and edit",
 	"VIEW": "view",
 	"MODALS.ERROR.TRIP_NOT_EXIST": "Oops, the trip you tried to access does not exist",
+	"MODALS.ERROR.TRIP_NOT_EXIST_MAYBE_SHARED": "Oops, the trip you tried to access does not exist.\nIf the trip you tried to access to was a shared trip, it is possible that you have been removed from the collaborators list",
 	"LEAVE_AT": "leave at",
 	"TO_ARRIVE_ON_TIME": "to arrive on time",
 	"BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL": "Full summary",
