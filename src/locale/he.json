@@ -651,11 +651,14 @@
 	"RECENT_CHANGES": "{count} השינויים האחרונים:",
 	"changedEvent": "עדכן את {eventName}",
 	"changedEventYou": "עדכנת את {eventName}",
-	"changedEventFull": "{who} עדכן את {eventName}",
+	"changedEventFull": "{who} עדכן את {eventName} מ{was} ל{now}",
+	"changedEventFullYou": "{who} עדכנת את {eventName} מ{was} ל{now}",
 	"changedEventTiming": "עדכן את התזמון של {eventName}",
 	"changedEventTimingYou": "עדכנת את התזמון של {eventName}",
-	"changedEventTimingFull": "{who} עדכן תזמון של הפעילות {eventName}",
+	"changedEventTimingFull": "{who} עדכן תזמון של {eventName} מ{was} ל{now}",
+	"changedEventTimingFullYou": "{who} עדכנת את התזמון של {eventName} מ{was} ל{now}",
 	"changedEventDurationAndTiming": "עדכן את התזמון והאורך של {eventName}",
 	"changedEventDurationAndTimingYou": "עדכנת את התזמון והאורך של {eventName}",
-	"changedEventDurationAndTimingFull": "{who} עדכן} את התזמון והאורך של {eventName}"
+	"changedEventDurationAndTimingFull": "{who} עדכן את התזמון והאורך של {eventName} מ{was} ל{now}",
+	"changedEventDurationAndTimingFullYou": "עדכנת את התזמון והאורך של {eventName} מ{was} ל{now}"
 }

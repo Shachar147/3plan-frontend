@@ -369,7 +369,7 @@ export class DBService implements BaseDataHandler {
 			duration: convertMsToHM(changeInfo.event.end - changeInfo.event.start),
 		};
 
-		const diff = jsonDiff(buildCalendarEvent(original), buildCalendarEvent(updated));
+		let diff = jsonDiff(buildCalendarEvent(original), buildCalendarEvent(updated));
 
 		// console.log({
 		// 	diff,
@@ -378,16 +378,29 @@ export class DBService implements BaseDataHandler {
 		// });
 
 		let action: TripActions = TripActions.changedEvent;
+		let actionParams = diff;
 		if ('start' in diff || 'end' in diff) {
 			if ('duration' in diff) {
 				console.log('changed duration and timing');
 				action = TripActions.changedEventDurationAndTiming;
+				actionParams = {
+					was: `${diff?.start?.was ?? original.start} - ${diff?.end?.was ?? original.end} (${
+						diff?.duration?.was ?? original.duration
+					})`,
+					now: `${diff?.start?.now ?? updated.start} - ${diff?.end?.now ?? updated.end} (${
+						diff?.duration?.now ?? updated.duration
+					})`,
+				};
 			} else {
 				action = TripActions.changedEventTiming;
+				actionParams = {
+					was: `${diff?.start?.was ?? original.start} - ${diff?.end?.was ?? original.end}`,
+					now: `${diff?.start?.now ?? updated.start} - ${diff?.end?.now ?? updated.end}`,
+				};
 			}
 		}
 
-		this.logHistory(tripId, action, diff, eventId, eventName).then(() => {
+		this.logHistory(tripId, action, actionParams, eventId, eventName).then(() => {
 			runInAction(() => {
 				eventStore.reloadHistoryCounter += 1;
 			});

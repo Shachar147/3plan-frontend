@@ -1616,13 +1616,12 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				}
 			);
 
-			const fullTitle =
-				historyRow.updatedBy !== getCurrentUsername()
-					? TranslateService.translate(eventStore, historyRow.action + 'Full', {
-							who: historyRow.updatedBy,
-							eventName: historyRow.eventName,
-					  })
-					: title;
+			const addition = historyRow.updatedBy !== getCurrentUsername() ? 'Full' : 'FullYou';
+			const fullTitle = TranslateService.translate(eventStore, historyRow.action + addition, {
+				who: historyRow.updatedBy,
+				eventName: historyRow.eventName,
+				...historyRow.actionParams,
+			});
 
 			return (
 				<div

@@ -569,11 +569,14 @@
 	"RECENT_CHANGES": "{count} Recent Changes:",
 	"changedEvent": "Changed Event {eventName}",
 	"changedEventYou": "You Changed Event {eventName}",
-	"changedEventFull": "{who} Changed Event {eventName}",
+	"changedEventFull": "{who} Changed Event {eventName} from {was} to {now}",
+	"changedEventFullYou": "You Changed Event {eventName} from {was} to {now}",
 	"changedEventTiming": "Changed Event {eventName} Timing",
 	"changedEventTimingYou": "You Changed Event {eventName} Timing",
-	"changedEventTimingFull": "{who} Changed Event {eventName} Timing",
+	"changedEventTimingFull": "{who} Changed Event {eventName} Timing from {was} to {now}",
+	"changedEventTimingFullYou": "You Changed Event {eventName} Timing from {was} to {now}",
 	"changedEventDurationAndTiming": "Changed Event {eventName} Timing and Duration",
 	"changedEventDurationAndTimingYou": "You Changed Event {eventName} Timing and Duration",
-	"changedEventDurationAndTimingFull": "{who} Changed Event {eventName} Timing and Duration"
+	"changedEventDurationAndTimingFull": "{who} Changed Event {eventName} Timing and Duration from {was} to {now}",
+	"changedEventDurationAndTimingFullYou": "You Changed Event {eventName} Timing and Duration from {was} to {now}"
 }
