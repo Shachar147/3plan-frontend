@@ -4345,6 +4345,19 @@ const ReactModalService = {
 
 			await eventStore.setCalendarEvents(updatedEvents, true);
 
+			if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
+				(eventStore.dataService as DBService)
+					.logHistory(eventStore.tripId, TripActions.switchedDays, {
+						was: item.text,
+						now: draggedItem.text,
+					})
+					.then(() => {
+						runInAction(() => {
+							eventStore.reloadHistoryCounter += 1;
+						});
+					});
+			}
+
 			ReactModalService.internal.closeModal(eventStore);
 
 			setTimeout(() => {

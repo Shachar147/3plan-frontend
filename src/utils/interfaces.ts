@@ -126,9 +126,11 @@ export interface DistanceResult {
 }
 
 export enum TripActions {
+	// calendar
 	changedEventDurationAndTiming = 'changedEventDurationAndTiming',
 	changedEventTiming = 'changedEventTiming',
 	changedEvent = 'changedEvent',
 	deletedCalendarEvent = 'deletedCalendarEvent',
 	duplicatedCalendarEvent = 'duplicatedCalendarEvent',
+	switchedDays = 'switchedDays',
 }
