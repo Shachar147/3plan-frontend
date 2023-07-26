@@ -1600,13 +1600,16 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const renderHistory = (historyRow: any) => {
 			const offset = -1 * (new Date().getTimezoneOffset() / 60);
 
-			const updatedAt = addHours(new Date(historyRow.updatedAt), offset);
-			const now = addHours(new Date(), offset);
+			const updatedAt = new Date(historyRow.updatedAt);
+			const now = new Date();
+
+			const nowWithOffset = addHours(new Date(), offset);
+			const updatedAtWithOffset = addHours(updatedAt, offset);
 
 			const when =
 				formatDate(updatedAt) == formatDate(now)
-					? formatTimeFromISODateString(updatedAt.toISOString())
-					: formatDate(now);
+					? formatTimeFromISODateString(updatedAtWithOffset.toISOString())
+					: formatDate(nowWithOffset);
 
 			const title = TranslateService.translate(
 				eventStore,
@@ -1652,7 +1655,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						count: historyRecords?.length?.toString() ?? '0',
 					})}
 				</b>
-				<div className="flex-col gap-4 width-100-percents justify-content-center margin-top-10">
+				<div className="flex-col gap-4 width-100-percents margin-top-10 max-height-250 overflow-auto bright-scrollbar">
 					{historyRecords?.map(renderHistory)}
 				</div>
 			</div>
