@@ -129,4 +129,5 @@ export enum TripActions {
 	changedEventDurationAndTiming = 'changedEventDurationAndTiming',
 	changedEventTiming = 'changedEventTiming',
 	changedEvent = 'changedEvent',
+	deletedCalendarEvent = 'deletedCalendarEvent',
 }

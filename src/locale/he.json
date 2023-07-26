@@ -661,11 +661,16 @@
 	"changedEventDurationAndTimingYou": "עדכנת את התזמון והאורך של {eventName}",
 	"changedEventDurationAndTimingFull": "{who} עדכן את התזמון והאורך של {eventName} מ{was} ל{now}",
 	"changedEventDurationAndTimingFullYou": "עדכנת את התזמון והאורך של {eventName} מ{was} ל{now}",
+	"deletedCalendarEvent": "מחק את {eventName} מלוח השנה",
+	"deletedCalendarEventYou": "מחקת את {eventName} מלוח השנה",
+	"deletedCalendarEventFull": "{who} מחק את {eventName} מלוח השנה (היה משובץ ב-{was})",
+	"deletedCalendarEventFullYou": "מחקת את {eventName} מלוח השנה (היה משובץ ב-{was})",
 	"VIEW_HISTORY": "צפייה בהיסטוריה",
 	"WHO": "מי?",
 	"YOU": "את/ה",
 	"WHAT": "מה?",
 	"BEFORE": "לפני",
 	"AFTER": "אחרי",
-	"UPDATED_AT": "עודכן ב"
+	"UPDATED_AT": "עודכן ב",
+	"IN_THE_SIDEBAR": "בתפריט הצד"
 }

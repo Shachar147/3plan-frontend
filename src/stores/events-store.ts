@@ -858,14 +858,6 @@ export class EventStore {
 				);
 			}
 
-			// const findEvent = this.allEvents.find((event) => event.id.toString() === eventId.toString());
-			// if (findEvent) {
-			// 	await this.updateEvent(findEvent, storedEvent);
-			// } else {
-			// 	console.error('event not found!');
-			// }
-			// await this.setAllEvents([...this.allEvents]);
-
 			return true;
 		}
 		return false;

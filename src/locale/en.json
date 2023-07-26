@@ -579,11 +579,16 @@
 	"changedEventDurationAndTimingYou": "You Changed Event {eventName} Timing and Duration",
 	"changedEventDurationAndTimingFull": "{who} Changed Event {eventName} Timing and Duration from {was} to {now}",
 	"changedEventDurationAndTimingFullYou": "You Changed Event {eventName} Timing and Duration from {was} to {now}",
+	"deletedCalendarEvent": "Deleted {eventName} from Calendar",
+	"deletedCalendarEventYou": "You deleted {eventName} from Calendar",
+	"deletedCalendarEventFull": "{who} deleted {eventName} from Calendar (from {was})",
+	"deletedCalendarEventFullYou": "You deleted {eventName} from Calendar (from {was})",
 	"VIEW_HISTORY": "View History",
 	"WHO": "Who?",
 	"YOU": "You",
 	"WHAT": "What?",
 	"BEFORE": "Before",
 	"AFTER": "After",
-	"UPDATED_AT": "Updated at"
+	"UPDATED_AT": "Updated at",
+	"IN_THE_SIDEBAR": "In the sidebar"
 }

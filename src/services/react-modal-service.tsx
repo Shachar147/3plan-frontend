@@ -13,6 +13,7 @@ import {
 	ImportEventsConfirmInfo,
 	LocationData,
 	SidebarEvent,
+	TripActions,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
 import {
@@ -56,6 +57,7 @@ import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/cons
 import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
+import { DBService } from './data-handlers/db-service';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -3201,6 +3203,8 @@ const ReactModalService = {
 			currentEvent: CalendarEvent,
 			addEventToSidebar: (event: SidebarEvent) => boolean
 		) => {
+			const original = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
+
 			ReactModalService.openConfirmModal(
 				eventStore,
 				async () => {
@@ -3211,6 +3215,24 @@ const ReactModalService = {
 						// remove from calendar
 						eventStore.allowRemoveAllCalendarEvents = true;
 						await eventStore.deleteEvent(eventId);
+
+						if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
+							(eventStore.dataService as DBService)
+								.logHistory(
+									eventStore.tripId,
+									TripActions.deletedCalendarEvent,
+									{
+										was: original,
+									},
+									eventId,
+									currentEvent.title
+								)
+								.then(() => {
+									runInAction(() => {
+										eventStore.reloadHistoryCounter += 1;
+									});
+								});
+						}
 
 						// refreshSources();
 
@@ -4471,8 +4493,32 @@ const ReactModalService = {
 		const updatedAt = addHours(new Date(historyRow.updatedAt), offset);
 
 		const isYou = historyRow.updatedBy == getCurrentUsername();
-
 		const when = formatFromISODateString(updatedAt.toISOString());
+
+		const getWas = () => {
+			switch (historyRow.action) {
+				case TripActions.deletedCalendarEvent:
+					const start = historyRow.actionParams.was.start
+						? formatFromISODateString(historyRow.actionParams.was.start)
+						: 'N/A';
+
+					const end = historyRow.actionParams.was.end
+						? formatFromISODateString(historyRow.actionParams.was.end)
+						: 'N/A';
+					return `${start} - ${end}`;
+				default:
+					return historyRow.actionParams.was;
+			}
+		};
+
+		const getNow = () => {
+			switch (historyRow.action) {
+				case TripActions.deletedCalendarEvent:
+					return TranslateService.translate(eventStore, 'IN_THE_SIDEBAR');
+				default:
+					return historyRow.actionParams.now;
+			}
+		};
 
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
@@ -4500,11 +4546,11 @@ const ReactModalService = {
 					</tr>
 					<tr>
 						<td>{TranslateService.translate(eventStore, 'BEFORE')}</td>
-						<td>{historyRow.actionParams.was}</td>
+						<td>{getWas()}</td>
 					</tr>
 					<tr>
 						<td>{TranslateService.translate(eventStore, 'AFTER')}</td>
-						<td>{historyRow.actionParams.now}</td>
+						<td>{getNow()}</td>
 					</tr>
 					<tr>
 						<td>{TranslateService.translate(eventStore, 'UPDATED_AT')}</td>
