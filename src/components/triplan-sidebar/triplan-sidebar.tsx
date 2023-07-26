@@ -37,6 +37,7 @@ import { addHours, formatDate, formatTimeFromISODateString, getDurationString } 
 
 // @ts-ignore
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
+import LogHistoryService from '../../services/data-handlers/log-history-service';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -1624,6 +1625,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				who: historyRow.updatedBy,
 				eventName: historyRow.eventName,
 				...historyRow.actionParams,
+				was: LogHistoryService.getWas(historyRow) ?? historyRow.actionParams.was,
 			});
 
 			return (

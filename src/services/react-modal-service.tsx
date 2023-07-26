@@ -58,6 +58,7 @@ import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
 import { DBService } from './data-handlers/db-service';
+import LogHistoryService from './data-handlers/log-history-service';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -3562,6 +3563,16 @@ const ReactModalService = {
 			// update calendar events
 			await eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
 
+			if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
+				(eventStore.dataService as DBService)
+					.logHistory(eventStore.tripId, TripActions.duplicatedCalendarEvent, {}, eventId, currentEvent.title)
+					.then(() => {
+						runInAction(() => {
+							eventStore.reloadHistoryCounter += 1;
+						});
+					});
+			}
+
 			// update all events
 			// @ts-ignore
 			// await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
@@ -4495,22 +4506,6 @@ const ReactModalService = {
 		const isYou = historyRow.updatedBy == getCurrentUsername();
 		const when = formatFromISODateString(updatedAt.toISOString());
 
-		const getWas = () => {
-			switch (historyRow.action) {
-				case TripActions.deletedCalendarEvent:
-					const start = historyRow.actionParams.was.start
-						? formatFromISODateString(historyRow.actionParams.was.start)
-						: 'N/A';
-
-					const end = historyRow.actionParams.was.end
-						? formatFromISODateString(historyRow.actionParams.was.end)
-						: 'N/A';
-					return `${start} - ${end}`;
-				default:
-					return historyRow.actionParams.was;
-			}
-		};
-
 		const getNow = () => {
 			switch (historyRow.action) {
 				case TripActions.deletedCalendarEvent:
@@ -4544,14 +4539,18 @@ const ReactModalService = {
 							)}
 						</td>
 					</tr>
-					<tr>
-						<td>{TranslateService.translate(eventStore, 'BEFORE')}</td>
-						<td>{getWas()}</td>
-					</tr>
-					<tr>
-						<td>{TranslateService.translate(eventStore, 'AFTER')}</td>
-						<td>{getNow()}</td>
-					</tr>
+					{historyRow.actionParams.was && (
+						<tr>
+							<td>{TranslateService.translate(eventStore, 'BEFORE')}</td>
+							<td>{LogHistoryService.getWas(historyRow)}</td>
+						</tr>
+					)}
+					{historyRow.actionParams.now && (
+						<tr>
+							<td>{TranslateService.translate(eventStore, 'AFTER')}</td>
+							<td>{getNow()}</td>
+						</tr>
+					)}
 					<tr>
 						<td>{TranslateService.translate(eventStore, 'UPDATED_AT')}</td>
 						<td>{when}</td>
