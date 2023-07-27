@@ -673,6 +673,14 @@
 	"switchedDaysYou": "החלפת ימים בלוח השנה",
 	"switchedDaysFull": "החליפ/ה ימים בלוח השנה: {was} ו- {now}",
 	"switchedDaysFullYou": "החלפת ימים בלוח השנה: {was} ו- {now}",
+	"addedCalendarEventFromExisting": "הוסיפ/ה פעילות ללוח השנה מהפעילויות הקיימות",
+	"addedCalendarEventFromExistingYou": "הוספת פעילות ללוח השנה מהפעילויות הקיימות",
+	"addedCalendarEventFromExistingFull": "{who} הוסיפ/ה פעילות ללוח השנה מהפעילויות הקיימות ({eventName})",
+	"addedCalendarEventFromExistingFullYou": "הוספת פעילות ללוח השנה מהפעילויות הקיימות ({eventName})",
+	"addedNewCalendarEvent": "הוסיפ/ה פעילות חדשה ללוח השנה",
+	"addedNewCalendarEventYou": "הוספת פעילות חדשה ללוח השנה",
+	"addedNewCalendarEventFull": "הוסיפ/ה פעילות חדשה ללוח השנה ({eventName})",
+	"addedNewCalendarEventFullYou": "הופת פעילות חדשה ללוח השנה ({eventName})",
 	"VIEW_HISTORY": "צפייה בהיסטוריה",
 	"WHO": "מי?",
 	"YOU": "את/ה",
@@ -680,5 +688,7 @@
 	"BEFORE": "לפני",
 	"AFTER": "אחרי",
 	"UPDATED_AT": "עודכן ב",
-	"IN_THE_SIDEBAR": "בתפריט הצד"
+	"IN_THE_SIDEBAR": "בתפריט הצד",
+	"EVENT_NAME": "שם הפעילות",
+	"TO_WHERE": "לאן?"
 }

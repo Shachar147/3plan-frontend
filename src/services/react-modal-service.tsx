@@ -57,7 +57,6 @@ import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/cons
 import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
-import { DBService } from './data-handlers/db-service';
 import LogHistoryService from './data-handlers/log-history-service';
 
 export const ReactModalRenderHelper = {
@@ -2830,11 +2829,6 @@ const ReactModalService = {
 			await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 			addToEventsToCategories(currentEvent);
 
-			// await eventStore.setAllEvents([
-			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
-			// 	{ ...currentEvent, category: categoryId },
-			// ]);
-
 			// if we got sidebarEventData it means we're trying to add already existing event to the calendar.
 			// (it could be either by clicking on the calendar and choosing 'add from existing' or trying to add from the map)
 			// in this case, after we added it to calendar, we need to remove it from sidebar.
@@ -2847,6 +2841,19 @@ const ReactModalService = {
 				});
 				await eventStore.setSidebarEvents(newSidebarEvents);
 			}
+
+			// log history
+			LogHistoryService.logHistory(
+				eventStore,
+				sidebarEventData ? TripActions.addedCalendarEventFromExisting : TripActions.addedNewCalendarEvent,
+				{
+					eventName: currentEvent.title,
+					toWhereStart: currentEvent.start,
+					toWhereEnd: currentEvent.end,
+				},
+				Number(currentEvent.id),
+				currentEvent.title
+			);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -3217,23 +3224,15 @@ const ReactModalService = {
 						eventStore.allowRemoveAllCalendarEvents = true;
 						await eventStore.deleteEvent(eventId);
 
-						if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
-							(eventStore.dataService as DBService)
-								.logHistory(
-									eventStore.tripId,
-									TripActions.deletedCalendarEvent,
-									{
-										was: original,
-									},
-									eventId,
-									currentEvent.title
-								)
-								.then(() => {
-									runInAction(() => {
-										eventStore.reloadHistoryCounter += 1;
-									});
-								});
-						}
+						LogHistoryService.logHistory(
+							eventStore,
+							TripActions.deletedCalendarEvent,
+							{
+								was: original,
+							},
+							eventId,
+							currentEvent.title
+						);
 
 						// refreshSources();
 
@@ -3563,15 +3562,13 @@ const ReactModalService = {
 			// update calendar events
 			await eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
 
-			if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
-				(eventStore.dataService as DBService)
-					.logHistory(eventStore.tripId, TripActions.duplicatedCalendarEvent, {}, eventId, currentEvent.title)
-					.then(() => {
-						runInAction(() => {
-							eventStore.reloadHistoryCounter += 1;
-						});
-					});
-			}
+			LogHistoryService.logHistory(
+				eventStore,
+				TripActions.duplicatedCalendarEvent,
+				{},
+				eventId,
+				currentEvent.title
+			);
 
 			// update all events
 			// @ts-ignore
@@ -4345,18 +4342,10 @@ const ReactModalService = {
 
 			await eventStore.setCalendarEvents(updatedEvents, true);
 
-			if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
-				(eventStore.dataService as DBService)
-					.logHistory(eventStore.tripId, TripActions.switchedDays, {
-						was: item.text,
-						now: draggedItem.text,
-					})
-					.then(() => {
-						runInAction(() => {
-							eventStore.reloadHistoryCounter += 1;
-						});
-					});
-			}
+			LogHistoryService.logHistory(eventStore, TripActions.switchedDays, {
+				was: draggedItem.text,
+				now: item.text,
+			});
 
 			ReactModalService.internal.closeModal(eventStore);
 
@@ -4552,6 +4541,22 @@ const ReactModalService = {
 							)}
 						</td>
 					</tr>
+					{historyRow.actionParams.eventName && (
+						<tr>
+							<td>{TranslateService.translate(eventStore, 'EVENT_NAME')}</td>
+							<td>{historyRow.actionParams.eventName}</td>
+						</tr>
+					)}
+					{historyRow.actionParams.toWhereStart && historyRow.actionParams.toWhereEnd && (
+						<tr>
+							<td>{TranslateService.translate(eventStore, 'TO_WHERE')}</td>
+							<td>
+								{formatFromISODateString(historyRow.actionParams.toWhereStart, false)}
+								{' - '}
+								{formatFromISODateString(historyRow.actionParams.toWhereEnd, false)}
+							</td>
+						</tr>
+					)}
 					{historyRow.actionParams.was && (
 						<tr>
 							<td>{TranslateService.translate(eventStore, 'BEFORE')}</td>

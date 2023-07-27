@@ -133,4 +133,6 @@ export enum TripActions {
 	deletedCalendarEvent = 'deletedCalendarEvent',
 	duplicatedCalendarEvent = 'duplicatedCalendarEvent',
 	switchedDays = 'switchedDays',
+	addedCalendarEventFromExisting = 'addedCalendarEventFromExisting',
+	addedNewCalendarEvent = 'addedNewCalendarEvent',
 }

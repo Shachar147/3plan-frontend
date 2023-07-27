@@ -1599,18 +1599,17 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 	const renderTripHistory = () => {
 		const renderHistory = (historyRow: any) => {
-			const offset = -1 * (new Date().getTimezoneOffset() / 60);
-
 			const updatedAt = new Date(historyRow.updatedAt);
 			const now = new Date();
 
+			const offset = -1 * (new Date().getTimezoneOffset() / 60);
 			const nowWithOffset = addHours(new Date(), offset);
 			const updatedAtWithOffset = addHours(updatedAt, offset);
 
 			const when =
 				formatDate(updatedAt) == formatDate(now)
 					? formatTimeFromISODateString(updatedAtWithOffset.toISOString())
-					: formatDate(nowWithOffset);
+					: formatDate(updatedAt);
 
 			const title = TranslateService.translate(
 				eventStore,

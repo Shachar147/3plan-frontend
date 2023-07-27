@@ -1227,6 +1227,7 @@ table{
 			th, td {
 				display: table-cell;
 				border: 1px solid;
+				padding-inline: 8px;
 
 				&:first-child {
 					min-width: 100px;

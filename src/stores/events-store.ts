@@ -35,6 +35,7 @@ import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
+import LogHistoryService from '../services/data-handlers/log-history-service';
 
 const defaultModalSettings = {
 	show: false,
@@ -848,15 +849,7 @@ export class EventStore {
 				newEvent,
 			]);
 
-			if (logHistoryData && this.dataService.getDataSourceName() == TripDataSource.DB) {
-				(this.dataService as DBService).logHistoryOnEventChange(
-					this,
-					this.tripId,
-					logHistoryData,
-					eventId,
-					storedEvent.title
-				);
-			}
+			LogHistoryService.logHistoryOnEventChange(this, this.tripId, logHistoryData, eventId, storedEvent.title);
 
 			return true;
 		}
