@@ -622,5 +622,8 @@
 	"IN_THE_SIDEBAR": "In the sidebar",
 	"EVENT_NAME": "Event Name",
 	"ADDED_TO_CATEGORY": "Added to category",
-	"HISTORY.TITLE": "Title"
+	"MODALS.END": "End time",
+	"MODALS.START": "Start time",
+	"MODALS.MOREINFO": "More info",
+	"MODALS.PREFERREDTIME": "Preferred Time"
 }

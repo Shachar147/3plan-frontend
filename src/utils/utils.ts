@@ -458,7 +458,19 @@ export function jsonDiff(obj1: object, obj2: object): any {
 		// @ts-ignore
 		if (!obj1.hasOwnProperty(i) || obj2[i] !== obj1[i]) {
 			// @ts-ignore
-			ret[i] = { was: obj1[i], now: obj2[i] };
+			if (!(obj1[i] == null && obj2[i] == undefined && obj2[i] == null && obj1[i] == undefined)) {
+				// @ts-ignore
+				if (typeof obj1[i] == 'object' && typeof obj2[i] == 'object') {
+					// @ts-ignore
+					if (JSON.stringify(obj1[i]) != JSON.stringify(obj2[i])) {
+						// @ts-ignore
+						ret[i] = { was: obj1[i], now: obj2[i] };
+					}
+				} else {
+					// @ts-ignore
+					ret[i] = { was: obj1[i], now: obj2[i] };
+				}
+			}
 		}
 	}
 	return ret;

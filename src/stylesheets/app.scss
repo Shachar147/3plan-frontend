@@ -752,6 +752,10 @@ body.ltr {
 	max-height: 250px;
 }
 
+.max-width-650 {
+	max-width: 650px;
+}
+
 .align-items-start {
 	align-items: self-start;
 }
@@ -1232,14 +1236,32 @@ table{
 				display: table-cell;
 				border: 1px solid;
 				padding-inline: 8px;
+				word-break: break-all;
 
 				&:first-child {
-					min-width: 100px;
+					min-width: 165px;
 					font-weight: bold;
+					text-align: left;
 				}
 
 				&:not(:first-child) {
 					width: 100%;
+				}
+			}
+		}
+	}
+}
+
+body.rtl {
+	table {
+		&.border-solid-table {
+			tr {
+				th, td {
+					&:first-child {
+						min-width: 120px;
+						font-weight: bold;
+						text-align: center;
+					}
 				}
 			}
 		}

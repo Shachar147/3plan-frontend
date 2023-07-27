@@ -58,20 +58,19 @@ const LogHistoryService = {
 		eventName?: string
 	) {
 		let diff = jsonDiff(buildCalendarEvent(original), buildCalendarEvent(updated));
-
-		if (diff['location'] && JSON.stringify(diff['location']['was']) == JSON.stringify(diff['location']['now'])) {
-			delete diff['location'];
-		}
-
-		if (
-			diff['openingHours'] &&
-			JSON.stringify(diff['openingHours']['was']) == JSON.stringify(diff['openingHours']['now'])
-		) {
-			delete diff['openingHours'];
-		}
-
 		delete diff['timingError'];
 		delete diff['className'];
+
+		// if (diff['location'] && JSON.stringify(diff['location']['was']) == JSON.stringify(diff['location']['now'])) {
+		// 	delete diff['location'];
+		// }
+		//
+		// if (
+		// 	diff['openingHours'] &&
+		// 	JSON.stringify(diff['openingHours']['was']) == JSON.stringify(diff['openingHours']['now'])
+		// ) {
+		// 	delete diff['openingHours'];
+		// }
 
 		// console.log({
 		// 	diff,

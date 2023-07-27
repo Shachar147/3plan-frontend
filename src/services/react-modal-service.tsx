@@ -4586,8 +4586,41 @@ const ReactModalService = {
 			}
 		};
 
+		if (historyRow.actionParams.priority) {
+			const priorityWas = historyRow.actionParams.priority.was as unknown as TriplanPriority;
+			historyRow.actionParams.priority.was = TranslateService.translate(eventStore, TriplanPriority[priorityWas]);
+
+			const priorityNow = historyRow.actionParams.priority.now as unknown as TriplanPriority;
+			historyRow.actionParams.priority.now = TranslateService.translate(eventStore, TriplanPriority[priorityNow]);
+		}
+
+		if (historyRow.actionParams.preferredTime) {
+			const preferredTimeWas = historyRow.actionParams.preferredTime.was as unknown as TriplanPriority;
+			historyRow.actionParams.preferredTime.was = TranslateService.translate(
+				eventStore,
+				TriplanPriority[preferredTimeWas]
+			);
+
+			const preferredTimeNow = historyRow.actionParams.preferredTime.now as unknown as TriplanPriority;
+			historyRow.actionParams.preferredTime.now = TranslateService.translate(
+				eventStore,
+				TriplanPriority[preferredTimeNow]
+			);
+		}
+
+		if (historyRow.actionParams.category) {
+			historyRow.actionParams.category.was =
+				eventStore.categories.find((c) => c.id == historyRow.actionParams.category.was)?.title ??
+				historyRow.actionParams.category.was;
+
+			historyRow.actionParams.category.now =
+				eventStore.categories.find((c) => c.id == historyRow.actionParams.category.now)?.title ??
+				historyRow.actionParams.category.now;
+		}
+
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
+			customClass: 'triplan-react-modal max-width-650',
 			title: TranslateService.translate(eventStore, 'VIEW_HISTORY'),
 			type: 'controlled',
 			onConfirm: () => {},
@@ -4595,11 +4628,11 @@ const ReactModalService = {
 			content: () => (
 				<table className="border-solid-table">
 					<tr>
-						<td>{TranslateService.translate(eventStore, 'WHO')}</td>
+						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'WHO')}</td>
 						<td>{isYou ? TranslateService.translate(eventStore, 'YOU') : historyRow.updatedBy}</td>
 					</tr>
 					<tr>
-						<td>{TranslateService.translate(eventStore, 'WHAT')}</td>
+						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'WHAT')}</td>
 						<td>
 							{TranslateService.translate(
 								eventStore,
@@ -4617,19 +4650,21 @@ const ReactModalService = {
 					</tr>
 					{historyRow.actionParams.eventName && (
 						<tr>
-							<td>{TranslateService.translate(eventStore, 'EVENT_NAME')}</td>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'EVENT_NAME')}</td>
 							<td>{historyRow.actionParams.eventName}</td>
 						</tr>
 					)}
 					{historyRow.actionParams.categoryName && (
 						<tr>
-							<td>{TranslateService.translate(eventStore, 'ADDED_TO_CATEGORY')}</td>
+							<td className="main-font-heavy">
+								{TranslateService.translate(eventStore, 'ADDED_TO_CATEGORY')}
+							</td>
 							<td>{historyRow.actionParams.categoryName}</td>
 						</tr>
 					)}
 					{historyRow.actionParams.toWhereStart && historyRow.actionParams.toWhereEnd && (
 						<tr>
-							<td>{TranslateService.translate(eventStore, 'TO_WHERE')}</td>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'TO_WHERE')}</td>
 							<td>
 								{formatFromISODateString(historyRow.actionParams.toWhereStart, false)}
 								{' - '}
@@ -4639,13 +4674,13 @@ const ReactModalService = {
 					)}
 					{historyRow.actionParams.was && (
 						<tr>
-							<td>{TranslateService.translate(eventStore, 'BEFORE')}</td>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'BEFORE')}</td>
 							<td>{LogHistoryService.getWas(historyRow)}</td>
 						</tr>
 					)}
 					{historyRow.actionParams.now && (
 						<tr>
-							<td>{TranslateService.translate(eventStore, 'AFTER')}</td>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'AFTER')}</td>
 							<td>{getNow()}</td>
 						</tr>
 					)}
@@ -4654,9 +4689,11 @@ const ReactModalService = {
 							.filter(
 								(k) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(k) == -1
 							)
-							.map((changedKey) => (
+							.map((changedKey, idx) => (
 								<tr>
-									<td id={changedKey}>
+									<td className="main-font-heavy">
+										{Number(idx + 1)}
+										{') '}
 										{TranslateService.translate(eventStore, `MODALS.${changedKey.toUpperCase()}`)}
 									</td>
 									<td>
@@ -4684,7 +4721,7 @@ const ReactModalService = {
 								</tr>
 							))}
 					<tr>
-						<td>{TranslateService.translate(eventStore, 'UPDATED_AT')}</td>
+						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'UPDATED_AT')}</td>
 						<td>{when}</td>
 					</tr>
 				</table>
