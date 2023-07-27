@@ -567,10 +567,10 @@
 	"UPDATE_PERMISSIONS": "Update Permissions",
 	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT": "Collaborator permissions updated successfully!",
 	"RECENT_CHANGES": "{count} Recent Changes:",
-	"changedEvent": "Changed Event {eventName}",
-	"changedEventYou": "You Changed Event {eventName}",
-	"changedEventFull": "{who} Changed Event {eventName} from {was} to {now}",
-	"changedEventFullYou": "You Changed Event {eventName} from {was} to {now}",
+	"changedEvent": "Changed Event {eventName} ({count} updates)",
+	"changedEventYou": "You Changed Event {eventName} ({count} updates)",
+	"changedEventFull": "{who} Changed Event {eventName} ({count} updates)",
+	"changedEventFullYou": "You Changed Event {eventName} ({count} updates)",
 	"changedEventTiming": "Changed Event {eventName} timing",
 	"changedEventTimingYou": "You Changed Event {eventName} timing",
 	"changedEventTimingFull": "{who} Changed Event {eventName} timing from {was} to {now}",
@@ -621,5 +621,6 @@
 	"UPDATED_AT": "Updated at",
 	"IN_THE_SIDEBAR": "In the sidebar",
 	"EVENT_NAME": "Event Name",
-	"ADDED_TO_CATEGORY": "Added to category"
+	"ADDED_TO_CATEGORY": "Added to category",
+	"HISTORY.TITLE": "Title"
 }

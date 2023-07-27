@@ -649,10 +649,10 @@
 	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CONTENT": "שנו ל <b>{name}</b> את הרשאות השיתוף על טיול זה:",
 	"UPDATE_PERMISSIONS": "עדכן הרשאות",
 	"RECENT_CHANGES": "{count} השינויים האחרונים:",
-	"changedEvent": "עדכנ/ה את {eventName}",
-	"changedEventYou": "עדכנת את {eventName}",
-	"changedEventFull": "{who} עדכנ/ה את {eventName} מ{was} ל{now}",
-	"changedEventFullYou": "{who} עדכנת את {eventName} מ{was} ל{now}",
+	"changedEvent": "עדכנ/ה את {eventName} ({count} שינויים)",
+	"changedEventYou": "עדכנת את {eventName} ({count} שינויים)",
+	"changedEventFull": "{who} עדכנ/ה את {eventName} ({count} שינויים)",
+	"changedEventFullYou": "{who} עדכנת את {eventName} ({count} שינויים)",
 	"changedEventTiming": "עדכנ/ה את התזמון של {eventName}",
 	"changedEventTimingYou": "עדכנת את התזמון של {eventName}",
 	"changedEventTimingFull": "{who} עדכנ/ה תזמון של {eventName} מ{was} ל{now}",
@@ -703,5 +703,9 @@
 	"IN_THE_SIDEBAR": "בתפריט הצד",
 	"EVENT_NAME": "שם הפעילות",
 	"TO_WHERE": "לאן?",
-	"ADDED_TO_CATEGORY": "נוספה לקטגוריה"
+	"ADDED_TO_CATEGORY": "נוספה לקטגוריה",
+	"MODALS.END": "זמן סיום",
+	"MODALS.START": "זמן התחלה",
+	"MODALS.MOREINFO": "מידע נוסף",
+	"MODALS.PREFERREDTIME": "זמן מועדף"
 }

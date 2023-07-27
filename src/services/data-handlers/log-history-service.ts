@@ -5,6 +5,7 @@ import { DBService } from './db-service';
 import { runInAction } from 'mobx';
 import { EventStore } from '../../stores/events-store';
 import { jsonDiff } from '../../utils/utils';
+import _ from 'lodash';
 
 const LogHistoryService = {
 	getWas(historyRow: any) {
@@ -48,7 +49,72 @@ const LogHistoryService = {
 				});
 		}
 	},
+	logHistoryOnEventChangeInternal(
+		eventStore: EventStore,
+		tripId: number,
+		original: any,
+		updated: any,
+		eventId?: number,
+		eventName?: string
+	) {
+		let diff = jsonDiff(buildCalendarEvent(original), buildCalendarEvent(updated));
 
+		if (diff['location'] && JSON.stringify(diff['location']['was']) == JSON.stringify(diff['location']['now'])) {
+			delete diff['location'];
+		}
+
+		if (
+			diff['openingHours'] &&
+			JSON.stringify(diff['openingHours']['was']) == JSON.stringify(diff['openingHours']['now'])
+		) {
+			delete diff['openingHours'];
+		}
+
+		delete diff['timingError'];
+		delete diff['className'];
+
+		// console.log({
+		// 	diff,
+		// 	original: buildCalendarEvent(original),
+		// 	updated: buildCalendarEvent(updated),
+		// });
+
+		let action: TripActions = TripActions.changedEvent;
+		let actionParams = diff;
+
+		const test = _.cloneDeep(diff);
+		delete test['start'];
+		delete test['end'];
+		delete test['duration'];
+		const isTimeRelatedChange = Object.keys(diff).length > 0 && Object.keys(test).length == 0;
+
+		if (isTimeRelatedChange) {
+			if ('duration' in diff) {
+				console.log('changed duration and timing');
+				action = TripActions.changedEventDurationAndTiming;
+				actionParams = {
+					was: `${diff?.start?.was ?? original.start} - ${diff?.end?.was ?? original.end} (${
+						diff?.duration?.was ?? original.duration
+					})`,
+					now: `${diff?.start?.now ?? updated.start} - ${diff?.end?.now ?? updated.end} (${
+						diff?.duration?.now ?? updated.duration
+					})`,
+				};
+			} else {
+				action = TripActions.changedEventTiming;
+				actionParams = {
+					was: `${diff?.start?.was ?? original.start} - ${diff?.end?.was ?? original.end}`,
+					now: `${diff?.start?.now ?? updated.start} - ${diff?.end?.now ?? updated.end}`,
+				};
+			}
+		}
+
+		(eventStore.dataService as DBService).logHistory(tripId, action, actionParams, eventId, eventName).then(() => {
+			runInAction(() => {
+				eventStore.reloadHistoryCounter += 1;
+			});
+		});
+	},
 	logHistoryOnEventChange(
 		eventStore: EventStore,
 		tripId: number,
@@ -78,44 +144,7 @@ const LogHistoryService = {
 				duration: convertMsToHM(changeInfo.event.end - changeInfo.event.start),
 			};
 
-			let diff = jsonDiff(buildCalendarEvent(original), buildCalendarEvent(updated));
-
-			// console.log({
-			// 	diff,
-			// 	original: buildCalendarEvent(original),
-			// 	updated: buildCalendarEvent(updated),
-			// });
-
-			let action: TripActions = TripActions.changedEvent;
-			let actionParams = diff;
-			if ('start' in diff || 'end' in diff) {
-				if ('duration' in diff) {
-					console.log('changed duration and timing');
-					action = TripActions.changedEventDurationAndTiming;
-					actionParams = {
-						was: `${diff?.start?.was ?? original.start} - ${diff?.end?.was ?? original.end} (${
-							diff?.duration?.was ?? original.duration
-						})`,
-						now: `${diff?.start?.now ?? updated.start} - ${diff?.end?.now ?? updated.end} (${
-							diff?.duration?.now ?? updated.duration
-						})`,
-					};
-				} else {
-					action = TripActions.changedEventTiming;
-					actionParams = {
-						was: `${diff?.start?.was ?? original.start} - ${diff?.end?.was ?? original.end}`,
-						now: `${diff?.start?.now ?? updated.start} - ${diff?.end?.now ?? updated.end}`,
-					};
-				}
-			}
-
-			(eventStore.dataService as DBService)
-				.logHistory(tripId, action, actionParams, eventId, eventName)
-				.then(() => {
-					runInAction(() => {
-						eventStore.reloadHistoryCounter += 1;
-					});
-				});
+			this.logHistoryOnEventChangeInternal(eventStore, tripId, original, updated, eventId, eventName);
 		}
 	},
 };

@@ -3452,6 +3452,42 @@ const ReactModalService = {
 						}
 					}
 
+					let originalStart = originalEvent.start;
+					try {
+						originalStart = formatFromISODateString((originalEvent.start as Date).toISOString(), false);
+					} catch {}
+
+					let originalEnd = originalEvent.end;
+					try {
+						originalEnd = formatFromISODateString((originalEvent.end as Date).toISOString(), false);
+					} catch {}
+
+					let currentStart: any = currentEvent.start;
+					try {
+						currentStart = formatFromISODateString((currentEvent.start as Date).toISOString(), false);
+					} catch {}
+
+					let currentEnd: any = currentEvent.end;
+					try {
+						currentEnd = formatFromISODateString((currentEvent.end as Date).toISOString(), false);
+					} catch {}
+					LogHistoryService.logHistoryOnEventChangeInternal(
+						eventStore,
+						eventStore.tripId,
+						{
+							...originalEvent,
+							start: originalStart,
+							end: originalEnd,
+						},
+						{
+							...currentEvent,
+							start: currentStart,
+							end: currentEnd,
+						},
+						Number(eventId),
+						originalEvent.title
+					);
+
 					ReactModalService.internal.alertMessage(eventStore, title, content, 'success', contentParams);
 				} else {
 					let title = 'MODALS.EDIT_EVENT_ERROR.CONTENT';
@@ -3487,14 +3523,43 @@ const ReactModalService = {
 					...eventStore.calendarEvents.filter((x) => x.id !== eventId),
 					currentEvent,
 				]);
-				// const allEventsEvent = {
-				// 	...currentEvent,
-				// 	category: categoryId.toString(),
-				// };
-				// await eventStore.setAllEvents([
-				// 	...eventStore.allEventsComputed.filter((x) => x.id !== eventId),
-				// 	allEventsEvent,
-				// ]);
+
+				let originalStart = originalEvent.start;
+				try {
+					originalStart = formatFromISODateString((originalEvent.start as Date).toISOString(), false);
+				} catch {}
+
+				let originalEnd = originalEvent.end;
+				try {
+					originalEnd = formatFromISODateString((originalEvent.end as Date).toISOString(), false);
+				} catch {}
+
+				let currentStart: any = currentEvent.start;
+				try {
+					currentStart = formatFromISODateString((currentEvent.start as Date).toISOString(), false);
+				} catch {}
+
+				let currentEnd: any = currentEvent.end;
+				try {
+					currentEnd = formatFromISODateString((currentEvent.end as Date).toISOString(), false);
+				} catch {}
+				LogHistoryService.logHistoryOnEventChangeInternal(
+					eventStore,
+					eventStore.tripId,
+					{
+						...originalEvent,
+						start: originalStart,
+						end: originalEnd,
+					},
+					{
+						...currentEvent,
+						start: currentStart,
+						end: currentEnd,
+					},
+					Number(eventId),
+					originalEvent.title
+				);
+
 				ReactModalService.internal.alertMessage(
 					eventStore,
 					'MODALS.UPDATED.TITLE',
@@ -4541,6 +4606,11 @@ const ReactModalService = {
 								isYou ? historyRow.action + 'You' : historyRow.action,
 								{
 									eventName: historyRow.eventName,
+									count: Object.keys(historyRow.actionParams).filter(
+										(c) =>
+											['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) ==
+											-1
+									).length,
 								}
 							)}
 						</td>
@@ -4579,6 +4649,40 @@ const ReactModalService = {
 							<td>{getNow()}</td>
 						</tr>
 					)}
+					{historyRow.action == TripActions.changedEvent &&
+						Object.keys(historyRow.actionParams)
+							.filter(
+								(k) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(k) == -1
+							)
+							.map((changedKey) => (
+								<tr>
+									<td id={changedKey}>
+										{TranslateService.translate(eventStore, `MODALS.${changedKey.toUpperCase()}`)}
+									</td>
+									<td>
+										<div className="flex-col gap-4">
+											<div>
+												<span>{TranslateService.translate(eventStore, 'BEFORE')}</span>
+												{' : '}
+												<span>
+													{historyRow.actionParams[changedKey]?.was?.address ||
+														historyRow.actionParams[changedKey]?.was ||
+														'N/A'}
+												</span>
+											</div>
+											<div>
+												<span>{TranslateService.translate(eventStore, 'AFTER')}</span>
+												{' : '}
+												<span>
+													{historyRow.actionParams[changedKey]?.now?.address ||
+														historyRow.actionParams[changedKey]?.now ||
+														'N/A'}
+												</span>
+											</div>
+										</div>
+									</td>
+								</tr>
+							))}
 					<tr>
 						<td>{TranslateService.translate(eventStore, 'UPDATED_AT')}</td>
 						<td>{when}</td>
