@@ -1438,8 +1438,10 @@ export class EventStore {
 
 		if (this.isTripLocked) {
 			await this.dataService.unlockTrip(this.tripName);
+			LogHistoryService.logHistory(this, TripActions.unlockedTrip, {});
 		} else {
 			await this.dataService.lockTrip(this.tripName);
+			LogHistoryService.logHistory(this, TripActions.lockedTrip, {});
 		}
 
 		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
