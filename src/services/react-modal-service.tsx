@@ -3,7 +3,7 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import { getClasses, getCurrentUsername, isHotelsCategory, ucfirst } from '../utils/utils';
+import { getClasses, getCurrentUsername, isHotel, isHotelsCategory, ucfirst } from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -2846,10 +2846,19 @@ const ReactModalService = {
 				await eventStore.setSidebarEvents(newSidebarEvents);
 			}
 
+			const categoryName =
+				sidebarEventData && sidebarEventData.category
+					? eventStore.categories.find((c) => c.id == Number(sidebarEventData.category))?.title
+					: undefined;
+
 			// log history
 			LogHistoryService.logHistory(
 				eventStore,
-				sidebarEventData ? TripActions.addedCalendarEventFromExisting : TripActions.addedNewCalendarEvent,
+				sidebarEventData
+					? categoryName && isHotel(categoryName, sidebarEventData.title)
+						? TripActions.addedHotelCalendarEventFromExisting
+						: TripActions.addedCalendarEventFromExisting
+					: TripActions.addedNewCalendarEvent,
 				{
 					eventName: currentEvent.title,
 					toWhereStart: currentEvent.start,
@@ -4650,7 +4659,14 @@ const ReactModalService = {
 					</tr>
 					{historyRow.actionParams.eventName && (
 						<tr>
-							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'EVENT_NAME')}</td>
+							<td className="main-font-heavy">
+								{TranslateService.translate(
+									eventStore,
+									historyRow.action == TripActions.addedHotelCalendarEventFromExisting
+										? 'HOTEL_NAME'
+										: 'EVENT_NAME'
+								)}
+							</td>
 							<td>{historyRow.actionParams.eventName}</td>
 						</tr>
 					)}

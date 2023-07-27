@@ -134,6 +134,7 @@ export enum TripActions {
 	duplicatedCalendarEvent = 'duplicatedCalendarEvent',
 	switchedDays = 'switchedDays',
 	addedCalendarEventFromExisting = 'addedCalendarEventFromExisting',
+	addedHotelCalendarEventFromExisting = 'addedHotelCalendarEventFromExisting',
 	addedNewCalendarEvent = 'addedNewCalendarEvent',
 
 	// sidebar
