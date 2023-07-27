@@ -648,7 +648,7 @@
 	"CONTINUE_ANYWAY": "המשך בכל זאת",
 	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CONTENT": "שנו ל <b>{name}</b> את הרשאות השיתוף על טיול זה:",
 	"UPDATE_PERMISSIONS": "עדכן הרשאות",
-	"RECENT_CHANGES": "{count} השינויים האחרונים:",
+	"RECENT_CHANGES": "{count} הפעולות האחרונות:",
 	"changedEvent": "עדכנ/ה את {eventName} ({count} שינויים)",
 	"changedEventYou": "עדכנת את {eventName} ({count} שינויים)",
 	"changedEventFull": "{who} עדכנ/ה את {eventName} ({count} שינויים)",
@@ -735,5 +735,16 @@
 	"MODALS.MOREINFO": "מידע נוסף",
 	"MODALS.PREFERREDTIME": "זמן מועדף",
 	"MODALS.STARTDATE": "תאריך התחלה",
-	"MODALS.ENDDATE": "תאריך סיום"
+	"MODALS.ENDDATE": "תאריך סיום",
+	"ADDED_CATEGORIES": "קטגוריות שנוספו",
+	"ADDED_EVENTS": "פעילויות שנוספו",
+	"ERRORS":  "שגיאות",
+	"importedCategoriesAndEvents": "ייבא/ה קטגוריות ופעילויות",
+	"importedCategoriesAndEventsFull": "{who} ייבא/ה קטגוריות ופעילויות",
+	"importedCategoriesAndEventsYou": "ייבאת {count2} קטגוריות ו{count} פעילויות",
+	"importedCategoriesAndEventsFullYou": "ייבאת {count2} קטגוריות ו{count} פעילויות",
+	"importedEvents": "ייבא/ה פעילויות",
+	"importedEventsFull": "{who} ייבא/ה פעילויות",
+	"importedEventsYou": "ייבאת {count} פעילויות",
+	"importedEventsFullYou": "ייבאת {count} פעילויות"
 }

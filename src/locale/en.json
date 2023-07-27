@@ -566,7 +566,7 @@
 	"CONTINUE_ANYWAY": "Continue Anyway",
 	"UPDATE_PERMISSIONS": "Update Permissions",
 	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT": "Collaborator permissions updated successfully!",
-	"RECENT_CHANGES": "{count} Recent Changes:",
+	"RECENT_CHANGES": "{count} Recent Actions:",
 	"changedEvent": "Changed activity {eventName} ({count} updates)",
 	"changedEventYou": "You Changed activity {eventName} ({count} updates)",
 	"changedEventFull": "{who} Changed activity {eventName} ({count} updates)",
@@ -652,5 +652,16 @@
 	"MODALS.MOREINFO": "More info",
 	"MODALS.PREFERREDTIME": "Preferred Time",
 	"MODALS.STARTDATE": "Start date",
-	"MODALS.ENDDATE": "End date"
+	"MODALS.ENDDATE": "End date",
+	"ADDED_CATEGORIES": "Added Categories",
+	"ADDED_EVENTS": "Added Events",
+	"ERRORS":  "Errors",
+	"importedCategoriesAndEvents": "Imported categories and activities",
+	"importedCategoriesAndEventsFull": "{who} imported categories and activities",
+	"importedCategoriesAndEventsYou": "You imported {count2} categories and {count} activities",
+	"importedCategoriesAndEventsFullYou": "You imported {count2} categories and {count} activities",
+	"importedEvents": "Imported activities",
+	"importedEventsFull": "{who} imported activities",
+	"importedEventsYou": "You imported {count} activities",
+	"importedEventsFullYou": "You imported {count} activities"
 }

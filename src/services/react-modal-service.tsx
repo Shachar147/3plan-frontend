@@ -14,6 +14,7 @@ import {
 	LocationData,
 	SidebarEvent,
 	TripActions,
+	TriPlanCategory,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
 import {
@@ -4026,6 +4027,21 @@ const ReactModalService = {
 			onConfirm: async () => {
 				const { categoriesImported, eventsImported } = await ImportService.import(eventStore, info);
 				if (categoriesImported || eventsImported) {
+					LogHistoryService.logHistory(
+						eventStore,
+						categoriesImported ? TripActions.importedCategoriesAndEvents : TripActions.importedEvents,
+						{
+							eventsToAdd: info.eventsToAdd,
+							categoriesToAdd: info.categoriesToAdd,
+							numOfEventsWithErrors: info.numOfEventsWithErrors,
+							errors: info.errors,
+							categoriesImported,
+							eventsImported,
+							count: info.eventsToAdd?.length ?? 0,
+							count2: info.categoriesToAdd?.length ?? 0,
+						}
+					);
+
 					ReactModalService.internal.alertMessage(
 						eventStore,
 						'MODALS.IMPORTED.TITLE',
@@ -4655,11 +4671,15 @@ const ReactModalService = {
 								isYou ? historyRow.action + 'You' : historyRow.action,
 								{
 									eventName: historyRow.eventName,
-									count: Object.keys(historyRow.actionParams).filter(
-										(c) =>
-											['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) ==
-											-1
-									).length,
+									count:
+										historyRow.actionParams.count ??
+										Object.keys(historyRow.actionParams).filter(
+											(c) =>
+												['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(
+													c
+												) == -1
+										).length,
+									count2: historyRow.actionParams.count2,
 								}
 							)}
 						</td>
@@ -4711,6 +4731,43 @@ const ReactModalService = {
 							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'AFTER')}</td>
 							<td>{getNow()}</td>
 						</tr>
+					)}
+
+					{(historyRow.action == TripActions.importedCategoriesAndEvents ||
+						historyRow.action == TripActions.importedEvents) && (
+						<>
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(eventStore, 'ADDED_CATEGORIES')}
+								</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams.categoriesToAdd
+										?.map(
+											(c: TriPlanCategory, idx: number) =>
+												Number(idx + 1) + '. ' + c.icon + ' ' + c.title
+										)
+										?.join('\n') ?? '-'}
+								</td>
+							</tr>
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(eventStore, 'ADDED_EVENTS')}
+								</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams.eventsToAdd
+										?.map((c: SidebarEvent, idx: number) => Number(idx + 1) + '. ' + c.title)
+										?.join('\n') ?? '-'}
+								</td>
+							</tr>
+							<tr>
+								<td className="main-font-heavy">{TranslateService.translate(eventStore, 'ERRORS')}</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams.errors
+										?.map((c: SidebarEvent, idx: number) => Number(idx + 1) + '. ' + c)
+										?.join('\n') ?? '-'}
+								</td>
+							</tr>
+						</>
 					)}
 					{(historyRow.action == TripActions.changedEvent ||
 						historyRow.action == TripActions.changedTripDates) &&

@@ -1616,10 +1616,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				historyRow.updatedBy !== getCurrentUsername() ? historyRow.action : historyRow.action + 'You',
 				{
 					eventName: historyRow.eventName,
-					count: Object.keys(historyRow.actionParams).filter(
-						(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
-					).length,
+					count:
+						historyRow.actionParams.count ??
+						Object.keys(historyRow.actionParams).filter(
+							(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
+						).length,
 					categoryName: historyRow.actionParams?.categoryName,
+					count2: historyRow.actionParams.count2,
 				}
 			);
 
@@ -1629,9 +1632,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				eventName: historyRow.eventName,
 				...historyRow.actionParams,
 				was: LogHistoryService.getWas(historyRow) ?? historyRow.actionParams.was,
-				count: Object.keys(historyRow.actionParams).filter(
-					(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
-				).length,
+				count:
+					historyRow.actionParams.count ??
+					Object.keys(historyRow.actionParams).filter(
+						(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
+					).length,
 			});
 
 			return (

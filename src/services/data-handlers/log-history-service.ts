@@ -1,4 +1,4 @@
-import { buildCalendarEvent, TripActions } from '../../utils/interfaces';
+import { buildCalendarEvent, SidebarEvent, TripActions, TriPlanCategory } from '../../utils/interfaces';
 import { convertMsToHM, formatFromISODateString } from '../../utils/time-utils';
 import { TripDataSource } from '../../utils/enums';
 import { DBService } from './db-service';
@@ -38,6 +38,15 @@ const LogHistoryService = {
 			startDate?: { was: any; now: any };
 			endDate?: { was: any; now: any };
 			count?: number;
+
+			// import:
+			eventsToAdd?: SidebarEvent[];
+			categoriesToAdd?: TriPlanCategory[];
+			numOfEventsWithErrors?: number;
+			errors?: string[];
+			categoriesImported?: boolean;
+			eventsImported?: boolean;
+			count2?: number;
 		},
 		eventId?: number,
 		eventName?: string

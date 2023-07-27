@@ -158,6 +158,7 @@ function MainPage(props: MainPageProps) {
 		}
 	}, [tripName, locale]);
 
+	// todo: see if it's possible to achieve it with sockets, it could be performance issue
 	useEffect(() => {
 		let interval: NodeJS.Timeout;
 		if (eventStore.isSharedTrip) {
