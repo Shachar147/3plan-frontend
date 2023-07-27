@@ -135,4 +135,9 @@ export enum TripActions {
 	switchedDays = 'switchedDays',
 	addedCalendarEventFromExisting = 'addedCalendarEventFromExisting',
 	addedNewCalendarEvent = 'addedNewCalendarEvent',
+
+	// sidebar
+	addedNewSidebarEventFromMap = 'addedNewSidebarEventFromMap',
+	addedNewSidebarEvent = 'addedNewSidebarEvent',
+	addedNewSidebarEventFromTinder = 'addedNewSidebarEventFromTinder',
 }

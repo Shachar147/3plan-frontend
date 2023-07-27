@@ -26,7 +26,15 @@ const LogHistoryService = {
 	logHistory(
 		eventStore: EventStore,
 		action: TripActions,
-		data: { was?: any; now?: any; eventName?: string; toWhereStart?: Date; toWhereEnd?: Date },
+		data: {
+			was?: any;
+			now?: any;
+			eventName?: string;
+			toWhereStart?: Date;
+			toWhereEnd?: Date;
+			categoryName?: string;
+			categoryId?: number;
+		},
 		eventId?: number,
 		eventName?: string
 	) {

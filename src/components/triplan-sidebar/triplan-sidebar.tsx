@@ -16,7 +16,7 @@ import {
 } from '../../utils/utils';
 import { TripDataSource, TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { eventStoreContext } from '../../stores/events-store';
-import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
+import { CalendarEvent, SidebarEvent, TripActions, TriPlanCategory } from '../../utils/interfaces';
 import { observer, Observer } from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';

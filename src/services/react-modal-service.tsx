@@ -1918,7 +1918,8 @@ const ReactModalService = {
 		categoryId?: number,
 		initialData: any = {},
 		isSecondModal: boolean = false,
-		onClose?: () => void
+		onClose?: () => void,
+		actionCode: TripActions = TripActions.addedNewSidebarEvent
 	) => {
 		// @ts-ignore
 		window.selectedLocation = initialData.location || undefined;
@@ -2016,14 +2017,17 @@ const ReactModalService = {
 			existingSidebarEvents[categoryId].push(currentEvent);
 			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			// const allEventsEvent = {
-			// 	...currentEvent,
-			// 	category: categoryId.toString(),
-			// };
-			// await eventStore.setAllEvents([
-			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
-			// 	allEventsEvent,
-			// ]);
+			LogHistoryService.logHistory(
+				eventStore,
+				actionCode,
+				{
+					eventName: currentEvent.title,
+					categoryName: eventStore.categories.find((c) => c.id == Number(categoryId!))?.title,
+					categoryId: categoryId,
+				},
+				Number(currentEvent.id),
+				currentEvent.title
+			);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -4545,6 +4549,12 @@ const ReactModalService = {
 						<tr>
 							<td>{TranslateService.translate(eventStore, 'EVENT_NAME')}</td>
 							<td>{historyRow.actionParams.eventName}</td>
+						</tr>
+					)}
+					{historyRow.actionParams.categoryName && (
+						<tr>
+							<td>{TranslateService.translate(eventStore, 'ADDED_TO_CATEGORY')}</td>
+							<td>{historyRow.actionParams.categoryName}</td>
 						</tr>
 					)}
 					{historyRow.actionParams.toWhereStart && historyRow.actionParams.toWhereEnd && (

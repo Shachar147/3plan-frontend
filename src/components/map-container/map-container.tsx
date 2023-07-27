@@ -33,7 +33,7 @@ import * as ReactDOMServer from 'react-dom/server';
 // @ts-ignore
 import Slider from 'react-slick';
 import { AllEventsEvent } from '../../services/data-handlers/data-handler-base';
-import { CalendarEvent, Coordinate, LocationData, SidebarEvent } from '../../utils/interfaces';
+import { CalendarEvent, Coordinate, LocationData, SidebarEvent, TripActions } from '../../utils/interfaces';
 import { observer, Observer } from 'mobx-react';
 import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
@@ -120,7 +120,8 @@ function Marker(props: MarkerProps): ReactElement {
 					undefined,
 					() => {
 						if (clearSearch) clearSearch();
-					}
+					},
+					TripActions.addedNewSidebarEventFromMap
 				);
 			}}
 		>

@@ -599,6 +599,18 @@
 	"addedNewCalendarEventYou": "You added a new calendar event",
 	"addedNewCalendarEventFull": "Added a new calendar event ({eventName})",
 	"addedNewCalendarEventFullYou": "You added a new calendar event ({eventName})",
+	"addedNewSidebarEventFromMap": "Added a new sidebar event from map",
+	"addedNewSidebarEventFromMapYou": "You added a new sidebar event from map",
+	"addedNewSidebarEventFromMapFull": "Added a new sidebar event from map ({eventName})",
+	"addedNewSidebarEventFromMapFullYou": "You added a new sidebar event from map ({eventName})",
+	"addedNewSidebarEvent": "Added a new sidebar event",
+	"addedNewSidebarEventYou": "You added a new sidebar event",
+	"addedNewSidebarEventFull": "Added a new sidebar event ({eventName})",
+	"addedNewSidebarEventFullYou": "You added a new sidebar event ({eventName})",
+	"addedNewSidebarEventFromTinder": "Added a new sidebar event from Triplan Places Tinder",
+	"addedNewSidebarEventFromTinderYou": "You added a new sidebar event from Triplan Places Tinder",
+	"addedNewSidebarEventFromTinderFull": "Added a new sidebar event from Triplan Places Tinder ({eventName})",
+	"addedNewSidebarEventFromTinderFullYou": "You added a new sidebar event from Triplan Places Tinder ({eventName})",
 	"VIEW_HISTORY": "View History",
 	"WHO": "Who?",
 	"WHAT": "What?",
@@ -608,5 +620,6 @@
 	"AFTER": "After",
 	"UPDATED_AT": "Updated at",
 	"IN_THE_SIDEBAR": "In the sidebar",
-	"EVENT_NAME": "Event Name"
+	"EVENT_NAME": "Event Name",
+	"ADDED_TO_CATEGORY": "Added to category"
 }

@@ -15,6 +15,7 @@ import Slider from 'react-slick';
 import { TriplanTinderApiService } from '../../../../admin/services/triplan-tinder-api-service';
 import { runInAction } from 'mobx';
 import { getTinderServerAddress } from '../../../../config/config';
+import { TripActions } from '../../../../utils/interfaces';
 
 interface PlacesTinderProps {
 	eventStore: EventStore;
@@ -179,7 +180,14 @@ function PlacesTinder(props: PlacesTinderProps) {
 			images: (currentPlace.tinder || currentPlace).images.join('\n'),
 		};
 
-		ReactModalService.openAddSidebarEventModal(eventStore, categoryId, initialData, true);
+		ReactModalService.openAddSidebarEventModal(
+			eventStore,
+			categoryId,
+			initialData,
+			true,
+			undefined,
+			TripActions.addedNewSidebarEventFromTinder
+		);
 		setCurrIdx(currIdx + 1);
 	}
 

@@ -681,6 +681,18 @@
 	"addedNewCalendarEventYou": "הוספת פעילות חדשה ללוח השנה",
 	"addedNewCalendarEventFull": "הוסיפ/ה פעילות חדשה ללוח השנה ({eventName})",
 	"addedNewCalendarEventFullYou": "הופת פעילות חדשה ללוח השנה ({eventName})",
+	"addedNewSidebarEventFromMap": "הוסיפ/ה פעילות חדשה מהמפה לתפריט הצד",
+	"addedNewSidebarEventFromMapYou": "הוספת פעילות חדשה מהמפה לתפריט הצד",
+	"addedNewSidebarEventFromMapFull": "הוסיפ/ה פעילות חדשה מהמפה לתפריט הצד ({eventName})",
+	"addedNewSidebarEventFromMapFullYou": "הוספת פעילות חדשה מהמפה לתפריט הצד ({eventName})",
+	"addedNewSidebarEvent": "הוסיפ/ה פעילות חדשה לתפריט הצד",
+	"addedNewSidebarEventYou": "הוספת פעילות חדשה לתפריט הצד",
+	"addedNewSidebarEventFull": "הוסיפ/ה פעילות חדשה לתפריט הצד ({eventName})",
+	"addedNewSidebarEventFullYou": "הוספת פעילות חדשה לתפריט הצד ({eventName})",
+	"addedNewSidebarEventFromTinder": "הוסיפ/ה פעילות חדשה מ לתפריט הצד מטינדר המקומות של טריפלאן",
+	"addedNewSidebarEventFromTinderYou": "הוספת פעילות חדשה מ לתפריט הצד מטינדר המקומות של טריפלאן",
+	"addedNewSidebarEventFromTinderFull": "הוסיפ/ה פעילות חדשה מ לתפריט הצד מטינדר המקומות של טריפלאן ({eventName})",
+	"addedNewSidebarEventFromTinderFullYou": "הוספת פעילות חדשה מ לתפריט הצד מטינדר המקומות של טריפלאן ({eventName})",
 	"VIEW_HISTORY": "צפייה בהיסטוריה",
 	"WHO": "מי?",
 	"YOU": "את/ה",
@@ -690,5 +702,6 @@
 	"UPDATED_AT": "עודכן ב",
 	"IN_THE_SIDEBAR": "בתפריט הצד",
 	"EVENT_NAME": "שם הפעילות",
-	"TO_WHERE": "לאן?"
+	"TO_WHERE": "לאן?",
+	"ADDED_TO_CATEGORY": "נוספה לקטגוריה"
 }
