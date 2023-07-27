@@ -1432,6 +1432,10 @@ export class EventStore {
 
 	@action
 	async toggleTripLocked() {
+		if (this.isSharedTrip && !this.canWrite) {
+			return;
+		}
+
 		if (this.isTripLocked) {
 			await this.dataService.unlockTrip(this.tripName);
 		} else {
