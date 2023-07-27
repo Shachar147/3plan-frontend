@@ -2,7 +2,14 @@ import React, { createContext } from 'react';
 import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
-import { CalendarEvent, Coordinate, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
+import {
+	CalendarEvent,
+	Coordinate,
+	DistanceResult,
+	SidebarEvent,
+	TripActions,
+	TriPlanCategory,
+} from '../utils/interfaces';
 import {
 	getEnumKey,
 	GoogleTravelMode,
@@ -946,6 +953,8 @@ export class EventStore {
 			eventIdToEvent[e.id] = e;
 		});
 
+		const count = this.calendarEvents.length;
+
 		this.calendarEvents.forEach((event) => {
 			const eventId = event.id!;
 			const categoryId = eventToCategory[eventId];
@@ -964,7 +973,11 @@ export class EventStore {
 		this.allowRemoveAllCalendarEvents = true;
 		const promise2 = this.setCalendarEvents([]);
 
-		return Promise.all([promise1, promise2]);
+		return Promise.all([promise1, promise2]).then(() => {
+			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
+				count,
+			});
+		});
 	}
 
 	@action

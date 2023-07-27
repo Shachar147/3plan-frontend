@@ -37,6 +37,7 @@ const LogHistoryService = {
 			categoryId?: number;
 			startDate?: { was: any; now: any };
 			endDate?: { was: any; now: any };
+			count?: number;
 		},
 		eventId?: number,
 		eventName?: string

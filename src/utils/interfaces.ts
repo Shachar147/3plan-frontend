@@ -136,6 +136,7 @@ export enum TripActions {
 	addedCalendarEventFromExisting = 'addedCalendarEventFromExisting',
 	addedHotelCalendarEventFromExisting = 'addedHotelCalendarEventFromExisting',
 	addedNewCalendarEvent = 'addedNewCalendarEvent',
+	clearedCalendar = 'clearedCalendar',
 
 	// sidebar
 	addedNewSidebarEventFromMap = 'addedNewSidebarEventFromMap',
