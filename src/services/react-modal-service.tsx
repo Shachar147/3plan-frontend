@@ -4741,12 +4741,14 @@ const ReactModalService = {
 									{TranslateService.translate(eventStore, 'ADDED_CATEGORIES')}
 								</td>
 								<td className="white-space-pre-line">
-									{historyRow.actionParams.categoriesToAdd
-										?.map(
-											(c: TriPlanCategory, idx: number) =>
-												Number(idx + 1) + '. ' + c.icon + ' ' + c.title
-										)
-										?.join('\n') ?? '-'}
+									{historyRow.actionParams.categoriesToAdd?.length
+										? historyRow.actionParams.categoriesToAdd
+												?.map(
+													(c: TriPlanCategory, idx: number) =>
+														Number(idx + 1) + '. ' + c.icon + ' ' + c.title
+												)
+												?.join('\n')
+										: '-'}
 								</td>
 							</tr>
 							<tr>
@@ -4754,9 +4756,13 @@ const ReactModalService = {
 									{TranslateService.translate(eventStore, 'ADDED_EVENTS')}
 								</td>
 								<td className="white-space-pre-line">
-									{historyRow.actionParams.eventsToAdd
-										?.map((c: SidebarEvent, idx: number) => Number(idx + 1) + '. ' + c.title)
-										?.join('\n') ?? '-'}
+									{historyRow.actionParams.eventsToAdd?.length
+										? historyRow.actionParams.eventsToAdd
+												?.map(
+													(c: SidebarEvent, idx: number) => Number(idx + 1) + '. ' + c.title
+												)
+												?.join('\n')
+										: '-'}
 								</td>
 							</tr>
 							<tr>
