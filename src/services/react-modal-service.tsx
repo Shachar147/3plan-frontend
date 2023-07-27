@@ -4768,9 +4768,11 @@ const ReactModalService = {
 							<tr>
 								<td className="main-font-heavy">{TranslateService.translate(eventStore, 'ERRORS')}</td>
 								<td className="white-space-pre-line">
-									{historyRow.actionParams.errors
-										?.map((c: SidebarEvent, idx: number) => Number(idx + 1) + '. ' + c)
-										?.join('\n') ?? '-'}
+									{historyRow.actionParams.errors?.length
+										? historyRow.actionParams.errors
+												?.map((c: SidebarEvent, idx: number) => Number(idx + 1) + '. ' + c)
+												?.join('\n')
+										: '-'}
 								</td>
 							</tr>
 						</>
