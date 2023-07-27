@@ -144,4 +144,5 @@ export enum TripActions {
 
 	// trip
 	addedCategory = 'addedCategory',
+	changedTripDates = 'changedTripDates',
 }

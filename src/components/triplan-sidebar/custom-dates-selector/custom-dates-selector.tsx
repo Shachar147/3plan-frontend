@@ -5,6 +5,9 @@ import { eventStoreContext } from '../../../stores/events-store';
 import Button, { ButtonFlavor } from '../../common/button/button';
 import DataServices, { DateRangeFormatted } from '../../../services/data-handlers/data-handler-base';
 import { validateDateRange } from '../../../utils/time-utils';
+import LogHistoryService from '../../../services/data-handlers/log-history-service';
+import { TripActions } from '../../../utils/interfaces';
+import _ from 'lodash';
 
 export interface CustomDatesSelectorProps {
 	customDateRange: DateRangeFormatted;
@@ -75,9 +78,22 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 							return;
 						}
 
+						const original = _.cloneDeep(customDateRange);
+
 						setCustomDateRange(newCustomDateRange);
 						eventStore.setCustomDateRange(newCustomDateRange);
 						dataService.setDateRange(newCustomDateRange, eventStore.tripName);
+
+						LogHistoryService.logHistory(eventStore, TripActions.changedTripDates, {
+							startDate: {
+								was: original.start,
+								now: newCustomDateRange.start,
+							},
+							endDate: {
+								was: original.end,
+								now: newCustomDateRange.end,
+							},
+						});
 
 						TriplanCalendarRef?.current?.switchToCustomView();
 					}}

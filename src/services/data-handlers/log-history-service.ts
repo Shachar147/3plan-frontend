@@ -35,6 +35,8 @@ const LogHistoryService = {
 			toWhereEnd?: Date;
 			categoryName?: string;
 			categoryId?: number;
+			startDate?: { was: any; now: any };
+			endDate?: { was: any; now: any };
 		},
 		eventId?: number,
 		eventName?: string

@@ -4712,7 +4712,8 @@ const ReactModalService = {
 							<td>{getNow()}</td>
 						</tr>
 					)}
-					{historyRow.action == TripActions.changedEvent &&
+					{(historyRow.action == TripActions.changedEvent ||
+						historyRow.action == TripActions.changedTripDates) &&
 						Object.keys(historyRow.actionParams)
 							.filter(
 								(k) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(k) == -1
@@ -4720,8 +4721,12 @@ const ReactModalService = {
 							.map((changedKey, idx) => (
 								<tr>
 									<td className="main-font-heavy">
-										{Number(idx + 1)}
-										{') '}
+										{historyRow.action == TripActions.changedEvent && (
+											<>
+												{Number(idx + 1)}
+												{') '}
+											</>
+										)}
 										{TranslateService.translate(eventStore, `MODALS.${changedKey.toUpperCase()}`)}
 									</td>
 									<td>
