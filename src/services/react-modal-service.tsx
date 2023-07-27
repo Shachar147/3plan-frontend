@@ -1480,13 +1480,14 @@ const ReactModalService = {
 			}
 
 			if (isOk) {
+				const categoryId = eventStore.createCategoryId();
 				runInAction(async () => {
 					ReactModalService.internal.disableOnConfirm();
 					await eventStore.setCategories(
 						[
 							...eventStore.categories,
 							{
-								id: eventStore.createCategoryId(),
+								id: categoryId,
 								title: newName,
 								icon: newIcon,
 							},
@@ -1496,6 +1497,12 @@ const ReactModalService = {
 
 					ReactModalService.internal.closeModal(eventStore);
 				});
+
+				LogHistoryService.logHistory(eventStore, TripActions.addedCategory, {
+					categoryName: eventStore.categories.find((c) => c.id == Number(categoryId!))?.title,
+					categoryId: categoryId,
+				});
+
 				ReactModalService.internal.alertMessage(
 					eventStore,
 					'MODALS.CREATE.TITLE',
@@ -4673,7 +4680,12 @@ const ReactModalService = {
 					{historyRow.actionParams.categoryName && (
 						<tr>
 							<td className="main-font-heavy">
-								{TranslateService.translate(eventStore, 'ADDED_TO_CATEGORY')}
+								{TranslateService.translate(
+									eventStore,
+									historyRow.action == TripActions.addedCategory
+										? 'CATEGORY_NAME'
+										: 'ADDED_TO_CATEGORY'
+								)}
 							</td>
 							<td>{historyRow.actionParams.categoryName}</td>
 						</tr>

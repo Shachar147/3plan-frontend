@@ -326,7 +326,7 @@ export class DBService implements BaseDataHandler {
 		});
 	}
 
-	async getHistory(tripId: number, limit: number = 30) {
+	async getHistory(tripId: number, limit: number = 50) {
 		const res: any = await apiGetPromise(this, `/history/by-trip/${tripId}/${limit}`);
 		return res.data;
 	}

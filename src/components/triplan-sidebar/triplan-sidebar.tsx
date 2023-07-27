@@ -1619,6 +1619,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					count: Object.keys(historyRow.actionParams).filter(
 						(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
 					).length,
+					categoryName: historyRow.actionParams?.categoryName,
 				}
 			);
 
@@ -1662,7 +1663,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						count: historyRecords?.length?.toString() ?? '0',
 					})}
 				</b>
-				<div className="flex-col gap-4 width-100-percents margin-top-10 max-height-250 overflow-auto bright-scrollbar">
+				<div className="flex-col gap-4 width-100-percents margin-top-10 max-height-370 overflow-auto bright-scrollbar">
 					{historyRecords?.map(renderHistory)}
 				</div>
 			</div>
