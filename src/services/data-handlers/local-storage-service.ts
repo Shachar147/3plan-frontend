@@ -23,6 +23,7 @@ import DataServices, {
 	DateRangeFormatted,
 	LocaleCode,
 	lsTripNameToTripName,
+	SharedTrip,
 	Trip,
 	tripNameToLSTripName,
 } from './data-handler-base';
@@ -38,7 +39,7 @@ export class LocalStorageService implements BaseDataHandler {
 	}
 
 	// --- GET ------------------------------------------------------------------------------
-	async getTrips(eventStore: EventStore): Promise<Trip[]> {
+	async getTrips(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		const trips: Trip[] = [];
 
 		const lsTripsDates = Object.keys(localStorage).filter((x) => x.indexOf(LS_CUSTOM_DATE_RANGE) > -1);
@@ -72,10 +73,10 @@ export class LocalStorageService implements BaseDataHandler {
 				}
 			});
 
-		return trips;
+		return { trips, sharedTrips: [] };
 	}
 
-	async getTripsShort(eventStore: EventStore) {
+	async getTripsShort(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		return this.getTrips(eventStore);
 	}
 

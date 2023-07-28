@@ -68,7 +68,7 @@ function MainPage(props: MainPageProps) {
 		const client_id = generate_uuidv4();
 
 		// Connect to the WebSocket server
-		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}&cid=${client_id}`;
+		const url = `${getWebSocketsServerAddress()}?uid=${getUserId()}&cid=${client_id}&tid=${eventStore.tripId}`;
 		console.log({ webSocketsUrl: url });
 		const socket = new WebSocket(url);
 
@@ -104,7 +104,7 @@ function MainPage(props: MainPageProps) {
 		return () => {
 			socket.close();
 		};
-	}, []);
+	}, [eventStore.tripId]);
 
 	useEffect(() => {
 		if (TriplanCalendarRef && TriplanCalendarRef.current) {
@@ -150,6 +150,19 @@ function MainPage(props: MainPageProps) {
 			eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(tripName));
 		}
 	}, [tripName, locale]);
+
+	useEffect(() => {
+		let interval: NodeJS.Timeout;
+		if (eventStore.isSharedTrip) {
+			console.log('started shared trip interval');
+			interval = setInterval(() => eventStore.verifyUserHavePermissionsOnTrip(tripName, createMode), 5000);
+		}
+
+		return () => {
+			console.log('stopped shared trip interval');
+			clearInterval(interval);
+		};
+	}, [eventStore.isSharedTrip]);
 
 	// ERROR HANDLING: todo add try/catch & show a message if fails
 	function addEventToSidebar(event: any): boolean {
@@ -513,13 +526,19 @@ function MainPage(props: MainPageProps) {
 			return null;
 		}
 
-		const text = eventStore.isMobile
+		let text = eventStore.isMobile
 			? TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED.SHORT')
 			: TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED');
 
 		const linkText = eventStore.isMobile
 			? TranslateService.translate(eventStore, 'NOTE.TRIP_IS_LOCKED.SHORT.LINK')
 			: TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE');
+
+		if (!eventStore.canWrite) {
+			text = eventStore.isMobile
+				? TranslateService.translate(eventStore, 'NOTE.SHARED_TRIP_IS_LOCKED.SHORT')
+				: TranslateService.translate(eventStore, 'NOTE.SHARED_TRIP_IS_LOCKED');
+		}
 
 		return (
 			<div
@@ -536,14 +555,16 @@ function MainPage(props: MainPageProps) {
 					)}
 				>
 					{text}
-					<Button
-						flavor={ButtonFlavor.link}
-						className={'text-decoration-underline min-height-20'}
-						onClick={() => {
-							eventStore.toggleTripLocked();
-						}}
-						text={linkText}
-					/>
+					{eventStore.canWrite && (
+						<Button
+							flavor={ButtonFlavor.link}
+							className={'text-decoration-underline min-height-20'}
+							onClick={() => {
+								eventStore.toggleTripLocked();
+							}}
+							text={linkText}
+						/>
+					)}
 				</div>
 			</div>
 		);

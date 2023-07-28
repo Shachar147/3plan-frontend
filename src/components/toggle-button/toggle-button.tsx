@@ -136,14 +136,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 	const eventStore = useContext(eventStoreContext);
 	return (
 		<div className={getClasses('multiple-options-toggle-button', customStyle && customStyle)} ref={containerRef}>
-			<div
-				className={getClasses(
-					'multiple-options-toggle-button-items-container',
-					eventStore.isRtl && 'flex-row-reverse'
-				)}
-			>
-				{props.options.map(renderOption)}
-			</div>
+			<div className="multiple-options-toggle-button-items-container">{props.options.map(renderOption)}</div>
 			<div
 				className="background-circle"
 				style={{ left, right, width, transitionDuration: updateCount <= 1 ? '0s' : undefined }}

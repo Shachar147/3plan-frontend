@@ -8,7 +8,12 @@ import { observer } from 'mobx-react';
 import { renderFooterLine } from '../../utils/ui-utils';
 import { getClasses } from '../../utils/utils';
 import ReactModalService from '../../services/react-modal-service';
-import DataServices, { DBTrip, Trip, tripNameToLSTripName } from '../../services/data-handlers/data-handler-base';
+import DataServices, {
+	DBTrip,
+	SharedTrip,
+	Trip,
+	tripNameToLSTripName,
+} from '../../services/data-handlers/data-handler-base';
 import ToggleButton from '../../components/toggle-button/toggle-button';
 import { TripDataSource } from '../../utils/enums';
 import { getUser, isLoggedOn } from '../../helpers/auth';
@@ -38,6 +43,7 @@ function MyTrips() {
 	const eventStore = useContext(eventStoreContext);
 	const navigate = useNavigate();
 	const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
+	const [sharedTrips, setSharedTrips] = useState<SharedTrip[]>([]);
 
 	const [error, setError] = useState<any>(undefined);
 	const [isLoadingTrips, setIsLoadingTrips] = useState(false);
@@ -52,12 +58,16 @@ function MyTrips() {
 
 	useEffect(() => {
 		setLsTrips([]);
+		setSharedTrips([]);
 		setIsLoadingTrips(true);
 		setError(undefined);
+
 		dataService
 			.getTripsShort(eventStore)
-			.then((trips: Trip[]) => {
+			.then((result) => {
+				const { trips, sharedTrips } = result;
 				setLsTrips(trips);
+				setSharedTrips(sharedTrips);
 				setIsLoadingTrips(false);
 			})
 			.catch((error) => {
@@ -225,6 +235,11 @@ function MyTrips() {
 		const end = formatShortDateStringIsrael(dates.end!);
 		const amountOfDays = getAmountOfDays(dates.start!, dates.end!);
 
+		const sharedTripData = sharedTrips.find((s) => s.name == trip.name);
+		const isSharedTrip = !!sharedTripData;
+		const canRead = isSharedTrip ? sharedTripData.canRead : true;
+		const canWrite = isSharedTrip ? sharedTripData.canWrite : true;
+
 		if (tripName === '') return <></>;
 
 		const classList = getClasses(
@@ -236,7 +251,11 @@ function MyTrips() {
 		function renderTripInfo() {
 			return (
 				<>
-					<i className="fa fa-plane" aria-hidden="true" />
+					<i
+						className={getClasses('fa', isSharedTrip ? 'fa-users' : 'fa-plane')}
+						title={isSharedTrip ? TranslateService.translate(eventStore, 'SHARED_TRIP') : undefined}
+						aria-hidden="true"
+					/>
 					<span className="my-trips-trip-name">
 						<EllipsisWithTooltip placement="bottom">{tripName}</EllipsisWithTooltip>
 					</span>
@@ -253,30 +272,38 @@ function MyTrips() {
 		function renderTripActions() {
 			return (
 				<div className="trips-list-trip-actions">
-					<i
-						className="fa fa-pencil-square-o"
-						aria-hidden="true"
-						title={TranslateService.translate(eventStore, 'EDIT_TRIP_MODAL.TITLE')}
-						onClick={(e) => onEditTrip(e, LSTripName)}
-					/>
-					<i
-						className="fa fa-files-o"
-						aria-hidden="true"
-						title={TranslateService.translate(eventStore, 'DUPLICATE_TRIP_MODAL.TITLE')}
-						onClick={(e) => onDuplicateTrip(e, LSTripName)}
-					/>
-					<i
-						className="fa fa-trash-o position-relative top--1"
-						aria-hidden="true"
-						title={TranslateService.translate(eventStore, 'DELETE_TRIP')}
-						onClick={(e) => onDeleteTrip(e, LSTripName)}
-					/>
-					<i
-						className={getClasses('fa', showHidden ? 'fa-eye' : 'fa-eye-slash')}
-						aria-hidden="true"
-						title={TranslateService.translate(eventStore, showHidden ? 'UNHIDE_TRIP' : 'HIDE_TRIP')}
-						onClick={(e) => onHideUnhideTrip(e, LSTripName)}
-					/>
+					{!isSharedTrip && (
+						<i
+							className="fa fa-pencil-square-o"
+							aria-hidden="true"
+							title={TranslateService.translate(eventStore, 'EDIT_TRIP_MODAL.TITLE')}
+							onClick={(e) => onEditTrip(e, LSTripName)}
+						/>
+					)}
+					{!isSharedTrip && (
+						<i
+							className="fa fa-files-o"
+							aria-hidden="true"
+							title={TranslateService.translate(eventStore, 'DUPLICATE_TRIP_MODAL.TITLE')}
+							onClick={(e) => onDuplicateTrip(e, LSTripName)}
+						/>
+					)}
+					{!isSharedTrip && (
+						<i
+							className="fa fa-trash-o position-relative top--1"
+							aria-hidden="true"
+							title={TranslateService.translate(eventStore, 'DELETE_TRIP')}
+							onClick={(e) => onDeleteTrip(e, LSTripName)}
+						/>
+					)}
+					{!isSharedTrip && (
+						<i
+							className={getClasses('fa', showHidden ? 'fa-eye' : 'fa-eye-slash')}
+							aria-hidden="true"
+							title={TranslateService.translate(eventStore, showHidden ? 'UNHIDE_TRIP' : 'HIDE_TRIP')}
+							onClick={(e) => onHideUnhideTrip(e, LSTripName)}
+						/>
+					)}
 				</div>
 			);
 		}
@@ -304,7 +331,9 @@ function MyTrips() {
 	function renderListOfTrips() {
 		const hiddenTripsEnabled = dataSource === 'DB';
 
-		const filteredList = lsTrips.filter((x) => (hiddenTripsEnabled ? !!x.isHidden == showHidden : true));
+		const filteredList = [...lsTrips, ...sharedTrips].filter((x) =>
+			hiddenTripsEnabled ? !!x.isHidden == showHidden : true
+		);
 
 		return (
 			<div className="flex-column gap-10">
@@ -348,7 +377,7 @@ function MyTrips() {
 	function renderForm() {
 		if (error) return returnErrorPlaceholder();
 		if (isLoadingTrips) return renderLoadingTrips();
-		return lsTrips.length === 0 ? renderNoTripsPlaceholder() : renderListOfTrips();
+		return lsTrips.length + sharedTrips.length === 0 ? renderNoTripsPlaceholder() : renderListOfTrips();
 	}
 
 	function renderDataSourceSelector() {

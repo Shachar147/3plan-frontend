@@ -53,6 +53,7 @@ import ToggleButton from '../components/toggle-button/toggle-button';
 import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
 import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
+import CopyInput from '../components/common/copy-input/copy-input';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -245,11 +246,13 @@ export const ReactModalRenderHelper = {
 			placeholderKey?: string;
 			id?: string;
 			name?: string;
+			value?: any;
 			readOnly?: boolean;
 			maxMenuHeight?: number;
 			removeDefaultClass?: boolean;
 			onChange?: (data: any) => void;
 			onClear?: () => void;
+			isClearable?: boolean;
 		},
 		wrapperClassName: string,
 		ref?: any,
@@ -262,12 +265,14 @@ export const ReactModalRenderHelper = {
 				id={extra.id}
 				name={extra.name}
 				options={extra.options}
+				value={extra.value != undefined ? extra.options.find((o) => o.value == extra.value) : undefined}
 				placeholderKey={extra.placeholderKey}
 				modalValueName={modalValueName}
 				maxMenuHeight={extra.maxMenuHeight}
 				removeDefaultClass={extra.removeDefaultClass}
 				onChange={extra.onChange}
 				onClear={extra.onClear}
+				isClearable={extra.isClearable ?? true}
 			/>
 		);
 
@@ -916,7 +921,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.DESCRIPTION',
 					className: 'border-top-gray description-row',
-					showOnMinimized: false,
+					showOnMinimized: true,
 				},
 				{
 					settings: {
@@ -1033,7 +1038,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.PRICE',
 					className: 'border-top-gray price-row',
-					showOnMinimized: modalsStore?.isViewMode ?? false,
+					showOnMinimized: false, // modalsStore?.isViewMode ?? false,
 				},
 				{
 					settings: {
@@ -1048,7 +1053,7 @@ const ReactModalService = {
 					},
 					textKey: 'MODALS.CURRENCY',
 					className: 'border-top-gray currency-row',
-					showOnMinimized: modalsStore?.isViewMode ?? false,
+					showOnMinimized: false, // modalsStore?.isViewMode ?? false,
 				},
 				{
 					settings: {
@@ -1209,7 +1214,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.DESCRIPTION',
 						className: 'border-top-gray description-row',
-						showOnMinimized: false,
+						showOnMinimized: true,
 					},
 					{
 						settings: {
@@ -1299,7 +1304,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.PRICE',
 						className: 'border-top-gray price-row',
-						showOnMinimized: modalsStore?.isViewMode ?? false,
+						showOnMinimized: false, // modalsStore?.isViewMode ?? false,
 					},
 					{
 						settings: {
@@ -1314,7 +1319,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.CURRENCY',
 						className: 'border-top-gray currency-row',
-						showOnMinimized: modalsStore?.isViewMode ?? false,
+						showOnMinimized: false, // modalsStore?.isViewMode ?? false,
 					},
 					{
 						settings: {
@@ -1807,6 +1812,103 @@ const ReactModalService = {
 			},
 		});
 	},
+	openShareTripModal: (eventStore: EventStore) => {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const options = [
+			{ value: 0, label: TranslateService.translate(eventStore, 'PERMISSIONS.READ') },
+			{ value: 1, label: TranslateService.translate(eventStore, 'PERMISSIONS.READ_WRITE') },
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'SHARE_TRIP')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.SHARE_TRIP.CONTENT'),
+						}}
+					/>
+					{ReactModalRenderHelper.renderSelectInput(
+						eventStore,
+						'share-trip-choose-permissions',
+						{
+							options,
+							placeholderKey: 'SHARE_TRIP.SELECT_PERMISSIONS',
+							removeDefaultClass: true,
+							value: 0,
+							isClearable: false,
+							maxMenuHeight: eventStore.isMobile ? 35 * 2 : undefined,
+						},
+						'add-event-from-sidebar-selector'
+					)}
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'CREATE_INVITE_LINK'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource === TripDataSource.DB) {
+					await DataServices.DBService.createInviteLink(
+						tripName,
+						!!eventStore.modalValues['share-trip-choose-permissions']?.value
+					)
+						.then((response) => {
+							const { inviteLink: data, expiredAt } = response.data;
+							const { inviteLink: token } = data;
+							const host = window.location.host;
+							const inviteLink = `http://${host}/inviteLink?token=${token}`;
+							ReactModalService.openShareTripStepTwoModal(eventStore, inviteLink, expiredAt);
+						})
+						.catch(() => {
+							ReactModalService.internal.openOopsErrorModal(eventStore);
+						});
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
+	},
+	openShareTripStepTwoModal: (eventStore: EventStore, inviteLink: string, expiredAt: number) => {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		ReactModalService.internal.closeModal(eventStore);
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'SHARE_TRIP')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.SHARE_TRIP.STEP2.CONTENT', {
+								X: expiredAt,
+							}),
+						}}
+					/>
+					<CopyInput eventStore={eventStore} value={inviteLink} />
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'CREATE_INVITE_LINK'),
+			confirmBtnCssClass: 'primary-button display-none',
+			onConfirm: async () => {},
+			onCancel: () => {
+				// todo complete: fix bug - open share trip, step 2, close, try to open it again will crash. open modal will crash generally.
+
+				window.location.reload();
+			},
+		});
+	},
 	openAddSidebarEventModal: (
 		eventStore: EventStore,
 		categoryId?: number,
@@ -2210,7 +2312,10 @@ const ReactModalService = {
 
 		const onConfirm = async () => {
 			if (modalsStore?.isViewMode) {
-				modalsStore.switchToEditMode();
+				runInAction(() => {
+					eventStore.isModalMinimized = false;
+					modalsStore.switchToEditMode();
+				});
 				ReactModalService.openEditSidebarEventModal(
 					eventStore,
 					event,
@@ -3451,7 +3556,10 @@ const ReactModalService = {
 
 		const onConfirm = async () => {
 			if (modalsStore?.isViewMode) {
-				modalsStore.switchToEditMode();
+				runInAction(() => {
+					eventStore.isModalMinimized = false;
+					modalsStore.switchToEditMode();
+				});
 				ReactModalService.openEditCalendarEventModal(eventStore, addEventToSidebar, info, modalsStore);
 			} else {
 				const event = {
@@ -3610,7 +3718,8 @@ const ReactModalService = {
 		titleKey = 'MODALS.ARE_YOU_SURE',
 		contentKey = 'MODALS.ARE_YOU_SURE.CONTENT',
 		continueKey = 'MODALS.CONTINUE',
-		contentParams?: TranslationParams
+		contentParams?: TranslationParams,
+		confirmBtnCssClass?: string
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
@@ -3624,7 +3733,7 @@ const ReactModalService = {
 			),
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, continueKey),
-			confirmBtnCssClass: 'primary-button',
+			confirmBtnCssClass: getClasses('primary-button', confirmBtnCssClass),
 			onConfirm: async () => {
 				await callback();
 
@@ -4237,6 +4346,122 @@ const ReactModalService = {
 			},
 			content,
 			confirmBtnText: TranslateService.translate(eventStore, 'GENERAL.YES'),
+		});
+	},
+	openDeleteCollaboratorPermissionsModal(eventStore: EventStore, collaborator: any) {
+		return ReactModalService.openConfirmModal(
+			eventStore,
+			() => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource === TripDataSource.DB) {
+					DataServices.DBService.deleteCollaboratorPermissions(
+						collaborator.permissionsId,
+						() => {
+							ReactModalService.internal.closeModal(eventStore);
+							runInAction(() => {
+								eventStore.reloadCollaboratorsCounter += 1;
+							});
+						},
+						() => {
+							ReactModalService.internal.openOopsErrorModal(eventStore);
+						}
+					);
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+			'MODALS.ARE_YOU_SURE',
+			'DELETE_COLLABORATOR_PERMISSIONS',
+			'CONTINUE_ANYWAY',
+			{
+				name: collaborator.username,
+				action: TranslateService.translate(eventStore, collaborator.canWrite ? 'VIEW_AND_EDIT' : 'VIEW'),
+			},
+			'red'
+		);
+	},
+	openChangeCollaboratorPermissionsModal(eventStore: EventStore, collaborator: any) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const options = [
+			{ value: 0, label: TranslateService.translate(eventStore, 'PERMISSIONS.READ') },
+			{ value: 1, label: TranslateService.translate(eventStore, 'PERMISSIONS.READ_WRITE') },
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'SHARE_TRIP')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(
+								eventStore,
+								'MODALS.EDIT_COLLABORATOR_PERMISSIONS.CONTENT',
+								{
+									name: collaborator.username,
+								}
+							),
+						}}
+					/>
+					{ReactModalRenderHelper.renderSelectInput(
+						eventStore,
+						'share-trip-choose-permissions',
+						{
+							options,
+							placeholderKey: 'SHARE_TRIP.SELECT_PERMISSIONS',
+							removeDefaultClass: true,
+							value: collaborator.canWrite ? 1 : 0,
+							isClearable: false,
+							maxMenuHeight: eventStore.isMobile ? 35 * 2 : undefined,
+						},
+						'add-event-from-sidebar-selector'
+					)}
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'UPDATE_PERMISSIONS'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource === TripDataSource.DB) {
+					DataServices.DBService.changeCollaboratorPermissions(
+						collaborator.permissionsId,
+						!!eventStore.modalValues['share-trip-choose-permissions']?.value
+					)
+						.then(() => {
+							ReactModalService.internal.closeModal(eventStore);
+							runInAction(() => {
+								eventStore.reloadCollaboratorsCounter += 1;
+							});
+
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.CREATE.TITLE',
+								'MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT',
+								'success'
+							);
+						})
+						.catch(() => {
+							ReactModalService.internal.openOopsErrorModal(eventStore);
+						});
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
 		});
 	},
 };

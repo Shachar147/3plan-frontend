@@ -2,23 +2,21 @@ import React, { CSSProperties, useContext } from 'react';
 import TranslateService from '../../services/translate-service';
 import {
 	addLineBreaks,
-	coordinateToString,
 	calendarOrSidebarEventDetails,
 	getClasses,
 	isBasketball,
 	isDessert,
 	isFlight,
 	isHotel,
-	toDistanceString,
-	ucfirst,
 	isHotelsCategory,
 	locationToString,
+	toDistanceString,
+	ucfirst,
 } from '../../utils/utils';
-import { TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
-import { getDurationString } from '../../utils/time-utils';
+import { TripDataSource, TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
 import { eventStoreContext } from '../../stores/events-store';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
-import { Observer, observer } from 'mobx-react';
+import { observer, Observer } from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import Button, { ButtonFlavor } from '../common/button/button';
@@ -32,6 +30,9 @@ import { runInAction } from 'mobx';
 import DistanceCalculator from './distance-calculator/distance-calculator';
 import { modalsStoreContext } from '../../stores/modals-store';
 import TriplanSearch from '../triplan-header/triplan-search/triplan-search';
+import { DBService } from '../../services/data-handlers/db-service';
+import useAsyncMemo from '../../custom-hooks/use-async-memo';
+import { getDurationString } from '../../utils/time-utils';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -122,6 +123,21 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		TriplanCalendarRef,
 	} = props;
 
+	const fetchCollaborators = async (): Promise<any[]> => {
+		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
+			const data = await (eventStore.dataService as DBService).getCollaborators(eventStore);
+			return data;
+		}
+		return [];
+	};
+
+	// const { data: collaborators, loading, error } = useAsyncMemo<any[]>(fetchCollaborators, [eventStore.dataService]);
+	const {
+		data: collaborators,
+		loading,
+		error,
+	} = useAsyncMemo<any[]>(() => fetchCollaborators(), [eventStore.reloadCollaboratorsCounter]);
+
 	const renderCustomDates = () => {
 		return (
 			<CustomDatesSelector
@@ -168,6 +184,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					eventStore.toggleTripLocked();
 				}}
 				flavor={ButtonFlavor['movable-link']}
+				disabled={!eventStore.canWrite}
+				disabledReason={TranslateService.translate(eventStore, 'NOTE.SHARED_TRIP_IS_LOCKED')}
 			/>
 		);
 	};
@@ -673,6 +691,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				{renderLockTrip()}
 				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
 				{renderImportButtons()}
+				{renderShareTripButton()}
 			</>,
 			undefined,
 			SidebarGroups.ACTIONS,
@@ -1497,11 +1516,90 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
+	const renderShareTripPlaceholder = () => {
+		const renderCollaborator = (collaborator: any) => {
+			return (
+				<div className="triplan-collaborator space-between padding-inline-8">
+					<div className="flex-row gap-8 align-items-center">
+						<i className="fa fa-users" aria-hidden="true" />
+						<div className="collaborator-name">{collaborator.username}</div>
+						<div className="collaborator-permissions-icons flex-row gap-8 align-items-center">
+							{collaborator.canRead && (
+								<i
+									className="fa fa-eye"
+									title={TranslateService.translate(eventStore, 'CAN_VIEW')}
+									aria-hidden="true"
+								/>
+							)}
+							{collaborator.canWrite && (
+								<i
+									className="fa fa-pencil"
+									title={TranslateService.translate(eventStore, 'CAN_EDIT')}
+									aria-hidden="true"
+								/>
+							)}
+						</div>
+					</div>
+					<div className="collaborator-permissions flex-row gap-8">
+						<Button
+							flavor={ButtonFlavor.link}
+							text={TranslateService.translate(eventStore, 'CHANGE_PERMISSIONS')}
+							onClick={() => {
+								ReactModalService.openChangeCollaboratorPermissionsModal(eventStore, collaborator);
+							}}
+						/>
+						<Button
+							flavor={ButtonFlavor.link}
+							text={'X'}
+							onClick={() => {
+								ReactModalService.openDeleteCollaboratorPermissionsModal(eventStore, collaborator);
+							}}
+						/>
+					</div>
+				</div>
+			);
+		};
+
+		return (
+			<div className="flex-col align-items-center justify-content-center">
+				<b>{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.TITLE')}</b>
+				<span className="white-space-pre-line text-align-center width-100-percents opacity-0-5">
+					{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.CONTENT')}
+				</span>
+				{renderShareTripButton(false, 'width-100-percents')}
+				{!!collaborators?.length && (
+					<div className="flex-col align-items-center justify-content-center margin-block-10 width-100-percents">
+						<b>{TranslateService.translate(eventStore, 'COLLABORATORS.TITLE')}</b>
+						<div className="flex-col gap-4 width-100-percents justify-content-center margin-top-10">
+							{collaborators?.map(renderCollaborator)}
+						</div>
+					</div>
+				)}
+			</div>
+		);
+	};
+
+	const renderShareTripButton = (isMoveable: boolean = true, className?: string, textKey: string = 'SHARE_TRIP') => {
+		return (
+			<Button
+				flavor={isMoveable ? ButtonFlavor['movable-link'] : ButtonFlavor.link}
+				className={getClasses('black', className)}
+				onClick={() => {
+					ReactModalService.openShareTripModal(eventStore);
+				}}
+				text={TranslateService.translate(eventStore, textKey)}
+				icon={'fa-users'}
+				disabled={eventStore.isSharedTrip}
+				disabledReason={TranslateService.translate(eventStore, 'ONLY_TRIP_OWNER_CAN_SHARE_TRIP')}
+			/>
+		);
+	};
+
 	const renderCategoryEvents = (categoryId: number) => {
 		const categoryEvents = eventStore.getSidebarEvents[categoryId] || [];
 
 		const preferredHoursHash: Record<string, SidebarEvent[]> = {};
-		// console.log(Object.keys(TriplanEventPreferredTime).filter((x) => !Number.isNaN(Number(x))));
+
 		Object.keys(TriplanEventPreferredTime)
 			.filter((x) => !Number.isNaN(Number(x)))
 			.forEach((preferredHour) => {
@@ -1761,6 +1859,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{/*<div className={"spacer margin-top-40"}/>*/}
 						<hr style={{ marginBlock: '20px 10px' }} />
 						{renderCategories()}
+						{!eventStore.isSharedTrip && <hr style={{ marginBlock: '20px 10px' }} />}
+						{!eventStore.isSharedTrip && renderShareTripPlaceholder()}
 					</div>
 				</div>
 			</div>

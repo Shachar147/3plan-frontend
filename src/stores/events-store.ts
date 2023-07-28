@@ -78,6 +78,10 @@ export class EventStore {
 	@observable openSidebarGroups = observable.map<string, number>({});
 	@observable hideEmptyCategories: boolean = false;
 	@observable tripName: string = '';
+	@observable tripId: number = 0;
+	@observable isSharedTrip: boolean = false;
+	@observable canRead: boolean = true;
+	@observable canWrite: boolean = true;
 	@observable allEventsTripName: string = '';
 	@observable customDateRange: DateRangeFormatted = defaultDateRange(); // -
 	@observable showOnlyEventsWithNoLocation: boolean = false;
@@ -158,6 +162,8 @@ export class EventStore {
 	@observable calendarViewType: string | null = null;
 
 	@observable isSidebarMinimized: boolean = false;
+
+	@observable reloadCollaboratorsCounter: number = 0;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -1076,9 +1082,43 @@ export class EventStore {
 		this.hideEmptyCategories = hide;
 	}
 
+	async verifyUserHavePermissionsOnTrip(name: string, createMode?: boolean) {
+		const { trips, sharedTrips } = await this.dataService.getTripsShort(this);
+		const existingTrips = [...trips, ...sharedTrips];
+
+		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
+			ReactModalService.internal.alertMessage(
+				this,
+				'MODALS.ERROR.TITLE',
+				'MODALS.ERROR.TRIP_NOT_EXIST_MAYBE_SHARED',
+				'error'
+			);
+			setTimeout(() => {
+				window.location.href = '/my-trips';
+				localStorage.removeItem([LS_CALENDAR_LOCALE, name].join('-'));
+				localStorage.removeItem([LS_SIDEBAR_EVENTS, name].join('-'));
+			}, 3000);
+		} else {
+			const sharedTrip = sharedTrips.find((s) => s.name === name);
+			this.isSharedTrip = !!sharedTrip;
+			if (!!sharedTrip) {
+				this.isTripLocked = !!sharedTrip.isLocked;
+				this.canRead = sharedTrip.canRead;
+				this.canWrite = sharedTrip.canWrite;
+
+				// @ts-ignore
+				this.isTripLocked ||= !sharedTrip.canWrite;
+			} else {
+				this.canRead = true;
+				this.canWrite = true;
+			}
+		}
+	}
+
 	@action
 	async setTripName(name: string, calendarLocale?: LocaleCode, createMode?: boolean) {
-		const existingTrips = await this.dataService.getTripsShort(this);
+		const { trips, sharedTrips } = await this.dataService.getTripsShort(this);
+		const existingTrips = [...trips, ...sharedTrips];
 
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
@@ -1111,10 +1151,14 @@ export class EventStore {
 				this.isTripLocked = isLocked;
 				this.lockTripIfAlreadyOver(isLocked, dateRange.end);
 				this.isTripLocked = DataServices.LocalStorageService.getIsLocked(name);
+
+				this.tripId = 0;
 			} else {
 				this.isLoading = true;
 				const tripData = await DataServices.DBService.getTripData(name);
 				newDistanceResults = await DataServices.DBService.getDistanceResults(name);
+
+				this.tripId = tripData.id ?? 0;
 
 				this.updateTripData(tripData);
 
@@ -1122,6 +1166,19 @@ export class EventStore {
 				runInAction(() => {
 					this.isLoading = false;
 				});
+			}
+
+			const sharedTrip = sharedTrips.find((s) => s.name === name);
+			this.isSharedTrip = !!sharedTrip;
+			if (!!sharedTrip) {
+				this.canRead = sharedTrip.canRead;
+				this.canWrite = sharedTrip.canWrite;
+
+				// @ts-ignore
+				this.isTripLocked ||= !sharedTrip.canWrite;
+			} else {
+				this.canRead = true;
+				this.canWrite = true;
 			}
 
 			// reset them when switching trips
@@ -1150,6 +1207,17 @@ export class EventStore {
 		this.allEvents = allEvents;
 		this.categories = categories;
 		this.isTripLocked = !!isLocked;
+
+		if ('canRead' in Object.keys(tripData) || 'canWrite' in Object.keys(tripData)) {
+			// @ts-ignore
+			this.canRead = tripData.canRead;
+
+			// @ts-ignore
+			this.canWrite = tripData.canWrite;
+
+			// @ts-ignore
+			this.isTripLocked ||= !tripData.canWrite;
+		}
 
 		this.lockTripIfAlreadyOver(!!isLocked, dateRange.end);
 	}
