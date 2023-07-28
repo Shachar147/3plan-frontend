@@ -412,6 +412,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 		// Get all events in the current view
 		const eventsInView: EventApi[] = calendar.getEvents().filter((event) => {
+			if (event.allDay || event._def?.allDay) {
+				return false;
+			}
+
 			// Filter events based on their start and end dates
 			const eventStartDate = event.start!;
 			const eventEndDate = event.end! || event.start!; // Use start date as end date for single-day events
@@ -438,12 +442,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		const eventsInView = getEventsInView();
 
 		// Sort events by their start time
-		eventsInView
-			.sort(function (a, b) {
-				// @ts-ignore
-				return a.start - b.start;
-			})
-			.filter((e) => !e.allDay && !e._def?.allDay);
+		eventsInView.sort(function (a, b) {
+			// @ts-ignore
+			return a.start - b.start;
+		});
 
 		let mostAvailableSlotStart: Date = viewStartDate;
 		let mostAvailableSlotEnd: Date = viewEndDate;
