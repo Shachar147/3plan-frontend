@@ -703,5 +703,10 @@
 	"duplicatedSidebarEvent": "Duplicated {eventName} on sidebar",
 	"duplicatedSidebarEventYou": "You Duplicated {eventName} on sidebar",
 	"duplicatedSidebarEventFull": "{who} Duplicated {eventName} on sidebar",
-	"duplicatedSidebarEventFullYou": "Duplicated {eventName} on sidebar"
+	"duplicatedSidebarEventFullYou": "Duplicated {eventName} on sidebar",
+	"sharedTrip": "Created share trip link with {permissions} permissions",
+	"sharedTripYou": "You created share trip link with {permissions} permissions",
+	"sharedTripFull": "{who} created share trip link with {permissions} permissions",
+	"sharedTripFullYou": "You created share trip link with {permissions} permissions",
+	"PERMISSIONS": "Permissions"
 }

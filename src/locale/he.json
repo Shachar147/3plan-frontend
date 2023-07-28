@@ -786,5 +786,10 @@
 	"duplicatedSidebarEvent": "שכפל את {eventName} בתפריט הצד",
 	"duplicatedSidebarEventYou": "שכפלת את {eventName} בתפריט הצד",
 	"duplicatedSidebarEventFull": "{who} שכפל את {eventName} בתפריט הצד",
-	"duplicatedSidebarEventFullYou": "שכפלת את {eventName} בתפריט הצד"
+	"duplicatedSidebarEventFullYou": "שכפלת את {eventName} בתפריט הצד",
+	"sharedTrip": "יצר/ה לינק שיתוף לטיול עם ההרשאות הבאות: {permissions}",
+	"sharedTripYou": "יצרת לינק שיתוף לטיול עם ההרשאות הבאות: {permissions}",
+	"sharedTripFull": "{who} יצר/ה לינק שיתוף לטיול עם ההרשאות הבאות: {permissions}",
+	"sharedTripFullYou": "יצרת לינק שיתוף לטיול עם ההרשאות הבאות: {permissions}",
+	"PERMISSIONS": "הרשאות"
 }

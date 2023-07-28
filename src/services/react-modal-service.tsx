@@ -1874,16 +1874,20 @@ const ReactModalService = {
 			confirmBtnCssClass: 'primary-button',
 			onConfirm: async () => {
 				const tripDataSource = eventStore.dataService.getDataSourceName();
+				const canWrite = !!eventStore.modalValues['share-trip-choose-permissions']?.value;
 				if (tripDataSource === TripDataSource.DB) {
-					await DataServices.DBService.createInviteLink(
-						tripName,
-						!!eventStore.modalValues['share-trip-choose-permissions']?.value
-					)
+					await DataServices.DBService.createInviteLink(tripName, canWrite)
 						.then((response) => {
 							const { inviteLink: data, expiredAt } = response.data;
 							const { inviteLink: token } = data;
 							const host = window.location.host;
 							const inviteLink = `http://${host}/inviteLink?token=${token}`;
+
+							// log history
+							LogHistoryService.logHistory(eventStore, TripActions.sharedTrip, {
+								permissions: canWrite ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
+							});
+
 							ReactModalService.openShareTripStepTwoModal(eventStore, inviteLink, expiredAt);
 						})
 						.catch(() => {
@@ -4737,38 +4741,39 @@ const ReactModalService = {
 					<tr>
 						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'WHAT')}</td>
 						<td>
-							{TranslateService.translate(
-								eventStore,
-								isYou ? historyRow.action + 'You' : historyRow.action,
-								{
-									eventName: historyRow.eventName,
-									count:
-										historyRow.actionParams.count ??
-										historyRow.action == TripActions.changedCategory
-											? Object.keys(historyRow.actionParams).filter(
-													(c) =>
-														[
-															'openingHours',
-															'images',
-															'timingError',
-															'className',
-															'id',
-														].indexOf(c) == -1
-											  ).length - 1
-											: Object.keys(historyRow.actionParams).filter(
-													(c) =>
-														[
-															'openingHours',
-															'images',
-															'timingError',
-															'className',
-															'id',
-														].indexOf(c) == -1
-											  ).length,
-									count2: historyRow.actionParams.count2,
-									...historyRow.actionParams,
-								}
-							)}
+							{fullTitle}
+							{/*{TranslateService.translate(*/}
+							{/*	eventStore,*/}
+							{/*	isYou ? historyRow.action + 'You' : historyRow.action,*/}
+							{/*	{*/}
+							{/*		eventName: historyRow.eventName,*/}
+							{/*		count:*/}
+							{/*			historyRow.actionParams.count ??*/}
+							{/*			historyRow.action == TripActions.changedCategory*/}
+							{/*				? Object.keys(historyRow.actionParams).filter(*/}
+							{/*						(c) =>*/}
+							{/*							[*/}
+							{/*								'openingHours',*/}
+							{/*								'images',*/}
+							{/*								'timingError',*/}
+							{/*								'className',*/}
+							{/*								'id',*/}
+							{/*							].indexOf(c) == -1*/}
+							{/*				  ).length - 1*/}
+							{/*				: Object.keys(historyRow.actionParams).filter(*/}
+							{/*						(c) =>*/}
+							{/*							[*/}
+							{/*								'openingHours',*/}
+							{/*								'images',*/}
+							{/*								'timingError',*/}
+							{/*								'className',*/}
+							{/*								'id',*/}
+							{/*							].indexOf(c) == -1*/}
+							{/*				  ).length,*/}
+							{/*		count2: historyRow.actionParams.count2,*/}
+							{/*		...historyRow.actionParams,*/}
+							{/*	}*/}
+							{/*)}*/}
 						</td>
 					</tr>
 					{historyRow.actionParams.eventName && (
@@ -4838,6 +4843,12 @@ const ReactModalService = {
 						<tr>
 							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'AFTER')}</td>
 							<td>{getNow()}</td>
+						</tr>
+					)}
+					{historyRow.actionParams.permissions && (
+						<tr>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'PERMISSIONS')}</td>
+							<td>{TranslateService.translate(eventStore, historyRow.actionParams.permissions)}</td>
 						</tr>
 					)}
 					{historyRow.action == TripActions.deletedCategory && (

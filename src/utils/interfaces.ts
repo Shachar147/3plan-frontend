@@ -161,4 +161,5 @@ export enum TripActions {
 	hideTrip = 'hideTrip',
 	unhideTrip = 'unhideTrip',
 	createdTrip = 'createdTrip',
+	sharedTrip = 'sharedTrip',
 }

@@ -1631,6 +1631,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							? (historyRow.actionParams?.totalAffectedCalendar ?? 0) +
 							  (historyRow.actionParams?.totalAffectedSidebar ?? 0)
 							: undefined,
+					permissions: historyRow.actionParams?.permissions
+						? TranslateService.translate(eventStore, historyRow.actionParams?.permissions)
+						: '',
 				}
 			);
 
@@ -1653,6 +1656,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						? (historyRow.actionParams?.totalAffectedCalendar ?? 0) +
 						  (historyRow.actionParams?.totalAffectedSidebar ?? 0)
 						: undefined,
+				permissions: historyRow.actionParams?.permissions
+					? TranslateService.translate(eventStore, historyRow.actionParams?.permissions)
+					: '',
 			});
 
 			return (

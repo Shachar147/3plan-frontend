@@ -51,6 +51,9 @@ const LogHistoryService = {
 			totalAffectedSidebar?: number;
 			totalAffectedCalendar?: number;
 			tripName?: { was: string; now: string } | string;
+
+			// share trip
+			permissions?: string;
 		},
 		eventId?: number,
 		eventName?: string
