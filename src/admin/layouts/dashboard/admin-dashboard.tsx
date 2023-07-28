@@ -81,7 +81,16 @@ function AdminDashboard() {
 	};
 
 	function renderTripStats() {
-		let columns: string[] = ['name', 'num_of_categories', 'scheduled_events', 'sidebar_events', 'username'];
+		let columns: string[] = [
+			'name',
+			'num_of_categories',
+			'scheduled_events',
+			'sidebar_events',
+			'username',
+			'lastUpdateAt',
+		];
+
+		const offset = -1 * getOffsetInHours();
 
 		if (eventStore.isMobile) {
 			columns = ['lastUpdateAt', 'num_of_categories', 'scheduled_events', 'sidebar_events', 'userId'];
@@ -90,7 +99,7 @@ function AdminDashboard() {
 					<table>
 						<tbody>
 							{adminStore.userStats
-								.filter((a: any) => a['lastUpdateAt'])
+								.filter((a: any) => a['lastUpdateAt'] && a['name'])
 								.map((row: any) => (
 									<>
 										<tr>
@@ -108,7 +117,7 @@ function AdminDashboard() {
 														{!row[col]
 															? '-'
 															: col == 'lastUpdateAt' || col == 'lastLoginAt'
-															? new Date(row[col])
+															? addHours(new Date(row[col]), offset)
 																	.toISOString()
 																	.split('.')[0]
 																	.replace('T', ', ')
@@ -128,8 +137,6 @@ function AdminDashboard() {
 			);
 		}
 
-		const offset = -1 * getOffsetInHours();
-
 		return (
 			<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
 				<table>
@@ -139,22 +146,25 @@ function AdminDashboard() {
 						))}
 					</thead>
 					<tbody>
-						{adminStore.userStats.map((row: any) => (
-							<tr>
-								{columns.map((col: any) => (
-									<td>
-										{!row[col]
-											? '-'
-											: col == 'lastUpdateAt' || col == 'lastLoginAt'
-											? addHours(new Date(row[col]), offset)
-													.toISOString()
-													.split('.')[0]
-													.replace('T', ', ')
-											: row[col]}
-									</td>
-								))}
-							</tr>
-						))}
+						{adminStore.userStats
+							.filter((a) => a['name'])
+							.sort((a, b) => b['lastUpdateAt'] - a['lastUpdateAt'])
+							.map((row: any) => (
+								<tr>
+									{columns.map((col: any) => (
+										<td>
+											{!row[col]
+												? '-'
+												: col == 'lastUpdateAt' || col == 'lastLoginAt'
+												? addHours(new Date(row[col]), offset)
+														.toISOString()
+														.split('.')[0]
+														.replace('T', ', ')
+												: row[col]}
+										</td>
+									))}
+								</tr>
+							))}
 					</tbody>
 				</table>
 			</div>
@@ -163,6 +173,8 @@ function AdminDashboard() {
 
 	function renderUserStats() {
 		let columns: string[] = ['userId', 'username', 'lastUpdateAt', 'lastLoginAt', 'numOfLogins'];
+
+		const offset = -1 * getOffsetInHours();
 
 		const stats: Record<number, any> = {};
 
@@ -177,42 +189,47 @@ function AdminDashboard() {
 				<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
 					<table>
 						<tbody>
-							{Object.values(stats).map((row: any) => (
-								<>
-									<tr>
-										<td>
-											<b>{row['username']}</b>
-										</td>
-									</tr>
-									{columns.map((col: any) => (
+							{Object.keys(stats)
+								.sort()
+								.map((userId: any) => {
+									const row = stats[userId];
+									return (
 										<>
 											<tr>
 												<td>
-													{`${TranslateService.translate(eventStore, col)}: `}
-													{!row[col]
-														? '-'
-														: col == 'lastUpdateAt' || col == 'lastLoginAt'
-														? new Date(row[col])
-																.toISOString()
-																.split('.')[0]
-																.replace('T', ', ')
-														: row[col]}
+													<b>{row['username']}</b>
 												</td>
 											</tr>
-											<tr>
-												<td />
-											</tr>
+											{columns.map((col: any) => (
+												<>
+													<tr>
+														<td>
+															{`${TranslateService.translate(eventStore, col)}: `}
+															{!row[col]
+																? '-'
+																: col == 'lastUpdateAt' || col == 'lastLoginAt'
+																? addHours(new Date(row[col]), offset)
+																		.toISOString()
+																		.split('.')[0]
+																		.replace('T', ', ')
+																: row[col]}
+														</td>
+													</tr>
+													<tr>
+														<td />
+													</tr>
+												</>
+											))}
 										</>
-									))}
-								</>
-							))}
+									);
+								})}
 						</tbody>
 					</table>
 				</div>
 			);
 		}
 
-		const offset = -1 * getOffsetInHours();
+		const seenUsers: any = {};
 
 		return (
 			<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
@@ -223,22 +240,31 @@ function AdminDashboard() {
 						))}
 					</thead>
 					<tbody>
-						{adminStore.userStats.map((row: any) => (
-							<tr>
-								{columns.map((col: any) => (
-									<td>
-										{!row[col]
-											? '-'
-											: col == 'lastUpdateAt' || col == 'lastLoginAt'
-											? addHours(new Date(row[col]), offset)
-													.toISOString()
-													.split('.')[0]
-													.replace('T', ', ')
-											: row[col]}
-									</td>
-								))}
-							</tr>
-						))}
+						{adminStore.userStats
+							// @ts-ignore
+							.sort((a, b) => a['userId'] - b['userId'])
+							.map((row: any) => {
+								if (seenUsers[row['userId']]) {
+									return null;
+								}
+								seenUsers[row['userId']] = 1;
+								return (
+									<tr>
+										{columns.map((col: any) => (
+											<td>
+												{!row[col]
+													? '-'
+													: col == 'lastUpdateAt' || col == 'lastLoginAt'
+													? addHours(new Date(row[col]), offset)
+															.toISOString()
+															.split('.')[0]
+															.replace('T', ', ')
+													: row[col]}
+											</td>
+										))}
+									</tr>
+								);
+							})}
 					</tbody>
 				</table>
 			</div>
@@ -247,7 +273,7 @@ function AdminDashboard() {
 
 	function renderContent() {
 		return (
-			<div className="flex-col gap-30">
+			<div className="flex-col gap-30 width-100-percents">
 				{wrapBlockWithTitle('ADMIN_DASHBOARD.TRIP_STATS.TITLE', renderTripStats())}
 				{wrapBlockWithTitle('ADMIN_DASHBOARD.USER_STATS.TITLE', renderUserStats())}
 				{wrapBlockWithTitle('ADMIN_DASHBOARD.TINDER_WIDGET.TITLE', renderTinderWidget())}

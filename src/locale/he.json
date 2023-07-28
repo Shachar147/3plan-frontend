@@ -791,5 +791,8 @@
 	"sharedTripYou": "יצרת לינק שיתוף לטיול עם ההרשאות הבאות: {permissions}",
 	"sharedTripFull": "{who} יצר/ה לינק שיתוף לטיול עם ההרשאות הבאות: {permissions}",
 	"sharedTripFullYou": "יצרת לינק שיתוף לטיול עם ההרשאות הבאות: {permissions}",
-	"PERMISSIONS": "הרשאות"
+	"PERMISSIONS": "הרשאות",
+	"Password too weak": "הסיסמא חלשה מדי",
+	"password must be longer than or equal to 8 characters": "הסיסמא חייבת להיות ארוכה או שווה ל8 תווים",
+	"Password too weak<br>password must be longer than or equal to 8 characters": "הסיסמא חלשה מדי<br>הסיסמא חייבת להיות ארוכה או שווה ל8 תווים"
 }
