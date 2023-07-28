@@ -1623,6 +1623,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						).length,
 					categoryName: historyRow.actionParams?.categoryName,
 					count2: historyRow.actionParams.count2,
+					totalAffected:
+						historyRow.action == TripActions.deletedCategory
+							? (historyRow.actionParams?.totalAffectedCalendar ?? 0) +
+							  (historyRow.actionParams?.totalAffectedSidebar ?? 0)
+							: undefined,
 				}
 			);
 
@@ -1637,6 +1642,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					Object.keys(historyRow.actionParams).filter(
 						(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
 					).length,
+				totalAffected:
+					historyRow.action == TripActions.deletedCategory
+						? (historyRow.actionParams?.totalAffectedCalendar ?? 0) +
+						  (historyRow.actionParams?.totalAffectedSidebar ?? 0)
+						: undefined,
 			});
 
 			return (

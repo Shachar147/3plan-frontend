@@ -746,5 +746,11 @@
 	"importedEvents": "ייבא/ה פעילויות",
 	"importedEventsFull": "{who} ייבא/ה פעילויות",
 	"importedEventsYou": "ייבאת {count} פעילויות",
-	"importedEventsFullYou": "ייבאת {count} פעילויות"
+	"importedEventsFullYou": "ייבאת {count} פעילויות",
+	"deletedCategory": "מחק/ה את הקטגוריה {categoryName}",
+	"deletedCategoryYou": "מחקת את הקטגוריה {categoryName}",
+	"deletedCategoryFull": "{who} מחק/ה את הקטגוריה {categoryName} ({totalAffected} פעילויות הושפעו מכך)",
+	"deletedCategoryFullYou": "מחקת את הקטגוריה {categoryName} ({totalAffected} פעילויות הושפעו מכך)",
+	"TOTAL_AFFECTED_CALENDAR": "פעילויות לוח שנה שנמחקו",
+	"TOTAL_AFFECTED_SIDEBAR": "פעילויות תפריט צד שנמחקו"
 }

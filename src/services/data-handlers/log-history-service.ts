@@ -47,6 +47,9 @@ const LogHistoryService = {
 			categoriesImported?: boolean;
 			eventsImported?: boolean;
 			count2?: number;
+
+			totalAffectedSidebar?: number;
+			totalAffectedCalendar?: number;
 		},
 		eventId?: number,
 		eventName?: string

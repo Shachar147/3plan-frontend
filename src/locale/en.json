@@ -663,5 +663,11 @@
 	"importedEvents": "Imported activities",
 	"importedEventsFull": "{who} imported activities",
 	"importedEventsYou": "You imported {count} activities",
-	"importedEventsFullYou": "You imported {count} activities"
+	"importedEventsFullYou": "You imported {count} activities",
+	"deletedCategory": "Deleted the category {categoryName}",
+	"deletedCategoryYou": "You deleted the category {categoryName}",
+	"deletedCategoryFull": "{who} deleted the category {categoryName} ({totalAffected} activities affected)",
+	"deletedCategoryFullYou": "You deleted the category {categoryName} ({totalAffected} activities affected)",
+	"TOTAL_AFFECTED_CALENDAR": "Deleted sidebar activities",
+	"TOTAL_AFFECTED_SIDEBAR": "Deleted calendar activities"
 }

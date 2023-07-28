@@ -145,8 +145,11 @@ export enum TripActions {
 	importedEvents = 'importedEvents',
 	importedCategoriesAndEvents = 'importedCategoriesAndEvents',
 
-	// trip
+	// categories
 	addedCategory = 'addedCategory',
+	deletedCategory = 'deletedCategory',
+
+	// trip
 	changedTripDates = 'changedTripDates',
 	unlockedTrip = 'unlockedTrip',
 	lockedTrip = 'lockedTrip',

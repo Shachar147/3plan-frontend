@@ -2958,6 +2958,8 @@ const ReactModalService = {
 		const newSidebarEvents = eventStore.getJSSidebarEvents();
 		delete newSidebarEvents[categoryId];
 
+		const categoryName = eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title;
+
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const onConfirm = async () => {
 			ReactModalService.internal.disableOnConfirm();
@@ -2974,8 +2976,12 @@ const ReactModalService = {
 			}
 			await eventStore.setCalendarEvents([...newCalendarEvents]);
 
-			// delete from all events
-			// await eventStore.setAllEvents([...newAllEvents]);
+			// log history
+			LogHistoryService.logHistory(eventStore, TripActions.deletedCategory, {
+				categoryName,
+				totalAffectedCalendar,
+				totalAffectedSidebar,
+			});
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -3013,9 +3019,7 @@ const ReactModalService = {
 		} else {
 			ReactModalService.internal.openModal(eventStore, {
 				...getDefaultSettings(eventStore),
-				title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${
-					eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title
-				}`,
+				title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${categoryName}`,
 				content: <div dangerouslySetInnerHTML={{ __html: html }} />,
 				cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 				confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
@@ -4680,6 +4684,7 @@ const ReactModalService = {
 												) == -1
 										).length,
 									count2: historyRow.actionParams.count2,
+									...historyRow.actionParams,
 								}
 							)}
 						</td>
@@ -4697,7 +4702,7 @@ const ReactModalService = {
 							<td>{historyRow.actionParams.eventName}</td>
 						</tr>
 					)}
-					{historyRow.actionParams.categoryName && (
+					{historyRow.actionParams.categoryName && historyRow.action != TripActions.deletedCategory && (
 						<tr>
 							<td className="main-font-heavy">
 								{TranslateService.translate(
@@ -4731,6 +4736,26 @@ const ReactModalService = {
 							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'AFTER')}</td>
 							<td>{getNow()}</td>
 						</tr>
+					)}
+					{historyRow.action == TripActions.deletedCategory && (
+						<>
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(eventStore, 'TOTAL_AFFECTED_CALENDAR')}
+								</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams?.totalAffectedCalendar ?? 0}
+								</td>
+							</tr>
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(eventStore, 'TOTAL_AFFECTED_SIDEBAR')}
+								</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams?.totalAffectedSidebar ?? 0}
+								</td>
+							</tr>
+						</>
 					)}
 
 					{(historyRow.action == TripActions.importedCategoriesAndEvents ||
