@@ -438,10 +438,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		const eventsInView = getEventsInView();
 
 		// Sort events by their start time
-		eventsInView.sort(function (a, b) {
-			// @ts-ignore
-			return a.start - b.start;
-		});
+		eventsInView
+			.sort(function (a, b) {
+				// @ts-ignore
+				return a.start - b.start;
+			})
+			.filter((e) => !e.allDay && !e._def?.allDay);
 
 		let mostAvailableSlotStart: Date = viewStartDate;
 		let mostAvailableSlotEnd: Date = viewEndDate;

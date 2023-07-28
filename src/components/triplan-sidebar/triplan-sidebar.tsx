@@ -1618,13 +1618,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					? formatTimeFromISODateString(updatedAtWithOffset.toISOString())
 					: formatDate(updatedAt);
 
-			console.log({
-				when,
-				updatedAt,
-				updatedAtWithOffset,
-				offset,
-				timezoneOffset: new Date().getTimezoneOffset(),
-			});
+			// console.log({
+			// 	when,
+			// 	updatedAt,
+			// 	updatedAtWithOffset,
+			// 	offset,
+			// 	timezoneOffset: new Date().getTimezoneOffset(),
+			// });
 
 			const title = TranslateService.translate(
 				eventStore,
