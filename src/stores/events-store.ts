@@ -1234,12 +1234,14 @@ export class EventStore {
 		// if trip end date already passed, auto-lock it.
 		// after it was auto-locked once, do not auto-lock it again (if the user decided to unlock it, leave it unlocked)
 		const key = 'auto-locked-' + this.tripName;
+		const key2 = 'auto-locked-' + this.tripId;
 		if (!isLocked) {
 			if (new Date().getTime() > new Date(endDate).getTime()) {
 				console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
-				if (!localStorage.getItem(key)) {
+				if (!localStorage.getItem(key) && !localStorage.getItem(key2)) {
 					this.dataService.lockTrip(this.tripName);
 					localStorage.setItem(key, '1');
+					localStorage.setItem(key2, '1');
 				}
 			}
 		}

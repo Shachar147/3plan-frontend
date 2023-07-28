@@ -1809,6 +1809,10 @@ const ReactModalService = {
 				if (tripDataSource === TripDataSource.DB) {
 					await DataServices.DBService.hideTripByName(tripName)
 						.then(() => {
+							LogHistoryService.logHistory(eventStore, TripActions.hideTrip, {
+								tripName,
+							});
+
 							if (onConfirm) {
 								onConfirm();
 								ReactModalService.internal.closeModal(eventStore);

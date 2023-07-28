@@ -674,5 +674,13 @@
 	"updatedTrip": "Updated trip details",
 	"updatedTripFull": "{who} updated trip details",
 	"updatedTripYou": "You updated trip details",
-	"updatedTripFullYou": "You updated trip details"
+	"updatedTripFullYou": "You updated trip details",
+	"hideTrip": "Hide the trip",
+	"hideTripFull": "{who} hide the trip",
+	"hideTripYou": "You hide the trip",
+	"hideTripFullYou": "You hide the trip",
+	"unhideTrip": "Un-hide the trip",
+	"unhideTripFull": "{who} un-hide the trip",
+	"unhideTripYou": "You un-hide the trip",
+	"unhideTripFullYou": "You un-hide the trip"
 }

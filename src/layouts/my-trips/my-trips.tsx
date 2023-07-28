@@ -25,6 +25,8 @@ import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
+import LogHistoryService from '../../services/data-handlers/log-history-service';
+import { TripActions } from '../../utils/interfaces';
 
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
 
@@ -210,6 +212,10 @@ function MyTrips() {
 
 			DataServices.DBService.unHideTripByName(tripName)
 				.then(() => {
+					LogHistoryService.logHistory(eventStore, TripActions.unhideTrip, {
+						tripName,
+					});
+
 					setReloadCounter(reloadCounter + 1);
 				})
 				.catch(() => {

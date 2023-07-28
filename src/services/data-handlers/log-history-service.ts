@@ -50,7 +50,7 @@ const LogHistoryService = {
 
 			totalAffectedSidebar?: number;
 			totalAffectedCalendar?: number;
-			tripName?: { was: string; now: string };
+			tripName?: { was: string; now: string } | string;
 		},
 		eventId?: number,
 		eventName?: string

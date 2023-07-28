@@ -757,5 +757,13 @@
 	"updatedTrip": "עדכנ/ה את פרטי הטיול",
 	"updatedTripFull": "{who} עדכנ/ה את פרטי הטיול",
 	"updatedTripYou": "עדכנת את פרטי הטיול",
-	"updatedTripFullYou": "עדכנת את פרטי הטיול"
+	"updatedTripFullYou": "עדכנת את פרטי הטיול",
+	"hideTrip": "הסתיר/ה את הטיול",
+	"hideTripFull": "{who} הסתיר/ה את הטיול",
+	"hideTripYou": "הסתרת את הטיול",
+	"hideTripFullYou": "הסתרת את הטיול",
+	"unhideTrip": "ביטל/ה את הסתרת הטיול",
+	"unhideTripFull": "{who} ביטל/ה את הסתרת הטיול",
+	"unhideTripYou": "ביטלת את הסתרת הטיול",
+	"unhideTripFullYou": "ביטלת את הסתרת הטיול"
 }
