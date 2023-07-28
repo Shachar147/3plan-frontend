@@ -324,6 +324,10 @@ body {
 	margin-inline: 0;
 }
 
+.margin-inline-5 {
+	margin-inline: 5px;
+}
+
 .margin-inline-10 {
 	margin-inline: 10px;
 }
@@ -748,6 +752,22 @@ body.ltr {
 	max-height: 250px;
 }
 
+.max-height-300 {
+	max-height: 300px;
+}
+
+.max-height-370 {
+	max-height: 370px;
+}
+
+.max-height-400 {
+	max-height: 400px;
+}
+
+.max-width-650 {
+	max-width: 650px;
+}
+
 .align-items-start {
 	align-items: self-start;
 }
@@ -762,6 +782,10 @@ body.ltr {
 
 .min-height-300 {
 	min-height: 300px;
+}
+
+.min-width-0 {
+	min-width: 0;
 }
 
 .min-width-38 {
@@ -884,6 +908,10 @@ a.disabled {
 
 .text-align-center {
 	text-align: center;
+}
+
+.text-align-start {
+	text-align: start;
 }
 
 .text-align-left {
@@ -1205,6 +1233,49 @@ body.admin-side {
 
 		.max-height-250 {
 			max-height: 350px !important;
+		}
+	}
+}
+
+table{
+	&.border-solid-table {
+		border: 1px solid;
+		display: table;
+
+		tr {
+			display: table-row;
+			th, td {
+				display: table-cell;
+				border: 1px solid;
+				padding-inline: 8px;
+				word-break: break-all;
+
+				&:first-child {
+					min-width: 165px;
+					font-weight: bold;
+					text-align: left;
+				}
+
+				&:not(:first-child) {
+					width: 100%;
+				}
+			}
+		}
+	}
+}
+
+body.rtl {
+	table {
+		&.border-solid-table {
+			tr {
+				th, td {
+					&:first-child {
+						min-width: 140px;
+						font-weight: bold;
+						text-align: center;
+					}
+				}
+			}
 		}
 	}
 }

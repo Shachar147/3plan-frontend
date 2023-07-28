@@ -1,13 +1,22 @@
 import { EventStore } from '../../stores/events-store';
 import { LS_DISTANCE_RESULTS } from '../../utils/defaults';
-import { CalendarEvent, DistanceResult, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
+import {
+	buildCalendarEvent,
+	CalendarEvent,
+	DistanceResult,
+	SidebarEvent,
+	TripActions,
+	TriPlanCategory,
+} from '../../utils/interfaces';
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, SharedTrip, Trip } from './data-handler-base';
 import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
-import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
+import { getCoordinatesRangeKey, jsonDiff, stringToCoordinate } from '../../utils/utils';
 import axios from 'axios';
 import { getToken } from '../../helpers/auth';
 import _ from 'lodash';
+import { convertMsToHM, formatFromISODateString } from '../../utils/time-utils';
+import { runInAction } from 'mobx';
 
 export interface upsertTripProps {
 	name?: string;
@@ -314,6 +323,21 @@ export class DBService implements BaseDataHandler {
 	async changeCollaboratorPermissions(permissionsId: any, canWrite: boolean) {
 		return await apiPut(`/shared-trips/${permissionsId}`, {
 			canWrite,
+		});
+	}
+
+	async getHistory(tripId: number, limit: number = 100) {
+		const res: any = await apiGetPromise(this, `/history/by-trip/${tripId}/${limit}`);
+		return res.data;
+	}
+
+	async logHistory(tripId: number, action: string, actionParams?: object, eventId?: number, eventName?: string) {
+		return await apiPost('/history', {
+			tripId,
+			action,
+			actionParams,
+			eventId,
+			eventName,
 		});
 	}
 }

@@ -3,7 +3,7 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import { getClasses, isHotelsCategory, ucfirst } from '../utils/utils';
+import { getClasses, getCurrentUsername, isHotel, isHotelsCategory, ucfirst } from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -13,6 +13,8 @@ import {
 	ImportEventsConfirmInfo,
 	LocationData,
 	SidebarEvent,
+	TripActions,
+	TriPlanCategory,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
 import {
@@ -24,10 +26,12 @@ import {
 	ViewMode,
 } from '../utils/enums';
 import {
+	addHours,
 	addHoursToDate,
 	convertMsToHM,
 	formatDate,
 	formatDuration,
+	formatFromISODateString,
 	getEndDate,
 	getInputDateTimeValue,
 	validateDateRange,
@@ -54,6 +58,7 @@ import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/cons
 import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
+import LogHistoryService from './data-handlers/log-history-service';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -1476,13 +1481,14 @@ const ReactModalService = {
 			}
 
 			if (isOk) {
+				const categoryId = eventStore.createCategoryId();
 				runInAction(async () => {
 					ReactModalService.internal.disableOnConfirm();
 					await eventStore.setCategories(
 						[
 							...eventStore.categories,
 							{
-								id: eventStore.createCategoryId(),
+								id: categoryId,
 								title: newName,
 								icon: newIcon,
 							},
@@ -1492,6 +1498,12 @@ const ReactModalService = {
 
 					ReactModalService.internal.closeModal(eventStore);
 				});
+
+				LogHistoryService.logHistory(eventStore, TripActions.addedCategory, {
+					categoryName: eventStore.categories.find((c) => c.id == Number(categoryId!))?.title,
+					categoryId: categoryId,
+				});
+
 				ReactModalService.internal.alertMessage(
 					eventStore,
 					'MODALS.CREATE.TITLE',
@@ -1584,6 +1596,13 @@ const ReactModalService = {
 				// DataServices.LocalStorageService.setTripName(tripName, newName)
 
 				ReactModalService.internal.closeModal(eventStore);
+
+				LogHistoryService.logHistory(eventStore, TripActions.updatedTrip, {
+					tripName: {
+						was: oldName,
+						now: newName,
+					},
+				});
 
 				ReactModalService.internal.alertMessage(
 					eventStore,
@@ -1790,6 +1809,10 @@ const ReactModalService = {
 				if (tripDataSource === TripDataSource.DB) {
 					await DataServices.DBService.hideTripByName(tripName)
 						.then(() => {
+							LogHistoryService.logHistory(eventStore, TripActions.hideTrip, {
+								tripName,
+							});
+
 							if (onConfirm) {
 								onConfirm();
 								ReactModalService.internal.closeModal(eventStore);
@@ -1851,16 +1874,20 @@ const ReactModalService = {
 			confirmBtnCssClass: 'primary-button',
 			onConfirm: async () => {
 				const tripDataSource = eventStore.dataService.getDataSourceName();
+				const canWrite = !!eventStore.modalValues['share-trip-choose-permissions']?.value;
 				if (tripDataSource === TripDataSource.DB) {
-					await DataServices.DBService.createInviteLink(
-						tripName,
-						!!eventStore.modalValues['share-trip-choose-permissions']?.value
-					)
+					await DataServices.DBService.createInviteLink(tripName, canWrite)
 						.then((response) => {
 							const { inviteLink: data, expiredAt } = response.data;
 							const { inviteLink: token } = data;
 							const host = window.location.host;
 							const inviteLink = `http://${host}/inviteLink?token=${token}`;
+
+							// log history
+							LogHistoryService.logHistory(eventStore, TripActions.sharedTrip, {
+								permissions: canWrite ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
+							});
+
 							ReactModalService.openShareTripStepTwoModal(eventStore, inviteLink, expiredAt);
 						})
 						.catch(() => {
@@ -1914,7 +1941,8 @@ const ReactModalService = {
 		categoryId?: number,
 		initialData: any = {},
 		isSecondModal: boolean = false,
-		onClose?: () => void
+		onClose?: () => void,
+		actionCode: TripActions = TripActions.addedNewSidebarEvent
 	) => {
 		// @ts-ignore
 		window.selectedLocation = initialData.location || undefined;
@@ -2012,14 +2040,17 @@ const ReactModalService = {
 			existingSidebarEvents[categoryId].push(currentEvent);
 			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			// const allEventsEvent = {
-			// 	...currentEvent,
-			// 	category: categoryId.toString(),
-			// };
-			// await eventStore.setAllEvents([
-			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
-			// 	allEventsEvent,
-			// ]);
+			LogHistoryService.logHistory(
+				eventStore,
+				actionCode,
+				{
+					eventName: currentEvent.title,
+					categoryName: eventStore.categories.find((c) => c.id == Number(categoryId!))?.title,
+					categoryId: categoryId,
+				},
+				Number(currentEvent.id),
+				currentEvent.title
+			);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -2210,16 +2241,21 @@ const ReactModalService = {
 				sidebarEvents[parseInt(category)] = sidebarEvents[parseInt(category)] || [];
 				sidebarEvents[parseInt(category)].push(currentEvent);
 				await eventStore.setSidebarEvents(sidebarEvents);
-				// const allEventsEvent = {
-				// 	...currentEvent,
-				// 	category,
-				// };
-				// await eventStore.setAllEvents([
-				// 	...eventStore.allEventsComputed.filter((x) => x.id !== eventId),
-				// 	allEventsEvent,
-				// ]);
 
 				addToEventsToCategories(currentEvent);
+
+				LogHistoryService.logHistoryOnSidebarEventChangeInternal(
+					eventStore,
+					eventStore.tripId,
+					{
+						...originalEvent,
+					},
+					{
+						...currentEvent,
+					},
+					Number(eventId),
+					originalEvent.title
+				);
 
 				ReactModalService.internal.alertMessage(
 					eventStore,
@@ -2278,6 +2314,19 @@ const ReactModalService = {
 						);
 					}
 					await eventStore.setSidebarEvents(newSidebarEvents);
+
+					LogHistoryService.logHistoryOnSidebarEventChangeInternal(
+						eventStore,
+						eventStore.tripId,
+						{
+							...originalEvent,
+						},
+						{
+							...currentEvent,
+						},
+						Number(eventId),
+						originalEvent.title
+					);
 
 					ReactModalService.internal.alertMessage(
 						eventStore,
@@ -2452,10 +2501,13 @@ const ReactModalService = {
 			existingSidebarEvents[parseInt(category)].push(currentEvent);
 			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			// await eventStore.setAllEvents([
-			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
-			// 	currentEvent,
-			// ]);
+			LogHistoryService.logHistory(
+				eventStore,
+				TripActions.duplicatedSidebarEvent,
+				{},
+				Number(currentEvent.id),
+				event.title
+			);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -2825,11 +2877,6 @@ const ReactModalService = {
 			await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 			addToEventsToCategories(currentEvent);
 
-			// await eventStore.setAllEvents([
-			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
-			// 	{ ...currentEvent, category: categoryId },
-			// ]);
-
 			// if we got sidebarEventData it means we're trying to add already existing event to the calendar.
 			// (it could be either by clicking on the calendar and choosing 'add from existing' or trying to add from the map)
 			// in this case, after we added it to calendar, we need to remove it from sidebar.
@@ -2842,6 +2889,28 @@ const ReactModalService = {
 				});
 				await eventStore.setSidebarEvents(newSidebarEvents);
 			}
+
+			const categoryName =
+				sidebarEventData && sidebarEventData.category
+					? eventStore.categories.find((c) => c.id == Number(sidebarEventData.category))?.title
+					: undefined;
+
+			// log history
+			LogHistoryService.logHistory(
+				eventStore,
+				sidebarEventData
+					? categoryName && isHotel(categoryName, sidebarEventData.title)
+						? TripActions.addedHotelCalendarEventFromExisting
+						: TripActions.addedCalendarEventFromExisting
+					: TripActions.addedNewCalendarEvent,
+				{
+					eventName: currentEvent.title,
+					toWhereStart: currentEvent.start,
+					toWhereEnd: currentEvent.end,
+				},
+				Number(currentEvent.id),
+				currentEvent.title
+			);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -2925,6 +2994,8 @@ const ReactModalService = {
 		const newSidebarEvents = eventStore.getJSSidebarEvents();
 		delete newSidebarEvents[categoryId];
 
+		const categoryName = eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title;
+
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const onConfirm = async () => {
 			ReactModalService.internal.disableOnConfirm();
@@ -2941,8 +3012,12 @@ const ReactModalService = {
 			}
 			await eventStore.setCalendarEvents([...newCalendarEvents]);
 
-			// delete from all events
-			// await eventStore.setAllEvents([...newAllEvents]);
+			// log history
+			LogHistoryService.logHistory(eventStore, TripActions.deletedCategory, {
+				categoryName,
+				totalAffectedCalendar,
+				totalAffectedSidebar,
+			});
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
@@ -2980,9 +3055,7 @@ const ReactModalService = {
 		} else {
 			ReactModalService.internal.openModal(eventStore, {
 				...getDefaultSettings(eventStore),
-				title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${
-					eventStore.categories.find((c) => c.id.toString() === categoryId.toString())!.title
-				}`,
+				title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${categoryName}`,
 				content: <div dangerouslySetInnerHTML={{ __html: html }} />,
 				cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 				confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
@@ -3010,7 +3083,7 @@ const ReactModalService = {
 			const newName = eventStore.modalValues.name;
 
 			// @ts-ignore
-			const order = eventStore.modalValues.categoryOrder;
+			const order = eventStore.modalValues.categoryOrder?.value ?? eventStore.modalValues.categoryOrder;
 
 			let isOk = true;
 
@@ -3078,6 +3151,30 @@ const ReactModalService = {
 
 				// remove from fullcalendar store
 				TriplanCalendarRef.current?.refreshSources();
+
+				const diff: Record<string, any> = {};
+				if (iconChanged) {
+					diff['icon'] = {
+						was: oldIcon,
+						now: newIcon,
+					};
+				}
+				if (titleChanged) {
+					diff['title'] = {
+						was: oldName,
+						now: newName,
+					};
+				}
+				if (orderChanged) {
+					diff['order'] = {
+						was: oldOrder,
+						now: order,
+					};
+				}
+
+				diff['categoryName'] = oldName;
+
+				LogHistoryService.logHistory(eventStore, TripActions.changedCategory, diff);
 
 				ReactModalService.internal.alertMessage(
 					eventStore,
@@ -3199,6 +3296,8 @@ const ReactModalService = {
 			currentEvent: CalendarEvent,
 			addEventToSidebar: (event: SidebarEvent) => boolean
 		) => {
+			const original = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
+
 			ReactModalService.openConfirmModal(
 				eventStore,
 				async () => {
@@ -3209,6 +3308,16 @@ const ReactModalService = {
 						// remove from calendar
 						eventStore.allowRemoveAllCalendarEvents = true;
 						await eventStore.deleteEvent(eventId);
+
+						LogHistoryService.logHistory(
+							eventStore,
+							TripActions.deletedCalendarEvent,
+							{
+								was: original,
+							},
+							eventId,
+							currentEvent.title
+						);
 
 						// refreshSources();
 
@@ -3424,6 +3533,42 @@ const ReactModalService = {
 						}
 					}
 
+					let originalStart = originalEvent.start;
+					try {
+						originalStart = formatFromISODateString((originalEvent.start as Date).toISOString(), false);
+					} catch {}
+
+					let originalEnd = originalEvent.end;
+					try {
+						originalEnd = formatFromISODateString((originalEvent.end as Date).toISOString(), false);
+					} catch {}
+
+					let currentStart: any = currentEvent.start;
+					try {
+						currentStart = formatFromISODateString((currentEvent.start as Date).toISOString(), false);
+					} catch {}
+
+					let currentEnd: any = currentEvent.end;
+					try {
+						currentEnd = formatFromISODateString((currentEvent.end as Date).toISOString(), false);
+					} catch {}
+					LogHistoryService.logHistoryOnEventChangeInternal(
+						eventStore,
+						eventStore.tripId,
+						{
+							...originalEvent,
+							start: originalStart,
+							end: originalEnd,
+						},
+						{
+							...currentEvent,
+							start: currentStart,
+							end: currentEnd,
+						},
+						Number(eventId),
+						originalEvent.title
+					);
+
 					ReactModalService.internal.alertMessage(eventStore, title, content, 'success', contentParams);
 				} else {
 					let title = 'MODALS.EDIT_EVENT_ERROR.CONTENT';
@@ -3459,14 +3604,43 @@ const ReactModalService = {
 					...eventStore.calendarEvents.filter((x) => x.id !== eventId),
 					currentEvent,
 				]);
-				// const allEventsEvent = {
-				// 	...currentEvent,
-				// 	category: categoryId.toString(),
-				// };
-				// await eventStore.setAllEvents([
-				// 	...eventStore.allEventsComputed.filter((x) => x.id !== eventId),
-				// 	allEventsEvent,
-				// ]);
+
+				let originalStart = originalEvent.start;
+				try {
+					originalStart = formatFromISODateString((originalEvent.start as Date).toISOString(), false);
+				} catch {}
+
+				let originalEnd = originalEvent.end;
+				try {
+					originalEnd = formatFromISODateString((originalEvent.end as Date).toISOString(), false);
+				} catch {}
+
+				let currentStart: any = currentEvent.start;
+				try {
+					currentStart = formatFromISODateString((currentEvent.start as Date).toISOString(), false);
+				} catch {}
+
+				let currentEnd: any = currentEvent.end;
+				try {
+					currentEnd = formatFromISODateString((currentEvent.end as Date).toISOString(), false);
+				} catch {}
+				LogHistoryService.logHistoryOnEventChangeInternal(
+					eventStore,
+					eventStore.tripId,
+					{
+						...originalEvent,
+						start: originalStart,
+						end: originalEnd,
+					},
+					{
+						...currentEvent,
+						start: currentStart,
+						end: currentEnd,
+					},
+					Number(eventId),
+					originalEvent.title
+				);
+
 				ReactModalService.internal.alertMessage(
 					eventStore,
 					'MODALS.UPDATED.TITLE',
@@ -3537,6 +3711,14 @@ const ReactModalService = {
 
 			// update calendar events
 			await eventStore.setCalendarEvents([...eventStore.calendarEvents, newEvent]);
+
+			LogHistoryService.logHistory(
+				eventStore,
+				TripActions.duplicatedCalendarEvent,
+				{},
+				eventId,
+				currentEvent.title
+			);
 
 			// update all events
 			// @ts-ignore
@@ -3707,6 +3889,17 @@ const ReactModalService = {
 
 				await removeEventFromSidebarById(event.id);
 				// await eventStore.setAllEvents(eventStore.allEventsComputed.filter((x) => x.id !== event.id));
+
+				LogHistoryService.logHistory(
+					eventStore,
+					TripActions.deletedSidebarEvent,
+					{
+						was: event,
+						eventName: event.title,
+					},
+					Number(event.id),
+					event.title
+				);
 
 				ReactModalService.internal.closeModal(eventStore);
 			},
@@ -3909,6 +4102,21 @@ const ReactModalService = {
 			onConfirm: async () => {
 				const { categoriesImported, eventsImported } = await ImportService.import(eventStore, info);
 				if (categoriesImported || eventsImported) {
+					LogHistoryService.logHistory(
+						eventStore,
+						categoriesImported ? TripActions.importedCategoriesAndEvents : TripActions.importedEvents,
+						{
+							eventsToAdd: info.eventsToAdd,
+							categoriesToAdd: info.categoriesToAdd,
+							numOfEventsWithErrors: info.numOfEventsWithErrors,
+							errors: info.errors,
+							categoriesImported,
+							eventsImported,
+							count: info.eventsToAdd?.length ?? 0,
+							count2: info.categoriesToAdd?.length ?? 0,
+						}
+					);
+
 					ReactModalService.internal.alertMessage(
 						eventStore,
 						'MODALS.IMPORTED.TITLE',
@@ -4310,6 +4518,11 @@ const ReactModalService = {
 
 			await eventStore.setCalendarEvents(updatedEvents, true);
 
+			LogHistoryService.logHistory(eventStore, TripActions.switchedDays, {
+				was: draggedItem.text,
+				now: item.text,
+			});
+
 			ReactModalService.internal.closeModal(eventStore);
 
 			setTimeout(() => {
@@ -4462,6 +4675,308 @@ const ReactModalService = {
 					return;
 				}
 			},
+		});
+	},
+	openSeeHistoryDetails(eventStore: EventStore, historyRow: any, fullTitle: string) {
+		const offset = -1 * (new Date().getTimezoneOffset() / 60);
+		const updatedAt = addHours(new Date(historyRow.updatedAt), offset);
+
+		const isYou = historyRow.updatedBy == getCurrentUsername();
+		const when = formatFromISODateString(updatedAt.toISOString());
+
+		const getNow = () => {
+			switch (historyRow.action) {
+				case TripActions.deletedCalendarEvent:
+					return TranslateService.translate(eventStore, 'IN_THE_SIDEBAR');
+				default:
+					return historyRow.actionParams.now;
+			}
+		};
+
+		if (historyRow.actionParams.priority) {
+			const priorityWas = historyRow.actionParams.priority.was as unknown as TriplanPriority;
+			historyRow.actionParams.priority.was = TranslateService.translate(eventStore, TriplanPriority[priorityWas]);
+
+			const priorityNow = historyRow.actionParams.priority.now as unknown as TriplanPriority;
+			historyRow.actionParams.priority.now = TranslateService.translate(eventStore, TriplanPriority[priorityNow]);
+		}
+
+		if (historyRow.actionParams.preferredTime) {
+			const preferredTimeWas = historyRow.actionParams.preferredTime.was as unknown as TriplanPriority;
+			historyRow.actionParams.preferredTime.was = TranslateService.translate(
+				eventStore,
+				TriplanPriority[preferredTimeWas]
+			);
+
+			const preferredTimeNow = historyRow.actionParams.preferredTime.now as unknown as TriplanPriority;
+			historyRow.actionParams.preferredTime.now = TranslateService.translate(
+				eventStore,
+				TriplanPriority[preferredTimeNow]
+			);
+		}
+
+		if (historyRow.actionParams.category) {
+			historyRow.actionParams.category.was =
+				eventStore.categories.find((c) => c.id == historyRow.actionParams.category.was)?.title ??
+				historyRow.actionParams.category.was;
+
+			historyRow.actionParams.category.now =
+				eventStore.categories.find((c) => c.id == historyRow.actionParams.category.now)?.title ??
+				historyRow.actionParams.category.now;
+		}
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			customClass: 'triplan-react-modal max-width-650',
+			title: TranslateService.translate(eventStore, 'VIEW_HISTORY'),
+			type: 'controlled',
+			onConfirm: () => {},
+			// content: () => fullTitle,
+			content: () => (
+				<table className="border-solid-table">
+					<tr>
+						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'WHO')}</td>
+						<td>{isYou ? TranslateService.translate(eventStore, 'YOU') : historyRow.updatedBy}</td>
+					</tr>
+					<tr>
+						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'WHAT')}</td>
+						<td>
+							{fullTitle}
+							{/*{TranslateService.translate(*/}
+							{/*	eventStore,*/}
+							{/*	isYou ? historyRow.action + 'You' : historyRow.action,*/}
+							{/*	{*/}
+							{/*		eventName: historyRow.eventName,*/}
+							{/*		count:*/}
+							{/*			historyRow.actionParams.count ??*/}
+							{/*			historyRow.action == TripActions.changedCategory*/}
+							{/*				? Object.keys(historyRow.actionParams).filter(*/}
+							{/*						(c) =>*/}
+							{/*							[*/}
+							{/*								'openingHours',*/}
+							{/*								'images',*/}
+							{/*								'timingError',*/}
+							{/*								'className',*/}
+							{/*								'id',*/}
+							{/*							].indexOf(c) == -1*/}
+							{/*				  ).length - 1*/}
+							{/*				: Object.keys(historyRow.actionParams).filter(*/}
+							{/*						(c) =>*/}
+							{/*							[*/}
+							{/*								'openingHours',*/}
+							{/*								'images',*/}
+							{/*								'timingError',*/}
+							{/*								'className',*/}
+							{/*								'id',*/}
+							{/*							].indexOf(c) == -1*/}
+							{/*				  ).length,*/}
+							{/*		count2: historyRow.actionParams.count2,*/}
+							{/*		...historyRow.actionParams,*/}
+							{/*	}*/}
+							{/*)}*/}
+						</td>
+					</tr>
+					{historyRow.actionParams.eventName && (
+						<tr>
+							<td className="main-font-heavy">
+								{TranslateService.translate(
+									eventStore,
+									historyRow.action == TripActions.addedHotelCalendarEventFromExisting
+										? 'HOTEL_NAME'
+										: 'EVENT_NAME'
+								)}
+							</td>
+							<td>{historyRow.actionParams.eventName}</td>
+						</tr>
+					)}
+					{historyRow.actionParams.categoryName &&
+						historyRow.action != TripActions.deletedCategory &&
+						historyRow.action != TripActions.changedCategory && (
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(
+										eventStore,
+										historyRow.action == TripActions.addedCategory
+											? 'CATEGORY_NAME'
+											: 'ADDED_TO_CATEGORY'
+									)}
+								</td>
+								<td>{historyRow.actionParams.categoryName}</td>
+							</tr>
+						)}
+					{historyRow.action == TripActions.updatedTrip && (
+						<tr>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'TRIP_NAME')}</td>
+							<td>
+								<div className="flex-col gap-4">
+									<div>
+										<span>{TranslateService.translate(eventStore, 'BEFORE')}</span>
+										{' : '}
+										<span>{historyRow.actionParams.tripName.was}</span>
+									</div>
+									<div>
+										<span>{TranslateService.translate(eventStore, 'AFTER')}</span>
+										{' : '}
+										<span>{historyRow.actionParams.tripName.now}</span>
+									</div>
+								</div>
+							</td>
+						</tr>
+					)}
+					{historyRow.actionParams.toWhereStart && historyRow.actionParams.toWhereEnd && (
+						<tr>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'TO_WHERE')}</td>
+							<td>
+								{formatFromISODateString(historyRow.actionParams.toWhereStart, false)}
+								{' - '}
+								{formatFromISODateString(historyRow.actionParams.toWhereEnd, false)}
+							</td>
+						</tr>
+					)}
+					{historyRow.actionParams.was && historyRow.action != TripActions.deletedSidebarEvent && (
+						<tr>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'BEFORE')}</td>
+							<td>{LogHistoryService.getWas(historyRow)}</td>
+						</tr>
+					)}
+					{historyRow.actionParams.now && (
+						<tr>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'AFTER')}</td>
+							<td>{getNow()}</td>
+						</tr>
+					)}
+					{historyRow.actionParams.permissions && (
+						<tr>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'PERMISSIONS')}</td>
+							<td>{TranslateService.translate(eventStore, historyRow.actionParams.permissions)}</td>
+						</tr>
+					)}
+					{historyRow.action == TripActions.deletedCategory && (
+						<>
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(eventStore, 'TOTAL_AFFECTED_CALENDAR')}
+								</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams?.totalAffectedCalendar ?? 0}
+								</td>
+							</tr>
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(eventStore, 'TOTAL_AFFECTED_SIDEBAR')}
+								</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams?.totalAffectedSidebar ?? 0}
+								</td>
+							</tr>
+						</>
+					)}
+
+					{(historyRow.action == TripActions.importedCategoriesAndEvents ||
+						historyRow.action == TripActions.importedEvents) && (
+						<>
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(eventStore, 'ADDED_CATEGORIES')}
+								</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams.categoriesToAdd?.length
+										? historyRow.actionParams.categoriesToAdd
+												?.map(
+													(c: TriPlanCategory, idx: number) =>
+														Number(idx + 1) + '. ' + c.icon + ' ' + c.title
+												)
+												?.join('\n')
+										: '-'}
+								</td>
+							</tr>
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(eventStore, 'ADDED_EVENTS')}
+								</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams.eventsToAdd?.length
+										? historyRow.actionParams.eventsToAdd
+												?.map(
+													(c: SidebarEvent, idx: number) => Number(idx + 1) + '. ' + c.title
+												)
+												?.join('\n')
+										: '-'}
+								</td>
+							</tr>
+							<tr>
+								<td className="main-font-heavy">{TranslateService.translate(eventStore, 'ERRORS')}</td>
+								<td className="white-space-pre-line">
+									{historyRow.actionParams.errors?.length
+										? historyRow.actionParams.errors
+												?.map((c: SidebarEvent, idx: number) => Number(idx + 1) + '. ' + c)
+												?.join('\n')
+										: '-'}
+								</td>
+							</tr>
+						</>
+					)}
+					{(historyRow.action == TripActions.changedEvent ||
+						historyRow.action == TripActions.changedCategory ||
+						historyRow.action == TripActions.changedSidebarEvent ||
+						historyRow.action == TripActions.changedTripDates) &&
+						Object.keys(historyRow.actionParams)
+							.filter(
+								(k) =>
+									[
+										'openingHours',
+										'images',
+										'timingError',
+										'className',
+										'id',
+										'count',
+										historyRow.action == TripActions.changedCategory && 'categoryName',
+									].indexOf(k) == -1
+							)
+							.map((changedKey, idx) => (
+								<tr>
+									<td className="main-font-heavy">
+										{(historyRow.action == TripActions.changedEvent ||
+											historyRow.action == TripActions.changedCategory) && (
+											<>
+												{Number(idx + 1)}
+												{'. '}
+											</>
+										)}
+										{TranslateService.translate(eventStore, `MODALS.${changedKey.toUpperCase()}`)}
+									</td>
+									<td>
+										<div className="flex-col gap-4">
+											<div>
+												<span>{TranslateService.translate(eventStore, 'BEFORE')}</span>
+												{' : '}
+												<span>
+													{historyRow.actionParams[changedKey]?.was?.address ||
+														historyRow.actionParams[changedKey]?.was ||
+														'N/A'}
+												</span>
+											</div>
+											<div>
+												<span>{TranslateService.translate(eventStore, 'AFTER')}</span>
+												{' : '}
+												<span>
+													{historyRow.actionParams[changedKey]?.now?.address ||
+														historyRow.actionParams[changedKey]?.now ||
+														'N/A'}
+												</span>
+											</div>
+										</div>
+									</td>
+								</tr>
+							))}
+					<tr>
+						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'UPDATED_AT')}</td>
+						<td>{when}</td>
+					</tr>
+				</table>
+			),
+			confirmBtnCssClass: 'display-none',
+			cancelBtnText: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CANCEL'),
 		});
 	},
 };

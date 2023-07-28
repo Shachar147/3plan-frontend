@@ -35,6 +35,10 @@
   min-width: 500px;
   max-width: 570px !important;
 
+  &.max-width-650 {
+    max-width: 650px !important;
+  }
+
   p {
     z-index: 0 !important;
   }

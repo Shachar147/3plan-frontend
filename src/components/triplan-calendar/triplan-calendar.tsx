@@ -1,7 +1,7 @@
 import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { buildCalendarEvent, CalendarEvent, SidebarEvent, TriPlanCategory } from '../../utils/interfaces';
+import { buildCalendarEvent, CalendarEvent, SidebarEvent, TripActions, TriPlanCategory } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
-import FullCalendar, { EventApi, EventContentArg, ViewMountArg } from '@fullcalendar/react';
+import FullCalendar, { EventApi, EventContentArg } from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
@@ -15,6 +15,8 @@ import {
 	addHours,
 	addSeconds,
 	areDatesOnDifferentDays,
+	convertMsToHM,
+	formatFromISODateString,
 	getDateRangeString,
 	isTodayInDateRange,
 	toDate,
@@ -25,7 +27,9 @@ import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
 import DraggableList from '../draggable-list/draggable-list';
-import { lockEvents } from '../../utils/utils';
+import { jsonDiff, lockEvents } from '../../utils/utils';
+import { TripDataSource } from '../../utils/enums';
+import { DBService } from '../../services/data-handlers/db-service';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -251,6 +255,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			hasEnd: !changeInfo.event.allDay,
 			start: changeInfo.event.start,
 			end: changeInfo.event.end,
+			duration: convertMsToHM(changeInfo.event.end - changeInfo.event.start),
 		};
 
 		if (!eventStore.distanceSectionAutoOpened) {
@@ -258,7 +263,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
-		return eventStore.changeEvent({ event: newEvent });
+		return eventStore.changeEvent({ event: newEvent }, changeInfo);
 	};
 
 	const refreshSources = () => {

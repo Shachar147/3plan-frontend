@@ -329,8 +329,6 @@ export function lockEvents(eventStore: EventStore, calendarEvent: CalendarEvent)
 		calendarEvent.durationEditable = true;
 		// @ts-ignore
 		calendarEvent.disableDragging = false;
-		// @ts-ignore
-		console.log(calendarEvent.classNames);
 
 		try {
 			calendarEvent.className = calendarEvent.className
@@ -452,4 +450,28 @@ export function locationToString(location?: LocationData): string {
 		}
 	}
 	return '';
+}
+
+export function jsonDiff(obj1: object, obj2: object): any {
+	const ret: Record<any, any> = {};
+	for (const i in obj2) {
+		// @ts-ignore
+		if (!obj1.hasOwnProperty(i) || obj2[i] != obj1[i]) {
+			// @ts-ignore
+			if (!(obj1[i] == null && obj2[i] == undefined && obj2[i] == null && obj1[i] == undefined)) {
+				// @ts-ignore
+				if (typeof obj1[i] == 'object' && typeof obj2[i] == 'object') {
+					// @ts-ignore
+					if (JSON.stringify(obj1[i]) != JSON.stringify(obj2[i])) {
+						// @ts-ignore
+						ret[i] = { was: obj1[i], now: obj2[i] };
+					}
+				} else {
+					// @ts-ignore
+					ret[i] = { was: obj1[i], now: obj2[i] };
+				}
+			}
+		}
+	}
+	return ret;
 }

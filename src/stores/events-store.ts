@@ -2,7 +2,14 @@ import React, { createContext } from 'react';
 import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { EventInput } from '@fullcalendar/react';
 import { defaultDateRange, defaultLocalCode, LS_CALENDAR_LOCALE, LS_SIDEBAR_EVENTS } from '../utils/defaults';
-import { CalendarEvent, Coordinate, DistanceResult, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
+import {
+	CalendarEvent,
+	Coordinate,
+	DistanceResult,
+	SidebarEvent,
+	TripActions,
+	TriPlanCategory,
+} from '../utils/interfaces';
 import {
 	getEnumKey,
 	GoogleTravelMode,
@@ -35,7 +42,7 @@ import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
-import { TriPlanCalendarRef } from '../components/triplan-calendar/triplan-calendar';
+import LogHistoryService from '../services/data-handlers/log-history-service';
 
 const defaultModalSettings = {
 	show: false,
@@ -164,6 +171,7 @@ export class EventStore {
 	@observable isSidebarMinimized: boolean = false;
 
 	@observable reloadCollaboratorsCounter: number = 0;
+	@observable reloadHistoryCounter: number = 0;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -837,7 +845,7 @@ export class EventStore {
 	}
 
 	@action
-	async changeEvent(changeInfo: any) {
+	async changeEvent(changeInfo: any, logHistoryData?: any) {
 		const eventId = changeInfo.event.id;
 		const storedEvent = this.calendarEvents.find((e) => e.id == eventId);
 		if (storedEvent) {
@@ -848,13 +856,7 @@ export class EventStore {
 				newEvent,
 			]);
 
-			// const findEvent = this.allEvents.find((event) => event.id.toString() === eventId.toString());
-			// if (findEvent) {
-			// 	await this.updateEvent(findEvent, storedEvent);
-			// } else {
-			// 	console.error('event not found!');
-			// }
-			// await this.setAllEvents([...this.allEvents]);
+			LogHistoryService.logHistoryOnEventChange(this, this.tripId, logHistoryData, eventId, storedEvent.title);
 
 			return true;
 		}
@@ -951,6 +953,8 @@ export class EventStore {
 			eventIdToEvent[e.id] = e;
 		});
 
+		const count = this.calendarEvents.length;
+
 		this.calendarEvents.forEach((event) => {
 			const eventId = event.id!;
 			const categoryId = eventToCategory[eventId];
@@ -969,7 +973,11 @@ export class EventStore {
 		this.allowRemoveAllCalendarEvents = true;
 		const promise2 = this.setCalendarEvents([]);
 
-		return Promise.all([promise1, promise2]);
+		return Promise.all([promise1, promise2]).then(() => {
+			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
+				count,
+			});
+		});
 	}
 
 	@action
@@ -1226,12 +1234,14 @@ export class EventStore {
 		// if trip end date already passed, auto-lock it.
 		// after it was auto-locked once, do not auto-lock it again (if the user decided to unlock it, leave it unlocked)
 		const key = 'auto-locked-' + this.tripName;
+		const key2 = 'auto-locked-' + this.tripId;
 		if (!isLocked) {
 			if (new Date().getTime() > new Date(endDate).getTime()) {
 				console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
-				if (!localStorage.getItem(key)) {
+				if (!localStorage.getItem(key) && !localStorage.getItem(key2)) {
 					this.dataService.lockTrip(this.tripName);
 					localStorage.setItem(key, '1');
+					localStorage.setItem(key2, '1');
 				}
 			}
 		}
@@ -1424,10 +1434,16 @@ export class EventStore {
 
 	@action
 	async toggleTripLocked() {
+		if (this.isSharedTrip && !this.canWrite) {
+			return;
+		}
+
 		if (this.isTripLocked) {
 			await this.dataService.unlockTrip(this.tripName);
+			LogHistoryService.logHistory(this, TripActions.unlockedTrip, {});
 		} else {
 			await this.dataService.lockTrip(this.tripName);
+			LogHistoryService.logHistory(this, TripActions.lockedTrip, {});
 		}
 
 		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {

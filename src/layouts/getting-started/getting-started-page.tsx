@@ -16,6 +16,8 @@ import { TripDataSource } from '../../utils/enums';
 import { upsertTripProps } from '../../services/data-handlers/db-service';
 import { validateDateRange } from '../../utils/time-utils';
 import { DEFAULT_VIEW_MODE_FOR_NEW_TRIPS, TRIP_MAX_SIZE_DAYS } from '../../utils/consts';
+import LogHistoryService from '../../services/data-handlers/log-history-service';
+import { TripActions } from '../../utils/interfaces';
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -211,6 +213,12 @@ const GettingStartedPage = () => {
 
 					eventStore.setCustomDateRange(customDateRange);
 					eventStore.dataService.setDateRange(customDateRange, TripName);
+
+					// keep to history:
+					LogHistoryService.logHistory(eventStore, TripActions.createdTrip, {
+						tripName: TripName,
+					});
+
 					navigate(`/plan/${res.data.name}`);
 					// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 				},
