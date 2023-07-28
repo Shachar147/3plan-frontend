@@ -34,6 +34,7 @@ import {
 	formatFromISODateString,
 	getEndDate,
 	getInputDateTimeValue,
+	getOffsetInHours,
 	validateDateRange,
 	validateDuration,
 } from '../utils/time-utils';
@@ -4678,7 +4679,7 @@ const ReactModalService = {
 		});
 	},
 	openSeeHistoryDetails(eventStore: EventStore, historyRow: any, fullTitle: string) {
-		const offset = -1 * (new Date().getTimezoneOffset() / 60);
+		const offset = -1 * getOffsetInHours();
 		const updatedAt = addHours(new Date(historyRow.updatedAt), offset);
 
 		const isYou = historyRow.updatedBy == getCurrentUsername();

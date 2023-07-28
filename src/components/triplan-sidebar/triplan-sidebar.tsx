@@ -33,7 +33,13 @@ import { modalsStoreContext } from '../../stores/modals-store';
 import TriplanSearch from '../triplan-header/triplan-search/triplan-search';
 import { DBService } from '../../services/data-handlers/db-service';
 import useAsyncMemo from '../../custom-hooks/use-async-memo';
-import { addHours, formatDate, formatTimeFromISODateString, getDurationString } from '../../utils/time-utils';
+import {
+	addHours,
+	formatDate,
+	formatTimeFromISODateString,
+	getDurationString,
+	getOffsetInHours,
+} from '../../utils/time-utils';
 
 // @ts-ignore
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
@@ -1602,12 +1608,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			const updatedAt = new Date(historyRow.updatedAt);
 			const now = new Date();
 
-			let offset = -1 * (new Date().getTimezoneOffset() / 60);
-
-			const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
-			if (mode != 'development') {
-				offset = 0;
-			}
+			const offset = -1 * getOffsetInHours();
 
 			const nowWithOffset = addHours(new Date(), offset);
 			const updatedAtWithOffset = addHours(updatedAt, offset);

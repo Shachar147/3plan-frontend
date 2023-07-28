@@ -14,7 +14,7 @@ import { eventStoreContext } from '../../../stores/events-store';
 import DestinationSlider from '../../components/destinations-slider/destination-slider';
 import TriplanSearch from '../../../components/triplan-header/triplan-search/triplan-search';
 import { formatDateString } from '../../../utils/defaults';
-import { addHours } from '../../../utils/time-utils';
+import { addHours, getOffsetInHours } from '../../../utils/time-utils';
 
 function AdminDashboard() {
 	const adminStore = useContext(adminStoreContext);
@@ -128,7 +128,7 @@ function AdminDashboard() {
 			);
 		}
 
-		const offset = -1 * (new Date().getTimezoneOffset() / 60);
+		const offset = -1 * getOffsetInHours();
 
 		return (
 			<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">
@@ -212,7 +212,7 @@ function AdminDashboard() {
 			);
 		}
 
-		const offset = -1 * (new Date().getTimezoneOffset() / 60);
+		const offset = -1 * getOffsetInHours();
 
 		return (
 			<div className="flex-col gap-10 width-100-percents text-align-center max-height-250 overflow-auto bright-scrollbar">

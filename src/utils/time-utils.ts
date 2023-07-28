@@ -296,3 +296,13 @@ export function areDatesOnDifferentDays(date1: Date, date2: Date) {
 		date1.getDate() !== date2.getDate()
 	);
 }
+
+export function getOffsetInHours() {
+	let offset = new Date().getTimezoneOffset() / 60;
+
+	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
+	if (mode != 'development') {
+		offset = 0;
+	}
+	return offset;
+}
