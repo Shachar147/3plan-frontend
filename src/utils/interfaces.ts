@@ -146,6 +146,7 @@ export enum TripActions {
 	importedCategoriesAndEvents = 'importedCategoriesAndEvents',
 	deletedSidebarEvent = 'deletedSidebarEvent',
 	changedSidebarEvent = 'changedSidebarEvent',
+	duplicatedSidebarEvent = 'duplicatedSidebarEvent',
 
 	// categories
 	addedCategory = 'addedCategory',

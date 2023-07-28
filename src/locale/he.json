@@ -782,5 +782,9 @@
 	"changedCategoryFull": "{who} עדכנ/ה את הקטגוריה {categoryName} ({count} שינויים)",
 	"changedCategoryYou": "עדכנת את הקטגוריה {categoryName}  ({count} שינויים)",
 	"changedCategoryFullYou": "עדכנת את הקטגוריה {categoryName} ({count} שינויים)",
-	"MODALS.ORDER": "מיקום"
+	"MODALS.ORDER": "מיקום",
+	"duplicatedSidebarEvent": "שכפל את {eventName} בתפריט הצד",
+	"duplicatedSidebarEventYou": "שכפלת את {eventName} בתפריט הצד",
+	"duplicatedSidebarEventFull": "{who} שכפל את {eventName} בתפריט הצד",
+	"duplicatedSidebarEventFullYou": "שכפלת את {eventName} בתפריט הצד"
 }

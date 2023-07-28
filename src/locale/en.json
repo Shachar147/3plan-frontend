@@ -699,5 +699,9 @@
 	"changedCategoryFull": "{who} updated category {categoryName} ({count} updates)",
 	"changedCategoryYou": "You updated category {categoryName} ({count} updates)",
 	"changedCategoryFullYou": "You updated category {categoryName} ({count} updates)",
-	"MODALS.ORDER": "Order"
+	"MODALS.ORDER": "Order",
+	"duplicatedSidebarEvent": "Duplicated {eventName} on sidebar",
+	"duplicatedSidebarEventYou": "You Duplicated {eventName} on sidebar",
+	"duplicatedSidebarEventFull": "{who} Duplicated {eventName} on sidebar",
+	"duplicatedSidebarEventFullYou": "Duplicated {eventName} on sidebar"
 }

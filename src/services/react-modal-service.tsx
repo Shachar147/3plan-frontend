@@ -2497,10 +2497,13 @@ const ReactModalService = {
 			existingSidebarEvents[parseInt(category)].push(currentEvent);
 			await eventStore.setSidebarEvents(existingSidebarEvents);
 
-			// await eventStore.setAllEvents([
-			// 	...eventStore.allEventsComputed.filter((x) => x.id !== currentEvent.id),
-			// 	currentEvent,
-			// ]);
+			LogHistoryService.logHistory(
+				eventStore,
+				TripActions.duplicatedSidebarEvent,
+				{},
+				Number(currentEvent.id),
+				event.title
+			);
 
 			ReactModalService.internal.alertMessage(
 				eventStore,
