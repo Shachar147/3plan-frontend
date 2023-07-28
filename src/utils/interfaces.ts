@@ -124,3 +124,42 @@ export interface DistanceResult {
 	distance: string;
 	duration_value: number;
 }
+
+export enum TripActions {
+	// calendar
+	changedEventDurationAndTiming = 'changedEventDurationAndTiming',
+	changedEventTiming = 'changedEventTiming',
+	changedEvent = 'changedEvent',
+	deletedCalendarEvent = 'deletedCalendarEvent',
+	duplicatedCalendarEvent = 'duplicatedCalendarEvent',
+	switchedDays = 'switchedDays',
+	addedCalendarEventFromExisting = 'addedCalendarEventFromExisting',
+	addedHotelCalendarEventFromExisting = 'addedHotelCalendarEventFromExisting',
+	addedNewCalendarEvent = 'addedNewCalendarEvent',
+	clearedCalendar = 'clearedCalendar',
+
+	// sidebar
+	addedNewSidebarEventFromMap = 'addedNewSidebarEventFromMap',
+	addedNewSidebarEvent = 'addedNewSidebarEvent',
+	addedNewSidebarEventFromTinder = 'addedNewSidebarEventFromTinder',
+	importedEvents = 'importedEvents',
+	importedCategoriesAndEvents = 'importedCategoriesAndEvents',
+	deletedSidebarEvent = 'deletedSidebarEvent',
+	changedSidebarEvent = 'changedSidebarEvent',
+	duplicatedSidebarEvent = 'duplicatedSidebarEvent',
+
+	// categories
+	addedCategory = 'addedCategory',
+	deletedCategory = 'deletedCategory',
+	changedCategory = 'changedCategory',
+
+	// trip
+	changedTripDates = 'changedTripDates',
+	unlockedTrip = 'unlockedTrip',
+	lockedTrip = 'lockedTrip',
+	updatedTrip = 'updatedTrip',
+	hideTrip = 'hideTrip',
+	unhideTrip = 'unhideTrip',
+	createdTrip = 'createdTrip',
+	sharedTrip = 'sharedTrip',
+}

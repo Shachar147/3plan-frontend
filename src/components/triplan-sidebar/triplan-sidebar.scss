@@ -356,3 +356,19 @@ body.rtl {
 		}
 	}
 }
+
+.triplan-history {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	justify-content: center;
+	background-color: white;
+	padding-block: 5px;
+	border-top: 1px solid #e0e3e6;
+	border-bottom: 1px solid #e0e3e6;
+	transition: all 0.2s ease-in-out;
+
+	&:hover {
+		opacity: 0.7;
+	}
+}

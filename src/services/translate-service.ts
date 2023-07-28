@@ -23,7 +23,7 @@ const TranslateService = {
 			: key; // fallback
 
 		Object.keys(params).forEach((key) => {
-			result = result.replaceAll(`{${key}}`, params[key].toString());
+			result = result.replaceAll(`{${key}}`, params[key]?.toString());
 		});
 
 		return result;
