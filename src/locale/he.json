@@ -752,5 +752,10 @@
 	"deletedCategoryFull": "{who} מחק/ה את הקטגוריה {categoryName} ({totalAffected} פעילויות הושפעו מכך)",
 	"deletedCategoryFullYou": "מחקת את הקטגוריה {categoryName} ({totalAffected} פעילויות הושפעו מכך)",
 	"TOTAL_AFFECTED_CALENDAR": "פעילויות לוח שנה שנמחקו",
-	"TOTAL_AFFECTED_SIDEBAR": "פעילויות תפריט צד שנמחקו"
+	"TOTAL_AFFECTED_SIDEBAR": "פעילויות תפריט צד שנמחקו",
+	"TRIP_NAME": "שם הטיול",
+	"updatedTrip": "עדכנ/ה את פרטי הטיול",
+	"updatedTripFull": "{who} עדכנ/ה את פרטי הטיול",
+	"updatedTripYou": "עדכנת את פרטי הטיול",
+	"updatedTripFullYou": "עדכנת את פרטי הטיול"
 }

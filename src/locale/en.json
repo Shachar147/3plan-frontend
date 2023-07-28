@@ -669,5 +669,10 @@
 	"deletedCategoryFull": "{who} deleted the category {categoryName} ({totalAffected} activities affected)",
 	"deletedCategoryFullYou": "You deleted the category {categoryName} ({totalAffected} activities affected)",
 	"TOTAL_AFFECTED_CALENDAR": "Deleted sidebar activities",
-	"TOTAL_AFFECTED_SIDEBAR": "Deleted calendar activities"
+	"TOTAL_AFFECTED_SIDEBAR": "Deleted calendar activities",
+	"TRIP_NAME": "Trip name",
+	"updatedTrip": "Updated trip details",
+	"updatedTripFull": "{who} updated trip details",
+	"updatedTripYou": "You updated trip details",
+	"updatedTripFullYou": "You updated trip details"
 }

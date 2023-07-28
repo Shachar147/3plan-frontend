@@ -1597,6 +1597,13 @@ const ReactModalService = {
 
 				ReactModalService.internal.closeModal(eventStore);
 
+				LogHistoryService.logHistory(eventStore, TripActions.updatedTrip, {
+					tripName: {
+						was: oldName,
+						now: newName,
+					},
+				});
+
 				ReactModalService.internal.alertMessage(
 					eventStore,
 					'MODALS.UPDATED.TITLE',
@@ -4713,6 +4720,25 @@ const ReactModalService = {
 								)}
 							</td>
 							<td>{historyRow.actionParams.categoryName}</td>
+						</tr>
+					)}
+					{historyRow.action == TripActions.updatedTrip && (
+						<tr>
+							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'TRIP_NAME')}</td>
+							<td>
+								<div className="flex-col gap-4">
+									<div>
+										<span>{TranslateService.translate(eventStore, 'BEFORE')}</span>
+										{' : '}
+										<span>{historyRow.actionParams.tripName.was}</span>
+									</div>
+									<div>
+										<span>{TranslateService.translate(eventStore, 'AFTER')}</span>
+										{' : '}
+										<span>{historyRow.actionParams.tripName.now}</span>
+									</div>
+								</div>
+							</td>
 						</tr>
 					)}
 					{historyRow.actionParams.toWhereStart && historyRow.actionParams.toWhereEnd && (

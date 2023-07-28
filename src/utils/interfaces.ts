@@ -153,4 +153,5 @@ export enum TripActions {
 	changedTripDates = 'changedTripDates',
 	unlockedTrip = 'unlockedTrip',
 	lockedTrip = 'lockedTrip',
+	updatedTrip = 'updatedTrip',
 }
