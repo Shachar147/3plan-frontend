@@ -765,5 +765,9 @@
 	"unhideTrip": "ביטל/ה את הסתרת הטיול",
 	"unhideTripFull": "{who} ביטל/ה את הסתרת הטיול",
 	"unhideTripYou": "ביטלת את הסתרת הטיול",
-	"unhideTripFullYou": "ביטלת את הסתרת הטיול"
+	"unhideTripFullYou": "ביטלת את הסתרת הטיול",
+	"createdTrip": "יצר/ה את הטיול",
+	"createdTripYou": "יצרת את הטיול",
+	"createdTripFull": "{who} יצר/ה את הטיול",
+	"createdTripFullYou": "יצרת את הטיול"
 }

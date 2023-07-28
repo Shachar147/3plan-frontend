@@ -682,5 +682,9 @@
 	"unhideTrip": "Un-hide the trip",
 	"unhideTripFull": "{who} un-hide the trip",
 	"unhideTripYou": "You un-hide the trip",
-	"unhideTripFullYou": "You un-hide the trip"
+	"unhideTripFullYou": "You un-hide the trip",
+	"createdTrip": "Created the trip",
+	"createdTripYou": "You created the trip",
+	"createdTripFull": "{who} created the trip",
+	"createdTripFullYou": "You created the trip"
 }
