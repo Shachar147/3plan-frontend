@@ -297,11 +297,11 @@ export function areDatesOnDifferentDays(date1: Date, date2: Date) {
 	);
 }
 
-export function getOffsetInHours() {
+export function getOffsetInHours(zeroIfProd: boolean = true) {
 	let offset = new Date().getTimezoneOffset() / 60;
 
 	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
-	if (mode != 'development') {
+	if (mode != 'development' && zeroIfProd) {
 		offset = 0;
 	}
 	return offset;

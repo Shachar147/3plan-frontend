@@ -90,7 +90,7 @@ function AdminDashboard() {
 			'lastUpdateAt',
 		];
 
-		const offset = -1 * getOffsetInHours();
+		const offset = -1 * getOffsetInHours(false);
 
 		if (eventStore.isMobile) {
 			columns = ['lastUpdateAt', 'num_of_categories', 'scheduled_events', 'sidebar_events', 'userId'];
@@ -174,7 +174,11 @@ function AdminDashboard() {
 	function renderUserStats() {
 		let columns: string[] = ['userId', 'username', 'lastUpdateAt', 'lastLoginAt', 'numOfLogins'];
 
-		const offset = -1 * getOffsetInHours();
+		const offset = -1 * getOffsetInHours(false);
+
+		console.log({
+			offset,
+		});
 
 		const stats: Record<number, any> = {};
 

@@ -36,9 +36,14 @@ function InviteLink() {
 					eventStore.isLoading = true;
 					eventStore.setTripName(tripName);
 				});
+
+				// todo complete - log history - used invite link to join
+
 				navigate('/plan/' + tripName, {});
 			})
 			.catch(() => {
+				// todo complete - log history - there was a try to use an old invite link
+
 				ReactModalService.internal.openOopsErrorModal(eventStore);
 			});
 	}, [token]);
