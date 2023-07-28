@@ -458,6 +458,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 					typeof currentEvent.end! == 'string' ? new Date(currentEvent.end!) : currentEvent.end!;
 				let gapEnd: Date = typeof nextEvent.start! == 'string' ? new Date(nextEvent.start!) : nextEvent.start!;
 
+				if (gapStart == null || gapEnd == null) {
+					debugger;
+				}
+
 				if (areDatesOnDifferentDays(gapStart, gapEnd)) {
 					gapEnd = new Date(new Date(gapStart.toISOString()).setHours(23, 59));
 				}
@@ -489,7 +493,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// alert('Most available slot end:' + mostAvailableSlotEnd);
 
 		// dates are currently in the client's timezone and we want them in utc.
-		const offset = -1 * getOffsetInHours();
+		const offset = -1 * getOffsetInHours(false);
 		const dtUTC = addHours(new Date(mostAvailableSlotStart), offset);
 		const dtEndUTC = addHours(new Date(mostAvailableSlotEnd), offset);
 
