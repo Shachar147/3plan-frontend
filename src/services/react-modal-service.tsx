@@ -2237,16 +2237,21 @@ const ReactModalService = {
 				sidebarEvents[parseInt(category)] = sidebarEvents[parseInt(category)] || [];
 				sidebarEvents[parseInt(category)].push(currentEvent);
 				await eventStore.setSidebarEvents(sidebarEvents);
-				// const allEventsEvent = {
-				// 	...currentEvent,
-				// 	category,
-				// };
-				// await eventStore.setAllEvents([
-				// 	...eventStore.allEventsComputed.filter((x) => x.id !== eventId),
-				// 	allEventsEvent,
-				// ]);
 
 				addToEventsToCategories(currentEvent);
+
+				LogHistoryService.logHistoryOnSidebarEventChangeInternal(
+					eventStore,
+					eventStore.tripId,
+					{
+						...originalEvent,
+					},
+					{
+						...currentEvent,
+					},
+					Number(eventId),
+					originalEvent.title
+				);
 
 				ReactModalService.internal.alertMessage(
 					eventStore,
@@ -2305,6 +2310,19 @@ const ReactModalService = {
 						);
 					}
 					await eventStore.setSidebarEvents(newSidebarEvents);
+
+					LogHistoryService.logHistoryOnSidebarEventChangeInternal(
+						eventStore,
+						eventStore.tripId,
+						{
+							...originalEvent,
+						},
+						{
+							...currentEvent,
+						},
+						Number(eventId),
+						originalEvent.title
+					);
 
 					ReactModalService.internal.alertMessage(
 						eventStore,
@@ -4844,6 +4862,7 @@ const ReactModalService = {
 						</>
 					)}
 					{(historyRow.action == TripActions.changedEvent ||
+						historyRow.action == TripActions.changedSidebarEvent ||
 						historyRow.action == TripActions.changedTripDates) &&
 						Object.keys(historyRow.actionParams)
 							.filter(

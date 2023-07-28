@@ -456,7 +456,7 @@ export function jsonDiff(obj1: object, obj2: object): any {
 	const ret: Record<any, any> = {};
 	for (const i in obj2) {
 		// @ts-ignore
-		if (!obj1.hasOwnProperty(i) || obj2[i] !== obj1[i]) {
+		if (!obj1.hasOwnProperty(i) || obj2[i] != obj1[i]) {
 			// @ts-ignore
 			if (!(obj1[i] == null && obj2[i] == undefined && obj2[i] == null && obj1[i] == undefined)) {
 				// @ts-ignore

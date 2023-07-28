@@ -690,5 +690,9 @@
 	"deletedSidebarEvent": "Deleted {eventName} from sidebar",
 	"deletedSidebarEventYou": "You deleted {eventName} from sidebar",
 	"deletedSidebarEventFull": "{who} deleted {eventName} from sidebar",
-	"deletedSidebarEventFullYou": "You deleted {eventName} from sidebar"
+	"deletedSidebarEventFullYou": "You deleted {eventName} from sidebar",
+	"changedSidebarEvent": "Changed sidebar activity {eventName} ({count} updates)",
+	"changedSidebarEventYou": "You Changed sidebar activity {eventName} ({count} updates)",
+	"changedSidebarEventFull": "{who} Changed sidebar activity {eventName} ({count} updates)",
+	"changedSidebarEventFullYou": "You Changed sidebar activity {eventName} ({count} updates)"
 }

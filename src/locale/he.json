@@ -773,5 +773,9 @@
 	"deletedSidebarEvent": "מחק/ה את {eventName} מתפריט הצד",
 	"deletedSidebarEventYou": "מחקת את {eventName} מתפריט הצד",
 	"deletedSidebarEventFull": "{who} מחק/ה את {eventName} מתפריט הצד",
-	"deletedSidebarEventFullYou": "מחקת את {eventName} מתפריט הצד"
+	"deletedSidebarEventFullYou": "מחקת את {eventName} מתפריט הצד",
+	"changedSidebarEvent": "עדכנ/ה את {eventName} בתפריט הצד ({count} שינויים)",
+	"changedSidebarEventYou": "עדכנת את {eventName} בתפריט הצד ({count} שינויים)",
+	"changedSidebarEventFull": "{who} עדכנ/ה את {eventName} בתפריט הצד ({count} שינויים)",
+	"changedSidebarEventFullYou": "{who} עדכנת את {eventName} בתפריט הצד ({count} שינויים)"
 }

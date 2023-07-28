@@ -130,6 +130,30 @@ const LogHistoryService = {
 			});
 		});
 	},
+	logHistoryOnSidebarEventChangeInternal(
+		eventStore: EventStore,
+		tripId: number,
+		original: any,
+		updated: any,
+		eventId?: number,
+		eventName?: string
+	) {
+		let diff = jsonDiff(buildCalendarEvent(original), buildCalendarEvent(updated));
+		delete diff['timingError'];
+		delete diff['className'];
+
+		let action: TripActions = TripActions.changedEvent;
+		let actionParams = diff;
+
+		action = TripActions.changedSidebarEvent;
+		actionParams = diff;
+
+		(eventStore.dataService as DBService).logHistory(tripId, action, actionParams, eventId, eventName).then(() => {
+			runInAction(() => {
+				eventStore.reloadHistoryCounter += 1;
+			});
+		});
+	},
 	logHistoryOnEventChange(
 		eventStore: EventStore,
 		tripId: number,
