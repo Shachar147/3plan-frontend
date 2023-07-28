@@ -18,6 +18,7 @@ import {
 	convertMsToHM,
 	formatFromISODateString,
 	getDateRangeString,
+	getOffsetInHours,
 	isTodayInDateRange,
 	toDate,
 } from '../../utils/time-utils';
@@ -488,9 +489,9 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// alert('Most available slot end:' + mostAvailableSlotEnd);
 
 		// dates are currently in the client's timezone and we want them in utc.
-		const offset = new Date().getTimezoneOffset() / 60;
-		const dtUTC = addHours(new Date(mostAvailableSlotStart), -1 * offset);
-		const dtEndUTC = addHours(new Date(mostAvailableSlotEnd), -1 * offset);
+		const offset = -1 * getOffsetInHours();
+		const dtUTC = addHours(new Date(mostAvailableSlotStart), offset);
+		const dtEndUTC = addHours(new Date(mostAvailableSlotEnd), offset);
 
 		return {
 			start: dtUTC,
