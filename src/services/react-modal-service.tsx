@@ -3076,7 +3076,7 @@ const ReactModalService = {
 			const newName = eventStore.modalValues.name;
 
 			// @ts-ignore
-			const order = eventStore.modalValues.categoryOrder;
+			const order = eventStore.modalValues.categoryOrder?.value ?? eventStore.modalValues.categoryOrder;
 
 			let isOk = true;
 
@@ -3144,6 +3144,30 @@ const ReactModalService = {
 
 				// remove from fullcalendar store
 				TriplanCalendarRef.current?.refreshSources();
+
+				const diff: Record<string, any> = {};
+				if (iconChanged) {
+					diff['icon'] = {
+						was: oldIcon,
+						now: newIcon,
+					};
+				}
+				if (titleChanged) {
+					diff['title'] = {
+						was: oldName,
+						now: newName,
+					};
+				}
+				if (orderChanged) {
+					diff['order'] = {
+						was: oldOrder,
+						now: order,
+					};
+				}
+
+				diff['categoryName'] = oldName;
+
+				LogHistoryService.logHistory(eventStore, TripActions.changedCategory, diff);
 
 				ReactModalService.internal.alertMessage(
 					eventStore,
@@ -4717,12 +4741,27 @@ const ReactModalService = {
 									eventName: historyRow.eventName,
 									count:
 										historyRow.actionParams.count ??
-										Object.keys(historyRow.actionParams).filter(
-											(c) =>
-												['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(
-													c
-												) == -1
-										).length,
+										historyRow.action == TripActions.changedCategory
+											? Object.keys(historyRow.actionParams).filter(
+													(c) =>
+														[
+															'openingHours',
+															'images',
+															'timingError',
+															'className',
+															'id',
+														].indexOf(c) == -1
+											  ).length - 1
+											: Object.keys(historyRow.actionParams).filter(
+													(c) =>
+														[
+															'openingHours',
+															'images',
+															'timingError',
+															'className',
+															'id',
+														].indexOf(c) == -1
+											  ).length,
 									count2: historyRow.actionParams.count2,
 									...historyRow.actionParams,
 								}
@@ -4742,19 +4781,21 @@ const ReactModalService = {
 							<td>{historyRow.actionParams.eventName}</td>
 						</tr>
 					)}
-					{historyRow.actionParams.categoryName && historyRow.action != TripActions.deletedCategory && (
-						<tr>
-							<td className="main-font-heavy">
-								{TranslateService.translate(
-									eventStore,
-									historyRow.action == TripActions.addedCategory
-										? 'CATEGORY_NAME'
-										: 'ADDED_TO_CATEGORY'
-								)}
-							</td>
-							<td>{historyRow.actionParams.categoryName}</td>
-						</tr>
-					)}
+					{historyRow.actionParams.categoryName &&
+						historyRow.action != TripActions.deletedCategory &&
+						historyRow.action != TripActions.changedCategory && (
+							<tr>
+								<td className="main-font-heavy">
+									{TranslateService.translate(
+										eventStore,
+										historyRow.action == TripActions.addedCategory
+											? 'CATEGORY_NAME'
+											: 'ADDED_TO_CATEGORY'
+									)}
+								</td>
+								<td>{historyRow.actionParams.categoryName}</td>
+							</tr>
+						)}
 					{historyRow.action == TripActions.updatedTrip && (
 						<tr>
 							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'TRIP_NAME')}</td>
@@ -4862,19 +4903,30 @@ const ReactModalService = {
 						</>
 					)}
 					{(historyRow.action == TripActions.changedEvent ||
+						historyRow.action == TripActions.changedCategory ||
 						historyRow.action == TripActions.changedSidebarEvent ||
 						historyRow.action == TripActions.changedTripDates) &&
 						Object.keys(historyRow.actionParams)
 							.filter(
-								(k) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(k) == -1
+								(k) =>
+									[
+										'openingHours',
+										'images',
+										'timingError',
+										'className',
+										'id',
+										'count',
+										historyRow.action == TripActions.changedCategory && 'categoryName',
+									].indexOf(k) == -1
 							)
 							.map((changedKey, idx) => (
 								<tr>
 									<td className="main-font-heavy">
-										{historyRow.action == TripActions.changedEvent && (
+										{(historyRow.action == TripActions.changedEvent ||
+											historyRow.action == TripActions.changedCategory) && (
 											<>
 												{Number(idx + 1)}
-												{') '}
+												{'. '}
 											</>
 										)}
 										{TranslateService.translate(eventStore, `MODALS.${changedKey.toUpperCase()}`)}

@@ -777,5 +777,10 @@
 	"changedSidebarEvent": "עדכנ/ה את {eventName} בתפריט הצד ({count} שינויים)",
 	"changedSidebarEventYou": "עדכנת את {eventName} בתפריט הצד ({count} שינויים)",
 	"changedSidebarEventFull": "{who} עדכנ/ה את {eventName} בתפריט הצד ({count} שינויים)",
-	"changedSidebarEventFullYou": "{who} עדכנת את {eventName} בתפריט הצד ({count} שינויים)"
+	"changedSidebarEventFullYou": "{who} עדכנת את {eventName} בתפריט הצד ({count} שינויים)",
+	"changedCategory": "עדכנ/ה את הקטגוריה {categoryName} ({count} שינויים)",
+	"changedCategoryFull": "{who} עדכנ/ה את הקטגוריה {categoryName} ({count} שינויים)",
+	"changedCategoryYou": "עדכנת את הקטגוריה {categoryName}  ({count} שינויים)",
+	"changedCategoryFullYou": "עדכנת את הקטגוריה {categoryName} ({count} שינויים)",
+	"MODALS.ORDER": "מיקום"
 }

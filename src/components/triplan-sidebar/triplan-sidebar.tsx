@@ -1617,10 +1617,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				{
 					eventName: historyRow.eventName,
 					count:
-						historyRow.actionParams.count ??
-						Object.keys(historyRow.actionParams).filter(
-							(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
-						).length,
+						historyRow.actionParams.count ?? historyRow.action == TripActions.changedCategory
+							? Object.keys(historyRow.actionParams).filter(
+									(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
+							  ).length - 1
+							: Object.keys(historyRow.actionParams).filter(
+									(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
+							  ).length,
 					categoryName: historyRow.actionParams?.categoryName,
 					count2: historyRow.actionParams.count2,
 					totalAffected:
@@ -1638,10 +1641,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				...historyRow.actionParams,
 				was: LogHistoryService.getWas(historyRow) ?? historyRow.actionParams.was,
 				count:
-					historyRow.actionParams.count ??
-					Object.keys(historyRow.actionParams).filter(
-						(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
-					).length,
+					historyRow.actionParams.count ?? historyRow.action == TripActions.changedCategory
+						? Object.keys(historyRow.actionParams).filter(
+								(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
+						  ).length - 1
+						: Object.keys(historyRow.actionParams).filter(
+								(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
+						  ).length,
 				totalAffected:
 					historyRow.action == TripActions.deletedCategory
 						? (historyRow.actionParams?.totalAffectedCalendar ?? 0) +

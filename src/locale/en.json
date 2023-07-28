@@ -694,5 +694,10 @@
 	"changedSidebarEvent": "Changed sidebar activity {eventName} ({count} updates)",
 	"changedSidebarEventYou": "You Changed sidebar activity {eventName} ({count} updates)",
 	"changedSidebarEventFull": "{who} Changed sidebar activity {eventName} ({count} updates)",
-	"changedSidebarEventFullYou": "You Changed sidebar activity {eventName} ({count} updates)"
+	"changedSidebarEventFullYou": "You Changed sidebar activity {eventName} ({count} updates)",
+	"changedCategory": "Updated category {categoryName} ({count} updates)",
+	"changedCategoryFull": "{who} updated category {categoryName} ({count} updates)",
+	"changedCategoryYou": "You updated category {categoryName} ({count} updates)",
+	"changedCategoryFullYou": "You updated category {categoryName} ({count} updates)",
+	"MODALS.ORDER": "Order"
 }

@@ -150,6 +150,7 @@ export enum TripActions {
 	// categories
 	addedCategory = 'addedCategory',
 	deletedCategory = 'deletedCategory',
+	changedCategory = 'changedCategory',
 
 	// trip
 	changedTripDates = 'changedTripDates',
