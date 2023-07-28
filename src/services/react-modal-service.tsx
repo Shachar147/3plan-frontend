@@ -4850,7 +4850,7 @@ const ReactModalService = {
 				</table>
 			),
 			confirmBtnCssClass: 'display-none',
-			confirmBtnText: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CANCEL'),
+			cancelBtnText: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CANCEL'),
 		});
 	},
 };
