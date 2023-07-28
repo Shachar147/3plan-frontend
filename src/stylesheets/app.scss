@@ -1187,7 +1187,8 @@ input:read-only {
 // added only to pc.
 .external-events-container.pc{
 	&:not(.combined) {
-		max-height: calc(100vh - 180px) !important;
+		// uncomment this line if having problems with sidebar height:
+		//max-height: calc(100vh - 180px) !important;
 	}
 }
 

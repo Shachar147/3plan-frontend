@@ -1602,7 +1602,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			const updatedAt = new Date(historyRow.updatedAt);
 			const now = new Date();
 
-			const offset = -1 * (new Date().getTimezoneOffset() / 60);
+			let offset = new Date().getTimezoneOffset() / 60;
+
+			const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
+			if (mode == 'development') {
+				offset *= -1;
+			}
+
 			const nowWithOffset = addHours(new Date(), offset);
 			const updatedAtWithOffset = addHours(updatedAt, offset);
 
