@@ -459,7 +459,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				let gapEnd: Date = typeof nextEvent.start! == 'string' ? new Date(nextEvent.start!) : nextEvent.start!;
 
 				if (gapStart == null || gapEnd == null) {
-					debugger;
+					console.log('hereeeeee', {
+						currentEvent,
+						nextEvent,
+					});
 				}
 
 				if (areDatesOnDifferentDays(gapStart, gapEnd)) {

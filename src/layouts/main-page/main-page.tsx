@@ -167,8 +167,10 @@ function MainPage(props: MainPageProps) {
 		}
 
 		return () => {
-			console.log('stopped shared trip interval');
-			clearInterval(interval);
+			if (interval) {
+				console.log('stopped shared trip interval');
+				clearInterval(interval);
+			}
 		};
 	}, [eventStore.isSharedTrip]);
 
