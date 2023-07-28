@@ -3841,6 +3841,17 @@ const ReactModalService = {
 				await removeEventFromSidebarById(event.id);
 				// await eventStore.setAllEvents(eventStore.allEventsComputed.filter((x) => x.id !== event.id));
 
+				LogHistoryService.logHistory(
+					eventStore,
+					TripActions.deletedSidebarEvent,
+					{
+						was: event,
+						eventName: event.title,
+					},
+					Number(event.id),
+					event.title
+				);
+
 				ReactModalService.internal.closeModal(eventStore);
 			},
 		});
@@ -4755,7 +4766,7 @@ const ReactModalService = {
 							</td>
 						</tr>
 					)}
-					{historyRow.actionParams.was && (
+					{historyRow.actionParams.was && historyRow.action != TripActions.deletedSidebarEvent && (
 						<tr>
 							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'BEFORE')}</td>
 							<td>{LogHistoryService.getWas(historyRow)}</td>

@@ -769,5 +769,9 @@
 	"createdTrip": "יצר/ה את הטיול",
 	"createdTripYou": "יצרת את הטיול",
 	"createdTripFull": "{who} יצר/ה את הטיול",
-	"createdTripFullYou": "יצרת את הטיול"
+	"createdTripFullYou": "יצרת את הטיול",
+	"deletedSidebarEvent": "מחק/ה את {eventName} מתפריט הצד",
+	"deletedSidebarEventYou": "מחקת את {eventName} מתפריט הצד",
+	"deletedSidebarEventFull": "{who} מחק/ה את {eventName} מתפריט הצד",
+	"deletedSidebarEventFullYou": "מחקת את {eventName} מתפריט הצד"
 }

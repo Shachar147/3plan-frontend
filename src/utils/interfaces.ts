@@ -144,6 +144,7 @@ export enum TripActions {
 	addedNewSidebarEventFromTinder = 'addedNewSidebarEventFromTinder',
 	importedEvents = 'importedEvents',
 	importedCategoriesAndEvents = 'importedCategoriesAndEvents',
+	deletedSidebarEvent = 'deletedSidebarEvent',
 
 	// categories
 	addedCategory = 'addedCategory',

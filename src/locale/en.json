@@ -579,10 +579,10 @@
 	"changedEventDurationAndTimingYou": "You Changed activity {eventName} timing and duration",
 	"changedEventDurationAndTimingFull": "{who} Changed activity {eventName} timing and duration from {was} to {now}",
 	"changedEventDurationAndTimingFullYou": "You Changed activity {eventName} timing and duration from {was} to {now}",
-	"deletedCalendarEvent": "Deleted {eventName} from calendar",
-	"deletedCalendarEventYou": "You deleted {eventName} from calendar",
-	"deletedCalendarEventFull": "{who} deleted {eventName} from calendar (from {was})",
-	"deletedCalendarEventFullYou": "You deleted {eventName} from calendar (from {was})",
+	"deletedCalendarEvent": "Removed {eventName} from calendar",
+	"deletedCalendarEventYou": "You removed {eventName} from calendar",
+	"deletedCalendarEventFull": "{who} removed {eventName} from calendar (from {was})",
+	"deletedCalendarEventFullYou": "You removed {eventName} from calendar (from {was})",
 	"duplicatedCalendarEvent": "Duplicated {eventName} on calendar",
 	"duplicatedCalendarEventYou": "You Duplicated {eventName} on calendar",
 	"duplicatedCalendarEventFull": "{who} Duplicated {eventName} on calendar",
@@ -686,5 +686,9 @@
 	"createdTrip": "Created the trip",
 	"createdTripYou": "You created the trip",
 	"createdTripFull": "{who} created the trip",
-	"createdTripFullYou": "You created the trip"
+	"createdTripFullYou": "You created the trip",
+	"deletedSidebarEvent": "Deleted {eventName} from sidebar",
+	"deletedSidebarEventYou": "You deleted {eventName} from sidebar",
+	"deletedSidebarEventFull": "{who} deleted {eventName} from sidebar",
+	"deletedSidebarEventFullYou": "You deleted {eventName} from sidebar"
 }
