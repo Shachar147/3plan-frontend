@@ -87,7 +87,7 @@ function MainPage(props: MainPageProps) {
 				setTimeout(() => {
 					runInAction(() => {
 						eventStore.reloadHistoryCounter += 1;
-						console.log('hereee');
+						// console.log('hereee');
 					});
 				}, 2000);
 
