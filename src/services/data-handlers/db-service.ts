@@ -11,12 +11,11 @@ import {
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, SharedTrip, Trip } from './data-handler-base';
 import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
-import { getCoordinatesRangeKey, jsonDiff, stringToCoordinate } from '../../utils/utils';
+import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
 import axios from 'axios';
 import { getToken } from '../../helpers/auth';
 import _ from 'lodash';
-import { convertMsToHM, formatFromISODateString } from '../../utils/time-utils';
-import { runInAction } from 'mobx';
+import { addSeconds } from '../../utils/time-utils';
 
 export interface upsertTripProps {
 	name?: string;
@@ -27,6 +26,8 @@ export interface upsertTripProps {
 	allEvents?: any[];
 	calendarLocale?: LocaleCode;
 }
+
+export const useInviteLinkLSKey = 'triplan-invite-link';
 
 export class DBService implements BaseDataHandler {
 	getDataSourceName() {
@@ -237,9 +238,24 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async useInviteLink(token: string) {
-		return await apiPost(`/shared-trips/use-invite-link`, {
-			token,
-		});
+		localStorage.setItem(
+			useInviteLinkLSKey,
+			JSON.stringify({
+				token,
+				expiresIn: addSeconds(new Date(), 120).getTime(),
+			})
+		);
+
+		return await apiPost(
+			`/shared-trips/use-invite-link`,
+			{
+				token,
+			},
+			true,
+			() => {
+				localStorage.removeItem(useInviteLinkLSKey);
+			}
+		);
 	}
 
 	async createTrip(

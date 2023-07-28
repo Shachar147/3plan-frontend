@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getServerAddress } from '../config/config';
 import { getToken } from './auth';
+import { addSeconds } from '../utils/time-utils';
 
 const unAuthorizedRoutes = ['signin'];
 
@@ -65,7 +66,7 @@ export async function apiGetNew(url, data) {
 		});
 }
 
-export async function apiPost(url, data, redirectUnautirhized = true) {
+export async function apiPost(url, data, redirectUnauthorized = true, onSuccess = () => {}) {
 	return await axios
 		.post(getServerAddress() + url, data, {
 			headers: {
@@ -73,10 +74,13 @@ export async function apiPost(url, data, redirectUnautirhized = true) {
 			},
 		})
 		.then((res) => {
+			if (onSuccess) {
+				onSuccess();
+			}
 			return res;
 		})
 		.catch(async (error) => {
-			const isUnauthorized = await handleUnauthorizedError(error, url, redirectUnautirhized);
+			const isUnauthorized = await handleUnauthorizedError(error, url, redirectUnauthorized);
 			if (!isUnauthorized) {
 				throw error;
 			}

@@ -14,6 +14,7 @@ import axios from 'axios';
 import { LOGIN_DELAY } from '../../utils/consts';
 import { apiPostWithCallback } from '../../helpers/api';
 import './login-page.scss';
+import { useInviteLinkLSKey } from '../../services/data-handlers/db-service';
 
 const defaultErrorField: Record<string, boolean> = {
 	username: false,
@@ -182,7 +183,20 @@ function LoginPage() {
 		);
 
 	if (redirect) {
-		window.location.href = '/';
+		let redirectTo = '/';
+
+		const str = localStorage.getItem(useInviteLinkLSKey);
+		if (str) {
+			const data = JSON.parse(str);
+			if (data['expiresIn'] && data['expiresIn'] >= new Date().getTime() && data['token']) {
+				redirectTo = `/inviteLink?token=${data['token']}`;
+				localStorage.removeItem(useInviteLinkLSKey);
+			}
+		}
+
+		window.location.href = redirectTo;
+
+		// window.location.href = '/';
 		// navigate('/');
 	}
 
