@@ -66,7 +66,7 @@ export async function apiGetNew(url, data) {
 		});
 }
 
-export async function apiPost(url, data, redirectUnauthorized = true, onSuccess = () => {}) {
+export async function apiPost(url, data, redirectUnauthorized = true, onSuccess = () => {}, onError = () => {}) {
 	return await axios
 		.post(getServerAddress() + url, data, {
 			headers: {

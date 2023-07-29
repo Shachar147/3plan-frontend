@@ -16,6 +16,7 @@ import axios from 'axios';
 import { getToken } from '../../helpers/auth';
 import _ from 'lodash';
 import { addSeconds } from '../../utils/time-utils';
+import ReactModalService from '../react-modal-service';
 
 export interface upsertTripProps {
 	name?: string;
@@ -237,7 +238,7 @@ export class DBService implements BaseDataHandler {
 		});
 	}
 
-	async useInviteLink(token: string) {
+	async useInviteLink(eventStore: EventStore, token: string) {
 		localStorage.setItem(
 			useInviteLinkLSKey,
 			JSON.stringify({
@@ -254,6 +255,11 @@ export class DBService implements BaseDataHandler {
 			true,
 			() => {
 				localStorage.removeItem(useInviteLinkLSKey);
+			},
+			() => {
+				// todo complete - log history - there was a try to use an old invite link
+
+				ReactModalService.internal.openOopsErrorModal(eventStore);
 			}
 		);
 	}

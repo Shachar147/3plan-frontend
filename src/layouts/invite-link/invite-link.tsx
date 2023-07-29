@@ -25,27 +25,21 @@ function InviteLink() {
 		if (!token) {
 			return;
 		}
-		DataServices.DBService.useInviteLink(token)
-			.then((response) => {
-				const trip = response.data;
-				const tripName = trip.name;
+		DataServices.DBService.useInviteLink(eventStore, token).then((response) => {
+			const trip = response.data;
+			const tripName = trip.name;
 
-				runInAction(() => {
-					// manually set loading before redirect to the page to prevent a bug of
-					// glimpse view of the previous trip before updating to this one.
-					eventStore.isLoading = true;
-					eventStore.setTripName(tripName);
-				});
-
-				// todo complete - log history - used invite link to join
-
-				navigate('/plan/' + tripName, {});
-			})
-			.catch(() => {
-				// todo complete - log history - there was a try to use an old invite link
-
-				ReactModalService.internal.openOopsErrorModal(eventStore);
+			runInAction(() => {
+				// manually set loading before redirect to the page to prevent a bug of
+				// glimpse view of the previous trip before updating to this one.
+				eventStore.isLoading = true;
+				eventStore.setTripName(tripName);
 			});
+
+			// todo complete - log history - used invite link to join
+
+			navigate('/plan/' + tripName, {});
+		});
 	}, [token]);
 
 	return (
