@@ -4580,6 +4580,7 @@ const ReactModalService = {
 							ReactModalService.internal.openOopsErrorModal(eventStore);
 						}
 					);
+					// todo complete - log history
 				} else {
 					ReactModalService.internal.alertMessage(
 						eventStore,
@@ -4655,6 +4656,8 @@ const ReactModalService = {
 							runInAction(() => {
 								eventStore.reloadCollaboratorsCounter += 1;
 							});
+
+							// todo complete - log history
 
 							ReactModalService.internal.alertMessage(
 								eventStore,

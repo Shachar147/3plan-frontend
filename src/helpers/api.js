@@ -80,6 +80,10 @@ export async function apiPost(url, data, redirectUnauthorized = true, onSuccess 
 			return res;
 		})
 		.catch(async (error) => {
+			if (onError) {
+				onError();
+			}
+
 			const isUnauthorized = await handleUnauthorizedError(error, url, redirectUnauthorized);
 			if (!isUnauthorized) {
 				throw error;
