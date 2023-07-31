@@ -451,12 +451,17 @@ export const ReactModalRenderHelper = {
 		const values = Object.keys(TriplanEventPreferredTime);
 		const keys = Object.values(TriplanEventPreferredTime);
 
-		const options = Object.values(TriplanEventPreferredTime)
-			.filter((x) => !Number.isNaN(Number(x)))
-			.map((val, index) => ({
+		const options = Object.keys(TriplanEventPreferredTime)
+			.filter((x) => Number.isNaN(Number(x)))
+			.map((key, index) => ({
 				value: values[index],
 				label: ucfirst(TranslateService.translate(eventStore, keys[index].toString())),
-			}));
+			}))
+			.sort((a, b) => {
+				const valA = a.value == '7' ? 5.5 : a.value; // 7 is night, 6 is nevermind
+				const valB = b.value == '7' ? 5.5 : b.value; // 7 is night, 6 is nevermind
+				return Number(valA) - Number(valB);
+			});
 
 		if (!eventStore.modalValues[modalValueName]) {
 			const idx = values.indexOf(extra.value?.toString());
@@ -976,8 +981,8 @@ const ReactModalService = {
 						},
 					},
 					textKey: 'MODALS.PREFERRED_TIME',
-					className: 'border-top-gray perferred-time-row',
-					showOnMinimized: false,
+					className: 'border-top-gray preferred-time-row',
+					showOnMinimized: true,
 				},
 				{
 					settings: {
@@ -1250,7 +1255,7 @@ const ReactModalService = {
 						},
 						textKey: 'MODALS.PREFERRED_TIME',
 						className: 'border-top-gray preferred-time-row',
-						showOnMinimized: false,
+						showOnMinimized: true,
 					},
 					{
 						settings: {
