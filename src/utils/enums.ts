@@ -20,6 +20,7 @@ export enum TriplanEventPreferredTime {
 	sunset = 4,
 	evening = 5,
 	nevermind = 6,
+	night = 7,
 	unset = 0,
 }
 

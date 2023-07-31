@@ -127,11 +127,14 @@
   .priority-row {
     order: 7;
   }
-  .actions-row {
+  .preferred-time-row {
     order: 8;
   }
-  .show-hide-more-row {
+  .actions-row {
     order: 9;
+  }
+  .show-hide-more-row {
+    order: 10;
   }
 
   &.view-mode {
