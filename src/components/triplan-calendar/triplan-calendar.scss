@@ -40,6 +40,14 @@
 	/*border-top:1px solid #2C3E50 !important;*/
 }
 
+.fc .fc-scrollgrid-section-body table, .fc .fc-scrollgrid-section-footer table {
+	border-bottom-style: solid !important;
+}
+.fc-v-event:not(.fc-event-end) {
+	border-bottom-width: 1px !important;
+	border-bottom-style: dashed !important;
+}
+
 .fc-event-main,
 .fc-event {
 	/*border-color: #cccccc;*/
