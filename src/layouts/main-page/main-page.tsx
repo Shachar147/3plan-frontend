@@ -253,7 +253,8 @@ function MainPage(props: MainPageProps) {
 		const onChange = (newVal: string) => eventStore.setListViewSummaryMode(newVal);
 
 		let content = null;
-		if (eventStore.isMobile) {
+		const paddingClass = eventStore.isMobile ? 'padding-top-70' : 'padding-top-60';
+		if (eventStore.isMobile && eventStore.listViewShowDaysNavigator) {
 			const arr = ListViewService.buildHTMLSummary(eventStore, true);
 
 			const backIcon = eventStore.getCurrentDirection() === 'rtl' ? 'fa-chevron-right' : 'fa-chevron-left';
@@ -294,7 +295,7 @@ function MainPage(props: MainPageProps) {
 			}
 
 			content = (
-				<div className={'trip-summary bright-scrollbar padding-top-60'}>
+				<div className={getClasses('trip-summary bright-scrollbar', paddingClass)}>
 					<div className="flex-col gap-5">
 						{navigation}
 						<div dangerouslySetInnerHTML={{ __html: arr[currentListViewPage] }} />
@@ -303,9 +304,9 @@ function MainPage(props: MainPageProps) {
 				</div>
 			);
 		} else {
-			content = !eventStore.isMobile && (
+			content = (
 				<div
-					className={'trip-summary bright-scrollbar padding-top-60'}
+					className={getClasses('trip-summary bright-scrollbar', paddingClass)}
 					dangerouslySetInnerHTML={{
 						__html: eventStore.isListView ? (ListViewService.buildHTMLSummary(eventStore) as string) : '',
 					}}
@@ -328,18 +329,66 @@ function MainPage(props: MainPageProps) {
 						options={options}
 						customStyle="white"
 					/>
-					<label className="list-view-checkbox-options">
-						<input
-							type="checkbox"
-							checked={eventStore.listViewShowNavigateTo}
-							onChange={(e) => {
+					{eventStore.isMobile && (
+						<Button
+							icon="fa-list-ol"
+							className={getClasses('min-width-38', !eventStore.listViewShowDaysNavigator && 'black')}
+							flavor={ButtonFlavor.secondary}
+							tooltip={TranslateService.translate(
+								eventStore,
+								eventStore.listViewShowDaysNavigator ? 'SHOW_DAYS_NAVIGATOR' : 'HIDE_DAYS_NAVIGATOR'
+							)}
+							onClick={() => {
 								runInAction(() => {
-									eventStore.listViewShowNavigateTo = e.target.checked;
+									eventStore.listViewShowDaysNavigator = !eventStore.listViewShowDaysNavigator;
 								});
 							}}
+							text={''}
 						/>
-						{TranslateService.translate(eventStore, 'SHOW_NAVIGATE_TO')}
-					</label>
+					)}
+					<Button
+						icon="fa-paper-plane"
+						className={getClasses('min-width-38', !eventStore.listViewShowNavigateTo && 'black')}
+						flavor={ButtonFlavor.secondary}
+						tooltip={TranslateService.translate(
+							eventStore,
+							eventStore.listViewShowNavigateTo ? 'SHOW_NAVIGATE_TO' : 'HIDE_NAVIGATE_TO'
+						)}
+						onClick={() => {
+							runInAction(() => {
+								eventStore.listViewShowNavigateTo = !eventStore.listViewShowNavigateTo;
+							});
+						}}
+						text={''}
+					/>
+
+					{/*{eventStore.isMobile && (*/}
+					{/*	<label className="list-view-checkbox-options">*/}
+					{/*		<input*/}
+					{/*			type="checkbox"*/}
+					{/*			checked={eventStore.listViewShowDaysNavigator}*/}
+					{/*			onChange={(e) => {*/}
+					{/*				runInAction(() => {*/}
+					{/*					eventStore.listViewShowDaysNavigator = e.target.checked;*/}
+					{/*				});*/}
+					{/*			}}*/}
+					{/*		/>*/}
+					{/*		{TranslateService.translate(eventStore, 'SHOW_DAYS_NAVIGATOR')}*/}
+					{/*	</label>*/}
+					{/*)}*/}
+
+					{/*<label className="list-view-checkbox-options">*/}
+					{/*	<input*/}
+					{/*		type="checkbox"*/}
+					{/*		checked={eventStore.listViewShowNavigateTo}*/}
+					{/*		onChange={(e) => {*/}
+					{/*			runInAction(() => {*/}
+					{/*				eventStore.listViewShowNavigateTo = e.target.checked;*/}
+					{/*			});*/}
+					{/*		}}*/}
+					{/*	/>*/}
+					{/*	{TranslateService.translate(eventStore, 'SHOW_NAVIGATE_TO')}*/}
+					{/*</label>*/}
 				</div>
 				{content}
 			</div>

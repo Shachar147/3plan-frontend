@@ -105,6 +105,7 @@ export class EventStore {
 	@observable createMode: boolean = false;
 	@observable listViewSummaryMode = ListViewSummaryMode.noDescriptions;
 	@observable listViewShowNavigateTo = false;
+	@observable listViewShowDaysNavigator = false;
 	@observable dataService: LocalStorageService | DBService;
 	@observable modalValues: any = {};
 	@observable isLoading = false;

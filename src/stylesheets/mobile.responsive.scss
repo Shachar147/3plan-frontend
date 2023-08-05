@@ -735,13 +735,11 @@
 	.list-container {
 		.list-view-mode-selector {
 			display: flex;
-			flex-direction: column;
+			// flex-direction: column;
 			align-items: center;
-			gap: 2px;
-
-			.list-view-checkbox-options {
-				display: none;
-			}
+			// gap: 2px;
+			gap: 8px;
+			justify-content: center;
 		}
 	}
 
@@ -850,6 +848,10 @@
 	.google-map-react {
 		// for no-items-on-map-placeholder when clicking on input and keyboard appears
 		overflow-y: hidden;
+	}
+
+	.list-view-mode-selector {
+		//height: 150px;
 	}
 }
 
