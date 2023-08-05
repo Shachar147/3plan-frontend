@@ -2958,7 +2958,8 @@ const ReactModalService = {
 					<div
 						className={getClasses(
 							'flex-col gap-20 align-layout-direction react-modal bright-scrollbar',
-							eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+							// eventStore.isModalMinimized && 'overflow-visible modal-minimized'
+							eventStore.isModalMinimized && 'modal-minimized'
 						)}
 						key={`add-calendar-event-modal-new-${eventStore.forceUpdate}`}
 					>
