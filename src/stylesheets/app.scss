@@ -690,6 +690,27 @@ body.ltr {
 	.fc-event-main {
 		cursor: default !important;
 	}
+
+	.locked-icon {
+		position: absolute;
+		bottom: 0;
+		inset-inline-start: 0;
+		margin-inline: 0;
+	}
+
+	&.ordered {
+		background-color: #f2f8fc !important;
+
+		.fc-event-main {
+			background-color: #f2f8fc !important;
+		}
+	}
+
+	&:not(.ordered){
+		.locked-icon {
+			display: none;
+		}
+	}
 }
 
 .file-upload-container {

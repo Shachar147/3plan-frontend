@@ -395,7 +395,7 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	let lockIconIfNeeded = '';
 	if (isOrdered || isTripLocked) {
 		tooltip = TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP');
-		lockIconIfNeeded = '<span class="margin-inline-2">🔒</span>';
+		lockIconIfNeeded = '<span class="locked-icon">🔒</span>';
 	}
 
 	return `<div title="${tooltip}">${icon} ${calendarEvent.title}${lockIconIfNeeded}</div>

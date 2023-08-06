@@ -431,6 +431,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	const setMobileDefaultView = () => {
 		calendarComponentRef.current?.getApi().changeView('timeGridThreeDay');
+		// calendarComponentRef.current?.getApi().changeView('timeGridDay');
 	};
 
 	const renderAddEventMobileButton = () => (

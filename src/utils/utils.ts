@@ -320,8 +320,13 @@ export function lockEvents(eventStore: EventStore, calendarEvent: CalendarEvent)
 		calendarEvent.disableDragging = true;
 		// @ts-ignore
 		calendarEvent.classNames = calendarEvent.className
-			? `${calendarEvent.className.toString().replace(' locked', '')} locked`
+			? `${calendarEvent.className.toString().replace(' locked', '').replace(' ordered', '')} locked`
 			: 'locked';
+
+		if (isOrdered) {
+			// @ts-ignore
+			calendarEvent.classNames += ' ordered';
+		}
 	} else {
 		// @ts-ignore
 		calendarEvent.editable = true;
