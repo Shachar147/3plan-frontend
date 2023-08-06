@@ -844,6 +844,16 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					}
 				});
 
+			Object.keys(priceList).forEach((currency) => {
+				priceList[currency as TriplanCurrency] = Number(priceList[currency as TriplanCurrency].toFixed(2));
+			});
+
+			Object.keys(unscheduledPriceList).forEach((currency) => {
+				unscheduledPriceList[currency as TriplanCurrency] = Number(
+					unscheduledPriceList[currency as TriplanCurrency].toFixed(2)
+				);
+			});
+
 			return {
 				priceList,
 				unscheduledPriceList,
