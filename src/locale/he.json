@@ -798,5 +798,7 @@
 	"PERMISSIONS": "הרשאות",
 	"Password too weak": "הסיסמא חלשה מדי",
 	"password must be longer than or equal to 8 characters": "הסיסמא חייבת להיות ארוכה או שווה ל8 תווים",
-	"Password too weak<br>password must be longer than or equal to 8 characters": "הסיסמא חלשה מדי<br>הסיסמא חייבת להיות ארוכה או שווה ל8 תווים"
+	"Password too weak<br>password must be longer than or equal to 8 characters": "הסיסמא חלשה מדי<br>הסיסמא חייבת להיות ארוכה או שווה ל8 תווים",
+	"MODALS.UPDATE_ORDERED_EVENT.CONTENT": "פעילות זו כבר הוזמנה ולכן אינכם יכולים לשנות את הזמנים שלה דרך לוח השנה.\n\nאם ברצונכם לשנות אותם בכל זאת, הוציאו אותה ממצב \"הוזמן\" -או- לחצו עליה, פתחו את מצב העריכה ושנו את השעות משם",
+	"GOT_IT": "הבנתי"
 }

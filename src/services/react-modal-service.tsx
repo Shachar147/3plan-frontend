@@ -664,7 +664,7 @@ export const ReactModalRenderHelper = {
 	},
 };
 
-const getDefaultSettings = (eventStore: EventStore) => {
+export const getDefaultSettings = (eventStore: EventStore) => {
 	return {
 		show: true,
 		showCancel: true,

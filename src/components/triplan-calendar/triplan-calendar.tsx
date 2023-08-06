@@ -22,13 +22,13 @@ import {
 	isTodayInDateRange,
 	toDate,
 } from '../../utils/time-utils';
-import ReactModalService from '../../services/react-modal-service';
+import ReactModalService, { getDefaultSettings } from '../../services/react-modal-service';
 import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
 import DraggableList from '../draggable-list/draggable-list';
-import { jsonDiff, lockEvents } from '../../utils/utils';
+import { getClasses, isEventAlreadyOrdered, jsonDiff, lockEvents } from '../../utils/utils';
 import { TripDataSource } from '../../utils/enums';
 import { DBService } from '../../services/data-handlers/db-service';
 
@@ -245,6 +245,53 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		if (eventStore.isTripLocked) {
 			return;
 		}
+
+		const isEventLocked = changeInfo.oldEvent.classNames.join(' ').indexOf('locked') !== -1;
+		if (isEventLocked) {
+			ReactModalService.internal.openModal(eventStore, {
+				...getDefaultSettings(eventStore),
+				title: TranslateService.translate(eventStore, 'MODALS.ERROR.TITLE'),
+				content: () => (
+					<div className="white-space-pre-line">
+						{TranslateService.translate(eventStore, 'MODALS.UPDATE_ORDERED_EVENT.CONTENT')}
+					</div>
+				),
+				confirmBtnText: TranslateService.translate(eventStore, 'GOT_IT'),
+				confirmBtnCssClass: 'primary-button red',
+				cancelBtnCssClass: 'hidden min-height-0 height-0',
+				onConfirm: () => {
+					ReactModalService.internal.closeModal(eventStore);
+				},
+			});
+			refreshSources();
+			return;
+		}
+
+		const isOrdered = isEventAlreadyOrdered(changeInfo.oldEvent);
+		if (isOrdered) {
+			ReactModalService.internal.openModal(eventStore, {
+				...getDefaultSettings(eventStore),
+				title: TranslateService.translate(eventStore, 'MODALS.ERROR.TITLE'),
+				content: () => (
+					<div className="white-space-pre-line">
+						{TranslateService.translate(eventStore, 'MODALS.UPDATE_ORDERED_EVENT.CONTENT')}
+					</div>
+				),
+				confirmBtnText: TranslateService.translate(eventStore, 'GOT_IT'),
+				confirmBtnCssClass: 'primary-button red',
+				cancelBtnCssClass: 'hidden min-height-0 height-0',
+				onConfirm: () => {
+					ReactModalService.internal.closeModal(eventStore);
+				},
+			});
+			refreshSources();
+			return;
+		}
+
+		// if ((storedEvent.className && storedEvent.className.indexOf('lock') !== -1) || this.isTripLocked) {
+		// 	alert('locked!');
+		// 	return;
+		// }
 
 		const newEvent = {
 			...changeInfo.event._def,
@@ -633,7 +680,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				events={_events}
 				eventReceive={onEventReceive}
 				eventClick={onEventClick}
-				eventChange={handleEventChange}
+				eventChange={(changeInfo) => handleEventChange(changeInfo)}
 				eventResizableFromStart={!eventStore.isMobile && !eventStore.isTripLocked}
 				locale={eventStore.calendarLocalCode}
 				direction={eventStore.getCurrentDirection()}
