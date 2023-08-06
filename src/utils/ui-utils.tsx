@@ -363,13 +363,14 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	const category = Number(calendarEvent.category!.toString());
 	const icon = calendarEvent.icon || eventStore.categoriesIcons[category];
 
+	const isOrdered = isEventAlreadyOrdered(calendarEvent);
+	const isTripLocked = eventStore.isTripLocked;
+
 	// locked
 	let tooltip = '';
-	// todo: uncomment if we'd like to return the functionality of locked events if already ordered.
-	// todo: uncomment also the code of locking them (look for the places that use isEventAlreadyOrdered)
-	// const tooltip = isEventAlreadyOrdered(calendarEvent as EventInput)
-	// 	? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP')
-	// 	: '';
+	// // todo: uncomment if we'd like to return the functionality of locked events if already ordered.
+	// // todo: uncomment also the code of locking them (look for the places that use isEventAlreadyOrdered)
+	// const tooltip = isOrdered || isTripLocked ? TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP') : '';
 	// event.classNames = event.classNames.join(",").replace('locked','').split(",");
 
 	let suggestedTime = '';
@@ -391,7 +392,13 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 		tooltip = calendarEvent.timingError;
 	}
 
-	return `<div title="${tooltip}">${icon} ${calendarEvent.title}</div>
+	let lockIconIfNeeded = '';
+	if (isOrdered || isTripLocked) {
+		tooltip = TranslateService.translate(eventStore, 'LOCKED_EVENT_TOOLTIP');
+		lockIconIfNeeded = '<span class="locked-icon">🔒</span>';
+	}
+
+	return `<div title="${tooltip}">${icon} ${calendarEvent.title}${lockIconIfNeeded}</div>
                 ${
 					calendarEvent.allDay
 						? ''

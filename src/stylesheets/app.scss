@@ -332,6 +332,14 @@ body {
 	margin-inline: 0;
 }
 
+.margin-inline-2 {
+	margin-inline: 2px;
+}
+
+.margin-inline-3 {
+	margin-inline: 3px;
+}
+
 .margin-inline-5 {
 	margin-inline: 5px;
 }
@@ -682,6 +690,27 @@ body.ltr {
 	.fc-event-main {
 		cursor: default !important;
 	}
+
+	.locked-icon {
+		position: absolute;
+		bottom: 0;
+		inset-inline-start: 0;
+		margin-inline: 0;
+	}
+
+	&.ordered {
+		background-color: #f2f8fc !important;
+
+		.fc-event-main {
+			background-color: #f2f8fc !important;
+		}
+	}
+
+	&:not(.ordered){
+		.locked-icon {
+			display: none;
+		}
+	}
 }
 
 .file-upload-container {
@@ -786,6 +815,10 @@ body.ltr {
 
 .margin-bottom-5 {
 	margin-bottom: 5px;
+}
+
+.min-height-0 {
+	min-height: 0 !important;
 }
 
 .min-height-300 {
@@ -983,6 +1016,10 @@ input[type='text'] {
 		max-width: 300px;
 		max-height: 40vh;
 	}
+}
+
+.height-0 {
+	height: 0;
 }
 
 .height-100vh {

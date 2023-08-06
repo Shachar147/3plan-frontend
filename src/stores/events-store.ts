@@ -849,6 +849,7 @@ export class EventStore {
 	async changeEvent(changeInfo: any, logHistoryData?: any) {
 		const eventId = changeInfo.event.id;
 		const storedEvent = this.calendarEvents.find((e) => e.id == eventId);
+
 		if (storedEvent) {
 			const newEvent = this.updateEvent(storedEvent, { ...changeInfo.event });
 
