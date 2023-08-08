@@ -801,7 +801,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	const renderTasks = () => {
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS');
 		const tasksBlock = wrapWithSidebarGroup(
-			<div className="text-align-center white-space-pre-line" key={eventStore.reloadTasks}>
+			<div className="text-align-center white-space-pre-line flex-col gap-8" key={eventStore.reloadTasks}>
 				<div className="opacity-0-5">
 					{TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS.DESCRIPTION')}
 				</div>
