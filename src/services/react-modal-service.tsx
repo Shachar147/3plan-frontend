@@ -3,7 +3,7 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import { getClasses, getCurrentUsername, isHotel, isHotelsCategory, ucfirst } from '../utils/utils';
+import { getClasses, getCurrentUsername, isHotel, isHotelsCategory, ucfirst, ucword } from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -15,6 +15,7 @@ import {
 	SidebarEvent,
 	TripActions,
 	TriPlanCategory,
+	TriplanTaskStatus,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
 import {
@@ -67,7 +68,9 @@ export const ReactModalRenderHelper = {
 		textKey: string,
 		input: JSX.Element,
 		className: string | undefined = undefined,
-		showOnMinimize: boolean = true
+		showOnMinimize: boolean = true,
+		labelClass: string | undefined = undefined,
+		isRequired: boolean | undefined = undefined
 	) => {
 		return (
 			<div
@@ -77,7 +80,10 @@ export const ReactModalRenderHelper = {
 					eventStore.isModalMinimized && !showOnMinimize && 'display-none'
 				)}
 			>
-				<label>{TranslateService.translate(eventStore, textKey)}</label>
+				<label className={getClasses('flex-row gap-4', labelClass)}>
+					{TranslateService.translate(eventStore, textKey)}
+					{isRequired && <div className="red-color padding-top-2">*</div>}
+				</label>
 				{input}
 			</div>
 		);
@@ -279,6 +285,7 @@ export const ReactModalRenderHelper = {
 				onChange={extra.onChange}
 				onClear={extra.onClear}
 				isClearable={extra.isClearable ?? true}
+				wrapperClassName={wrapperClassName}
 			/>
 		);
 
@@ -4987,6 +4994,181 @@ const ReactModalService = {
 			),
 			confirmBtnCssClass: 'display-none',
 			cancelBtnText: TranslateService.translate(eventStore, 'CALCULATE_DISTANCES_MODAL.CANCEL'),
+		});
+	},
+	openAddTaskModal(eventStore: EventStore, tripId: number) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const event_options = eventStore.allEventsComputed.map((x) => ({ value: x.id, label: x.title }));
+
+		const status_options = Object.keys(TriplanTaskStatus).map((x) => ({
+			value: x,
+			label: ucword(TranslateService.translate(eventStore, x).replaceAll('_', ' ')),
+		}));
+
+		const rows = [
+			{
+				textKey: 'MODALS.TITLE',
+				component: ReactModalRenderHelper.renderTextInput(eventStore, 'add-task-title', {
+					placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
+					id: 'add-task-title',
+					value: undefined,
+					className: 'min-width-100-important',
+				}),
+				required: true,
+			},
+			{
+				textKey: 'CHOOSE_TASK_STATUS.LABEL',
+				component: ReactModalRenderHelper.renderSelectInput(
+					eventStore,
+					'add-task-status',
+					{
+						options: status_options,
+						placeholderKey: 'CHOOSE_TASK_STATUS.PLACEHOLDER',
+						removeDefaultClass: true,
+						value: TriplanTaskStatus.TODO,
+						isClearable: false,
+						maxMenuHeight: eventStore.isMobile ? 45 * Math.min(status_options.length, 4) : undefined,
+					},
+					'add-task-selector'
+				),
+				required: true,
+			},
+			{
+				textKey: 'ASSIGN_TASK_CONTENT.LABEL',
+				component: ReactModalRenderHelper.renderTextAreaInput(
+					eventStore,
+					'add-task-content',
+					{
+						placeholderKey: 'ASSIGN_TASK_CONTENT.PLACEHOLDER',
+						value: undefined,
+						// readOnly: modalsStore?.isViewMode,
+					},
+					eventStore.modalValuesRefs['add-task-content']
+				),
+			},
+			{
+				textKey: 'ASSIGN_TASK_TO_EVENT.LABEL',
+				component: ReactModalRenderHelper.renderSelectInput(
+					eventStore,
+					'add-task-event-id',
+					{
+						options: event_options,
+						placeholderKey: 'ASSIGN_TASK_TO_EVENT.PLACEHOLDER',
+						removeDefaultClass: true,
+						value: undefined,
+						isClearable: true,
+						maxMenuHeight: eventStore.isMobile ? 45 * Math.min(event_options.length, 4) : undefined,
+					},
+					'add-task-selector'
+				),
+			},
+			{
+				textKey: 'MUST_BE_DONE_BEFORE.LABEL',
+				component: ReactModalRenderHelper.renderDatePickerInput(
+					eventStore,
+					'add-task-must-be-done-before',
+					{
+						placeholderKey: 'MUST_BE_DONE_BEFORE.PLACEHOLDER',
+						value: undefined,
+					},
+					eventStore.modalValuesRefs['add-task-must-be-done-before']
+				),
+			},
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'ADD_TASK.MODAL_TITLE')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.ADD_TASK.CONTENT'),
+						}}
+					/>
+					<div>
+						{rows.map((row, idx) =>
+							ReactModalRenderHelper.renderInputWithLabel(
+								eventStore,
+								row.textKey,
+								row.component,
+								getClasses('padding-bottom-20', idx == 0 && 'border-top-gray', 'border-bottom-gray'),
+								undefined,
+								'add-task-label',
+								row.required
+							)
+						)}
+					</div>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'CREATE_TASK'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				const title: string = eventStore.modalValues['add-task-title']?.length
+					? eventStore.modalValues['add-task-title']
+					: undefined;
+				const eventId: number = Number(eventStore.modalValues['add-task-event-id']?.value);
+				const status: TriplanTaskStatus =
+					eventStore.modalValues['add-task-status']?.value ?? TriplanTaskStatus.TODO;
+				const description: string = eventStore.modalValues['add-task-content'];
+				const mustBeDoneBefore: number = eventStore.modalValues['add-task-must-be-done-before'];
+
+				if (tripDataSource === TripDataSource.DB) {
+					const data = {
+						tripId: eventStore.tripId,
+						title,
+						eventId,
+						status,
+						description,
+						mustBeDoneBefore: mustBeDoneBefore ? new Date(mustBeDoneBefore).getTime() / 1000 : undefined,
+					};
+
+					console.log(data);
+
+					await DataServices.DBService.createTask(data)
+						.then((response) => {
+							const { data } = response.data;
+
+							// log history
+							LogHistoryService.logHistory(eventStore, TripActions.createdTask, {
+								name: title,
+								eventName: eventId
+									? eventStore.allEventsComputed.find((e) => Number(e.id) == Number(eventId))?.title
+									: undefined,
+							});
+
+							ReactModalService.internal.closeModal(eventStore);
+
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.CREATE.TITLE',
+								'MODALS.CREATE_TASK.CONTENT',
+								'success'
+							);
+
+							setTimeout(() => {
+								runInAction(() => {
+									eventStore.reloadTasks += 1;
+								});
+							}, 1000);
+						})
+						.catch(() => {
+							ReactModalService.internal.openOopsErrorModal(eventStore);
+						});
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
 		});
 	},
 };

@@ -147,6 +147,7 @@ export enum TripActions {
 	deletedSidebarEvent = 'deletedSidebarEvent',
 	changedSidebarEvent = 'changedSidebarEvent',
 	duplicatedSidebarEvent = 'duplicatedSidebarEvent',
+	createdTask = 'createdTask',
 
 	// categories
 	addedCategory = 'addedCategory',
@@ -162,4 +163,26 @@ export enum TripActions {
 	unhideTrip = 'unhideTrip',
 	createdTrip = 'createdTrip',
 	sharedTrip = 'sharedTrip',
+}
+
+export enum TriplanTaskStatus {
+	TODO = 'TODO',
+	IN_PROGRESS = 'IN_PROGRESS',
+	CANCELLED = 'CANCELLED',
+	DONE = 'DONE',
+}
+
+export interface TriplanTask {
+	id: number;
+	tripId: number;
+	eventId?: number;
+	addedByUserId: number;
+	title: string;
+	content?: string;
+	addedAt: number; // timestamp
+	mustBeDoneBefore?: number; // timestamp
+	status: TriplanTaskStatus;
+	isDeleted: boolean;
+	deletedAt?: number;
+	updatedAt?: number; // timestamp
 }

@@ -15,7 +15,14 @@ export function padTo2Digits(num: number) {
 }
 
 export function ucfirst(string: string) {
-	return string.charAt(0).toUpperCase() + string.slice(1);
+	return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1);
+}
+
+export function ucword(string: string) {
+	return string
+		.split(' ')
+		.map((s) => ucfirst(s))
+		.join(' ');
 }
 
 // loaders

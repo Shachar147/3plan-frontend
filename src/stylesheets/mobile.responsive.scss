@@ -853,6 +853,33 @@
 	.list-view-mode-selector {
 		//height: 150px;
 	}
+
+	.input-with-label {
+		.add-task-label {
+			min-width: 100px !important;
+			max-width: 100px !important;
+		}
+
+		.add-task-selector {
+			display: flex;
+			flex: 1 1 0;
+			min-width: 0;
+		}
+
+		.add-task-selector > div {
+			width: 100%;
+		}
+
+		//.triplan-text-input {
+		//	input {
+		//		border-top: 1px !important;
+		//		border-bottom: 1px !important;
+		//		border-left: 1px !important;
+		//		border-right: 1px !important;
+		//		border: 1px solid #d6d6d6 !important;
+		//	}
+		//}
+	}
 }
 
 @media only screen and (max-height: 500px){

@@ -833,6 +833,26 @@ body.ltr {
 	min-width: 38px;
 }
 
+.min-width-100 {
+	min-width: 100px;
+}
+
+.min-width-100-important {
+	min-width: 100px !important;
+}
+
+.min-width-150 {
+	min-width: 100px;
+}
+
+.min-width-200 {
+	min-width: 200px;
+}
+
+.min-width-300 {
+	min-width: 300px;
+}
+
 .min-width-313 {
 	min-width: 313px;
 }
@@ -1221,6 +1241,36 @@ input:read-only {
 	}
 }
 
+.input-with-label {
+	.add-task-label {
+		min-width: 200px !important;
+		max-width: 200px !important;
+		word-break: break-word;
+		justify-content: center;
+	}
+
+	.add-task-selector {
+		min-width: 300px;
+
+		div[class$='ValueContainer'] {
+			text-align: start;
+		}
+	}
+
+	.triplan-textarea-input,
+	.triplan-text-input {
+		textarea,
+		input {
+			border-top: 1px !important;
+			border-bottom: 1px !important;
+			border-left: 1px !important;
+			border-right: 1px !important;
+			border: 1px solid #d6d6d6 !important;
+			min-width: unset !important;
+		}
+	}
+}
+
 .images-row {
 	.triplan-textarea-input {
 		width: 100%;
@@ -1310,6 +1360,10 @@ table{
 	}
 }
 
+.gray-color {
+	color: var(--gray)
+}
+
 body.rtl {
 	table {
 		&.border-solid-table {
@@ -1324,4 +1378,10 @@ body.rtl {
 			}
 		}
 	}
+}
+
+input[id^='react-select-'][id$='-input'] {
+	border: 0 !important;
+	outline: 0 !important;
+	border-style: hidden !important;
 }
