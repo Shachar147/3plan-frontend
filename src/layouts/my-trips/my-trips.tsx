@@ -79,13 +79,18 @@ function MyTrips() {
 	}, [dataService, dataSource, reloadCounter]);
 
 	useEffect(() => {
-		setTimeout(() => {
+		if (eventStore.isMobile) {
 			setApplyPageIntro(true);
-
+			setApplyFadeIn(true);
+		} else {
 			setTimeout(() => {
-				setApplyFadeIn(true);
-			}, 200);
-		}, 500);
+				setApplyPageIntro(true);
+
+				setTimeout(() => {
+					setApplyFadeIn(true);
+				}, 200);
+			}, 500);
+		}
 
 		document.getElementById('root')!.classList.add('overflow-hidden');
 		document.getElementById('root')!.classList.add('height-100vh');

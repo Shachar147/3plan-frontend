@@ -880,6 +880,22 @@
 		//	}
 		//}
 	}
+
+	.my-trips-page,
+	.getting-started-page {
+		.plan-your-trip-header {
+			padding-bottom: 300px;
+			margin-top: -300px;
+		}
+
+		.create-new-trip-form.shown {
+			transition: opacity 0.1s ease-in-out !important;
+		}
+
+		.create-new-trip-form.shown.fadeIn {
+			transition: opacity 0.1s ease-in-out !important;
+		}
+	}
 }
 
 @media only screen and (max-height: 500px){
