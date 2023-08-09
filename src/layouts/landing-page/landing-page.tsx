@@ -38,7 +38,7 @@ const LandingPage = () => {
 				<img
 					className="logo-container"
 					src={'/images/logo/new-logo.png'}
-					style={{ width: '50%', minWidth: '400px' }}
+					style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 				/>
 				<div className={'slogan main-font'}>
 					<span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE1')}</span>
@@ -58,7 +58,7 @@ const LandingPage = () => {
 							navigate('/my-trips');
 						}}
 						flavor={ButtonFlavor.secondary}
-						className={'black'}
+						className={'orange'}
 					/>
 				</div>
 			</div>

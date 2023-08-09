@@ -37,6 +37,11 @@ button:disabled {
 		box-shadow: none !important;
 	}
 
+	&.orange {
+		background-color: #f85e26 !important;
+		box-shadow: none !important;
+	}
+
 	&.black {
 		background-color: var(--black) !important;
 		box-shadow: none !important;
@@ -92,6 +97,16 @@ button.secondary-button {
 			background-color: #f3f3f3 !important; // #eaeff4
 		}
 	}
+
+	&.orange {
+		color: #f85e26 !important;
+		border: 1 px solid var(--gray);
+
+		&:not(:disabled):hover {
+			background-color: #f3f3f3 !important;
+			border: 1px solid #f85e26 !important;
+		}
+	}
 }
 
 .dangerous-button {
@@ -121,6 +136,10 @@ button.secondary-button {
 	}
 	&.blue-color {
 		color: var(--blue);
+	}
+
+	&.orange-color {
+		color: #f85e26; // var(--orange);
 	}
 
 	&:focus {

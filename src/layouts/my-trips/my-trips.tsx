@@ -422,7 +422,7 @@ function MyTrips() {
 			<img
 				className={getClasses(['logo-container pointer'], applyPageIntro && 'up')}
 				src="/images/logo/new-logo.png"
-				style={{ width: '50%', minWidth: '400px' }}
+				style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 				onClick={() => {
 					navigate('/home');
 				}}

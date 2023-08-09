@@ -36,13 +36,13 @@ body {
 .landing-page-layout {
 	padding: 30px;
 	padding-block-start: 0;
-	background-color: #eaeff5;
+	 //background-color: #eaeff5;
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;
 	//height: 100vh;
 	//width: 100vw;
-	background-image: url('~/images/landing-page/background-2.png');
+	//background-image: url('~/images/landing-page/background-2.png');
 	text-align: center;
 
 	display: flex;
@@ -182,12 +182,12 @@ body {
 
 .main-part .up {
 	position: relative;
-	top: -130px;
+	top: -80px;
 }
 
 .main-part .up2 {
 	position: relative;
-	top: -145px;
+	top: -80px;
 }
 
 .create-new-trip-form {
@@ -201,7 +201,7 @@ body {
 
 .create-new-trip-form.shown {
 	position: relative;
-	top: -130px;
+	top: -80px;
 	display: flex;
 	transition: opacity 0.5s ease-in-out;
 }
