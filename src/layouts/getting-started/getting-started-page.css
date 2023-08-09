@@ -122,33 +122,8 @@ body {
 	margin-inline: 5px;
 }
 
-.main-part .up {
-	position: relative;
-	top: -80px;
-}
-
-.main-part .up2 {
-	position: relative;
-	top: -80px;
-}
-
 .create-new-trip-form {
-	display: none;
-	opacity: 0;
-	transition: opacity 0.3s ease-in-out;
-	position: fixed;
-	top: -1000px;
 	justify-content: center;
-}
-
-.create-new-trip-form.shown {
 	position: relative;
-	top: -80px;
-	display: flex !important;
-	transition: opacity 0.3s ease-in-out;
-}
-
-.create-new-trip-form.shown.fadeIn {
-	opacity: 1;
-	transition: opacity 0.3s ease-in-out;
+	display: flex;
 }
