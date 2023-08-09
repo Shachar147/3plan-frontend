@@ -79,13 +79,18 @@ function MyTrips() {
 	}, [dataService, dataSource, reloadCounter]);
 
 	useEffect(() => {
-		setTimeout(() => {
+		if (eventStore.isMobile) {
 			setApplyPageIntro(true);
-
+			setApplyFadeIn(true);
+		} else {
 			setTimeout(() => {
-				setApplyFadeIn(true);
-			}, 200);
-		}, 500);
+				setApplyPageIntro(true);
+
+				setTimeout(() => {
+					setApplyFadeIn(true);
+				}, 200);
+			}, 500);
+		}
 
 		document.getElementById('root')!.classList.add('overflow-hidden');
 		document.getElementById('root')!.classList.add('height-100vh');
@@ -422,7 +427,7 @@ function MyTrips() {
 			<img
 				className={getClasses(['logo-container pointer'], applyPageIntro && 'up')}
 				src="/images/logo/new-logo.png"
-				style={{ width: '50%', minWidth: '400px' }}
+				style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 				onClick={() => {
 					navigate('/home');
 				}}

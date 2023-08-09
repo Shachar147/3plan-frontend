@@ -74,7 +74,7 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 					props.onChange(data);
 				}
 			}}
-			maxMenuHeight={maxMenuHeight || 45 * 5}
+			maxMenuHeight={maxMenuHeight ?? 45 * 5}
 			styles={SELECT_STYLE}
 		/>
 	);

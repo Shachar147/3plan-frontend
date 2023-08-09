@@ -7,6 +7,7 @@ import {
 	SidebarEvent,
 	TripActions,
 	TriPlanCategory,
+	TriplanTaskStatus,
 } from '../../utils/interfaces';
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, SharedTrip, Trip } from './data-handler-base';
 import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
@@ -361,5 +362,20 @@ export class DBService implements BaseDataHandler {
 			eventId,
 			eventName,
 		});
+	}
+
+	async getTasks(tripId: number) {
+		const res: any = await apiGetPromise(this, `/todolist/task/${tripId}`);
+		return res.data;
+	}
+
+	async createTask(data: {
+		description: string;
+		title: string;
+		status: TriplanTaskStatus;
+		eventId?: number;
+		mustBeDoneBefore?: number;
+	}) {
+		return await apiPost(`/todolist/task`, data);
 	}
 }

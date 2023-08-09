@@ -17,7 +17,7 @@ import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 const Logo = () => (
 	<img
 		className={getClasses(['logo-container pointer'])}
-		style={{ maxWidth: '400px' }}
+		style={{ maxWidth: '200px' }}
 		src={'/images/logo/new-logo.png'}
 	/>
 );

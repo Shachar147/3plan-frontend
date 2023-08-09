@@ -5,13 +5,14 @@ body {
 .landing-page-layout {
 	padding: 30px;
 	padding-block-start: 0;
-	background-color: #eaeff5;
+	//background-color: #eaeff5;
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;
 	//height: 100vh;
 	//width: 100vw;
-	background-image: url('~/images/landing-page/background-2.png');
+	//background-image: url('~/images/landing-page/background-2.png');
+	background-color: white;
 	text-align: center;
 
 	display: flex;
@@ -93,5 +94,16 @@ body {
 				margin-inline: 5px;
 			}
 		}
+	}
+}
+
+
+.landing-page-layout {
+	height: 100vh !important;
+
+	.main-part{
+		flex: 1 1 0;
+		min-height: 0;
+		justify-content: center;
 	}
 }

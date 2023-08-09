@@ -173,6 +173,7 @@ export class EventStore {
 
 	@observable reloadCollaboratorsCounter: number = 0;
 	@observable reloadHistoryCounter: number = 0;
+	@observable reloadTasks: number = 0;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();

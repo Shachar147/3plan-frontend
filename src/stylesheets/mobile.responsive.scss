@@ -444,7 +444,7 @@
 	.login-page,
 	.register-page {
 		.logo-container {
-			min-width: 280px !important;
+			min-width: 200px !important;
 		}
 	}
 
@@ -485,7 +485,7 @@
 
 	.create-new-trip-form {
 		position: relative;
-		top: -130px !important;
+		top: -80px !important;
 
 		.my-trips.bright-scrollbar {
 			max-height: 300px !important;
@@ -494,7 +494,7 @@
 
 	.main-part .up {
 		position: relative;
-		top: -150px !important;
+		top: -80px !important;
 	}
 
 	.mobile-header-search-container {
@@ -852,6 +852,49 @@
 
 	.list-view-mode-selector {
 		//height: 150px;
+	}
+
+	.input-with-label {
+		.add-task-label {
+			min-width: 100px !important;
+			max-width: 100px !important;
+		}
+
+		.add-task-selector {
+			display: flex;
+			flex: 1 1 0;
+			min-width: 0;
+		}
+
+		.add-task-selector > div {
+			width: 100%;
+		}
+
+		//.triplan-text-input {
+		//	input {
+		//		border-top: 1px !important;
+		//		border-bottom: 1px !important;
+		//		border-left: 1px !important;
+		//		border-right: 1px !important;
+		//		border: 1px solid #d6d6d6 !important;
+		//	}
+		//}
+	}
+
+	.my-trips-page,
+	.getting-started-page {
+		.plan-your-trip-header {
+			padding-bottom: 300px;
+			margin-top: -300px;
+		}
+
+		.create-new-trip-form.shown {
+			transition: opacity 0.1s ease-in-out !important;
+		}
+
+		.create-new-trip-form.shown.fadeIn {
+			transition: opacity 0.1s ease-in-out !important;
+		}
 	}
 }
 

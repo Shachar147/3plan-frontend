@@ -32,13 +32,18 @@ const GettingStartedPage = () => {
 	const [tripName, setTripName] = useState<string>('');
 
 	useEffect(() => {
-		setTimeout(() => {
+		if (eventStore.isMobile) {
 			setApplyPageIntro(true);
-
+			setApplyFadeIn(true);
+		} else {
 			setTimeout(() => {
-				setApplyFadeIn(true);
-			}, 200);
-		}, 500);
+				setApplyPageIntro(true);
+
+				setTimeout(() => {
+					setApplyFadeIn(true);
+				}, 200);
+			}, 500);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -254,7 +259,14 @@ const GettingStartedPage = () => {
 	function renderMainPart() {
 		return (
 			<div className="main-part">
-				<div className={getClasses(['plan-your-trip-header main-font visible'], applyPageIntro && 'hidden')}>
+				<div
+					className={getClasses(
+						['plan-your-trip-header main-font'],
+						!eventStore.isMobile && 'visible',
+						!eventStore.isMobile && applyPageIntro && 'hidden',
+						eventStore.isMobile && 'opacity-0'
+					)}
+				>
 					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}
 					<br />
 					<div className={'trip main-font-heavy'}>
@@ -264,7 +276,7 @@ const GettingStartedPage = () => {
 				<img
 					className={getClasses(['logo-container pointer'], applyPageIntro && 'up')}
 					src={'/images/logo/new-logo.png'}
-					style={{ width: '50%', minWidth: '400px' }}
+					style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 					onClick={() => {
 						navigate('/home');
 					}}
@@ -313,7 +325,7 @@ const GettingStartedPage = () => {
 						onClick={() => {
 							navigate('/my-trips');
 						}}
-						className={'black'}
+						className={'orange'}
 					/>
 				</div>
 			</div>
@@ -321,7 +333,7 @@ const GettingStartedPage = () => {
 	}
 
 	return (
-		<div className="landing-page-layout">
+		<div className="landing-page-layout getting-started-page">
 			<TriplanHeaderWrapper />
 			{renderMainPart()}
 			{renderFooterLine(eventStore, getClasses('visible', applyPageIntro && 'hidden'))}

@@ -54,6 +54,8 @@ const LogHistoryService = {
 
 			// share trip
 			permissions?: string;
+
+			name?: string;
 		},
 		eventId?: number,
 		eventName?: string
