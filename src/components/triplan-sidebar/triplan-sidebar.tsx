@@ -1973,7 +1973,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{renderWarnings()}
 						{renderDistances()}
 						{renderActions()}
-						{renderTasks()}
+						{/*{renderTasks()}*/}
 						{renderRecommendations()}
 						{renderCalendarSidebarStatistics()}
 						<hr style={{ marginBlock: '20px 10px' }} />
