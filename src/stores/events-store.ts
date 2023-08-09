@@ -1332,7 +1332,7 @@ export class EventStore {
 
 		if (isMobile) {
 			this.isSwitchDaysEnabled = false;
-			this.listViewShowNavigateTo = true;
+			// this.listViewShowNavigateTo = true;
 		}
 	}
 
