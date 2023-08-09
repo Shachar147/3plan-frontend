@@ -259,74 +259,49 @@ const GettingStartedPage = () => {
 	function renderMainPart() {
 		return (
 			<div className="main-part">
-				<div
-					className={getClasses(
-						['plan-your-trip-header main-font'],
-						!eventStore.isMobile && 'visible',
-						!eventStore.isMobile && applyPageIntro && 'hidden',
-						eventStore.isMobile && 'opacity-0'
-					)}
-				>
-					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}
-					<br />
-					<div className={'trip main-font-heavy'}>
-						{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}
-					</div>
-				</div>
 				<img
-					className={getClasses(['logo-container pointer'], applyPageIntro && 'up')}
+					className={'logo-container pointer'}
 					src={'/images/logo/new-logo.png'}
 					style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 					onClick={() => {
 						navigate('/home');
 					}}
 				/>
-				<div
-					className={getClasses(
-						['create-new-trip-form display-none'],
-						applyPageIntro && 'shown',
-						applyFadeIn && 'fadeIn'
-					)}
-				>
-					{renderForm()}
-				</div>
-				<div className={getClasses(['slogan main-font'], applyPageIntro && 'up2')}>
-					<span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE1')}</span>
-					<span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE2')}</span>
-				</div>
-
-				<div
-					className={getClasses(['start-now-button'], applyPageIntro && 'up2')}
-					style={{
-						display: 'flex',
-						alignContent: 'center',
-						justifyContent: 'center',
-						gap: '10px',
-					}}
-				>
-					<Button
-						text={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}
-						flavor={ButtonFlavor.primary}
-						// disabled={
-						// 	tripName.length === 0 ||
-						// 	new Date(customDateRange.start).getTime() > new Date(customDateRange.end).getTime()
-						// }
-						// disabledReason={TranslateService.translate(
-						// 	eventStore,
-						// 	tripName.length === 0
-						// 		? 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST'
-						// 		: 'MODALS.ERROR.START_DATE_SMALLER'
-						// )}
-						onClick={() => createNewTrip(tripName)}
-					/>
-					<Button
-						text={TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}
-						flavor={ButtonFlavor.secondary}
-						onClick={() => {
-							navigate('/my-trips');
+				<div className="flex-col gap-16 margin-top--16">
+					<div className="create-new-trip-form">{renderForm()}</div>
+					<div
+						className={'start-now-button'}
+						style={{
+							display: 'flex',
+							alignContent: 'center',
+							justifyContent: 'center',
+							gap: '10px',
 						}}
-						className={'orange'}
-					/>
+					>
+						<Button
+							text={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP')}
+							flavor={ButtonFlavor.primary}
+							// disabled={
+							// 	tripName.length === 0 ||
+							// 	new Date(customDateRange.start).getTime() > new Date(customDateRange.end).getTime()
+							// }
+							// disabledReason={TranslateService.translate(
+							// 	eventStore,
+							// 	tripName.length === 0
+							// 		? 'GETTING_STARTED_PAGE.CREATE_NEW_TRIP.PLEASE_SET_TRIPNAME_FIRST'
+							// 		: 'MODALS.ERROR.START_DATE_SMALLER'
+							// )}
+							onClick={() => createNewTrip(tripName)}
+						/>
+						<Button
+							text={TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}
+							flavor={ButtonFlavor.secondary}
+							onClick={() => {
+								navigate('/my-trips');
+							}}
+							className={'black'}
+						/>
+					</div>
 				</div>
 			</div>
 		);
