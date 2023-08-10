@@ -425,7 +425,7 @@ function MyTrips() {
 	function renderLogo() {
 		return (
 			<img
-				className={'logo-container pointer'}
+				className={getClasses(['logo-container pointer'], applyPageIntro && 'up')}
 				src="/images/logo/new-logo.png"
 				style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 				onClick={() => {
@@ -440,8 +440,21 @@ function MyTrips() {
 		<div className="landing-page-layout my-trips-page">
 			<TriplanHeaderWrapper />
 			<div className={getClasses('main-part', eventStore.isMobile && 'mobile')}>
+				<div className={getClasses(['plan-your-trip-header main-font visible'], applyPageIntro && 'hidden')}>
+					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}
+					<br />
+					<div className="trip main-font-heavy">
+						{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}
+					</div>
+				</div>
 				{renderLogo()}
-				<div className={'create-new-trip-form flex-column'}>
+				<div
+					className={getClasses(
+						['create-new-trip-form flex-column display-none'],
+						applyPageIntro && 'shown',
+						applyFadeIn && 'fadeIn'
+					)}
+				>
 					{getUser() && renderDataSourceSelector()}
 					{renderForm()}
 				</div>

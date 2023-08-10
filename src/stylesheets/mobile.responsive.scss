@@ -159,7 +159,7 @@
 			transition: width 0.3s ease-in-out;
 
 			.logo-container {
-				min-width: 166px !important;
+				min-width: 200px !important;
 
 				&.up {
 					width: 45% !important;
@@ -444,7 +444,7 @@
 	.login-page,
 	.register-page {
 		.logo-container {
-			min-width: 166px !important;
+			min-width: 200px !important;
 		}
 	}
 
@@ -485,6 +485,7 @@
 
 	.create-new-trip-form {
 		position: relative;
+		top: -80px !important;
 
 		.my-trips.bright-scrollbar {
 			max-height: 300px !important;
@@ -893,15 +894,6 @@
 
 		.create-new-trip-form.shown.fadeIn {
 			transition: opacity 0.1s ease-in-out !important;
-		}
-	}
-
-	.my-trips-page {
-		.main-part {
-			margin-top: 25px !important;
-			.logo-container {
-				max-width: 40% !important;
-			}
 		}
 	}
 }
