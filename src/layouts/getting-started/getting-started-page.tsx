@@ -325,7 +325,7 @@ const GettingStartedPage = () => {
 						onClick={() => {
 							navigate('/my-trips');
 						}}
-						className={'orange'}
+						className={'black'}
 					/>
 				</div>
 			</div>

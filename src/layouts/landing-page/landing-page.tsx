@@ -58,7 +58,7 @@ const LandingPage = () => {
 							navigate('/my-trips');
 						}}
 						flavor={ButtonFlavor.secondary}
-						className={'orange'}
+						className={'black'}
 					/>
 				</div>
 			</div>
