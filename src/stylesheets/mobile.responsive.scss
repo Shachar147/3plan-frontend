@@ -870,15 +870,16 @@
 			width: 100%;
 		}
 
-		//.triplan-text-input {
-		//	input {
-		//		border-top: 1px !important;
-		//		border-bottom: 1px !important;
-		//		border-left: 1px !important;
-		//		border-right: 1px !important;
-		//		border: 1px solid #d6d6d6 !important;
-		//	}
-		//}
+		.triplan-text-input {
+			input {
+				border-top: 1px !important;
+				border-bottom: 1px !important;
+				border-left: 1px !important;
+				border-right: 1px !important;
+				border: 1px solid #d6d6d6 !important;
+				max-width: 100% !important;
+			}
+		}
 	}
 
 	.my-trips-page,
@@ -894,6 +895,23 @@
 
 		.create-new-trip-form.shown.fadeIn {
 			transition: opacity 0.1s ease-in-out !important;
+		}
+	}
+
+	.triplan-tasks-navbar {
+		background-color: #f1f1f1;
+		border-block: 1px solid #dee2e6;
+		gap: 4px;
+		padding-top: 6px;
+		flex-direction: column-reverse;
+
+		.search-container {
+			padding-inline: 5px;
+			height: 35px;
+
+			.triplan-text-input input[type=text] {
+				min-width: 95px;
+			}
 		}
 	}
 }

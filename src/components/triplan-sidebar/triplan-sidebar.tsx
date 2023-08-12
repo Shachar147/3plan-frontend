@@ -749,6 +749,31 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
+	const renderTasksNavbar = () => {
+		const eyeIcon = eventStore.hideDoneTasks ? 'fa-eye' : 'fa-eye-slash';
+		const flex = eventStore.isMobile ? 'flex-col' : 'flex-row';
+		return (
+			<div className={getClasses('triplan-tasks-navbar padding-block-10 gap-8', flex)}>
+				{renderTasksSearch()}
+				<Button
+					className={getClasses(
+						['padding-inline-start-10 pointer padding-inline-end-10'],
+						eventStore.hideDoneTasks && 'blue-color'
+					)}
+					onClick={() => {
+						runInAction(() => (eventStore.hideDoneTasks = !eventStore.hideDoneTasks));
+					}}
+					flavor={ButtonFlavor.link}
+					icon={eyeIcon}
+					text={TranslateService.translate(
+						eventStore,
+						eventStore.hideDoneTasks ? 'SHOW_DONE_TASKS' : 'HIDE_DONE_TASKS'
+					)}
+				/>
+			</div>
+		);
+	};
+
 	const renderTasksInner = (_tasks: TriplanTask[] | null) => {
 		function sortTasks(tasks: TriplanTask[]): TriplanTask[] {
 			const statusOrder = [
@@ -888,6 +913,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	};
 
 	function renderTasksSearch() {
+		const searchPlacholderKey = eventStore.isMobile ? 'TASKS_SEARCH_PLACEHOLDER.FULL' : 'TASKS_SEARCH_PLACEHOLDER';
 		return (
 			<div className="tasks-search-container flex-row">
 				<TriplanSearch
@@ -895,7 +921,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					onChange={(val: any) => {
 						runInAction(() => (eventStore.tasksSearchValue = val));
 					}}
-					placeholder={TranslateService.translate(eventStore, 'TASKS_SEARCH_PLACEHOLDER')}
+					placeholder={TranslateService.translate(eventStore, searchPlacholderKey)}
 				/>
 			</div>
 		);
@@ -907,31 +933,13 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			return;
 		}
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS');
-		const eyeIcon = eventStore.hideDoneTasks ? 'fa-eye' : 'fa-eye-slash';
 
 		const tasksBlock = wrapWithSidebarGroup(
 			<div className="text-align-center white-space-pre-line flex-col gap-8" key={eventStore.reloadTasksCounter}>
 				<div className="opacity-0-5">
 					{TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS.DESCRIPTION')}
 				</div>
-				<div className="triplan-tasks-navbar padding-block-10 flex-row gap-8">
-					{renderTasksSearch()}
-					<Button
-						className={getClasses(
-							['padding-inline-start-10 pointer padding-inline-end-10'],
-							eventStore.hideDoneTasks && 'blue-color'
-						)}
-						onClick={() => {
-							runInAction(() => (eventStore.hideDoneTasks = !eventStore.hideDoneTasks));
-						}}
-						flavor={ButtonFlavor.link}
-						icon={eyeIcon}
-						text={TranslateService.translate(
-							eventStore,
-							eventStore.hideDoneTasks ? 'SHOW_DONE_TASKS' : 'HIDE_DONE_TASKS'
-						)}
-					/>
-				</div>
+				{renderTasksNavbar()}
 				{renderTasksInner(tasks)}
 				{renderAddTaskButton()}
 			</div>,

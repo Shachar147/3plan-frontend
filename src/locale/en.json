@@ -529,6 +529,7 @@
 	"MOBILE_NAVBAR.USER_SIDE": "User Side",
 	"SIDEBAR_SEARCH_PLACEHOLDER": "Enter search keywords",
 	"TASKS_SEARCH_PLACEHOLDER": "Search tasks",
+	"TASKS_SEARCH_PLACEHOLDER.FULL": "Enter tasks search keywords",
 	"ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES": "Estimated Price:",
 	"ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES": "Estimated Price (Unscheduled):",
 	"PUSH_TO_START": "Top of the list",
