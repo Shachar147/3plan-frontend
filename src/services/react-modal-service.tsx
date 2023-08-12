@@ -5153,8 +5153,17 @@ const ReactModalService = {
 								});
 							}, 1000);
 						})
-						.catch(() => {
-							ReactModalService.internal.openOopsErrorModal(eventStore);
+						.catch((e) => {
+							if (e.response.data.statusCode === 409) {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'MODALS.ERROR.TITLE',
+									'TASK_ALREADY_EXISTS',
+									'error'
+								);
+							} else {
+								ReactModalService.internal.openOopsErrorModal(eventStore);
+							}
 						});
 				} else {
 					ReactModalService.internal.alertMessage(
