@@ -1393,3 +1393,11 @@ input[id^='react-select-'][id$='-input'] {
 	outline: 0 !important;
 	border-style: hidden !important;
 }
+
+.input-with-label {
+	div[class^=' css-'][class$='-Input'] {
+		input[type="text"]:focus {
+			border: 0 !important;
+		}
+	}
+}
