@@ -42,6 +42,7 @@ import useAsyncMemo from '../../custom-hooks/use-async-memo';
 import {
 	addHours,
 	formatDate,
+	formatFromISODateString,
 	formatTimeFromISODateString,
 	getDurationString,
 	getOffsetInHours,
@@ -164,7 +165,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		[eventStore.reloadCollaboratorsCounter]
 	);
 
-	const { data: tasks } = useAsyncMemo<any[]>(() => fetchTasks(), [eventStore.reloadTasks]);
+	const { data: tasks } = useAsyncMemo<any[]>(() => fetchTasks(), [eventStore.reloadTasksCounter]);
 
 	const fetchHistory = async (): Promise<any[]> => {
 		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
@@ -748,62 +749,188 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		);
 	};
 
-	const renderTasksInner = (tasks: TriplanTask[] | null) => {
-		const renderTask = (task: TriplanTask) => {
-			// let when = 'N/A';
-			// if (task.mustBeDoneBefore) {
-			// 	const mustBeDoneBefore = new Date(task.mustBeDoneBefore * 1000);
-			// 	const offset = -1 * getOffsetInHours();
-			// 	const now = new Date();
-			// 	const mustBeDoneBeforeWithOffset = addHours(mustBeDoneBefore, offset);
-			//
-			// 	when =
-			// 		formatDate(mustBeDoneBefore) == formatDate(now)
-			// 			? formatTimeFromISODateString(mustBeDoneBeforeWithOffset.toISOString())
-			// 			: formatDate(mustBeDoneBefore);
-			// }
+	const renderTasksInner = (_tasks: TriplanTask[] | null) => {
+		function sortTasks(tasks: TriplanTask[]): TriplanTask[] {
+			const statusOrder = [
+				TriplanTaskStatus.TODO,
+				TriplanTaskStatus.IN_PROGRESS,
+				TriplanTaskStatus.DONE,
+				TriplanTaskStatus.CANCELLED,
+			];
 
+			return tasks.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+		}
+
+		const renderTask = (task: TriplanTask) => {
 			const title = TranslateService.translate(eventStore, task.title);
 			const fullTitle = TranslateService.translate(eventStore, task.content ?? task.title);
 
 			return (
 				<div
-					className="triplan-history space-between padding-inline-8 gap-8 align-items-center cursor-pointer"
+					className={getClasses(
+						'triplan-history space-between padding-inline-8 gap-8 align-items-center opacity-1-hover-important',
+						task.status == TriplanTaskStatus.CANCELLED && 'opacity-0-6'
+					)}
 					title={fullTitle}
 					onClick={() => {
-						// ReactModalService.openSeeHistoryDetails(eventStore, historyRow, fullTitle);
+						ReactModalService.openViewTaskModal(eventStore, task, title);
 					}}
 				>
 					<i
 						className={getClasses(
-							'fa',
+							'fa cursor-pointer',
 							task.status == TriplanTaskStatus.DONE ? 'fa-check-square-o' : 'fa-square-o'
 						)}
+						onClick={() => {
+							(eventStore.dataService as DBService)
+								.updateTaskStatus(
+									task.id,
+									task.status == TriplanTaskStatus.DONE
+										? TriplanTaskStatus.TODO
+										: TriplanTaskStatus.DONE
+								)
+								.then(() => {
+									runInAction(() => {
+										eventStore.reloadTasksCounter += 1;
+									});
+								});
+						}}
 						aria-hidden="true"
 					/>
 					{/*<div className="history-when flex-row gap-8">{when}</div>*/}
 					<div className="flex-row gap-4 align-items-center flex-1-1-0 min-width-0">
-						<div className="history-title flex-row align-items-center flex-1-1-0 min-width-0 text-align-start">
+						<div
+							className={getClasses(
+								'history-title flex-row align-items-center flex-1-1-0 min-width-0 text-align-start',
+								(task.status == TriplanTaskStatus.CANCELLED || task.status == TriplanTaskStatus.DONE) &&
+									'text-decoration-strike-through'
+							)}
+						>
 							<EllipsisWithTooltip>{title}</EllipsisWithTooltip>
 						</div>
 					</div>
+					<i
+						className={getClasses(
+							'fa cursor-pointer',
+							task.status == TriplanTaskStatus.CANCELLED ? 'fa-undo' : 'fa-trash-o'
+						)}
+						onClick={() => {
+							(eventStore.dataService as DBService)
+								.updateTaskStatus(
+									task.id,
+									task.status == TriplanTaskStatus.CANCELLED
+										? TriplanTaskStatus.TODO
+										: TriplanTaskStatus.CANCELLED
+								)
+								.then(() => {
+									runInAction(() => {
+										eventStore.reloadTasksCounter += 1;
+									});
+								});
+						}}
+						aria-hidden="true"
+					/>
 				</div>
 			);
 		};
 
-		if (tasks == undefined) {
+		if (_tasks == undefined) {
 			return TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE');
 		}
 
-		return tasks.map(renderTask);
+		const tasksClone = _tasks.filter((t) => {
+			if (eventStore.hideDoneTasks && [TriplanTaskStatus.CANCELLED, TriplanTaskStatus.DONE].includes(t.status)) {
+				return false;
+			}
+
+			if (eventStore.tasksSearchValue.length) {
+				return (
+					t.title.includes(eventStore.tasksSearchValue) || t.content?.includes(eventStore.tasksSearchValue)
+				);
+			}
+			return true;
+		});
+
+		const tasksByDeadline: Record<number, TriplanTask[]> = {};
+		tasksClone.forEach((t) => {
+			tasksByDeadline[t.mustBeDoneBefore ?? 0] ||= [];
+			tasksByDeadline[t.mustBeDoneBefore ?? 0].push(t);
+		});
+
+		if (Object.keys(tasksByDeadline).length >= 1) {
+			return Object.keys(tasksByDeadline).map((deadline: string) => {
+				const deadlineString: string =
+					deadline == '0'
+						? TranslateService.translate(eventStore, 'TODOLIST.NO_DEADLINE')
+						: formatFromISODateString(new Date(Number(deadline) * 1000).toISOString(), true).split(',')[0];
+
+				const currTasks = tasksByDeadline[Number(deadline)];
+				const doneTasks = currTasks.filter((t) =>
+					[TriplanTaskStatus.DONE, TriplanTaskStatus.CANCELLED].includes(t.status)
+				);
+
+				return (
+					<div key={`todolist-${deadline}`}>
+						{renderLineWithText(
+							`${TranslateService.translate(eventStore, 'DEADLINE')}: ${deadlineString} (${
+								doneTasks.length
+							}/${currTasks.length})`
+						)}
+						<div className="flex-col gap-8">
+							{sortTasks(tasksByDeadline[Number(deadline)]).map(renderTask)}
+						</div>
+					</div>
+				);
+			});
+		}
+
+		return sortTasks(tasksClone).map(renderTask);
 	};
 
+	function renderTasksSearch() {
+		return (
+			<div className="tasks-search-container flex-row">
+				<TriplanSearch
+					value={eventStore.tasksSearchValue}
+					onChange={(val: any) => {
+						runInAction(() => (eventStore.tasksSearchValue = val));
+					}}
+					placeholder={TranslateService.translate(eventStore, 'TASKS_SEARCH_PLACEHOLDER')}
+				/>
+			</div>
+		);
+	}
+
 	const renderTasks = () => {
+		// supported only on the db version
+		if (eventStore.dataService.getDataSourceName() != TripDataSource.DB) {
+			return;
+		}
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS');
+		const eyeIcon = eventStore.hideDoneTasks ? 'fa-eye' : 'fa-eye-slash';
+
 		const tasksBlock = wrapWithSidebarGroup(
-			<div className="text-align-center white-space-pre-line flex-col gap-8" key={eventStore.reloadTasks}>
+			<div className="text-align-center white-space-pre-line flex-col gap-8" key={eventStore.reloadTasksCounter}>
 				<div className="opacity-0-5">
 					{TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS.DESCRIPTION')}
+				</div>
+				<div className="triplan-tasks-navbar padding-block-10 flex-row gap-8">
+					{renderTasksSearch()}
+					<Button
+						className={getClasses(
+							['padding-inline-start-10 pointer padding-inline-end-10'],
+							eventStore.hideDoneTasks && 'blue-color'
+						)}
+						onClick={() => {
+							runInAction(() => (eventStore.hideDoneTasks = !eventStore.hideDoneTasks));
+						}}
+						flavor={ButtonFlavor.link}
+						icon={eyeIcon}
+						text={TranslateService.translate(
+							eventStore,
+							eventStore.hideDoneTasks ? 'SHOW_DONE_TASKS' : 'HIDE_DONE_TASKS'
+						)}
+					/>
 				</div>
 				{renderTasksInner(tasks)}
 				{renderAddTaskButton()}
@@ -811,7 +938,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			undefined,
 			SidebarGroups.TASKS,
 			groupTitle,
-			3
+			10 + (tasks?.length ?? 0)
 		);
 		return (
 			<>
@@ -1146,7 +1273,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			<div className="sidebar-search-container flex-row width-100-percents">
 				<TriplanSearch
 					value={eventStore.sidebarSearchValue}
-					onChange={(val) => eventStore.setSidebarSearchValue(val)}
+					onChange={(val: any) => eventStore.setSidebarSearchValue(val)}
 					placeholder={TranslateService.translate(eventStore, 'SIDEBAR_SEARCH_PLACEHOLDER')}
 				/>
 			</div>
@@ -1599,6 +1726,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				eventStore,
 				historyRow.updatedBy !== getCurrentUsername() ? historyRow.action : historyRow.action + 'You',
 				{
+					...historyRow.actionParams,
 					eventName: historyRow.eventName,
 					count:
 						historyRow.actionParams.count ?? historyRow.action == TripActions.changedCategory
@@ -1973,7 +2101,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{renderWarnings()}
 						{renderDistances()}
 						{renderActions()}
-						{/*{renderTasks()}*/}
+						{renderTasks()}
 						{renderRecommendations()}
 						{renderCalendarSidebarStatistics()}
 						<hr style={{ marginBlock: '20px 10px' }} />

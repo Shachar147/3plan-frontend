@@ -15,6 +15,7 @@ import {
 	SidebarEvent,
 	TripActions,
 	TriPlanCategory,
+	TriplanTask,
 	TriplanTaskStatus,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
@@ -5034,19 +5035,19 @@ const ReactModalService = {
 				),
 				required: true,
 			},
-			{
-				textKey: 'ASSIGN_TASK_CONTENT.LABEL',
-				component: ReactModalRenderHelper.renderTextAreaInput(
-					eventStore,
-					'add-task-content',
-					{
-						placeholderKey: 'ASSIGN_TASK_CONTENT.PLACEHOLDER',
-						value: undefined,
-						// readOnly: modalsStore?.isViewMode,
-					},
-					eventStore.modalValuesRefs['add-task-content']
-				),
-			},
+			// {
+			// 	textKey: 'ASSIGN_TASK_CONTENT.LABEL',
+			// 	component: ReactModalRenderHelper.renderTextAreaInput(
+			// 		eventStore,
+			// 		'add-task-content',
+			// 		{
+			// 			placeholderKey: 'ASSIGN_TASK_CONTENT.PLACEHOLDER',
+			// 			value: undefined,
+			// 			// readOnly: modalsStore?.isViewMode,
+			// 		},
+			// 		eventStore.modalValuesRefs['add-task-content']
+			// 	),
+			// },
 			{
 				textKey: 'ASSIGN_TASK_TO_EVENT.LABEL',
 				component: ReactModalRenderHelper.renderSelectInput(
@@ -5152,11 +5153,12 @@ const ReactModalService = {
 
 							setTimeout(() => {
 								runInAction(() => {
-									eventStore.reloadTasks += 1;
+									eventStore.reloadTasksCounter += 1;
 								});
 							}, 1000);
 						})
-						.catch(() => {
+						.catch((e) => {
+							debugger;
 							ReactModalService.internal.openOopsErrorModal(eventStore);
 						});
 				} else {
@@ -5171,6 +5173,7 @@ const ReactModalService = {
 			},
 		});
 	},
+	openViewTaskModal(eventStore: EventStore, task: TriplanTask, title: string) {},
 };
 
 export default ReactModalService;

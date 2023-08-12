@@ -161,6 +161,8 @@
 	"COLLAPSE_ALL": "Collapse all",
 	"HIDE_EMPTY_CATEGORIES": "Show Empty",
 	"SHOW_EMPTY_CATEGORIES": "Hide Empty",
+	"HIDE_DONE_TASKS": "Show only undone tasks",
+	"SHOW_DONE_TASKS": "Show all tasks",
 	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP": "Create a new trip",
 	"GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP": "When is your trip?",
 	"GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP": "Choose a name to your trip",
@@ -526,6 +528,7 @@
 	"MOBILE_NAVBAR.ADMIN_SIDE": "Admin Side",
 	"MOBILE_NAVBAR.USER_SIDE": "User Side",
 	"SIDEBAR_SEARCH_PLACEHOLDER": "Enter search keywords",
+	"TASKS_SEARCH_PLACEHOLDER": "Search tasks",
 	"ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES": "Estimated Price:",
 	"ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES": "Estimated Price (Unscheduled):",
 	"PUSH_TO_START": "Top of the list",
@@ -732,5 +735,7 @@
 	"createdTaskYou": "You created a task ({name})",
 	"createdTaskFull": "{who} created a task ({name})",
 	"createdTaskFullYou": "You created a task ({name})",
-	"MODALS.CREATE_TASK.CONTENT": "Task have been created"
+	"MODALS.CREATE_TASK.CONTENT": "Task have been created",
+	"DEADLINE": "Deadline",
+	"TODOLIST.NO_DEADLINE" : "No deadline"
 }

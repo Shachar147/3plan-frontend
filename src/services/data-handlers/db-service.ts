@@ -378,4 +378,8 @@ export class DBService implements BaseDataHandler {
 	}) {
 		return await apiPost(`/todolist/task`, data);
 	}
+
+	async updateTaskStatus(taskId: number, status: TriplanTaskStatus) {
+		return await apiPut(`/todolist/task/${taskId}`, { status });
+	}
 }
