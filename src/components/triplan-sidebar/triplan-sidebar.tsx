@@ -831,7 +831,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						}}
 						aria-hidden="true"
 					/>
-					{/*<div className="history-when flex-row gap-8">{when}</div>*/}
 					<div className="flex-row gap-4 align-items-center flex-1-1-0 min-width-0">
 						<div
 							className={getClasses(
@@ -840,7 +839,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 									'text-decoration-strike-through'
 							)}
 						>
-							<EllipsisWithTooltip>{title}</EllipsisWithTooltip>
+							{title}
 						</div>
 					</div>
 					<i
