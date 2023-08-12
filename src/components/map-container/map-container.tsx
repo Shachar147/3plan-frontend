@@ -603,66 +603,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			setSearchCoordinatesSearchValue(searchValue);
 			setSearchCoordinates(searchMarkers);
 			return;
-
-			// // marker + marker when hovering
-			// const bgColor = "3849ab";
-			// const icon = {
-			//     url: `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`,
-			//     scaledSize: new googleRef.Size(30, 30),
-			//     fillColor: "#F00",
-			//     fillOpacity: 0.7,
-			//     strokeWeight: 0.4,
-			//     strokeColor: "#ffffff"
-			// };
-			// const markerIcon = {...icon, fillColor: bgColor}
-			// const markerIconWithBorder = {
-			//     ...markerIcon,
-			//     strokeColor: '#ffffff',
-			//     strokeOpacity: 0.6,
-			//     strokeWeight: 8,
-			// }
-			//
-			// // set marker
-			// const refMarker = new googleRef.Marker({
-			//     position: { lat: coordinate.lat, lng: coordinate.lng },
-			//     // label: texts[key],
-			//     title: selectedSearchLocation.address,
-			//     icon: markerIcon,
-			//     // label: event.icon
-			// });
-			//
-			// // on click event
-			// googleRef.event.addListener(refMarker, 'click', (function () {
-			//     return function () {
-			//         // infoWindow.setContent(buildInfoWindowContent(event));
-			//         // infoWindow.open(map, refMarker);
-			//     }
-			// })(refMarker));
-			//
-			// // hover & leave events
-			// googleRef.event.addListener(refMarker, 'mouseover', (function () {
-			//     return function () {
-			//         refMarker.setIcon(markerIconWithBorder)
-			//     }
-			// })(refMarker));
-			// googleRef.event.addListener(refMarker, 'mouseout', (function () {
-			//     return function () {
-			//         refMarker.setIcon(markerIcon)
-			//     }
-			// })(refMarker));
-
-			// if (searchMarkers && searchMarkers.length) {
-			//     debugger;
-			//     markerCluster.removeMarkers(searchMarkers)
-			// }
-
-			// searchMarkers = [refMarker];
-			// // new MarkerClusterer(googleMapRef, [...markers, ...searchMarkers], {
-			// //     imagePath: "/images/marker_images/m",
-			// //     minimumClusterSize: 10
-			// // });
-			//
-			// return refMarker;
 		};
 	}, [googleRef, googleMapRef]);
 

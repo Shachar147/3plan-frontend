@@ -4472,19 +4472,19 @@ const ReactModalService = {
 				(e) => formatDate(new Date(e.start)) == draggedItem.text
 			);
 
-			console.log({
-				text: item.text,
-				events: dtEvents
-					.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-					.map((x) => x.title),
-			});
-
-			console.log({
-				text: draggedItem.text,
-				events: draggedDtEvents
-					.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-					.map((x) => x.title),
-			});
+			// console.log({
+			// 	text: item.text,
+			// 	events: dtEvents
+			// 		.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+			// 		.map((x) => x.title),
+			// });
+			//
+			// console.log({
+			// 	text: draggedItem.text,
+			// 	events: draggedDtEvents
+			// 		.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+			// 		.map((x) => x.title),
+			// });
 
 			const dt = item.date;
 			const draggedDt = draggedItem.date;
@@ -4498,10 +4498,6 @@ const ReactModalService = {
 				let duration = event.duration;
 
 				if (event.allDay) {
-					// temporary
-					// updatedEvents.push(event);
-					// return;
-					// debugger;
 					duration = '24:00';
 				}
 
@@ -5157,8 +5153,7 @@ const ReactModalService = {
 								});
 							}, 1000);
 						})
-						.catch((e) => {
-							debugger;
+						.catch(() => {
 							ReactModalService.internal.openOopsErrorModal(eventStore);
 						});
 				} else {

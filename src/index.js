@@ -659,10 +659,6 @@ const RootRouter = () => {
 		// Add an event listener to the Autocomplete instance for 'input' event
 		const inputElement = document.getElementsByClassName(className)[0];
 		inputElement.addEventListener('keyup', (e) => {
-			// e.preventDefault();
-			// const a = autoCompleteRef;
-			// debugger;
-			// console.log(e.key);
 			if (e.key != 'Backspace') {
 				BiEventsService.reportEvent('google_map:place_searched', className, eventStore.isMobile, {
 					value: autoCompleteRef.value,
@@ -671,7 +667,6 @@ const RootRouter = () => {
 		});
 		inputElement.addEventListener('keydown', (e) => {
 			// const a = autoCompleteRef;
-			// debugger;
 			// BiEventsService.reportEvent('google_map:place_searched', className, eventStore.isMobile, {
 			// 	value: autoCompleteRef.value,
 			// });
