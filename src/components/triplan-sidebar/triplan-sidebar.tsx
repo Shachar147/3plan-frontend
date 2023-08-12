@@ -768,7 +768,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			return (
 				<div
 					className={getClasses(
-						'triplan-history space-between padding-inline-8 gap-8 align-items-center cursor-pointer',
+						'triplan-history space-between padding-inline-8 gap-8 align-items-center opacity-1-hover-important',
 						task.status == TriplanTaskStatus.CANCELLED && 'opacity-0-6'
 					)}
 					title={fullTitle}
@@ -778,7 +778,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				>
 					<i
 						className={getClasses(
-							'fa',
+							'fa cursor-pointer',
 							task.status == TriplanTaskStatus.DONE ? 'fa-check-square-o' : 'fa-square-o'
 						)}
 						onClick={() => {
@@ -811,7 +811,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					</div>
 					<i
 						className={getClasses(
-							'fa',
+							'fa cursor-pointer',
 							task.status == TriplanTaskStatus.CANCELLED ? 'fa-undo' : 'fa-trash-o'
 						)}
 						onClick={() => {

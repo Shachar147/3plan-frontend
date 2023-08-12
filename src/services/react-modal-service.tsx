@@ -5035,19 +5035,19 @@ const ReactModalService = {
 				),
 				required: true,
 			},
-			{
-				textKey: 'ASSIGN_TASK_CONTENT.LABEL',
-				component: ReactModalRenderHelper.renderTextAreaInput(
-					eventStore,
-					'add-task-content',
-					{
-						placeholderKey: 'ASSIGN_TASK_CONTENT.PLACEHOLDER',
-						value: undefined,
-						// readOnly: modalsStore?.isViewMode,
-					},
-					eventStore.modalValuesRefs['add-task-content']
-				),
-			},
+			// {
+			// 	textKey: 'ASSIGN_TASK_CONTENT.LABEL',
+			// 	component: ReactModalRenderHelper.renderTextAreaInput(
+			// 		eventStore,
+			// 		'add-task-content',
+			// 		{
+			// 			placeholderKey: 'ASSIGN_TASK_CONTENT.PLACEHOLDER',
+			// 			value: undefined,
+			// 			// readOnly: modalsStore?.isViewMode,
+			// 		},
+			// 		eventStore.modalValuesRefs['add-task-content']
+			// 	),
+			// },
 			{
 				textKey: 'ASSIGN_TASK_TO_EVENT.LABEL',
 				component: ReactModalRenderHelper.renderSelectInput(
