@@ -150,7 +150,14 @@ function MainPage(props: MainPageProps) {
 	}, [MapContainerRef.current, eventStore.viewMode]);
 
 	useEffect(() => {
-		eventStore.setTripName(tripName, locale as LocaleCode, createMode);
+		runInAction(() => {
+			eventStore.isLoading = true;
+		});
+		eventStore.setTripName(tripName, locale as LocaleCode, createMode).then(() => {
+			runInAction(() => {
+				eventStore.isLoading = false;
+			});
+		});
 
 		// must put it here, otherwise dates are incorrect
 		if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
@@ -556,7 +563,11 @@ function MainPage(props: MainPageProps) {
 		return (
 			<div className={getClasses('mobile-footer-navigator', isModalOpened && 'z-index-1000')}>
 				{viewOptions.map((viewOption) => (
-					<a title={viewOption.name} onClick={() => eventStore.setMobileViewMode(viewOption.key as ViewMode)}>
+					<a
+						title={viewOption.name}
+						onClick={() => eventStore.setMobileViewMode(viewOption.key as ViewMode)}
+						key={`mobile-footer-navigation-${viewOption.name}`}
+					>
 						{eventStore.mobileViewMode === viewOption.key ? viewOption.iconActive : viewOption.icon}
 						<span
 							title={viewOption.name}

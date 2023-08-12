@@ -1168,7 +1168,10 @@ export class EventStore {
 
 				this.tripId = 0;
 			} else {
-				this.isLoading = true;
+				runInAction(() => {
+					this.isLoading = true;
+				});
+
 				const tripData = await DataServices.DBService.getTripData(name);
 				newDistanceResults = await DataServices.DBService.getDistanceResults(name);
 

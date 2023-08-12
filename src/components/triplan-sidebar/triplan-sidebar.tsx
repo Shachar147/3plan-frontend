@@ -599,7 +599,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 										)}
 										{unscheduledNearByPlaces.map((x: any, idx: number) => {
 											return (
-												<div className="nearby-result cursor-pointer flex-col gap-3">
+												<div
+													className="nearby-result cursor-pointer flex-col gap-3"
+													key={`unscheduled-events-${x.event.category}-${idx}`}
+												>
 													{renderEventDraggable(
 														x.event,
 														x.event.category,
@@ -617,7 +620,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 											})`
 										)}
 										{scheduledNearByPlaces.map((x: any, idx: number) => (
-											<div className="nearby-result cursor-pointer flex-col gap-3">
+											<div
+												className="nearby-result cursor-pointer flex-col gap-3"
+												key={`scheduled-event-${x.event.category}-${idx}`}
+											>
 												{renderEventDraggable(
 													x.event,
 													x.event.category,
@@ -1221,7 +1227,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				const pricesSections = isUnknown
 					? [<div className="font-weight-bold">{unknownText}</div>]
 					: Object.keys(priceList).map((currency) => (
-							<div className="font-weight-bold">
+							<div className="font-weight-bold" key={`price-list-${currency}`}>
 								{priceList[currency as TriplanCurrency]}{' '}
 								{TranslateService.translate(eventStore, `${currency}_sign`)}
 							</div>
