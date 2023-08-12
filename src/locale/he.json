@@ -831,5 +831,7 @@
 	"MODALS.CREATE_TASK.CONTENT": "המשימה נוצרה בהצלחה",
 	"DEADLINE": "דדליין",
 	"TODOLIST.NO_DEADLINE": "ללא דדליין",
-	"NOT_ASSIGNED_TO_ANY_EVENT": "לא משויכים לפעילות"
+	"NOT_ASSIGNED_TO_ANY_EVENT": "לא משויכים לפעילות",
+	"TRIP_SUMMARY.OPEN_TASK": "משימה פתוחה אחת",
+	"TRIP_SUMMARY.OPEN_TASKS": "{amount} משימות פתוחות"
 }

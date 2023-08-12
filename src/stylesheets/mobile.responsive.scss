@@ -914,6 +914,11 @@
 			}
 		}
 	}
+
+	ordered-indication,
+	.task-indication {
+		font-size: 18px !important;
+	}
 }
 
 @media only screen and (max-height: 500px){

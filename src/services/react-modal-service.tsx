@@ -5148,9 +5148,7 @@ const ReactModalService = {
 							);
 
 							setTimeout(() => {
-								runInAction(() => {
-									eventStore.reloadTasksCounter += 1;
-								});
+								eventStore.reloadTasks();
 							}, 1000);
 						})
 						.catch((e) => {

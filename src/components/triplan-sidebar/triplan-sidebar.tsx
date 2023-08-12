@@ -153,24 +153,14 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		return [];
 	};
 
-	// todo complete: move this to the store itself.
 	// todo complete: move the indication if there's a task or not in the list view to be based on whether the event have/don't have open/in progress tasks
 	// todo complete: add tasks block to view/edit tasks (both sidebar and calendar)
-	const fetchTasks = async (): Promise<any[]> => {
-		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
-			const data = await (eventStore.dataService as DBService).getTasks(eventStore.tripId);
-			return data.data;
-		}
-		return [];
-	};
 
 	// const { data: collaborators, loading, error } = useAsyncMemo<any[]>(fetchCollaborators, [eventStore.dataService]);
 	const { data: collaborators } = useAsyncMemo<any[]>(
 		() => fetchCollaborators(),
 		[eventStore.reloadCollaboratorsCounter]
 	);
-
-	const { data: tasks } = useAsyncMemo<any[]>(() => fetchTasks(), [eventStore.reloadTasksCounter]);
 
 	const fetchHistory = async (): Promise<any[]> => {
 		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
@@ -827,7 +817,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								)
 								.then(() => {
 									runInAction(() => {
-										eventStore.reloadTasksCounter += 1;
+										eventStore.reloadTasks();
 									});
 								});
 						}}
@@ -859,7 +849,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 								)
 								.then(() => {
 									runInAction(() => {
-										eventStore.reloadTasksCounter += 1;
+										eventStore.reloadTasks();
 									});
 								});
 						}}
@@ -981,18 +971,18 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS');
 
 		const tasksBlock = wrapWithSidebarGroup(
-			<div className="text-align-center white-space-pre-line flex-col gap-8" key={eventStore.reloadTasksCounter}>
+			<div className="text-align-center white-space-pre-line flex-col gap-8">
 				<div className="opacity-0-5">
 					{TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS.DESCRIPTION')}
 				</div>
 				{renderTasksNavbar()}
-				{renderTasksInner(tasks)}
+				{renderTasksInner(eventStore.tasks)}
 				{renderAddTaskButton()}
 			</div>,
 			undefined,
 			SidebarGroups.TASKS,
 			groupTitle,
-			10 + (tasks?.length ?? 0)
+			10 + (eventStore.tasks?.length ?? 0)
 		);
 		return (
 			<>

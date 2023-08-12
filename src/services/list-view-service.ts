@@ -522,20 +522,36 @@ const ListViewService = {
 					}
 				}
 
-				let taskIndication = taskKeywords.find(
+				const hasDescriptionTasks = taskKeywords.find(
 					(x) =>
 						title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 ||
 						event.description?.toLowerCase().indexOf(x.toLowerCase()) !== -1
-				)
-					? `<span style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>`
-					: '';
+				);
+
+				const hasTodolistTasks = eventStore.checkIfEventHaveOpenTasks(event);
+
+				//  hasTasks = hasDescriptionTasks || hasTodolistTasks;
+				let taskIndication = '';
+				if (hasTodolistTasks) {
+					const amount = eventStore.tasks.filter((t) => t.eventId == event.id)?.length;
+					if (amount == 1) {
+						const openTasks = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OPEN_TASK', { amount });
+						taskIndication = `<span class='task-indication' style='font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;'>&nbsp;<u>${openTasks}</u></span>`;
+					} else if (amount > 1) {
+						const openTasks = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OPEN_TASKS', { amount });
+						taskIndication = `<span class='task-indication' style='font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;'>&nbsp;<u>${openTasks}</u></span>`;
+					}
+				}
+				if (taskIndication == '' && hasDescriptionTasks) {
+					taskIndication = `<span class='task-indication' style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>`;
+				}
 
 				const orderedIndication = orderedKeywords.find(
 					(x) =>
 						title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 ||
 						(event.description ?? '').toLowerCase().indexOf(x.toLowerCase()) !== -1
 				)
-					? `<span style="font-size: 22px; padding-inline: 5px; color:${orderedColor}; font-weight:bold;">&nbsp;<u>${ordered}</u></span>`
+					? `<span class='ordered-indication'  style="font-size: 22px; padding-inline: 5px; color:${orderedColor}; font-weight:bold;">&nbsp;<u>${ordered}</u></span>`
 					: '';
 
 				// if there's task indication (todo complete), and ordered, and if we check if there's a task, but without 'order' keywords there's no results - we do not need to show task indication since it was about 'need to order'

@@ -9,6 +9,7 @@ import {
 	SidebarEvent,
 	TripActions,
 	TriPlanCategory,
+	TriplanTask,
 } from '../utils/interfaces';
 import {
 	getEnumKey,
@@ -174,8 +175,8 @@ export class EventStore {
 
 	@observable reloadCollaboratorsCounter: number = 0;
 	@observable reloadHistoryCounter: number = 0;
-	@observable reloadTasksCounter: number = 0;
 
+	@observable tasks: TriplanTask[] = [];
 	@observable tasksSearchValue = '';
 	@observable hideDoneTasks: boolean = false;
 
@@ -247,15 +248,30 @@ export class EventStore {
 	}
 
 	checkIfEventHaveOpenTasks(event: SidebarEvent | CalendarEvent | AllEventsEvent | EventInput): boolean {
-		let { title, description } = event;
-		const { taskKeywords } = ListViewService._initSummaryConfiguration();
-		const isTodoComplete = taskKeywords.find(
-			(k: string) =>
-				title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 ||
-				(description && description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
-		);
+		// let { title, description } = event;
+		// const { taskKeywords } = ListViewService._initSummaryConfiguration();
+		// const isTodoComplete = taskKeywords.find(
+		// 	(k: string) =>
+		// 		title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 ||
+		// 		(description && description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
+		// );
+		//
+		// return !!isTodoComplete;
+		const { id: eventId } = event;
+		return !!this.tasks.find((t) => t.eventId == eventId);
+	}
 
-		return !!isTodoComplete;
+	@action
+	async initTasks(tripId: number) {
+		const data = await (this.dataService as DBService).getTasks(tripId);
+		this.tasks = data.data;
+	}
+
+	@action
+	async reloadTasks() {
+		if (this.tripId) {
+			this.initTasks(this.tripId);
+		}
 	}
 
 	// --- computed -------------------------------------------------------------
@@ -1181,6 +1197,10 @@ export class EventStore {
 				newDistanceResults = await DataServices.DBService.getDistanceResults(name);
 
 				this.tripId = tripData.id ?? 0;
+
+				if (tripData.id) {
+					await this.initTasks(tripData.id);
+				}
 
 				await this.updateTripData(tripData);
 
