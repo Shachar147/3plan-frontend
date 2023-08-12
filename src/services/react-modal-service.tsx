@@ -15,6 +15,7 @@ import {
 	SidebarEvent,
 	TripActions,
 	TriPlanCategory,
+	TriplanTask,
 	TriplanTaskStatus,
 	WeeklyOpeningHoursData,
 } from '../utils/interfaces';
@@ -5152,11 +5153,12 @@ const ReactModalService = {
 
 							setTimeout(() => {
 								runInAction(() => {
-									eventStore.reloadTasks += 1;
+									eventStore.reloadTasksCounter += 1;
 								});
 							}, 1000);
 						})
-						.catch(() => {
+						.catch((e) => {
+							debugger;
 							ReactModalService.internal.openOopsErrorModal(eventStore);
 						});
 				} else {
@@ -5171,6 +5173,7 @@ const ReactModalService = {
 			},
 		});
 	},
+	openViewTaskModal(eventStore: EventStore, task: TriplanTask, title: string) {},
 };
 
 export default ReactModalService;

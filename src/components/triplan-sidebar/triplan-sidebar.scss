@@ -372,3 +372,17 @@ body.rtl {
 		opacity: 0.7;
 	}
 }
+
+.triplan-tasks-navbar {
+	background-color: #f1f1f1;
+	border-block: 1px solid #dee2e6;
+
+	.search-container {
+		padding: 0;
+		padding-inline-start: 5px;
+
+		.triplan-text-input input[type=text] {
+			min-width: 95px;
+		}
+	}
+}

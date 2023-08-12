@@ -141,6 +141,10 @@ body {
 	position: relative;
 }
 
+.text-decoration-strike-through {
+	text-decoration: line-through;
+}
+
 .strikethrough:before {
 	position: absolute;
 	content: '';

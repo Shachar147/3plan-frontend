@@ -173,6 +173,8 @@
 	"COLLAPSE_ALL": "סגור הכל",
 	"HIDE_EMPTY_CATEGORIES": "הצג קטגוריות ריקות",
 	"SHOW_EMPTY_CATEGORIES": "הסתר קטגוריות ריקות",
+	"HIDE_DONE_TASKS": "הצג רק משימות שלא הושלמו",
+	"SHOW_DONE_TASKS": "הצג את כל המשימות",
 	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP": "צור טיול חדש",
 	"GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP": "מתי הטיול שלכם?",
 	"GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP": "בחר שם לטיול",
@@ -608,6 +610,7 @@
 	"MOBILE_NAVBAR.ADMIN_SIDE": "למערכת הניהול",
 	"MOBILE_NAVBAR.USER_SIDE": "חזרה לצד המשתמש",
 	"SIDEBAR_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש בתפריט",
+	"TASKS_SEARCH_PLACEHOLDER": "חיפוש משימה",
 	"ils": "שקל",
 	"aed": "דירהאם",
 	"usd": "דולר",
@@ -823,5 +826,7 @@
 	"createdTaskYou": "יצרת משימה ({name})",
 	"createdTaskFull": "{who} יצר/ה משימה ({name})",
 	"createdTaskFullYou": "יצרת משימה ({name})",
-	"MODALS.CREATE_TASK.CONTENT": "המשימה נוצרה בהצלחה"
+	"MODALS.CREATE_TASK.CONTENT": "המשימה נוצרה בהצלחה",
+	"DEADLINE": "דדליין",
+	"TODOLIST.NO_DEADLINE": "ללא דדליין"
 }
