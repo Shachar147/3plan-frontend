@@ -237,12 +237,6 @@ function MainPage(props: MainPageProps) {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.list) return null;
 
 		const options = [
-			// {
-			// 	key: ListViewSummaryMode.box,
-			// 	name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX'),
-			// 	// icon: (<i className="fa fa-map-o black-color" aria-hidden="true" />),
-			// 	// iconActive: (<i className="fa fa-list blue-color" aria-hidden="true" />)
-			// },
 			{
 				key: ListViewSummaryMode.full,
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL'),
@@ -368,34 +362,6 @@ function MainPage(props: MainPageProps) {
 						}}
 						text={''}
 					/>
-
-					{/*{eventStore.isMobile && (*/}
-					{/*	<label className="list-view-checkbox-options">*/}
-					{/*		<input*/}
-					{/*			type="checkbox"*/}
-					{/*			checked={eventStore.listViewShowDaysNavigator}*/}
-					{/*			onChange={(e) => {*/}
-					{/*				runInAction(() => {*/}
-					{/*					eventStore.listViewShowDaysNavigator = e.target.checked;*/}
-					{/*				});*/}
-					{/*			}}*/}
-					{/*		/>*/}
-					{/*		{TranslateService.translate(eventStore, 'SHOW_DAYS_NAVIGATOR')}*/}
-					{/*	</label>*/}
-					{/*)}*/}
-
-					{/*<label className="list-view-checkbox-options">*/}
-					{/*	<input*/}
-					{/*		type="checkbox"*/}
-					{/*		checked={eventStore.listViewShowNavigateTo}*/}
-					{/*		onChange={(e) => {*/}
-					{/*			runInAction(() => {*/}
-					{/*				eventStore.listViewShowNavigateTo = e.target.checked;*/}
-					{/*			});*/}
-					{/*		}}*/}
-					{/*	/>*/}
-					{/*	{TranslateService.translate(eventStore, 'SHOW_NAVIGATE_TO')}*/}
-					{/*</label>*/}
 				</div>
 				{content}
 			</div>
