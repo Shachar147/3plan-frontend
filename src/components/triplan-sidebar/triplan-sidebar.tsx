@@ -153,9 +153,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		return [];
 	};
 
-	// todo: move this to the store itself.
-	// todo: move the indication if there's a task or not in the list view to be based on whether the event have/don't have open/in progress tasks
-	// todo: add tasks block to view/edit tasks (both sidebar and calendar)
+	// todo complete: move this to the store itself.
+	// todo complete: move the indication if there's a task or not in the list view to be based on whether the event have/don't have open/in progress tasks
+	// todo complete: add tasks block to view/edit tasks (both sidebar and calendar)
 	const fetchTasks = async (): Promise<any[]> => {
 		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
 			const data = await (eventStore.dataService as DBService).getTasks(eventStore.tripId);
