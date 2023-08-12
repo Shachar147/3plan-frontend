@@ -76,7 +76,7 @@ function MainPage(props: MainPageProps) {
 		axios.defaults.headers['cid'] = client_id;
 
 		// Listen for messages from the server
-		socket.addEventListener('message', (event: MessageEvent) => {
+		socket.addEventListener('message', async (event: MessageEvent) => {
 			// Parse the received data
 			const data = JSON.parse(event.data);
 
@@ -99,7 +99,7 @@ function MainPage(props: MainPageProps) {
 
 				eventStore.showToastr(TranslateService.translate(eventStore, toastrKey), toastrIcon, toastrDuration);
 
-				eventStore.updateTripData(tripData);
+				await eventStore.updateTripData(tripData);
 
 				if (eventStore.isMobile) {
 					TriplanCalendarRef.current?.setMobileDefaultView();
@@ -627,7 +627,10 @@ function MainPage(props: MainPageProps) {
 					)}
 				>
 					<div className={getClasses('main-layout', eventStore.getCurrentDirection())}>
-						{eventStore.isLoading || isFetchingData || !eventStore.tripName?.length ? (
+						{eventStore.isLoading ||
+						eventStore.isLoadingTrip ||
+						isFetchingData ||
+						!eventStore.tripName?.length ? (
 							renderLoading()
 						) : (
 							<>

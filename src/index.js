@@ -68,7 +68,6 @@ import InviteLink from './layouts/invite-link/invite-link';
 // - add price (!) and total price (!)
 // - add "leave at X to arrive on time" to list view (!!)
 
-// DBService vs LocalStorageService, both implements the same base class/interface - wip - todo complete
 // started implementing functions on DBService, need to continue, and
 // ... on every place we used to call local storage service - call db service instead if it's a db trip
 // ... whenevery tripName is set, set also dbSource in event-store.
@@ -247,6 +246,7 @@ import InviteLink from './layouts/invite-link/invite-link';
 // V (!!) add more white as background. its more pleasent and easy to read. maybe the sidebar / calendar in white. see gmail for example.
 // V make the regular hours white compared to the sleepy hours.
 // V (!!) same design for all buttons (modals too)
+// V DBService vs LocalStorageService, both implements the same base class/interface
 
 // fixed bugs:
 // V fix bug - placing event on board, editing it (rename for example), remove, re-add it <- old event still there.

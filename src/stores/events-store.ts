@@ -109,6 +109,7 @@ export class EventStore {
 	@observable dataService: LocalStorageService | DBService;
 	@observable modalValues: any = {};
 	@observable isLoading = false;
+	@observable isLoadingTrip = false; // is loading trip data right now
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
@@ -1134,6 +1135,10 @@ export class EventStore {
 		const { trips, sharedTrips } = await this.dataService.getTripsShort(this);
 		const existingTrips = [...trips, ...sharedTrips];
 
+		runInAction(() => {
+			this.isLoadingTrip = true;
+		});
+
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
 			setTimeout(() => {
@@ -1177,7 +1182,7 @@ export class EventStore {
 
 				this.tripId = tripData.id ?? 0;
 
-				this.updateTripData(tripData);
+				await this.updateTripData(tripData);
 
 				await this.waitIfNeeded(startTime);
 				runInAction(() => {
@@ -1209,17 +1214,21 @@ export class EventStore {
 				this.distanceResults = observable.map(newDistanceResults);
 			});
 		}
+
+		runInAction(() => {
+			this.isLoadingTrip = false;
+		});
 	}
 
 	@action
-	updateTripData(tripData: Trip) {
+	async updateTripData(tripData: Trip) {
 		const { categories, allEvents, sidebarEvents, calendarEvents, dateRange, isLocked } = tripData;
 		// this.setCalendarLocalCode(calendarLocale ?? tripData.calendarLocale);
 		// this.setCalendarLocalCode(tripData.calendarLocale);
 		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale(), false);
 
-		this.setSidebarEvents(sidebarEvents, false);
-		this.setCalendarEvents(calendarEvents, false);
+		await this.setSidebarEvents(sidebarEvents, false);
+		await this.setCalendarEvents(calendarEvents, false);
 		this.customDateRange = dateRange;
 		this.allEvents = allEvents;
 		this.categories = categories;
