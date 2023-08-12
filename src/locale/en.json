@@ -739,5 +739,6 @@
 	"createdTaskFullYou": "You created a task ({name})",
 	"MODALS.CREATE_TASK.CONTENT": "Task have been created",
 	"DEADLINE": "Deadline",
-	"TODOLIST.NO_DEADLINE" : "No deadline"
+	"TODOLIST.NO_DEADLINE" : "No deadline",
+	"NOT_ASSIGNED_TO_ANY_EVENT": "Not assigned to any activity"
 }

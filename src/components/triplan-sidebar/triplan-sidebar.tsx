@@ -81,7 +81,8 @@ export const wrapWithSidebarGroup = (
 	groupTitle: string,
 	itemsCount: number,
 	textColor: string = 'inherit',
-	maxHeight?: number
+	maxHeight?: number,
+	titleSuffix?: string
 ) => {
 	const eventStore = useContext(eventStoreContext);
 	const isOpen = eventStore.openSidebarGroups.has(groupKey);
@@ -126,6 +127,7 @@ export const wrapWithSidebarGroup = (
 				<span className={'flex-gap-5 align-items-center'}>
 					{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
 				</span>
+				{!!titleSuffix && <div>{titleSuffix}</div>}
 			</div>
 			<div style={eventsStyle as unknown as CSSProperties}>{children}</div>
 		</>
@@ -867,6 +869,29 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			);
 		};
 
+		const renderTasksByDeadline = (deadline: string, tasksByDeadline: Record<number, TriplanTask[]>) => {
+			const deadlineString: string =
+				deadline == '0'
+					? TranslateService.translate(eventStore, 'TODOLIST.NO_DEADLINE')
+					: formatFromISODateString(new Date(Number(deadline) * 1000).toISOString(), true).split(',')[0];
+
+			const currTasks = tasksByDeadline[Number(deadline)];
+			const doneTasks = currTasks.filter((t) =>
+				[TriplanTaskStatus.DONE, TriplanTaskStatus.CANCELLED].includes(t.status)
+			);
+
+			return (
+				<div key={`todolist-${deadline}`}>
+					{renderLineWithText(
+						`${TranslateService.translate(eventStore, 'DEADLINE')}: ${deadlineString} (${
+							doneTasks.length
+						}/${currTasks.length})`
+					)}
+					<div className="flex-col gap-8">{sortTasks(tasksByDeadline[Number(deadline)]).map(renderTask)}</div>
+				</div>
+			);
+		};
+
 		if (_tasks == undefined) {
 			return TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE');
 		}
@@ -884,40 +909,53 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			return true;
 		});
 
+		const hasEventTasks = !!tasksClone.filter((t) => t.eventId);
+
+		const tasksByEventByDeadline: Record<number, Record<number, TriplanTask[]>> = {};
 		const tasksByDeadline: Record<number, TriplanTask[]> = {};
 		tasksClone.forEach((t) => {
 			tasksByDeadline[t.mustBeDoneBefore ?? 0] ||= [];
 			tasksByDeadline[t.mustBeDoneBefore ?? 0].push(t);
+
+			tasksByEventByDeadline[t.eventId ?? 0] ||= {};
+			tasksByEventByDeadline[t.eventId ?? 0][t.mustBeDoneBefore ?? 0] ||= [];
+			tasksByEventByDeadline[t.eventId ?? 0][t.mustBeDoneBefore ?? 0].push(t);
 		});
 
-		if (Object.keys(tasksByDeadline).length >= 1) {
-			return Object.keys(tasksByDeadline).map((deadline: string) => {
-				const deadlineString: string =
-					deadline == '0'
-						? TranslateService.translate(eventStore, 'TODOLIST.NO_DEADLINE')
-						: formatFromISODateString(new Date(Number(deadline) * 1000).toISOString(), true).split(',')[0];
-
-				const currTasks = tasksByDeadline[Number(deadline)];
-				const doneTasks = currTasks.filter((t) =>
-					[TriplanTaskStatus.DONE, TriplanTaskStatus.CANCELLED].includes(t.status)
-				);
-
+		if (!hasEventTasks) {
+			return Object.keys(tasksByDeadline).map((deadline: string) => (
+				<div key={`tasks-by-deadline-${deadline}`}>{renderTasksByDeadline(deadline, tasksByDeadline)}</div>
+			));
+		} else {
+			return Object.keys(tasksByEventByDeadline).map((eventId: string) => {
+				const title =
+					eventStore.allEventsComputed.find((e) => e.id == eventId)?.title ??
+					TranslateService.translate(eventStore, 'NOT_ASSIGNED_TO_ANY_EVENT');
+				const all = Object.values(tasksByEventByDeadline[Number(eventId)]).flat();
+				const total = all.length;
+				const completed = all.filter((t) =>
+					[TriplanTaskStatus.CANCELLED, TriplanTaskStatus.DONE].includes(t.status)
+				).length;
 				return (
-					<div key={`todolist-${deadline}`}>
-						{renderLineWithText(
-							`${TranslateService.translate(eventStore, 'DEADLINE')}: ${deadlineString} (${
-								doneTasks.length
-							}/${currTasks.length})`
+					<div key={`tasks-by-event-by-deadline-${eventId}`}>
+						{wrapWithSidebarGroup(
+							<>
+								{Object.keys(tasksByEventByDeadline[Number(eventId)]).map((deadline) =>
+									renderTasksByDeadline(deadline, tasksByEventByDeadline[Number(eventId)])
+								)}
+							</>,
+							undefined,
+							`tasks-by-event-by-deadline-${eventId}`,
+							title,
+							total,
+							undefined,
+							undefined,
+							`(${completed}/${total})`
 						)}
-						<div className="flex-col gap-8">
-							{sortTasks(tasksByDeadline[Number(deadline)]).map(renderTask)}
-						</div>
 					</div>
 				);
 			});
 		}
-
-		return sortTasks(tasksClone).map(renderTask);
 	};
 
 	function renderTasksSearch() {

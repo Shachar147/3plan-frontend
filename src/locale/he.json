@@ -830,5 +830,6 @@
 	"createdTaskFullYou": "יצרת משימה ({name})",
 	"MODALS.CREATE_TASK.CONTENT": "המשימה נוצרה בהצלחה",
 	"DEADLINE": "דדליין",
-	"TODOLIST.NO_DEADLINE": "ללא דדליין"
+	"TODOLIST.NO_DEADLINE": "ללא דדליין",
+	"NOT_ASSIGNED_TO_ANY_EVENT": "לא משויכים לפעילות"
 }
