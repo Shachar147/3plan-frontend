@@ -31,6 +31,7 @@ import {
 	addHours,
 	addHoursToDate,
 	convertMsToHM,
+	fixDuration,
 	formatDate,
 	formatDuration,
 	formatFromISODateString,
@@ -1984,6 +1985,10 @@ const ReactModalService = {
 				currency, // add column 16
 			} = ReactModalService.internal.getModalValues(eventStore);
 
+			if (duration) {
+				duration = fixDuration(duration);
+			}
+
 			// @ts-ignore
 			delete location?.openingHours;
 
@@ -2018,14 +2023,15 @@ const ReactModalService = {
 				currency, // add column 16
 			} as SidebarEvent;
 
-			const isDurationValid =
-				duration &&
-				duration.split(':').length == 2 &&
-				!Number.isNaN(duration.split(':')[0]) &&
-				!Number.isNaN(duration.split(':')[1]) &&
-				parseInt(duration.split(':')[0]) >= 0 &&
-				parseInt(duration.split(':')[1]) >= 0 &&
-				parseInt(duration.split(':')[0]) + parseInt(duration.split(':')[1]) > 0;
+			const isDurationValid = validateDuration(duration);
+			// const isDurationValid =
+			// 	duration &&
+			// 	duration.split(':').length == 2 &&
+			// 	!Number.isNaN(duration.split(':')[0]) &&
+			// 	!Number.isNaN(duration.split(':')[1]) &&
+			// 	parseInt(duration.split(':')[0]) >= 0 &&
+			// 	parseInt(duration.split(':')[1]) >= 0 &&
+			// 	parseInt(duration.split(':')[0]) + parseInt(duration.split(':')[1]) > 0;
 			if (!isDurationValid) {
 				console.error('duration is not valid');
 				currentEvent.duration = defaultTimedEventDuration;
@@ -2474,13 +2480,14 @@ const ReactModalService = {
 				category,
 			} as SidebarEvent;
 
-			const isDurationValid =
-				duration.split(':').length == 2 &&
-				!Number.isNaN(duration.split(':')[0]) &&
-				!Number.isNaN(duration.split(':')[1]) &&
-				parseInt(duration.split(':')[0]) >= 0 &&
-				parseInt(duration.split(':')[1]) >= 0 &&
-				parseInt(duration.split(':')[0]) + parseInt(duration.split(':')[1]) > 0;
+			const isDurationValid = validateDuration(duration);
+			// const isDurationValid =
+			// 	duration.split(':').length == 2 &&
+			// 	!Number.isNaN(duration.split(':')[0]) &&
+			// 	!Number.isNaN(duration.split(':')[1]) &&
+			// 	parseInt(duration.split(':')[0]) >= 0 &&
+			// 	parseInt(duration.split(':')[1]) >= 0 &&
+			// 	parseInt(duration.split(':')[0]) + parseInt(duration.split(':')[1]) > 0;
 			if (!isDurationValid) {
 				console.error('duration is not valid');
 				currentEvent.duration = defaultTimedEventDuration;

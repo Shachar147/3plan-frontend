@@ -77,6 +77,8 @@ export function convertMsToHM(milliseconds: number): string {
 }
 
 export function formatDuration(duration: string) {
+	duration = fixDuration(duration);
+
 	const hours = parseInt(duration.split(':')[0]);
 	const minutes = parseInt(duration.split(':')[1]);
 	const milliseconds = minutes * 60000 + hours * 3600000;
@@ -132,7 +134,26 @@ export function addHoursToDate(date: Date, hoursToAdd: number) {
 	return new Date(date.setTime(date.getTime() + hoursToAdd * hourToMilliseconds));
 }
 
+export function fixDuration(duration: string) {
+	if (duration.indexOf(':') == -1) {
+		if (duration.length == 4) {
+			return duration.slice(0, 2) + ':' + duration.slice(2, 4);
+		}
+		if (duration.length == 3) {
+			return '0' + duration[0] + ':' + duration.slice(1, 3);
+		}
+		if (duration.length == 2) {
+			return duration + ':00';
+		}
+		if (duration.length == 1) {
+			return '0' + duration[0] + ':00';
+		}
+	}
+	return duration;
+}
+
 export function validateDuration(duration: string) {
+	duration = fixDuration(duration);
 	return (
 		duration.split(':').length == 2 &&
 		!Number.isNaN(duration.split(':')[0]) &&
