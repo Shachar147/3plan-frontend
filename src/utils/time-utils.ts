@@ -327,3 +327,9 @@ export function getOffsetInHours(zeroIfProd: boolean = true) {
 	}
 	return offset;
 }
+
+// turns 18/02/2023 to 02/18/2023
+export function israelDateFormatToUSA(israelDate: string): string {
+	const parts = israelDate.split('/');
+	return [parts[1], parts[0], parts[2]].join('/');
+}

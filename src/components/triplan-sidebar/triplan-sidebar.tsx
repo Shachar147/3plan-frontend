@@ -46,6 +46,7 @@ import {
 	formatTimeFromISODateString,
 	getDurationString,
 	getOffsetInHours,
+	israelDateFormatToUSA,
 } from '../../utils/time-utils';
 
 // @ts-ignore
@@ -801,6 +802,14 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			return tasks.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
 		}
 
+		function sortDeadlines(deadlineStrings: string[]) {
+			return deadlineStrings.sort((a, b) => {
+				const aDate = a == getDeadlineString(0) ? 0 : new Date(israelDateFormatToUSA(a)).getTime();
+				const bDate = b == getDeadlineString(0) ? 0 : new Date(israelDateFormatToUSA(b)).getTime();
+				return aDate - bDate;
+			});
+		}
+
 		const renderTask = (task: TriplanTask) => {
 			const title = TranslateService.translate(eventStore, task.title);
 			const fullTitle = TranslateService.translate(eventStore, task.content ?? task.title);
@@ -929,7 +938,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		});
 
 		if (!hasEventTasks || !eventStore.groupTasksByEvent) {
-			return Object.keys(tasksByDeadline).map((deadlineString: string) => (
+			return sortDeadlines(Object.keys(tasksByDeadline)).map((deadlineString: string) => (
 				<div key={`tasks-by-deadline-${deadlineString}`}>
 					{renderTasksByDeadline(deadlineString, tasksByDeadline)}
 				</div>
