@@ -179,6 +179,7 @@ export class EventStore {
 	@observable tasks: TriplanTask[] = [];
 	@observable tasksSearchValue = '';
 	@observable hideDoneTasks: boolean = false;
+	@observable groupTasksByEvent: boolean = false;
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
