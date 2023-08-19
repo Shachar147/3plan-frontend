@@ -3282,6 +3282,7 @@ const ReactModalService = {
 	//  flights - arrival, landing, how much time ahead do you want to be, and then it's scheduling it automatically
 	// todo: list of already reserved activities and hotels
 	// todo: the ability to keep a list of booking confirmations within the app will be amazing
+	// todo complete: add tasks block to view/edit tasks (both sidebar and calendar)
 	openEditCalendarEventModal: (
 		eventStore: EventStore,
 		addEventToSidebar: (event: SidebarEvent) => boolean,

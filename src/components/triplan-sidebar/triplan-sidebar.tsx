@@ -153,9 +153,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		return [];
 	};
 
-	// todo complete: move the indication if there's a task or not in the list view to be based on whether the event have/don't have open/in progress tasks
-	// todo complete: add tasks block to view/edit tasks (both sidebar and calendar)
-
 	// const { data: collaborators, loading, error } = useAsyncMemo<any[]>(fetchCollaborators, [eventStore.dataService]);
 	const { data: collaborators } = useAsyncMemo<any[]>(
 		() => fetchCollaborators(),
