@@ -379,12 +379,20 @@ body.rtl {
 	align-items: center;
 	justify-content: center;
 
-	.search-container {
-		padding: 0;
-		padding-inline-start: 5px;
+	.tasks-search-container {
+		margin-bottom: 8px;
+		.search-container {
+			padding: 0;
+			padding-inline-start: 5px;
+			max-width: CALC(100% - 20px);
 
-		.triplan-text-input input[type=text] {
-			min-width: 95px;
+			.triplan-text-input input[type=text] {
+				min-width: 95px;
+			}
 		}
+	}
+
+	button {
+		min-height: 30px !important;
 	}
 }

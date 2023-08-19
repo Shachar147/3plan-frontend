@@ -744,5 +744,6 @@
 	"TODOLIST.NO_DEADLINE" : "No deadline",
 	"NOT_ASSIGNED_TO_ANY_EVENT": "Not assigned to any activity",
 	"TRIP_SUMMARY.OPEN_TASK": "one open task",
-	"TRIP_SUMMARY.OPEN_TASKS": "{amount} open tasks"
+	"TRIP_SUMMARY.OPEN_TASKS": "{amount} open tasks",
+	"SOON": "Soon"
 }

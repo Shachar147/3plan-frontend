@@ -835,5 +835,6 @@
 	"TODOLIST.NO_DEADLINE": "ללא דדליין",
 	"NOT_ASSIGNED_TO_ANY_EVENT": "לא משויכים לפעילות",
 	"TRIP_SUMMARY.OPEN_TASK": "משימה פתוחה אחת",
-	"TRIP_SUMMARY.OPEN_TASKS": "{amount} משימות פתוחות"
+	"TRIP_SUMMARY.OPEN_TASKS": "{amount} משימות פתוחות",
+	"SOON": "בקרוב"
 }

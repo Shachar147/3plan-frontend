@@ -53,6 +53,7 @@ import {
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import LogHistoryService from '../../services/data-handlers/log-history-service';
 import TranslateService from '../../services/translate-service';
+import moment from 'moment/moment';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -750,6 +751,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 	const renderTasksNavbar = () => {
 		const eyeIcon = eventStore.hideDoneTasks ? 'fa-eye' : 'fa-eye-slash';
+		const groupIcon = 'fa-sitemap'; // eventStore.groupTasksByEvent ? 'fa-object-group' : 'fa-object-ungroup';
 		const flex = 'flex-col'; // eventStore.isMobile ? 'flex-col' : 'flex-row';
 		return (
 			<div className={getClasses('triplan-tasks-navbar padding-block-10', flex)}>
@@ -779,7 +781,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						runInAction(() => (eventStore.groupTasksByEvent = !eventStore.groupTasksByEvent));
 					}}
 					flavor={ButtonFlavor.link}
-					icon={eyeIcon}
+					icon={groupIcon}
 					text={TranslateService.translate(
 						eventStore,
 						// eventStore.groupTasksByEvent ? 'SHOW_TASKS_UNGROUPPED' : 'GROUP_TASKS_BY_EVENT'
@@ -804,8 +806,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 		function sortDeadlines(deadlineStrings: string[]) {
 			return deadlineStrings.sort((a, b) => {
-				const aDate = a == getDeadlineString(0) ? 0 : new Date(israelDateFormatToUSA(a)).getTime();
-				const bDate = b == getDeadlineString(0) ? 0 : new Date(israelDateFormatToUSA(b)).getTime();
+				const aDate =
+					a == getDeadlineString(0) ? Number.MAX_SAFE_INTEGER : new Date(israelDateFormatToUSA(a)).getTime();
+				const bDate =
+					b == getDeadlineString(0) ? Number.MAX_SAFE_INTEGER : new Date(israelDateFormatToUSA(b)).getTime();
 				return aDate - bDate;
 			});
 		}
@@ -894,13 +898,38 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				[TriplanTaskStatus.DONE, TriplanTaskStatus.CANCELLED].includes(t.status)
 			);
 
+			const isPassed = (deadlineString: string) => {
+				if (deadlineString == getDeadlineString(0)) return false;
+				const timestamp = new Date(israelDateFormatToUSA(deadlineString)).getTime() / 1000;
+				const endOfToday = moment().endOf('day').unix();
+				return endOfToday > timestamp;
+			};
+
+			const isSoon = (deadlineString: string) => {
+				if (deadlineString == getDeadlineString(0)) return false;
+				const timestamp = new Date(israelDateFormatToUSA(deadlineString)).getTime() / 1000;
+				const endOfToday = moment().endOf('day').unix();
+				const startOfToday = moment().startOf('day').unix();
+				return timestamp > endOfToday && timestamp - startOfToday <= 86400 * 3; // in the last 3 days
+			};
+
+			let title = `${TranslateService.translate(eventStore, 'DEADLINE')}: ${deadlineString} (${
+				doneTasks.length
+			}/${currTasks.length})`;
+
+			let colorClass;
+			if (doneTasks.length != currTasks.length) {
+				if (isPassed(deadlineString)) {
+					colorClass = 'red-color';
+				} else if (isSoon(deadlineString)) {
+					colorClass = 'orange-color';
+					title = TranslateService.translate(eventStore, 'SOON') + ': ' + title;
+				}
+			}
+
 			return (
 				<div key={`todolist-${deadlineString}`}>
-					{renderLineWithText(
-						`${TranslateService.translate(eventStore, 'DEADLINE')}: ${deadlineString} (${
-							doneTasks.length
-						}/${currTasks.length})`
-					)}
+					{renderLineWithText(title, colorClass)}
 					<div className="flex-col gap-8">{sortTasks(tasksByDeadline[deadlineString]).map(renderTask)}</div>
 				</div>
 			);
@@ -1965,9 +1994,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			});
 	};
 
-	const renderLineWithText = (text: string) => {
+	const renderLineWithText = (text: string, className?: string) => {
 		return (
-			<div className={'preferred-time'}>
+			<div className={getClasses('preferred-time', className)}>
 				<div className={'preferred-time-divider'} style={{ maxWidth: '20px' }} />
 				<div className={'preferred-time-title'}>{text}</div>
 				<div className={'preferred-time-divider'} />
