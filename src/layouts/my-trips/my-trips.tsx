@@ -459,7 +459,7 @@ function MyTrips() {
 					{renderForm()}
 				</div>
 			</div>
-			{renderFooterLine(eventStore, applyPageIntro ? 'hidden' : '')}
+			{/*{renderFooterLine(eventStore, applyPageIntro ? 'hidden' : '')}*/}
 		</div>
 	);
 }

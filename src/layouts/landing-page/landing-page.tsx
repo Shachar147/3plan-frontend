@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import TranslateService from '../../services/translate-service';
 import { eventStoreContext } from '../../stores/events-store';
 import { observer } from 'mobx-react';
-import { renderFooterLine } from '../../utils/ui-utils';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
@@ -38,7 +37,7 @@ const LandingPage = () => {
 				<img
 					className="logo-container"
 					src={'/images/logo/new-logo.png'}
-					style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
+					style={{ width: '50%', minWidth: '100px', maxWidth: '150px' }}
 				/>
 				<div className={'slogan main-font'}>
 					<span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE1')}</span>
@@ -62,7 +61,6 @@ const LandingPage = () => {
 					/>
 				</div>
 			</div>
-			{renderFooterLine(eventStore)}
 		</div>
 	);
 };

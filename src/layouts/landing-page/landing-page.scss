@@ -7,12 +7,14 @@ body {
 	padding-block-start: 0;
 	//background-color: #eaeff5;
 	background-position: center;
-	background-size: contain;
+	//background-size: contain;
 	background-repeat: no-repeat;
 	//height: 100vh;
 	//width: 100vw;
 	//background-image: url('~/images/landing-page/background-2.png');
-	background-color: white;
+	//background-color: white;
+	background-image: url('~/images/bgs/2.jpg');
+	background-size: cover !important;
 	text-align: center;
 
 	display: flex;
@@ -21,9 +23,21 @@ body {
 
 	color: #282b3c;
 
+	.mobile-header {
+		background-color: rgba(0,0,0, 0.6) !important;
+	}
+
+	.mobile-navbar {
+		background-color: transparent !important;
+
+		.black-background {
+			background-color: var(--white) !important;
+		}
+	}
+
 	.main-part {
 		width: 40%;
-		margin: 0 auto;
+		margin: 80px auto 0;
 		background-size: contain;
 		background-position: center;
 		background-repeat: no-repeat;
@@ -49,7 +63,7 @@ body {
 		.slogan {
 			display: flex;
 			flex-direction: column;
-			padding-block: 40px;
+			padding-block: 10px;
 		}
 	}
 

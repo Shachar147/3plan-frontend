@@ -4,6 +4,21 @@
 	display: flex;
 	flex-direction: column;
 
+	background-image: url('~/images/bgs/2.jpg');
+	background-position: center;
+	background-size: cover;
+
+	.mobile-header {
+		background-color: rgba(0,0,0, 0.6) !important;
+	}
+	.mobile-navbar {
+		background-color: transparent !important;
+
+		.black-background {
+			background-color: var(--white) !important;
+		}
+	}
+
 	.change-language-bar {
 		background-color: rgba(255, 255, 255, 0.4);
 		border-bottom-left-radius: 30px;
@@ -30,6 +45,7 @@
 		width: 100%;
 		padding-inline: 16px;
 		gap: 16px;
+		margin-top: 140px;
 
 		.logo-container {
 			//max-width: 400px;

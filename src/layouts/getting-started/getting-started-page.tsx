@@ -336,7 +336,7 @@ const GettingStartedPage = () => {
 		<div className="landing-page-layout getting-started-page">
 			<TriplanHeaderWrapper />
 			{renderMainPart()}
-			{renderFooterLine(eventStore, getClasses('visible', applyPageIntro && 'hidden'))}
+			{/*{renderFooterLine(eventStore, getClasses('visible', applyPageIntro && 'hidden'))}*/}
 		</div>
 	);
 };

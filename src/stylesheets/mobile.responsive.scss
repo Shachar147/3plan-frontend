@@ -915,9 +915,17 @@
 		}
 	}
 
-	ordered-indication,
+	.ordered-indication,
 	.task-indication {
 		font-size: 18px !important;
+	}
+
+	.register-page,
+	.login-page {
+		.register-page-content,
+		.login-page-content {
+			margin-top: 170px !important;
+		}
 	}
 }
 
