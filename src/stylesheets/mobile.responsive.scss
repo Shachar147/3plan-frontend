@@ -924,7 +924,17 @@
 	.login-page {
 		.register-page-content,
 		.login-page-content {
-			margin-top: 170px !important;
+			margin-top: 200px !important;
+			gap: 8px !important;
+
+			.logo-container {
+				min-width: 140px !important;
+				max-width: 150px !important;
+			}
+		}
+
+		.register-page-content {
+			margin-top: 230px !important;
 		}
 	}
 }
