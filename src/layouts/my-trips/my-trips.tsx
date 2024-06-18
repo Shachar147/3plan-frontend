@@ -124,7 +124,7 @@ function MyTrips() {
 			<div
 				className={getClasses(
 					['my-trips bright-scrollbar min-height-300 flex-column gap-20 no-trips-placeholder'],
-					eventStore.isListView && 'hidden'
+					// eventStore.isListView && 'hidden'
 				)}
 			>
 				<img src={noTripsPlaceholderIcon} className="opacity-0-1" />
@@ -154,7 +154,7 @@ function MyTrips() {
 			<div
 				className={getClasses(
 					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder'],
-					eventStore.isListView && 'hidden'
+					// eventStore.isListView && 'hidden'
 				)}
 			>
 				<img src={noTripsPlaceholderIcon} className="opacity-0-3" />
@@ -168,7 +168,7 @@ function MyTrips() {
 			<div
 				className={getClasses(
 					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder'],
-					eventStore.isListView && 'hidden'
+					// eventStore.isListView && 'hidden'
 				)}
 			>
 				<img src="images/oops.png" className="oops-placeholder" />

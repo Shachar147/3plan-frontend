@@ -291,7 +291,7 @@
 	"MODALS.ERROR.TRIP_NOT_EXIST_MAYBE_SHARED": "Oops, the trip you tried to access does not exist.\nIf the trip you tried to access to was a shared trip, it is possible that you have been removed from the collaborators list",
 	"LEAVE_AT": "leave at",
 	"TO_ARRIVE_ON_TIME": "to arrive on time",
-	"BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL": "Full summary",
+	"BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.FULL": "Full",
 	"BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS": "No descriptions",
 	"BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX": "Headlines only",
 	"BUTTON_TEXT.TRIP_DATA_SOURCE.LOCAL": "Local Trips",

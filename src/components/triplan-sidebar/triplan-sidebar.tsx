@@ -54,6 +54,7 @@ import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import LogHistoryService from '../../services/data-handlers/log-history-service';
 import TranslateService from '../../services/translate-service';
 import moment from 'moment/moment';
+import { withPlacesFinder } from '../../config/config';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -2143,7 +2144,10 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 	}
 
 	function renderRecommendations() {
-		return null; // disabled for now
+		if (!withPlacesFinder){
+			return null;
+		}
+
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.RECOMMENDATIONS');
 		const recomendationsBlock = wrapWithSidebarGroup(
 			<>
