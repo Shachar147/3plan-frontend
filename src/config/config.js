@@ -1,3 +1,5 @@
+export const withPlacesFinder = false; // disabled for now
+
 export function getServerAddress() {
 	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
 	if (mode && mode.trim() === 'development') {

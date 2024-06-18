@@ -2023,7 +2023,7 @@ const ReactModalService = {
 				currency, // add column 16
 			} as SidebarEvent;
 
-			const isDurationValid = validateDuration(duration);
+			const isDurationValid = !duration || validateDuration(duration);
 			// const isDurationValid =
 			// 	duration &&
 			// 	duration.split(':').length == 2 &&
