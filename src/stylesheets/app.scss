@@ -988,7 +988,7 @@ a.disabled {
 }
 
 .text-align-right {
-	text-align: right;
+	text-align: right !important;
 }
 
 a.text-decoration-none {
@@ -1326,10 +1326,12 @@ input:read-only {
 }
 
 body.admin-side {
-	background-color: #d3efff !important;
+	// background-color: #d3efff !important;
+	background-color: #ebebeb !important;
 
 	.mobile-header, .mobile-header .mobile-navbar, .mobile-header .mobile-trip-name {
-		background-color: #c4e1f1 !important;
+		//background-color: #c4e1f1 !important;
+		background-color: #bfbfbf !important;
 	}
 
 	#root {

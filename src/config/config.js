@@ -6,9 +6,9 @@ export function getServerAddress() {
 		// return 'http://192.168.1.25:3001'; // Tel Aviv
 		// return 'http://192.168.1.83:3001'; // Nesher
 		// return 'http://192.168.1.20:3001'; // Nesher
-		return 'http://localhost:3001';
+		// return 'http://localhost:3001';
 		// return 'http://192.168.1.30:3001'; // Hadera
-		// return 'https://triplan-server.herokuapp.com';
+		return 'https://triplan-server.herokuapp.com';
 	} else {
 		return 'https://triplan-server.herokuapp.com';
 	}

@@ -13,8 +13,8 @@ import AdminDashboardWrapper from '../a-dashboard-wrapper/a-dashboard-wrapper';
 import { eventStoreContext } from '../../../stores/events-store';
 import DestinationSlider from '../../components/destinations-slider/destination-slider';
 import TriplanSearch from '../../../components/triplan-header/triplan-search/triplan-search';
-import { formatDateString } from '../../../utils/defaults';
 import { addHours, getOffsetInHours } from '../../../utils/time-utils';
+import StatsTable from '../../../components/common/stats-table/stats-table';
 
 function AdminDashboard() {
 	const adminStore = useContext(adminStoreContext);
@@ -81,6 +81,48 @@ function AdminDashboard() {
 	};
 
 	function renderTripStats() {
+		let columns: string[] = [
+			'name',
+			'num_of_categories',
+			'scheduled_events',
+			'sidebar_events',
+			'username',
+			'lastUpdateAt',
+		];
+
+		const dataSource = adminStore.userStats
+			.filter((a) => a['name'])
+			.sort((a, b) => b['lastUpdateAt'] - a['lastUpdateAt']);
+
+		const offset = -1 * getOffsetInHours(false);
+
+		const stats: Record<string, (number | string)[]> = {};
+
+		function getValue(row, col) {
+			return !row[col]
+				? '-'
+				: col == 'lastUpdateAt' || col == 'lastLoginAt'
+					? addHours(new Date(row[col]), offset).toISOString().split('.')[0].replace('T', ', ')
+					: row[col];
+		}
+
+		if (eventStore.isMobile) {
+			dataSource.forEach((row: Record<string, any>, idx) => {
+				stats[`#${idx + 1}`] = columns.map((col) => `${TranslateService.translate(eventStore, col)}: ${getValue(row,col)}`);
+			});
+			columns = ["details"];
+
+		} else {
+			dataSource.forEach((row: Record<string, any>, idx) => {
+				stats[`#${idx + 1}`] = columns.map((col) => getValue(row, col)
+				);
+			});
+		}
+
+		return <StatsTable cols={["#", ...columns.map((c) => TranslateService.translate(eventStore, c))]} stats={stats} direction={eventStore.getCurrentDirectionStart()} noHeader={eventStore.isMobile} />;
+	}
+
+	function renderTripStatsOld() {
 		let columns: string[] = [
 			'name',
 			'num_of_categories',
@@ -172,6 +214,48 @@ function AdminDashboard() {
 	}
 
 	function renderUserStats() {
+		let columns: string[] = ['userId', 'username', 'lastUpdateAt', 'lastLoginAt', 'numOfLogins'];
+
+		const seenUsers: Record<string, number> = {};
+		const dataSource = adminStore.userStats
+			.filter((a) => a['name'])
+			.sort((a, b) => b['lastUpdateAt'] - a['lastUpdateAt']).map((row) => {
+				if (seenUsers[row['userId']]) {
+					return null;
+				}
+				seenUsers[row['userId']] = 1;
+				return row;
+			}).filter(Boolean);
+
+		const offset = -1 * getOffsetInHours(false);
+
+		const stats: Record<string, (number | string)[]> = {};
+
+		function getValue(row, col) {
+			return !row[col]
+				? '-'
+				: col == 'lastUpdateAt' || col == 'lastLoginAt'
+					? addHours(new Date(row[col]), offset).toISOString().split('.')[0].replace('T', ', ')
+					: row[col];
+		}
+
+		if (eventStore.isMobile) {
+			dataSource.forEach((row: Record<string, any>, idx) => {
+				stats[`#${idx + 1}`] = columns.map((col) => `${TranslateService.translate(eventStore, col)}: ${getValue(row,col)}`);
+			});
+			columns = ["details"];
+
+		} else {
+			dataSource.forEach((row: Record<string, any>, idx) => {
+				stats[`#${idx + 1}`] = columns.map((col) => getValue(row, col)
+				);
+			});
+		}
+
+		return <StatsTable cols={["#", ...columns.map((c) => TranslateService.translate(eventStore, c))]} stats={stats} direction={eventStore.getCurrentDirectionStart()} noHeader={eventStore.isMobile} />;
+	}
+
+	function renderUserStatsOld() {
 		let columns: string[] = ['userId', 'username', 'lastUpdateAt', 'lastLoginAt', 'numOfLogins'];
 
 		const offset = -1 * getOffsetInHours(false);
