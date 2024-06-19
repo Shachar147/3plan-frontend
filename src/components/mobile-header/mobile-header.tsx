@@ -7,6 +7,8 @@ import './mobile-header.scss';
 import { eventStoreContext } from '../../stores/events-store';
 import { getClasses } from '../../utils/utils';
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
+import TranslateService from '../../services/translate-service';
+import { navigate } from '@storybook/addon-links';
 
 interface MobileHeaderProps extends TriplanHeaderProps {
 	showTripName?: boolean;
@@ -35,6 +37,14 @@ function MobileHeader(options: MobileHeaderProps) {
 
 					{showTripName && (
 						<EllipsisWithTooltip placement="bottom">{eventStore.tripName}</EllipsisWithTooltip>
+					)}
+
+					{options.adminMode && !showTripName && (
+						<div className={'border-radius-10 opacity-0-6'} style={{ backgroundColor: 'white' }} onClick={() => navigate('/')}>
+							<EllipsisWithTooltip placement="bottom">
+								{TranslateService.translate(eventStore, 'MOBILE_NAVBAR.USER_SIDE')}
+							</EllipsisWithTooltip>
+						</div>
 					)}
 
 					<div className="flex-row align-items-center gap-15">
