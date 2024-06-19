@@ -377,20 +377,21 @@ function AdminDashboard() {
 	}
 
 	function renderContent() {
+		const isShort = eventStore.isMobile ? '.SHORT' : '';
 		return (
 			<div className="flex-col gap-30 width-100-percents">
 				<TabMenu
 					tabs={[
 						{
-							name: TranslateService.translate(eventStore, 'ADMIN_DASHBOARD.TRIP_STATS.TITLE'),
+							name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.TRIP_STATS.TITLE${isShort}`),
 							render: renderTripStats,
 						},
 						{
-							name: TranslateService.translate(eventStore, 'ADMIN_DASHBOARD.USER_STATS.TITLE'),
+							name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.USER_STATS.TITLE${isShort}`),
 							render: renderUserStats,
 						},
 						{
-							name: TranslateService.translate(eventStore, 'ADMIN_DASHBOARD.TINDER_WIDGET.TITLE'),
+							name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.TINDER_WIDGET.TITLE${isShort}`),
 							render: renderTinderWidget,
 						},
 					]}
