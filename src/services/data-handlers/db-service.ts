@@ -1,24 +1,21 @@
 import { EventStore } from '../../stores/events-store';
 import { LS_DISTANCE_RESULTS } from '../../utils/defaults';
 import {
-	buildCalendarEvent,
 	CalendarEvent,
 	DistanceResult,
 	SidebarEvent,
-	TripActions,
 	TriPlanCategory,
 	TriplanTaskStatus,
 } from '../../utils/interfaces';
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, SharedTrip, Trip } from './data-handler-base';
 import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
-import { getCoordinatesRangeKey, getCurrentUsername, stringToCoordinate } from '../../utils/utils';
+import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
 import axios from 'axios';
 import { getToken } from '../../helpers/auth';
 import _ from 'lodash';
 import { addSeconds } from '../../utils/time-utils';
 import ReactModalService from '../react-modal-service';
-import LogHistoryService from './log-history-service';
 
 export interface upsertTripProps {
 	name?: string;
