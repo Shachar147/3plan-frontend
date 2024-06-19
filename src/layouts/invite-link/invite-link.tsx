@@ -43,9 +43,7 @@ function InviteLink() {
 			LogHistoryService.logHistory(
 				eventStore,
 				TripActions.usedShareTripLink,
-				{
-					who: getCurrentUsername()!
-				}
+				{}
 			);
 
 			navigate('/plan/' + tripName, {});

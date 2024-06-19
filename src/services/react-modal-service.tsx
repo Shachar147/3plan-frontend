@@ -4669,13 +4669,32 @@ const ReactModalService = {
 						collaborator.permissionsId,
 						!!eventStore.modalValues['share-trip-choose-permissions']?.value
 					)
-						.then(() => {
+						.then((response) => {
 							ReactModalService.internal.closeModal(eventStore);
 							runInAction(() => {
 								eventStore.reloadCollaboratorsCounter += 1;
 							});
 
-							// todo complete - log history
+							if (!response) {
+								ReactModalService.internal.openOopsErrorModal(eventStore);
+								return;
+							}
+
+							// log history - changed collaborator permissions
+							if (collaborator.canWrite != response["data"]["canWrite"]) {
+								LogHistoryService.logHistory(
+									eventStore,
+									TripActions.changeCollaboratorPermissions,
+									{
+										name: response["data"]["collaboratorUserName"],
+										was: collaborator.canWrite ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
+										now: response["data"]["canWrite"] ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ'
+									}
+								);
+							}
+							else {
+								// alert nothing changed?
+							}
 
 							ReactModalService.internal.alertMessage(
 								eventStore,
@@ -4858,13 +4877,13 @@ const ReactModalService = {
 					{historyRow.actionParams.was && historyRow.action != TripActions.deletedSidebarEvent && (
 						<tr>
 							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'BEFORE')}</td>
-							<td>{LogHistoryService.getWas(historyRow)}</td>
+							<td>{TranslateService.translate(eventStore, LogHistoryService.getWas(historyRow))}</td>
 						</tr>
 					)}
 					{historyRow.actionParams.now && (
 						<tr>
 							<td className="main-font-heavy">{TranslateService.translate(eventStore, 'AFTER')}</td>
-							<td>{getNow()}</td>
+							<td>{TranslateService.translate(eventStore, getNow())}</td>
 						</tr>
 					)}
 					{historyRow.actionParams.permissions && (

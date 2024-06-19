@@ -4,8 +4,9 @@ import { TripDataSource } from '../../utils/enums';
 import { DBService } from './db-service';
 import { runInAction } from 'mobx';
 import { EventStore } from '../../stores/events-store';
-import { jsonDiff } from '../../utils/utils';
+import { getCurrentUsername, jsonDiff } from '../../utils/utils';
 import _ from 'lodash';
+import { getUserId } from '../../helpers/auth';
 
 const LogHistoryService = {
 	getWas(historyRow: any) {
@@ -56,10 +57,17 @@ const LogHistoryService = {
 			permissions?: string;
 
 			name?: string;
+			who?: string;
+			whoId?: number;
 		},
 		eventId?: number,
 		eventName?: string
 	) {
+		data = {
+			who: getCurrentUsername()!,
+			whoId: Number(getUserId()!),
+			...data
+		}
 		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
 			(eventStore.dataService as DBService)
 				.logHistory(eventStore.tripId, action, data, eventId, eventName)

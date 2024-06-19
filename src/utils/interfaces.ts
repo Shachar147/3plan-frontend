@@ -162,8 +162,11 @@ export enum TripActions {
 	hideTrip = 'hideTrip',
 	unhideTrip = 'unhideTrip',
 	createdTrip = 'createdTrip',
+
+	// share trips actions
 	sharedTrip = 'sharedTrip',
-	usedShareTripLink = 'usedShareTripLink'
+	usedShareTripLink = 'usedShareTripLink',
+	changeCollaboratorPermissions = 'changeCollaboratorPermissions'
 }
 
 export enum TriplanTaskStatus {
