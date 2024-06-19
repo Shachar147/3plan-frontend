@@ -43,7 +43,7 @@ function MobileHeader(options: MobileHeaderProps) {
 					{options.adminMode && !showTripName && (
 						<div className={'border-radius-10 opacity-0-6 padding-10'} style={{ backgroundColor: 'white' }} onClick={() => navigate('/')}>
 							<EllipsisWithTooltip placement="bottom">
-								{TranslateService.translate(eventStore, 'MOBILE_NAVBAR.USER_SIDE')}
+								{TranslateService.translate(eventStore, 'SWITCH_TO_USER_SIDE')}
 							</EllipsisWithTooltip>
 						</div>
 					)}

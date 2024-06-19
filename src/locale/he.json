@@ -615,6 +615,7 @@
 	"MAXIMIZE_SIDEBAR": "הצג את התפריט",
 	"MOBILE_NAVBAR.ADMIN_SIDE": "למערכת הניהול",
 	"MOBILE_NAVBAR.USER_SIDE": "חזרה לצד המשתמש",
+	"SWITCH_TO_USER_SIDE": "חזרה לצד המשתמש",
 	"SIDEBAR_SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש בתפריט",
 	"TASKS_SEARCH_PLACEHOLDER": "חיפוש משימה",
 	"TASKS_SEARCH_PLACEHOLDER.FULL": "הקלד טקסט לחיפוש משימה",
