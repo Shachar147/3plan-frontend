@@ -163,6 +163,7 @@ export enum TripActions {
 	unhideTrip = 'unhideTrip',
 	createdTrip = 'createdTrip',
 	sharedTrip = 'sharedTrip',
+	usedShareTripLink = 'usedShareTripLink'
 }
 
 export enum TriplanTaskStatus {

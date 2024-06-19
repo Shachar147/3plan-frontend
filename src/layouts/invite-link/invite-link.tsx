@@ -6,7 +6,9 @@ import { eventStoreContext } from '../../stores/events-store';
 import { runInAction } from 'mobx';
 import LoadingComponent from '../../components/loading/loading-component';
 import TranslateService from '../../services/translate-service';
-import { LOADER_DETAILS } from '../../utils/utils';
+import { getCurrentUsername, LOADER_DETAILS } from '../../utils/utils';
+import LogHistoryService from '../../services/data-handlers/log-history-service';
+import { TripActions } from '../../utils/interfaces';
 
 function InviteLink() {
 	const eventStore = useContext(eventStoreContext);
@@ -36,7 +38,15 @@ function InviteLink() {
 				eventStore.setTripName(tripName);
 			});
 
-			// todo complete - log history - used invite link to join
+			// log history - used invite link to join
+			eventStore.tripId = trip.id;
+			LogHistoryService.logHistory(
+				eventStore,
+				TripActions.usedShareTripLink,
+				{
+					who: getCurrentUsername()!
+				}
+			);
 
 			navigate('/plan/' + tripName, {});
 		});
