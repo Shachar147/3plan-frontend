@@ -2,13 +2,12 @@ import MobileNavbar from './mobile-navbar/mobile-navbar';
 import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import { TriplanHeaderProps } from '../triplan-header/triplan-header';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './mobile-header.scss';
 import { eventStoreContext } from '../../stores/events-store';
 import { getClasses } from '../../utils/utils';
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import TranslateService from '../../services/translate-service';
-import { navigate } from '@storybook/addon-links';
 
 interface MobileHeaderProps extends TriplanHeaderProps {
 	showTripName?: boolean;
@@ -18,6 +17,8 @@ interface MobileHeaderProps extends TriplanHeaderProps {
 function MobileHeader(options: MobileHeaderProps) {
 	const { withLogo = false, showTripName } = options;
 	const eventStore = useContext(eventStoreContext);
+
+	const navigate = useNavigate();
 
 	const homeUrl = options.adminMode ? '/admin' : '/';
 
@@ -40,11 +41,7 @@ function MobileHeader(options: MobileHeaderProps) {
 					)}
 
 					{options.adminMode && !showTripName && (
-						<div
-							className={'border-radius-10 opacity-0-6 padding-10'}
-							style={{ backgroundColor: 'white' }}
-							onClick={() => (window.location.href = '/')}
-						>
+						<div className={'border-radius-10 opacity-0-6 padding-10'} style={{ backgroundColor: 'white' }} onClick={() => navigate('/')}>
 							<EllipsisWithTooltip placement="bottom">
 								{TranslateService.translate(eventStore, 'MOBILE_NAVBAR.USER_SIDE')}
 							</EllipsisWithTooltip>
