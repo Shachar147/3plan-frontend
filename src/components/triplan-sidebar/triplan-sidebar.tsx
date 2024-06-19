@@ -1807,21 +1807,12 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 			const offset = -1 * getOffsetInHours();
 
-			const nowWithOffset = addHours(new Date(), offset);
 			const updatedAtWithOffset = addHours(updatedAt, offset);
 
 			const when =
 				formatDate(updatedAt) == formatDate(now)
 					? formatTimeFromISODateString(updatedAtWithOffset.toISOString())
 					: formatDate(updatedAt);
-
-			// console.log({
-			// 	when,
-			// 	updatedAt,
-			// 	updatedAtWithOffset,
-			// 	offset,
-			// 	timezoneOffset: new Date().getTimezoneOffset(),
-			// });
 
 			const title = TranslateService.translate(
 				eventStore,

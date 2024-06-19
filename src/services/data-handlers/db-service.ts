@@ -1,11 +1,9 @@
 import { EventStore } from '../../stores/events-store';
 import { LS_DISTANCE_RESULTS } from '../../utils/defaults';
 import {
-	buildCalendarEvent,
 	CalendarEvent,
 	DistanceResult,
 	SidebarEvent,
-	TripActions,
 	TriPlanCategory,
 	TriplanTaskStatus,
 } from '../../utils/interfaces';

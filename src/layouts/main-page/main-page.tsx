@@ -330,7 +330,7 @@ function MainPage(props: MainPageProps) {
 						options={options}
 						customStyle="white"
 					/>
-					{eventStore.isMobile && (
+					{eventStore.isMobile && eventStore.calendarEvents.length > 0 && (
 						<Button
 							icon="fa-list-ol"
 							className={getClasses('min-width-38', !eventStore.listViewShowDaysNavigator && 'black')}
@@ -347,7 +347,7 @@ function MainPage(props: MainPageProps) {
 							text={''}
 						/>
 					)}
-					<Button
+					{eventStore.calendarEvents.length > 0 && <Button
 						icon="fa-paper-plane"
 						className={getClasses('min-width-38', !eventStore.listViewShowNavigateTo && 'black')}
 						flavor={ButtonFlavor.secondary}
@@ -361,7 +361,7 @@ function MainPage(props: MainPageProps) {
 							});
 						}}
 						text={''}
-					/>
+					/>}
 				</div>
 				{content}
 			</div>
