@@ -4588,17 +4588,24 @@ const ReactModalService = {
 				if (tripDataSource === TripDataSource.DB) {
 					DataServices.DBService.deleteCollaboratorPermissions(
 						collaborator.permissionsId,
-						() => {
+						(response) => {
 							ReactModalService.internal.closeModal(eventStore);
 							runInAction(() => {
 								eventStore.reloadCollaboratorsCounter += 1;
 							});
+
+							LogHistoryService.logHistory(
+								eventStore,
+								TripActions.deleteCollaborator,
+								{
+									name: response["data"]["collaboratorUserName"],
+								}
+							);
 						},
 						() => {
 							ReactModalService.internal.openOopsErrorModal(eventStore);
 						}
 					);
-					// todo complete - log history
 				} else {
 					ReactModalService.internal.alertMessage(
 						eventStore,
