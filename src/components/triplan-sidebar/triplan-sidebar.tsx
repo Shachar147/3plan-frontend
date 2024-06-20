@@ -2140,7 +2140,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		}
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.RECOMMENDATIONS');
-		const recomendationsBlock = wrapWithSidebarGroup(
+		const recommendationsBlock = wrapWithSidebarGroup(
 			<>
 				<Button
 					icon="fa-heart"
@@ -2167,7 +2167,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		return (
 			<>
 				<hr className={'margin-block-2'} />
-				{recomendationsBlock}
+				{recommendationsBlock}
 			</>
 		);
 	}
