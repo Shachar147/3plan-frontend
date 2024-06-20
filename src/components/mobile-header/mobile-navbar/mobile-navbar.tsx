@@ -95,7 +95,7 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 				},
 				icon: 'fa-search',
 				// @ts-ignore
-				cName: getClasses('nav-text', options.isSearchOpen && 'active'),
+				cName: getClasses('nav-text', (options.isSearchOpen || eventStore.isSearchOpen) && 'active'),
 			},
 			withMyTrips && eventStore.tripId && {
 				title: TranslateService.translate(eventStore, 'SWITCH_TRIPS'),
@@ -121,7 +121,7 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 			},
 			renderSwitchToAdmin(isAdmin),
 		].filter(Boolean);
-	}, [isAdmin]);
+	}, [isAdmin, eventStore.isSearchOpen]);
 
 	const logoutLink = withLoginLogout && {
 		title: isLoggedIn ? logoutText : loginText,
@@ -166,12 +166,12 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 				<>
 					{/* All the icons now are white */}
 					<div className="mobile-navbar flex-row gap-10 align-items-center justify-content-center">
-						{withSearch && (
-							<i
-								className={getClasses('fa fa-search', eventStore.isSearchOpen && 'blue-color')}
-								onClick={() => toggleSearch()}
-							/>
-						)}
+						{/*{withSearch && (*/}
+						{/*	<i*/}
+						{/*		className={getClasses('fa fa-search', eventStore.isSearchOpen && 'blue-color')}*/}
+						{/*		onClick={() => toggleSearch()}*/}
+						{/*	/>*/}
+						{/*)}*/}
 
 						<Link to="#" className="menu-bars">
 							<HamburgerIcon className={'black-background'} />
