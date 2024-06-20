@@ -333,3 +333,19 @@ export function israelDateFormatToUSA(israelDate: string): string {
 	const parts = israelDate.split('/');
 	return [parts[1], parts[0], parts[2]].join('/');
 }
+
+export function getUserDateFormat(eventStore: EventStore){
+	if (eventStore.isHebrew) {
+		return 'DD/MM/YYYY'
+	} else {
+		return 'MM/DD/YYYY';
+	}
+}
+
+export function getUserDateFormatLowercase(eventStore: EventStore){
+	if (eventStore.isHebrew) {
+		return 'dd/mm/YYYY'
+	} else {
+		return 'mm/dd/YYYY';
+	}
+}

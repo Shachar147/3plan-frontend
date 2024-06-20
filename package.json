@@ -39,6 +39,7 @@
 		"react-dom": "16.8.6",
 		"react-ellipsis-with-tooltip": "^1.1.1",
 		"react-onclickoutside": "^6.12.2",
+		"react-range-picker": "^1.0.1",
 		"react-scripts": "^5.0.1",
 		"react-select": "^5.4.0",
 		"react-slick": "^0.29.0",
