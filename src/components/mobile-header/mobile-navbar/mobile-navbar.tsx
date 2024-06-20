@@ -97,7 +97,7 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 				// @ts-ignore
 				cName: getClasses('nav-text', options.isSearchOpen && 'active'),
 			},
-			withMyTrips && {
+			withMyTrips && eventStore.tripId && {
 				title: TranslateService.translate(eventStore, 'SWITCH_TRIPS'),
 				onClick: () => {
 					ReactModalService.openSwitchTripsModal(eventStore);
