@@ -357,6 +357,10 @@ export const SELECT_STYLE = {
 		...provided,
 		height: '40px',
 	}),
+	menuPortal: (base: any) => ({
+		...base,
+		zIndex: 9999999, // Ensure the menu is above other elements
+	}),
 };
 
 export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarEvent) => {

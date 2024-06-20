@@ -98,6 +98,14 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 				cName: getClasses('nav-text', options.isSearchOpen && 'active'),
 			},
 			withMyTrips && {
+				title: TranslateService.translate(eventStore, 'SWITCH_TRIPS'),
+				onClick: () => {
+					ReactModalService.openSwitchTripsModal(eventStore);
+				},
+				icon: 'fa-reply-all',
+				cName: 'nav-text'
+			},
+			withMyTrips && {
 				title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
 				path: '/my-trips',
 				icon: 'fa-street-view',

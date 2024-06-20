@@ -1,6 +1,6 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService, { TranslationParams } from './translate-service';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
 import { getClasses, getCurrentUsername, isHotel, isHotelsCategory, ucfirst, ucword } from '../utils/utils';
@@ -63,6 +63,8 @@ import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
 import LogHistoryService from './data-handlers/log-history-service';
+import {navigate} from "@storybook/addon-links";
+import {useNavigate} from "react-router-dom";
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -4466,6 +4468,55 @@ const ReactModalService = {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE'),
+			type: 'controlled',
+			onConfirm: () => {},
+			content,
+			confirmBtnCssClass: 'display-none',
+		});
+	},
+
+	openSwitchTripsModal: async (eventStore: EventStore) => {
+		const tripsData = await eventStore.dataService.getTripsShort(eventStore);
+		const { trips, sharedTrips } = tripsData;
+
+		const options = trips
+			.map((trip) => ({
+				value: trip.name,
+				label: trip.name,
+			}));
+
+		sharedTrips.forEach((trip) => {
+			options.push({
+				value: trip.name,
+				label: `${trip.name} (${TranslateService.translate(eventStore, 'SHARED_TRIP')})`
+			});
+		})
+
+		const content = () => {
+			return (
+				<Observer>
+					{ () => <div className="width-100-percents flex-row justify-content-center margin-top-10">
+						<SelectInput
+							readOnly={false}
+							id={"select-other-trip"}
+							name={"select-other-trip"}
+							options={options}
+							value={undefined}
+							placeholderKey={'TYPE_TO_SEARCH_PLACEHOLDER'}
+							modalValueName={"select-other-trip"}
+							menuPortalTarget={document.body}
+							onChange={(data) => {
+								window.location.href = `/plan/${data.value}`;
+							}}
+						/>
+					</div>}
+				</Observer>
+			);
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'SWITCH_TRIPS'),
 			type: 'controlled',
 			onConfirm: () => {},
 			content,
