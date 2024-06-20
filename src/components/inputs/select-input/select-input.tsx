@@ -26,6 +26,7 @@ interface SelectInputProps {
 	removeDefaultClass?: boolean;
 	value?: any;
 	isClearable?: boolean;
+	menuPortalTarget?: any;
 }
 export interface SelectInputRef {
 	getValue(): SelectInputOption;
@@ -76,6 +77,8 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 			}}
 			maxMenuHeight={maxMenuHeight ?? 45 * 5}
 			styles={SELECT_STYLE}
+			menuPortalTarget={props.menuPortalTarget}
+			menuPlacement={"auto"}
 		/>
 	);
 

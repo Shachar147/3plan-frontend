@@ -761,5 +761,6 @@
 	"NOT_ASSIGNED_TO_ANY_EVENT": "Not assigned to any activity",
 	"TRIP_SUMMARY.OPEN_TASK": "one open task",
 	"TRIP_SUMMARY.OPEN_TASKS": "{amount} open tasks",
-	"SOON": "Soon"
+	"SOON": "Soon",
+	"SWITCH_TRIPS": "Switch trips"
 }
