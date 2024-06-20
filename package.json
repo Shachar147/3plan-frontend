@@ -57,8 +57,7 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "lint-staged",
-			"post-commit": "npm run post-commit"
+			"pre-commit": "lint-staged"
 		}
 	},
 	"lint-staged": {
@@ -90,7 +89,6 @@
 	"scripts": {
 		"start": "npm run build && serve -s build",
 		"start:dev:old": "react-scripts start",
-		"post-commit": ".git/hooks/post-commit",
 		"start:dev:windows": "SET PORT=3000 && SET REACT_APP_MODE=development && react-scripts start",
 		"start:dev": "PORT=3000 REACT_APP_MODE=development react-scripts start",
 		"start:prod:mac": "PORT=3000 REACT_APP_MODE=production react-scripts start",
