@@ -77,7 +77,7 @@ function SelectInput(props: SelectInputProps, ref: Ref<SelectInputRef> | any) {
 			}}
 			maxMenuHeight={maxMenuHeight ?? 45 * 5}
 			styles={SELECT_STYLE}
-			menuPortalTarget={props.menuPortalTarget}
+			menuPortalTarget={props.menuPortalTarget ?? document.body}
 			menuPlacement={"auto"}
 		/>
 	);

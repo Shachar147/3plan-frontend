@@ -648,11 +648,13 @@
 		.slick-slider,
 		.slick-list,
 		.slick-tarck {
-			max-height: 150px;
+			//max-height: 150px;
+			max-height: 90vh
 		}
 
 		.bright-scrollbar {
-			max-height: 50px;
+			//max-height: 50px;
+			max-height: 80vh
 		}
 	}
 
