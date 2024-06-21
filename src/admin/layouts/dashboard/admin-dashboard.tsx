@@ -93,7 +93,7 @@ function AdminDashboard() {
 
 		const dataSource = adminStore.userStats
 			.filter((a) => a['name'])
-			.sort((a, b) => b['lastUpdateAt'] - a['lastUpdateAt']);
+			.sort((a, b) => getTime(b['lastUpdateAt']) - getTime(a['lastUpdateAt']))
 
 		const offset = -1 * getOffsetInHours(false);
 
@@ -126,6 +126,7 @@ function AdminDashboard() {
 				stats={stats}
 				direction={eventStore.getCurrentDirectionStart()}
 				noHeader={eventStore.isMobile}
+				switchMaxNumber={1000}
 			/>
 		);
 	}
@@ -198,7 +199,7 @@ function AdminDashboard() {
 					<tbody>
 						{adminStore.userStats
 							.filter((a) => a['name'])
-							.sort((a, b) => b['lastUpdateAt'] - a['lastUpdateAt'])
+							.sort((a, b) => getTime(b['lastUpdatedAt']) - getTime(a['lastUpdatedAt']))
 							.map((row: any) => (
 								<tr>
 									{columns.map((col: any) => (
@@ -221,13 +222,20 @@ function AdminDashboard() {
 		);
 	}
 
+	function getTime (dateString?: string): number {
+		if (!dateString){
+			return 0;
+		}
+		return new Date(dateString).getTime();
+	}
+
 	function renderUserStats() {
 		let columns: string[] = ['userId', 'username', 'lastUpdateAt', 'lastLoginAt', 'numOfLogins'];
 
 		const seenUsers: Record<string, number> = {};
 		const dataSource = adminStore.userStats
 			.filter((a) => a['name'])
-			.sort((a, b) => b['lastLoginAt'] - a['lastLoginAt'])
+			.sort((a, b) => getTime(b['lastLoginAt']) - getTime(a['lastLoginAt']))
 			.map((row) => {
 				if (seenUsers[row['userId']]) {
 					return null;
