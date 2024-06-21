@@ -57,6 +57,7 @@
 		border-radius: 4px;
 		color: #2d2d2d;
 		direction: ltr;
+		cursor: pointer;
 	}
 
 	&:hover {
@@ -64,6 +65,7 @@
 
 		a {
 			text-decoration: none;
+			color: dodgerblue !important;
 		}
 	}
 }
