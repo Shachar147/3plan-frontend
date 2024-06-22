@@ -769,6 +769,7 @@
 	"POINT_OF_INTEREST.PRICE": "From {price}{currency} per person",
 	"TOP_PICK": "TOP PICK",
 	"POINT_OF_INTEREST.REVIEWS": "{rate}/{rateMax} ({quantity} reviews)",
+	"POINT_OF_INTEREST.REVIEWS.SHORT": "{rate}/{rateMax}",
 	"X_MINUTES": "{X} minutes",
 	"ONE_HOUR":"One hour",
 	"X_HOURS": "{X} hours",

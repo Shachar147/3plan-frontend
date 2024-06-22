@@ -12,7 +12,7 @@ import TranslateService from "../../services/translate-service";
 import {EventStore} from "../../stores/events-store";
 
 interface PointOfInterestProps {
-    item: any, // getyourguide result
+    item: any, // getyourguide / dubaicoil result
     eventStore: EventStore,
 }
 
@@ -148,15 +148,15 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                         price: item.extra.price,
                         currency: item.extra.currency === 'ILS' ? '₪' : item.extra.currency
                     })}</span>}
-                    <div className="rate">
+                    {!!item.rate && !!item.rate.rating && <div className="rate">
                         {renderStars(item.rate.rating)}
-                        <span>{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.REVIEWS', {
+                        <span>{TranslateService.translate(eventStore, item.rate.quantity ? 'POINT_OF_INTEREST.REVIEWS' : 'POINT_OF_INTEREST.REVIEWS.SHORT', {
                             rate: item.rate.rating.toFixed(1),
                             rateMax: 5,
                             quantity: item.rate.quantity
                         })}
                         </span>
-                    </div>
+                    </div>}
                     {eventStore.isMobile && (
                         <div className="poi-footer-links">
                             <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>
@@ -164,13 +164,13 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                                 <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
                             )}
                             <div className="source-logo">
-                                <img src="/images/getyourguide.png" alt="GetYourGuide" />
+                                <img src={`/images/${item.source.toLowerCase().replaceAll(".", "")}.png`} alt={item.source} />
                             </div>
                         </div>
                     )}
                     <div className="poi-footer">
-                        {!eventStore.isMobile &&<div className="source-logo">
-                            <img src="/images/getyourguide.png" alt="GetYourGuide" />
+                        {!eventStore.isMobile && <div className="source-logo">
+                            <img src={`/images/${item.source.toLowerCase().replaceAll(".", "")}.png`} alt={item.source} />
                         </div>}
                         {!eventStore.isMobile && <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>}
                         {item.location && !eventStore.isMobile && (

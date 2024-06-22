@@ -2,14 +2,19 @@ import { apiGetPromise } from "../../../helpers/api";
 
 export const allSources = [
     'Local',
-    'GetYourGuide'
+    'GetYourGuide',
+    "Dubai.co.il"
 ];
 
 export const SourceToUrl = (destination: string, page: number): Record<string, string> => {
-    return {
+    const base: Record<string, string> = {
         'Local': `/poi/by-destination?destination=${destination}&page=${page}`,
-        'GetYourGuide': `/suggestions/getyourguide?destination=${destination}&page=${page}`
+        'GetYourGuide': `/poi/external-source/getyourguide?destination=${destination}&page=${page}`,
     };
+    if (destination === "Dubai"){
+        base["Dubai.co.il"] = `/poi/external-source/dubaicoil?destination=${destination}&page=${page}`;
+    }
+    return base;
 }
 
 export default class FeedViewApiService {
@@ -23,13 +28,21 @@ export default class FeedViewApiService {
 
     getItems = async (source: string, destination: string, page: number) => {
         const url = SourceToUrl(destination, page)[source];
+        if (!url){
+            return Promise.resolve({
+                results: [],
+                isFinished: true,
+                source
+            })
+        }
         const result = await apiGetPromise(this, url);
         if (result) {
             return result?.data;
         }
         return {
             results: [],
-            isFinished: true
+            isFinished: true,
+            source
         };
     }
 
