@@ -8,7 +8,7 @@
   width: max-content;
   min-width: 130px;
   font-size: 14px;
-  border: 2px solid #ccc;
+  border: 1px solid #ccc;
   border-radius: 4px;
   background-color: white;
   cursor: pointer;
@@ -23,14 +23,18 @@
   color: #555;
 }
 
-//.category-select {
-//  background-position: right 10px top 50%; /* Position on the right for RTL languages */
-//}
+.feed-view-filter-bar {
+  &:not(.hebrew-mode) {
+    .category-select {
+      background-position: right 10px top 50%; /* Position on the right for RTL languages */
+    }
+  }
 
-.hebrew-mode {
-  .category-select {
-    text-align: right;
-    direction: rtl;
+  &.hebrew-mode {
+    .category-select {
+      text-align: right;
+      direction: rtl;
+    }
   }
 }
 
