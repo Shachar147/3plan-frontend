@@ -1453,6 +1453,9 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			if (!category.description) return null;
 			const categoryEvents = eventStore.getSidebarEvents[category.id] || [];
 			if (categoryEvents.length) return null;
+			const scheduledEvents = eventStore.calendarEvents.filter((e) => e.category.toString() === category.id.toString());
+			if (scheduledEvents.length) return null;
+
 			return (
 				<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
 					{TranslateService.translate(eventStore, category.description)}
