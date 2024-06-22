@@ -1968,7 +1968,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			return null;
 		}
 
-		return Object.keys(preferredHoursHash)
+		const eventsByPreferredHour = Object.keys(preferredHoursHash)
 			.filter((x) => preferredHoursHash[x].length > 0)
 			.map((preferredHour: string) => {
 				// @ts-ignore
@@ -1984,6 +1984,20 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					</div>
 				);
 			});
+
+		const scheduledEvents = eventStore.calendarEvents.filter((e) => e.category.toString() === categoryId.toString());
+
+		return (
+			<>
+				{eventsByPreferredHour}
+				{scheduledEvents.length > 0 && <div key={`${categoryId}-scheduled-events`}>
+					{renderLineWithText(
+						`${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${scheduledEvents.length})`
+					)}
+					<div>{renderScheduledEvents(categoryId, scheduledEvents)}</div>
+				</div>}
+			</>
+		)
 	};
 
 	const renderLineWithText = (text: string, className?: string) => {
@@ -2037,6 +2051,73 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		return (
 			<div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
 				{events.map((event) => renderEventDraggable(event, categoryId))}
+			</div>
+		);
+	};
+
+	const renderScheduledEvents = (categoryId: number, events: CalendarEvent[]) => {
+		const order = [
+			TriplanPriority.unset,
+			TriplanPriority.must,
+			TriplanPriority.high,
+			TriplanPriority.maybe,
+			TriplanPriority.least,
+		];
+
+		events = events
+			.map((event) => {
+				event.category = categoryId.toString();
+				return event;
+			})
+			.sort((a, b) => {
+				let A = order.indexOf(Number(a.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+				let B = order.indexOf(Number(b.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+
+				if (A === -1) {
+					A = 999;
+				}
+				if (B === -1) {
+					B = 999;
+				}
+
+				if (A > B) {
+					return 1;
+				} else if (A < B) {
+					return -1;
+				}
+				return 0;
+			});
+		return (
+			<div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+				{events.map((event, idx) => renderEventDraggable(
+					event,
+					categoryId,
+					false,
+					calendarOrSidebarEventDetails(eventStore, event),
+					() => {
+						const calendarEvent = eventStore.calendarEvents.find(
+							(y) => y.id == event.id
+						)!;
+						if (typeof calendarEvent.start === 'string') {
+							calendarEvent.start = new Date(calendarEvent.start);
+						}
+						if (typeof calendarEvent.end === 'string') {
+							calendarEvent.end = new Date(calendarEvent.end);
+						}
+						modalsStore.switchToViewMode();
+						ReactModalService.openEditCalendarEventModal(
+							eventStore,
+							props.addEventToSidebar,
+							{
+								event: {
+									...calendarEvent,
+									_def: calendarEvent,
+								},
+							},
+							modalsStore
+						);
+					}
+				))}
 			</div>
 		);
 	};
