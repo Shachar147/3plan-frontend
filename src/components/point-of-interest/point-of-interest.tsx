@@ -103,9 +103,12 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                     address: item.name
                 } : undefined,
                 category: categoryId,
+                currency: item.currency ? TranslateService.translate(eventStore, item.currency) : undefined,
+                moreInfo: item.more_info,
                 extra: {
                     ...item.extra,
-                    feedId
+                    feedId,
+                    moreInfo: item.more_info,
                 }
             },
             true,
@@ -142,7 +145,8 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                 <div className="poi-details">
                     {durationText && <span className="duration">{durationText}</span>}
                     {item.extra?.price && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
-                        price: item.extra.price
+                        price: item.extra.price,
+                        currency: item.extra.currency === 'ILS' ? '₪' : item.extra.currency
                     })}</span>}
                     <div className="rate">
                         {renderStars(item.rate.rating)}

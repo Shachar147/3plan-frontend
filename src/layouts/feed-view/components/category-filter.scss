@@ -1,0 +1,44 @@
+.category-filter {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.category-select {
+  width: max-content;
+  min-width: 130px;
+  font-size: 14px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%23757280"><path d="M15.293 7.293a1 1 0 0 0-1.414 0L10 11.586 5.707 7.293a1 1 0 1 0-1.414 1.414l5 5a1 1 0 0 0 1.414 0l5-5a1 1 0 0 0 0-1.414z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: left 10px top 50%; /* Position on the left for LTR languages */
+  background-size: 18px auto; /* Increase size of the icon */
+  color: #555;
+}
+
+//.category-select {
+//  background-position: right 10px top 50%; /* Position on the right for RTL languages */
+//}
+
+.hebrew-mode {
+  .category-select {
+    text-align: right;
+    direction: rtl;
+  }
+}
+
+.category-select:focus {
+  outline: none;
+}
+
+/* Remove default arrow on Firefox */
+.category-select::-ms-expand {
+  display: none;
+}

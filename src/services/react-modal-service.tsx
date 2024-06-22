@@ -441,7 +441,7 @@ export const ReactModalRenderHelper = {
 			});
 
 		if (!eventStore.modalValues[modalValueName]) {
-			const selectedOption = options.find((option) => option.value == extra.value?.toString());
+			const selectedOption = options.find((option) => option.value.toLowerCase() == extra.value?.toString()?.toLowerCase());
 			eventStore.modalValues[modalValueName] = selectedOption;
 		}
 
@@ -2024,6 +2024,13 @@ const ReactModalService = {
 				price,
 				currency, // add column 16
 			} as SidebarEvent;
+
+			if (initialData.extra?.feedId) {
+				// @ts-ignore
+				currentEvent.extra = {
+					feedId: initialData.extra?.feedId
+				};
+			}
 
 			const isDurationValid = !duration || validateDuration(duration);
 			// const isDurationValid =
