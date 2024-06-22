@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import PointOfInterest from "../../components/point-of-interest/point-of-interest";
 import { EventStore } from "../../stores/events-store";
-import FeedViewApiService from "./services/feed-view-api-service";
+import FeedViewApiService, {allSources} from "./services/feed-view-api-service";
 import CategoryFilter from "./components/category-filter";
-import {getClasses} from "../../utils/utils";
+import { getClasses } from "../../utils/utils";
 import TranslateService from "../../services/translate-service";
 import './feed-view.scss';
 import LazyLoadComponent from "./components/lazy-load-component";
@@ -12,45 +12,82 @@ interface FeedViewProps {
     eventStore: EventStore;
 }
 
+const cacheThreshold = 400;
+
 function FeedView({ eventStore }: FeedViewProps) {
     const [items, setItems] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [sourceCounts, setSourceCounts] = useState<Record<string, number>>({});
+    const [finishedSources, setFinishedSources] = useState([]);
+    const [reachedEnd, setReachedEnd] = useState(false);
 
-    // useEffect(() => {
-    //     const fetchItems = async () => {
-    //         const response = await (new FeedViewApiService().getItems("Dubai", 1));
-    //         setItems(response.results);
-    //         setFilteredItems(response.results); // Initially set filtered items to all items
-    //         const uniqueCategories = Array.from(
-    //             new Set(response.results.map((item) => item.category))
-    //         );
-    //         setCategories(uniqueCategories);
-    //     };
-    //
-    //     fetchItems();
-    // }, []);
+    const apiService = useMemo(() => new FeedViewApiService(), []);
+    const destination = "Dubai";
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            const counts = await apiService.getCount(destination);
+            setSourceCounts(counts);
+            setIsLoading(false);
+        };
+        fetchCounts();
+    }, [apiService, destination]);
 
     const fetchItems = async (page, setLoading) => {
         setLoading(true);
 
-        // console.log("loading!");
-        const response = await (new FeedViewApiService().getItems("Dubai", page));
-        // console.log(response);
-        const newItems = [...items, ...response.results];
-        setItems(newItems);
-        // setFilteredItems([...items, ...response.results]); // Initially set filtered items to all items
-        handleCategoryChange(selectedCategory, newItems);
+        const sources = allSources.filter(
+            source => (source === "Local" || (sourceCounts[source] ?? 0) < cacheThreshold) && !finishedSources.includes(source)
+        );
+
+        if (sources.length === 0) {
+            setLoading(false);
+            setReachedEnd(true);
+            return;
+        }
+
+        const responses = await Promise.all(
+            sources.map(source => apiService.getItems(source, destination, page))
+        );
+
+        const _finishedSources = [];
+        const newItems = responses.reduce((acc, response) => {
+            const source = response.source;
+            acc.push(...response.results);
+            if (response.isFinished) {
+                _finishedSources.push(source);
+            }
+            return acc;
+        }, []);
+
+        // Function to filter duplicates based on name, url, source combination
+        const filterUniqueItems = (items) => {
+            const seen = new Map();
+            return items.filter(item => {
+                const key = item.name + item.url + item.source;
+                return seen.has(key) ? false : seen.set(key, true);
+            });
+        };
+
+        const uniqueNewItems = filterUniqueItems(newItems);
+
+        setFinishedSources((prevFinishedSources) => {
+            return [...new Set([...prevFinishedSources, ..._finishedSources])];
+        });
+
+        setItems(prevItems => [...prevItems, ...uniqueNewItems]);
+        handleCategoryChange(selectedCategory, [...items, ...uniqueNewItems]);
 
         const uniqueCategories = Array.from(
-            new Set(response.results.map((item) => item.category))
+            new Set(uniqueNewItems.map(item => item.category))
         );
-        setCategories(uniqueCategories);
+        setCategories(prevCategories => [...new Set([...prevCategories, ...uniqueCategories])]);
 
         setLoading(false);
     };
-
 
     const handleCategoryChange = (category, items) => {
         setSelectedCategory(category);
@@ -63,21 +100,29 @@ function FeedView({ eventStore }: FeedViewProps) {
     };
 
     return (
-        <LazyLoadComponent fetchData={(page, setLoading) => fetchItems(page, setLoading)}>
+        isLoading ? <span>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span> : <LazyLoadComponent fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
             <div className="flex-column gap-4">
                 <div className={getClasses("feed-view-filter-bar flex-row justify-content-space-between", eventStore.isHebrew && 'hebrew-mode')}>
                     <CategoryFilter
                         categories={categories}
                         onFilterChange={(category) => handleCategoryChange(category, items)}
                     />
-                    {items.length != filteredItems.length && <span className="flex-1-1-0 min-width-max-content">{TranslateService.translate(eventStore, 'SHOWING_X_FROM_Y', {
+                    {items.length !== filteredItems.length && <span className="flex-1-1-0 min-width-max-content">{TranslateService.translate(eventStore, 'SHOWING_X_FROM_Y', {
                         0: filteredItems.length,
                         1: items.length
                     })}</span>}
                 </div>
-                {filteredItems.map((item) => (
-                    <PointOfInterest key={item.id} item={item} eventStore={eventStore} />
+                {filteredItems.map((item, idx) => (
+                    <div className="flex-row width-100-percents align-items-center">
+                        {idx+1}
+                        <PointOfInterest key={item.id} item={item} eventStore={eventStore} />
+                    </div>
                 ))}
+                {reachedEnd && filteredItems.length > 0 && (
+                    <div className="width-100-percents text-align-center">
+                        {TranslateService.translate(eventStore, 'NO_MORE_ITEMS')}
+                    </div>
+                )}
             </div>
         </LazyLoadComponent>
     );

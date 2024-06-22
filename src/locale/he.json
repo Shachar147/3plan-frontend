@@ -864,5 +864,6 @@
 	"X_MINUTES": "{X} דקות",
 	"ONE_HOUR":"שעה אחת",
 	"X_HOURS": "{X} שעות",
-	"X_HOURS_Y_MINUTES":"{X} שעות, {Y} דקות"
+	"X_HOURS_Y_MINUTES":"{X} שעות, {Y} דקות",
+	"NO_MORE_ITEMS": "אין פריטים נוספים"
 }

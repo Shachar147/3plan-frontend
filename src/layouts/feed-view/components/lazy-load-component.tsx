@@ -6,12 +6,13 @@ import {getClasses} from "../../../utils/utils";
 interface LazyLoadComponentProps {
     fetchData: (page: number, setLoading: (bool) => void) => Promise<any>;
     children: React.ReactNode;
+    isLoading: boolean;
 }
 
-const LazyLoadComponent = ({ children, fetchData }: LazyLoadComponentProps) => {
+const LazyLoadComponent = ({ children, fetchData, isLoading }: LazyLoadComponentProps) => {
     const eventStore = useContext(eventStoreContext);
     const [page, setPage] = useState(1);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(isLoading);
     const loader = useRef(null);
 
     useEffect (() => {

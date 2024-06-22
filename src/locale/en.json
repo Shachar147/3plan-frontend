@@ -773,5 +773,6 @@
 	"ONE_HOUR":"One hour",
 	"X_HOURS": "{X} hours",
 	"X_HOURS_Y_MINUTES":"{X} hours, {Y} minutes",
-	"VIEW_ON_GOOGLE_MAPS": "View on google maps"
+	"VIEW_ON_GOOGLE_MAPS": "View on google maps",
+	"NO_MORE_ITEMS": "No more items"
 }

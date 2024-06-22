@@ -1,15 +1,38 @@
-import {apiGetPromise} from "../../../helpers/api";
+import { apiGetPromise } from "../../../helpers/api";
+
+export const allSources = [
+    'Local',
+    'GetYourGuide'
+];
+
+export const SourceToUrl = (destination: string, page: number): Record<string, string> => {
+    return {
+        'Local': `/poi/by-destination?destination=${destination}&page=${page}`,
+        'GetYourGuide': `/suggestions/getyourguide?destination=${destination}&page=${page}`
+    };
+}
 
 export default class FeedViewApiService {
-    getItems = async (destination: string, page: number) => {
-        const result = await apiGetPromise(this, `/suggestions/getyourguide?destination=${destination}&page=${page}`);
+    getCount = async (destination: string) => {
+        const result = await apiGetPromise(this, `/poi/count/by-source/${destination}`);
+        if (result) {
+            return result?.data;
+        }
+        return {};
+    }
+
+    getItems = async (source: string, destination: string, page: number) => {
+        const url = SourceToUrl(destination, page)[source];
+        const result = await apiGetPromise(this, url);
         if (result) {
             return result?.data;
         }
         return {
-            results: []
+            results: [],
+            isFinished: true
         };
     }
+
     getItemsOld = async () => {
         return {
             "results": [
