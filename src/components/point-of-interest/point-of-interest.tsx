@@ -159,12 +159,15 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                             {item.location && (
                                 <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
                             )}
+                            <div className="source-logo">
+                                <img src="/images/getyourguide.png" alt="GetYourGuide" />
+                            </div>
                         </div>
                     )}
                     <div className="poi-footer">
-                        <div className="source-logo">
+                        {!eventStore.isMobile &&<div className="source-logo">
                             <img src="/images/getyourguide.png" alt="GetYourGuide" />
-                        </div>
+                        </div>}
                         {!eventStore.isMobile && <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>}
                         {item.location && !eventStore.isMobile && (
                             <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>

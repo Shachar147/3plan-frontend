@@ -119,27 +119,23 @@ h2 {
 
 .point-of-interest {
   &.hebrew-mode {
-    flex-direction: row-reverse;
     text-align: right;
+    direction: rtl;
 
-    .poi-details {
-      align-items: end;
-    }
-
-    .poi-footer {
-      flex-direction: row-reverse;
-    }
-
-    .top-pick-label {
-      align-self: flex-end;
+    .duration {
+      text-align: right;
+      direction: rtl;
     }
 
     .rate {
-      flex-direction: row-reverse;
-
       span {
         margin-inline: 8px;
       }
+    }
+
+    .poi-footer-links {
+      text-align: right;
+      direction: rtl;
     }
   }
 }
@@ -166,10 +162,12 @@ h2 {
     .poi-footer-links {
       width: 100%;
       display: flex;
-      flex-direction: row-reverse;
+      flex-direction: row;
       gap: 16px;
-      border-top: 1px solid var(--gray);
-      padding-top: 20px;
+      border-block: 1px solid var(--gray);
+      margin-top: 10px;
+      margin-bottom: 20px;
+      padding-top: 10px;
       padding-bottom: 10px;
     }
 
