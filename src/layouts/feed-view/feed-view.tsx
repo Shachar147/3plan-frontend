@@ -35,12 +35,13 @@ function FeedView({ eventStore }: FeedViewProps) {
     const fetchItems = async (page, setLoading) => {
         setLoading(true);
 
-        console.log("loading!");
+        // console.log("loading!");
         const response = await (new FeedViewApiService().getItems("Dubai", page));
-        console.log(response);
-        setItems([...items, ...response.results]);
-        setFilteredItems([...items, ...response.results]); // Initially set filtered items to all items
-        handleCategoryChange(selectedCategory);
+        // console.log(response);
+        const newItems = [...items, ...response.results];
+        setItems(newItems);
+        // setFilteredItems([...items, ...response.results]); // Initially set filtered items to all items
+        handleCategoryChange(selectedCategory, newItems);
 
         const uniqueCategories = Array.from(
             new Set(response.results.map((item) => item.category))
@@ -51,7 +52,7 @@ function FeedView({ eventStore }: FeedViewProps) {
     };
 
 
-    const handleCategoryChange = (category) => {
+    const handleCategoryChange = (category, items) => {
         setSelectedCategory(category);
         if (category === "") {
             setFilteredItems(items); // Show all items if no category selected
@@ -67,7 +68,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                 <div className={getClasses("feed-view-filter-bar flex-row justify-content-space-between", eventStore.isHebrew && 'hebrew-mode')}>
                     <CategoryFilter
                         categories={categories}
-                        onFilterChange={handleCategoryChange}
+                        onFilterChange={(category) => handleCategoryChange(category, items)}
                     />
                     {items.length != filteredItems.length && <span className="flex-1-1-0 min-width-max-content">{TranslateService.translate(eventStore, 'SHOWING_X_FROM_Y', {
                         0: filteredItems.length,
