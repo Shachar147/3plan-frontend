@@ -12,7 +12,7 @@ interface FeedViewProps {
     eventStore: EventStore;
 }
 
-const cacheThreshold = 400;
+const cacheThreshold = 300;
 
 function FeedView({ eventStore }: FeedViewProps) {
     const [items, setItems] = useState([]);
