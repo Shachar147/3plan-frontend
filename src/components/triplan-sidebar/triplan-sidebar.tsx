@@ -1450,7 +1450,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		};
 
 		const renderNoItemsInCategoryPlaceholder = (category: TriPlanCategory) => {
-			if (!category.description) return null;
+			if (!category.description) return null; // indication that it is a default category
 			const categoryEvents = eventStore.getSidebarEvents[category.id] || [];
 			if (categoryEvents.length) return null;
 			const scheduledEvents = eventStore.calendarEvents.filter((e) => e.category.toString() === category.id.toString());
@@ -1563,8 +1563,8 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						</div>
 					</div>
 					<div style={eventsStyle as unknown as CSSProperties}>
-						{renderCategoryEvents(triplanCategory.id)}
 						{renderNoItemsInCategoryPlaceholder(triplanCategory)}
+						{renderCategoryEvents(triplanCategory.id)}
 						{renderAddSidebarEventButton(triplanCategory)}
 					</div>
 				</div>
