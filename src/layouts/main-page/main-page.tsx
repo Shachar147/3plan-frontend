@@ -34,6 +34,8 @@ import axios from 'axios';
 import { BiEventsService } from '../../services/bi-events.service';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatDate } from '../../utils/time-utils';
+import PointOfInterest from "../../components/point-of-interest/point-of-interest";
+import FeedView from "../feed-view/feed-view";
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -372,6 +374,10 @@ function MainPage(props: MainPageProps) {
 		BiEventsService.reportEvent('google_map:rendered', `${eventStore.viewMode}-view`, eventStore.isMobile);
 	}
 
+	function renderFeedView() {
+		return <FeedView eventStore={eventStore} />
+	}
+
 	function renderMapView(shouldShow: boolean = true) {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.map) {
 			shouldShow = false;
@@ -635,6 +641,7 @@ function MainPage(props: MainPageProps) {
 						) : (
 							<>
 								{renderSidebar()}
+								{eventStore.isFeedView && renderFeedView()}
 								{eventStore.isMapView && renderMapView(eventStore.isMapView)}
 								{eventStore.isListView && renderListView()}
 								{eventStore.isCalendarView && renderCalendarView()}

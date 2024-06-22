@@ -487,3 +487,53 @@ export function jsonDiff(obj1: object, obj2: object): any {
 	}
 	return ret;
 }
+
+export function extractCategory(arr: string[]): string {
+	const categoryToKeywordMapping: Record<string, string[]> = {
+		אטרקציות: ["hiking", "hikes", "dive", " Terme ", "skypool"],
+		תיירות: [
+			"city-walk",
+			"burj",
+			"מסגד",
+			"טיילת",
+			"המרינה",
+			"אייפל",
+			"eifel",
+		],
+		תצפיות: ["sky view", "תצפית", "dubai frame"],
+		"ברים חיי לילה": ["dance club", "lounge"],
+		פארקים: ["פארק"],
+		עיירות: ["עיירה", "עיירות"],
+		חופים: ["beach "],
+		"ביץ׳ ברים": ["beach bar"],
+		"בתי מלון": [
+			"six senses",
+			"sixsenses",
+			"hotel",
+			"resort",
+			"בית מלון",
+			"המלון",
+		],
+		אוכל: ["resturant", "cafe", "מסעדה", "chocolate", "croissants"],
+	};
+
+	let toReturn = "";
+	Object.keys(categoryToKeywordMapping).forEach((category) => {
+		arr.forEach((str) => {
+			categoryToKeywordMapping[category].forEach((keyword) => {
+				if (str.toLowerCase().indexOf(keyword.toLowerCase()) !== -1) {
+					toReturn = category;
+					return toReturn;
+				}
+			});
+
+			if (toReturn !== "") {
+				return toReturn;
+			}
+		});
+		if (toReturn !== "") {
+			return toReturn;
+		}
+	});
+	return toReturn;
+}

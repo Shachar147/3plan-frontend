@@ -138,10 +138,11 @@
 	"MODALS.ADD_EVENT_TO_CALENDAR.TITLE": "הוסף פעילות ללוח השנה",
 	"MODALS.ADD_HOTEL_TO_CALENDAR.TITLE": "הוסף בית מלון ללוח השנה",
 	"GENERAL_CATEGORY.TITLE": "כללי",
-	"BUTTON_TEXT.LIST_VIEW": "תצוגת רשימה",
-	"BUTTON_TEXT.MAP_VIEW": "תצוגת מפה",
+	"BUTTON_TEXT.LIST_VIEW": "רשימה",
+	"BUTTON_TEXT.MAP_VIEW": "מפה",
+	"BUTTON_TEXT.FEED_VIEW": "מומלצים",
 	"BUTTON_TEXT.COMBINED_VIEW": "תצוגה משולבת",
-	"BUTTON_TEXT.CALENDAR_VIEW": "תצוגת לוח שנה",
+	"BUTTON_TEXT.CALENDAR_VIEW": "לוח שנה",
 	"BUTTON_TEXT.SIDEBAR_VIEW": "פעילויות",
 	"MODALS.ARE_YOU_SURE": "האם אתה בטוח?",
 	"MODALS.ARE_YOU_SURE.CONTENT": "האם אתה בטוח שאתה רוצה לעשות את זה?",
@@ -853,5 +854,7 @@
 	"TRIP_SUMMARY.OPEN_TASK": "משימה פתוחה אחת",
 	"TRIP_SUMMARY.OPEN_TASKS": "{amount} משימות פתוחות",
 	"SOON": "בקרוב",
-	"SWITCH_TRIPS": "מעבר מהיר לטיול אחר"
+	"SWITCH_TRIPS": "מעבר מהיר לטיול אחר",
+	"POINT_OF_INTEREST.ADD_TO_PLAN": "הוסף לתכנון",
+	"POINT_OF_INTEREST.ADDED_TO_PLAN": "נוסף לתכנון!"
 }

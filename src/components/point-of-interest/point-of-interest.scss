@@ -1,0 +1,117 @@
+.point-of-interest {
+  display: flex;
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  min-height: 300px;
+  height: auto;
+  max-height: max-content;
+  position: relative;
+}
+
+.poi-left {
+  flex: 1;
+  margin-right: 16px;
+}
+
+.carousel-wrapper {
+  position: relative;
+}
+
+.heart-icon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 24px;
+  color: gray;
+  cursor: pointer;
+  border: 1px solid gray;
+  border-radius: 50%;
+  background-color: white;
+  padding: 4px;
+}
+
+.heart-icon.filled {
+  color: red;
+  background-color: red;
+  border-color: red;
+}
+
+.poi-right {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Align details and footer to the bottom */
+}
+
+.top-pick-label {
+  background-color: gold;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  font-weight: bold;
+  align-self: flex-start;
+}
+
+.category-label {
+  color: #666;
+  margin-bottom: 8px;
+}
+
+h2 {
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.description, .duration, .price {
+  margin-bottom: 8px;
+  display: block;
+}
+
+.poi-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Ensure the details are aligned to the bottom */
+  flex: 1;
+}
+
+.rate {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.star {
+  color: gold;
+  margin-right: 4px;
+}
+
+.poi-footer {
+  display: flex;
+  align-items: center;
+}
+
+.more-info,
+.google-maps-link {
+  color: #007bff;
+  text-decoration: none;
+  margin-right: 16px;
+}
+
+.more-info:hover,
+.google-maps-link:hover {
+  text-decoration: underline;
+}
+
+.source-logo img {
+  width: 100px;
+  margin-right: 16px;
+}
+
+.button-custom {
+  padding-inline: 16px;
+}

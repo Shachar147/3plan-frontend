@@ -127,6 +127,7 @@
 	"MODALS.ADD_HOTEL_TO_CALENDAR.TITLE": "Add Hotel to Calendar",
 	"GENERAL_CATEGORY.TITLE": "General",
 	"BUTTON_TEXT.LIST_VIEW": "List View",
+	"BUTTON_TEXT.FEED_VIEW": "Explore",
 	"BUTTON_TEXT.CALENDAR_VIEW": "Calendar View",
 	"BUTTON_TEXT.COMBINED_VIEW": "Combined View",
 	"BUTTON_TEXT.MAP_VIEW": "Map View",
@@ -762,5 +763,7 @@
 	"TRIP_SUMMARY.OPEN_TASK": "one open task",
 	"TRIP_SUMMARY.OPEN_TASKS": "{amount} open tasks",
 	"SOON": "Soon",
-	"SWITCH_TRIPS": "Quick Switch trips"
+	"SWITCH_TRIPS": "Quick Switch trips",
+	"POINT_OF_INTEREST.ADD_TO_PLAN": "Add to plan",
+	"POINT_OF_INTEREST.ADDED_TO_PLAN": "Added to plan!"
 }

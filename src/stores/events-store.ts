@@ -620,6 +620,11 @@ export class EventStore {
 	}
 
 	@computed
+	get isFeedView() {
+		return this.isMobile ? this.mobileViewMode === ViewMode.feed : this.viewMode === ViewMode.feed;
+	}
+
+	@computed
 	get isCalendarView() {
 		return this.isMobile ? this.mobileViewMode === ViewMode.calendar : this.viewMode === ViewMode.calendar;
 	}
