@@ -17,7 +17,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/90e681997b23ee53.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-hallstatt-and-alpine-peaks-with-skywalk-lift-t316897/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-hallstatt-and-alpine-peaks-with-skywalk-lift-t316897/",
                 "duration": "13:00",
                 "category": "",
                 "priority": "high",
@@ -44,7 +44,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/5a26559595c52.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-concert-vivaldi-s-four-seasons-in-karlskirche-t44883/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-concert-vivaldi-s-four-seasons-in-karlskirche-t44883/",
                 "duration": "01:15",
                 "category": "",
                 "location": {
@@ -70,7 +70,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/61f9262815d6d.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-art-and-architecture-in-the-belvedere-t47912/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-art-and-architecture-in-the-belvedere-t47912/",
                 "duration": "01:00",
                 "category": "מוזיאונים",
                 "priority": "high",
@@ -97,7 +97,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/63850a10677341a2.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-schonbrunn-palace-gardens-skip-the-line-tour-t397843/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-schonbrunn-palace-gardens-skip-the-line-tour-t397843/",
                 "duration": "02:00",
                 "category": "",
                 "location": {
@@ -123,7 +123,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/92f086dc82e47451456221cb659e757b3400549ccef1072b77a5ee41948d3f9c.jpg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/skip-the-line-sisi-museum-hofburg-and-gardens-tour-vienna-t471440/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/skip-the-line-sisi-museum-hofburg-and-gardens-tour-vienna-t471440/",
                 "duration": "02:30",
                 "category": "מוזיאונים",
                 "location": {
@@ -149,7 +149,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/5526b068384b44ab.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-mozart-concert-at-the-golden-hall-t613/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-mozart-concert-at-the-golden-hall-t613/",
                 "duration": "02:00",
                 "category": "",
                 "location": {
@@ -175,7 +175,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/5bc598c2cd4b2.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/performance-of-the-lipizzans-at-spanish-riding-school-t187323/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/performance-of-the-lipizzans-at-spanish-riding-school-t187323/",
                 "category": "",
                 "location": {
                     "latitude": 48.2077304,
@@ -226,7 +226,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/b0d04e4451c25d9b.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-skip-the-line-schonbrunn-palace-and-gardens-tour-t471518/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-skip-the-line-schonbrunn-palace-and-gardens-tour-t471518/",
                 "duration": "02:30",
                 "category": "",
                 "location": {
@@ -252,7 +252,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/5dd2fe6abe3aa.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-vivaldi-four-seasons-at-the-musikverein-t329566/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-vivaldi-four-seasons-at-the-musikverein-t329566/",
                 "duration": "02:00",
                 "category": "",
                 "location": {
@@ -278,7 +278,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/64c3729a3f4d7.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/schonbrunn-guided-tour-to-the-palace-and-garden-t494393/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/schonbrunn-guided-tour-to-the-palace-and-garden-t494393/",
                 "duration": "02:30",
                 "category": "",
                 "location": {
@@ -304,7 +304,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/5d88813d28e24.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/schonbrunn-zoo-tickets-vienna-t7525/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/schonbrunn-zoo-tickets-vienna-t7525/",
                 "category": "",
                 "location": {
                     "latitude": 48.18357349432304,
@@ -329,7 +329,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/640728f7ab4d0.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-sigmund-freud-museum-ticket-t396089/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-sigmund-freud-museum-ticket-t396089/",
                 "category": "מוזיאונים",
                 "location": {
                     "latitude": 48.2185966,
@@ -356,7 +356,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/5d08ac8398cad.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/albertina-museum-tickets-vienna-t37928/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/albertina-museum-tickets-vienna-t37928/",
                 "category": "מוזיאונים",
                 "location": {
                     "latitude": 48.2046992,
@@ -381,7 +381,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/beb26e78ced50e1b.jpeg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-classic-ensemble-vienna-at-st-peter-s-church-t69684/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-classic-ensemble-vienna-at-st-peter-s-church-t69684/",
                 "duration": "01:00",
                 "category": "",
                 "location": {
@@ -407,7 +407,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     "https://cdn.getyourguide.com/img/tour/f6efde8e96b0f8ac7cc9021554e0d0b68bbbb9cbf44628b3327f6a9e559393c9.jpg/132.jpg"
                 ],
                 "source": "GetYourGuide",
-                "more_info": "https://www.getyourguide.com//vienna-l7/vienna-karlskirche-entry-ticket-with-panoramic-terrace-t720573/",
+                "more_info": "https://www.getyourguide.com/vienna-l7/vienna-karlskirche-entry-ticket-with-panoramic-terrace-t720573/",
                 "category": "",
                 "location": {
                     "latitude": 48.198615369515615,

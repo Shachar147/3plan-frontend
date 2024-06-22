@@ -860,7 +860,7 @@
 	"VIEW_ON_GOOGLE_MAPS": "צפה בגוגל מפות",
 	"POINT_OF_INTEREST.PRICE": "החל מ- {price}₪ לבן אדם",
 	"TOP_PICK": "בחירה מובילה",
-	"POINT_OF_INTEREST.REVIEWS": "{rate}/{rateMax} ({quantity} ביקורות)",
+	"POINT_OF_INTEREST.REVIEWS": "(סהֿ״{quantity} ביקורות) {rate}/{rateMax}",
 	"X_MINUTES": "{X} דקות",
 	"ONE_HOUR":"שעה אחת",
 	"X_HOURS": "{X} שעות",

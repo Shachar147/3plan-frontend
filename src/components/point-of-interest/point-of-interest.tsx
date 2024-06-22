@@ -22,6 +22,12 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
     const isHebrew = eventStore.isHebrew;
     const feedId = `${item.source}-${item.name}-${item.url}`;
 
+    const category = extractCategory([
+        item.name ?? '',
+        item.description ?? '',
+    ].filter(Boolean))
+    item.category = item.category || category || "כללי";
+
     const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${item.location?.latitude},${item.location?.longitude}`;
 
     const handleFavoriteClick = () => {
@@ -64,12 +70,6 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
 
     const handleAddToPlan = () => {
         let categoryId = undefined;
-
-        const category = extractCategory([
-            item.name ?? '',
-            item.description ?? '',
-        ].filter(Boolean))
-        item.category = item.category || category || "כללי";
 
         if (item.category) {
             const existingCategory = eventStore.categories.filter((c) => c.title === item.category);

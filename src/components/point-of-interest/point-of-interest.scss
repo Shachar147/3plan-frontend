@@ -133,6 +133,14 @@ h2 {
     .top-pick-label {
       align-self: flex-end;
     }
+
+    .rate {
+      flex-direction: row-reverse;
+
+      span {
+        margin-inline: 8px;
+      }
+    }
   }
 }
 
