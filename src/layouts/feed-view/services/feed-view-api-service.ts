@@ -1,5 +1,16 @@
+import {apiGetPromise} from "../../../helpers/api";
+
 export default class FeedViewApiService {
-    getItems = () => {
+    getItems = async (destination: string, page: number) => {
+        const result = await apiGetPromise(this, `/suggestions/getyourguide?destination=${destination}&page=${page}`);
+        if (result) {
+            return result?.data;
+        }
+        return {
+            results: []
+        };
+    }
+    getItemsOld = async () => {
         return {
             "results": [
                 {
