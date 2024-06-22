@@ -10,11 +10,11 @@
   height: auto;
   max-height: max-content;
   position: relative;
+  gap: 16px;
 }
 
 .poi-left {
   flex: 1;
-  margin-right: 16px;
 }
 
 .carousel-wrapper {
@@ -28,7 +28,7 @@
   font-size: 24px;
   color: gray;
   cursor: pointer;
-  border: 1px solid gray;
+  border: 1px solid white;
   border-radius: 50%;
   background-color: white;
   padding: 4px;
@@ -36,8 +36,6 @@
 
 .heart-icon.filled {
   color: red;
-  background-color: red;
-  border-color: red;
 }
 
 .poi-right {
@@ -72,6 +70,10 @@ h2 {
   display: block;
 }
 
+.duration {
+  color: var(--gray);
+}
+
 .poi-details {
   display: flex;
   flex-direction: column;
@@ -93,13 +95,13 @@ h2 {
 .poi-footer {
   display: flex;
   align-items: center;
+  gap: 16px;
 }
 
 .more-info,
 .google-maps-link {
   color: #007bff;
   text-decoration: none;
-  margin-right: 16px;
 }
 
 .more-info:hover,
@@ -109,9 +111,64 @@ h2 {
 
 .source-logo img {
   width: 100px;
-  margin-right: 16px;
 }
 
 .button-custom {
   padding-inline: 16px;
+}
+
+.point-of-interest {
+  &.hebrew-mode {
+    flex-direction: row-reverse;
+    text-align: right;
+
+    .poi-details {
+      align-items: end;
+    }
+
+    .poi-footer {
+      flex-direction: row-reverse;
+    }
+
+    .top-pick-label {
+      align-self: flex-end;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .point-of-interest, .point-of-interest.hebrew-mode {
+    flex-direction: column;
+    align-items: stretch;
+
+    .poi-left {
+      order: 1;
+      margin-bottom: 10px;
+    }
+
+    .poi-right {
+      order: 2;
+      margin-bottom: 10px;
+    }
+
+    .poi-left, .poi-right {
+      margin-inline: 0;
+    }
+
+    .poi-footer-links {
+      width: 100%;
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 16px;
+      border-top: 1px solid var(--gray);
+      padding-top: 20px;
+      padding-bottom: 10px;
+    }
+
+    .poi-footer {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+  }
 }

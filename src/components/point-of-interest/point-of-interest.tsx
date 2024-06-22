@@ -13,11 +13,13 @@ import {EventStore} from "../../stores/events-store";
 
 interface PointOfInterestProps {
     item: any, // getyourguide result
-    eventStore: EventStore
+    eventStore: EventStore,
 }
+
 const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
     const [isFavorite, setIsFavorite] = useState(false);
 
+    const isHebrew = eventStore.isHebrew;
     const feedId = `${item.source}-${item.name}-${item.url}`;
 
     const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${item.location?.latitude},${item.location?.longitude}`;
@@ -49,11 +51,13 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
 
     const formatDuration = (duration) => {
         if (!duration) return null;
+
         const [hours, minutes] = duration.split(':').map(Number);
-        if (hours === 0 && minutes > 0) return `${minutes} minutes`;
-        if (hours > 0 && minutes === 0) return `${hours} hours`;
-        if (hours > 0 && minutes > 0) return `${hours} hours, ${minutes} minutes`;
-        return `${hours} hours`;
+        if (hours === 0 && minutes > 0) return TranslateService.translate(eventStore, 'X_MINUTES', { X: minutes });
+        if (hours === 1 && minutes === 0) return TranslateService.translate(eventStore, 'ONE_HOUR');
+        if (hours > 0 && minutes === 0) return TranslateService.translate(eventStore, 'X_HOURS', { X: hours});
+        if (hours > 0 && minutes > 0) return TranslateService.translate(eventStore, 'X_HOURS_Y_MINUTES', { X: hours, Y: minutes});
+        return TranslateService.translate(eventStore, 'X_HOURS');
     };
 
     const durationText = formatDuration(item.duration);
@@ -112,8 +116,9 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
 
     const alreadyInPlan = !![...eventStore.calendarEvents, ...eventStore.allSidebarEvents].find((i) => i.extra?.feedId == feedId);
 
+
     return (
-        <div className="point-of-interest">
+        <div className={`point-of-interest ${isHebrew ? 'hebrew-mode' : ''}`}>
             <div className="poi-left">
                 <div className="carousel-wrapper">
                     <Carousel showThumbs={false}>
@@ -123,31 +128,46 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                             </div>
                         ))}
                     </Carousel>
+                    {/*<FaHeart*/}
+                    {/*    className={`heart-icon ${isFavorite ? 'filled' : ''}`}*/}
+                    {/*    onClick={handleFavoriteClick}*/}
+                    {/*/>*/}
                 </div>
             </div>
             <div className="poi-right">
-                <FaHeart
-                    className={`heart-icon ${isFavorite ? 'filled' : ''}`}
-                    onClick={handleFavoriteClick}
-                />
-                {item.priority === 'high' && <div className="top-pick-label">Top Pick</div>}
+                {item.priority === 'high' && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
                 {item.category && <div className="category-label">{item.category}</div>}
                 <h2>{item.name}</h2>
                 <span className="description">{item.description}</span>
                 <div className="poi-details">
                     {durationText && <span className="duration">{durationText}</span>}
-                    {item.extra?.price && <span className="price">From {item.extra.price} ILS per person</span>}
+                    {item.extra?.price && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
+                        price: item.extra.price
+                    })}</span>}
                     <div className="rate">
                         {renderStars(item.rate.rating)}
-                        <span> {item.rate.rating.toFixed(1)}/5 ({item.rate.quantity} reviews)</span>
+                        <span>{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.REVIEWS', {
+                            rate: item.rate.rating.toFixed(1),
+                            rateMax: 5,
+                            quantity: item.rate.quantity
+                        })}
+                        </span>
                     </div>
+                    {eventStore.isMobile && (
+                        <div className="poi-footer-links">
+                            <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>
+                            {item.location && (
+                                <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
+                            )}
+                        </div>
+                    )}
                     <div className="poi-footer">
                         <div className="source-logo">
                             <img src="/images/getyourguide.png" alt="GetYourGuide" />
                         </div>
-                        <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">More Info</a>
-                        {item.location && (
-                            <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+                        {!eventStore.isMobile && <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>}
+                        {item.location && !eventStore.isMobile && (
+                            <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
                         )}
                         <Button
                             flavor={ButtonFlavor.primary}

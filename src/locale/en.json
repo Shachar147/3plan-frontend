@@ -765,5 +765,12 @@
 	"SOON": "Soon",
 	"SWITCH_TRIPS": "Quick Switch trips",
 	"POINT_OF_INTEREST.ADD_TO_PLAN": "Add to plan",
-	"POINT_OF_INTEREST.ADDED_TO_PLAN": "Added to plan!"
+	"POINT_OF_INTEREST.ADDED_TO_PLAN": "Added to plan!",
+	"POINT_OF_INTEREST.PRICE": "From {price}₪ per person",
+	"TOP_PICK": "TOP PICK",
+	"POINT_OF_INTEREST.REVIEWS": "{rate}/{rateMax} ({quantity} reviews)",
+	"X_MINUTES": "{X} minutes",
+	"ONE_HOUR":"One hour",
+	"X_HOURS": "{X} hours",
+	"X_HOURS_Y_MINUTES":"{X} hours, {Y} minutes"
 }
