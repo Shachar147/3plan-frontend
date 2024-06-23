@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { render } from 'react-dom';
-import MainPage from './layouts/main-page/main-page';
+import MainPage from './pages/main-page/main-page';
 import 'bootstrap/dist/css/bootstrap.css';
 import './stylesheets/fonts.css';
 import './stylesheets/colors.css';
@@ -10,26 +10,26 @@ import './stylesheets/rtl.scss';
 import './stylesheets/fontawesome/css/font-awesome.css';
 import './stylesheets/modals.scss';
 import './stylesheets/mobile.responsive.scss';
-import LandingPage from './layouts/landing-page/landing-page';
+import LandingPage from './pages/landing-page/landing-page';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import GettingStartedPage from './layouts/getting-started/getting-started-page';
-import MyTrips from './layouts/my-trips/my-trips';
+import GettingStartedPage from './pages/getting-started/getting-started-page';
+import MyTrips from './pages/my-trips/my-trips';
 import TranslateService from './services/translate-service';
 import { eventStoreContext } from './stores/events-store';
-import ThemeExample from './layouts/theme-example/theme-example';
+import ThemeExample from './pages/theme-example/theme-example';
 import { runInAction } from 'mobx';
 import { getCoordinatesRangeKey, isMatching, padTo2Digits } from './utils/utils';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { Observer } from 'mobx-react';
-import RegisterPage from './layouts/register-page/register-page';
-import LogoutPage from './layouts/logout-page/logout-page';
+import RegisterPage from './pages/register-page/register-page';
+import LogoutPage from './pages/logout-page/logout-page';
 import { getToken, getUser } from './helpers/auth';
 import axios from 'axios';
-import LoginPage from './layouts/login-page/login-page';
-import MobileLanguageSelectorPage from './layouts/language-selector/mobile-language-selector';
-import AdminDashboard from './admin/layouts/dashboard/admin-dashboard';
-import AdminManageDestinationItems from './admin/layouts/manage-destination/a-manage-destination';
-import AManageItem from './admin/layouts/manage-item/a-manage-item';
+import LoginPage from './pages/login-page/login-page';
+import MobileLanguageSelectorPage from './pages/language-selector/mobile-language-selector';
+import AdminDashboard from './admin/pages/dashboard/admin-dashboard';
+import AdminManageDestinationItems from './admin/pages/manage-destination/a-manage-destination';
+import AManageItem from './admin/pages/manage-item/a-manage-item';
 import {
 	ATTRACTIONS_KEYWORDS,
 	DESSERTS_KEYWORDS,
@@ -43,7 +43,7 @@ import {
 } from './components/map-container/map-container';
 import { BiEventsService } from './services/bi-events.service';
 import useIsAdmin from './custom-hooks/use-is-admin';
-import InviteLink from './layouts/invite-link/invite-link';
+import InviteLink from './pages/invite-link/invite-link';
 
 // Dubai
 // Namos / Twiggy?
