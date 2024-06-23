@@ -25,7 +25,7 @@ function FeedView({ eventStore }: FeedViewProps) {
     const [reachedEnd, setReachedEnd] = useState(false);
 
     const apiService = useMemo(() => new FeedViewApiService(), []);
-    const destination = "Dubai";
+    const destination = "Rome";
 
     useEffect(() => {
         const fetchCounts = async () => {
@@ -113,7 +113,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                     })}</span>}
                 </div>
                 {filteredItems.map((item, idx) => (
-                    <div className="flex-row width-100-percents align-items-center">
+                    <div className={getClasses("width-100-percents align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row")}>
                         {idx+1}
                         <PointOfInterest key={item.id} item={item} eventStore={eventStore} />
                     </div>
