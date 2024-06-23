@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef, useContext} from 'react';
-import TranslateService from "../../../services/translate-service";
-import {eventStoreContext} from "../../../stores/events-store";
-import {getClasses} from "../../../utils/utils";
+import TranslateService from "../../services/translate-service";
+import {eventStoreContext} from "../../stores/events-store";
+import {getClasses} from "../../utils/utils";
 
 interface LazyLoadComponentProps {
     fetchData: (page: number, setLoading: (bool) => void) => Promise<any>;

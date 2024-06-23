@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import './category-filter.scss';
-import TranslateService from "../../../services/translate-service";
-import {eventStoreContext} from "../../../stores/events-store";
+import TranslateService from "../../../../services/translate-service";
+import {eventStoreContext} from "../../../../stores/events-store";
 
 const CategoryFilter = ({ categories, onFilterChange }) => {
     const eventStore = useContext(eventStoreContext);

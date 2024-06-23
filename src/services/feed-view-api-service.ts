@@ -1,4 +1,4 @@
-import { apiGetPromise } from "../../../helpers/api";
+import { apiGetPromise } from "../helpers/api";
 
 export const allSources = [
     'Local',
