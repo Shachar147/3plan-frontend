@@ -778,5 +778,6 @@
 	"NO_MORE_ITEMS": "No more items",
 	"DESTINATION_SELECTOR.POPULAR_DESTINATION": "Popular Destination",
 	"DESTINATION_SELECTOR.PLACEHOLDER": "Select countries or cities...",
-	"GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO": "Where are you going to?"
+	"GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO": "Where are you going to?",
+	"FEED_VIEW.EXPLORING": "Exploring: {destinations}"
 }

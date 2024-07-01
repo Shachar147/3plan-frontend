@@ -7,9 +7,10 @@ interface LazyLoadComponentProps {
     fetchData: (page: number, setLoading: (bool) => void) => Promise<any>;
     children: React.ReactNode;
     isLoading: boolean;
+    className?: string;
 }
 
-const LazyLoadComponent = ({ children, fetchData, isLoading }: LazyLoadComponentProps) => {
+const LazyLoadComponent = ({ children, fetchData, isLoading, className }: LazyLoadComponentProps) => {
     const eventStore = useContext(eventStoreContext);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(isLoading);
@@ -44,7 +45,7 @@ const LazyLoadComponent = ({ children, fetchData, isLoading }: LazyLoadComponent
     }, [loading]);
 
     return (
-        <div>
+        <div className={className}>
             {children}
             <div ref={loader} className={getClasses("width-100-percents text-align-center", eventStore.isHebrew && 'direction-rtl')}>
                 {loading && <span>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}

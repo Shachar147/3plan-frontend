@@ -18,6 +18,7 @@ export interface Trip {
 	isHidden?: boolean;
 	id?: number; // for my trips page
 	lastUpdateAt?: string;
+	destinations?: string[];
 }
 
 export interface SharedTrip extends Trip {
