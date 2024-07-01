@@ -918,9 +918,32 @@
 		}
 	}
 
-	ordered-indication,
+	.ordered-indication,
 	.task-indication {
 		font-size: 18px !important;
+	}
+
+	.mobile-footer-navigator-option-feed {
+		order: 1;
+	}
+	.mobile-footer-navigator-option-sidebar {
+		order: 2;
+	}
+	.mobile-footer-navigator-option-map {
+		order: 3;
+	}
+	.mobile-footer-navigator-option-calendar {
+		order: 4;
+	}
+	.mobile-footer-navigator-option-list {
+		order: 5;
+	}
+
+	.poi-left {
+		width: 100%;
+		height: 100px;
+		min-width: 100%;
+		min-height: 100px;
 	}
 }
 

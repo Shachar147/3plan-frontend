@@ -239,6 +239,10 @@ body {
 	padding-inline: 15px;
 }
 
+.padding-inline-16 {
+	padding-inline: 16px;
+}
+
 .padding-inline-20 {
 	padding-inline: 20px;
 }
@@ -1073,6 +1077,10 @@ input[type='text'] {
 
 .width-max-content {
 	width: max-content;
+}
+
+.min-width-max-content {
+	min-width: max-content;
 }
 
 .z-index-99999999 {

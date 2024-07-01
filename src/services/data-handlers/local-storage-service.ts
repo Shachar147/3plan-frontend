@@ -28,6 +28,7 @@ import DataServices, {
 	tripNameToLSTripName,
 } from './data-handler-base';
 import { TripDataSource, ViewMode } from '../../utils/enums';
+import {apiPut} from "../../helpers/api";
 
 export class LocalStorageService implements BaseDataHandler {
 	CONTINUE_AS_GUEST_MODAL_LS_KEY = 'triplan-hide-continue-as-guest-modal';
@@ -207,6 +208,11 @@ export class LocalStorageService implements BaseDataHandler {
 	getIsLocked(tripName?: string) {
 		const key = tripName ? [LS_IS_TRIP_LOCKED, tripName].join('-') : LS_IS_TRIP_LOCKED;
 		return localStorage.getItem(key) == '1';
+	}
+
+	async setDestinations(destinations: string[], tripName: string) {
+		// unsupported
+		// todo complete: implement.
 	}
 
 	// --- SET ------------------------------------------------------------------------------

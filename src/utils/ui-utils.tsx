@@ -283,6 +283,12 @@ export const getViewSelectorOptions = (
 			icon: <i className="fa fa-list black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true" />,
 		},
+		{
+			key: ViewMode.feed,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.FEED_VIEW'),
+			icon: <i className="fa fa-search black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-search selected-color" aria-hidden="true" />,
+		},
 	];
 
 	if (withMobileViews) {

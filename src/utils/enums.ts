@@ -30,6 +30,8 @@ export enum ViewMode {
 	calendar = 'calendar',
 	map = 'map',
 
+	feed = 'feed',
+
 	// for mobile:
 	sidebar = 'sidebar',
 }

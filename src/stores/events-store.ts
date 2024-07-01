@@ -77,6 +77,7 @@ export class EventStore {
 	@observable calendarEvents: CalendarEvent[] = []; // EventInput[]
 	@observable allEvents: AllEventsEvent[] = []; // SidebarEvent[];
 	@observable calendarLocalCode: LocaleCode = defaultLocalCode;
+	@observable destinations?: string[]; // NEW!
 	@observable searchValue = '';
 	@observable sidebarSearchValue = '';
 	@observable viewMode = DataServices.LocalStorageService.getLastViewMode(ViewMode.map); // ViewMode.combined
@@ -617,6 +618,11 @@ export class EventStore {
 	@computed
 	get isMapView() {
 		return this.isMobile ? this.mobileViewMode === ViewMode.map : this.viewMode === ViewMode.map;
+	}
+
+	@computed
+	get isFeedView() {
+		return this.isMobile ? this.mobileViewMode === ViewMode.feed : this.viewMode === ViewMode.feed;
 	}
 
 	@computed
@@ -1254,6 +1260,7 @@ export class EventStore {
 		this.allEvents = allEvents;
 		this.categories = categories;
 		this.isTripLocked = !!isLocked;
+		this.destinations = tripData.destinations;
 
 		if ('canRead' in Object.keys(tripData) || 'canWrite' in Object.keys(tripData)) {
 			// @ts-ignore

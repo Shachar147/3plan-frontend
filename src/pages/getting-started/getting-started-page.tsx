@@ -18,6 +18,7 @@ import { validateDateRange } from '../../utils/time-utils';
 import { DEFAULT_VIEW_MODE_FOR_NEW_TRIPS, TRIP_MAX_SIZE_DAYS } from '../../utils/consts';
 import LogHistoryService from '../../services/data-handlers/log-history-service';
 import { TripActions } from '../../utils/interfaces';
+import DestinationSelector from "../../components/destination-selector/destination-selector";
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -29,6 +30,7 @@ const GettingStartedPage = () => {
 	useHandleWindowResize();
 
 	const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
+	const [selectedDestinations, setSelectedDestinations] = useState([]);
 	const [tripName, setTripName] = useState<string>('');
 
 	useEffect(() => {
@@ -75,7 +77,7 @@ const GettingStartedPage = () => {
 					border: 0,
 				}}
 			>
-				<div className="main-font">
+				<div className={'main-font font-size-20'}>
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
 				</div>
 				<div className={'trip-name-line'}>
@@ -102,6 +104,14 @@ const GettingStartedPage = () => {
 						className={getClasses(errors['title'] && 'red-border')}
 					/>
 				</div>
+
+				<div className={'main-font font-size-20'}>
+					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO')}
+				</div>
+				<div className={'custom-dates-line flex-row align-items-center'}>
+					<DestinationSelector onChange={setSelectedDestinations} />
+				</div>
+
 				<div className={'main-font font-size-20'}>
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
 				</div>
@@ -203,6 +213,7 @@ const GettingStartedPage = () => {
 				sidebarEvents: defaultEvents,
 				calendarEvents: defaultCalendarEvents,
 				categories: getDefaultCategories(eventStore),
+				destinations: selectedDestinations
 			};
 
 			// backup

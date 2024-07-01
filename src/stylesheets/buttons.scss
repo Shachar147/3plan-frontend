@@ -26,6 +26,7 @@ button:disabled {
 	opacity: 0.4;
 }
 
+.primary-success-button,
 .primary-button {
 	background-color: var(--blue) !important;
 	color: white !important;
@@ -52,7 +53,12 @@ button:disabled {
 	}
 }
 
+.primary-success-button {
+	background-color: var(--success) !important;
+}
+
 .swal2-confirm:not(:disabled):hover,
+.primary-success-button:not(:disabled):hover,
 .primary-button:not(:disabled):hover {
 	background-color: var(--dark-gray) !important;
 }
