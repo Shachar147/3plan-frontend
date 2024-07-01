@@ -36,6 +36,8 @@ const popularCities = [
     { city: 'Warsaw', countryCode: 'PL', countryLabel: 'Poland' },
     { city: 'Brussels', countryCode: 'BE', countryLabel: 'Belgium' },
     { city: 'Zurich', countryCode: 'CH', countryLabel: 'Switzerland' },
+    { city: 'Ibiza', countryCode: 'ES', countryLabel: 'Spain' },
+    { city: 'Palma De Mallorca', countryCode: 'ES', countryLabel: 'Spain' },
     // Additional popular cities in Thailand
     { city: 'Bangkok', countryCode: 'TH', countryLabel: 'Thailand' },
     { city: 'Phuket', countryCode: 'TH', countryLabel: 'Thailand' },
