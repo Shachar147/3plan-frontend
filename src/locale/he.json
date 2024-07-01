@@ -866,5 +866,8 @@
 	"ONE_HOUR":"שעה אחת",
 	"X_HOURS": "{X} שעות",
 	"X_HOURS_Y_MINUTES":"{X} שעות, {Y} דקות",
-	"NO_MORE_ITEMS": "אין פריטים נוספים"
+	"NO_MORE_ITEMS": "אין פריטים נוספים",
+	"DESTINATION_SELECTOR.POPULAR_DESTINATION": "יעד פופולרי",
+	"DESTINATION_SELECTOR.PLACEHOLDER": "בחרו ערים ו/או מדינות...",
+	"GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO": "לאן אתם מתכננים לטוס?"
 }
