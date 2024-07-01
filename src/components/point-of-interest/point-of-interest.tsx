@@ -181,7 +181,7 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                             onClick={handleAddToPlan}
                             icon={alreadyInPlan ? "fa fa-check" : undefined}
                             text={alreadyInPlan ? TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADDED_TO_PLAN') : TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADD_TO_PLAN')}
-                            disabled={alreadyInPlan}
+                            disabled={alreadyInPlan || eventStore.isTripLocked || !eventStore.canWrite}
                         />
                     </div>
                 </div>

@@ -26,7 +26,7 @@ function SelectDestinationPlaceholder(){
             <DestinationSelector onChange={setSelectedDestinations} />
             <Button
                 flavor={ButtonFlavor.primary}
-                disabled={!selectedDestinations?.length}
+                disabled={!selectedDestinations?.length || eventStore.isTripLocked || !eventStore.canWrite}
                 text={TranslateService.translate(eventStore, 'UPDATE_TRIP')}
                 onClick={() => eventStore.dataService.setDestinations(selectedDestinations, eventStore.tripName).then(() => window.location.reload())}
             />

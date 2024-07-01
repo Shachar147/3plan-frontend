@@ -538,6 +538,7 @@ function MainPage(props: MainPageProps) {
 					<a
 						title={viewOption.name}
 						onClick={() => eventStore.setMobileViewMode(viewOption.key as ViewMode)}
+						className={`mobile-footer-navigator-option-${viewOption.key}`}
 						key={`mobile-footer-navigation-${viewOption.name}`}
 					>
 						{eventStore.mobileViewMode === viewOption.key ? viewOption.iconActive : viewOption.icon}
