@@ -21,7 +21,7 @@ function SelectDestinationPlaceholder(){
     const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
 
     return (
-        <div className={getClasses("width-100-percents flex-align-items-center justify-content-center flex-column gap-8", eventStore.getCurrentDirection() === 'rtl' && 'direction-rtl')}>
+        <div className={getClasses("width-100-percents text-align-center flex-align-items-center justify-content-center flex-column gap-8", eventStore.getCurrentDirection() === 'rtl' && 'direction-rtl')}>
             {TranslateService.translate(eventStore, 'FEED_VIEW.FEED_IS_EMPTY_NO_DESTINATIONS.SELECT')}
             <DestinationSelector onChange={setSelectedDestinations} />
             <Button
