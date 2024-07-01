@@ -36,11 +36,26 @@ const popularCities = [
     { city: 'Warsaw', countryCode: 'PL', countryLabel: 'Poland' },
     { city: 'Brussels', countryCode: 'BE', countryLabel: 'Belgium' },
     { city: 'Zurich', countryCode: 'CH', countryLabel: 'Switzerland' },
+    // Additional popular cities in Thailand
+    { city: 'Bangkok', countryCode: 'TH', countryLabel: 'Thailand' },
+    { city: 'Phuket', countryCode: 'TH', countryLabel: 'Thailand' },
+    { city: 'Chiang Mai', countryCode: 'TH', countryLabel: 'Thailand' },
+    { city: 'Ko Samui', countryCode: 'TH', countryLabel: 'Thailand' },
+    { city: 'Ko Pha Ngan', countryCode: 'TH', countryLabel: 'Thailand' },
+    { city: 'Krabi', countryCode: 'TH', countryLabel: 'Thailand' },
+    // Additional popular places in Mexico
+    { city: 'Tulum', countryCode: 'MX', countryLabel: 'Mexico' },
+    { city: 'Bacalar', countryCode: 'MX', countryLabel: 'Mexico' },
+    { city: 'Playa del Carmen', countryCode: 'MX', countryLabel: 'Mexico' },
+    { city: 'Cancun', countryCode: 'MX', countryLabel: 'Mexico' },
+    { city: 'Isla Mujeres', countryCode: 'MX', countryLabel: 'Mexico' },
 ];
 
 const DestinationSelector: React.FC = () => {
     const [selectedOptions, setSelectedOptions] = useState<MultiValue<OptionType>>([]);
     const [options, setOptions] = useState<OptionType[]>([]);
+
+    console.log(selectedOptions);
 
     const eventStore = useContext(eventStoreContext);
 
@@ -61,6 +76,20 @@ const DestinationSelector: React.FC = () => {
         });
 
         countries.forEach((country) => {
+
+            // Check if popular city already exists in options
+            const existingCity = allOptions.find(opt => opt.label === `${country.label}`);
+
+            if (!existingCity) {
+                allOptions.push({
+                    value: `${country.label}`,
+                    label: `${country.label}`,
+                    type: 'country',
+                    flagClass: `fi fi-${country.value.toLowerCase()}`,
+                    isPopular: popularCities.some(pc => pc.countryLabel === country.label),
+                });
+            }
+
             const cities = getCities(country.label);
 
             // Sort cities based on popularity (popularCities first)
