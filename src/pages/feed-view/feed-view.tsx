@@ -1,18 +1,38 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, {useState, useEffect, useMemo, useContext} from "react";
 import PointOfInterest from "../../components/point-of-interest/point-of-interest";
-import { EventStore } from "../../stores/events-store";
+import {EventStore, eventStoreContext} from "../../stores/events-store";
 import FeedViewApiService, { allSources } from "./services/feed-view-api-service";
 import CategoryFilter from "./components/category-filter";
 import { getClasses } from "../../utils/utils";
 import TranslateService from "../../services/translate-service";
 import './feed-view.scss';
 import LazyLoadComponent from "./components/lazy-load-component";
+import DestinationSelector from "../../components/destination-selector/destination-selector";
+import Button, {ButtonFlavor} from "../../components/common/button/button";
 
 interface FeedViewProps {
     eventStore: EventStore;
 }
 
 const cacheThreshold = 300;
+
+function SelectDestinationPlaceholder(){
+    const eventStore = useContext(eventStoreContext);
+    const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
+
+    return (
+        <div className={getClasses("width-100-percents flex-align-items-center justify-content-center flex-column gap-8", eventStore.getCurrentDirection() === 'rtl' && 'direction-rtl')}>
+            {TranslateService.translate(eventStore, 'FEED_VIEW.FEED_IS_EMPTY_NO_DESTINATIONS.SELECT')}
+            <DestinationSelector onChange={setSelectedDestinations} />
+            <Button
+                flavor={ButtonFlavor.primary}
+                disabled={!selectedDestinations?.length}
+                text={TranslateService.translate(eventStore, 'UPDATE_TRIP')}
+                onClick={() => eventStore.dataService.setDestinations(selectedDestinations, eventStore.tripName).then(() => window.location.reload())}
+            />
+        </div>
+    )
+}
 
 function FeedView({ eventStore }: FeedViewProps) {
     const [items, setItems] = useState([]);
@@ -28,11 +48,11 @@ function FeedView({ eventStore }: FeedViewProps) {
     const [allReachedEnd, setAllReachedEnd] = useState<boolean>(false);
 
     const apiService = useMemo(() => new FeedViewApiService(), []);
+    const haveNoDestinations = destinations == "[]" || destinations?.[0] == "[]";
 
     useEffect(() => {
         const fetchCounts = async () => {
-            debugger;
-            if (destinations == "[]" || destinations?.[0] == "[]") {
+            if (haveNoDestinations) {
                 setIsLoading(false);
                 return;
             }
@@ -162,15 +182,15 @@ function FeedView({ eventStore }: FeedViewProps) {
     }
 
     return (
-        isLoading ? <span>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span> : <LazyLoadComponent className="width-100-percents" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
+        isLoading && !haveNoDestinations ? <span>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span> : <LazyLoadComponent className="width-100-percents" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
             <div className="flex-column gap-4">
-                <div className={getClasses("feed-view-filter-bar flex-row justify-content-space-between", eventStore.isHebrew && 'hebrew-mode')}>
+                {!haveNoDestinations && <div className={getClasses("feed-view-filter-bar flex-row justify-content-space-between", eventStore.isHebrew && 'hebrew-mode')}>
                     <CategoryFilter
                         categories={categories}
                         onFilterChange={(category) => handleCategoryChange(category, items)}
                     />
                     {renderShowingResultsText()}
-                </div>
+                </div>}
                 {filteredItems.map((item, idx) => (
                     <div key={item.id} className={getClasses("width-100-percents align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row")}>
                         {idx+1}
@@ -182,6 +202,7 @@ function FeedView({ eventStore }: FeedViewProps) {
                         {TranslateService.translate(eventStore, 'NO_MORE_ITEMS')}
                     </div>
                 )}
+                {haveNoDestinations && <SelectDestinationPlaceholder />}
             </div>
         </LazyLoadComponent>
     );

@@ -19,6 +19,10 @@
 	--triplan-orange: #ffb752;
 }
 
+.green-background {
+	background-color: var(--success);
+}
+
 .triplan-orange-color {
 	color: var(--triplan-orange);
 }

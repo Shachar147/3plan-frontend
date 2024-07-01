@@ -189,6 +189,10 @@ export class DBService implements BaseDataHandler {
 		return await apiPut(`/trip/name/${tripName}`, { name: newTripName });
 	}
 
+	async setDestinations(destinations: string[], tripName: string) {
+		return await apiPut(`/trip/name/${tripName}`, { destinations });
+	}
+
 	// --------------------------------------------------------------------------------------
 	async deleteTripByName(
 		tripName: string,

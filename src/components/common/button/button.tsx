@@ -3,6 +3,7 @@ import { getClasses } from '../../../utils/utils';
 
 export enum ButtonFlavor {
 	primary = 'primary',
+	success = 'primary-success',
 	secondary = 'secondary',
 	link = 'link',
 	'movable-link' = 'movable-link',
