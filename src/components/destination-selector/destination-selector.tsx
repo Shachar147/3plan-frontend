@@ -51,11 +51,13 @@ const popularCities = [
     { city: 'Isla Mujeres', countryCode: 'MX', countryLabel: 'Mexico' },
 ];
 
-const DestinationSelector: React.FC = () => {
+interface DestinationSelectorProps {
+    onChange: (selectedValues: string[]) => void;
+}
+
+function DestinationSelector(props: DestinationSelectorProps) {
     const [selectedOptions, setSelectedOptions] = useState<MultiValue<OptionType>>([]);
     const [options, setOptions] = useState<OptionType[]>([]);
-
-    console.log(selectedOptions);
 
     const eventStore = useContext(eventStoreContext);
 
@@ -67,7 +69,7 @@ const DestinationSelector: React.FC = () => {
         // Add popular cities to options
         popularCities.forEach(({ city, countryCode, countryLabel }) => {
             allOptions.push({
-                value: `${city}, ${countryLabel}`,
+                value: city, // `${city}, ${countryLabel}`,
                 label: `${city}, ${countryLabel}`,
                 type: 'city',
                 flagClass: `fi fi-${countryCode.toLowerCase()}`,
@@ -82,8 +84,8 @@ const DestinationSelector: React.FC = () => {
 
             if (!existingCity) {
                 allOptions.push({
-                    value: `${country.label}`,
-                    label: `${country.label}`,
+                    value: country.label,
+                    label: country.label,
                     type: 'country',
                     flagClass: `fi fi-${country.value.toLowerCase()}`,
                     isPopular: popularCities.some(pc => pc.countryLabel === country.label),
@@ -105,7 +107,7 @@ const DestinationSelector: React.FC = () => {
 
                 if (!existingCity) {
                     allOptions.push({
-                        value: `${city}, ${country.label}`,
+                        value: city, // `${city}, ${country.label}`,
                         label: `${city}, ${country.label}`,
                         type: 'city',
                         flagClass: `fi fi-${country.value.toLowerCase()}`,
@@ -148,6 +150,7 @@ const DestinationSelector: React.FC = () => {
 
     const handleChange = (selected: MultiValue<OptionType>) => {
         setSelectedOptions(selected || []);
+        props.onChange((selected || []).map((i) => i.value));
     };
 
     return (
@@ -181,6 +184,6 @@ const DestinationSelector: React.FC = () => {
             </div>
         </div>
     );
-};
+}
 
 export default DestinationSelector;

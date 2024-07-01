@@ -25,6 +25,7 @@ export interface upsertTripProps {
 	sidebarEvents?: Record<number, any[]>;
 	allEvents?: any[];
 	calendarLocale?: LocaleCode;
+	destinations?: string[];
 }
 
 export const useInviteLinkLSKey = 'triplan-invite-link';
@@ -269,7 +270,7 @@ export class DBService implements BaseDataHandler {
 		errorCallback?: (error: any, error_retry: number) => void,
 		finallyCallback?: () => void
 	) {
-		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale } = data;
+		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale, destinations } = data;
 
 		return await apiPost('/trip', {
 			name,
@@ -279,6 +280,7 @@ export class DBService implements BaseDataHandler {
 			sidebarEvents,
 			allEvents,
 			calendarLocale,
+			destinations
 		})
 			.then((res: any) => {
 				if (successCallback) {

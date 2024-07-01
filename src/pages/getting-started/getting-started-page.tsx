@@ -30,6 +30,7 @@ const GettingStartedPage = () => {
 	useHandleWindowResize();
 
 	const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
+	const [selectedDestinations, setSelectedDestinations] = useState([]);
 	const [tripName, setTripName] = useState<string>('');
 
 	useEffect(() => {
@@ -108,7 +109,7 @@ const GettingStartedPage = () => {
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO')}
 				</div>
 				<div className={'custom-dates-line flex-row align-items-center'}>
-					<DestinationSelector />
+					<DestinationSelector onChange={setSelectedDestinations} />
 				</div>
 
 				<div className={'main-font font-size-20'}>
@@ -212,6 +213,7 @@ const GettingStartedPage = () => {
 				sidebarEvents: defaultEvents,
 				calendarEvents: defaultCalendarEvents,
 				categories: getDefaultCategories(eventStore),
+				destinations: selectedDestinations
 			};
 
 			// backup
