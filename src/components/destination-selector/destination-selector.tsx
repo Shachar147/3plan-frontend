@@ -8,6 +8,7 @@ import './destination-selector.scss';
 import { OptionType } from './types';
 import TranslateService from "../../services/translate-service";
 import {eventStoreContext} from "../../stores/events-store";
+import countriesAndCities from "./countries-and-cities";
 
 // List of popular cities with corresponding country codes
 const popularCities = [
@@ -65,7 +66,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
 
     // Function to fetch cities for each country and set options
     const fetchCitiesAndSetOptions = () => {
-        const countries = countryList().getData();
+        // const countries = countryList().getData();
         let allOptions: OptionType[] = [];
 
         // Add popular cities to options
@@ -79,49 +80,53 @@ function DestinationSelector(props: DestinationSelectorProps) {
             });
         });
 
-        countries.forEach((country) => {
+        allOptions.push(...countriesAndCities)
 
-            // Check if popular city already exists in options
-            const existingCity = allOptions.find(opt => opt.label === `${country.label}`);
-
-            if (!existingCity) {
-                allOptions.push({
-                    value: country.label,
-                    label: country.label,
-                    type: 'country',
-                    flagClass: `fi fi-${country.value.toLowerCase()}`,
-                    isPopular: popularCities.some(pc => pc.countryLabel === country.label),
-                });
-            }
-
-            const cities = getCities(country.label);
-
-            // Sort cities based on popularity (popularCities first)
-            cities.sort((a, b) => {
-                if (popularCities.some(pc => pc.city === a)) return -1;
-                if (popularCities.some(pc => pc.city === b)) return 1;
-                return 0;
-            });
-
-            cities.forEach((city) => {
-                // Check if popular city already exists in options
-                const existingCity = allOptions.find(opt => opt.label === `${city}, ${country.label}`);
-
-                if (!existingCity) {
-                    allOptions.push({
-                        value: city, // `${city}, ${country.label}`,
-                        label: `${city}, ${country.label}`,
-                        type: 'city',
-                        flagClass: `fi fi-${country.value.toLowerCase()}`,
-                        isPopular: popularCities.some(pc => pc.city === city),
-                    });
-                }
-            });
-        });
+        // countries.forEach((country) => {
+        //
+        //     // Check if popular city already exists in options
+        //     const existingCity = allOptions.find(opt => opt.label === `${country.label}`);
+        //
+        //     if (!existingCity) {
+        //         allOptions.push({
+        //             value: country.label,
+        //             label: country.label,
+        //             type: 'country',
+        //             flagClass: `fi fi-${country.value.toLowerCase()}`,
+        //             isPopular: popularCities.some(pc => pc.countryLabel === country.label),
+        //         });
+        //     }
+        //
+        //     const cities = getCities(country.label);
+        //
+        //     // Sort cities based on popularity (popularCities first)
+        //     cities.sort((a, b) => {
+        //         if (popularCities.some(pc => pc.city === a)) return -1;
+        //         if (popularCities.some(pc => pc.city === b)) return 1;
+        //         return 0;
+        //     });
+        //
+        //     cities.forEach((city) => {
+        //         // Check if popular city already exists in options
+        //         const existingCity = allOptions.find(opt => opt.label === `${city}, ${country.label}`);
+        //
+        //         if (!existingCity) {
+        //             allOptions.push({
+        //                 value: city, // `${city}, ${country.label}`,
+        //                 label: `${city}, ${country.label}`,
+        //                 type: 'city',
+        //                 flagClass: `fi fi-${country.value.toLowerCase()}`,
+        //                 isPopular: popularCities.some(pc => pc.city === city),
+        //             });
+        //         }
+        //     });
+        // });
         return allOptions;
     };
 
     const allOptions = useMemo(() => fetchCitiesAndSetOptions(), []);
+
+    debugger;
 
     // Fetch cities and set options on component mount
     useEffect(() => {
