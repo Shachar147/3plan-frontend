@@ -126,8 +126,6 @@ function DestinationSelector(props: DestinationSelectorProps) {
 
     const allOptions = useMemo(() => fetchCitiesAndSetOptions(), []);
 
-    debugger;
-
     // Fetch cities and set options on component mount
     useEffect(() => {
 

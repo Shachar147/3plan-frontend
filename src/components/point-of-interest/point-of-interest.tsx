@@ -119,6 +119,10 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
 
     const alreadyInPlan = !![...eventStore.calendarEvents, ...eventStore.allSidebarEvents].find((i) => i.extra?.feedId == feedId);
 
+    let rating = item.rate.rating.toFixed(1);
+    if (rating.toString().endsWith(".0")){
+        rating = item.rate.rating.toFixed(0);
+    }
 
     return (
         <div className={`point-of-interest ${isHebrew ? 'hebrew-mode' : ''}`}>
@@ -151,7 +155,7 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                     {!!item.rate && !!item.rate.rating && <div className="rate">
                         {renderStars(item.rate.rating)}
                         <span>{TranslateService.translate(eventStore, item.rate.quantity ? 'POINT_OF_INTEREST.REVIEWS' : 'POINT_OF_INTEREST.REVIEWS.SHORT', {
-                            rate: item.rate.rating.toFixed(1),
+                            rate: rating,
                             rateMax: 5,
                             quantity: item.rate.quantity
                         })}
