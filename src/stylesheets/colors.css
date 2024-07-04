@@ -39,6 +39,10 @@
 	color: var(--pink);
 }
 
+.white-color {
+	color: white;
+}
+
 .black-background {
 	background: var(--black) !important;
 }

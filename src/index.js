@@ -44,6 +44,7 @@ import {
 import { BiEventsService } from './services/bi-events.service';
 import useIsAdmin from './custom-hooks/use-is-admin';
 import InviteLink from './pages/invite-link/invite-link';
+import MainPageV2 from "./pages/v2/main-page/main-page";
 
 // Dubai
 // Namos / Twiggy?
@@ -836,6 +837,7 @@ const RootRouter = () => {
 					{/*<Route exact path='/' element={<PrivateRoute/>}>*/}
 					{/*    <Route exact path='/' element={<LandingPage/>}/>*/}
 					{/*<Route exact path="/loginold" element={getUser() == undefined ? <LoginPageOld /> : <LandingPage />} />*/}
+					<Route exact path="/test" element={<MainPageV2 />} />
 					<Route exact path="/" element={getUser() == undefined ? <LoginPage /> : <LandingPage />} />
 					<Route exact path="/home" element={<LandingPage />} />
 					<Route path="/login" element={<LoginPage />} />
