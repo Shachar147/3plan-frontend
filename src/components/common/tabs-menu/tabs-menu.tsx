@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 export interface Tab {
 	name: string;
+	icon?: string;
 	render: () => React.ReactNode | null;
 }
 export interface TabMenuProps {
@@ -16,11 +17,13 @@ export default function TabMenu(props: TabMenuProps){
 	return (
 		<div key={activeTab}>
 			<div className="ui top attached tabular menu">
-				{tabs.map((tab) => <div className={getClasses(activeTab == tab.name && 'active', "item", activeTab !== tab.name && 'cursor-pointer')} onClick={() => {
+				{tabs.map((tab) => <div className={getClasses(activeTab == tab.name && 'active', "item", activeTab !== tab.name && 'cursor-pointer', 'flex-row gap-8 align-items-center')} onClick={() => {
 					if (activeTab !== tab.name) {
 						setActiveTab(tab.name);
 					}
-				}} >{tab.name}</div>)}
+				}} >
+					{tab.icon && <i className={`fa ${tab.icon}`} aria-hidden="true" />}
+					{tab.name}</div>)}
 			</div>
 			<div className="ui bottom attached active tab segment">
 				{tabs.find((t) => t.name === activeTab)?.render()}

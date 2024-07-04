@@ -11,13 +11,14 @@ interface TriplanSearchProps {
 	value?: string;
 	onChange?: (e: string) => void;
 	placeholder?: string;
+	className?: string;
 }
 
 function TriplanSearch(props: TriplanSearchProps) {
 	const { isHidden = false, value, onChange } = props;
 	const eventStore = useContext(eventStoreContext);
 	return (
-		<div className={getClasses('search-container', isHidden && 'hidden')}>
+		<div className={getClasses('search-container', isHidden && 'hidden', props.className)}>
 			<TextInput
 				modalValueName={'fc-search'}
 				type={'text'}

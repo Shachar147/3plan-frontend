@@ -4,18 +4,20 @@ import Button, {ButtonFlavor} from "../../../../../components/common/button/butt
 import React, {useContext} from "react";
 import {observer} from "mobx-react";
 import './triplan-header-banner.scss';
-import TranslateService from "../../../../../services/translate-service";
-import TabMenu from "../../../../../components/common/tabs-menu/tabs-menu";
 import {eventStoreContext} from "../../../../../stores/events-store";
+import TranslateService from "../../../../../services/translate-service";
+import ReactModalService from "../../../../../services/react-modal-service";
 
 function TriplanHeaderLine(){
+    const eventStore = useContext(eventStoreContext);
+
     const baseClass = "triplan-header-banner-header-line";
     return (
         <div className={baseClass}>
             <div className={`${baseClass}-top-shadow`} />
             <div className={`${baseClass}-left-side`}>
-                <TriplanLogo onClick={() => alert("here")} white height={60} />
-                <TriplanSearch />
+                {!eventStore.isMobile && <TriplanLogo onClick={() => alert("here")} white height={60} />}
+                <TriplanSearch className={`${baseClass}-search`} />
             </div>
             <div className={`${baseClass}-right-side`}>
                 <Button
@@ -24,7 +26,7 @@ function TriplanHeaderLine(){
                     onClick={() => {
                         alert("wishlist");
                     }}
-                    flavor={ButtonFlavor['movable-link']}
+                    flavor={ButtonFlavor.link}
                 />
                 <Button
                     icon="fa-plane"
@@ -32,7 +34,7 @@ function TriplanHeaderLine(){
                     onClick={() => {
                         alert("plan");
                     }}
-                    flavor={ButtonFlavor['movable-link']}
+                    flavor={ButtonFlavor.link}
                 />
                 <Button
                     icon="fa-user"
@@ -40,36 +42,19 @@ function TriplanHeaderLine(){
                     onClick={() => {
                         alert("profile");
                     }}
-                    flavor={ButtonFlavor['movable-link']}
+                    flavor={ButtonFlavor.link}
+                />
+                <Button
+                    icon="fa-globe"
+                    text={TranslateService.translate(eventStore, 'LANGUAGE')}
+                    onClick={() => {
+                        ReactModalService.openChangeLanguageModal(eventStore);
+                    }}
+                    flavor={ButtonFlavor.link}
                 />
             </div>
         </div>
     );
-}
-
-function TriplanHeaderFooter(){
-    const eventStore = useContext(eventStoreContext);
-    const isShort = eventStore.isMobile ? '.SHORT' : '';
-    return (
-        <div className="triplan-header-banner-footer">
-            <TabMenu
-                tabs={[
-                    {
-                        name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.TRIP_STATS.TITLE${isShort}`),
-                        render: () => "trips",
-                    },
-                    {
-                        name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.USER_STATS.TITLE${isShort}`),
-                        render: () => "users",
-                    },
-                    {
-                        name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.TINDER_WIDGET.TITLE${isShort}`),
-                        render: () => "tinder",
-                    },
-                ]}
-            />
-        </div>
-    )
 }
 
 function TriplanHeaderBanner(){
@@ -78,8 +63,10 @@ function TriplanHeaderBanner(){
         <div className={baseClass}>
             <div className={`${baseClass}-shadow`} />
             <TriplanHeaderLine />
-
-            <TriplanHeaderFooter />
+            <div className={`${baseClass}-slogan`}>
+                <span>Trips planning</span>
+                <span>was never easier</span>
+            </div>
             <div className={`${baseClass}-bottom-shadow`} />
         </div>
     );
