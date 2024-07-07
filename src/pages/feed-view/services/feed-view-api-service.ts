@@ -9,8 +9,8 @@ export const allSources = [
 
 export const SourceToUrl = (destination: string, page: number): Record<string, string> => {
     const base: Record<string, string> = {
-        // 'Local': `/poi/by-destination?destination=${destination}&page=${page}`,
-        // 'GetYourGuide': `/poi/external-source/getyourguide?destination=${destination}&page=${page}`,
+        'Local': `/poi/by-destination?destination=${destination}&page=${page}`,
+        'GetYourGuide': `/poi/external-source/getyourguide?destination=${destination}&page=${page}`,
         'TripAdvisor': `/poi/external-source/tripadvisor?destination=${destination}&page=${page}`,
     };
     if (destination === "Dubai"){
