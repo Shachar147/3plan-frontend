@@ -872,5 +872,11 @@
 	"GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO": "לאן אתם מתכננים לטוס?",
 	"FEED_VIEW.EXPLORING": "מציג תוצאות עבור: {destinations}",
 	"FEED_VIEW.FEED_IS_EMPTY_NO_DESTINATIONS.SELECT": "בכדי לצפות בנקודות עניין, בחרו קודם כל את היעדים אליהם אתם רוצים לטוס בטיול זה",
-	"UPDATE_TRIP": "עדכן טיול"
+	"UPDATE_TRIP": "עדכן טיול",
+	"CATEGORY.VIEWS": "תצפיות",
+	"CATEGORY.PARKS": "פארקים",
+	"CATEGORY.CITIES": "עיירות",
+	"CATEGORY.BEACHES": "חופים",
+	"CATEGORY.BEACH_BARS": "ביץ׳ ברים",
+	"CATEGORY.MUSEUMS": "מוזיאונים"
 }

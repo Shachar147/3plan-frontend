@@ -781,5 +781,11 @@
 	"GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO": "Where are you going to?",
 	"FEED_VIEW.EXPLORING": "Exploring: {destinations}",
 	"FEED_VIEW.FEED_IS_EMPTY_NO_DESTINATIONS.SELECT": "In order to explore point of interests, choose your trip destinations first",
-	"UPDATE_TRIP": "Update trip"
+	"UPDATE_TRIP": "Update trip",
+	"CATEGORY.VIEWS": "Views",
+	"CATEGORY.PARKS": "Parks",
+	"CATEGORY.CITIES": "Cities",
+	"CATEGORY.BEACHES": "Beaches",
+	"CATEGORY.BEACH_BARS": "Beach bars",
+	"CATEGORY.MUSEUMS": "Museums"
 }
