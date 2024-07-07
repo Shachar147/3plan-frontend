@@ -12,6 +12,14 @@
   position: relative;
   gap: 16px;
   width: 100%;
+
+  .carousel-wrapper .slider-wrapper {
+    max-height: 266.66px;
+  }
+
+  .carousel-status {
+    direction: ltr;
+  }
 }
 
 .poi-left {
