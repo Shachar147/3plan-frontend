@@ -48,7 +48,7 @@ function FeedView({ eventStore }: FeedViewProps) {
     const [allReachedEnd, setAllReachedEnd] = useState<boolean>(false);
 
     const apiService = useMemo(() => new FeedViewApiService(), []);
-    const haveNoDestinations = destinations == "[]" || destinations?.[0] == "[]";
+    const haveNoDestinations = !destinations?.length;
 
     useEffect(() => {
         const fetchCounts = async () => {
@@ -103,8 +103,9 @@ function FeedView({ eventStore }: FeedViewProps) {
 
                 // Check if items are finished for this destination
                 allFinished = responses.every(response => response.isFinished);
+            } else {
+                allFinished = true;
             }
-            allFinished = true;
 
             if (allFinished) {
                 setReachedEndPerDestination(prev => ({
@@ -182,9 +183,9 @@ function FeedView({ eventStore }: FeedViewProps) {
     }
 
     return (
-        isLoading && !haveNoDestinations ? <span>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span> : <LazyLoadComponent className="width-100-percents" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
+        isLoading && !haveNoDestinations ? <span className={getClasses(eventStore.isHebrew && 'direction-rtl', eventStore.isMobile ? 'text-align-center' : 'width-100-percents flex-row justify-content-center margin-top-20')}>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span> : <LazyLoadComponent className="width-100-percents" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
             <div className="flex-column gap-4">
-                {!haveNoDestinations && <div className={getClasses("feed-view-filter-bar flex-row justify-content-space-between", eventStore.isHebrew && 'hebrew-mode')}>
+                {!haveNoDestinations && <div className={getClasses("feed-view-filter-bar justify-content-space-between", eventStore.isHebrew && 'hebrew-mode', eventStore.isMobile ? 'flex-col-reverse align-items-center gap-8' : 'flex-row')}>
                     <CategoryFilter
                         categories={categories}
                         onFilterChange={(category) => handleCategoryChange(category, items)}
