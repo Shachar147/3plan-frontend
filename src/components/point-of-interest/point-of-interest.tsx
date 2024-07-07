@@ -7,7 +7,7 @@ import './point-of-interest.scss';
 import ReactModalService from "../../services/react-modal-service";
 import {TripActions} from "../../utils/interfaces";
 import {TriplanPriority} from "../../utils/enums";
-import {extractCategory} from "../../utils/utils";
+import {extractCategory, getClasses} from "../../utils/utils";
 import TranslateService from "../../services/translate-service";
 import {EventStore} from "../../stores/events-store";
 
@@ -45,7 +45,7 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
         }
 
         if (halfStar) {
-            stars.push(<FaStarHalfAlt key="half" className="star" />);
+            stars.push(<FaStarHalfAlt key="half" className={getClasses("star", eventStore.isHebrew && 'flip-x')} />);
         }
 
         for (let i = 0; i < emptyStars; i++) {
@@ -119,9 +119,16 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
 
     const alreadyInPlan = !![...eventStore.calendarEvents, ...eventStore.allSidebarEvents].find((i) => i.extra?.feedId == feedId);
 
-    let rating = item.rate.rating.toFixed(1);
+    if (!item.rate){
+        item.rate = {
+            rating: 0,
+            quantity: 0
+        }
+    }
+
+    let rating = item.rate?.rating?.toFixed(1) ?? "0";
     if (rating.toString().endsWith(".0")){
-        rating = item.rate.rating.toFixed(0);
+        rating = item.rate?.rating.toFixed(0);
     }
 
     return (

@@ -3,6 +3,7 @@ import { apiGetPromise } from "../../../helpers/api";
 export const allSources = [
     'Local',
     'GetYourGuide',
+    'TripAdvisor',
     "Dubai.co.il"
 ];
 
@@ -10,6 +11,7 @@ export const SourceToUrl = (destination: string, page: number): Record<string, s
     const base: Record<string, string> = {
         'Local': `/poi/by-destination?destination=${destination}&page=${page}`,
         'GetYourGuide': `/poi/external-source/getyourguide?destination=${destination}&page=${page}`,
+        'TripAdvisor': `/poi/external-source/tripadvisor?destination=${destination}&page=${page}`,
     };
     if (destination === "Dubai"){
         base["Dubai.co.il"] = `/poi/external-source/dubaicoil?destination=${destination}&page=${page}`;
