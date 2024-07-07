@@ -548,8 +548,8 @@ const ListViewService = {
 
 				const orderedIndication = orderedKeywords.find(
 					(x) =>
-						title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 ||
-						(event.description ?? '').toLowerCase().indexOf(x.toLowerCase()) !== -1
+						title!.toLowerCase().replace("preserved","").indexOf(x.toLowerCase()) !== -1 ||
+						(event.description ?? '').toLowerCase().replace("preserved","").indexOf(x.toLowerCase()) !== -1
 				)
 					? `<span class='ordered-indication'  style="font-size: 22px; padding-inline: 5px; color:${orderedColor}; font-weight:bold;">&nbsp;<u>${ordered}</u></span>`
 					: '';
