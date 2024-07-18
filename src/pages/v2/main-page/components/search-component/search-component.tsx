@@ -1,15 +1,28 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import './search-component.scss';
 import TranslateService from "../../../../../services/translate-service";
-import {eventStoreContext} from "../../../../../stores/events-store";
-import {getClasses} from "../../../../../utils/utils";
+import { eventStoreContext } from "../../../../../stores/events-store";
+import { getClasses } from "../../../../../utils/utils";
 
 const SearchComponent = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [chosenName, setChosenItem] = useState('');
 
     const eventStore = useContext(eventStoreContext);
+
+    useEffect(() => {
+        if (showSuggestions) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [showSuggestions]);
 
     // Function to handle input change
     const handleInputChange = (event) => {
@@ -39,13 +52,15 @@ const SearchComponent = () => {
     const handleSuggestionClick = (suggestion) => {
         setSearchQuery(suggestion.name);
         setShowSuggestions(false);
+        setChosenItem(suggestion.name);
     };
 
     const isShort = eventStore.isMobile ? '.SHORT' : ''; // todo complete - shorter text in mobile?
 
+    const shouldShowSuggestions = searchQuery.length > 0 && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
 
     return (
-        <div className={getClasses("search-container", searchQuery.length > 0 && 'has-values')}>
+        <div className={getClasses("search-container", shouldShowSuggestions && 'has-values')} key={`search-box-${shouldShowSuggestions}`}>
             <div className="search-box">
                 <input
                     className="search-input"
@@ -59,7 +74,7 @@ const SearchComponent = () => {
                     {TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
                 </button>
             </div>
-            {searchQuery.length > 0 && showSuggestions && (
+            {shouldShowSuggestions && (
                 <div className="suggestions-container bright-scrollbar">
                     {suggestions.map((suggestion, index) => (
                         <div
