@@ -3,6 +3,7 @@ import './search-component.scss';
 import TranslateService from "../../../../../services/translate-service";
 import { eventStoreContext } from "../../../../../stores/events-store";
 import { getClasses } from "../../../../../utils/utils";
+import {useHandleWindowResize} from "../../../../../custom-hooks/use-window-size";
 
 const SearchComponent = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -12,6 +13,7 @@ const SearchComponent = () => {
     const [rerenderCounter, setReRenderCounter] = useState(0);
 
     const eventStore = useContext(eventStoreContext);
+    useHandleWindowResize();
 
     useEffect(() => {
         if (showSuggestions) {

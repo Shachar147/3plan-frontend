@@ -47,8 +47,8 @@ const LazyLoadComponent = ({ children, fetchData, isLoading, className }: LazyLo
     return (
         <div className={className}>
             {children}
-            <div ref={loader} className={getClasses("width-100-percents text-align-center", eventStore.isHebrew && 'direction-rtl')}>
-                {loading && <span>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}
+            <div ref={loader} className={getClasses("margin-top-10 width-100-percents text-align-center", eventStore.isHebrew && 'direction-rtl')}>
+                {loading && <div>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div>}
             </div>
         </div>
     );

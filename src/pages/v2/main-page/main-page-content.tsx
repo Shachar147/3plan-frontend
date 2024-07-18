@@ -24,7 +24,7 @@ function Content(){
 
     useEffect(() => {
         runInAction(() => {
-            eventStore.destinations = ["Dubai"];
+            eventStore.destinations = ["United States"];
         })
     }, [])
 
