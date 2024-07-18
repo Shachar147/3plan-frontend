@@ -787,5 +787,7 @@
 	"WISHLIST": "Wishlist",
 	"PLAN": "Plan",
 	"PROFILE": "Profile",
-	"SAVED_COLLECTIONS": "Saved collections"
+	"SAVED_COLLECTIONS": "Saved collections",
+	"HEADER_SEARCH_PLACEHOLDER": "Find places and things to do",
+	"HEADER_SEARCH_PLACEHOLDER.SHORT": "Find places"
 }

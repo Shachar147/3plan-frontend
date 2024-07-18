@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {observer} from "mobx-react";
 import './main-page.scss';
 import TriplanHeaderBanner from "./components/triplan-header-banner/triplan-header-banner";
@@ -19,6 +19,25 @@ function TriplanTabContent({ title }: { title: string}) {
 function Content(){
     const eventStore = useContext(eventStoreContext);
     const isShort = eventStore.isMobile ? '.SHORT' : ''; // todo complete - shorter text in mobile?
+
+    useEffect(() => {
+        const scrollContainer = document.querySelector('.ui.tabular.menu');
+        const scrollItems = document.querySelectorAll('.item');
+
+        scrollItems.forEach(item => {
+            item.addEventListener('click', (event) => {
+                const itemRect = item.getBoundingClientRect();
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const scrollOffset = itemRect.left - containerRect.left + scrollContainer.scrollLeft;
+
+                scrollContainer.scroll({
+                    left: scrollOffset,
+                    behavior: 'smooth' // Smooth scrolling
+                });
+            });
+        });
+    }, [])
+
     return (
         <div className="triplan-header-banner-footer">
             <TabMenu
