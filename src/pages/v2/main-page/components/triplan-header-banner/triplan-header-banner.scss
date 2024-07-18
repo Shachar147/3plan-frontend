@@ -1,5 +1,5 @@
 .triplan-header-banner {
-  height: 600px;
+  height: 700px;
   padding-inline: 196px + 96px;
   padding-top: 10px;
   font-family: GT Eesti,fallback for GT Eesti,android fallback for GT Eesti,sans-serif;
@@ -12,8 +12,15 @@
   //background-position-y: center;
   //background-repeat: no-repeat;
   //background-image: url("https://img.freepik.com/free-vector/travel-pattern-with-elements-dash-lines_23-2148057144.jpg?t=st=1720070910~exp=1720074510~hmac=c09ac3569de3060380954ef0594d134184876b5683a8bdbe331aa980d0bf3c12&w=1380");
-  background-image: url("http://localhost:3000/images/banner/4.png");
+  //background-image: url("http://localhost:3000/images/banner/4.png");
+
+  // background-image: url("http://localhost:3000/images/banner/5.jpg");
+  //background-image: url("http://localhost:3000/images/banner/6.jpg");
+
   background-position-x: center;
+
+  background-size: 100% auto;
+  background-position-y: center;
   //background-position-y: center;
   //background-repeat: no-repeat;
   //background-color: #8bdaee;
@@ -45,7 +52,7 @@
     background: linear-gradient(180deg, transparent, #000);
     height: 100px;
     position: absolute;
-    top: 500px;
+    top: 600px;
     left: 0;
     width: 100%;
     z-index: 1;
@@ -62,6 +69,19 @@
     //top: 0;
     //width: 100%;
     //left: 0;
+
+    .link-button {
+      color: white;
+      padding: 10px;
+      padding-top: 30px;
+      margin-top: -30px;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.3);
+        opacity: 1 !important;
+        color: white !important;
+      }
+    }
 
     &-search {
       width: 400px;
@@ -107,18 +127,46 @@
   }
 }
 
+body.rtl {
+  .triplan-header-banner-footer,
+  .triplan-header-banner {
+    direction: rtl;
+    //.triplan-header-banner-header-line,
+    //.triplan-header-banner-header-line-left-side,
+    //.triplan-header-banner-header-line-right-side {
+    //  flex-direction: row-reverse;
+    //}
+  }
+
+  .triplan-header-banner-slogan {
+    text-align: right;
+  }
+}
+
 @media only screen and (max-width: 600px) {
   .triplan-header-banner {
     padding-inline: 20px;
+    height: 380px;
+    background-size: cover;
+
+    &-bottom-shadow {
+      top: 280px;
+    }
 
     &-shadow {
       opacity: 1;
     }
 
     &-slogan {
-      top: 240px;
-      font-size: 50px;
-      text-align: center;
+      top: 120px;
+      font-size: 40px;
+      text-align: center !important;
+      width: 100%;
+      left: 0;
+
+      > span {
+        line-height: 40px;
+      }
 
       > span:nth-child(2) {
         font-size: 30px;
@@ -133,16 +181,35 @@
       padding-top: 20px;
       flex-direction: column-reverse;
       align-items: center;
-      gap: 308px;
+      gap: 150px;
+
+      .link-button {
+        padding-top: 50px;
+        margin-top: -50px;
+      }
 
       &-search {
+        top: 130px;
         width: 300px;
-        max-width: 300px;
+        max-width: 100%;
       }
     }
 
     //.triplan-header-banner-footer {
     //  top: 116px;
     //}
+  }
+
+  .ui.tabular.menu .active.item {
+    border: 0;
+  }
+
+  .triplan-header-banner-footer {
+    .tabular.menu {
+      overflow-y: auto;
+      .item {
+        white-space: nowrap;
+      }
+    }
   }
 }

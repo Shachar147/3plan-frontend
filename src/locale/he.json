@@ -140,7 +140,7 @@
 	"GENERAL_CATEGORY.TITLE": "כללי",
 	"BUTTON_TEXT.LIST_VIEW": "רשימה",
 	"BUTTON_TEXT.MAP_VIEW": "מפה",
-	"BUTTON_TEXT.FEED_VIEW": "חקור",
+	"BUTTON_TEXT.FEED_VIEW": "מצא נקודות עניין",
 	"BUTTON_TEXT.COMBINED_VIEW": "תצוגה משולבת",
 	"BUTTON_TEXT.CALENDAR_VIEW": "לוח שנה",
 	"BUTTON_TEXT.SIDEBAR_VIEW": "פעילויות",
@@ -873,5 +873,10 @@
 	"FEED_VIEW.EXPLORING": "מציג תוצאות עבור: {destinations}",
 	"FEED_VIEW.FEED_IS_EMPTY_NO_DESTINATIONS.SELECT": "בכדי לצפות בנקודות עניין, בחרו קודם כל את היעדים אליהם אתם רוצים לטוס בטיול זה",
 	"UPDATE_TRIP": "עדכן טיול",
-	"LANGUAGE": "שפה"
+	"LANGUAGE": "שפה",
+	"V2.TRIPLAN_HEADER_BANNER": "<span>תכנון טיולים</span><span>מעולם לא היה פשוט יותר!</span>",
+	"WISHLIST": "מועדפים",
+	"PLAN": "תכנון טיולים",
+	"PROFILE": "פרופיל",
+	"SAVED_COLLECTIONS": "המקומות ששמרת"
 }

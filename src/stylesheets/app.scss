@@ -1442,3 +1442,8 @@ input[id^='react-select-'][id$='-input'] {
 .grayscale {
 	filter: grayscale(100%);
 }
+
+.black-text-shadow {
+	color: black; /* Set the text color to black */
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Create a shadow effect */
+}

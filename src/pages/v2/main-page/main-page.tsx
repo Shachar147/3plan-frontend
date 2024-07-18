@@ -4,6 +4,7 @@ import './main-page.scss';
 import TriplanHeaderBanner from "./components/triplan-header-banner/triplan-header-banner";
 import {eventStoreContext} from "../../../stores/events-store";
 import TabMenu from "../../../components/common/tabs-menu/tabs-menu";
+import TranslateService from "../../../services/translate-service";
 
 function TriplanTabContent({ title }: { title: string}) {
     return (
@@ -23,19 +24,19 @@ function Content(){
             <TabMenu
                 tabs={[
                     {
-                        name: "Explore",
+                        name: TranslateService.translate(eventStore, "BUTTON_TEXT.FEED_VIEW"),
                         icon: "fa-search",
-                        render: () => <TriplanTabContent title={"explore"} />
+                        render: () => <TriplanTabContent title={TranslateService.translate(eventStore, "BUTTON_TEXT.FEED_VIEW")} />
                     },
                     {
-                        name: "Saved Collections",
+                        name: TranslateService.translate(eventStore, "SAVED_COLLECTIONS"),
                         icon: "fa-save",
-                        render: () => <TriplanTabContent title={"users"} />
+                        render: () => <TriplanTabContent title={TranslateService.translate(eventStore, "SAVED_COLLECTIONS")} />
                     },
                     {
-                        name: "Your trips",
+                        name: TranslateService.translate(eventStore, "LANDING_PAGE.MY_TRIPS"),
                         icon: "fa-plane",
-                        render: () => <TriplanTabContent title={"trips"} />
+                        render: () => <TriplanTabContent title={TranslateService.translate(eventStore, "LANDING_PAGE.MY_TRIPS")} />
                     },
                 ]}
             />
