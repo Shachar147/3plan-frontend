@@ -141,6 +141,7 @@
 	"BUTTON_TEXT.LIST_VIEW": "רשימה",
 	"BUTTON_TEXT.MAP_VIEW": "מפה",
 	"BUTTON_TEXT.FEED_VIEW": "מצא נקודות עניין",
+	"BUTTON_TEXT.FEED_VIEW.SHORT": "נק׳ עניין",
 	"BUTTON_TEXT.COMBINED_VIEW": "תצוגה משולבת",
 	"BUTTON_TEXT.CALENDAR_VIEW": "לוח שנה",
 	"BUTTON_TEXT.SIDEBAR_VIEW": "פעילויות",
@@ -151,6 +152,7 @@
 	"HEBREW": "עברית",
 	"ENGLISH": "אנגלית",
 	"LANDING_PAGE.MY_TRIPS": "הטיולים שלי",
+	"LANDING_PAGE.MY_TRIPS.SHORT": "הטיולים שלי",
 	"LANDING_PAGE.RECOMMENDED_DESTINATIONS": "יעדים מומלצים",
 	"LANDING_PAGE.PLANNING_A_NEW": "מתכננים בקרוב",
 	"LANDING_PAGE.TRIP": "טיול?",
@@ -879,6 +881,7 @@
 	"PLAN": "תכנון טיולים",
 	"PROFILE": "פרופיל",
 	"SAVED_COLLECTIONS": "המקומות ששמרת",
+	"SAVED_COLLECTIONS.SHORT": "המקומות ששמרת",
 	"HEADER_SEARCH_PLACEHOLDER": "חפשו מקומות ודברים לעשות",
 	"HEADER_SEARCH_PLACEHOLDER.SHORT": "חפשו מקומות ודברים לעשות"
 }

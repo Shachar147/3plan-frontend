@@ -55,7 +55,7 @@ const SearchComponent = () => {
         setChosenItem(suggestion.name);
     };
 
-    const isShort = eventStore.isMobile ? '.SHORT' : ''; // todo complete - shorter text in mobile?
+    const isShort = eventStore.isMobile ? '.SHORT' : '';
 
     const shouldShowSuggestions = searchQuery.length > 0 && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
 

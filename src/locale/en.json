@@ -128,6 +128,7 @@
 	"GENERAL_CATEGORY.TITLE": "General",
 	"BUTTON_TEXT.LIST_VIEW": "List View",
 	"BUTTON_TEXT.FEED_VIEW": "Explore Places",
+	"BUTTON_TEXT.FEED_VIEW.SHORT": "Explore",
 	"BUTTON_TEXT.CALENDAR_VIEW": "Calendar View",
 	"BUTTON_TEXT.COMBINED_VIEW": "Combined View",
 	"BUTTON_TEXT.MAP_VIEW": "Map View",
@@ -139,6 +140,7 @@
 	"HEBREW": "Hebrew",
 	"ENGLISH": "English",
 	"LANDING_PAGE.MY_TRIPS": "My Trips",
+	"LANDING_PAGE.MY_TRIPS.SHORT": "My Trips",
 	"LANDING_PAGE.RECOMMENDED_DESTINATIONS": "recommended destinations",
 	"LANDING_PAGE.PLANNING_A_NEW": "Planning a new",
 	"LANDING_PAGE.TRIP": "Trip?",
@@ -788,6 +790,7 @@
 	"PLAN": "Plan",
 	"PROFILE": "Profile",
 	"SAVED_COLLECTIONS": "Saved collections",
+	"SAVED_COLLECTIONS.SHORT": "Saved collections",
 	"HEADER_SEARCH_PLACEHOLDER": "Find places and things to do",
 	"HEADER_SEARCH_PLACEHOLDER.SHORT": "Find places"
 }

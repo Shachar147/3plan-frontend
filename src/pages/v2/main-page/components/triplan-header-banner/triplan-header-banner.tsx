@@ -17,8 +17,6 @@ function TriplanHeaderLine(){
 
     const [scrollY, setScrollY] = useState(0);
 
-    useHandleWindowResize();
-
     useEffect(() => {
         const handleScroll = () => {
             setScrollY(window.scrollY);

@@ -1,6 +1,7 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { getClasses } from '../../../utils/utils';
 import { useState } from 'react';
+import {observer} from "mobx-react";
 
 export interface Tab {
 	name: string;
@@ -11,9 +12,14 @@ export interface TabMenuProps {
 	tabs: Tab[],
 	activeTab?: string;
 }
-export default function TabMenu(props: TabMenuProps){
+function TabMenu(props: TabMenuProps){
 	const { tabs } = props;
 	const [activeTab, setActiveTab] = useState(props.activeTab ?? tabs?.[0].name);
+
+	useEffect(() => {
+		setActiveTab(props.activeTab);
+	}, [props.activeTab]);
+
 	return (
 		<div key={activeTab}>
 			<div className="ui top attached tabular menu">
@@ -31,3 +37,5 @@ export default function TabMenu(props: TabMenuProps){
 		</div>
 	)
 }
+
+export default observer(TabMenu)
