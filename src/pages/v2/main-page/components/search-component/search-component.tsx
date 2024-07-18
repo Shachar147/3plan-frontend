@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {useContext, useState, useEffect, useRef} from 'react';
 import './search-component.scss';
 import TranslateService from "../../../../../services/translate-service";
 import { eventStoreContext } from "../../../../../stores/events-store";
@@ -9,6 +9,7 @@ const SearchComponent = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [chosenName, setChosenItem] = useState('');
+    const [rerenderCounter, setReRenderCounter] = useState(0);
 
     const eventStore = useContext(eventStoreContext);
 
@@ -57,10 +58,19 @@ const SearchComponent = () => {
 
     const isShort = eventStore.isMobile ? '.SHORT' : '';
 
-    const shouldShowSuggestions = searchQuery.length > 0 && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
+    const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length > 0 && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
+    const prevShouldShowSuggestions = useRef(shouldShowSuggestions);
+    useEffect(() => {
+        if (shouldShowSuggestions !== prevShouldShowSuggestions.current) {
+            if (prevShouldShowSuggestions.current && !shouldShowSuggestions) {
+                setReRenderCounter(rerenderCounter+1);
+            }
+            prevShouldShowSuggestions.current = shouldShowSuggestions;
+        }
+    }, [shouldShowSuggestions]);
 
     return (
-        <div className={getClasses("search-container", shouldShowSuggestions && 'has-values')} key={`search-box-${shouldShowSuggestions}`}>
+        <div className={getClasses("search-container", shouldShowSuggestions && 'has-values')} key={`search-box-${rerenderCounter}`}>
             <div className="search-box">
                 <input
                     className="search-input"
@@ -70,7 +80,7 @@ const SearchComponent = () => {
                     placeholder={TranslateService.translate(eventStore, `HEADER_SEARCH_PLACEHOLDER${isShort}`)}
                     autoComplete="off"
                 />
-                <button className="search-button" type="button">
+                <button className="search-button" type="button" onClick={() => setChosenItem(searchQuery)}>
                     {TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
                 </button>
             </div>
@@ -86,6 +96,11 @@ const SearchComponent = () => {
                             <small className="suggestion-descriptor">{suggestion.descriptor}</small>
                         </div>
                     ))}
+                    {suggestions.length === 0 && (
+                        <span className="margin-top-20">
+                            {TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}
+                        </span>
+                    )}
                 </div>
             )}
         </div>
