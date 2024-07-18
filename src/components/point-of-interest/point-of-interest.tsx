@@ -119,9 +119,12 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
 
     const alreadyInPlan = !![...eventStore.calendarEvents, ...eventStore.allSidebarEvents].find((i) => i.extra?.feedId == feedId);
 
-    let rating = item.rate.rating.toFixed(1);
-    if (rating.toString().endsWith(".0")){
-        rating = item.rate.rating.toFixed(0);
+    let rating = item.rate?.rating?.toFixed(1);
+    if (rating?.toString()?.endsWith(".0")){
+        rating = item.rate?.rating.toFixed(0);
+    }
+    if (!rating){
+        console.log("here", item.source);
     }
 
     return (

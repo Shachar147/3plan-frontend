@@ -235,8 +235,10 @@ body.rtl {
     //}
   }
 
-  .ui.tabular.menu .active.item {
+  .triplan-header-banner-footer .ui.tabular.menu .active.item {
     border: 0;
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
   }
 
   .triplan-header-banner-footer {

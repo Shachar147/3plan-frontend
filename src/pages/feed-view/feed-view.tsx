@@ -184,7 +184,7 @@ function FeedView({ eventStore }: FeedViewProps) {
     return (
         isLoading && !haveNoDestinations ? <span>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span> : <LazyLoadComponent className="width-100-percents" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
             <div className="flex-column gap-4">
-                {!haveNoDestinations && <div className={getClasses("feed-view-filter-bar flex-row justify-content-space-between", eventStore.isHebrew && 'hebrew-mode')}>
+                {!haveNoDestinations && <div className={getClasses("feed-view-filter-bar justify-content-space-between", eventStore.isHebrew ? 'hebrew-mode flex-row-reverse' : 'flex-row')}>
                     <CategoryFilter
                         categories={categories}
                         onFilterChange={(category) => handleCategoryChange(category, items)}

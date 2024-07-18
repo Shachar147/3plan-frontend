@@ -4,13 +4,16 @@ import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import TabMenu from "../../../components/common/tabs-menu/tabs-menu";
 import TranslateService from "../../../services/translate-service";
 import {observer} from "mobx-react";
+import FeedView from "../../feed-view/feed-view";
+import {runInAction} from "mobx";
 
-function TriplanTabContent({ title }: { title: string}) {
+function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
         <div style={{
-            height: 600
+            minHeight: 600,
+            height: "max-content"
         }}>
-            {title}
+            {content}
         </div>
     )
 }
@@ -18,6 +21,12 @@ function TriplanTabContent({ title }: { title: string}) {
 function Content(){
     const eventStore = useContext(eventStoreContext);
     useHandleWindowResize();
+
+    useEffect(() => {
+        runInAction(() => {
+            eventStore.destinations = ["Dubai"];
+        })
+    }, [])
 
     useEffect(() => {
         const scrollContainer = document.querySelector('.ui.tabular.menu');
@@ -46,17 +55,17 @@ function Content(){
                     {
                         name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
                         icon: "fa-search",
-                        render: () => <TriplanTabContent title={TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`)} />
+                        render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} />} />
                     },
                     {
                         name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`),
                         icon: "fa-save",
-                        render: () => <TriplanTabContent title={TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`)} />
+                        render: () => <TriplanTabContent content={TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`)} />
                     },
                     {
                         name: TranslateService.translate(eventStore, `LANDING_PAGE.MY_TRIPS${isShort}`),
                         icon: "fa-plane",
-                        render: () => <TriplanTabContent title={TranslateService.translate(eventStore, `LANDING_PAGE.MY_TRIPS${isShort}`)} />
+                        render: () => <TriplanTabContent content={TranslateService.translate(eventStore, `LANDING_PAGE.MY_TRIPS${isShort}`)} />
                     },
                 ]}
             />
