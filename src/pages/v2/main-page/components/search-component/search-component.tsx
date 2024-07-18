@@ -2,6 +2,7 @@ import React, {useContext, useState} from 'react';
 import './search-component.scss';
 import TranslateService from "../../../../../services/translate-service";
 import {eventStoreContext} from "../../../../../stores/events-store";
+import {getClasses} from "../../../../../utils/utils";
 
 const SearchComponent = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -40,15 +41,18 @@ const SearchComponent = () => {
         setShowSuggestions(false);
     };
 
+    const isShort = eventStore.isMobile ? '.SHORT' : ''; // todo complete - shorter text in mobile?
+
+
     return (
-        <div className="search-container">
+        <div className={getClasses("search-container", searchQuery.length > 0 && 'has-values')}>
             <div className="search-box">
                 <input
                     className="search-input"
                     type="text"
                     value={searchQuery}
                     onChange={handleInputChange}
-                    placeholder={TranslateService.translate(eventStore, `HEADER_SEARCH_PLACEHOLDER${eventStore.isMobile ? '.SHORT' : ''}`)}
+                    placeholder={TranslateService.translate(eventStore, `HEADER_SEARCH_PLACEHOLDER${isShort}`)}
                     autoComplete="off"
                 />
                 <button className="search-button" type="button">

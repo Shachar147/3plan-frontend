@@ -82,4 +82,56 @@
   .suggestions-container {
     width: 270px;
   }
+  //.triplan-header-banner:has(.search-container.has-values) + .triplan-header-banner-footer {
+  //  opacity: 0.6;
+  //}
+  .triplan-header-banner-header-line-left-side:has(.search-container.has-values) + .triplan-header-banner-header-line-right-side,
+  .triplan-header-banner:has(.search-container.has-values) + .triplan-header-banner-footer,
+  .triplan-header-banner-header-line:has(.search-container.has-values) + div + .triplan-header-banner-bottom-shadow {
+    display: none;
+  }
+
+  .triplan-header-banner-header-line:has(.search-container.has-values) + .triplan-header-banner-slogan {
+    opacity: 0.3;
+  }
+
+  .triplan-header-banner:has(.search-container.has-values) {
+    z-index: 999;
+  }
+
+  .triplan-main-page-container:has(.search-container.has-values) {
+    background-color: rgba(0,0,0, 0.7) !important;
+  }
+
+  .search-container {
+    &.has-values {
+      background-color: rgba(0,0,0, 0.7);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      padding-top: 20px;
+      z-index: 999999999999999;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+
+      .suggestions-container {
+        top: 85px;
+        width: 100%;
+        left: 0;
+        max-height: CALC(100% - 100px);
+        background-color: unset !important;
+
+        .suggestion-item {
+          background-color: unset !important;
+          color: white;
+
+          .suggestion-name {
+            color: white;
+          }
+        }
+      }
+    }
+  }
 }

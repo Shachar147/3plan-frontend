@@ -18,7 +18,6 @@ function TriplanTabContent({ title }: { title: string}) {
 
 function Content(){
     const eventStore = useContext(eventStoreContext);
-    const isShort = eventStore.isMobile ? '.SHORT' : ''; // todo complete - shorter text in mobile?
 
     useEffect(() => {
         const scrollContainer = document.querySelector('.ui.tabular.menu');
