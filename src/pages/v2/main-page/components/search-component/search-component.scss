@@ -75,6 +75,11 @@
   font-size: 14px;
 }
 
+// so tabs won't come above search
+.triplan-header-banner:has(.search-container .suggestions-container) {
+  z-index: 3;
+}
+
 @media only screen and (max-width: 600px) {
   .search-input {
     min-width: 200px !important;

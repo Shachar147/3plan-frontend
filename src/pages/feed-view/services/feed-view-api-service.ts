@@ -58,6 +58,14 @@ export default class FeedViewApiService {
         };
     }
 
+    getSearchSuggestions = async (searchKeyword: string) => {
+        const result = await apiGetPromise(this,  `/poi/search-suggestions/?s=${searchKeyword}`);
+        if (result) {
+            return result?.data;
+        }
+        return [];
+    }
+
     getItemsOld = async () => {
         return {
             "results": [
