@@ -23,12 +23,6 @@ function Content(){
     useHandleWindowResize();
 
     useEffect(() => {
-        runInAction(() => {
-            eventStore.destinations = ["United States"];
-        })
-    }, [])
-
-    useEffect(() => {
         const scrollContainer = document.querySelector('.ui.tabular.menu');
         const scrollItems = document.querySelectorAll('.item');
 
@@ -55,7 +49,7 @@ function Content(){
                     {
                         name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
                         icon: "fa-search",
-                        render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} />} />
+                        render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />
                     },
                     {
                         name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`),

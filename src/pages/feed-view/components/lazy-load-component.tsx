@@ -2,23 +2,27 @@ import React, {useEffect, useState, useRef, useContext} from 'react';
 import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
 import {getClasses} from "../../../utils/utils";
+import {observer} from "mobx-react";
 
 interface LazyLoadComponentProps {
     fetchData: (page: number, setLoading: (bool) => void) => Promise<any>;
     children: React.ReactNode;
     isLoading: boolean;
+    allReachedEnd: boolean;
     className?: string;
 }
 
-const LazyLoadComponent = ({ children, fetchData, isLoading, className }: LazyLoadComponentProps) => {
+const LazyLoadComponent = ({ children, fetchData, isLoading, className, allReachedEnd }: LazyLoadComponentProps) => {
     const eventStore = useContext(eventStoreContext);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(isLoading);
     const loader = useRef(null);
 
     useEffect (() => {
-        fetchData(page, setLoading);
-    }, [page]);
+        if (!allReachedEnd) {
+            fetchData(page, setLoading);
+        }
+    }, [page, allReachedEnd]);
 
     useEffect(() => {
         const options = {
@@ -47,11 +51,11 @@ const LazyLoadComponent = ({ children, fetchData, isLoading, className }: LazyLo
     return (
         <div className={className}>
             {children}
-            <div ref={loader} className={getClasses("margin-top-10 width-100-percents text-align-center", eventStore.isHebrew && 'direction-rtl')}>
-                {loading && <div>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div>}
-            </div>
+            {!allReachedEnd && loading && <div ref={loader} className={getClasses("margin-top-10 width-100-percents text-align-center", eventStore.isHebrew && 'direction-rtl')}>
+                {<div>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div>}
+            </div>}
         </div>
     );
 };
 
-export default LazyLoadComponent;
+export default observer(LazyLoadComponent);

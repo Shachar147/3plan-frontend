@@ -46,6 +46,18 @@ export default class FeedViewApiService {
         };
     }
 
+    getMainFeedItems = async () => {
+        const result = await apiGetPromise(this,  `/poi/feed/`);
+        if (result) {
+            return result?.data;
+        }
+        return {
+            results: [],
+            isFinished: true,
+            source: "Local"
+        };
+    }
+
     getItemsOld = async () => {
         return {
             "results": [

@@ -12,6 +12,7 @@ import Button, {ButtonFlavor} from "../../components/common/button/button";
 
 interface FeedViewProps {
     eventStore: EventStore;
+    mainFeed?: boolean;
 }
 
 const cacheThreshold = 300;
@@ -34,7 +35,7 @@ function SelectDestinationPlaceholder(){
     )
 }
 
-function FeedView({ eventStore }: FeedViewProps) {
+function FeedView({ eventStore, mainFeed }: FeedViewProps) {
     const [items, setItems] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -44,7 +45,7 @@ function FeedView({ eventStore }: FeedViewProps) {
     const [finishedSources, setFinishedSources] = useState<string[]>([]);
     const [reachedEndPerDestination, setReachedEndPerDestination] = useState<Record<string, boolean>>({});
     const [reachedEndForDestinations, setReachedEndForDestinations] = useState<boolean>(false);
-    const destinations = eventStore.destinations;
+    let destinations = eventStore.destinations;
     const [allReachedEnd, setAllReachedEnd] = useState<boolean>(false);
 
     const apiService = useMemo(() => new FeedViewApiService(), []);
@@ -68,60 +69,93 @@ function FeedView({ eventStore }: FeedViewProps) {
             setIsLoading(false);
         };
 
-        fetchCounts();
+        if (mainFeed) {
+            setIsLoading(false);
+        } else {
+            fetchCounts();
+        }
     }, [apiService, destinations]);
+
+    // Function to filter duplicates based on name, url, source combination
+    const filterUniqueItems = (items) => {
+        const seen = new Map();
+        return items.filter(item => {
+            const key = item.name + item.url + item.source;
+            return seen.has(key) ? false : seen.set(key, true);
+        });
+    };
 
     const fetchItems = async (page, setLoading) => {
         setLoading(true);
         const newItems = [];
 
-        for (const destination of destinations) {
-            const sources = allSources.filter(
-                source => (source === "Local" || (sourceCounts[destination]?.[source] ?? 0) < cacheThreshold) && !finishedSources.includes(source)
-            );
+        let _reachedEndPerDestination = reachedEndPerDestination ?? {};
 
-            if (sources.length === 0) {
-                // If no sources left for this destination, continue to the next destination
-                setReachedEndPerDestination(prev => ({
-                    ...prev,
-                    [destination]: true
-                }));
+        if (mainFeed) {
+            if (page > 1){
+                return;
             }
+            destinations = ["MainFeed"];
+            const destination = destinations[0];
+            const responses = await Promise.all(
+                [
+                    apiService.getMainFeedItems()
+                ]);
 
-            let allFinished = false;
-            if (destination != "[]") {
-                const responses = await Promise.all(
-                    sources.map(source => apiService.getItems(source, destination, page))
+            responses.forEach(response => {
+                newItems.push(...response.results);
+                response.isFinished = true;
+                if (response.isFinished) {
+                    setFinishedSources(prev => [...prev, response.source]);
+                }
+            });
+
+            _reachedEndPerDestination = {
+                ..._reachedEndPerDestination,
+                [destination]: true
+            }
+            setReachedEndPerDestination(_reachedEndPerDestination);
+        }
+        else {
+            for (const destination of destinations) {
+                const sources = allSources.filter(
+                    source => (source === "Local" || (sourceCounts[destination]?.[source] ?? 0) < cacheThreshold) && !finishedSources.includes(source)
                 );
 
-                responses.forEach(response => {
-                    newItems.push(...response.results);
-                    if (response.isFinished) {
-                        setFinishedSources(prev => [...prev, response.source]);
+                if (sources.length === 0) {
+                    // If no sources left for this destination, continue to the next destination
+                    setReachedEndPerDestination(prev => ({
+                        ...prev,
+                        [destination]: true
+                    }));
+                }
+
+                let allFinished = false;
+                if (destination != "[]") {
+                    const responses = await Promise.all(
+                        sources.map(source => apiService.getItems(source, destination, page))
+                    );
+
+                    responses.forEach(response => {
+                        newItems.push(...response.results);
+                        if (response.isFinished) {
+                            setFinishedSources(prev => [...prev, response.source]);
+                        }
+                    });
+
+                    // Check if items are finished for this destination
+                    allFinished = responses.every(response => response.isFinished);
+                }
+
+                if (allFinished) {
+                    _reachedEndPerDestination = {
+                        ..._reachedEndPerDestination,
+                        [destination]: true
                     }
-                });
-
-                // Check if items are finished for this destination
-                allFinished = responses.every(response => response.isFinished);
-            }
-            allFinished = true;
-
-            if (allFinished) {
-                setReachedEndPerDestination(prev => ({
-                    ...prev,
-                    [destination]: true
-                }));
+                    setReachedEndPerDestination(_reachedEndPerDestination);
+                }
             }
         }
-
-        // Function to filter duplicates based on name, url, source combination
-        const filterUniqueItems = (items) => {
-            const seen = new Map();
-            return items.filter(item => {
-                const key = item.name + item.url + item.source;
-                return seen.has(key) ? false : seen.set(key, true);
-            });
-        };
 
         const uniqueNewItems = filterUniqueItems(newItems);
 
@@ -134,7 +168,7 @@ function FeedView({ eventStore }: FeedViewProps) {
         setCategories(prevCategories => [...new Set([...prevCategories, ...uniqueCategories])]);
 
         // Check if all destinations have reached the end
-        const allReachedEndNow = destinations.every(dest => reachedEndPerDestination[dest]);
+        const allReachedEndNow = destinations.every(dest => _reachedEndPerDestination[dest]);
         setReachedEndForDestinations(allReachedEndNow);
 
         setLoading(false);
@@ -182,7 +216,7 @@ function FeedView({ eventStore }: FeedViewProps) {
     }
 
     return (
-        (isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
+        (isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" allReachedEnd={allReachedEnd} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
             <div className="flex-column gap-4">
                 {!haveNoDestinations && <div className={getClasses("feed-view-filter-bar justify-content-space-between", eventStore.isHebrew ? 'hebrew-mode flex-row-reverse' : 'flex-row')}>
                     <CategoryFilter
