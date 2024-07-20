@@ -44,7 +44,7 @@ import {
 import { BiEventsService } from './services/bi-events.service';
 import useIsAdmin from './custom-hooks/use-is-admin';
 import InviteLink from './pages/invite-link/invite-link';
-import MainPageV2 from "./pages/v2/main-page/main-page";
+import MainPageV2 from "./v2/views/main-page/main-page";
 
 // Dubai
 // Namos / Twiggy?

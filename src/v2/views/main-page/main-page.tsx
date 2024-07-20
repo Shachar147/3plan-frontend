@@ -1,7 +1,7 @@
 import React from 'react';
 import {observer} from "mobx-react";
 import './main-page.scss';
-import TriplanHeaderBanner from "./components/triplan-header-banner/triplan-header-banner";
+import TriplanHeaderBanner from "../../components/triplan-header-banner/triplan-header-banner";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import Content from "./main-page-content";
 

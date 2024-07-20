@@ -2,14 +2,14 @@ import React, {useState} from 'react';
 import {Carousel} from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import {FaRegStar, FaStar, FaStarHalfAlt} from 'react-icons/fa';
-import Button, {ButtonFlavor} from '../common/button/button'; // Import your Button component
+import Button, {ButtonFlavor} from '../../../components/common/button/button'; // Import your Button component
 import './point-of-interest.scss';
-import ReactModalService from "../../services/react-modal-service";
-import {TripActions} from "../../utils/interfaces";
-import {TriplanPriority} from "../../utils/enums";
-import {extractCategory} from "../../utils/utils";
-import TranslateService from "../../services/translate-service";
-import {EventStore} from "../../stores/events-store";
+import ReactModalService from "../../../services/react-modal-service";
+import {TripActions} from "../../../utils/interfaces";
+import {TriplanPriority} from "../../../utils/enums";
+import {extractCategory} from "../../../utils/utils";
+import TranslateService from "../../../services/translate-service";
+import {EventStore} from "../../../stores/events-store";
 
 interface PointOfInterestProps {
     item: any, // getyourguide / dubaicoil result

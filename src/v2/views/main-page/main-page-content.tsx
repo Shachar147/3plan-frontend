@@ -4,21 +4,18 @@ import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import TabMenu from "../../../components/common/tabs-menu/tabs-menu";
 import TranslateService from "../../../services/translate-service";
 import {observer} from "mobx-react";
-import FeedView from "../../feed-view/feed-view";
-import {runInAction} from "mobx";
+import FeedView from "../../components/feed-view/feed-view";
+import './main-page-content.scss'
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
-        <div style={{
-            minHeight: 600,
-            height: "max-content"
-        }}>
+        <div className="main-page-content">
             {content}
         </div>
     )
 }
 
-function Content(){
+function MainPageContent(){
     const eventStore = useContext(eventStoreContext);
     useHandleWindowResize();
 
@@ -67,4 +64,4 @@ function Content(){
     );
 }
 
-export default observer(Content);
+export default observer(MainPageContent);

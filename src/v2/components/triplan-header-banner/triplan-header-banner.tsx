@@ -1,15 +1,14 @@
-import TriplanLogo from "../../../../../components/triplan-header/logo/triplan-logo";
-import Button, {ButtonFlavor} from "../../../../../components/common/button/button";
+import TriplanLogo from "../../../components/triplan-header/logo/triplan-logo";
+import Button, {ButtonFlavor} from "../../../components/common/button/button";
 import React, {useContext, useEffect, useState} from "react";
 import {observer} from "mobx-react";
 import './triplan-header-banner.scss';
-import {eventStoreContext} from "../../../../../stores/events-store";
-import TranslateService from "../../../../../services/translate-service";
-import ReactModalService from "../../../../../services/react-modal-service";
-import {getClasses} from "../../../../../utils/utils";
+import {eventStoreContext} from "../../../stores/events-store";
+import TranslateService from "../../../services/translate-service";
+import ReactModalService from "../../../services/react-modal-service";
+import {getClasses} from "../../../utils/utils";
 import TriplanSearchV2 from "../search-component/triplan-search-v2";
-import { getServerAddress } from '../../../../../config/config';
-import {useHandleWindowResize} from "../../../../../custom-hooks/use-window-size";
+import { getServerAddress } from '../../../config/config';
 
 
 function TriplanHeaderLine(){

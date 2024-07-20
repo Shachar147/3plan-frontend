@@ -1,11 +1,12 @@
 import React, {useContext, useState, useEffect, useRef, useMemo} from 'react';
 import './search-component.scss';
-import TranslateService from "../../../../../services/translate-service";
-import { eventStoreContext } from "../../../../../stores/events-store";
-import { getClasses } from "../../../../../utils/utils";
-import {useHandleWindowResize} from "../../../../../custom-hooks/use-window-size";
-import useAsyncMemo from "../../../../../custom-hooks/use-async-memo";
-import FeedViewApiService from "../../../../feed-view/services/feed-view-api-service";
+import TranslateService from "../../../services/translate-service";
+import { eventStoreContext } from "../../../stores/events-store";
+import { getClasses } from "../../../utils/utils";
+import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
+import FeedViewApiService from "../../services/feed-view-api-service";
+import {observer} from "mobx-react";
+import onClickOutside from 'react-onclickoutside';
 
 export interface SearchSuggestion {
     name: string;
@@ -23,6 +24,15 @@ const TriplanSearchV2 = () => {
 
     const eventStore = useContext(eventStoreContext);
     useHandleWindowResize();
+
+    // @ts-ignore
+    TriplanSearchV2.handleClickOutside = () => handleClickOutside();
+
+    function handleClickOutside() {
+        setTimeout(() => {
+            setShowSuggestions(false);
+        }, 100);
+    }
 
     const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length > 3 && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
     const prevShouldShowSuggestions = useRef(shouldShowSuggestions);
@@ -151,4 +161,15 @@ const TriplanSearchV2 = () => {
     );
 };
 
-export default TriplanSearchV2;
+var clickOutsideConfig = {
+    handleClickOutside: function (instance: any) {
+        // There aren't any "instances" when dealing with functional
+        // components, so we ignore the instance parameter entirely,
+        //  and just return the handler that we set up for Menu:
+
+        // @ts-ignore
+        return TriplanSearchV2.handleClickOutside;
+    },
+};
+
+export default observer(onClickOutside(TriplanSearchV2, clickOutsideConfig));

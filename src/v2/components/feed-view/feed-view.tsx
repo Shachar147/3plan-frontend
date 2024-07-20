@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useMemo, useContext} from "react";
-import PointOfInterest from "../../components/point-of-interest/point-of-interest";
-import {EventStore, eventStoreContext} from "../../stores/events-store";
-import FeedViewApiService, { allSources } from "./services/feed-view-api-service";
-import CategoryFilter from "./components/category-filter";
-import { getClasses } from "../../utils/utils";
-import TranslateService from "../../services/translate-service";
+import PointOfInterest from "../point-of-interest/point-of-interest";
+import {EventStore, eventStoreContext} from "../../../stores/events-store";
+import FeedViewApiService, { allSources } from "../../services/feed-view-api-service";
+import CategoryFilter from "../category-filter/category-filter";
+import { getClasses } from "../../../utils/utils";
+import TranslateService from "../../../services/translate-service";
 import './feed-view.scss';
-import LazyLoadComponent from "./components/lazy-load-component";
-import DestinationSelector from "../../components/destination-selector/destination-selector";
-import Button, {ButtonFlavor} from "../../components/common/button/button";
+import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
+import DestinationSelector from "../../../components/destination-selector/destination-selector";
+import Button, {ButtonFlavor} from "../../../components/common/button/button";
 
 interface FeedViewProps {
     eventStore: EventStore;
@@ -49,7 +49,7 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
     const [allReachedEnd, setAllReachedEnd] = useState<boolean>(false);
 
     const apiService = useMemo(() => new FeedViewApiService(), []);
-    const haveNoDestinations = destinations == "[]" || destinations?.[0] == "[]";
+    const haveNoDestinations = destinations == "[]" || destinations?.[0] == "[]" || destinations?.length == 0;
 
     useEffect(() => {
         const fetchCounts = async () => {
@@ -105,9 +105,7 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
             responses.forEach(response => {
                 newItems.push(...response.results);
                 response.isFinished = true;
-                if (response.isFinished) {
-                    setFinishedSources(prev => [...prev, response.source]);
-                }
+                setFinishedSources(prev => [...prev, response.source]);
             });
 
             _reachedEndPerDestination = {
@@ -215,28 +213,69 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
         );
     }
 
+    function renderCategoryFilter(){
+        if (mainFeed) {
+            return null;
+        }
+        if (haveNoDestinations) {
+            return null;
+        }
+        return (
+            <div className={getClasses("feed-view-filter-bar justify-content-space-between", eventStore.isHebrew ? 'hebrew-mode flex-row-reverse' : 'flex-row')}>
+                <CategoryFilter
+                    categories={categories}
+                    onFilterChange={(category) => handleCategoryChange(category, items)}
+                />
+                {renderShowingResultsText()}
+            </div>
+        );
+    }
+
+    function renderItems(){
+        const classList = getClasses("width-100-percents align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
+
+        return filteredItems.map((item, idx) => (
+            <div key={item.id} className={classList}>
+                {idx+1}
+                <PointOfInterest key={item.id} item={item} eventStore={eventStore} />
+            </div>
+        ))
+    }
+
+    function isFiltered(){
+        return selectedCategory != "";
+    }
+
+    function renderReachedEnd(){
+        if (!allReachedEnd) {
+            return null;
+        }
+        if (isFiltered() && filteredItems.length == 0) {
+            return null;
+        }
+
+        return (
+            <div className="width-100-percents text-align-center">
+                {TranslateService.translate(eventStore, 'NO_MORE_ITEMS')}
+            </div>
+        );
+    }
+
+    function renderSelectDestinationPlaceholder(){
+        if (haveNoDestinations){
+            return (
+                <SelectDestinationPlaceholder/>
+            );
+        }
+    }
+
     return (
         (isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" allReachedEnd={allReachedEnd} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
             <div className="flex-column gap-4">
-                {!haveNoDestinations && <div className={getClasses("feed-view-filter-bar justify-content-space-between", eventStore.isHebrew ? 'hebrew-mode flex-row-reverse' : 'flex-row')}>
-                    <CategoryFilter
-                        categories={categories}
-                        onFilterChange={(category) => handleCategoryChange(category, items)}
-                    />
-                    {renderShowingResultsText()}
-                </div>}
-                {filteredItems.map((item, idx) => (
-                    <div key={item.id} className={getClasses("width-100-percents align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row")}>
-                        {idx+1}
-                        <PointOfInterest key={item.id} item={item} eventStore={eventStore} />
-                    </div>
-                ))}
-                {allReachedEnd && filteredItems.length > 0 && (
-                    <div className="width-100-percents text-align-center">
-                        {TranslateService.translate(eventStore, 'NO_MORE_ITEMS')}
-                    </div>
-                )}
-                {haveNoDestinations && <SelectDestinationPlaceholder />}
+                {renderCategoryFilter()}
+                {renderItems()}
+                {renderReachedEnd()}
+                {renderSelectDestinationPlaceholder()}
             </div>
         </LazyLoadComponent>
     );

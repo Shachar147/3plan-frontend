@@ -1,4 +1,5 @@
-import { apiGetPromise } from "../../../helpers/api";
+import { apiGetPromise } from "../../helpers/api";
+import {ENDPOINTS} from "../utils/endpoints";
 
 export const allSources = [
     'Local',
@@ -8,18 +9,18 @@ export const allSources = [
 
 export const SourceToUrl = (destination: string, page: number): Record<string, string> => {
     const base: Record<string, string> = {
-        'Local': `/poi/by-destination?destination=${destination}&page=${page}`,
-        'GetYourGuide': `/poi/external-source/getyourguide?destination=${destination}&page=${page}`,
+        'Local': `${ENDPOINTS.poi.local}?destination=${destination}&page=${page}`,
+        'GetYourGuide': `${ENDPOINTS.poi.external.getyourguide}?destination=${destination}&page=${page}`,
     };
     if (destination === "Dubai"){
-        base["Dubai.co.il"] = `/poi/external-source/dubaicoil?destination=${destination}&page=${page}`;
+        base["Dubai.co.il"] = `${ENDPOINTS.poi.external.dubaicoil}?destination=${destination}&page=${page}`;
     }
     return base;
 }
 
 export default class FeedViewApiService {
     getCount = async (destination: string) => {
-        const result = await apiGetPromise(this, `/poi/count/by-source/${destination}`);
+        const result = await apiGetPromise(this, `${ENDPOINTS.poi.count}/${destination}`);
         if (result) {
             return result?.data;
         }
@@ -47,7 +48,7 @@ export default class FeedViewApiService {
     }
 
     getMainFeedItems = async () => {
-        const result = await apiGetPromise(this,  `/poi/feed/`);
+        const result = await apiGetPromise(this,  ENDPOINTS.poi.feed);
         if (result) {
             return result?.data;
         }
@@ -59,7 +60,7 @@ export default class FeedViewApiService {
     }
 
     getSearchSuggestions = async (searchKeyword: string) => {
-        const result = await apiGetPromise(this,  `/poi/search-suggestions/?s=${searchKeyword}`);
+        const result = await apiGetPromise(this,  `${ENDPOINTS.poi.searchSuggestions}/?s=${searchKeyword}`);
         if (result) {
             return result?.data;
         }
