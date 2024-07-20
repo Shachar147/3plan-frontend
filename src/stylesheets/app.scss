@@ -468,6 +468,10 @@ body {
 	flex-direction: row;
 }
 
+.flex-wrap-wrap {
+	flex-wrap: wrap;
+}
+
 .fa.flex-row {
 	display: flex;
 	flex-direction: row;
@@ -1091,6 +1095,10 @@ input[type='text'] {
 	width: 100%;
 }
 
+.width-100-percents-important {
+	width: 100% !important;
+}
+
 .width-max-content {
 	width: max-content;
 }
@@ -1450,4 +1458,26 @@ input[id^='react-select-'][id$='-input'] {
 .black-text-shadow {
 	color: black; /* Set the text color to black */
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Create a shadow effect */
+}
+
+
+.max-height-100-ellipsis {
+	max-height: 100px; /* Set the maximum height */
+	overflow: hidden; /* Hide the overflowing text */
+	position: relative;
+
+	/* Add this for multiline ellipsis */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 5; /* Number of lines to show */
+	overflow: hidden;
+}
+
+.max-height-100-ellipsis::after {
+	content: ''; /* Add ellipsis */
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 0 10px; /* Adjust padding as needed */
+	background: white; /* Match background to avoid overlap */
 }

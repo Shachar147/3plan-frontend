@@ -7,7 +7,7 @@ import './point-of-interest.scss';
 import ReactModalService from "../../../services/react-modal-service";
 import {TripActions} from "../../../utils/interfaces";
 import {TriplanPriority} from "../../../utils/enums";
-import {extractCategory} from "../../../utils/utils";
+import {extractCategory, getClasses} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore} from "../../../stores/events-store";
 
@@ -27,13 +27,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
         item.name ?? '',
         item.description ?? '',
     ].filter(Boolean))
-    item.category = item.category || category || "כללי";
+    item.category = item.category || category || "CATEGORY.GENERAL";
 
     const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${item.location?.latitude},${item.location?.longitude}`;
-
-    const handleFavoriteClick = () => {
-        setIsFavorite(!isFavorite);
-    };
 
     const renderStars = (rating) => {
         const fullStars = Math.floor(rating);
@@ -87,7 +83,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
                         ...eventStore.categories,
                         {
                             id: categoryId,
-                            title: item.category,
+                            title: TranslateService.translate(eventStore, item.category),
                             icon: '',
                         },
                     ],
@@ -164,8 +160,10 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
         );
     }
 
+    const isShrinkedMode = eventStore.isMobile || mainFeed;
+
     return (
-        <div className={`point-of-interest ${isHebrew ? 'hebrew-mode' : ''}`}>
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed')}>
             <div className="poi-left">
                 <div className="carousel-wrapper">
                     <Carousel showThumbs={false}>
@@ -179,9 +177,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
             </div>
             <div className="poi-right">
                 {item.priority === 'high' && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
-                {item.category && <div className="category-label">{item.category}</div>}
-                <h2>{item.name}</h2>
-                <span className="description">{item.description}</span>
+                {item.category && <div className="category-label">{TranslateService.translate(eventStore, item.category)}</div>}
+                {isShrinkedMode ? <h4>{item.name}</h4> : <h2>{item.name}</h2>}
+                <span className={getClasses("description", isShrinkedMode && 'max-height-100-ellipsis')}>{item.description}</span>
                 <div className="poi-details">
                     {durationText && <span className="duration">{durationText}</span>}
                     {item.extra?.price && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
@@ -197,7 +195,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
                         })}
                         </span>
                     </div>}
-                    {eventStore.isMobile && (
+                    {isShrinkedMode && (
                         <div className="poi-footer-links">
                             <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>
                             {item.location && (
@@ -209,11 +207,11 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
                         </div>
                     )}
                     <div className="poi-footer">
-                        {!eventStore.isMobile && <div className="source-logo">
+                        {!isShrinkedMode && <div className="source-logo">
                             <img src={`/images/${item.source.toLowerCase().replaceAll(".", "")}.png`} alt={item.source} />
                         </div>}
-                        {!eventStore.isMobile && <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>}
-                        {item.location && !eventStore.isMobile && (
+                        {!isShrinkedMode && <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>}
+                        {item.location && !isShrinkedMode && (
                             <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
                         )}
                         {renderSaveButton()}

@@ -6,6 +6,7 @@ import TranslateService from "../../../services/translate-service";
 import {observer} from "mobx-react";
 import FeedView from "../../components/feed-view/feed-view";
 import './main-page-content.scss'
+import MyTrips from "../my-trips/my-trips";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -56,7 +57,7 @@ function MainPageContent(){
                     {
                         name: TranslateService.translate(eventStore, `LANDING_PAGE.MY_TRIPS${isShort}`),
                         icon: "fa-plane",
-                        render: () => <TriplanTabContent content={TranslateService.translate(eventStore, `LANDING_PAGE.MY_TRIPS${isShort}`)} />
+                        render: () => <TriplanTabContent content={<MyTrips />} />
                     },
                 ]}
             />

@@ -4,6 +4,7 @@ export const ENDPOINTS = {
         local: '/poi/by-destination',
         external: {
             getyourguide: '/poi/external-source/getyourguide',
+            tripadvisor: '/poi/external-source/tripadvisor',
             dubaicoil: '/poi/external-source/dubaicoil'
         },
         feed: '/poi/feed/',

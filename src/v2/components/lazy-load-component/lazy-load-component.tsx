@@ -8,21 +8,19 @@ interface LazyLoadComponentProps {
     fetchData: (page: number, setLoading: (bool) => void) => Promise<any>;
     children: React.ReactNode;
     isLoading: boolean;
-    allReachedEnd: boolean;
+    disableLoader: boolean;
     className?: string;
 }
 
-const LazyLoadComponent = ({ children, fetchData, isLoading, className, allReachedEnd }: LazyLoadComponentProps) => {
+const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, className }: LazyLoadComponentProps) => {
     const eventStore = useContext(eventStoreContext);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(isLoading);
     const loader = useRef(null);
 
     useEffect (() => {
-        if (!allReachedEnd) {
-            fetchData(page, setLoading);
-        }
-    }, [page, allReachedEnd]);
+        fetchData(page, setLoading);
+    }, [page]);
 
     useEffect(() => {
         const options = {
@@ -51,11 +49,11 @@ const LazyLoadComponent = ({ children, fetchData, isLoading, className, allReach
     return (
         <div className={className}>
             {children}
-            {!allReachedEnd && loading && <div ref={loader} className={getClasses("margin-top-10 width-100-percents text-align-center", eventStore.isHebrew && 'direction-rtl')}>
-                {<div>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div>}
-            </div>}
+            <div ref={loader} className={getClasses("width-100-percents text-align-center", eventStore.isHebrew && 'direction-rtl')}>
+                {loading && !disableLoader && <span className={getClasses(eventStore.isMobile && 'margin-block-8')}>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}
+            </div>
         </div>
     );
 };
 
-export default observer(LazyLoadComponent);
+export default LazyLoadComponent;

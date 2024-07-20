@@ -885,5 +885,11 @@
 	"HEADER_SEARCH_PLACEHOLDER": "חפשו מקומות ודברים לעשות",
 	"HEADER_SEARCH_PLACEHOLDER.SHORT": "חפשו מקומות",
 	"KEEP_TO_SAVED": "הוסף למקומות שמורים",
-	"REMOVE_FROM_SAVED": "הסר ממקומות שמורים"
+	"REMOVE_FROM_SAVED": "הסר ממקומות שמורים",
+	"CATEGORY.VIEWS": "תצפיות",
+	"CATEGORY.PARKS": "פארקים",
+	"CATEGORY.CITIES": "עיירות",
+	"CATEGORY.BEACHES": "חופים",
+	"CATEGORY.BEACH_BARS": "ביץ׳ ברים",
+	"CATEGORY.MUSEUMS": "מוזיאונים"
 }

@@ -10,7 +10,11 @@
   position: relative;
   z-index: 2;
 
-  padding-inline: 196px + 96px;
+  padding-inline: 96px;
+
+  .tabular.menu {
+    padding-inline: 196px;
+  }
 
   .tab {
     border-color: white !important;

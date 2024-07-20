@@ -232,11 +232,11 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
     }
 
     function renderItems(){
-        const classList = getClasses("width-100-percents align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
+        const classList = getClasses("align-items-center", !mainFeed && 'width-100-percents', eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
         return filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
-                {idx+1}
+                {!mainFeed && `${idx+1}`}
                 <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
             </div>
         ))
@@ -270,8 +270,8 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
     }
 
     return (
-        (isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" allReachedEnd={allReachedEnd} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
-            <div className="flex-column gap-4">
+        (isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
+            <div className={getClasses(mainFeed ? 'flex-row justify-content-center flex-wrap-wrap align-items-start' : 'flex-column', "gap-4")}>
                 {renderCategoryFilter()}
                 {renderItems()}
                 {renderReachedEnd()}

@@ -44,8 +44,8 @@
 .suggestions-container {
   position: absolute;
   top: CALC(100% + 2px);
-  left: 30px;
-  width: CALC(100% + 70px);
+  left: 20px;
+  width: calc(100% + 80px);
   max-height: 300px;
   overflow-y: auto;
   background-color: white;

@@ -4,6 +4,7 @@ import {ENDPOINTS} from "../utils/endpoints";
 export const allSources = [
     'Local',
     'GetYourGuide',
+    'TripAdvisor',
     "Dubai.co.il"
 ];
 
@@ -11,6 +12,7 @@ export const SourceToUrl = (destination: string, page: number): Record<string, s
     const base: Record<string, string> = {
         'Local': `${ENDPOINTS.poi.local}?destination=${destination}&page=${page}`,
         'GetYourGuide': `${ENDPOINTS.poi.external.getyourguide}?destination=${destination}&page=${page}`,
+        'TripAdvisor': `${ENDPOINTS.poi.external.tripadvisor}?destination=${destination}&page=${page}`,
     };
     if (destination === "Dubai"){
         base["Dubai.co.il"] = `${ENDPOINTS.poi.external.dubaicoil}?destination=${destination}&page=${page}`;
