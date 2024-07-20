@@ -12,6 +12,10 @@
   position: relative;
   gap: 16px;
   width: 100%;
+
+  .carousel-status {
+    direction: ltr !important;
+  }
 }
 
 .poi-left {

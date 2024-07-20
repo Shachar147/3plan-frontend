@@ -792,5 +792,7 @@
 	"SAVED_COLLECTIONS": "Saved collections",
 	"SAVED_COLLECTIONS.SHORT": "Saved collections",
 	"HEADER_SEARCH_PLACEHOLDER": "Find places and things to do",
-	"HEADER_SEARCH_PLACEHOLDER.SHORT": "Find places"
+	"HEADER_SEARCH_PLACEHOLDER.SHORT": "Find places",
+	"KEEP_TO_SAVED": "Keep to saved",
+	"REMOVE_FROM_SAVED": "Remove from saved"
 }

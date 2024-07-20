@@ -37,7 +37,6 @@ function TriplanHeaderLine(){
             <div className={getClasses(`${baseClass}`, !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
                 <div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => alert("here")} white={!isSticky} height={60} />}
-                    {/*<TriplanSearch className={`${baseClass}-search`} />*/}
                     <TriplanSearchV2 />
                 </div>
                 <div className={`${baseClass}-right-side`}>

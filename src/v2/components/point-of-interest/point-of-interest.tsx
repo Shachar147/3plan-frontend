@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Carousel} from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import {FaRegStar, FaStar, FaStarHalfAlt} from 'react-icons/fa';
+import {FaHeart, FaRegStar, FaStar, FaStarHalfAlt} from 'react-icons/fa';
 import Button, {ButtonFlavor} from '../../../components/common/button/button'; // Import your Button component
 import './point-of-interest.scss';
 import ReactModalService from "../../../services/react-modal-service";
@@ -14,9 +14,10 @@ import {EventStore} from "../../../stores/events-store";
 interface PointOfInterestProps {
     item: any, // getyourguide / dubaicoil result
     eventStore: EventStore,
+    mainFeed?: boolean;
 }
 
-const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) => {
     const [isFavorite, setIsFavorite] = useState(false);
 
     const isHebrew = eventStore.isHebrew;
@@ -69,6 +70,10 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
     const durationText = formatDuration(item.duration);
 
     const handleAddToPlan = () => {
+        if (mainFeed){
+            return; // since we're not on specific trip.
+        }
+
         let categoryId = undefined;
 
         if (item.category) {
@@ -118,13 +123,45 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
     };
 
     const alreadyInPlan = !![...eventStore.calendarEvents, ...eventStore.allSidebarEvents].find((i) => i.extra?.feedId == feedId);
+    const alreadyInSaved = false; // todo complete
 
-    let rating = item.rate?.rating?.toFixed(1);
-    if (rating?.toString()?.endsWith(".0")){
-        rating = item.rate?.rating.toFixed(0);
+    function getRating(){
+        let rating = item.rate?.rating?.toFixed(1);
+        if (rating?.toString()?.endsWith(".0")){
+            rating = item.rate?.rating.toFixed(0);
+        }
+        return rating;
     }
-    if (!rating){
-        console.log("here", item.source);
+
+    const rating = getRating();
+
+    const handleAddToSaved = () => {
+        alert("todo complete!");
+    }
+
+    function renderSaveButton() {
+        if (mainFeed) {
+            return (
+                <Button
+                    flavor={alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary}
+                    onClick={handleAddToSaved}
+                    icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
+                    text={alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED")}
+                    disabled={alreadyInSaved}
+                    className="padding-inline-15"
+                />
+            );
+        }
+        return (
+            <Button
+                flavor={alreadyInPlan ? ButtonFlavor.success : ButtonFlavor.primary}
+                onClick={handleAddToPlan}
+                icon={alreadyInPlan ? "fa fa-check" : undefined}
+                text={alreadyInPlan ? TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADDED_TO_PLAN') : TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADD_TO_PLAN')}
+                disabled={alreadyInPlan || eventStore.isTripLocked || !eventStore.canWrite}
+                className="padding-inline-15"
+            />
+        );
     }
 
     return (
@@ -138,10 +175,6 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                             </div>
                         ))}
                     </Carousel>
-                    {/*<FaHeart*/}
-                    {/*    className={`heart-icon ${isFavorite ? 'filled' : ''}`}*/}
-                    {/*    onClick={handleFavoriteClick}*/}
-                    {/*/>*/}
                 </div>
             </div>
             <div className="poi-right">
@@ -183,13 +216,7 @@ const PointOfInterest = ({ item, eventStore }: PointOfInterestProps) => {
                         {item.location && !eventStore.isMobile && (
                             <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
                         )}
-                        <Button
-                            flavor={alreadyInPlan ? ButtonFlavor.success : ButtonFlavor.primary}
-                            onClick={handleAddToPlan}
-                            icon={alreadyInPlan ? "fa fa-check" : undefined}
-                            text={alreadyInPlan ? TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADDED_TO_PLAN') : TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADD_TO_PLAN')}
-                            disabled={alreadyInPlan || eventStore.isTripLocked || !eventStore.canWrite}
-                        />
+                        {renderSaveButton()}
                     </div>
                 </div>
             </div>

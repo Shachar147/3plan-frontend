@@ -237,7 +237,7 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
         return filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
                 {idx+1}
-                <PointOfInterest key={item.id} item={item} eventStore={eventStore} />
+                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
             </div>
         ))
     }
