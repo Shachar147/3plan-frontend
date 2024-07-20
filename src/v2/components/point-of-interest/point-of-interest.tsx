@@ -188,7 +188,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
         <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed')}>
             <div className="poi-left">
                 <div className="carousel-wrapper">
-                    <Carousel showThumbs={false}>
+                    <Carousel showThumbs={false} showIndicators={false}>
                         {item.images.map((image, index) => (
                             <div key={index}>
                                 <img src={image} alt={item.name} />
