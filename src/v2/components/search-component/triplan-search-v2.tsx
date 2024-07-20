@@ -10,7 +10,9 @@ import onClickOutside from 'react-onclickoutside';
 
 export interface SearchSuggestion {
     name: string;
-    descriptor?: string;
+    category: string;
+    destination: string;
+    image?: string;
 }
 
 const TriplanSearchV2 = () => {
@@ -146,8 +148,11 @@ const TriplanSearchV2 = () => {
                             className="suggestion-item"
                             onClick={() => handleSuggestionClick(suggestion)}
                         >
-                            <p className="suggestion-name">{suggestion.name}</p>
-                            <small className="suggestion-descriptor">{suggestion.descriptor}</small>
+                            <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>
+                            <small className="suggestion-descriptor">{TranslateService.translate(eventStore, 'X_IN_Y',{
+                                X: TranslateService.translate(eventStore, suggestion.category),
+                                Y: TranslateService.translate(eventStore, suggestion.destination)
+                            })}</small>
                         </div>
                     ))}
                     {suggestions.length === 0 && (

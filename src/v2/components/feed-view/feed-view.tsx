@@ -7,7 +7,7 @@ import { getClasses } from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import './feed-view.scss';
 import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
-import DestinationSelector from "../../../components/destination-selector/destination-selector";
+import DestinationSelector from "../destination-selector/destination-selector";
 import Button, {ButtonFlavor} from "../../../components/common/button/button";
 
 interface FeedViewProps {
@@ -234,9 +234,28 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
     function renderItems(){
         const classList = getClasses("align-items-center", !mainFeed && 'width-100-percents', eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
+        if (mainFeed){
+            return (
+                <div className="flex-column margin-top-10">
+                    <h2 className="main-feed-header">{
+                        TranslateService.translate(eventStore, 'TOP_PICKS')
+                    }</h2>
+                    <div className="flex-row justify-content-center flex-wrap-wrap align-items-start">
+                    {
+                        filteredItems.map((item, idx) => (
+                            <div key={item.id} className={classList}>
+                                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
+                            </div>
+                        ))
+                    }
+                    </div>
+                </div>
+            )
+        }
+
         return filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
-                {!mainFeed && `${idx+1}`}
+                {idx+1}
                 <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
             </div>
         ))
@@ -271,7 +290,7 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
 
     return (
         (isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
-            <div className={getClasses(mainFeed ? 'flex-row justify-content-center flex-wrap-wrap align-items-start' : 'flex-column', "gap-4")}>
+            <div className={getClasses(!mainFeed && 'flex-column', "gap-4")}>
                 {renderCategoryFilter()}
                 {renderItems()}
                 {renderReachedEnd()}

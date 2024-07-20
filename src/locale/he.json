@@ -321,6 +321,10 @@
 	"Switzerland": "שוויץ",
 	"London": "לונדון",
 	"Dubai": "דובאי",
+	"Ibiza": "איביזה",
+	"New York": "ניו יורק",
+	"Brooklyn": "ברוקלין",
+	"Miami": "מיאמי",
 	"Israel": "ישראל",
 	"Italy": "איטליה",
 	"Maldives": "האיים המלדיבים",
@@ -891,5 +895,7 @@
 	"CATEGORY.CITIES": "עיירות",
 	"CATEGORY.BEACHES": "חופים",
 	"CATEGORY.BEACH_BARS": "ביץ׳ ברים",
-	"CATEGORY.MUSEUMS": "מוזיאונים"
+	"CATEGORY.MUSEUMS": "מוזיאונים",
+	"X_IN_Y": "{X} ב{Y}",
+	"TOP_PICKS": "בחירות מובילות"
 }

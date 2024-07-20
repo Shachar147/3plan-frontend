@@ -68,6 +68,12 @@
 .category-label {
   color: #666;
   margin-bottom: 8px;
+  display: flex;
+  gap: 6px;
+
+  i {
+    border-radius: 50%;
+  }
 }
 
 h2 {

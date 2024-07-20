@@ -41,10 +41,17 @@
   background-color: #0056b3;
 }
 
+.rtl {
+  .suggestions-container {
+    text-align: right;
+    direction: rtl;
+  }
+}
+
 .suggestions-container {
   position: absolute;
   top: CALC(100% + 2px);
-  left: 20px;
+  inset-inline-start: 20px;
   width: calc(100% + 80px);
   max-height: 300px;
   overflow-y: auto;

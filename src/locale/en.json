@@ -800,5 +800,7 @@
 	"CATEGORY.CITIES": "Cities",
 	"CATEGORY.BEACHES": "Beaches",
 	"CATEGORY.BEACH_BARS": "Beach bars",
-	"CATEGORY.MUSEUMS": "Museums"
+	"CATEGORY.MUSEUMS": "Museums",
+	"X_IN_Y": "{X} in {Y}",
+	"TOP_PICKS": "Top picks"
 }

@@ -10,6 +10,8 @@ import {TriplanPriority} from "../../../utils/enums";
 import {extractCategory, getClasses} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore} from "../../../stores/events-store";
+import countriesAndCities from "../destination-selector/countries-and-cities";
+import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
 
 interface PointOfInterestProps {
     item: any, // getyourguide / dubaicoil result
@@ -73,7 +75,8 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
         let categoryId = undefined;
 
         if (item.category) {
-            const existingCategory = eventStore.categories.filter((c) => c.title === item.category);
+            const existingCategory = eventStore.categories.filter((c) => c.title === item.category || c.title === TranslateService.translate(eventStore, item.category));
+            debugger;
             if (existingCategory.length > 0) {
                 categoryId = existingCategory[0].id;
             } else {
@@ -160,6 +163,26 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
         );
     }
 
+    function renderCategoryName(){
+        const name = TranslateService.translate(eventStore,'X_IN_Y', {
+            X: TranslateService.translate(eventStore, item.category),
+            Y: TranslateService.translate(eventStore, item.destination)
+        }).replace(" בהאיים"," באיים");
+
+        return (
+            <span>{name}</span>
+        )
+    }
+
+    function renderDestinationIcon(){
+        const found = fetchCitiesAndSetOptions().find((c) => c.value === item.destination);
+        if (found){
+            return (
+                <i className={found.flagClass} />
+            )
+        }
+    }
+
     const isShrinkedMode = eventStore.isMobile || mainFeed;
 
     return (
@@ -177,7 +200,10 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
             </div>
             <div className="poi-right">
                 {item.priority === 'high' && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
-                {item.category && <div className="category-label">{TranslateService.translate(eventStore, item.category)}</div>}
+                {item.category && <div className="category-label">
+                    {renderDestinationIcon()}
+                    {renderCategoryName()}
+                </div>}
                 {isShrinkedMode ? <h4>{item.name}</h4> : <h2>{item.name}</h2>}
                 <span className={getClasses("description", isShrinkedMode && 'max-height-100-ellipsis')}>{item.description}</span>
                 <div className="poi-details">
