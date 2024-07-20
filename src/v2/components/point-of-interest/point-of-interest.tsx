@@ -76,7 +76,6 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
 
         if (item.category) {
             const existingCategory = eventStore.categories.filter((c) => c.title === item.category || c.title === TranslateService.translate(eventStore, item.category));
-            debugger;
             if (existingCategory.length > 0) {
                 categoryId = existingCategory[0].id;
             } else {

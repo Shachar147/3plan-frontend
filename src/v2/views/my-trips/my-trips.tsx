@@ -1,7 +1,7 @@
 import {observer} from "mobx-react";
 import TranslateService from "../../../services/translate-service";
 import Button, {ButtonFlavor} from "../../../components/common/button/button";
-import React, {useContext, useEffect, useMemo, useState} from "react";
+import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import DataServices, {
     DBTrip,
@@ -17,6 +17,7 @@ import {getClasses} from "../../../utils/utils";
 import {runInAction} from "mobx";
 import {useNavigate} from "react-router-dom";
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
+import {fetchCitiesAndSetOptions} from "../../components/destination-selector/destination-selector";
 
 function MyTrips(){
     const eventStore = useContext(eventStoreContext);
@@ -81,6 +82,8 @@ function MyTrips(){
         const canRead = isSharedTrip ? sharedTripData.canRead : true;
         const canWrite = isSharedTrip ? sharedTripData.canWrite : true;
 
+        const destinations = trip.destinations;
+
         if (tripName === '') return <></>;
 
         const classList = getClasses(
@@ -88,6 +91,15 @@ function MyTrips(){
             dataSource.toLowerCase(),
             getUser() && 'logged-in'
         );
+
+        function renderDestinationIcon(destination: string) {
+            const found = fetchCitiesAndSetOptions().find((c) => c.value === destination);
+            if (found) {
+                return (
+                    <i title={found.value} alt={found.value} className={found.flagClass} />
+                );
+            }
+        }
 
         function renderTripInfo() {
             return (
@@ -97,6 +109,7 @@ function MyTrips(){
                         title={isSharedTrip ? TranslateService.translate(eventStore, 'SHARED_TRIP') : undefined}
                         aria-hidden="true"
                     />
+                    {destinations && <div className="flex-row gap-3">{destinations.map(renderDestinationIcon)}</div>}
                     <span className="my-trips-trip-name">
 						<EllipsisWithTooltip placement="bottom">{tripName}</EllipsisWithTooltip>
 					</span>

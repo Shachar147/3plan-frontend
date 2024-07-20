@@ -145,6 +145,7 @@ h2 {
     display: flex;
     flex-direction: column;
     max-width: 300px;
+    min-height: 677px;
 
     .poi-right {
       min-height: 450px;
@@ -157,7 +158,8 @@ h2 {
     }
     .carousel .slide img {
       max-width: 100%;
-      max-height: 177px;
+      //max-height: 177px;
+      height: 177px;
     }
 
     .poi-footer-links {
