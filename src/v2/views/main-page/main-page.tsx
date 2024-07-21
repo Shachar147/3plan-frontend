@@ -3,7 +3,7 @@ import {observer} from "mobx-react";
 import './main-page.scss';
 import TriplanHeaderBanner from "../../components/triplan-header-banner/triplan-header-banner";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
-import Content from "./main-page-content";
+import MainPageContent from "./main-page-content";
 
 function TriplanFooter(){
     return (
@@ -17,7 +17,7 @@ function MainPageV2(){
     return (
         <div className="triplan-main-page-container flex-column">
             <TriplanHeaderBanner />
-            <Content />
+            <MainPageContent />
             <TriplanFooter />
         </div>
     )

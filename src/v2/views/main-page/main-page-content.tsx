@@ -7,6 +7,7 @@ import {observer} from "mobx-react";
 import FeedView from "../../components/feed-view/feed-view";
 import './main-page-content.scss'
 import MyTrips from "../my-trips/my-trips";
+import {feedStoreContext} from "../../stores/feed-view-store";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -18,7 +19,12 @@ function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
 
 function MainPageContent(){
     const eventStore = useContext(eventStoreContext);
+    const feedStore = useContext(feedStoreContext);
     useHandleWindowResize();
+
+    useEffect(() => {
+        feedStore.getSavedCollections();
+    }, [])
 
     useEffect(() => {
         const scrollContainer = document.querySelector('.ui.tabular.menu');
@@ -50,9 +56,13 @@ function MainPageContent(){
                         render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />
                     },
                     {
-                        name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`),
+                        name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
+                            X: feedStore.savedItems.length
+                        }),
                         icon: "fa-save",
-                        render: () => <TriplanTabContent content={TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`)} />
+                        render: () => <TriplanTabContent content={TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
+                            X: feedStore.savedItems.length
+                        })} />
                     },
                     {
                         name: TranslateService.translate(eventStore, `LANDING_PAGE.MY_TRIPS${isShort}`),

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Carousel} from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import {FaRegStar, FaStar, FaStarHalfAlt} from 'react-icons/fa';
@@ -11,15 +11,20 @@ import {extractCategory, getClasses} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore} from "../../../stores/events-store";
 import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
+import FeedViewApiService from "../../services/feed-view-api-service";
+import {IPointOfInterest} from "../../utils/interfaces";
+import {runInAction} from "mobx";
+import {feedStoreContext} from "../../stores/feed-view-store";
+import {observer} from "mobx-react";
 
 interface PointOfInterestProps {
-    item: any, // getyourguide / dubaicoil result
+    item: IPointOfInterest, // getyourguide / dubaicoil result
     eventStore: EventStore,
     mainFeed?: boolean;
 }
 
 const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) => {
-    const [isFavorite, setIsFavorite] = useState(false);
+    const feedStore = useContext(feedStoreContext);
 
     const isHebrew = eventStore.isHebrew;
     const feedId = `${item.source}-${item.name}-${item.url}`;
@@ -120,7 +125,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
     };
 
     const alreadyInPlan = !![...eventStore.calendarEvents, ...eventStore.allSidebarEvents].find((i) => i.extra?.feedId == feedId);
-    const alreadyInSaved = false; // todo complete
+    const alreadyInSaved = !!feedStore.savedItems.find((i) => i.poiId == item.id);
 
     function getRating(){
         let rating = item.rate?.rating?.toFixed(1);
@@ -133,7 +138,19 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
     const rating = getRating();
 
     const handleAddToSaved = () => {
-        alert("todo complete!");
+        new FeedViewApiService().saveItem(item).then((result) => {
+            runInAction(() => {
+                feedStore.getSavedCollections()
+            })
+        })
+    }
+
+    const handleRemoveFromSaved = () => {
+        new FeedViewApiService().unSaveItem(item).then((result) => {
+            runInAction(() => {
+                feedStore.getSavedCollections()
+            })
+        })
     }
 
     function renderSaveButton() {
@@ -184,6 +201,18 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
 
     const isShrinkedMode = eventStore.isMobile || mainFeed;
 
+    function renderItemCategory(){
+        return (
+            <div className={getClasses("category-label", mainFeed && 'main-feed')}>
+                <div className="flex-row gap-8">
+                    {renderDestinationIcon()}
+                    {renderCategoryName()}
+                </div>
+                {mainFeed && renderSaveButton()}
+            </div>
+        )
+    }
+
     return (
         <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed')}>
             <div className="poi-left">
@@ -195,15 +224,12 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
                             </div>
                         ))}
                     </Carousel>
+                    {mainFeed && renderItemCategory()}
                 </div>
             </div>
             <div className="poi-right">
                 {(item.priority === 'high' || item.isSystemRecommendation) && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
-                {item.category && <div className="category-label">
-                    {renderDestinationIcon()}
-                    {mainFeed && renderSaveButton()}
-                    {renderCategoryName()}
-                </div>}
+                {item.category && !mainFeed && renderItemCategory()}
                 {isShrinkedMode ? <h4>{item.name}</h4> : <h2>{item.name}</h2>}
                 <span className={getClasses("description", isShrinkedMode && 'max-height-100-ellipsis')}>{item.description}</span>
                 <div className="poi-details">
@@ -248,4 +274,4 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
     );
 };
 
-export default PointOfInterest;
+export default observer(PointOfInterest);

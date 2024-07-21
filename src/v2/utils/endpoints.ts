@@ -9,5 +9,10 @@ export const ENDPOINTS = {
         },
         feed: '/poi/feed/',
         searchSuggestions: '/poi/search-suggestions'
+    },
+    savedCollections: {
+        get: '/saved-collections/',
+        upsert: '/saved-collections/upsert/',
+        deleteItem: '/saved-collections-item/'
     }
 }

@@ -158,6 +158,11 @@ h2 {
     .category-label {
       position: absolute;
       margin-top: -116px;
+
+      &.main-feed {
+        margin-top: -100px;
+      }
+
       background: linear-gradient(180deg, transparent, #000);
       height: 100px;
       width: 100%;
@@ -175,6 +180,11 @@ h2 {
         i {
           transition: background-color 0.2s ease-in-out;
         }
+      }
+
+      button:has(.fa-heart),
+      button:has(.fa-heart-o) {
+        z-index: 100;
       }
 
       i {

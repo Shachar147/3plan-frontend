@@ -1,9 +1,11 @@
 import { createContext } from "react";
-import {action, observable} from "mobx";
+import {action, computed, observable, runInAction} from "mobx";
+import {IPointOfInterest, SavedCollection} from "../utils/interfaces";
+import FeedViewApiService from "../services/feed-view-api-service";
 
 export class FeedStore {
-    @observable items: any[] = [];
-    @observable filteredItems: any[] = [];
+    @observable items: IPointOfInterest[] = [];
+    @observable filteredItems: IPointOfInterest[] = [];
     @observable categories: string[] = [];
     @observable selectedCategory: string = "";
     @observable isLoading: boolean = true;
@@ -12,6 +14,16 @@ export class FeedStore {
     @observable reachedEndPerDestination: Record<string, boolean> = {};
     @observable reachedEndForDestinations: boolean = false;
     @observable allReachedEnd: boolean = false;
+    @observable savedCollections: SavedCollection[] = [];
+
+    @action
+    getSavedCollections = async () => {
+        new FeedViewApiService().getSavedCollections().then((response) => {
+            runInAction(() => {
+                this.savedCollections = response;
+            })
+        })
+    }
 
     @action
     setItems = (items: any[]) => {
@@ -62,6 +74,11 @@ export class FeedStore {
     setAllReachedEnd = (allReachedEnd: boolean) => {
         this.allReachedEnd = allReachedEnd;
     };
+
+    @computed
+    get savedItems(){
+        return this.savedCollections.map((c) => c.items).flat();
+    }
 }
 
 export const feedStoreContext = createContext(new FeedStore());

@@ -1,5 +1,6 @@
-import { apiGetPromise } from "../../helpers/api";
+import {apiDelete, apiGetPromise, apiPost} from "../../helpers/api";
 import {ENDPOINTS} from "../utils/endpoints";
+import {IPointOfInterest, SavedCollection} from "../utils/interfaces";
 
 export const allSources = [
     'Local',
@@ -47,6 +48,28 @@ export default class FeedViewApiService {
             isFinished: true,
             source
         };
+    }
+
+    getSavedCollections = async(): Promise<SavedCollection[]> => {
+        const result = await apiGetPromise(this, ENDPOINTS.savedCollections.get)
+        return result?.data?.data ?? [];
+    }
+
+    saveItem = async (item: IPointOfInterest) => {
+        return await apiPost(ENDPOINTS.savedCollections.upsert, {
+            name: item.destination,
+            destination: item.destination,
+            items: [
+                item.id
+            ]
+        })
+    }
+
+    unSaveItem = async (item: IPointOfInterest) => {
+        // todo complete
+        alert("here");
+        // return await apiDelete(ENDPOINTS.savedCollections.deleteItem, {
+        // })
     }
 
     getMainFeedItems = async () => {
