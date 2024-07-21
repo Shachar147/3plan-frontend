@@ -146,7 +146,16 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
     }
 
     const handleRemoveFromSaved = () => {
-        new FeedViewApiService().unSaveItem(item).then((result) => {
+        debugger;
+        const collection = feedStore.savedCollections.find((c) => c.items.map((i) => i.poiId).includes(item.id))
+        if (!collection){
+            debugger;
+            ReactModalService.internal.openOopsErrorModal(eventStore);
+            return;
+        }
+
+        new FeedViewApiService().unSaveItem(item, collection.id).then((result) => {
+            debugger;
             runInAction(() => {
                 feedStore.getSavedCollections()
             })
@@ -158,11 +167,16 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
             return (
                 <Button
                     flavor={ButtonFlavor.link}
-                    onClick={handleAddToSaved}
+                    onClick={() => {
+                        debugger;
+                        if (alreadyInSaved){
+                            return handleRemoveFromSaved();
+                        }
+                        return handleAddToSaved();
+                    }}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
                     text=""
                     tooltip={alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED")}
-                    disabled={alreadyInSaved}
                     className="padding-inline-15"
                 />
             );

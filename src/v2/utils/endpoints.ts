@@ -13,6 +13,6 @@ export const ENDPOINTS = {
     savedCollections: {
         get: '/saved-collections/',
         upsert: '/saved-collections/upsert/',
-        deleteItem: '/saved-collections-item/'
+        deleteItem: '/saved-collections-item/delete/cid/:cid/pid/:pid'
     }
 }

@@ -65,11 +65,11 @@ export default class FeedViewApiService {
         })
     }
 
-    unSaveItem = async (item: IPointOfInterest) => {
-        // todo complete
-        alert("here");
-        // return await apiDelete(ENDPOINTS.savedCollections.deleteItem, {
-        // })
+    unSaveItem = async (item: IPointOfInterest, collectionId: number) => {
+        debugger;
+        const pid = item.id;
+        const url = ENDPOINTS.savedCollections.deleteItem.replace(":cid", collectionId.toString()).replace(":pid", pid.toString());
+        return await apiPost(url)
     }
 
     getMainFeedItems = async () => {
