@@ -21,9 +21,10 @@ interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
     eventStore: EventStore,
     mainFeed?: boolean;
+    savedCollection?: boolean;
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
 
     const isHebrew = eventStore.isHebrew;
@@ -146,16 +147,12 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
     }
 
     const handleRemoveFromSaved = () => {
-        debugger;
-        const collection = feedStore.savedCollections.find((c) => c.items.map((i) => i.poiId).includes(item.id))
+        const collection = feedStore.savedCollections.find((c) => c.items.map((i) => i.poiId).includes(item.id));
         if (!collection){
-            debugger;
             ReactModalService.internal.openOopsErrorModal(eventStore);
             return;
         }
-
         new FeedViewApiService().unSaveItem(item, collection.id).then((result) => {
-            debugger;
             runInAction(() => {
                 feedStore.getSavedCollections()
             })
@@ -194,6 +191,18 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
     }
 
     function renderCategoryName(){
+        if (savedCollection){
+            return (
+                <div className="flex-row gap-3">
+                    <span>
+                        {TranslateService.translate(eventStore, item.category)}
+                    </span>
+                    <span>
+                        {TranslateService.translate(eventStore, item.destination)}
+                    </span>
+                </div>
+            )
+        }
         const name = TranslateService.translate(eventStore,'X_IN_Y', {
             X: TranslateService.translate(eventStore, item.category),
             Y: TranslateService.translate(eventStore, item.destination)
@@ -228,11 +237,11 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
     }
 
     return (
-        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed')}>
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection')}>
             <div className="poi-left">
                 <div className="carousel-wrapper">
                     <Carousel showThumbs={false} showIndicators={false}>
-                        {item.images.map((image, index) => (
+                        {item.images?.map((image, index) => (
                             <div key={index}>
                                 <img src={image} alt={item.name} className="zoomable" />
                             </div>
@@ -261,27 +270,27 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
                         })}
                         </span>
                     </div>}
-                    {isShrinkedMode && (
+                    {isShrinkedMode && !savedCollection && (
                         <div className="poi-footer-links">
-                            <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>
+                            {item.more_info && <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>}
                             {item.location && (
                                 <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
                             )}
                             <div className="source-logo">
-                                <img src={`/images/${item.source.toLowerCase().replaceAll(".", "")}.png`} alt={item.source} />
+                                <img src={`/images/${item.source?.toLowerCase()?.replaceAll(".", "")}.png`} alt={item.source} />
                             </div>
                         </div>
                     )}
-                    <div className="poi-footer">
+                    {!savedCollection && <div className="poi-footer">
                         {!isShrinkedMode && <div className="source-logo">
-                            <img src={`/images/${item.source.toLowerCase().replaceAll(".", "")}.png`} alt={item.source} />
+                            <img src={`/images/${item.source?.toLowerCase()?.replaceAll(".", "")}.png`} alt={item.source} />
                         </div>}
                         {!isShrinkedMode && <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>}
                         {item.location && !isShrinkedMode && (
                             <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
                         )}
                         {!mainFeed && renderSaveButton()}
-                    </div>
+                    </div>}
                 </div>
             </div>
         </div>

@@ -905,5 +905,8 @@
 	"CATEGORY.BEACH_BARS": "ביץ׳ ברים",
 	"CATEGORY.MUSEUMS": "מוזיאונים",
 	"X_IN_Y": "{X} ב{Y}",
-	"TOP_PICKS": "בחירות מובילות"
+	"TOP_PICKS": "בחירות מובילות",
+	"NO_SAVED_COLLECTIONS": "אופס... נראה שאין לכם מקומות שמורים עדיין",
+	"SAVED_COLLECTION_PREFIX": "יעד: ",
+	"SAVED_COLLECTION.ITEMS": "סהֿ\"כ מקומות שמורים: {X}"
 }

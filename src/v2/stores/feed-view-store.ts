@@ -16,6 +16,8 @@ export class FeedStore {
     @observable allReachedEnd: boolean = false;
     @observable savedCollections: SavedCollection[] = [];
 
+    @observable activeTab: string = "default";
+
     @action
     getSavedCollections = async () => {
         new FeedViewApiService().getSavedCollections().then((response) => {
@@ -74,6 +76,11 @@ export class FeedStore {
     setAllReachedEnd = (allReachedEnd: boolean) => {
         this.allReachedEnd = allReachedEnd;
     };
+
+    @action
+    setActiveTab = (activeTab: string) => {
+        this.activeTab = activeTab;
+    }
 
     @computed
     get savedItems(){

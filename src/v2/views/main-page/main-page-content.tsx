@@ -8,6 +8,7 @@ import FeedView from "../../components/feed-view/feed-view";
 import './main-page-content.scss'
 import MyTrips from "../my-trips/my-trips";
 import {feedStoreContext} from "../../stores/feed-view-store";
+import SavedCollectionsTab from "../saved-collections/saved-collections";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -48,23 +49,23 @@ function MainPageContent(){
     return (
         <div className="triplan-header-banner-footer">
             <TabMenu
-                activeTab={TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`)}
                 tabs={[
                     {
+                        id: "default",
                         name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
                         icon: "fa-search",
                         render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />
                     },
                     {
+                        id: "saved-collections",
                         name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
                             X: feedStore.savedItems.length
                         }),
                         icon: "fa-save",
-                        render: () => <TriplanTabContent content={TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
-                            X: feedStore.savedItems.length
-                        })} />
+                        render: () => <TriplanTabContent content={<SavedCollectionsTab />} />
                     },
                     {
+                        id: "my-trips",
                         name: TranslateService.translate(eventStore, `LANDING_PAGE.MY_TRIPS${isShort}`),
                         icon: "fa-plane",
                         render: () => <TriplanTabContent content={<MyTrips />} />

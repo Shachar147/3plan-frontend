@@ -1,11 +1,15 @@
 export interface SavedCollection {
+    id: number;
     name: string;
     destination: string;
     items: SavedCollectionItem[]
 }
 
 export interface SavedCollectionItem {
+    id: number;
     poiId: number;
+    collectionId: number;
+    fullDetails: IPointOfInterest
 }
 
 export interface IPointOfInterest {

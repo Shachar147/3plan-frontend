@@ -802,5 +802,8 @@
 	"CATEGORY.BEACH_BARS": "Beach bars",
 	"CATEGORY.MUSEUMS": "Museums",
 	"X_IN_Y": "{X} in {Y}",
-	"TOP_PICKS": "Top picks"
+	"TOP_PICKS": "Top picks",
+	"NO_SAVED_COLLECTIONS": "Oops... it seems like you don't have saved collections yet",
+	"SAVED_COLLECTION_PREFIX": "Saved collection: ",
+	"SAVED_COLLECTION.ITEMS": "Total items: {X}"
 }

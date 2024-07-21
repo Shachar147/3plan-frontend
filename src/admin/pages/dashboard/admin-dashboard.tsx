@@ -391,14 +391,17 @@ function AdminDashboard() {
 				<TabMenu
 					tabs={[
 						{
+							id: "default",
 							name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.TRIP_STATS.TITLE${isShort}`),
 							render: renderTripStats,
 						},
 						{
+							id: "user-stats",
 							name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.USER_STATS.TITLE${isShort}`),
 							render: renderUserStats,
 						},
 						{
+							id: "tinder-widget",
 							name: TranslateService.translate(eventStore, `ADMIN_DASHBOARD.TINDER_WIDGET.TITLE${isShort}`),
 							render: renderTinderWidget,
 						},
