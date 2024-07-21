@@ -83,7 +83,8 @@ function TriplanHeaderBanner(){
     const eventStore = useContext(eventStoreContext);
 
     // const bgs = ["6.jpg", "5.jpg", "7.jpg", "8.jpg", "9.jpg"];
-    const bgs = ["6.jpg"]
+    // const bgs = ["6.jpg"]
+    const bgs = ["best/10.png"]
     const random = Math.floor(Math.random() * bgs.length);
 
     return (

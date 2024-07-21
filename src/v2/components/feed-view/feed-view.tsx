@@ -1,6 +1,7 @@
-import React, {useState, useEffect, useMemo, useContext} from "react";
+import React, { useEffect, useMemo, useContext } from "react";
+import { observer } from "mobx-react";
 import PointOfInterest from "../point-of-interest/point-of-interest";
-import {EventStore, eventStoreContext} from "../../../stores/events-store";
+import { EventStore, eventStoreContext } from "../../../stores/events-store";
 import FeedViewApiService, { allSources } from "../../services/feed-view-api-service";
 import CategoryFilter from "../category-filter/category-filter";
 import { getClasses } from "../../../utils/utils";
@@ -8,7 +9,8 @@ import TranslateService from "../../../services/translate-service";
 import './feed-view.scss';
 import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 import DestinationSelector from "../destination-selector/destination-selector";
-import Button, {ButtonFlavor} from "../../../components/common/button/button";
+import Button, { ButtonFlavor } from "../../../components/common/button/button";
+import { feedStoreContext } from "../../stores/feed-view-store";
 
 interface FeedViewProps {
     eventStore: EventStore;
@@ -17,7 +19,7 @@ interface FeedViewProps {
 
 const cacheThreshold = 300;
 
-function SelectDestinationPlaceholder(){
+function SelectDestinationPlaceholder() {
     const eventStore = useContext(eventStoreContext);
     const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
 
@@ -35,46 +37,35 @@ function SelectDestinationPlaceholder(){
     )
 }
 
-function FeedView({ eventStore, mainFeed }: FeedViewProps) {
-    const [items, setItems] = useState([]);
-    const [filteredItems, setFilteredItems] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
-    const [sourceCounts, setSourceCounts] = useState<Record<string, number[]>>({});
-    const [finishedSources, setFinishedSources] = useState<string[]>([]);
-    const [reachedEndPerDestination, setReachedEndPerDestination] = useState<Record<string, boolean>>({});
-    const [reachedEndForDestinations, setReachedEndForDestinations] = useState<boolean>(false);
-    let destinations = eventStore.destinations;
-    const [allReachedEnd, setAllReachedEnd] = useState<boolean>(false);
-
+const FeedView = ({ eventStore, mainFeed }: FeedViewProps) => {
+    const feedStore = useContext(feedStoreContext);
     const apiService = useMemo(() => new FeedViewApiService(), []);
-    const haveNoDestinations = destinations == "[]" || destinations?.[0] == "[]" || destinations?.length == 0;
+    const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
 
     useEffect(() => {
         const fetchCounts = async () => {
             if (haveNoDestinations) {
-                setIsLoading(false);
+                feedStore.setIsLoading(false);
                 return;
             }
-            const countsPromises = destinations.map(destination => apiService.getCount(destination));
+            const countsPromises = eventStore.destinations.map(destination => apiService.getCount(destination));
             const countsResults = await Promise.all(countsPromises);
 
             const newSourceCounts = {};
             countsResults.forEach((counts, index) => {
-                newSourceCounts[destinations[index]] = counts;
+                newSourceCounts[eventStore.destinations[index]] = counts;
             });
 
-            setSourceCounts(newSourceCounts);
-            setIsLoading(false);
+            feedStore.setSourceCounts(newSourceCounts);
+            feedStore.setIsLoading(false);
         };
 
         if (mainFeed) {
-            setIsLoading(false);
+            feedStore.setIsLoading(false);
         } else {
             fetchCounts();
         }
-    }, [apiService, destinations]);
+    }, [apiService, eventStore.destinations]);
 
     // Function to filter duplicates based on name, url, source combination
     const filterUniqueItems = (items) => {
@@ -88,15 +79,13 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
     const fetchItems = async (page, setLoading) => {
         setLoading(true);
         const newItems = [];
-
-        let _reachedEndPerDestination = reachedEndPerDestination ?? {};
+        let _reachedEndPerDestination = feedStore.reachedEndPerDestination ?? {};
 
         if (mainFeed) {
-            if (page > 1){
+            if (page > 1 || feedStore.items.length) {
                 return;
             }
-            destinations = ["MainFeed"];
-            const destination = destinations[0];
+            const destination = "MainFeed";
             const responses = await Promise.all(
                 [
                     apiService.getMainFeedItems()
@@ -105,27 +94,24 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
             responses.forEach(response => {
                 newItems.push(...response.results);
                 response.isFinished = true;
-                setFinishedSources(prev => [...prev, response.source]);
+                feedStore.setFinishedSources([...feedStore.finishedSources, response.source]);
             });
 
-            _reachedEndPerDestination = {
-                ..._reachedEndPerDestination,
-                [destination]: true
-            }
-            setReachedEndPerDestination(_reachedEndPerDestination);
+            _reachedEndPerDestination[destination] = true;
+            feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
         }
         else {
-            for (const destination of destinations) {
+            for (const destination of eventStore.destinations) {
                 const sources = allSources.filter(
-                    source => (source === "Local" || (sourceCounts[destination]?.[source] ?? 0) < cacheThreshold) && !finishedSources.includes(source)
+                    source => (source === "Local" || (feedStore.sourceCounts[destination]?.[source] ?? 0) < cacheThreshold) && !feedStore.finishedSources.includes(source)
                 );
 
                 if (sources.length === 0) {
                     // If no sources left for this destination, continue to the next destination
-                    setReachedEndPerDestination(prev => ({
-                        ...prev,
+                    feedStore.setReachedEndPerDestination({
+                        ...feedStore.reachedEndPerDestination,
                         [destination]: true
-                    }));
+                    });
                 }
 
                 let allFinished = false;
@@ -137,7 +123,7 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
                     responses.forEach(response => {
                         newItems.push(...response.results);
                         if (response.isFinished) {
-                            setFinishedSources(prev => [...prev, response.source]);
+                            feedStore.setFinishedSources([...feedStore.finishedSources, response.source]);
                         }
                     });
 
@@ -146,55 +132,54 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
                 }
 
                 if (allFinished) {
-                    _reachedEndPerDestination = {
-                        ..._reachedEndPerDestination,
-                        [destination]: true
-                    }
-                    setReachedEndPerDestination(_reachedEndPerDestination);
+                    _reachedEndPerDestination[destination] = true;
+                    feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
                 }
             }
         }
 
-        const uniqueNewItems = filterUniqueItems(newItems);
-
-        setItems(prevItems => [...prevItems, ...uniqueNewItems]);
-        handleCategoryChange(selectedCategory, [...items, ...uniqueNewItems]);
+        let uniqueNewItems = filterUniqueItems(newItems);
+        if (mainFeed && feedStore.items.length > 0){
+            uniqueNewItems = [];
+        }
+        feedStore.setItems(filterUniqueItems([...feedStore.items, ...uniqueNewItems]));
+        handleCategoryChange(feedStore.selectedCategory, filterUniqueItems([...feedStore.items, ...uniqueNewItems]));
 
         const uniqueCategories = Array.from(
             new Set(uniqueNewItems.map(item => item.category))
         );
-        setCategories(prevCategories => [...new Set([...prevCategories, ...uniqueCategories])]);
+        feedStore.setCategories([...new Set([...feedStore.categories, ...uniqueCategories])]);
 
         // Check if all destinations have reached the end
-        const allReachedEndNow = destinations.every(dest => _reachedEndPerDestination[dest]);
-        setReachedEndForDestinations(allReachedEndNow);
+        const allReachedEndNow = eventStore.destinations.every(dest => _reachedEndPerDestination[dest]);
+        feedStore.setReachedEndForDestinations(allReachedEndNow);
 
         setLoading(false);
     };
 
     const handleCategoryChange = (category, items) => {
-        setSelectedCategory(category);
+        feedStore.setSelectedCategory(category);
         if (category === "") {
-            setFilteredItems(items); // Show all items if no category selected
+            feedStore.setFilteredItems(items); // Show all items if no category selected
         } else {
             const filtered = items.filter((item) => item.category === category);
-            setFilteredItems(filtered);
+            feedStore.setFilteredItems(filtered);
         }
     };
 
     // useEffect to update allReachedEnd state based on reachedEndForDestinations and other conditions
     useEffect(() => {
-        const allSourcesFinished = allSources.every(source => finishedSources.includes(source));
+        const allSourcesFinished = allSources.every(source => feedStore.finishedSources.includes(source));
 
-        if (reachedEndForDestinations && allSourcesFinished) {
-            setAllReachedEnd(true);
+        if (feedStore.reachedEndForDestinations && allSourcesFinished) {
+            feedStore.setAllReachedEnd(true);
         } else {
-            setAllReachedEnd(false);
+            feedStore.setAllReachedEnd(false);
         }
-    }, [reachedEndForDestinations, finishedSources]);
+    }, [feedStore.reachedEndForDestinations, feedStore.finishedSources]);
 
-    function renderShowingResultsText(){
-        const isFiltering = items.length !== filteredItems.length;
+    function renderShowingResultsText() {
+        const isFiltering = feedStore.items.length !== feedStore.filteredItems.length;
 
         if (!eventStore.destinations?.length || eventStore.destinations == '[]') {
             return;
@@ -206,14 +191,14 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
                     destinations: eventStore.destinations?.join(", ") || "-"
                 })}</span>
                 {isFiltering && <span>({ TranslateService.translate(eventStore, 'SHOWING_X_FROM_Y', {
-                    0: filteredItems.length,
-                    1: items.length
+                    0: feedStore.filteredItems.length,
+                    1: feedStore.items.length
                 })})</span>}
             </div>
         );
     }
 
-    function renderCategoryFilter(){
+    function renderCategoryFilter() {
         if (mainFeed) {
             return null;
         }
@@ -223,53 +208,53 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
         return (
             <div className={getClasses("feed-view-filter-bar justify-content-space-between", eventStore.isHebrew ? 'hebrew-mode flex-row-reverse' : 'flex-row')}>
                 <CategoryFilter
-                    categories={categories}
-                    onFilterChange={(category) => handleCategoryChange(category, items)}
+                    categories={feedStore.categories}
+                    onFilterChange={(category) => handleCategoryChange(category, feedStore.items)}
                 />
                 {renderShowingResultsText()}
             </div>
         );
     }
 
-    function renderItems(){
+    function renderItems() {
         const classList = getClasses("align-items-center", !mainFeed && 'width-100-percents', eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
-        if (mainFeed){
+        if (mainFeed) {
             return (
                 <div className="flex-column margin-top-10">
                     <h2 className="main-feed-header">{
                         TranslateService.translate(eventStore, 'TOP_PICKS')
                     }</h2>
                     <div className="flex-row justify-content-center flex-wrap-wrap align-items-start">
-                    {
-                        filteredItems.map((item, idx) => (
-                            <div key={item.id} className={classList}>
-                                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
-                            </div>
-                        ))
-                    }
+                        {
+                            feedStore.filteredItems.map((item, idx) => (
+                                <div key={item.id} className={classList}>
+                                    <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
+                                </div>
+                            ))
+                        }
                     </div>
                 </div>
             )
         }
 
-        return filteredItems.map((item, idx) => (
+        return feedStore.filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
-                {idx+1}
+                {idx + 1}
                 <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
             </div>
-        ))
+        ));
     }
 
-    function isFiltered(){
-        return selectedCategory != "";
+    function isFiltered() {
+        return feedStore.selectedCategory != "";
     }
 
-    function renderReachedEnd(){
-        if (!allReachedEnd) {
+    function renderReachedEnd() {
+        if (!feedStore.allReachedEnd) {
             return null;
         }
-        if (isFiltered() && filteredItems.length == 0) {
+        if (isFiltered() && feedStore.filteredItems.length == 0) {
             return null;
         }
 
@@ -280,16 +265,16 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
         );
     }
 
-    function renderSelectDestinationPlaceholder(){
-        if (haveNoDestinations){
+    function renderSelectDestinationPlaceholder() {
+        if (haveNoDestinations) {
             return (
-                <SelectDestinationPlaceholder/>
+                <SelectDestinationPlaceholder />
             );
         }
     }
 
     return (
-        (isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading}>
+        (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading}>
             <div className={getClasses(!mainFeed && 'flex-column', "gap-4")}>
                 {renderCategoryFilter()}
                 {renderItems()}
@@ -300,4 +285,4 @@ function FeedView({ eventStore, mainFeed }: FeedViewProps) {
     );
 }
 
-export default FeedView;
+export default observer(FeedView);

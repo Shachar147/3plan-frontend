@@ -15,11 +15,14 @@ interface LazyLoadComponentProps {
 const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, className }: LazyLoadComponentProps) => {
     const eventStore = useContext(eventStoreContext);
     const [page, setPage] = useState(1);
+    const prevPage = useRef(0);
     const [loading, setLoading] = useState(isLoading);
     const loader = useRef(null);
 
     useEffect (() => {
-        fetchData(page, setLoading);
+        if (page != prevPage.current) {
+            fetchData(page, setLoading);
+        }
     }, [page]);
 
     useEffect(() => {

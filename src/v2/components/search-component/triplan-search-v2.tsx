@@ -31,9 +31,11 @@ const TriplanSearchV2 = () => {
     TriplanSearchV2.handleClickOutside = () => handleClickOutside();
 
     function handleClickOutside() {
-        setTimeout(() => {
-            setShowSuggestions(false);
-        }, 100);
+        if (!eventStore.isMobile) {
+            setTimeout(() => {
+                setShowSuggestions(false);
+            }, 100);
+        }
     }
 
     const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length > 3 && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
@@ -149,10 +151,10 @@ const TriplanSearchV2 = () => {
                             onClick={() => handleSuggestionClick(suggestion)}
                         >
                             <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>
-                            <small className="suggestion-descriptor">{TranslateService.translate(eventStore, 'X_IN_Y',{
+                            {suggestion.destination && <small className="suggestion-descriptor">{TranslateService.translate(eventStore, 'X_IN_Y',{
                                 X: TranslateService.translate(eventStore, suggestion.category),
                                 Y: TranslateService.translate(eventStore, suggestion.destination)
-                            })}</small>
+                            })}</small>}
                         </div>
                     ))}
                     {suggestions.length === 0 && (

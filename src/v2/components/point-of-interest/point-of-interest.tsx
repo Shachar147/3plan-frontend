@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Carousel} from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import {FaHeart, FaRegStar, FaStar, FaStarHalfAlt} from 'react-icons/fa';
+import {FaRegStar, FaStar, FaStarHalfAlt} from 'react-icons/fa';
 import Button, {ButtonFlavor} from '../../../components/common/button/button'; // Import your Button component
 import './point-of-interest.scss';
 import ReactModalService from "../../../services/react-modal-service";
@@ -10,7 +10,6 @@ import {TriplanPriority} from "../../../utils/enums";
 import {extractCategory, getClasses} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore} from "../../../stores/events-store";
-import countriesAndCities from "../destination-selector/countries-and-cities";
 import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
 
 interface PointOfInterestProps {
@@ -141,10 +140,11 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
         if (mainFeed) {
             return (
                 <Button
-                    flavor={alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary}
+                    flavor={ButtonFlavor.link}
                     onClick={handleAddToSaved}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
-                    text={alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED")}
+                    text=""
+                    tooltip={alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED")}
                     disabled={alreadyInSaved}
                     className="padding-inline-15"
                 />
@@ -191,16 +191,17 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
                     <Carousel showThumbs={false} showIndicators={false}>
                         {item.images.map((image, index) => (
                             <div key={index}>
-                                <img src={image} alt={item.name} />
+                                <img src={image} alt={item.name} className="zoomable" />
                             </div>
                         ))}
                     </Carousel>
                 </div>
             </div>
             <div className="poi-right">
-                {item.priority === 'high' && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
+                {(item.priority === 'high' || item.isSystemRecommendation) && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
                 {item.category && <div className="category-label">
                     {renderDestinationIcon()}
+                    {mainFeed && renderSaveButton()}
                     {renderCategoryName()}
                 </div>}
                 {isShrinkedMode ? <h4>{item.name}</h4> : <h2>{item.name}</h2>}
@@ -239,7 +240,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed }: PointOfInterestProps) =
                         {item.location && !isShrinkedMode && (
                             <a href={googleMapsLink} className="google-maps-link" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a>
                         )}
-                        {renderSaveButton()}
+                        {!mainFeed && renderSaveButton()}
                     </div>
                 </div>
             </div>
