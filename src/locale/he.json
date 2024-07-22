@@ -908,5 +908,7 @@
 	"TOP_PICKS": "בחירות מובילות",
 	"NO_SAVED_COLLECTIONS": "אופס... נראה שאין לכם מקומות שמורים עדיין",
 	"SAVED_COLLECTION_PREFIX": "יעד: ",
-	"SAVED_COLLECTION.ITEMS": "סהֿ\"כ מקומות שמורים: {X}"
+	"SAVED_COLLECTION.ITEMS": "סהֿ\"כ מקומות שמורים: {X}",
+	"MY_TRIPS": "הטיולים שלי ({X})",
+	"MY_TRIPS.SHORT": "הטיולים שליד ({X})"
 }

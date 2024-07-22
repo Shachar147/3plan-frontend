@@ -121,7 +121,7 @@ export class DBService implements BaseDataHandler {
 		return collaborators;
 	}
 
-	async getTripsShort(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
+	async getTripsShort(_: any): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		const res: any = await apiGetPromise(this, '/trip/short');
 		const trips: Trip[] = [];
 		res.data.data.forEach((x: any) => {

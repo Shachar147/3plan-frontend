@@ -10,28 +10,18 @@ import DataServices, {
     tripNameToLSTripName
 } from "../../../services/data-handlers/data-handler-base";
 import {TripDataSource} from "../../../utils/enums";
-import {LocalStorageService} from "../../../services/data-handlers/local-storage-service";
 import {getUser} from "../../../helpers/auth";
 import {formatShortDateStringIsrael, getAmountOfDays} from "../../../utils/time-utils";
-import {getClasses} from "../../../utils/utils";
+import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
 import {runInAction} from "mobx";
 import {useNavigate} from "react-router-dom";
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import {fetchCitiesAndSetOptions} from "../../components/destination-selector/destination-selector";
+import PointOfInterest from "../../components/point-of-interest/point-of-interest";
+import {myTripsContext} from "../../stores/my-trips-store";
+import LoadingComponent from "../../../components/loading/loading-component";
 
-function MyTrips(){
-    const eventStore = useContext(eventStoreContext);
-    const navigate = useNavigate();
-
-    const [dataSource, setDataSource] = useState<TripDataSource>(
-        LocalStorageService.getLastDataSource() === TripDataSource.DB && getUser()
-            ? TripDataSource.DB
-            : LocalStorageService.getLastDataSource() === TripDataSource.LOCAL
-            ? TripDataSource.LOCAL
-            : getUser()
-                ? TripDataSource.DB
-                : TripDataSource.LOCAL
-    );
+function MyTripsTabOld(){
     const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
     const [sharedTrips, setSharedTrips] = useState<SharedTrip[]>([]);
     const [error, setError] = useState<any>(undefined);
@@ -40,25 +30,7 @@ function MyTrips(){
     const dataService = useMemo(() => DataServices.getService(dataSource), [dataSource]);
     const [reloadCounter, setReloadCounter] = useState(0);
 
-    useEffect(() => {
-        setLsTrips([]);
-        setSharedTrips([]);
-        setIsLoadingTrips(true);
-        setError(undefined);
 
-        dataService
-            .getTripsShort(eventStore)
-            .then((result) => {
-                const { trips, sharedTrips } = result;
-                setLsTrips(trips);
-                setSharedTrips(sharedTrips);
-                setIsLoadingTrips(false);
-            })
-            .catch((error) => {
-                setError(error);
-                setIsLoadingTrips(false);
-            });
-    }, [dataService, dataSource, reloadCounter]);
 
     const hiddenTripsEnabled = dataSource === 'DB';
     const filteredList = [...lsTrips, ...sharedTrips].filter((x) =>
@@ -221,4 +193,78 @@ function MyTrips(){
     );
 }
 
-export default observer(MyTrips);
+function MyTripsTab(){
+    const eventStore = useContext(eventStoreContext);
+    const myTripsStore = useContext(myTripsContext);
+    const navigate = useNavigate();
+    const dataSource = TripDataSource.DB;
+
+    // useEffect(() => {
+    //     myTripsStore.loadMyTrips();
+    // }, [])
+
+
+    function renderTrip(trip: Trip){
+        const classList = getClasses("align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
+
+        const itemsWithImages = trip.allEvents.filter((i) => i?.images?.length).filter((i) => {
+            const images = i.images.split(",");
+            return !images[0].includes("googleapis");
+        });
+
+        const images: string[] = itemsWithImages.map((i) => i.images.split(",")[0]);
+        const idxToDetails = {};
+        itemsWithImages?.forEach((i, idx) =>
+            idxToDetails[idx] = i
+        );
+
+        if (images.length == 0){
+            images.push("/images/trip-photo-1.jpg");
+        }
+
+        const item = {
+            tripId: trip.id,
+            images: images,
+            name: trip.name,
+            destination: trip.destinations?.join(", "),
+            category: "SAVED_COLLECTION_PREFIX", // todo complete
+            rate: undefined,
+            isSystemRecommendation: undefined,
+            location: undefined,
+            more_info: undefined,
+            source: undefined,
+            description: TranslateService.translate(eventStore, 'SAVED_COLLECTION.ITEMS', {X: trip.allEvents.length}),
+            idxToDetails
+        }
+
+        return (
+            <div key={item.id} className={classList}>
+                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed savedCollection />
+            </div>
+        );
+    }
+
+    function renderNoTripsPlaceholder(){
+        return TranslateService.translate(eventStore, 'NO_SAVED_COLLECTIONS');
+    }
+
+    if (myTripsStore.isLoading) {
+        const loaderDetails = LOADER_DETAILS();
+        return (
+            <LoadingComponent
+                title={TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE')}
+                message={TranslateService.translate(eventStore, 'LOADING_TRIP_PLACEHOLDER')}
+                loaderDetails={loaderDetails}
+            />
+        )
+    }
+
+    return (
+        <div className="flex-row justify-content-center flex-wrap-wrap align-items-start" key={myTripsStore.myTrips?.length}>
+            {myTripsStore.myTrips?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.myTrips.sort((a, b) => b.allEvents?.length - a.allEvents?.length).map(renderTrip)}
+        </div>
+    )
+
+}
+
+export default observer(MyTripsTab);

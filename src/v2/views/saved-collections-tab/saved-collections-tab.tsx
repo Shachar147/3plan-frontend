@@ -18,7 +18,7 @@ function SavedCollectionsTab(){
 
         const idxToDetails = {};
         collection.items?.forEach((i, idx) =>
-            idxToDetails[idx] = i.fullDetails.id
+            idxToDetails[idx] = i.fullDetails
         );
 
         item = {
@@ -55,4 +55,4 @@ function SavedCollectionsTab(){
     )
 
 }
-export default observer(SavedCollectionsTab)
+export default observer(SavedCollectionsTab);

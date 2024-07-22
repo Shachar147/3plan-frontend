@@ -6,9 +6,10 @@ import TranslateService from "../../../services/translate-service";
 import {observer} from "mobx-react";
 import FeedView from "../../components/feed-view/feed-view";
 import './main-page-content.scss'
-import MyTrips from "../my-trips/my-trips";
+import MyTrips from "../my-trips-tab/my-trips-tab";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
+import {myTripsContext} from "../../stores/my-trips-store";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -21,10 +22,12 @@ function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
 function MainPageContent(){
     const eventStore = useContext(eventStoreContext);
     const feedStore = useContext(feedStoreContext);
+    const myTripsStore = useContext(myTripsContext);
     useHandleWindowResize();
 
     useEffect(() => {
         feedStore.getSavedCollections();
+        myTripsStore.loadMyTrips();
     }, [])
 
     useEffect(() => {
@@ -66,7 +69,9 @@ function MainPageContent(){
                     },
                     {
                         id: "my-trips",
-                        name: TranslateService.translate(eventStore, `LANDING_PAGE.MY_TRIPS${isShort}`),
+                        name: TranslateService.translate(eventStore, `MY_TRIPS${isShort}`, {
+                            X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
+                        }),
                         icon: "fa-plane",
                         render: () => <TriplanTabContent content={<MyTrips />} />
                     },

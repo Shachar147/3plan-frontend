@@ -157,7 +157,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
         // todo complete - if it's saved collection - remove the item we're looking at in the picture right now.
         let idToRemove = item.id;
         if (savedCollection){
-            idToRemove = item.idxToDetails[currentSlide];
+            idToRemove = item.idxToDetails[currentSlide].id;
         }
 
         new FeedViewApiService().unSaveItem(idToRemove, collection.id).then((result) => {
@@ -243,6 +243,14 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
         )
     }
 
+    const Image = ({ image }: { image: string}) => {
+        const [src, setSrc] = useState(image);
+
+        return (
+            <img src={src} alt={item.name} onError={() => setSrc("/images/trip-photo-1.jpg")} className="zoomable" />
+        )
+    }
+
     return (
         <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection')}>
             <div className="poi-left">
@@ -253,7 +261,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
                     }}>
                         {item.images?.map((image, index) => (
                             <div key={index}>
-                                <img src={image} alt={item.name} className="zoomable" />
+                                <Image image={image} key={index} />
                             </div>
                         ))}
                     </Carousel>
