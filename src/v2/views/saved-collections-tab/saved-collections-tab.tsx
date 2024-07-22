@@ -16,6 +16,11 @@ function SavedCollectionsTab(){
 
         let item: any = collection.items?.[0]?.fullDetails ?? {};
 
+        const idxToDetails = {};
+        collection.items?.forEach((i, idx) =>
+            idxToDetails[idx] = i.fullDetails.id
+        );
+
         item = {
             ...item,
             collectionId: collection.id,
@@ -28,7 +33,8 @@ function SavedCollectionsTab(){
             location: undefined,
             more_info: undefined,
             source: undefined,
-            description: TranslateService.translate(eventStore, 'SAVED_COLLECTION.ITEMS', {X: collection.items.length})
+            description: TranslateService.translate(eventStore, 'SAVED_COLLECTION.ITEMS', {X: collection.items.length}),
+            idxToDetails
         }
 
         return (
@@ -44,7 +50,7 @@ function SavedCollectionsTab(){
 
     return (
         <div className="flex-row justify-content-center flex-wrap-wrap align-items-start" key={feedStore.savedCollections.length}>
-            {feedStore.savedCollections.length == 0 ? renderNoSavedCollectionsPlaceholder() : feedStore.savedCollections.map(renderCollection)}
+            {feedStore.savedCollections.length == 0 ? renderNoSavedCollectionsPlaceholder() : feedStore.savedCollections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
         </div>
     )
 

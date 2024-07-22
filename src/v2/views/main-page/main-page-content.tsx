@@ -8,7 +8,7 @@ import FeedView from "../../components/feed-view/feed-view";
 import './main-page-content.scss'
 import MyTrips from "../my-trips/my-trips";
 import {feedStoreContext} from "../../stores/feed-view-store";
-import SavedCollectionsTab from "../saved-collections/saved-collections";
+import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (

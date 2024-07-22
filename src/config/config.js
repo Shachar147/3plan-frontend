@@ -6,7 +6,7 @@ export function getServerAddress() {
 		// return 'http://192.168.1.25:3001'; // Tel Aviv
 		// return 'http://192.168.1.83:3001'; // Nesher
 		// return 'http://192.168.1.20:3001'; // Nesher
-		return 'http://192.168.1.179:3001'; // Nesher
+		return 'http://192.168.1.180:3001'; // Nesher
 		// return 'http://192.168.1.150:3001';
 		// return 'http://localhost:3001';
 		// return 'http://172.20.10.3:3001'; // Chen&Erez

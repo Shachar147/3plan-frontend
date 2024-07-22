@@ -29,6 +29,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
 
     const isHebrew = eventStore.isHebrew;
     const feedId = `${item.source}-${item.name}-${item.url}`;
+    const [currentSlide, setCurrentSlide] = useState(0);
 
     const category = extractCategory([
         item.name ?? '',
@@ -152,7 +153,14 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
             ReactModalService.internal.openOopsErrorModal(eventStore);
             return;
         }
-        new FeedViewApiService().unSaveItem(item, collection.id).then((result) => {
+
+        // todo complete - if it's saved collection - remove the item we're looking at in the picture right now.
+        let idToRemove = item.id;
+        if (savedCollection){
+            idToRemove = item.idxToDetails[currentSlide];
+        }
+
+        new FeedViewApiService().unSaveItem(idToRemove, collection.id).then((result) => {
             runInAction(() => {
                 feedStore.getSavedCollections()
             })
@@ -165,7 +173,6 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
                 <Button
                     flavor={ButtonFlavor.link}
                     onClick={() => {
-                        debugger;
                         if (alreadyInSaved){
                             return handleRemoveFromSaved();
                         }
@@ -240,7 +247,10 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
         <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection')}>
             <div className="poi-left">
                 <div className="carousel-wrapper">
-                    <Carousel showThumbs={false} showIndicators={false}>
+                    {/*todo complete - fix carousel on hebrew*/}
+                    <Carousel showThumbs={false} showIndicators={false} onChange={(idx) => {
+                        setCurrentSlide(idx);
+                    }}>
                         {item.images?.map((image, index) => (
                             <div key={index}>
                                 <img src={image} alt={item.name} className="zoomable" />

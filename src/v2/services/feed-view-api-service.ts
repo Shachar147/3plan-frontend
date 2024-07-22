@@ -65,9 +65,7 @@ export default class FeedViewApiService {
         })
     }
 
-    unSaveItem = async (item: IPointOfInterest, collectionId: number) => {
-        debugger;
-        const pid = item.id;
+    unSaveItem = async (pid: number, collectionId: number) => {
         const url = ENDPOINTS.savedCollections.deleteItem.replace(":cid", collectionId.toString()).replace(":pid", pid.toString());
         return await apiPost(url)
     }
