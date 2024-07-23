@@ -32,12 +32,14 @@ function MainPageContent(){
     const tabs = [
         {
             id: "default",
+            order: 0,
             name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
             icon: "fa-search",
             render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />
         },
         {
             id: savedCollectionsTabId,
+            order: 1,
             name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
                 X: feedStore.savedItems.length
             }),
@@ -46,6 +48,7 @@ function MainPageContent(){
         },
         {
             id: myTripsTabId,
+            order: 2,
             name: TranslateService.translate(eventStore, `MY_TRIPS${isShort}`, {
                 X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
             }),
@@ -53,6 +56,8 @@ function MainPageContent(){
             render: () => <TriplanTabContent content={<MyTrips />} />
         },
     ];
+
+    const tabsIdsByOrder = tabs.map((i) => i.id);
 
     const tabIdToIdx = useMemo(() => {
         const toReturn = {};
@@ -89,11 +94,37 @@ function MainPageContent(){
         });
     }, [])
 
+    // const orderedTabs = eventStore.isMobile ? tabs.sort((a, b) => {
+    //     if (a.id === activeTab) {
+    //         return -1;
+    //     } else if (b.id === activeTab) {
+    //         return 1;
+    //     } else {
+    //         const activeIdx = tabsIdsByOrder.indexOf(activeTab);
+    //         const aIdx = tabsIdsByOrder.indexOf(a.id);
+    //         const bIdx = tabsIdsByOrder.indexOf(b.id);
+    //
+    //         if (aIdx > activeIdx && bIdx > activeIdx) {
+    //             if (bIdx > aIdx){
+    //                 return -1;
+    //             } else {
+    //                 return 1;
+    //             }
+    //         }
+    //         else if (aIdx > activeIdx){
+    //             return -1;
+    //         } else {
+    //             return 1;
+    //         }
+    //     }
+    // }) : tabs;
+    const orderedTabs = tabs;
+
     return (
         <div className={getClasses("triplan-header-banner-footer", eventStore.isMobile && activeTabIdx === tabs.length -1 && 'padding-inline-end-10')} key={rootStore.tabMenuReRenderCounter}>
             <TabMenu
                 activeTab={activeTab}
-                tabs={tabs}
+                tabs={orderedTabs}
                 onChange={(tabId) => {
                     localStorage.setItem(mainPageContentTabLsKey, tabId);
                     setActiveTabIdx(tabIdToIdx[tabId]);
