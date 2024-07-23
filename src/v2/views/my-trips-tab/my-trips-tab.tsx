@@ -10,7 +10,7 @@ import DataServices, {
     tripNameToLSTripName
 } from "../../../services/data-handlers/data-handler-base";
 import {getUser} from "../../../helpers/auth";
-import {formatShortDateStringIsrael, getAmountOfDays} from "../../../utils/time-utils";
+import {formatShortDateStringIsrael, getAmountOfDays, getUserDateFormat} from "../../../utils/time-utils";
 import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
 import {runInAction} from "mobx";
 import {useNavigate} from "react-router-dom";
@@ -23,6 +23,7 @@ import ReactModalService from "../../../services/react-modal-service";
 import LogHistoryService from "../../../services/data-handlers/log-history-service";
 import {TripActions} from "../../../utils/interfaces";
 import './my-trips-tab.scss';
+import moment from "moment";
 
 function MyTripsTabOld(){
     const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
@@ -303,6 +304,24 @@ function MyTripsTab(){
         // ReactModalService.openDeleteTripModal(eventStore, LSTripName, dataSource);
     }
 
+    function daysBetween(date1, date2) {
+        // Parse the dates
+        const d1 = new Date(date1);
+        const d2 = new Date(date2);
+
+        // Calculate the difference in milliseconds
+        const diffTime = Math.abs(d2 - d1);
+
+        // Convert milliseconds to days
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+        return diffDays;
+    }
+
+    function daysAgo(date1){
+        return daysBetween(date1, new Date());
+    }
+
     function renderTripInfo(trip: Trip) {
         const dates = trip.dateRange;
         const start = formatShortDateStringIsrael(dates.start!);
@@ -312,25 +331,53 @@ function MyTripsTab(){
         const totalSidebarEvents = Object.values(trip.sidebarEvents).flat().length;
         const totalCalendarEvents = trip.calendarEvents.length;
 
+        // const createdAt = new Date(trip.createdAt).toLocaleDateString();
+        const dateFormat = getUserDateFormat(eventStore);
+        const createdAt = moment(trip.createdAt, 'YYYY-MM-DD').format(dateFormat);
+        const daysAgoNum = daysAgo(new Date(trip.createdAt));
+
+        const updatedAt = moment(trip.lastUpdateAt, 'YYYY-MM-DD').format(dateFormat);
+        const uDaysAgoNum = daysAgo(new Date(trip.lastUpdateAt));
+
         return (
             <>
-                <span>
-                    {TranslateService.translate(eventStore, 'MY_TRIPS.ITEMS', {X: totalSidebarEvents + totalCalendarEvents})}
-                </span>
-                <span>
-                    {TranslateService.translate(eventStore, 'SCHEDULED_EVENTS')}: {totalCalendarEvents}
-                </span>
-                <span>
-                    {TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}: {totalSidebarEvents}
-                </span>
-            <div className="flex-row gap-3 flex-wrap-wrap">
-                <div id="when">
-                    {TranslateService.translate(eventStore, 'DATES')}: {end} - {start}
+                <div className="flex-row gap-3 flex-wrap-wrap">
+                    <div id="when">
+                        {TranslateService.translate(eventStore, 'DATES')}: {end} - {start}
+                    </div>
+                    <div id="amount-of-days">
+                        ({amountOfDays} {TranslateService.translate(eventStore, 'DAYS')})
+                    </div>
                 </div>
-                <div id="amount-of-days">
-                    ({amountOfDays} {TranslateService.translate(eventStore, 'DAYS')})
+                <span>
+                        {TranslateService.translate(eventStore, 'DESTINATIONS_X', {X: !trip.destinations?.length ? "-" : trip.destinations.map((d) => TranslateService.translate(eventStore, d)).join(", ")})}
+                </span>
+                <div className="activities-info">
+                    <span>
+                        {TranslateService.translate(eventStore, 'MY_TRIPS.ITEMS', {X: totalSidebarEvents + totalCalendarEvents})}
+                    </span>
+                    <span>
+                        {TranslateService.translate(eventStore, 'scheduled_events')}: {totalCalendarEvents}
+                    </span>
+                    <span>
+                        {TranslateService.translate(eventStore, 'sidebar_events')}: {totalSidebarEvents}
+                    </span>
                 </div>
-            </div>
+
+                <span>
+                    {TranslateService.translate(eventStore, 'CREATED_AT_X', {
+                        X: `${createdAt} (${TranslateService.translate(eventStore, daysAgoNum == 0 ? 'BUTTON_TEXT.TODAY' : 'DAYS_AGO', {
+                            Y: daysAgoNum
+                        })})`
+                    })}
+                </span>
+                <span>
+                    {TranslateService.translate(eventStore, 'UPDATED_AT_X', {
+                        X: `${updatedAt} (${TranslateService.translate(eventStore, uDaysAgoNum == 0 ? 'BUTTON_TEXT.TODAY' : 'DAYS_AGO', {
+                            Y: uDaysAgoNum
+                        })})`
+                    })}
+                </span>
             </>
         );
     }

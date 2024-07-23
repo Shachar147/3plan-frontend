@@ -321,6 +321,8 @@
 	"Switzerland": "שוויץ",
 	"London": "לונדון",
 	"Dubai": "דובאי",
+	"Isla Mujeres": "איסלה מוחרס",
+	"Ko Pha Ngan": "קופנגן",
 	"Ibiza": "איביזה",
 	"New York": "ניו יורק",
 	"Brooklyn": "ברוקלין",
@@ -912,5 +914,9 @@
 	"MY_TRIPS": "הטיולים שלי ({X})",
 	"MY_TRIPS.SHORT": "הטיולים שלי ({X})",
 	"MY_TRIPS.ITEMS": "סה\"כ פעילויות: {X}",
-	"DATES": "תאריכים"
+	"DATES": "תאריכים",
+	"CREATED_AT_X": "נוצר בתאריך: {X}",
+	"DAYS_AGO": "לפני {Y} ימים",
+	"UPDATED_AT_X": "עודכן לאחרונה בתאריך: {X}",
+	"DESTINATIONS_X": "יעדים: {X}"
 }
