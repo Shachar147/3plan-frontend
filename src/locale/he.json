@@ -893,6 +893,7 @@
 	"V2.TRIPLAN_HEADER_BANNER": "<span>תכנון טיולים</span><span>מעולם לא היה פשוט יותר!</span>",
 	"WISHLIST": "מועדפים",
 	"PLAN": "תכנון טיולים",
+	"PLAN.SHORT": "תכנון",
 	"PROFILE": "פרופיל",
 	"SAVED_COLLECTIONS": "המקומות ששמרת ({X})",
 	"SAVED_COLLECTIONS.SHORT": "המקומות ששמרת ({X})",

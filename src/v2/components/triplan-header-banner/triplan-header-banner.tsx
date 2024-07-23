@@ -1,82 +1,12 @@
-import TriplanLogo from "../../../components/triplan-header/logo/triplan-logo";
-import Button, {ButtonFlavor} from "../../../components/common/button/button";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext} from "react";
 import {observer} from "mobx-react";
 import './triplan-header-banner.scss';
 import {eventStoreContext} from "../../../stores/events-store";
 import TranslateService from "../../../services/translate-service";
-import ReactModalService from "../../../services/react-modal-service";
 import {getClasses} from "../../../utils/utils";
-import TriplanSearchV2 from "../search-component/triplan-search-v2";
 import { getServerAddress } from '../../../config/config';
+import TriplanHeaderLine from "./triplan-header-line";
 
-
-function TriplanHeaderLine(){
-    const eventStore = useContext(eventStoreContext);
-
-    const [scrollY, setScrollY] = useState(0);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrollY(window.scrollY);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        // Cleanup the event listener on component unmount
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-
-    const baseClass = "triplan-header-banner-header-line";
-    const isSticky = !eventStore.isMobile && scrollY > 100;
-    return (
-        <>
-            <div className={`${baseClass}-top-shadow`} />
-            <div className={getClasses(`${baseClass}`, !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
-                <div className={`${baseClass}-left-side`}>
-                    {!eventStore.isMobile && <TriplanLogo onClick={() => alert("here")} white={!isSticky} height={60} />}
-                    <TriplanSearchV2 />
-                </div>
-                <div className={`${baseClass}-right-side`}>
-                    <Button
-                        icon="fa-heart"
-                        text={TranslateService.translate(eventStore, 'WISHLIST')}
-                        onClick={() => {
-                            alert("wishlist");
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
-                    <Button
-                        icon="fa-plane"
-                        text={TranslateService.translate(eventStore, 'PLAN')}
-                        onClick={() => {
-                            alert("plan");
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
-                    <Button
-                        icon="fa-user"
-                        text={TranslateService.translate(eventStore, 'PROFILE')}
-                        onClick={() => {
-                            alert("profile");
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
-                    <Button
-                        icon="fa-globe"
-                        text={TranslateService.translate(eventStore, 'LANGUAGE')}
-                        onClick={() => {
-                            ReactModalService.openChangeLanguageModal(eventStore);
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
-                </div>
-            </div>
-        </>
-    );
-}
 
 function TriplanHeaderBanner(){
     const baseClass = "triplan-header-banner";

@@ -788,6 +788,7 @@
 	"V2.TRIPLAN_HEADER_BANNER": "<span>Trips Planning</span><span>has never been easier</span>",
 	"WISHLIST": "Wishlist",
 	"PLAN": "Plan",
+	"PLAN.SHORT": "Plan",
 	"PROFILE": "Profile",
 	"SAVED_COLLECTIONS": "Saved Collections ({X})",
 	"SAVED_COLLECTIONS.SHORT": "Saved Collections ({X})",
