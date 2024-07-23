@@ -44,12 +44,13 @@ function MainPageContent(){
                 X: feedStore.savedItems.length
             }),
             icon: "fa-save",
+            // icon: "fa-heart",
             render: () => <TriplanTabContent content={<SavedCollectionsTab />} />
         },
         {
             id: myTripsTabId,
             order: 2,
-            name: TranslateService.translate(eventStore, `MY_TRIPS${isShort}`, {
+            name: TranslateService.translate(eventStore, `MY_TRIPS_X${isShort}`, {
                 X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
             }),
             icon: "fa-plane",

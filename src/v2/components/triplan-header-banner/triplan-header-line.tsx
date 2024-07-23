@@ -51,16 +51,18 @@ function TriplanHeaderLine(){
                         onClick={() => {
                             localStorage.setItem(mainPageContentTabLsKey, savedCollectionsTabId);
                             rootStore.triggerTabsReRender();
+                            rootStore.triggerHeaderReRender();
                         }}
                         flavor={ButtonFlavor.link}
                     />
                     <Button
                         icon="fa-plane"
-                        text={TranslateService.translate(eventStore, `PLAN${isShort}`)}
+                        text={TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
                         className={localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
                         onClick={() => {
                             localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
                             rootStore.triggerTabsReRender();
+                            rootStore.triggerHeaderReRender();
                         }}
                         flavor={ButtonFlavor.link}
                     />
