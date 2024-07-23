@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {Carousel} from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import {FaRegStar, FaStar, FaStarHalfAlt} from 'react-icons/fa';
@@ -16,15 +16,25 @@ import {IPointOfInterest} from "../../utils/interfaces";
 import {runInAction} from "mobx";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {observer} from "mobx-react";
+import {Trip} from "../../../services/data-handlers/data-handler-base";
 
 interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
     eventStore: EventStore,
     mainFeed?: boolean;
+
+    // saved collection
     savedCollection?: boolean;
+
+    // my trips
+    onClick?: () => void;
+    myTrips?: boolean;
+    renderTripActions?: () => void;
+    renderTripInfo?: () => void;
+    namePrefix?: React.ReactNode;
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
 
     const isHebrew = eventStore.isHebrew;
@@ -168,6 +178,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
     }
 
     function renderSaveButton() {
+        if (myTrips) {
+            return;
+        }
         if (mainFeed) {
             return (
                 <Button
@@ -198,6 +211,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
     }
 
     function renderCategoryName(){
+        if (myTrips){
+            return;
+        }
         if (savedCollection){
             return (
                 <div className="flex-row gap-3">
@@ -221,12 +237,21 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
     }
 
     function renderDestinationIcon(){
-        const found = fetchCitiesAndSetOptions().find((c) => c.value === item.destination);
-        if (found){
-            return (
-                <i className={found.flagClass} />
-            )
-        }
+        const destinations = item.destination.split(",");
+        const sources = fetchCitiesAndSetOptions();
+        return (
+            <>
+                {destinations.map((destination) => {
+                    const found = sources.find((c) => c.value === destination.trim());
+                    if (found){
+                        return (
+                            <i className={found.flagClass} alt={destination.trim()} title={destination.trim()} />
+                        )
+                    }
+                }).filter(Boolean)}
+            </>
+        )
+
     }
 
     const isShrinkedMode = eventStore.isMobile || mainFeed;
@@ -234,7 +259,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
     function renderItemCategory(){
         return (
             <div className={getClasses("category-label", mainFeed && 'main-feed')}>
-                <div className="flex-row gap-8">
+                <div className="flex-row gap-8 flex-wrap-wrap">
                     {renderDestinationIcon()}
                     {renderCategoryName()}
                 </div>
@@ -243,35 +268,41 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
         )
     }
 
-    const Image = ({ image }: { image: string}) => {
+    const Image = ({ image, idx }: { image: string, idx: number}) => {
         const [src, setSrc] = useState(image);
 
+        const fallbacks = ["/images/trip-photo-1.jpg", "/images/trip-photo-2.png", "/images/trip-photo-3.png", "/images/trip-photo-4.png", "/images/trip-photo-5.png",  "/images/trip-photo-2.png"]
+        const random = Math.floor(Math.random() * fallbacks.length);
+
         return (
-            <img src={src} alt={item.name} onError={() => setSrc("/images/trip-photo-1.jpg")} className="zoomable" />
+            <img src={src} alt={item.name} onError={() => setSrc(fallbacks[random])} className="zoomable" key={idx} />
         )
     }
 
     return (
-        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection')}>
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', !!onClick && 'cursor-pointer')} onClick={onClick}>
             <div className="poi-left">
-                <div className="carousel-wrapper">
+                <div className="carousel-wrapper" onClick={(e) => (item.images?.length > 1) && e.stopPropagation()}>
                     {/*todo complete - fix carousel on hebrew*/}
                     <Carousel showThumbs={false} showIndicators={false} onChange={(idx) => {
                         setCurrentSlide(idx);
                     }}>
                         {item.images?.map((image, index) => (
-                            <div key={index}>
-                                <Image image={image} key={index} />
+                            <div key={`item-${item.id}-image-${index}`}>
+                                <Image image={image} key={item.id + index} idx={`item-${item.id}-idx-${index}`} />
                             </div>
                         ))}
                     </Carousel>
                     {mainFeed && renderItemCategory()}
+                    {renderTripActions?.()}
                 </div>
             </div>
             <div className="poi-right">
                 {(item.priority === 'high' || item.isSystemRecommendation) && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
                 {item.category && !mainFeed && renderItemCategory()}
-                {isShrinkedMode ? <h4>{item.name}</h4> : <h2>{item.name}</h2>}
+                <div className="flex-row gap-3 align-items-center">
+                    {isShrinkedMode ? <h4>{namePrefix}{item.name}</h4> : <h2>{namePrefix}{item.name}</h2>}
+                </div>
                 <span className={getClasses("description", isShrinkedMode && 'max-height-100-ellipsis')}>{item.description}</span>
                 <div className="poi-details">
                     {durationText && <span className="duration">{durationText}</span>}
@@ -288,7 +319,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
                         })}
                         </span>
                     </div>}
-                    {isShrinkedMode && !savedCollection && (
+                    {isShrinkedMode && !savedCollection && !myTrips && (
                         <div className="poi-footer-links">
                             {item.more_info && <a href={item.more_info} className="more-info" target="_blank" rel="noopener noreferrer">{TranslateService.translate(eventStore, 'MORE_INFO')}</a>}
                             {item.location && (
@@ -299,7 +330,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
                             </div>
                         </div>
                     )}
-                    {!savedCollection && <div className="poi-footer">
+                    {!savedCollection && !myTrips && <div className="poi-footer">
                         {!isShrinkedMode && <div className="source-logo">
                             <img src={`/images/${item.source?.toLowerCase()?.replaceAll(".", "")}.png`} alt={item.source} />
                         </div>}
@@ -309,6 +340,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection }: PointO
                         )}
                         {!mainFeed && renderSaveButton()}
                     </div>}
+                    {renderTripInfo?.()}
                 </div>
             </div>
         </div>

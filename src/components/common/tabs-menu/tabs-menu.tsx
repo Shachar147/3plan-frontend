@@ -13,10 +13,11 @@ export interface Tab {
 export interface TabMenuProps {
 	tabs: Tab[],
 	activeTab?: string;
+	onChange?: (tabId) => void;
 }
 
 function TabMenu(props: TabMenuProps){
-	const { tabs } = props;
+	const { tabs, onChange } = props;
 	const feedStore = useContext(feedStoreContext);
 
 	useEffect(() => {
@@ -31,6 +32,7 @@ function TabMenu(props: TabMenuProps){
 				{tabs.map((tab) => <div className={getClasses(feedStore.activeTab == tab.id && 'active', "item", feedStore.activeTab !== tab.id && 'cursor-pointer', 'flex-row gap-8 align-items-center')} onClick={() => {
 					if (feedStore.activeTab !== tab.id) {
 						feedStore.setActiveTab(tab.id);
+						onChange?.(tab.id);
 					}
 				}} >
 					{tab.icon && <i className={`fa ${tab.icon}`} aria-hidden="true" />}

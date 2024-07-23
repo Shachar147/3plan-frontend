@@ -19,6 +19,8 @@ function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     )
 }
 
+const mainPageContentTabLsKey = "triplan-main-page-content-tab";
+
 function MainPageContent(){
     const eventStore = useContext(eventStoreContext);
     const feedStore = useContext(feedStoreContext);
@@ -52,6 +54,7 @@ function MainPageContent(){
     return (
         <div className="triplan-header-banner-footer">
             <TabMenu
+                activeTab={localStorage.getItem(mainPageContentTabLsKey) ?? "default"}
                 tabs={[
                     {
                         id: "default",
@@ -76,6 +79,9 @@ function MainPageContent(){
                         render: () => <TriplanTabContent content={<MyTrips />} />
                     },
                 ]}
+            onChange={(tabId) => {
+                localStorage.setItem(mainPageContentTabLsKey, tabId)
+            }}
             />
         </div>
     );

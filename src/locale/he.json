@@ -107,7 +107,7 @@
 	"IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_EVENTS": "הפעילויות הבאות יתווספו עם הלחיצה על אישור:",
 	"MODALS.DELETE_CATEGORY.CONTENT": "האם אתה בטוח שאתה רוצה למחוק את הקטגוריה הזאת?<br/>מחיקת הקטגורייה תמחק איתה את כל הפעילויות שתחתיה.<br/>זוהי פעולה בלתי הפיכה",
 	"CALENDAR_EVENTS": "פעילויות לוח שנה",
-	"SIDEBAR_EVENTS": "פעילויות תפריד צד",
+	"SIDEBAR_EVENTS": "פעילויות בתפריט הצד",
 	"TOTAL_EVENTS": "פעילויות בסך הכל",
 	"MODALS.DELETE_CATEGORY.CONTENT.IT_WILL_AFFECT": "פעולה זו תשפיע על:",
 	"MODALS.DESCRIPTION": "תיאור",
@@ -910,5 +910,7 @@
 	"SAVED_COLLECTION_PREFIX": "יעד: ",
 	"SAVED_COLLECTION.ITEMS": "סהֿ\"כ מקומות שמורים: {X}",
 	"MY_TRIPS": "הטיולים שלי ({X})",
-	"MY_TRIPS.SHORT": "הטיולים שליד ({X})"
+	"MY_TRIPS.SHORT": "הטיולים שלי ({X})",
+	"MY_TRIPS.ITEMS": "סה\"כ פעילויות: {X}",
+	"DATES": "תאריכים"
 }

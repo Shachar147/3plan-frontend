@@ -1,7 +1,7 @@
 import {observer} from "mobx-react";
 import TranslateService from "../../../services/translate-service";
 import Button, {ButtonFlavor} from "../../../components/common/button/button";
-import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
+import React, {useContext, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import DataServices, {
     DBTrip,
@@ -9,7 +9,6 @@ import DataServices, {
     Trip,
     tripNameToLSTripName
 } from "../../../services/data-handlers/data-handler-base";
-import {TripDataSource} from "../../../utils/enums";
 import {getUser} from "../../../helpers/auth";
 import {formatShortDateStringIsrael, getAmountOfDays} from "../../../utils/time-utils";
 import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
@@ -20,17 +19,15 @@ import {fetchCitiesAndSetOptions} from "../../components/destination-selector/de
 import PointOfInterest from "../../components/point-of-interest/point-of-interest";
 import {myTripsContext} from "../../stores/my-trips-store";
 import LoadingComponent from "../../../components/loading/loading-component";
+import ReactModalService from "../../../services/react-modal-service";
+import LogHistoryService from "../../../services/data-handlers/log-history-service";
+import {TripActions} from "../../../utils/interfaces";
+import './my-trips-tab.scss';
 
 function MyTripsTabOld(){
     const [lsTrips, setLsTrips] = useState<Trip[] | DBTrip[]>([]);
     const [sharedTrips, setSharedTrips] = useState<SharedTrip[]>([]);
-    const [error, setError] = useState<any>(undefined);
-    const [isLoadingTrips, setIsLoadingTrips] = useState(false);
     const [showHidden, setShowHidden] = useState(false);
-    const dataService = useMemo(() => DataServices.getService(dataSource), [dataSource]);
-    const [reloadCounter, setReloadCounter] = useState(0);
-
-
 
     const hiddenTripsEnabled = dataSource === 'DB';
     const filteredList = [...lsTrips, ...sharedTrips].filter((x) =>
@@ -197,12 +194,6 @@ function MyTripsTab(){
     const eventStore = useContext(eventStoreContext);
     const myTripsStore = useContext(myTripsContext);
     const navigate = useNavigate();
-    const dataSource = TripDataSource.DB;
-
-    // useEffect(() => {
-    //     myTripsStore.loadMyTrips();
-    // }, [])
-
 
     function renderTrip(trip: Trip){
         const classList = getClasses("align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
@@ -222,24 +213,26 @@ function MyTripsTab(){
             images.push("/images/trip-photo-1.jpg");
         }
 
+        const isSharedTrip = myTripsStore.mySharedTrips.find((s) => s.id == trip.id);
         const item = {
             tripId: trip.id,
             images: images,
-            name: trip.name,
+            name: trip.name.replaceAll("-", " "),
             destination: trip.destinations?.join(", "),
-            category: "SAVED_COLLECTION_PREFIX", // todo complete
+            category: undefined,
             rate: undefined,
             isSystemRecommendation: undefined,
             location: undefined,
             more_info: undefined,
             source: undefined,
-            description: TranslateService.translate(eventStore, 'SAVED_COLLECTION.ITEMS', {X: trip.allEvents.length}),
-            idxToDetails
+            description: undefined,
+            idxToDetails,
+            isSharedTrip
         }
 
         return (
             <div key={item.id} className={classList}>
-                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed savedCollection />
+                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed myTrips onClick={() => navigate('/plan/' + trip.name, {})} renderTripActions={() => renderTripActions(trip)} renderTripInfo={() => renderTripInfo(trip)} namePrefix={isSharedTrip ? <span>{TranslateService.translate(eventStore, 'SHARED_TRIP')}:&nbsp;</span> : undefined} />
             </div>
         );
     }
@@ -259,9 +252,135 @@ function MyTripsTab(){
         )
     }
 
+    function onEditTrip(e: any, LSTripName: any) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (Object.keys(eventStore.modalValues).length === 0) {
+            eventStore.modalValues.name = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
+        }
+        ReactModalService.openEditTripModal(eventStore, LSTripName);
+    }
+
+    function onDuplicateTrip(e: any, LSTripName: any) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (Object.keys(eventStore.modalValues).length === 0) {
+            eventStore.modalValues.name = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
+        }
+        ReactModalService.openDuplicateTripModal(eventStore, LSTripName);
+    }
+
+    function onDeleteTrip(e: any, LSTripName: any) {
+        e.preventDefault();
+        e.stopPropagation();
+        ReactModalService.openDeleteTripModal(eventStore, LSTripName, myTripsStore.dataSource);
+    }
+
+    function onHideUnhideTrip(e: any, LSTripName: any) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (myTripsStore.showHidden) {
+            const tripName = LSTripName.replaceAll('-', ' ');
+
+            DataServices.DBService.unHideTripByName(tripName)
+                .then(() => {
+                    LogHistoryService.logHistory(eventStore, TripActions.unhideTrip, {
+                        tripName,
+                    });
+
+                    myTripsStore.loadMyTrips()
+                })
+                .catch(() => {
+                    ReactModalService.internal.openOopsErrorModal(eventStore);
+                });
+        } else {
+            ReactModalService.openHideTripModal(eventStore, LSTripName, myTripsStore.dataSource, () =>
+                myTripsStore.loadMyTrips()
+            );
+        }
+        // ReactModalService.openDeleteTripModal(eventStore, LSTripName, dataSource);
+    }
+
+    function renderTripInfo(trip: Trip) {
+        const dates = trip.dateRange;
+        const start = formatShortDateStringIsrael(dates.start!);
+        const end = formatShortDateStringIsrael(dates.end!);
+        const amountOfDays = getAmountOfDays(dates.start!, dates.end!);
+
+        const totalSidebarEvents = Object.values(trip.sidebarEvents).flat().length;
+        const totalCalendarEvents = trip.calendarEvents.length;
+
+        return (
+            <>
+                <span>
+                    {TranslateService.translate(eventStore, 'MY_TRIPS.ITEMS', {X: totalSidebarEvents + totalCalendarEvents})}
+                </span>
+                <span>
+                    {TranslateService.translate(eventStore, 'SCHEDULED_EVENTS')}: {totalCalendarEvents}
+                </span>
+                <span>
+                    {TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}: {totalSidebarEvents}
+                </span>
+            <div className="flex-row gap-3 flex-wrap-wrap">
+                <div id="when">
+                    {TranslateService.translate(eventStore, 'DATES')}: {end} - {start}
+                </div>
+                <div id="amount-of-days">
+                    ({amountOfDays} {TranslateService.translate(eventStore, 'DAYS')})
+                </div>
+            </div>
+            </>
+        );
+    }
+
+    function renderTripActions(trip: Trip) {
+        // @ts-ignore
+        const { isSharedTrip } = trip;
+        const LSTripName = tripNameToLSTripName(trip.name);
+
+        return (
+            <div className="trips-list-trip-actions-v2">
+                {!isSharedTrip && (
+                    <i
+                        className="fa fa-pencil-square-o"
+                        aria-hidden="true"
+                        title={TranslateService.translate(eventStore, 'EDIT_TRIP_MODAL.TITLE')}
+                        onClick={(e) => onEditTrip(e, LSTripName)}
+                    />
+                )}
+                {!isSharedTrip && (
+                    <i
+                        className="fa fa-files-o"
+                        aria-hidden="true"
+                        title={TranslateService.translate(eventStore, 'DUPLICATE_TRIP_MODAL.TITLE')}
+                        onClick={(e) => onDuplicateTrip(e, LSTripName)}
+                    />
+                )}
+                {!isSharedTrip && (
+                    <i
+                        className="fa fa-trash-o position-relative top--1"
+                        aria-hidden="true"
+                        title={TranslateService.translate(eventStore, 'DELETE_TRIP')}
+                        onClick={(e) => onDeleteTrip(e, LSTripName)}
+                    />
+                )}
+                {!isSharedTrip && (
+                    <i
+                        className={getClasses('fa', myTripsStore.showHidden ? 'fa-eye' : 'fa-eye-slash')}
+                        aria-hidden="true"
+                        title={TranslateService.translate(eventStore, myTripsStore.showHidden ? 'UNHIDE_TRIP' : 'HIDE_TRIP')}
+                        onClick={(e) => onHideUnhideTrip(e, LSTripName)}
+                    />
+                )}
+            </div>
+        );
+    }
+
     return (
         <div className="flex-row justify-content-center flex-wrap-wrap align-items-start" key={myTripsStore.myTrips?.length}>
-            {myTripsStore.myTrips?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.myTrips.sort((a, b) => b.allEvents?.length - a.allEvents?.length).map(renderTrip)}
+            {myTripsStore.allTripsSorted?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.allTripsSorted.map(renderTrip)}
         </div>
     )
 

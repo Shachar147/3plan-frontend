@@ -163,6 +163,14 @@ h2 {
       }
     }
 
+    &.my-trips-poi {
+      min-height: 250px;
+
+      .poi-right {
+        min-height: 150px;
+      }
+    }
+
     .category-label {
       position: absolute;
       margin-top: -116px;

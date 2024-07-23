@@ -805,7 +805,9 @@
 	"TOP_PICKS": "Top picks",
 	"NO_SAVED_COLLECTIONS": "Oops... it seems like you don't have saved collections yet",
 	"SAVED_COLLECTION_PREFIX": "Saved collection: ",
-	"SAVED_COLLECTION.ITEMS": "Total items: {X}",
+	"SAVED_COLLECTION.ITEMS": "Total saved places: {X}",
+	"MY_TRIPS.ITEMS": "Total activities: {X}",
 	"MY_TRIPS": "My Trips ({X})",
-	"MY_TRIPS.SHORT": "My Trips ({X})"
+	"MY_TRIPS.SHORT": "My Trips ({X})",
+	"DATES": "Dates"
 }

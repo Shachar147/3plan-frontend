@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useContext } from "react";
+import React, {useEffect, useMemo, useContext, useState} from "react";
 import { observer } from "mobx-react";
 import PointOfInterest from "../point-of-interest/point-of-interest";
 import { EventStore, eventStoreContext } from "../../../stores/events-store";

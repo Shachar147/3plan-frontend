@@ -1,19 +1,23 @@
 import {createContext} from "react";
-import {action, observable, runInAction} from "mobx";
+import {action, computed, observable, runInAction} from "mobx";
 import DataServices, {SharedTrip, Trip} from "../../services/data-handlers/data-handler-base";
 import {TripDataSource} from "../../utils/enums";
 
 export class MyTripsStore {
    @observable myTrips: Trip[] = [];
    @observable mySharedTrips: SharedTrip[] = [];
+   @observable hiddenTripsEnabled: boolean = false;
    @observable isLoading = false;
+   @observable showHidden = false;
+
+   dataSource = TripDataSource.DB; // shouldn't change, therefore not observer
 
    @action
    async loadMyTrips(){
        this.setIsLoading(true);
 
        // @ts-ignore
-       const { trips, sharedTrips } = await DataServices.getService(TripDataSource.DB).getTripsShort(undefined);
+       const { trips, sharedTrips } = await DataServices.getService(this.dataSource).getTripsShort(undefined);
        runInAction(() => {
            this.myTrips = trips;
            this.mySharedTrips = sharedTrips;
@@ -24,6 +28,19 @@ export class MyTripsStore {
    @action
     setIsLoading(isLoading: boolean){
        this.isLoading = isLoading;
+   }
+
+    @computed
+    get allTripsSorted(){
+        const filteredList = [...this.myTrips, ...this.mySharedTrips].filter((x) =>
+            !!x.isHidden == this.showHidden
+        );
+
+        return filteredList.sort((a, b) => {
+            const b_timestamp = b.lastUpdateAt ? new Date(b.lastUpdateAt).getTime() : 0;
+            const a_timestamp = a.lastUpdateAt ? new Date(a.lastUpdateAt).getTime() : 0;
+            return b_timestamp - a_timestamp;
+        })
    }
 }
 
