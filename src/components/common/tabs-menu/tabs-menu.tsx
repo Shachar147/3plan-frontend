@@ -29,7 +29,7 @@ function TabMenu(props: TabMenuProps){
 	return (
 		<div key={feedStore.activeTab}>
 			<div className="ui top attached tabular menu">
-				{tabs.map((tab) => <div className={getClasses(feedStore.activeTab == tab.id && 'active', "item", feedStore.activeTab !== tab.id && 'cursor-pointer', 'flex-row gap-8 align-items-center')} onClick={() => {
+				{tabs.map((tab) => <div key={`tab-${tab.id}`} className={getClasses(feedStore.activeTab == tab.id && 'active', "item", feedStore.activeTab !== tab.id && 'cursor-pointer', 'flex-row gap-8 align-items-center')} onClick={() => {
 					if (feedStore.activeTab !== tab.id) {
 						feedStore.setActiveTab(tab.id);
 						onChange?.(tab.id);

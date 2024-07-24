@@ -49,7 +49,7 @@ function MainPageContent(){
         {
             id: myTripsTabId,
             order: 2,
-            name: TranslateService.translate(eventStore, `MY_TRIPS${isShort}`, {
+            name: TranslateService.translate(eventStore, `MY_TRIPS_X${isShort}`, {
                 X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
             }),
             icon: "fa-plane",
