@@ -7,12 +7,15 @@ import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import FeedViewApiService from "../../services/feed-view-api-service";
 import {observer} from "mobx-react";
 import onClickOutside from 'react-onclickoutside';
+import {CityOrCountry, fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
+import {cityImage} from "../../utils/consts";
 
 export interface SearchSuggestion {
     name: string;
     category: string;
     destination: string;
     image?: string;
+    hideImage?: boolean;
 }
 
 const TriplanSearchV2 = () => {
@@ -22,6 +25,7 @@ const TriplanSearchV2 = () => {
     const [chosenName, setChosenItem] = useState('');
     const [rerenderCounter, setReRenderCounter] = useState(0);
 
+    const citiesAndCountries = useMemo<CityOrCountry[]>(() => fetchCitiesAndSetOptions(), []);
     const searchSuggestionsCaching = useRef<Record<string, SearchSuggestion[]>>({});
 
     const eventStore = useContext(eventStoreContext);
@@ -68,13 +72,34 @@ const TriplanSearchV2 = () => {
         if (searchQuery.length >= 3) {
             const cachedKey = Object.keys(searchSuggestionsCaching.current).find((s) => s.includes(searchQuery.trim()));
             if (cachedKey) {
-                console.log(searchSuggestionsCaching.current)
+                // console.log(searchSuggestionsCaching.current)
                 console.log("returned from cache!");
                 setSuggestions(searchSuggestionsCaching.current[cachedKey]);
                 return searchSuggestionsCaching.current[cachedKey];
             }
 
-            const results: SearchSuggestion[] = await apiService.getSearchSuggestions(searchQuery.trim());
+            let results: SearchSuggestion[] = await apiService.getSearchSuggestions(searchQuery.trim());
+
+            const countries = citiesAndCountries.filter((c) => c.label.toLowerCase().includes(searchQuery.toLowerCase().trim()) && c.type === "country").map((c) => ({
+                name: c.value,
+                category: c.type,
+                destination: c.label,
+                image: cityImage
+            }));
+
+            const cities = citiesAndCountries.filter((c) => c.label.toLowerCase().includes(searchQuery.toLowerCase().trim()) && c.type === "city").map((c) => ({
+                name: c.value,
+                category: c.type,
+                destination: c.label,
+                image: cityImage
+            }));
+
+            results = [
+                ...countries,
+                ...cities,
+                ...results,
+            ]
+
             searchSuggestionsCaching.current = {
                 ...searchSuggestionsCaching.current,
                 [searchQuery.trim()]: results
@@ -96,7 +121,7 @@ const TriplanSearchV2 = () => {
         setSearchQuery(query);
 
         // Mocked suggestions for demo purpose
-        const filteredSuggestions = [{ name: TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT")}];
+        const filteredSuggestions = [{ name: TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT"), category: "", destination: "", hideImage: true}];
 
         //     [
         //     { name: 'Dubai', descriptor: 'City in United Arab Emirates' },
@@ -127,6 +152,17 @@ const TriplanSearchV2 = () => {
 
     const isShort = eventStore.isMobile ? '.SHORT' : '';
 
+    function getDescription(suggestion: SearchSuggestion) {
+        const isCityOrCountry = suggestion.image == cityImage;
+        if (isCityOrCountry) {
+            return suggestion.destination;
+        }
+        return suggestion.destination ? TranslateService.translate(eventStore, 'X_IN_Y', {
+            X: TranslateService.translate(eventStore, suggestion.category),
+            Y: TranslateService.translate(eventStore, suggestion.destination)
+        }) : "";
+    }
+
     return (
         <div className={getClasses("search-container", shouldShowSuggestions && 'has-values')} key={`search-box-${rerenderCounter}`}>
             <div className="search-box">
@@ -145,23 +181,22 @@ const TriplanSearchV2 = () => {
             {shouldShowSuggestions && (
                 <div className="suggestions-container bright-scrollbar">
                     {suggestions.map((suggestion, index) => (
-                        <div
-                            key={index}
-                            className="suggestion-item"
-                            onClick={() => handleSuggestionClick(suggestion)}
-                        >
-                            <div className="suggestion-item-image" style={{
-                                backgroundImage: `url(${suggestion.image})`
-                            }}/>
-                            <div className="suggestion-item-text">
-                                <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>
-                                <small className="suggestion-descriptor">{suggestion.destination ? TranslateService.translate(eventStore, 'X_IN_Y',{
-                                    X: TranslateService.translate(eventStore, suggestion.category),
-                                    Y: TranslateService.translate(eventStore, suggestion.destination)
-                                }): ""}</small>
+                            <div
+                                key={index}
+                                className="suggestion-item"
+                                onClick={() => handleSuggestionClick(suggestion)}
+                            >
+                                {!suggestion.hideImage && <div className="suggestion-item-image" style={{
+                                    // backgroundImage: `url(${suggestion.image})`
+                                    backgroundImage: `url(${suggestion.image ?? "images/no-image.png"})`
+                                }}/>}
+                                <div className="suggestion-item-text">
+                                    <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>
+                                    <small className="suggestion-descriptor">{getDescription(suggestion)}</small>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    }}
                     {suggestions.length === 0 && (
                         <span className="margin-top-20">
                             {TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}

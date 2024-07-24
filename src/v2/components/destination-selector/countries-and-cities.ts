@@ -819,6 +819,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "Germany",
+        "label": "Germany",
+        "type": "country",
+        "flagClass": "fi fi-de",
+        "isPopular": false
+    },
+    {
         "value": "Tiranë",
         "label": "Tiranë, Albania",
         "type": "city",
@@ -48321,6 +48328,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "Hungary",
+        "label": "Hungary",
+        "type": "country",
+        "flagClass": "fi fi-hu",
+        "isPopular": false
+    },
+    {
         "value": "Debrecen",
         "label": "Debrecen, Hungary",
         "type": "city",
@@ -57188,6 +57202,13 @@ const countriesAndCities = [
         "type": "city",
         "flagClass": "fi fi-it",
         "isPopular": false
+    },
+    {
+        "value": "Italy",
+        "label": "Italy",
+        "type": "country",
+        "flagClass": "fi fi-it",
+        "isPopular": true
     },
     {
         "value": "Milano",

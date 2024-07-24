@@ -3,9 +3,12 @@ const myTripsTabId = "my-trips";
 const savedCollectionsTabId = "saved-collections";
 const newDesignRootPath = "/new";
 
+const cityImage = "images/city.jpg";
+
 export {
     mainPageContentTabLsKey,
     myTripsTabId,
     newDesignRootPath,
-    savedCollectionsTabId
+    savedCollectionsTabId,
+    cityImage
 }

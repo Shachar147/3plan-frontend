@@ -58,8 +58,16 @@ interface DestinationSelectorProps {
     onChange: (selectedValues: string[]) => void;
 }
 
+export interface CityOrCountry {
+    "value": string,
+    "label": string,
+    "type": "country" | "city",
+    "flagClass": string,
+    "isPopular": boolean
+}
+
 // Function to fetch cities for each country and set options
-const fetchCitiesAndSetOptions = () => {
+const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
     // const countries = countryList().getData();
     let allOptions: OptionType[] = [];
 
