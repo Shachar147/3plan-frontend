@@ -340,6 +340,10 @@ body {
 	margin-block: 5px;
 }
 
+.margin-block-8 {
+	margin-block: 8px;
+}
+
 .margin-block-10 {
 	margin-block: 10px;
 }
@@ -380,6 +384,10 @@ body {
 	margin-top: 5px;
 }
 
+.margin-top-8 {
+	margin-top: 8px;
+}
+
 .margin-top-10 {
 	margin-top: 10px;
 }
@@ -406,6 +414,10 @@ body {
 
 .margin-bottom-2 {
 	margin-bottom: 2px;
+}
+
+.margin-bottom-4 {
+	margin-bottom: 4px;
 }
 
 .margin-bottom-5 {
@@ -461,6 +473,12 @@ body {
 .flex-col {
 	display: flex;
 	flex-direction: column;
+}
+
+.flex-col-reverse,
+.flex-column-reverse {
+	display: flex;
+	flex-direction: column-reverse;
 }
 
 .flex-row {

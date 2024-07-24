@@ -4,3 +4,13 @@
   align-items: center;
   min-width: 100%;
 }
+
+
+@media (max-width: 768px) {
+  .category-filter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+}
