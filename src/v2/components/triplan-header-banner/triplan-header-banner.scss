@@ -231,12 +231,17 @@ body.rtl {
         width: 300px;
         max-width: 100%;
       }
+
+      &-right-side {
+        gap: 6px !important;
+      }
     }
 
     //.triplan-header-banner-footer {
     //  top: 116px;
     //}
   }
+
 
   .triplan-header-banner-footer .ui.tabular.menu .active.item {
     border: 0;

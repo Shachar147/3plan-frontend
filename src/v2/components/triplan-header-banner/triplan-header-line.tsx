@@ -83,7 +83,7 @@ function TriplanHeaderLine(){
                         // icon="fa-user"
                         // text={TranslateService.translate(eventStore, 'PROFILE')}
                         icon="fa-sign-out"
-                        text={isLoggedIn ? `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}` : `${TranslateService.translate(eventStore, 'LOGIN')}`}
+                        text={isLoggedIn ? eventStore.isMobile ? TranslateService.translate(eventStore, 'LOGOUT') : `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}` : `${TranslateService.translate(eventStore, 'LOGIN')}`}
                         onClick={() => {
                             navigate(isLoggedIn ? '/logout' : '/login',)
                         }}
