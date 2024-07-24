@@ -44,13 +44,12 @@ function MainPageContent(){
                 X: feedStore.savedItems.length
             }),
             icon: "fa-save",
-            // icon: "fa-heart",
             render: () => <TriplanTabContent content={<SavedCollectionsTab />} />
         },
         {
             id: myTripsTabId,
             order: 2,
-            name: TranslateService.translate(eventStore, `MY_TRIPS_X${isShort}`, {
+            name: TranslateService.translate(eventStore, `MY_TRIPS${isShort}`, {
                 X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
             }),
             icon: "fa-plane",
@@ -95,37 +94,11 @@ function MainPageContent(){
         });
     }, [])
 
-    // const orderedTabs = eventStore.isMobile ? tabs.sort((a, b) => {
-    //     if (a.id === activeTab) {
-    //         return -1;
-    //     } else if (b.id === activeTab) {
-    //         return 1;
-    //     } else {
-    //         const activeIdx = tabsIdsByOrder.indexOf(activeTab);
-    //         const aIdx = tabsIdsByOrder.indexOf(a.id);
-    //         const bIdx = tabsIdsByOrder.indexOf(b.id);
-    //
-    //         if (aIdx > activeIdx && bIdx > activeIdx) {
-    //             if (bIdx > aIdx){
-    //                 return -1;
-    //             } else {
-    //                 return 1;
-    //             }
-    //         }
-    //         else if (aIdx > activeIdx){
-    //             return -1;
-    //         } else {
-    //             return 1;
-    //         }
-    //     }
-    // }) : tabs;
-    const orderedTabs = tabs;
-
     return (
         <div className={getClasses("triplan-header-banner-footer", eventStore.isMobile && activeTabIdx === tabs.length -1 && 'padding-inline-end-10')} key={rootStore.tabMenuReRenderCounter}>
             <TabMenu
                 activeTab={activeTab}
-                tabs={orderedTabs}
+                tabs={tabs}
                 onChange={(tabId) => {
                     localStorage.setItem(mainPageContentTabLsKey, tabId);
                     setActiveTabIdx(tabIdToIdx[tabId]);

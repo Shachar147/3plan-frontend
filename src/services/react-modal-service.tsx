@@ -1574,7 +1574,7 @@ const ReactModalService = {
 			content,
 		});
 	},
-	openEditTripModal: (eventStore: EventStore, LSTripName: string) => {
+	openEditTripModal: (eventStore: EventStore, LSTripName: string, tripId?: number) => {
 		const tripName = LSTripName !== '' ? lsTripNameToTripName(LSTripName) : '';
 		const title = `${TranslateService.translate(eventStore, 'EDIT_TRIP_MODAL.TITLE')}: ${tripName}`;
 
@@ -1619,7 +1619,7 @@ const ReactModalService = {
 						was: oldName,
 						now: newName,
 					},
-				});
+				}, undefined, undefined, tripId);
 
 				ReactModalService.internal.alertMessage(
 					eventStore,

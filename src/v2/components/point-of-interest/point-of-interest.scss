@@ -65,6 +65,19 @@
   align-self: flex-start;
 }
 
+.name-container {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  align-items: center;
+  width: 100%;
+
+  h2, h4 {
+    display: flex;
+    flex: 1 1 0;
+  }
+}
+
 //.main-feed {
 //  .top-pick-label {
 //    background-color: #ff0074;

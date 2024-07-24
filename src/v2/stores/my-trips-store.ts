@@ -10,18 +10,26 @@ export class MyTripsStore {
    @observable isLoading = false;
    @observable showHidden = false;
 
+   @observable tripsInEditMode: Record<number, boolean> = {};
+
    dataSource = TripDataSource.DB; // shouldn't change, therefore not observer
 
    @action
-   async loadMyTrips(){
-       this.setIsLoading(true);
+   async loadMyTrips(showLoader: boolean = true){
+
+       if (showLoader) {
+           this.setIsLoading(true);
+       }
 
        // @ts-ignore
        const { trips, sharedTrips } = await DataServices.getService(this.dataSource).getTripsShort(undefined);
        runInAction(() => {
            this.myTrips = trips;
            this.mySharedTrips = sharedTrips;
-           this.setIsLoading(false);
+
+           if (showLoader) {
+               this.setIsLoading(false);
+           }
        })
    }
 
@@ -42,6 +50,19 @@ export class MyTripsStore {
             return b_timestamp - a_timestamp;
         })
    }
+
+    @action
+    toggleEditTrip(tripId: number) {
+       if (this.tripsInEditMode[tripId]) {
+           delete this.tripsInEditMode[tripId];
+       } else {
+           this.tripsInEditMode[tripId] = true;
+       }
+    }
+
+    isTripOnEditMode(tripId:number): boolean{
+       return !!this.tripsInEditMode[tripId];
+    }
 }
 
 export const myTripsContext = createContext(new MyTripsStore());

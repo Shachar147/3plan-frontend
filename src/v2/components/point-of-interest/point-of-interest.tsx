@@ -17,6 +17,8 @@ import {runInAction} from "mobx";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {observer} from "mobx-react";
 import {Trip} from "../../../services/data-handlers/data-handler-base";
+import TextInput from "../../../components/inputs/text-input/text-input";
+import EditableLabel from "../editable-label/editable-label";
 
 interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
@@ -32,9 +34,11 @@ interface PointOfInterestProps {
     renderTripActions?: () => void;
     renderTripInfo?: () => void;
     namePrefix?: React.ReactNode;
+    isEditMode?: boolean;
+    onEditSave?: () => void;
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
 
     const isHebrew = eventStore.isHebrew;
@@ -279,8 +283,26 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
         )
     }
 
+    function renderName() {
+        const name = (
+            <EditableLabel name="trip-name" value={item.name.replaceAll("-", " ")} placeholder={TranslateService.translate(eventStore, 'name')} isEditMode={isEditMode} onEditSave={onEditSave} key={`edit-label-${item.name}`} />
+        )
+        if (isShrinkedMode) {
+            return (
+                <h4>{namePrefix}{name}</h4>
+            );
+        }
+        return (
+            <h2>{namePrefix}{name}</h2>
+        );
+    }
+
     return (
-        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', !!onClick && 'cursor-pointer')} onClick={onClick}>
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', !!onClick && 'cursor-pointer')} onClick={() => {
+            if (!isEditMode) {
+                onClick?.();
+            }
+        }}>
             <div className="poi-left">
                 <div className="carousel-wrapper" onClick={(e) => (item.images?.length > 1) && e.stopPropagation()}>
                     {/*todo complete - fix carousel on hebrew*/}
@@ -300,8 +322,8 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
             <div className="poi-right">
                 {(item.priority === 'high' || item.isSystemRecommendation) && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
                 {item.category && !mainFeed && renderItemCategory()}
-                <div className="flex-row gap-3 align-items-center">
-                    {isShrinkedMode ? <h4>{namePrefix}{item.name}</h4> : <h2>{namePrefix}{item.name}</h2>}
+                <div className="name-container">
+                    {renderName()}
                 </div>
                 <span className={getClasses("description", isShrinkedMode && 'max-height-100-ellipsis')}>{item.description}</span>
                 <div className="poi-details">
