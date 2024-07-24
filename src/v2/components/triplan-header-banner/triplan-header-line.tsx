@@ -10,12 +10,17 @@ import ReactModalService from "../../../services/react-modal-service";
 import {observer} from "mobx-react";
 import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, savedCollectionsTabId} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
+import {useNavigate} from "react-router-dom";
+import {getUser, isLoggedOn} from "../../../helpers/auth";
 
 
 function TriplanHeaderLine(){
     const rootStore = useContext(rootStoreContext);
     const eventStore = useContext(eventStoreContext);
     useHandleWindowResize();
+
+    const isLoggedIn = isLoggedOn();
+    const navigate = useNavigate();
 
     const [scrollY, setScrollY] = useState(0);
 
@@ -67,18 +72,20 @@ function TriplanHeaderLine(){
                         flavor={ButtonFlavor.link}
                     />
                     <Button
-                        icon="fa-user"
-                        text={TranslateService.translate(eventStore, 'PROFILE')}
-                        onClick={() => {
-                            alert("profile");
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
-                    <Button
                         icon="fa-globe"
                         text={TranslateService.translate(eventStore, 'LANGUAGE')}
                         onClick={() => {
                             ReactModalService.openChangeLanguageModal(eventStore);
+                        }}
+                        flavor={ButtonFlavor.link}
+                    />
+                    <Button
+                        // icon="fa-user"
+                        // text={TranslateService.translate(eventStore, 'PROFILE')}
+                        icon="fa-sign-out"
+                        text={isLoggedIn ? `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}` : `${TranslateService.translate(eventStore, 'LOGIN')}`}
+                        onClick={() => {
+                            navigate(isLoggedIn ? '/logout' : '/login',)
                         }}
                         flavor={ButtonFlavor.link}
                     />

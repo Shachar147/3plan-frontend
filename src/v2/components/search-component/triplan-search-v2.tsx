@@ -150,11 +150,16 @@ const TriplanSearchV2 = () => {
                             className="suggestion-item"
                             onClick={() => handleSuggestionClick(suggestion)}
                         >
-                            <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>
-                            {suggestion.destination && <small className="suggestion-descriptor">{TranslateService.translate(eventStore, 'X_IN_Y',{
-                                X: TranslateService.translate(eventStore, suggestion.category),
-                                Y: TranslateService.translate(eventStore, suggestion.destination)
-                            })}</small>}
+                            <div className="suggestion-item-image" style={{
+                                backgroundImage: `url(${suggestion.image})`
+                            }}/>
+                            <div className="suggestion-item-text">
+                                <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>
+                                <small className="suggestion-descriptor">{suggestion.destination ? TranslateService.translate(eventStore, 'X_IN_Y',{
+                                    X: TranslateService.translate(eventStore, suggestion.category),
+                                    Y: TranslateService.translate(eventStore, suggestion.destination)
+                                }): ""}</small>
+                            </div>
                         </div>
                     ))}
                     {suggestions.length === 0 && (
