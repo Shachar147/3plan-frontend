@@ -4,12 +4,16 @@
   background-color: white;
 }
 
+.main-feed-description,
 .main-feed-header {
   padding-inline: 106px;
+  align-self: flex-start;
+}
+
+.main-feed-header {
   font-weight: bold;
   font-size: 2.25rem;
   line-height: 2.75rem;
-  align-self: flex-start;
 }
 
 .triplan-header-banner-footer {
@@ -65,11 +69,13 @@
     }
   }
 
+  .main-feed-description,
   .main-feed-header {
-    padding-inline: 0 !important;
+    padding-inline: 25px !important;
   }
   .tabular.menu {
-    padding-inline: 0 !important;
+    //padding-inline: 0 !important;
+    padding-inline: 10px !important;
   }
 
   .triplan-header-banner-footer {

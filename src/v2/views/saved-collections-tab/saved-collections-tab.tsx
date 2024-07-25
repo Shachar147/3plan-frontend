@@ -50,7 +50,17 @@ function SavedCollectionsTab(){
 
     return (
         <div className="flex-row justify-content-center flex-wrap-wrap align-items-start" key={feedStore.savedCollections.length}>
-            {feedStore.savedCollections.length == 0 ? renderNoSavedCollectionsPlaceholder() : feedStore.savedCollections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
+            {feedStore.savedCollections.length == 0 ? renderNoSavedCollectionsPlaceholder() : (
+                <div className="flex-column margin-top-10">
+                    <h2 className="main-feed-header">{
+                        TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.TITLE')
+                    }</h2>
+                    <span className="main-feed-description white-space-pre-wrap text-align-start">{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.DESCRIPTION')}</span>
+                    <div className="flex-row justify-content-center flex-wrap-wrap align-items-start">
+                        {feedStore.savedCollections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
+                    </div>
+                </div>
+            )}
         </div>
     )
 

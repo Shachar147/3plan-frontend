@@ -896,6 +896,8 @@
 	"V2.TRIPLAN_HEADER_BANNER": "<span>תכנון טיולים</span><span>מעולם לא היה פשוט יותר!</span>",
 	"WISHLIST": "מועדפים",
 	"PROFILE": "פרופיל",
+	"SAVED_COLLECTIONS.TITLE": "המקומות ששמרת",
+	"SAVED_COLLECTIONS.DESCRIPTION": "כל המקומות ששמרת יופיעו כאן, מקובצים לפי מיקום!",
 	"SAVED_COLLECTIONS": "המקומות ששמרת ({X})",
 	"SAVED_COLLECTIONS.SHORT": "המקומות ששמרת ({X})",
 	"HEADER_SEARCH_PLACEHOLDER": "חפשו מקומות ודברים לעשות",

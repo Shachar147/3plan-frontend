@@ -54,9 +54,18 @@ function TriplanHeaderLine(){
                         text={TranslateService.translate(eventStore, 'WISHLIST')}
                         className={localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId && 'active'}
                         onClick={() => {
+                            if (localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId) {
+                                return;
+                            }
+
                             localStorage.setItem(mainPageContentTabLsKey, savedCollectionsTabId);
                             rootStore.triggerTabsReRender();
                             rootStore.triggerHeaderReRender();
+
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth' // Optional: for smooth scrolling
+                            });
                         }}
                         flavor={ButtonFlavor.link}
                     />
@@ -65,9 +74,17 @@ function TriplanHeaderLine(){
                         text={TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
                         className={localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
                         onClick={() => {
+                            if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
+                                return;
+                            }
                             localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
                             rootStore.triggerTabsReRender();
                             rootStore.triggerHeaderReRender();
+
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth' // Optional: for smooth scrolling
+                            });
                         }}
                         flavor={ButtonFlavor.link}
                     />

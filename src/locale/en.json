@@ -788,6 +788,8 @@
 	"V2.TRIPLAN_HEADER_BANNER": "<span>Trips Planning</span><span>has never been easier</span>",
 	"WISHLIST": "Wishlist",
 	"PROFILE": "Profile",
+	"SAVED_COLLECTIONS.TITLE": "Saved Collections",
+	"SAVED_COLLECTIONS.DESCRIPTION": "All the places you saved will appear here, grouped by destination!",
 	"SAVED_COLLECTIONS": "Saved Collections ({X})",
 	"SAVED_COLLECTIONS.SHORT": "Saved Collections ({X})",
 	"HEADER_SEARCH_PLACEHOLDER": "Find places and things to do",
