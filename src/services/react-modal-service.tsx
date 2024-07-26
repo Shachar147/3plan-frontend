@@ -65,6 +65,7 @@ import CopyInput from '../components/common/copy-input/copy-input';
 import LogHistoryService from './data-handlers/log-history-service';
 import {navigate} from "@storybook/addon-links";
 import {useNavigate} from "react-router-dom";
+import {endpoints} from "../v2/utils/endpoints";
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -4316,7 +4317,7 @@ const ReactModalService = {
 		};
 
 		const onConfirm = async () => {
-			const result = await apiPost('/distance', {
+			const result = await apiPost(endpoints.v1.distance.calculateDistances, {
 				from: allLocations,
 				to: allLocations,
 				tripName: eventStore.tripName,
@@ -4331,7 +4332,7 @@ const ReactModalService = {
 
 			const updateTaskStatus = async () => {
 				counter++;
-				const result = await apiGetNew(`/task/${taskId}`);
+				const result = await apiGetNew(endpoints.v1.backgroundTasks.getTask(taskId));
 				runInAction(() => {
 					eventStore.taskData = result.data;
 

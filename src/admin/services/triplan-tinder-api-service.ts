@@ -6,10 +6,11 @@ import {
 } from '../helpers/interfaces';
 import { apiGet, apiPost, apiPut } from '../helpers/api';
 import { getServerAddress } from '../../config/config';
+import {endpoints} from "../../v2/utils/endpoints";
 
 export const TriplanTinderApiService = {
 	async getPlacesByDestination(): Promise<GetPlacesByDestinationResult> {
-		const result = await apiGet('/item/by-destination');
+		const result = await apiGet(endpoints.v1.tinderPlacesFinder.placesByDestination);
 		if (result) {
 			return result?.data as GetPlacesByDestinationResult;
 		}
@@ -17,7 +18,7 @@ export const TriplanTinderApiService = {
 	},
 
 	async downloadMedia(): Promise<DownloadMediaResult> {
-		const result = await apiPut('/item/download-media', {});
+		const result = await apiPut(endpoints.v1.tinderPlacesFinder.downloadMedia, {});
 		if (result) {
 			return result?.data as DownloadMediaResult;
 		}
@@ -25,7 +26,7 @@ export const TriplanTinderApiService = {
 	},
 
 	async fixItems(): Promise<FixItemsResult> {
-		const result = await apiPut('/item/fix', {});
+		const result = await apiPut(endpoints.v1.tinderPlacesFinder.fixItems, {});
 		if (result) {
 			return result?.data as FixItemsResult;
 		}
@@ -33,7 +34,7 @@ export const TriplanTinderApiService = {
 	},
 
 	async createInstagramItems(json: object): Promise<CreateInstagramItemsResult> {
-		const result = await apiPost('/instagram/json', {}, getServerAddress());
+		const result = await apiPost(endpoints.v1.tinderPlacesFinder.createInstagramItems, {}, getServerAddress());
 		if (result) {
 			return result?.data as CreateInstagramItemsResult;
 		}

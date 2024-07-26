@@ -29,6 +29,7 @@ import { LocationData } from '../../../utils/interfaces';
 import SelectInput from '../../../components/inputs/select-input/select-input';
 import { TriplanPriority } from '../../../utils/enums';
 import { ucfirst } from '../../../utils/utils';
+import {endpoints} from "../../../v2/utils/endpoints";
 
 interface ManageItemData {
 	items: TinderItem[];
@@ -187,7 +188,7 @@ function AManageItem() {
 				item.location = location;
 			} catch {}
 		}
-		const result = await apiPut(`/item/${item!.id}`, {
+		const result = await apiPut(endpoints.v1.tinderPlacesFinder.updateItemById(item.id), {
 			...item,
 			downloadedImages: item!.downloadedImages
 				?.map((x) => x.replace(getTinderServerAddress(), ''))
@@ -212,7 +213,7 @@ function AManageItem() {
 
 	async function deleteItem() {
 		setIsSaving(true);
-		const result = await apiDelete(`/item/${item!.id}`);
+		const result = await apiDelete(endpoints.v1.tinderPlacesFinder.deleteItemById(item!.id));
 		ReactModalService.internal.alertMessage(
 			eventStore,
 			'MODALS.DELETED.TITLE',

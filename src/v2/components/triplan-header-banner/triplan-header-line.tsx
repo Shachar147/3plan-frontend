@@ -45,7 +45,7 @@ function TriplanHeaderLine(){
             <div className={`${baseClass}-top-shadow`} />
             <div className={getClasses(`${baseClass}`, !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
                 <div className={`${baseClass}-left-side`}>
-                    {!eventStore.isMobile && <TriplanLogo onClick={() => alert("here")} white={!isSticky} height={60} />}
+                    {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
                     <TriplanSearchV2 />
                 </div>
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>

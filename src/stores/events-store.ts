@@ -44,6 +44,7 @@ import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
 import LogHistoryService from '../services/data-handlers/log-history-service';
+import {endpoints} from "../v2/utils/endpoints";
 
 const defaultModalSettings = {
 	show: false,
@@ -1423,7 +1424,7 @@ export class EventStore {
 				lng: location.longitude!,
 			};
 
-			apiGetNew(`/distance/near/${coordinateToString(from)}`).then((results) => {
+			apiGetNew(endpoints.v1.distance.getPlacesNearby(coordinateToString(from))).then((results) => {
 				const data = results.data;
 				const allEventsWithLocation = this.allEventsComputed.filter(
 					(x) => x?.location?.latitude && x?.location?.longitude

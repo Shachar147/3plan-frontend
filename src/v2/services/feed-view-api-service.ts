@@ -1,5 +1,5 @@
-import {apiDelete, apiGetPromise, apiPost} from "../../helpers/api";
-import {ENDPOINTS} from "../utils/endpoints";
+import {apiGetPromise, apiPost} from "../../helpers/api";
+import {endpoints} from "../utils/endpoints";
 import {IPointOfInterest, SavedCollection} from "../utils/interfaces";
 
 export const allSources = [
@@ -11,19 +11,19 @@ export const allSources = [
 
 export const SourceToUrl = (destination: string, page: number): Record<string, string> => {
     const base: Record<string, string> = {
-        'Local': `${ENDPOINTS.poi.local}?destination=${destination}&page=${page}`,
-        'GetYourGuide': `${ENDPOINTS.poi.external.getyourguide}?destination=${destination}&page=${page}`,
-        'TripAdvisor': `${ENDPOINTS.poi.external.tripadvisor}?destination=${destination}&page=${page}`,
+        'Local': `${endpoints.v2.poi.local}?destination=${destination}&page=${page}`,
+        'GetYourGuide': `${endpoints.v2.poi.external.getyourguide}?destination=${destination}&page=${page}`,
+        'TripAdvisor': `${endpoints.v2.poi.external.tripadvisor}?destination=${destination}&page=${page}`,
     };
     if (destination === "Dubai"){
-        base["Dubai.co.il"] = `${ENDPOINTS.poi.external.dubaicoil}?destination=${destination}&page=${page}`;
+        base["Dubai.co.il"] = `${endpoints.v2.poi.external.dubaicoil}?destination=${destination}&page=${page}`;
     }
     return base;
 }
 
 export default class FeedViewApiService {
     getCount = async (destination: string) => {
-        const result = await apiGetPromise(this, `${ENDPOINTS.poi.count}/${destination}`);
+        const result = await apiGetPromise(this, `${endpoints.v2.poi.count}/${destination}`);
         if (result) {
             return result?.data;
         }
@@ -51,12 +51,12 @@ export default class FeedViewApiService {
     }
 
     getSavedCollections = async(): Promise<SavedCollection[]> => {
-        const result = await apiGetPromise(this, ENDPOINTS.savedCollections.get)
+        const result = await apiGetPromise(this, endpoints.v2.savedCollections.get)
         return result?.data?.data ?? [];
     }
 
     saveItem = async (item: IPointOfInterest) => {
-        return await apiPost(ENDPOINTS.savedCollections.upsert, {
+        return await apiPost(endpoints.v2.savedCollections.upsert, {
             name: item.destination,
             destination: item.destination,
             items: [
@@ -66,12 +66,12 @@ export default class FeedViewApiService {
     }
 
     unSaveItem = async (pid: number, collectionId: number) => {
-        const url = ENDPOINTS.savedCollections.deleteItem.replace(":cid", collectionId.toString()).replace(":pid", pid.toString());
+        const url = endpoints.v2.savedCollections.deleteItem(collectionId, pid);
         return await apiPost(url)
     }
 
     getMainFeedItems = async () => {
-        const result = await apiGetPromise(this,  ENDPOINTS.poi.feed);
+        const result = await apiGetPromise(this,  endpoints.v2.poi.feed);
         if (result) {
             return result?.data;
         }
@@ -83,7 +83,7 @@ export default class FeedViewApiService {
     }
 
     getSearchSuggestions = async (searchKeyword: string) => {
-        const result = await apiGetPromise(this,  `${ENDPOINTS.poi.searchSuggestions}/?s=${searchKeyword}`);
+        const result = await apiGetPromise(this,  `${endpoints.v2.poi.searchSuggestions}/?s=${searchKeyword}`);
         if (result) {
             return result?.data;
         }
