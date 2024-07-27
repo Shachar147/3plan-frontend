@@ -1,5 +1,5 @@
 
-function getParameterFromHash(paramName: string) {
+export function getParameterFromHash(paramName: string) {
     // Get the hash from the window location
     let hash = window.location.hash; // "#param=value"
 
@@ -12,7 +12,7 @@ function getParameterFromHash(paramName: string) {
     let params = hash.split('&'); // ["param=value"]
 
     // Create an object to hold the parameters
-    let hashParams = {};
+    let hashParams: Record<string, any> = {};
 
     // Loop through each key-value pair
     params.forEach(param => {

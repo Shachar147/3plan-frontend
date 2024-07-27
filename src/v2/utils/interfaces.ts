@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface SavedCollection {
     id: number;
     name: string;
@@ -39,4 +41,12 @@ export interface IPointOfInterest {
     addedBy?: Record<string, any>; // user
     updatedBy?: Record<string, any>; // user
     isSystemRecommendation: boolean;
+}
+
+export interface TabData {
+    id: string,
+    order: number,
+    name: string,
+    icon: string,
+    render: () => React.ReactNode;
 }

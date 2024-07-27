@@ -59,6 +59,7 @@ function TriplanHeaderLine(){
                             }
 
                             localStorage.setItem(mainPageContentTabLsKey, savedCollectionsTabId);
+                            window.location.hash = savedCollectionsTabId;
                             rootStore.triggerTabsReRender();
                             rootStore.triggerHeaderReRender();
 
@@ -78,6 +79,7 @@ function TriplanHeaderLine(){
                                 return;
                             }
                             localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
+                            window.location.hash = myTripsTabId;
                             rootStore.triggerTabsReRender();
                             rootStore.triggerHeaderReRender();
 

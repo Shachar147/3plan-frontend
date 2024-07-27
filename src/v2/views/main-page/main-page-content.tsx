@@ -13,6 +13,9 @@ import {myTripsContext} from "../../stores/my-trips-store";
 import {getClasses} from "../../../utils/utils";
 import {mainPageContentTabLsKey, myTripsTabId, savedCollectionsTabId} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
+import {getParameterFromHash} from "../../utils/utils";
+import {useMyTrips, useSavedCollections, useScrollWhenTabChanges} from "../../hooks/main-page-hooks";
+import {TabData} from "../../utils/interfaces";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -31,71 +34,68 @@ function MainPageContent(){
     const myTripsStore = useContext(myTripsContext);
 
     const isShort = eventStore.isMobile ? '.SHORT' : '';
-    const tabs = [
-        {
-            id: "explore",
-            order: 0,
-            name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
-            icon: "fa-search",
-            render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />
-        },
-        {
-            id: savedCollectionsTabId,
-            order: 1,
-            name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
-                X: feedStore.savedItems.length
-            }),
-            icon: "fa-save",
-            render: () => <TriplanTabContent content={<SavedCollectionsTab />} />
-        },
-        {
-            id: myTripsTabId,
-            order: 2,
-            name: TranslateService.translate(eventStore, `MY_TRIPS_X${isShort}`, {
-                X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
-            }),
-            icon: "fa-plane",
-            render: () => <TriplanTabContent content={<MyTrips />} />
-        },
-    ];
+    const searchKeyword = getParameterFromHash('q');
 
-    const tabsIdsByOrder = tabs.map((i) => i.id);
-
-    const tabIdToIdx = useMemo(() => {
-        const toReturn = {};
-        tabs.forEach((tab, idx) => {
-            toReturn[tab.id] = idx
-        });
-        return toReturn;
-    }, [tabs]);
+    const tabs: TabData[] = getTabs();
+    const tabIdToIdx = useMemo<Record<string, number>>(getTabIdToIndexMapping, [tabs]);
 
     const tabFromHash = window.location.hash.replace('#', '');
     const activeTab = localStorage.getItem(mainPageContentTabLsKey) ?? tabs.map((x) => x.id).includes(tabFromHash) ? tabFromHash : defaultTab;
     const [activeTabIdx, setActiveTabIdx] = useState(tabIdToIdx[activeTab]);
     useHandleWindowResize();
+    useSavedCollections();
+    useMyTrips();
+    useScrollWhenTabChanges();
 
-    useEffect(() => {
-        feedStore.getSavedCollections();
-        myTripsStore.loadMyTrips();
-    }, [])
+    function getTabs():TabData[] {
+        if (searchKeyword) {
+            return  [{
+                id: "search-results",
+                order: 0,
+                name: TranslateService.translate(eventStore, 'SEARCH_RESULTS'),
+                icon: "fa-search",
+                render: () => <TriplanTabContent content={
+                    <>{"todo complete"}</>
+                    // <FeedView eventStore={eventStore} mainFeed />
+                } />
+            }];
+        }
+        return [
+            {
+                id: "explore",
+                order: 0,
+                name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
+                icon: "fa-search",
+                render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />
+            },
+            {
+                id: savedCollectionsTabId,
+                order: 1,
+                name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
+                    X: feedStore.savedItems.length
+                }),
+                icon: "fa-save",
+                render: () => <TriplanTabContent content={<SavedCollectionsTab />} />
+            },
+            {
+                id: myTripsTabId,
+                order: 2,
+                name: TranslateService.translate(eventStore, `MY_TRIPS_X${isShort}`, {
+                    X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
+                }),
+                icon: "fa-plane",
+                render: () => <TriplanTabContent content={<MyTrips />} />
+            },
+        ];
+    }
 
-    useEffect(() => {
-        const scrollContainer = document.querySelector('.ui.tabular.menu');
-        const scrollItems = document.querySelectorAll('.item');
-
-        scrollItems.forEach(item => {
-            item.addEventListener('click', (event) => {
-                const itemRect = item.getBoundingClientRect();
-                const containerRect = scrollContainer.getBoundingClientRect();
-                const scrollOffset = itemRect.left - containerRect.left + scrollContainer.scrollLeft;
-
-                scrollContainer.scroll({
-                    left: scrollOffset,
-                    behavior: 'smooth' // Smooth scrolling
-                });
-            });
+    function getTabIdToIndexMapping(){
+        const toReturn = {};
+        tabs.forEach((tab, idx) => {
+            toReturn[tab.id] = idx
         });
-    }, [])
+        return toReturn;
+    }
 
     return (
         <div className={getClasses("triplan-header-banner-footer", eventStore.isMobile && activeTabIdx === tabs.length -1 && 'padding-inline-end-10')} key={rootStore.tabMenuReRenderCounter}>
