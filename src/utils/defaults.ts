@@ -3,7 +3,7 @@ import { DateRangeFormatted } from '../services/data-handlers/data-handler-base'
 import { EventStore } from '../stores/events-store';
 import TranslateService from '../services/translate-service';
 
-export const defaultLocalCode = 'he';
+export const defaultLocalCode = 'en'; // 'he';
 export const defaultTimedEventDuration = '01:00';
 
 export const defaultEvents: Record<number, SidebarEvent[]> = {};

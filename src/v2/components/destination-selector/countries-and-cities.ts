@@ -10066,6 +10066,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "Brussels",
+        "label": "Brussels, Belgium",
+        "type": "city",
+        "flagClass": "fi fi-be",
+        "isPopular": false
+    },
+    {
         "value": "Gent",
         "label": "Gent, Belgium",
         "type": "city",
@@ -42159,6 +42166,20 @@ const countriesAndCities = [
         "type": "city",
         "flagClass": "fi fi-gr",
         "isPopular": false
+    },
+    {
+        "value": "Santorini",
+        "label": "Santorini, Greece",
+        "type": "island",
+        "flagClass": "fi fi-gr",
+        "isPopular": true
+    },
+    {
+        "value": "Crete",
+        "label": "Crete, Greece",
+        "type": "island",
+        "flagClass": "fi fi-gr",
+        "isPopular": true
     },
     {
         "value": "Iráklion",
@@ -119348,6 +119369,13 @@ const countriesAndCities = [
         "type": "city",
         "flagClass": "fi fi-us",
         "isPopular": false
+    },
+    {
+        "value": "Hawaii",
+        "label": "Hawaii, United States",
+        "type": "country",
+        "flagClass": "fi fi-us",
+        "isPopular": true
     },
     {
         "value": "Minneapolis",

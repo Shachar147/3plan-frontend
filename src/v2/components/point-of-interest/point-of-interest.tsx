@@ -275,7 +275,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
     const Image = ({ image, idx }: { image: string, idx: number}) => {
         const [src, setSrc] = useState(image);
 
-        const fallbacks = ["/images/trip-photo-1.jpg", "/images/trip-photo-2.png", "/images/trip-photo-3.png", "/images/trip-photo-4.png", "/images/trip-photo-5.png",  "/images/trip-photo-2.png"]
+        const fallbacks = ["/images/trip-photo-1.jpg", "/images/trip-photo-2.png", "/images/trip-photo-3.png", "/images/trip-photo-4.png", "/images/trip-photo-5.png",  "/images/trip-photo-2.png",  "/images/trip-photo-6.png"]
         const random = Math.floor(Math.random() * fallbacks.length);
 
         return (

@@ -61,7 +61,7 @@ interface DestinationSelectorProps {
 export interface CityOrCountry {
     "value": string,
     "label": string,
-    "type": "country" | "city",
+    "type": "country" | "city" | "island",
     "flagClass": string,
     "isPopular": boolean
 }

@@ -18,6 +18,8 @@ export interface SearchSuggestion {
     hideImage?: boolean;
 }
 
+const AUTO_COMPLETE_MIN_CHARACTERS = 3;
+
 const TriplanSearchV2 = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
@@ -42,7 +44,7 @@ const TriplanSearchV2 = () => {
         }
     }
 
-    const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length > 3 && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
+    const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
     const prevShouldShowSuggestions = useRef(shouldShowSuggestions);
     useEffect(() => {
         if (eventStore.isMobile) {

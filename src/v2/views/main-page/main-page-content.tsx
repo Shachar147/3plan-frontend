@@ -22,6 +22,8 @@ function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     )
 }
 
+const defaultTab = "explore";
+
 function MainPageContent(){
     const rootStore = useContext(rootStoreContext);
     const eventStore = useContext(eventStoreContext);
@@ -31,7 +33,7 @@ function MainPageContent(){
     const isShort = eventStore.isMobile ? '.SHORT' : '';
     const tabs = [
         {
-            id: "default",
+            id: "explore",
             order: 0,
             name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
             icon: "fa-search",
@@ -67,7 +69,8 @@ function MainPageContent(){
         return toReturn;
     }, [tabs]);
 
-    const activeTab = localStorage.getItem(mainPageContentTabLsKey) ?? "default";
+    const tabFromHash = window.location.hash.replace('#', '');
+    const activeTab = localStorage.getItem(mainPageContentTabLsKey) ?? tabs.map((x) => x.id).includes(tabFromHash) ? tabFromHash : defaultTab;
     const [activeTabIdx, setActiveTabIdx] = useState(tabIdToIdx[activeTab]);
     useHandleWindowResize();
 
@@ -103,6 +106,7 @@ function MainPageContent(){
                     localStorage.setItem(mainPageContentTabLsKey, tabId);
                     setActiveTabIdx(tabIdToIdx[tabId]);
                     rootStore.triggerHeaderReRender();
+                    window.location.hash = tabId;
                 }}
             />
         </div>
