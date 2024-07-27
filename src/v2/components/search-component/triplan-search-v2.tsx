@@ -1,14 +1,17 @@
-import React, {useContext, useState, useEffect, useRef, useMemo} from 'react';
+import React, {useContext, useState} from 'react';
 import './search-component.scss';
 import TranslateService from "../../../services/translate-service";
 import { eventStoreContext } from "../../../stores/events-store";
 import { getClasses } from "../../../utils/utils";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
-import FeedViewApiService from "../../services/feed-view-api-service";
 import {observer} from "mobx-react";
+
+// @ts-ignore
 import onClickOutside from 'react-onclickoutside';
-import {CityOrCountry, fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
 import {cityImage} from "../../utils/consts";
+import {useLoadSuggestions, useMobileLockScroll} from "../../hooks/search-hooks";
+import {getParameterFromHash} from "../../utils/utils";
+import {rootStoreContext} from "../../stores/root-store";
 
 export interface SearchSuggestion {
     name: string;
@@ -21,14 +24,12 @@ export interface SearchSuggestion {
 const AUTO_COMPLETE_MIN_CHARACTERS = 3;
 
 const TriplanSearchV2 = () => {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState<string>(getParameterFromHash('q') ?? '');
     const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [chosenName, setChosenItem] = useState('');
     const [rerenderCounter, setReRenderCounter] = useState(0);
-
-    const citiesAndCountries = useMemo<CityOrCountry[]>(() => fetchCitiesAndSetOptions(), []);
-    const searchSuggestionsCaching = useRef<Record<string, SearchSuggestion[]>>({});
+    const [searchValueFromHash, setSearchValueFromHash] = useState((getParameterFromHash('q')?.length ?? 0) > 0)
 
     const eventStore = useContext(eventStoreContext);
     useHandleWindowResize();
@@ -44,111 +45,32 @@ const TriplanSearchV2 = () => {
         }
     }
 
-    const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions;
-    const prevShouldShowSuggestions = useRef(shouldShowSuggestions);
-    useEffect(() => {
-        if (eventStore.isMobile) {
-            if (shouldShowSuggestions !== prevShouldShowSuggestions.current) {
-                if (prevShouldShowSuggestions.current && !shouldShowSuggestions) {
-                    setReRenderCounter(rerenderCounter + 1);
-                }
-                prevShouldShowSuggestions.current = shouldShowSuggestions;
-            }
+    const rootStore = useContext(rootStoreContext);
+    const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions && !searchValueFromHash;
+    useMobileLockScroll(rerenderCounter, setReRenderCounter, shouldShowSuggestions, showSuggestions, suggestions);
 
-            if (showSuggestions && suggestions.length > 0) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        return () => {
-            document.body.style.overflow = 'auto';
-        };
-
-    }, [shouldShowSuggestions, suggestions]);
-
-    const apiService = useMemo(() => new FeedViewApiService(), []);
-
-    async function loadSuggestions() {
-        if (searchQuery.length >= 3) {
-            const cachedKey = Object.keys(searchSuggestionsCaching.current).find((s) => s.includes(searchQuery.trim()));
-            if (cachedKey) {
-                // console.log(searchSuggestionsCaching.current)
-                console.log("returned from cache!");
-                setSuggestions(searchSuggestionsCaching.current[cachedKey]);
-                return searchSuggestionsCaching.current[cachedKey];
-            }
-
-            let results: SearchSuggestion[] = await apiService.getSearchSuggestions(searchQuery.trim());
-
-            const countries = citiesAndCountries.filter((c) => c.label.toLowerCase().includes(searchQuery.toLowerCase().trim()) && c.type === "country").map((c) => ({
-                name: c.value,
-                category: c.type,
-                destination: c.label,
-                image: cityImage
-            }));
-
-            const cities = citiesAndCountries.filter((c) => c.label.toLowerCase().includes(searchQuery.toLowerCase().trim()) && c.type === "city").map((c) => ({
-                name: c.value,
-                category: c.type,
-                destination: c.label,
-                image: cityImage
-            }));
-
-            results = [
-                ...countries,
-                ...cities,
-                ...results,
-            ]
-
-            searchSuggestionsCaching.current = {
-                ...searchSuggestionsCaching.current,
-                [searchQuery.trim()]: results
-            };
-            setSuggestions(results);
-            setShowSuggestions(true);
-        } else {
-            setSuggestions([]);
-        }
-    }
-
-    useEffect(() => {
-        loadSuggestions();
-    }, [searchQuery])
+    useLoadSuggestions(searchQuery, setSuggestions, setShowSuggestions);
 
     // Function to handle input change
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: any) => {
         const query = event.target.value;
+        setSearchValueFromHash(false);
         setSearchQuery(query);
-
         // Mocked suggestions for demo purpose
         const filteredSuggestions = [{ name: TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT"), category: "", destination: "", hideImage: true}];
-
-        //     [
-        //     { name: 'Dubai', descriptor: 'City in United Arab Emirates' },
-        //     { name: 'Dubai Airport', descriptor: 'Attraction in Dubai, UAE' },
-        //     { name: 'Dubai Marina', descriptor: 'Neighborhood in Dubai, UAE' },
-        //     { name: 'Dubai Mall', descriptor: 'Shopping Mall in Dubai, UAE' },
-        //     { name: 'Dubai Frame', descriptor: 'Attraction in Dubai, UAE' },
-        //     { name: 'Skydive Dubai', descriptor: 'Adventure Sports in Dubai, UAE' }
-        // ];
-
-        // Filter suggestions based on query (mocked example)
-        // const filteredSuggestions = mockSuggestions.filter((suggestion) =>
-        //     suggestion.name.toLowerCase().includes(query.toLowerCase())
-        // );
-
         setSuggestions(filteredSuggestions);
         setShowSuggestions(true);
+        rootStore.triggerTabsReRender();
     };
 
     // Function to handle suggestion click
-    const handleSuggestionClick = (suggestion) => {
+    const handleSuggestionClick = (suggestion: any) => {
         document.body.style.overflow = 'auto';
         setSearchQuery(suggestion.name);
         setShowSuggestions(false);
         setChosenItem(suggestion.name);
+        window.location.hash = `q=${suggestion.name}`;
+        rootStore.triggerTabsReRender();
         setSuggestions([]);
     };
 
@@ -198,7 +120,7 @@ const TriplanSearchV2 = () => {
                                 </div>
                             </div>
                         ))
-                    }}
+                    }
                     {suggestions.length === 0 && (
                         <span className="margin-top-20">
                             {TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS')}

@@ -8,6 +8,10 @@ export function getParameterFromHash(paramName: string) {
         hash = hash.substring(1); // "param=value"
     }
 
+    if (hash.includes("?")) {
+        hash = hash.split('?')[1];
+    }
+
     // Split the hash into key-value pairs
     let params = hash.split('&'); // ["param=value"]
 

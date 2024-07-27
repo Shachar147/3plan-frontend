@@ -1,8 +1,8 @@
 // DestinationSelector.tsx
 import React, {useState, useEffect, useMemo, useContext} from 'react';
 import Select, { MultiValue } from 'react-select';
-import countryList from 'react-select-country-list';
-import { getCities } from 'country-city';
+// import countryList from 'react-select-country-list';
+// import { getCities } from 'country-city';
 import 'flag-icons/css/flag-icons.min.css';
 import './destination-selector.scss';
 import { OptionType } from './types';
@@ -69,7 +69,7 @@ export interface CityOrCountry {
 // Function to fetch cities for each country and set options
 const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
     // const countries = countryList().getData();
-    let allOptions: OptionType[] = [];
+    let allOptions: CityOrCountry[] = [];
 
     // Add popular cities to options
     popularCities.forEach(({ city, countryCode, countryLabel }) => {
@@ -82,6 +82,7 @@ const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
         });
     });
 
+    // @ts-ignore
     allOptions.push(...countriesAndCities)
 
     // countries.forEach((country) => {
@@ -123,6 +124,8 @@ const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
     //         }
     //     });
     // });
+
+    // @ts-ignore
     return allOptions;
 };
 
@@ -132,20 +135,20 @@ function DestinationSelector(props: DestinationSelectorProps) {
 
     const eventStore = useContext(eventStoreContext);
 
-    const allOptions = useMemo(() => fetchCitiesAndSetOptions(), []);
+    const allOptions = useMemo<OptionType[]>(() => fetchCitiesAndSetOptions(), []);
 
     // Fetch cities and set options on component mount
     useEffect(() => {
 
-        const citiesByCountry = {};
-        const popularOptions = [];
+        const citiesByCountry: any = {};
+        const popularOptions: any[] = [];
         allOptions.forEach((option) => {
-            citiesByCountry[option.flagClass] ||= [];
+            citiesByCountry[option.flagClass!] ||= [];
             if (option.isPopular) {
                 popularOptions.push(option);
             }
-            else if (citiesByCountry[option.flagClass].length < 5) {
-                citiesByCountry[option.flagClass].push(option);
+            else if (citiesByCountry[option.flagClass!].length < 5) {
+                citiesByCountry[option.flagClass!].push(option);
             }
         })
 
@@ -158,6 +161,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
             option.label.toLowerCase().includes(inputValue.toLowerCase())
         );
 
+        // @ts-ignore
         setOptions(filteredOptions.slice(0, Math.min(allOptions.length, 300)));
     };
 

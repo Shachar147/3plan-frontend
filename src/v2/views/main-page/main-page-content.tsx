@@ -35,17 +35,43 @@ function MainPageContent(){
 
     const isShort = eventStore.isMobile ? '.SHORT' : '';
     const searchKeyword = getParameterFromHash('q');
+    const isInSearch = (searchKeyword?.length ?? 0) > 0;
 
     const tabs: TabData[] = getTabs();
     const tabIdToIdx = useMemo<Record<string, number>>(getTabIdToIndexMapping, [tabs]);
 
     const tabFromHash = window.location.hash.replace('#', '');
-    const activeTab = localStorage.getItem(mainPageContentTabLsKey) ?? tabs.map((x) => x.id).includes(tabFromHash) ? tabFromHash : defaultTab;
+    const activeTab = useMemo(() => {
+        if (isInSearch) {
+            return 'search-results';
+        }
+        if (localStorage.getItem(mainPageContentTabLsKey)){
+            return localStorage.getItem(mainPageContentTabLsKey);
+        }
+        if (tabs.map((x) => x.id).includes(tabFromHash)){
+            return tabFromHash;
+        }
+        return defaultTab;
+    }, [isInSearch, tabs, tabFromHash, rootStore.tabMenuReRenderCounter]);
     const [activeTabIdx, setActiveTabIdx] = useState(tabIdToIdx[activeTab]);
+
+    useEffect(() => {
+        setActiveTabIdx(tabIdToIdx[activeTab]);
+    }, [activeTab])
+
     useHandleWindowResize();
     useSavedCollections();
     useMyTrips();
-    useScrollWhenTabChanges();
+    useScrollWhenTabChanges(tabs);
+
+    // clear existing items & categories.
+    // todo - change to a different store of search results.
+    useEffect(() => {
+        if (searchKeyword) {
+            feedStore.setCategories([]);
+            feedStore.setItems([]);
+        }
+    }, [searchKeyword])
 
     function getTabs():TabData[] {
         if (searchKeyword) {
@@ -55,8 +81,7 @@ function MainPageContent(){
                 name: TranslateService.translate(eventStore, 'SEARCH_RESULTS'),
                 icon: "fa-search",
                 render: () => <TriplanTabContent content={
-                    <>{"todo complete"}</>
-                    // <FeedView eventStore={eventStore} mainFeed />
+                    <FeedView eventStore={eventStore} searchKeyword={searchKeyword} />
                 } />
             }];
         }
@@ -103,7 +128,9 @@ function MainPageContent(){
                 activeTab={activeTab}
                 tabs={tabs}
                 onChange={(tabId) => {
-                    localStorage.setItem(mainPageContentTabLsKey, tabId);
+                    if (tabId != 'search-results') {
+                        localStorage.setItem(mainPageContentTabLsKey, tabId);
+                    }
                     setActiveTabIdx(tabIdToIdx[tabId]);
                     rootStore.triggerHeaderReRender();
                     window.location.hash = tabId;

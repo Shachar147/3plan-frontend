@@ -15,6 +15,7 @@ import { feedStoreContext } from "../../stores/feed-view-store";
 interface FeedViewProps {
     eventStore: EventStore;
     mainFeed?: boolean;
+    searchKeyword?: string;
 }
 
 const cacheThreshold = 300;
@@ -37,7 +38,7 @@ function SelectDestinationPlaceholder() {
     )
 }
 
-const FeedView = ({ eventStore, mainFeed }: FeedViewProps) => {
+const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
     const feedStore = useContext(feedStoreContext);
     const apiService = useMemo(() => new FeedViewApiService(), []);
     const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
@@ -60,7 +61,7 @@ const FeedView = ({ eventStore, mainFeed }: FeedViewProps) => {
             feedStore.setIsLoading(false);
         };
 
-        if (mainFeed) {
+        if (mainFeed || searchKeyword) {
             feedStore.setIsLoading(false);
         } else {
             fetchCounts();
@@ -99,6 +100,43 @@ const FeedView = ({ eventStore, mainFeed }: FeedViewProps) => {
 
             _reachedEndPerDestination[destination] = true;
             feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
+        }
+        else if (searchKeyword){
+            const destination = searchKeyword;
+
+            const sources = allSources.filter(
+                source => (source === "Local" || (feedStore.sourceCounts[destination]?.[source] ?? 0) < cacheThreshold) && !feedStore.finishedSources.includes(source)
+            );
+
+            if (sources.length === 0) {
+                // If no sources left for this destination, continue to the next destination
+                feedStore.setReachedEndPerDestination({
+                    ...feedStore.reachedEndPerDestination,
+                    [destination]: true
+                });
+            }
+
+            let allFinished = false;
+            if (destination != "[]") {
+                const responses = await Promise.all(
+                    sources.map(source => apiService.getItems(source, destination, page))
+                );
+
+                responses.forEach(response => {
+                    newItems.push(...response.results);
+                    if (response.isFinished) {
+                        feedStore.setFinishedSources([...feedStore.finishedSources, response.source]);
+                    }
+                });
+
+                // Check if items are finished for this destination
+                allFinished = responses.every(response => response.isFinished);
+            }
+
+            if (allFinished) {
+                _reachedEndPerDestination[destination] = true;
+                feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
+            }
         }
         else {
             for (const destination of eventStore.destinations) {
@@ -217,7 +255,7 @@ const FeedView = ({ eventStore, mainFeed }: FeedViewProps) => {
     }
 
     function renderItems() {
-        const classList = getClasses("align-items-center", !mainFeed && 'width-100-percents', eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
+        const classList = getClasses("align-items-center", (!mainFeed && !searchKeyword) && 'width-100-percents', eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
         if (mainFeed) {
             return (

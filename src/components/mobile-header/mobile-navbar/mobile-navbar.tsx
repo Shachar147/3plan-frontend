@@ -12,6 +12,8 @@ import { getUser } from '../../../helpers/auth';
 import { getClasses } from '../../../utils/utils';
 import { observer, Observer } from 'mobx-react';
 import { TriplanHeaderProps } from '../../triplan-header/triplan-header';
+
+// @ts-ignore
 import onClickOutside from 'react-onclickoutside';
 import ReactModalService from '../../../services/react-modal-service';
 import { runInAction } from 'mobx';
