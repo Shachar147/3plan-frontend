@@ -12,6 +12,7 @@ import {cityImage} from "../../utils/consts";
 import {useLoadSuggestions, useMobileLockScroll} from "../../hooks/search-hooks";
 import {getParameterFromHash} from "../../utils/utils";
 import {rootStoreContext} from "../../stores/root-store";
+import {feedStoreContext} from "../../stores/feed-view-store";
 
 export interface SearchSuggestion {
     name: string;
@@ -46,6 +47,7 @@ const TriplanSearchV2 = () => {
     }
 
     const rootStore = useContext(rootStoreContext);
+    const feedStore = useContext(feedStoreContext);
     const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions && !searchValueFromHash;
     useMobileLockScroll(rerenderCounter, setReRenderCounter, shouldShowSuggestions, showSuggestions, suggestions);
 
@@ -70,6 +72,12 @@ const TriplanSearchV2 = () => {
         setShowSuggestions(false);
         setChosenItem(suggestion.name);
         window.location.hash = `q=${suggestion.name}`;
+
+        // clear existing items & categories.
+        // todo - change to a different store of search results.
+        feedStore.setCategories([]);
+        feedStore.setItems([]);
+
         rootStore.triggerTabsReRender();
         setSuggestions([]);
     };

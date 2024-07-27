@@ -924,5 +924,6 @@
 	"CREATED_AT_X": "נוצר ב: {X}",
 	"DAYS_AGO": "לפני {Y} ימים",
 	"UPDATED_AT_X": "עודכן ב: {X}",
-	"DESTINATIONS_X": "יעדים: {X}"
+	"DESTINATIONS_X": "יעדים: {X}",
+	"SEARCH_RESULTS_FOR_X": "תוצאות חיפוש ל \"{X}\""
 }

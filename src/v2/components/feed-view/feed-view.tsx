@@ -103,6 +103,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
         }
         else if (searchKeyword){
             const destination = searchKeyword;
+            eventStore.destinations = [destination];
 
             const sources = allSources.filter(
                 source => (source === "Local" || (feedStore.sourceCounts[destination]?.[source] ?? 0) < cacheThreshold) && !feedStore.finishedSources.includes(source)
@@ -184,7 +185,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
         handleCategoryChange(feedStore.selectedCategory, filterUniqueItems([...feedStore.items, ...uniqueNewItems]));
 
         const uniqueCategories = Array.from(
-            new Set(uniqueNewItems.map(item => item.category))
+            new Set(uniqueNewItems.map(item => item.category || 'CATEGORY.GENERAL'))
         );
         feedStore.setCategories([...new Set([...feedStore.categories, ...uniqueCategories])]);
 
@@ -197,7 +198,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
 
     const handleCategoryChange = (category, items) => {
         feedStore.setSelectedCategory(category);
-        if (category === "") {
+        if (category == "") {
             feedStore.setFilteredItems(items); // Show all items if no category selected
         } else {
             const filtered = items.filter((item) => item.category === category);
@@ -225,9 +226,9 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
 
         return (
             <div className={getClasses("flex-1-1-0 min-width-max-content gap-4", eventStore.getCurrentDirection() === 'rtl' && 'direction-rtl')}>
-                <span>{TranslateService.translate(eventStore, "FEED_VIEW.EXPLORING", {
-                    destinations: eventStore.destinations?.join(", ") || "-"
-                })}</span>
+                {/*<span>{TranslateService.translate(eventStore, "FEED_VIEW.EXPLORING", {*/}
+                {/*    destinations: eventStore.destinations?.join(", ") || "-"*/}
+                {/*})}</span>*/}
                 {isFiltering && <span>({ TranslateService.translate(eventStore, 'SHOWING_X_FROM_Y', {
                     0: feedStore.filteredItems.length,
                     1: feedStore.items.length
@@ -237,6 +238,9 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
     }
 
     function renderCategoryFilter() {
+        if (!feedStore.categories) {
+            return null;
+        }
         if (mainFeed) {
             return null;
         }
@@ -267,7 +271,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
                         {
                             feedStore.filteredItems.map((item, idx) => (
                                 <div key={item.id} className={classList}>
-                                    <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
+                                    <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} />
                                 </div>
                             ))
                         }
@@ -279,7 +283,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
         return feedStore.filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
                 {idx + 1}
-                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} />
+                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} />
             </div>
         ));
     }
@@ -313,7 +317,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
 
     return (
         (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading}>
-            <div className={getClasses(!mainFeed && 'flex-column', "gap-4")}>
+            <div className={getClasses(!mainFeed && 'flex-column', "gap-4", searchKeyword && !eventStore.isMobile && 'padding-inline-100')}>
                 {renderCategoryFilter()}
                 {renderItems()}
                 {renderReachedEnd()}

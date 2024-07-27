@@ -36,9 +36,12 @@ interface PointOfInterestProps {
     namePrefix?: React.ReactNode;
     isEditMode?: boolean;
     onEditSave?: () => void;
+
+    // search result
+    isSearchResult?: boolean;
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
 
     const isHebrew = eventStore.isHebrew;
@@ -88,7 +91,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
     const durationText = formatDuration(item.duration);
 
     const handleAddToPlan = () => {
-        if (mainFeed){
+        if (mainFeed || isSearchResult){
             return; // since we're not on specific trip.
         }
 
@@ -185,10 +188,11 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
         if (myTrips) {
             return;
         }
-        if (mainFeed) {
+        if (mainFeed || isSearchResult) {
+            const text = alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED");
             return (
                 <Button
-                    flavor={ButtonFlavor.link}
+                    flavor={mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary}
                     onClick={() => {
                         if (alreadyInSaved){
                             return handleRemoveFromSaved();
@@ -196,8 +200,8 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
                         return handleAddToSaved();
                     }}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
-                    text=""
-                    tooltip={alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED")}
+                    text={isSearchResult ? text : ""}
+                    tooltip={mainFeed ? text : ""}
                     className="padding-inline-15"
                 />
             );
@@ -267,7 +271,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
                     {renderDestinationIcon()}
                     {renderCategoryName()}
                 </div>
-                {mainFeed && renderSaveButton()}
+                {(mainFeed) && renderSaveButton()}
             </div>
         )
     }
@@ -298,7 +302,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
     }
 
     return (
-        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', !!onClick && 'cursor-pointer')} onClick={() => {
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', !!onClick && 'cursor-pointer', isSearchResult && 'search-result')} onClick={() => {
             if (!isEditMode) {
                 onClick?.();
             }
@@ -315,7 +319,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, savedCollection, myTrips,
                             </div>
                         ))}
                     </Carousel>
-                    {mainFeed && renderItemCategory()}
+                    {(mainFeed) && renderItemCategory()}
                     {renderTripActions?.()}
                 </div>
             </div>

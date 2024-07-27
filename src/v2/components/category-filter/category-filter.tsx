@@ -24,7 +24,7 @@ const CategoryFilter = ({ categories, onFilterChange }) => {
                 <option value="">{TranslateService.translate(eventStore, 'MODALS.CATEGORY')}</option>
                 {categories.map((category) => (
                     <option key={category} value={category}>
-                        {category}
+                        {TranslateService.translate(eventStore, category)}
                     </option>
                 ))}
             </select>

@@ -21,7 +21,7 @@ export function getParameterFromHash(paramName: string) {
     // Loop through each key-value pair
     params.forEach(param => {
         let [key, value] = param.split('=');
-        hashParams[key] = value;
+        hashParams[key] = value ? decodeURIComponent(value) : undefined;
     });
 
     return hashParams[paramName];

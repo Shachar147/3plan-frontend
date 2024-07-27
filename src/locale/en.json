@@ -816,5 +816,6 @@
 	"CREATED_AT_X": "Created at: {X}",
 	"DAYS_AGO": "{Y} days ago",
 	"UPDATED_AT_X": "Updated at: {X}",
-	"DESTINATIONS_X": "Destinations: {X}"
+	"DESTINATIONS_X": "Destinations: {X}",
+	"SEARCH_RESULTS_FOR_X": "Search results for \"{X}\""
 }

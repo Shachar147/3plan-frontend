@@ -33,6 +33,7 @@ const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, clas
         };
 
         const observer = new IntersectionObserver((entries) => {
+            // console.log("hereeee", entries[0], loading);
             if (entries[0].isIntersecting && !loading) {
                 setPage((prevPage) => prevPage + 1);
             }

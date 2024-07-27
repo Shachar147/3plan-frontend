@@ -36659,6 +36659,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "France",
+        "label": "France",
+        "type": "country",
+        "flagClass": "fi fi-fr",
+        "isPopular": true
+    },
+    {
         "value": "Nice",
         "label": "Nice, France",
         "type": "city",
@@ -42177,6 +42184,13 @@ const countriesAndCities = [
     {
         "value": "Crete",
         "label": "Crete, Greece",
+        "type": "island",
+        "flagClass": "fi fi-gr",
+        "isPopular": true
+    },
+    {
+        "value": "Mykonos",
+        "label": "Mykonos, Greece",
         "type": "island",
         "flagClass": "fi fi-gr",
         "isPopular": true
@@ -56277,6 +56291,13 @@ const countriesAndCities = [
         "label": "Isle of Man, Isle of Man",
         "type": "city",
         "flagClass": "fi fi-im",
+        "isPopular": false
+    },
+    {
+        "value": "Israel",
+        "label": "Israel",
+        "type": "country",
+        "flagClass": "fi fi-il",
         "isPopular": false
     },
     {
@@ -117838,6 +117859,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "United Kingdom",
+        "label": "United Kingdom",
+        "type": "country",
+        "flagClass": "fi fi-gb",
+        "isPopular": false
+    },
+    {
         "value": "Manchester",
         "label": "Manchester, United Kingdom",
         "type": "city",
@@ -123032,484 +123060,484 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
-        "value": "Viet Nam",
-        "label": "Viet Nam",
+        "value": "Vietnam",
+        "label": "Vietnam",
         "type": "country",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Thanh Pho Ho Chi Minh",
-        "label": "Thanh Pho Ho Chi Minh, Viet Nam",
+        "label": "Thanh Pho Ho Chi Minh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Ha Noi",
-        "label": "Ha Noi, Viet Nam",
+        "label": "Ha Noi, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Bac Can",
-        "label": "Bac Can, Viet Nam",
+        "label": "Bac Can, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Nha Trang",
-        "label": "Nha Trang, Viet Nam",
+        "label": "Nha Trang, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Bien Hoa",
-        "label": "Bien Hoa, Viet Nam",
+        "label": "Bien Hoa, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Hai Phong",
-        "label": "Hai Phong, Viet Nam",
+        "label": "Hai Phong, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Dha Nang",
-        "label": "Dha Nang, Viet Nam",
+        "label": "Dha Nang, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Hue",
-        "label": "Hue, Viet Nam",
+        "label": "Hue, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Vung Tau",
-        "label": "Vung Tau, Viet Nam",
+        "label": "Vung Tau, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Can Tho",
-        "label": "Can Tho, Viet Nam",
+        "label": "Can Tho, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Long Xuyen",
-        "label": "Long Xuyen, Viet Nam",
+        "label": "Long Xuyen, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Da Lat",
-        "label": "Da Lat, Viet Nam",
+        "label": "Da Lat, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Ha Dong",
-        "label": "Ha Dong, Viet Nam",
+        "label": "Ha Dong, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Bac Giang",
-        "label": "Bac Giang, Viet Nam",
+        "label": "Bac Giang, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Bac Ninh",
-        "label": "Bac Ninh, Viet Nam",
+        "label": "Bac Ninh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Hoi An",
-        "label": "Hoi An, Viet Nam",
+        "label": "Hoi An, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Dong Ha",
-        "label": "Dong Ha, Viet Nam",
+        "label": "Dong Ha, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Buon Me Thuot",
-        "label": "Buon Me Thuot, Viet Nam",
+        "label": "Buon Me Thuot, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Ca Mau",
-        "label": "Ca Mau, Viet Nam",
+        "label": "Ca Mau, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Hoa Binh",
-        "label": "Hoa Binh, Viet Nam",
+        "label": "Hoa Binh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Tuy Hoa",
-        "label": "Tuy Hoa, Viet Nam",
+        "label": "Tuy Hoa, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Tay Ninh",
-        "label": "Tay Ninh, Viet Nam",
+        "label": "Tay Ninh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Phan Thiet",
-        "label": "Phan Thiet, Viet Nam",
+        "label": "Phan Thiet, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "My Tho",
-        "label": "My Tho, Viet Nam",
+        "label": "My Tho, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Thanh Hoa",
-        "label": "Thanh Hoa, Viet Nam",
+        "label": "Thanh Hoa, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Vinh",
-        "label": "Vinh, Viet Nam",
+        "label": "Vinh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Song Be",
-        "label": "Song Be, Viet Nam",
+        "label": "Song Be, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Bien San",
-        "label": "Bien San, Viet Nam",
+        "label": "Bien San, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Ha Tinh",
-        "label": "Ha Tinh, Viet Nam",
+        "label": "Ha Tinh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Qui Nhon",
-        "label": "Qui Nhon, Viet Nam",
+        "label": "Qui Nhon, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Nam Dinh",
-        "label": "Nam Dinh, Viet Nam",
+        "label": "Nam Dinh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Cam Ranh",
-        "label": "Cam Ranh, Viet Nam",
+        "label": "Cam Ranh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Thai Nguyen",
-        "label": "Thai Nguyen, Viet Nam",
+        "label": "Thai Nguyen, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Soc Trang",
-        "label": "Soc Trang, Viet Nam",
+        "label": "Soc Trang, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Play Cu",
-        "label": "Play Cu, Viet Nam",
+        "label": "Play Cu, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Bac Lieu",
-        "label": "Bac Lieu, Viet Nam",
+        "label": "Bac Lieu, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Vinh Long",
-        "label": "Vinh Long, Viet Nam",
+        "label": "Vinh Long, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Yen Bai",
-        "label": "Yen Bai, Viet Nam",
+        "label": "Yen Bai, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Viet Tri",
-        "label": "Viet Tri, Viet Nam",
+        "label": "Viet Tri, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Tam Ky",
-        "label": "Tam Ky, Viet Nam",
+        "label": "Tam Ky, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Hai Duong",
-        "label": "Hai Duong, Viet Nam",
+        "label": "Hai Duong, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Tra Vinh",
-        "label": "Tra Vinh, Viet Nam",
+        "label": "Tra Vinh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Thai Binh",
-        "label": "Thai Binh, Viet Nam",
+        "label": "Thai Binh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Lao Cai",
-        "label": "Lao Cai, Viet Nam",
+        "label": "Lao Cai, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Quang Ngai",
-        "label": "Quang Ngai, Viet Nam",
+        "label": "Quang Ngai, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Tuyen Quang",
-        "label": "Tuyen Quang, Viet Nam",
+        "label": "Tuyen Quang, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Dien Bien",
-        "label": "Dien Bien, Viet Nam",
+        "label": "Dien Bien, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Dong Xoai",
-        "label": "Dong Xoai, Viet Nam",
+        "label": "Dong Xoai, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Rach Gia",
-        "label": "Rach Gia, Viet Nam",
+        "label": "Rach Gia, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Cam Pha",
-        "label": "Cam Pha, Viet Nam",
+        "label": "Cam Pha, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Hong Gai",
-        "label": "Hong Gai, Viet Nam",
+        "label": "Hong Gai, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Phan Rang",
-        "label": "Phan Rang, Viet Nam",
+        "label": "Phan Rang, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Uong Bi",
-        "label": "Uong Bi, Viet Nam",
+        "label": "Uong Bi, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Tan An",
-        "label": "Tan An, Viet Nam",
+        "label": "Tan An, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Chau Doc",
-        "label": "Chau Doc, Viet Nam",
+        "label": "Chau Doc, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Ben Tre",
-        "label": "Ben Tre, Viet Nam",
+        "label": "Ben Tre, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Kon Tum",
-        "label": "Kon Tum, Viet Nam",
+        "label": "Kon Tum, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Sa Dec",
-        "label": "Sa Dec, Viet Nam",
+        "label": "Sa Dec, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Huong Yen",
-        "label": "Huong Yen, Viet Nam",
+        "label": "Huong Yen, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Son Tay",
-        "label": "Son Tay, Viet Nam",
+        "label": "Son Tay, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Cao Bang",
-        "label": "Cao Bang, Viet Nam",
+        "label": "Cao Bang, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Ninh Binh",
-        "label": "Ninh Binh, Viet Nam",
+        "label": "Ninh Binh, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Ha Giang",
-        "label": "Ha Giang, Viet Nam",
+        "label": "Ha Giang, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Lang Son",
-        "label": "Lang Son, Viet Nam",
+        "label": "Lang Son, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Dong Hoi",
-        "label": "Dong Hoi, Viet Nam",
+        "label": "Dong Hoi, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Phu Ly",
-        "label": "Phu Ly, Viet Nam",
+        "label": "Phu Ly, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Son La",
-        "label": "Son La, Viet Nam",
+        "label": "Son La, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },
     {
         "value": "Vinh Yen",
-        "label": "Vinh Yen, Viet Nam",
+        "label": "Vinh Yen, Vietnam",
         "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
@@ -124521,7 +124549,133 @@ const countriesAndCities = [
         "type": "city",
         "flagClass": "fi fi-zw",
         "isPopular": false
-    }
+    },
+        {
+            "value": "United States",
+            "label": "United States",
+            "type": "country",
+            "flagClass": "fi fi-us",
+            "isPopular": true
+        },
+        {
+            "value": "Japan",
+            "label": "Japan",
+            "type": "country",
+            "flagClass": "fi fi-jp",
+            "isPopular": true
+        },
+        {
+            "value": "United Arab Emirates",
+            "label": "United Arab Emirates",
+            "type": "country",
+            "flagClass": "fi fi-ae",
+            "isPopular": true
+        },
+        {
+            "value": "Australia",
+            "label": "Australia",
+            "type": "country",
+            "flagClass": "fi fi-au",
+            "isPopular": false
+        },
+        {
+            "value": "Netherlands",
+            "label": "Netherlands",
+            "type": "country",
+            "flagClass": "fi fi-nl",
+            "isPopular": true
+        },
+        {
+            "value": "Spain",
+            "label": "Spain",
+            "type": "country",
+            "flagClass": "fi fi-es",
+            "isPopular": true
+        },
+        {
+            "value": "Austria",
+            "label": "Austria",
+            "type": "country",
+            "flagClass": "fi fi-at",
+            "isPopular": true
+        },
+        {
+            "value": "Czech Republic",
+            "label": "Czech Republic",
+            "type": "country",
+            "flagClass": "fi fi-cz",
+            "isPopular": true
+        },
+        {
+            "value": "Greece",
+            "label": "Greece",
+            "type": "country",
+            "flagClass": "fi fi-gr",
+            "isPopular": true
+        },
+        {
+            "value": "Sweden",
+            "label": "Sweden",
+            "type": "country",
+            "flagClass": "fi fi-se",
+            "isPopular": false
+        },
+        {
+            "value": "Denmark",
+            "label": "Denmark",
+            "type": "country",
+            "flagClass": "fi fi-dk",
+            "isPopular": false
+        },
+        {
+            "value": "Norway",
+            "label": "Norway",
+            "type": "country",
+            "flagClass": "fi fi-no",
+            "isPopular": false
+        },
+        {
+            "value": "Portugal",
+            "label": "Portugal",
+            "type": "country",
+            "flagClass": "fi fi-pt",
+            "isPopular": true
+        },
+        {
+            "value": "Poland",
+            "label": "Poland",
+            "type": "country",
+            "flagClass": "fi fi-pl",
+            "isPopular": true
+        },
+        {
+            "value": "Belgium",
+            "label": "Belgium",
+            "type": "country",
+            "flagClass": "fi fi-be",
+            "isPopular": true
+        },
+        {
+            "value": "Switzerland",
+            "label": "Switzerland",
+            "type": "country",
+            "flagClass": "fi fi-ch",
+            "isPopular": true
+        },
+        {
+            "value": "Thailand",
+            "label": "Thailand",
+            "type": "country",
+            "flagClass": "fi fi-th",
+            "isPopular": true
+        },
+        {
+            "value": "Mexico",
+            "label": "Mexico",
+            "type": "country",
+            "flagClass": "fi fi-mx",
+            "isPopular": true
+        }
 ]
 
 export default countriesAndCities;

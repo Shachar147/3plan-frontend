@@ -83,7 +83,27 @@ const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
     });
 
     // @ts-ignore
-    allOptions.push(...countriesAndCities)
+    allOptions.push(...countriesAndCities);
+
+    // const countries = allOptions.filter((c) => c.type == "country").map((c) => c.label);
+    // let a = allOptions.filter((c) => c.type != "country").map((c) => c.label.split(', ')[1]);
+    // a = [...Array.from(new Set(a))];
+    // const missing: any[] = [];
+    // a.forEach((opt) => {
+    //     if (!countries.includes(opt)){
+    //         console.log("missing: "+ opt);
+    //         const similar = allOptions.find((c) => c.type != 'country' && c.label.includes(opt));
+    //         if (similar) {
+    //             similar.label = opt;
+    //             similar.value = opt;
+    //             similar.type = "country";
+    //             missing.push(similar);
+    //         } else {
+    //             console.error("couldnt find " + opt);
+    //         }
+    //     }
+    // })
+    // console.log(missing);
 
     // countries.forEach((country) => {
     //

@@ -64,21 +64,15 @@ function MainPageContent(){
     useMyTrips();
     useScrollWhenTabChanges(tabs);
 
-    // clear existing items & categories.
-    // todo - change to a different store of search results.
-    useEffect(() => {
-        if (searchKeyword) {
-            feedStore.setCategories([]);
-            feedStore.setItems([]);
-        }
-    }, [searchKeyword])
-
     function getTabs():TabData[] {
         if (searchKeyword) {
+            const isShort = eventStore.isMobile;
             return  [{
                 id: "search-results",
                 order: 0,
-                name: TranslateService.translate(eventStore, 'SEARCH_RESULTS'),
+                name: TranslateService.translate(eventStore, isShort ? 'SEARCH_RESULTS' : 'SEARCH_RESULTS_FOR_X', {
+                    X: searchKeyword
+                }),
                 icon: "fa-search",
                 render: () => <TriplanTabContent content={
                     <FeedView eventStore={eventStore} searchKeyword={searchKeyword} />
