@@ -39,9 +39,12 @@ interface PointOfInterestProps {
 
     // search result
     isSearchResult?: boolean;
+
+    // specific item
+    isViewItem?: boolean;
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
 
     const isHebrew = eventStore.isHebrew;
@@ -91,7 +94,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, savedColl
     const durationText = formatDuration(item.duration);
 
     const handleAddToPlan = () => {
-        if (mainFeed || isSearchResult){
+        if (mainFeed || isSearchResult || isViewItem){
             return; // since we're not on specific trip.
         }
 
@@ -188,7 +191,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, savedColl
         if (myTrips) {
             return;
         }
-        if (mainFeed || isSearchResult) {
+        if (mainFeed || isSearchResult || isViewItem) {
             const text = alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED");
             return (
                 <Button
@@ -200,7 +203,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, savedColl
                         return handleAddToSaved();
                     }}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
-                    text={isSearchResult ? text : ""}
+                    text={(isSearchResult || isViewItem) ? text : ""}
                     tooltip={mainFeed ? text : ""}
                     className="padding-inline-15"
                 />
@@ -279,7 +282,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, savedColl
     const Image = ({ image, idx }: { image: string, idx: number}) => {
         const [src, setSrc] = useState(image);
 
-        const fallbacks = ["/images/trip-photo-1.jpg", "/images/trip-photo-2.png", "/images/trip-photo-3.png", "/images/trip-photo-4.png", "/images/trip-photo-5.png",  "/images/trip-photo-2.png",  "/images/trip-photo-6.png"]
+        const fallbacks = ["/images/trip-photo-1.jpg", "/images/trip-photo-2.png", "/images/trip-photo-3.png", "/images/trip-photo-4.png", "/images/trip-photo-5.png",  "/images/trip-photo-2.png"]
         const random = Math.floor(Math.random() * fallbacks.length);
 
         return (
@@ -302,7 +305,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, savedColl
     }
 
     return (
-        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', !!onClick && 'cursor-pointer', isSearchResult && 'search-result')} onClick={() => {
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', !!onClick && 'cursor-pointer', isSearchResult && 'search-result', isViewItem && 'view-item')} onClick={() => {
             if (!isEditMode) {
                 onClick?.();
             }

@@ -11,7 +11,13 @@ import {feedStoreContext} from "../../stores/feed-view-store";
 import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
 import {myTripsContext} from "../../stores/my-trips-store";
 import {getClasses} from "../../../utils/utils";
-import {mainPageContentTabLsKey, myTripsTabId, savedCollectionsTabId} from "../../utils/consts";
+import {
+    mainPageContentTabLsKey,
+    myTripsTabId,
+    savedCollectionsTabId,
+    searchResultsTabId,
+    specificItemTabId
+} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
 import {getParameterFromHash} from "../../utils/utils";
 import {useMyTrips, useSavedCollections, useScrollWhenTabChanges} from "../../hooks/main-page-hooks";
@@ -37,13 +43,19 @@ function MainPageContent(){
     const searchKeyword = getParameterFromHash('q');
     const isInSearch = (searchKeyword?.length ?? 0) > 0;
 
+    const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
+    const isInViewItem = (viewItemId?.length ?? 0) > 0;
+
     const tabs: TabData[] = getTabs();
     const tabIdToIdx = useMemo<Record<string, number>>(getTabIdToIndexMapping, [tabs]);
 
     const tabFromHash = window.location.hash.replace('#', '');
     const activeTab = useMemo(() => {
+        if (isInViewItem) {
+            return specificItemTabId;
+        }
         if (isInSearch) {
-            return 'search-results';
+            return searchResultsTabId;
         }
         if (localStorage.getItem(mainPageContentTabLsKey)){
             return localStorage.getItem(mainPageContentTabLsKey);
@@ -65,10 +77,24 @@ function MainPageContent(){
     useScrollWhenTabChanges(tabs);
 
     function getTabs():TabData[] {
+        if (isInViewItem) {
+            const itemName = localStorage.getItem(`item-${viewItemId}`)
+            return  [{
+                id: specificItemTabId,
+                order: 0,
+                name: TranslateService.translate(eventStore, (isShort || !itemName) ? 'VIEW_ITEM.SHORT' : 'VIEW_ITEM', {
+                    X: itemName
+                }),
+                icon: "fa-info",
+                render: () => <TriplanTabContent content={
+                    <FeedView eventStore={eventStore} viewItemId={viewItemId} />
+                } />
+            }];
+        }
         if (searchKeyword) {
             const isShort = eventStore.isMobile;
             return  [{
-                id: "search-results",
+                id: searchResultsTabId,
                 order: 0,
                 name: TranslateService.translate(eventStore, isShort ? 'SEARCH_RESULTS' : 'SEARCH_RESULTS_FOR_X', {
                     X: searchKeyword
@@ -122,7 +148,7 @@ function MainPageContent(){
                 activeTab={activeTab}
                 tabs={tabs}
                 onChange={(tabId) => {
-                    if (tabId != 'search-results') {
+                    if (tabId != searchResultsTabId && tabId != specificItemTabId) {
                         localStorage.setItem(mainPageContentTabLsKey, tabId);
                     }
                     setActiveTabIdx(tabIdToIdx[tabId]);

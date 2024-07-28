@@ -11,12 +11,12 @@ export const allSources = [
 
 export const SourceToUrl = (destination: string, page: number): Record<string, string> => {
     const base: Record<string, string> = {
-        'Local': `${endpoints.v2.poi.local}?destination=${destination}&page=${page}`,
-        'GetYourGuide': `${endpoints.v2.poi.external.getyourguide}?destination=${destination}&page=${page}`,
-        'TripAdvisor': `${endpoints.v2.poi.external.tripadvisor}?destination=${destination}&page=${page}`,
+        'Local': endpoints.v2.poi.local(destination, page),
+        'GetYourGuide': endpoints.v2.poi.external.getyourguide(destination, page),
+        'TripAdvisor': endpoints.v2.poi.external.tripadvisor(destination, page),
     };
     if (destination === "Dubai"){
-        base["Dubai.co.il"] = `${endpoints.v2.poi.external.dubaicoil}?destination=${destination}&page=${page}`;
+        base["Dubai.co.il"] = endpoints.v2.poi.external.dubaicoil(destination, page);
     }
     return base;
 }
@@ -48,6 +48,11 @@ export default class FeedViewApiService {
             isFinished: true,
             source
         };
+    }
+
+    getItemById = async (poiId: number): Promise<IPointOfInterest> => {
+        const result = await apiGetPromise(this, endpoints.v2.poi.getPoiById(poiId));
+        return result?.data;
     }
 
     getSavedCollections = async(): Promise<SavedCollection[]> => {

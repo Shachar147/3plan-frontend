@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useContext, useState} from "react";
-import { observer } from "mobx-react";
+import { Observer, observer } from "mobx-react";
 import PointOfInterest from "../point-of-interest/point-of-interest";
 import { EventStore, eventStoreContext } from "../../../stores/events-store";
 import FeedViewApiService, { allSources } from "../../services/feed-view-api-service";
@@ -16,6 +16,7 @@ interface FeedViewProps {
     eventStore: EventStore;
     mainFeed?: boolean;
     searchKeyword?: string;
+    viewItemId?: number;
 }
 
 const cacheThreshold = 300;
@@ -38,7 +39,7 @@ function SelectDestinationPlaceholder() {
     )
 }
 
-const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
+const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewProps) => {
     const feedStore = useContext(feedStoreContext);
     const apiService = useMemo(() => new FeedViewApiService(), []);
     const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
@@ -61,7 +62,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
             feedStore.setIsLoading(false);
         };
 
-        if (mainFeed || searchKeyword) {
+        if (mainFeed || searchKeyword || viewItemId) {
             feedStore.setIsLoading(false);
         } else {
             fetchCounts();
@@ -98,6 +99,21 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
                 feedStore.setFinishedSources([...feedStore.finishedSources, response.source]);
             });
 
+            _reachedEndPerDestination[destination] = true;
+            feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
+        }
+        else if (viewItemId) {
+            if (page > 1){
+                return;
+            }
+
+            const destination = viewItemId.toString();
+            eventStore.destinations = [destination];
+
+            // todo change to view specific item search
+            const item = await apiService.getItemById(viewItemId);
+            newItems.push(item);
+            feedStore.setFinishedSources(["Locale"]);
             _reachedEndPerDestination[destination] = true;
             feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
         }
@@ -238,7 +254,10 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
     }
 
     function renderCategoryFilter() {
-        if (!feedStore.categories) {
+        if (!feedStore.categories || feedStore.categories.length == 0) {
+            return null;
+        }
+        if (viewItemId){
             return null;
         }
         if (mainFeed) {
@@ -271,7 +290,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
                         {
                             feedStore.filteredItems.map((item, idx) => (
                                 <div key={item.id} className={classList}>
-                                    <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} />
+                                    <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId} />
                                 </div>
                             ))
                         }
@@ -283,7 +302,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
         return feedStore.filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
                 {idx + 1}
-                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} />
+                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}  />
             </div>
         ));
     }
@@ -293,6 +312,9 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
     }
 
     function renderReachedEnd() {
+        if (viewItemId) {
+            return null;
+        }
         if (!feedStore.allReachedEnd) {
             return null;
         }
@@ -302,12 +324,15 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
 
         return (
             <div className="width-100-percents text-align-center">
-                {TranslateService.translate(eventStore, 'NO_MORE_ITEMS')}
+                {TranslateService.translate(eventStore, feedStore.items.length == 0 ? 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS' : 'NO_MORE_ITEMS')}
             </div>
         );
     }
 
     function renderSelectDestinationPlaceholder() {
+        if (viewItemId) {
+            return null;
+        }
         if (haveNoDestinations) {
             return (
                 <SelectDestinationPlaceholder />
@@ -315,14 +340,20 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword }: FeedViewProps) => {
         }
     }
 
-    return (
-        (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading}>
+    function renderFeedContent(){
+        return (
             <div className={getClasses(!mainFeed && 'flex-column', "gap-4", searchKeyword && !eventStore.isMobile && 'padding-inline-100')}>
                 {renderCategoryFilter()}
                 {renderItems()}
                 {renderReachedEnd()}
                 {renderSelectDestinationPlaceholder()}
             </div>
+        );
+    }
+
+    return (
+        (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading}>
+            {renderFeedContent()}
         </LazyLoadComponent>
     );
 }

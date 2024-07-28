@@ -8,7 +8,7 @@ import {observer} from "mobx-react";
 
 // @ts-ignore
 import onClickOutside from 'react-onclickoutside';
-import {cityImage} from "../../utils/consts";
+import {cityImage, specificItemTabId} from "../../utils/consts";
 import {useLoadSuggestions, useMobileLockScroll} from "../../hooks/search-hooks";
 import {getParameterFromHash} from "../../utils/utils";
 import {rootStoreContext} from "../../stores/root-store";
@@ -18,6 +18,7 @@ export interface SearchSuggestion {
     name: string;
     category: string;
     destination: string;
+    id?: number; // when its' loaded from the server
     image?: string;
     hideImage?: boolean;
 }
@@ -66,12 +67,18 @@ const TriplanSearchV2 = () => {
     };
 
     // Function to handle suggestion click
-    const handleSuggestionClick = (suggestion: any) => {
+    const handleSuggestionClick = (suggestion: SearchSuggestion) => {
         document.body.style.overflow = 'auto';
-        setSearchQuery(suggestion.name);
         setShowSuggestions(false);
         setChosenItem(suggestion.name);
-        window.location.hash = `q=${suggestion.name}`;
+        if (suggestion.id) {
+            setSearchQuery('');
+            localStorage.setItem(`item-${suggestion.id}-name`, suggestion.name);
+            window.location.hash = `${specificItemTabId}?id=${suggestion.id}`;
+        } else {
+            setSearchQuery(suggestion.name);
+            window.location.hash = `q=${suggestion.name}`;
+        }
 
         // clear existing items & categories.
         // todo - change to a different store of search results.

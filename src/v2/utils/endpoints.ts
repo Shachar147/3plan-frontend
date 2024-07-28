@@ -1,4 +1,4 @@
-export const endpoints = {
+export const endpoints: Record<string, any> = {
     v1: {
         admin: {
           statistics: '/admin-statistics'
@@ -57,12 +57,13 @@ export const endpoints = {
     },
     v2: {
         poi: {
+            getPoiById: (poiId: number) => `/poi/${poiId}`,
             count: '/poi/count/by-source',
-            local: '/poi/by-destination',
+            local: (destination: string, page: number) => `/poi/by-destination?destination=${destination}&page=${page}`,
             external: {
-                getyourguide: '/poi/external-source/getyourguide',
-                tripadvisor: '/poi/external-source/tripadvisor',
-                dubaicoil: '/poi/external-source/dubaicoil'
+                getyourguide: (destination: string, page: number) => `/poi/external-source/getyourguide?destination=${destination}&page=${page}`,
+                tripadvisor: (destination: string, page: number) => `/poi/external-source/tripadvisor?destination=${destination}&page=${page}`,
+                dubaicoil: (destination: string, page: number) => `/poi/external-source/dubaicoil?destination=${destination}&page=${page}`
             },
             feed: '/poi/feed/',
             searchSuggestions: '/poi/search-suggestions'
