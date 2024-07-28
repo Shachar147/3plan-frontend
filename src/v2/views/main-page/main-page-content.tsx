@@ -78,7 +78,7 @@ function MainPageContent(){
 
     function getTabs():TabData[] {
         if (isInViewItem) {
-            const itemName = localStorage.getItem(`item-${viewItemId}`)
+            const itemName = localStorage.getItem(`item-${viewItemId}-name`)
             return  [{
                 id: specificItemTabId,
                 order: 0,
