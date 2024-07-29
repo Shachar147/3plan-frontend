@@ -16,8 +16,6 @@ import {IPointOfInterest} from "../../utils/interfaces";
 import {runInAction} from "mobx";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {observer} from "mobx-react";
-import {Trip} from "../../../services/data-handlers/data-handler-base";
-import TextInput from "../../../components/inputs/text-input/text-input";
 import EditableLabel from "../editable-label/editable-label";
 
 interface PointOfInterestProps {

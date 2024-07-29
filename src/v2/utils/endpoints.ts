@@ -72,6 +72,9 @@ export const endpoints: Record<string, any> = {
             get: '/saved-collections/',
             upsert: '/saved-collections/upsert/',
             deleteItem: (cid: number, pid: number) => `/saved-collections-item/delete/cid/${cid}/pid/${pid}`
+        },
+        statistics: {
+            summaries: '/admin-statistics/summaries'
         }
     },
 }

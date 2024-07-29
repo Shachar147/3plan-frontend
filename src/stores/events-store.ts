@@ -35,7 +35,6 @@ import {
 	lsTripNameToTripName,
 	Trip,
 } from '../services/data-handlers/data-handler-base';
-import ListViewService from '../services/list-view-service';
 import { LocalStorageService } from '../services/data-handlers/local-storage-service';
 import { DBService } from '../services/data-handlers/db-service';
 import { getUser } from '../helpers/auth';

@@ -4,12 +4,8 @@ import './main-page.scss';
 import TriplanHeaderBanner from "../../components/triplan-header-banner/triplan-header-banner";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import MainPageContent from "./main-page-content";
+import TriplanFooter from "../../components/triplan-footer/triplan-footer";
 
-function TriplanFooter(){
-    return (
-        <div className="triplan-footer">test</div>
-    )
-}
 
 function MainPageV2(){
     useHandleWindowResize();

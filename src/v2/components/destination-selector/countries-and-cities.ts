@@ -57245,6 +57245,13 @@ const countriesAndCities = [
         "flagClass": "fi fi-it",
         "isPopular": false
     },
+	{
+		"value": "Capri",
+		"label": "Capri, Italy",
+		"type": "island",
+		"flagClass": "fi fi-it",
+		"isPopular": false
+	},
     {
         "value": "Italy",
         "label": "Italy",
