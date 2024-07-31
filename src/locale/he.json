@@ -947,7 +947,7 @@
 	"FOOTER.TOTAL_PLACES_ON_SIDEBAR": "סה\"כ מקומות בצד: {X}",
 	"FOOTER.POINT_OF_INTERESTS_STATS": "נקודות עניין",
 	"FOOTER.TOTAL_POIS": "סה\"כ נקודות עניין: {X}",
-	"FOOTER.TOTAL_DESTINATIONS_WITH_INTERESTS": "סה\"כ יעדים עם עניין: {X}",
+	"FOOTER.TOTAL_DESTINATIONS_WITH_INTERESTS": "סה\"כ יעדים עם נקודות עניין: {X}",
 	"FOOTER.TOTAL_SAVED_COLLECTIONS": "סה\"כ אוספים שמורים: {X}",
 	"FOOTER.TOTAL_SAVED_ITEMS": "סה\"כ פריטים שמורים: {X}",
 	"FOOTER.AVG_SAVED_ITEMS_PER_USER": "ממוצע פריטים שמורים למשתמש: {X}"
