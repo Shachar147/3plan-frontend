@@ -19,7 +19,7 @@ function TriplanHeaderBanner(){
 
     return (
         <div className={baseClass} style={{
-            backgroundImage: `url('${getServerAddress().replace("3001","3000")}/images/banner/${bgs[random]}')`
+            backgroundImage: `url('/images/banner/${bgs[random]}')`
         }}>
             <div className={getClasses(`${baseClass}-shadow`, eventStore.isHebrew && 'flip-x')} />
             <TriplanHeaderLine />
