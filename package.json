@@ -49,7 +49,7 @@
 		"react-select-country-list": "^2.2.3",
 		"react-slick": "^0.29.0",
 		"reactstrap": "8.0.0",
-		"serve": "^14.0.1",
+		"serve": "^14.2.3",
 		"socket.io-client": "^4.6.1",
 		"styled-components": "^5.3.6",
 		"sweetalert2": "8.8.5"
@@ -93,7 +93,7 @@
 		"webpack": "^5.75.0"
 	},
 	"scripts": {
-    	"start": "serve -s build",
+		"start": "npm run build && serve -s build",
 		"start:dev:old": "react-scripts start",
 		"start:dev:windows": "SET PORT=3000 && SET REACT_APP_MODE=development && react-scripts start",
 		"start:dev": "PORT=3000 REACT_APP_MODE=development react-scripts start",
