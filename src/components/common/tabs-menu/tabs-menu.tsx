@@ -1,30 +1,48 @@
-import React from "react";
+import React, {useContext, useEffect} from "react";
 import { getClasses } from '../../../utils/utils';
 import { useState } from 'react';
+import {observer} from "mobx-react";
+import {feedStoreContext} from "../../../v2/stores/feed-view-store";
 
 export interface Tab {
+	id: string;
 	name: string;
+	icon?: string;
 	render: () => React.ReactNode | null;
 }
 export interface TabMenuProps {
 	tabs: Tab[],
 	activeTab?: string;
+	onChange?: (tabId) => void;
 }
-export default function TabMenu(props: TabMenuProps){
-	const { tabs } = props;
-	const [activeTab, setActiveTab] = useState(props.activeTab ?? tabs?.[0].name);
+
+function TabMenu(props: TabMenuProps){
+	const { tabs, onChange } = props;
+	const feedStore = useContext(feedStoreContext);
+
+	useEffect(() => {
+		if (props.activeTab) {
+			feedStore.setActiveTab(props.activeTab);
+		}
+	}, [props.activeTab]);
+
 	return (
-		<div key={activeTab}>
+		<div key={feedStore.activeTab}>
 			<div className="ui top attached tabular menu">
-				{tabs.map((tab) => <div className={getClasses(activeTab == tab.name && 'active', "item", activeTab !== tab.name && 'cursor-pointer')} onClick={() => {
-					if (activeTab !== tab.name) {
-						setActiveTab(tab.name);
+				{tabs.map((tab) => <div key={`tab-${tab.id}`} className={getClasses(feedStore.activeTab == tab.id && 'active', "item", feedStore.activeTab !== tab.id && 'cursor-pointer', 'flex-row gap-8 align-items-center')} onClick={() => {
+					if (feedStore.activeTab !== tab.id) {
+						feedStore.setActiveTab(tab.id);
+						onChange?.(tab.id);
 					}
-				}} >{tab.name}</div>)}
+				}} >
+					{tab.icon && <i className={`fa ${tab.icon}`} aria-hidden="true" />}
+					{tab.name}</div>)}
 			</div>
 			<div className="ui bottom attached active tab segment">
-				{tabs.find((t) => t.name === activeTab)?.render()}
+				{tabs.find((t) => t.id === feedStore.activeTab)?.render()}
 			</div>
 		</div>
 	)
 }
+
+export default observer(TabMenu)

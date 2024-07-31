@@ -1,0 +1,92 @@
+.triplan-main-page-container {
+  min-height: 100vh;
+  height: 100%;
+  background-color: white;
+}
+
+.main-feed-description,
+.main-feed-header {
+  padding-inline: 106px;
+  align-self: flex-start;
+}
+
+.main-feed-header {
+  font-weight: bold;
+  font-size: 2.25rem;
+  line-height: 2.75rem;
+}
+
+.triplan-header-banner-footer {
+  //top: 471px;
+  top: -57px;
+  position: relative;
+  z-index: 2;
+
+  padding-inline: 126px;
+
+  .tabular.menu {
+    padding-inline: 126px;
+  }
+
+  .tab {
+    border-color: white !important;
+  }
+  .ui.tabular.menu .active.item {
+    border-top-left-radius: 30px !important;
+    border-top-right-radius: 30px !important;
+  }
+
+  .menu {
+    border-color: white !important;
+    .item {
+      flex: 1 1 0;
+      text-align: center;
+      justify-content: center;
+      font-size: 20px;
+
+      &:not(.active){
+        color: white !important;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .menu {
+    .item {
+      font-size: 14px !important;
+    }
+  }
+
+  .main-feed-description,
+  .main-feed-header {
+    padding-inline: 25px !important;
+  }
+  .tabular.menu {
+    //padding-inline: 0 !important;
+    padding-inline: 10px !important;
+  }
+
+  .triplan-header-banner-footer {
+    top: -40px; // -56px
+    padding-inline: 10px;
+  }
+
+  // change language modal on mobile
+  .triplan-main-page-container + div {
+    > div {
+      padding: 0 !important;
+    }
+
+    .triplan-react-modal {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  .feed-view-filter-bar {
+    flex-direction: column-reverse !important;
+    gap: 16px;
+    text-align: center;
+    align-items: center;
+  }
+}

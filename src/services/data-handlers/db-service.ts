@@ -16,6 +16,7 @@ import { getToken } from '../../helpers/auth';
 import _ from 'lodash';
 import { addSeconds } from '../../utils/time-utils';
 import ReactModalService from '../react-modal-service';
+import {endpoints} from "../../v2/utils/endpoints";
 
 export interface upsertTripProps {
 	name?: string;
@@ -71,7 +72,7 @@ export class DBService implements BaseDataHandler {
 			return {};
 		}
 
-		const res: any = await apiGetPromise(this, `/distance/trip/${tripName}`);
+		const res: any = await apiGetPromise(this, endpoints.v1.distance.getDistanceResults(tripName));
 
 		const result: Record<string, DistanceResult> = {};
 
@@ -98,13 +99,13 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async getTripData(tripName?: string): Promise<Trip> {
-		const res: any = await apiGetPromise(this, `/trip/name/${tripName}`);
+		const res: any = await apiGetPromise(this, endpoints.v1.trips.getTripByName(tripName!));
 		return res.data as Trip;
 	}
 
 	// unused
 	async getTrips(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
-		const res: any = await apiGetPromise(this, '/trip/');
+		const res: any = await apiGetPromise(this, endpoints.v1.trips.getAllTrips);
 		const trips: Trip[] = [];
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);
@@ -113,7 +114,7 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async getCollaborators(eventStore: EventStore): Promise<any[]> {
-		const res: any = await apiGetPromise(this, `/shared-trips/collaborators/name/${eventStore.tripName}`);
+		const res: any = await apiGetPromise(this, endpoints.v1.sharedTrips.getTripCollaborators(eventStore.tripName));
 		const collaborators: any[] = [];
 		res.data.forEach((x: any) => {
 			collaborators.push(x);
@@ -121,8 +122,8 @@ export class DBService implements BaseDataHandler {
 		return collaborators;
 	}
 
-	async getTripsShort(eventStore: EventStore): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
-		const res: any = await apiGetPromise(this, '/trip/short');
+	async getTripsShort(_: any): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
+		const res: any = await apiGetPromise(this, endpoints.v1.trips.getAllTripsShort);
 		const trips: Trip[] = [];
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);
@@ -141,38 +142,38 @@ export class DBService implements BaseDataHandler {
 			axios.defaults.headers.Authorization = `Bearer ${token}`;
 		}
 
-		const res: any = await apiGetPromise(this, '/statistics', false);
+		const res: any = await apiGetPromise(this, endpoints.v1.admin.statistics, false);
 		return res.data;
 	}
 
 	// --- SET ------------------------------------------------------------------------------
 	async setAllEvents(allEvents: AllEventsEvent[], tripName: string) {
-		return await apiPut(`/trip/name/${tripName}`, { allEvents });
+		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { allEvents });
 	}
 
 	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
 		const arr = _.cloneDeep(calendarEvents);
 		arr.map((x) => {
-			x.className = x.className?.replace(' locked', '');
+			x.className = (x.className ?? "").replace(' locked', '');
 
 			// @ts-ignore
 			x.classNames = x.classNames?.replace(' locked', '');
 		});
 
-		return await apiPut(`/trip/name/${tripName}`, { calendarEvents: arr });
+		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { calendarEvents: arr });
 	}
 
 	async setCalendarLocale(calendarLocale: LocaleCode, tripName?: string) {
 		if (!tripName) return;
-		return await apiPut(`/trip/name/${tripName}`, { calendarLocale });
+		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { calendarLocale });
 	}
 
 	async setCategories(categories: TriPlanCategory[], tripName: string) {
-		return await apiPut(`/trip/name/${tripName}`, { categories });
+		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { categories });
 	}
 
 	async setDateRange(dateRange: DateRangeFormatted, tripName: string) {
-		return await apiPut(`/trip/name/${tripName}`, { dateRange });
+		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { dateRange });
 	}
 
 	setDistanceResults(distanceResults: Map<String, DistanceResult>, tripName?: string): void {
@@ -182,15 +183,15 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) {
-		return await apiPut(`/trip/name/${tripName}`, { sidebarEvents });
+		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { sidebarEvents });
 	}
 
 	async setTripName(tripName: string, newTripName: string) {
-		return await apiPut(`/trip/name/${tripName}`, { name: newTripName });
+		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { name: newTripName });
 	}
 
 	async setDestinations(destinations: string[], tripName: string) {
-		return await apiPut(`/trip/name/${tripName}`, { destinations });
+		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { destinations });
 	}
 
 	// --------------------------------------------------------------------------------------
@@ -202,7 +203,7 @@ export class DBService implements BaseDataHandler {
 	) {
 		await apiDelete(
 			this,
-			`/trip/name/${tripName}`,
+			endpoints.v1.trips.deleteTripByName(tripName),
 			async function (res: any) {
 				if (successCallback) {
 					successCallback(res);
@@ -227,15 +228,15 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async hideTripByName(tripName: string) {
-		return await apiPut(`/trip/hide/name/${tripName}`, {});
+		return await apiPut(endpoints.v1.trips.hideTripByName(tripName), {});
 	}
 
 	async unHideTripByName(tripName: string) {
-		return await apiPut(`/trip/unhide/name/${tripName}`, {});
+		return await apiPut(endpoints.v1.trips.unhideTripByName(tripName), {});
 	}
 
 	async createInviteLink(tripName: string, canWrite: boolean) {
-		return await apiPost(`/shared-trips/create-invite-link`, {
+		return await apiPost(endpoints.v1.sharedTrips.createInviteLink, {
 			tripName,
 			canRead: true,
 			canWrite,
@@ -252,7 +253,7 @@ export class DBService implements BaseDataHandler {
 		);
 
 		return await apiPost(
-			`/shared-trips/use-invite-link`,
+			endpoints.v1.sharedTrips.useInviteLink,
 			{
 				token,
 			},
@@ -276,7 +277,7 @@ export class DBService implements BaseDataHandler {
 	) {
 		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale, destinations } = data;
 
-		return await apiPost('/trip', {
+		return await apiPost(endpoints.v1.trips.createTrip, {
 			name,
 			dateRange,
 			categories,
@@ -304,15 +305,15 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async duplicateTrip(_eventStore: EventStore, tripName: string, newTripName: string) {
-		return await apiPost(`/trip/duplicate`, { name: tripName, newName: newTripName });
+		return await apiPost(endpoints.v1.trips.duplicateTrip, { name: tripName, newName: newTripName });
 	}
 
 	async lockTrip(tripName: string) {
-		return await apiPut(`/trip/lock/name/${tripName}`, {});
+		return await apiPut(endpoints.v1.trips.lockTripByName(tripName), {});
 	}
 
 	async unlockTrip(tripName: string) {
-		return await apiPut(`/trip/unlock/name/${tripName}`, {});
+		return await apiPut(endpoints.v1.trips.unlockTripByName(tripName), {});
 	}
 
 	async deleteCollaboratorPermissions(
@@ -323,7 +324,7 @@ export class DBService implements BaseDataHandler {
 	) {
 		await apiDelete(
 			this,
-			`/shared-trips/${permissionsId}`,
+			endpoints.v1.sharedTrips.deleteCollaboratorPermissions(permissionsId),
 			async function (res: any) {
 				if (successCallback) {
 					successCallback(res);
@@ -348,18 +349,18 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async changeCollaboratorPermissions(permissionsId: any, canWrite: boolean) {
-		return await apiPut(`/shared-trips/${permissionsId}`, {
+		return await apiPut(endpoints.v1.sharedTrips.updateCollaboratorPermissions(permissionsId), {
 			canWrite,
 		});
 	}
 
 	async getHistory(tripId: number, limit: number = 100) {
-		const res: any = await apiGetPromise(this, `/history/by-trip/${tripId}/${limit}`);
+		const res: any = await apiGetPromise(this, endpoints.v1.history.getHistoryById(tripId, limit));
 		return res.data;
 	}
 
 	async logHistory(tripId: number, action: string, actionParams?: object, eventId?: number, eventName?: string) {
-		return await apiPost('/history', {
+		return await apiPost(endpoints.v1.history.logHistory, {
 			tripId,
 			action,
 			actionParams,
@@ -369,7 +370,7 @@ export class DBService implements BaseDataHandler {
 	}
 
 	async getTasks(tripId: number) {
-		const res: any = await apiGetPromise(this, `/todolist/task/${tripId}`);
+		const res: any = await apiGetPromise(this, endpoints.v1.tasks.getTripTasks(tripId));
 		return res.data;
 	}
 
@@ -380,10 +381,10 @@ export class DBService implements BaseDataHandler {
 		eventId?: number;
 		mustBeDoneBefore?: number;
 	}) {
-		return await apiPost(`/todolist/task`, data);
+		return await apiPost(endpoints.v1.tasks.createTask, data);
 	}
 
 	async updateTaskStatus(taskId: number, status: TriplanTaskStatus) {
-		return await apiPut(`/todolist/task/${taskId}`, { status });
+		return await apiPut(endpoints.v1.tasks.updateTaskStatus(taskId), { status });
 	}
 }

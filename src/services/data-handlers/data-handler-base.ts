@@ -20,6 +20,7 @@ export interface Trip {
 	id?: number; // for my trips page
 	lastUpdateAt?: string;
 	destinations?: string[];
+	createdAt?: number;
 }
 
 export interface SharedTrip extends Trip {

@@ -285,7 +285,7 @@ export const getViewSelectorOptions = (
 		},
 		{
 			key: ViewMode.feed,
-			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.FEED_VIEW'),
+			name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${eventStore.isMobile ? '.SHORT' : ''}`),
 			icon: <i className="fa fa-search black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-search selected-color" aria-hidden="true" />,
 		},

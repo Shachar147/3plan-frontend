@@ -61,7 +61,8 @@ const LogHistoryService = {
 			whoId?: number;
 		},
 		eventId?: number,
-		eventName?: string
+		eventName?: string,
+		tripId?: number,
 	) {
 		data = {
 			who: getCurrentUsername()!,
@@ -70,7 +71,7 @@ const LogHistoryService = {
 		}
 		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
 			(eventStore.dataService as DBService)
-				.logHistory(eventStore.tripId, action, data, eventId, eventName)
+				.logHistory(tripId ?? eventStore.tripId, action, data, eventId, eventName)
 				.then(() => {
 					runInAction(() => {
 						eventStore.reloadHistoryCounter += 1;

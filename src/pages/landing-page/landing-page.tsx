@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, {useContext, useEffect} from 'react';
 import './landing-page.scss';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import TranslateService from '../../services/translate-service';
-import { eventStoreContext } from '../../stores/events-store';
-import { observer } from 'mobx-react';
-import { renderFooterLine } from '../../utils/ui-utils';
-import Button, { ButtonFlavor } from '../../components/common/button/button';
+import {eventStoreContext} from '../../stores/events-store';
+import {observer} from 'mobx-react';
+import {renderFooterLine} from '../../utils/ui-utils';
+import Button, {ButtonFlavor} from '../../components/common/button/button';
 import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
-import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
+import {useHandleWindowResize} from '../../custom-hooks/use-window-size';
+import {getCurrentUsername} from "../../utils/utils";
 
 const dataService = DataServices.LocalStorageService;
 const LandingPage = () => {
@@ -60,6 +61,16 @@ const LandingPage = () => {
 						flavor={ButtonFlavor.secondary}
 						className={'black'}
 					/>
+				</div>
+				<div>
+					{getCurrentUsername()?.toLowerCase() == 'shachar' && <Button
+						text="New site - Beta"
+						onClick={() => {
+							navigate('/new');
+						}}
+						flavor={ButtonFlavor.link}
+						className="black text-decoration-underline margin-top-20"
+					/>}
 				</div>
 			</div>
 			{renderFooterLine(eventStore)}

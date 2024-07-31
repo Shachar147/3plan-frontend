@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getTinderServerAddress } from '../../config/config';
 import { Exception } from 'sass';
+import {endpoints} from "../../v2/utils/endpoints";
 
 const unAuthorizedRoutes = ['signin'];
 
@@ -8,7 +9,7 @@ async function login(serverAddress?: string) {
 	const username = 'triplan';
 	const password = 'Aa783c0fc5-e574-bfee';
 
-	const result: any = await _apiPost('/auth/signin', { username, password }, undefined, serverAddress);
+	const result: any = await _apiPost(endpoints.v1.auth.signIn, { username, password }, undefined, serverAddress);
 	return result?.data?.accessToken;
 }
 

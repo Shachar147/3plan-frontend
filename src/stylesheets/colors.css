@@ -17,10 +17,19 @@
 	--red: #ff5252;
 	--invalid-red-background: #fcf2f2;
 	--triplan-orange: #ffb752;
+	--red-pink-color: #ff0074;
+}
+
+.dark-gray-background {
+	background-color: #333d4f;
 }
 
 .green-background {
 	background-color: var(--success);
+}
+
+.red-pink-color {
+	background-color: #ff0074;
 }
 
 .triplan-orange-color {
@@ -37,6 +46,10 @@
 
 .pink-color {
 	color: var(--pink);
+}
+
+.white-color {
+	color: white;
 }
 
 .black-background {

@@ -1,0 +1,64 @@
+.my-trips-poi {
+  border-top-left-radius: 40px !important;
+
+  min-height: 350px !important;
+
+  .poi-right {
+    min-height: 330px !important;
+  }
+
+  .activities-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border-top: 1px solid #f1f1f1;
+    border-bottom: 1px solid #f1f1f1;
+    padding-block: 8px;
+    margin-block: 8px;
+  }
+
+  .description {
+    margin-bottom: 0;
+    margin-top: 8px;
+  }
+
+  .poi-details {
+    justify-content: flex-start;
+  }
+
+  .carousel {
+    //border-top-right-radius: 40px;
+    border-top-left-radius: 40px;
+  }
+}
+
+.trips-list-trip-actions-v2 {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  background-color: black;
+  //position: absolute;
+  padding: 3px;
+  //bottom: -30px;
+  justify-content: center;
+  border-bottom-right-radius: 40px;
+  //border-bottom-left-radius: 40px;
+
+  i {
+    border-radius: 50%;
+    padding: 4px;
+    width: max-content;
+    padding-inline: 6px;
+    color: var(--gray);
+    opacity: 0.6;
+    transition: color 0.1s ease-in-out, opacity 0.1s ease-in-out;
+    cursor: pointer;
+
+    &.active,
+    &:hover {
+      color: white;
+      opacity: 1;
+    }
+  }
+}

@@ -216,7 +216,7 @@ body {
 }
 
 .padding-inline-end-10 {
-	padding-inline-end: 10px;
+	padding-inline-end: 10px !important;
 }
 
 .padding-inline-0 {
@@ -225,6 +225,10 @@ body {
 
 .padding-inline-3 {
 	padding-inline: 3px;
+}
+
+.padding-inline-5 {
+	padding-inline: 5px;
 }
 
 .padding-inline-3-important {
@@ -245,6 +249,10 @@ body {
 
 .padding-inline-20 {
 	padding-inline: 20px;
+}
+
+.padding-inline-100 {
+	padding-inline: 100px;
 }
 
 .padding-block-5 {
@@ -480,6 +488,10 @@ body {
 .flex-row {
 	display: flex; //  !important <- not good. if something needs it, need to understand why.
 	flex-direction: row;
+}
+
+.flex-wrap-wrap {
+	flex-wrap: wrap;
 }
 
 .fa.flex-row {
@@ -1068,8 +1080,28 @@ input[type='text'] {
 	}
 }
 
+.height-auto {
+	height: auto;
+}
+
 .height-0 {
 	height: 0;
+}
+
+.height-60 {
+	height: 60px;
+}
+
+.height-200 {
+	height: 200px;
+}
+
+.height-300 {
+	height: 300px;
+}
+
+.height-360 {
+	height: 360px;
 }
 
 .height-60vh {
@@ -1091,6 +1123,10 @@ input[type='text'] {
 
 .width-100-percents {
 	width: 100%;
+}
+
+.width-100-percents-important {
+	width: 100% !important;
 }
 
 .width-max-content {
@@ -1153,6 +1189,10 @@ body.rtl {
 
 .white-space-pre {
 	white-space: pre;
+}
+
+.white-space-pre-wrap {
+	white-space: pre-wrap;
 }
 
 .white-space-pre-line {
@@ -1447,4 +1487,31 @@ input[id^='react-select-'][id$='-input'] {
 
 .grayscale {
 	filter: grayscale(100%);
+}
+
+.black-text-shadow {
+	color: black; /* Set the text color to black */
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Create a shadow effect */
+}
+
+
+.max-height-100-ellipsis {
+	max-height: 100px; /* Set the maximum height */
+	overflow: hidden; /* Hide the overflowing text */
+	position: relative;
+
+	/* Add this for multiline ellipsis */
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 5; /* Number of lines to show */
+	overflow: hidden;
+}
+
+.max-height-100-ellipsis::after {
+	content: ''; /* Add ellipsis */
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 0 10px; /* Adjust padding as needed */
+	background: white; /* Match background to avoid overlap */
 }

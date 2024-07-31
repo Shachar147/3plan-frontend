@@ -1,0 +1,162 @@
+.search-container {
+  position: relative;
+  width: 100%;
+
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: white;
+  height: 56px;
+  border: 1px solid #ccc;
+  border-radius: 44px;
+  width: max-content;
+  padding-inline: 6px;
+
+  .search-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    outline: none;
+    border: 0 !important;
+  }
+
+  .search-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 44px;
+    cursor: pointer;
+    outline: none;
+  }
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+}
+
+.rtl {
+  .suggestions-container {
+    text-align: right;
+    direction: rtl;
+  }
+}
+
+.suggestions-container {
+  position: absolute;
+  top: CALC(100% + 2px);
+  inset-inline-start: 20px;
+  width: calc(100% + 80px);
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: white;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 999999999999;
+
+  .suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+
+    display: flex;
+    // align-items: center;
+    gap: 10px;
+
+    .suggestion-item-image {
+      width: 50px;
+      height: 50px;
+      min-height: 50px;
+      min-width: 50px;
+      background-size: cover;
+    }
+  }
+}
+
+.suggestion-item:hover {
+  background-color: #f9f9f9;
+}
+
+.suggestion-name {
+  font-weight: bold;
+  //margin-bottom: 5px;
+  color: black;
+  margin: 0 !important;
+}
+
+.suggestion-descriptor {
+  color: #666;
+  font-size: 14px;
+}
+
+// so tabs won't come above search
+.triplan-header-banner:has(.search-container .suggestions-container) {
+  z-index: 3;
+}
+
+@media only screen and (max-width: 600px) {
+  .search-input {
+    min-width: 200px !important;
+  }
+  .suggestions-container {
+    width: 270px;
+  }
+  //.triplan-header-banner:has(.search-container.has-values) + .triplan-header-banner-footer {
+  //  opacity: 0.6;
+  //}
+  .triplan-header-banner-header-line-left-side:has(.search-container.has-values) + .triplan-header-banner-header-line-right-side,
+  .triplan-header-banner:has(.search-container.has-values) + .triplan-header-banner-footer,
+  .triplan-header-banner-header-line:has(.search-container.has-values) + div + .triplan-header-banner-bottom-shadow {
+    display: none;
+  }
+
+  .triplan-header-banner-header-line:has(.search-container.has-values) + .triplan-header-banner-slogan {
+    opacity: 0.3;
+  }
+
+  .triplan-header-banner:has(.search-container.has-values) {
+    z-index: 999;
+  }
+
+  .triplan-main-page-container:has(.search-container.has-values) {
+    background-color: rgba(0,0,0, 0.7) !important;
+  }
+
+  .search-container {
+    &.has-values {
+      background-color: rgba(0,0,0, 0.7);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      padding-top: 20px;
+      z-index: 999999999999999;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+
+      .suggestions-container {
+        top: 85px;
+        width: 100%;
+        left: 0;
+        max-height: CALC(100% - 100px);
+        background-color: unset !important;
+
+        .suggestion-item {
+          background-color: unset !important;
+          color: white;
+
+          .suggestion-name {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}

@@ -6,9 +6,10 @@ import { eventStoreContext } from '../../../stores/events-store';
 export interface TriplanLogoProps {
 	onClick?: () => void;
 	height?: number | string;
+	white?: boolean;
 }
 
-function TriplanLogo({ onClick, height = 40 }: TriplanLogoProps) {
+function TriplanLogo({ onClick, height = 40, white = false }: TriplanLogoProps) {
 	const eventStore = useContext(eventStoreContext);
 	const calcHeight = !height.toString().includes('%') && !height.toString().includes('px') ? `${height}px` : height;
 
@@ -16,7 +17,7 @@ function TriplanLogo({ onClick, height = 40 }: TriplanLogoProps) {
 		<div className="header-logo cursor-pointer flex flex-shrink-0 flex-grow-0" onClick={onClick}>
 			<img
 				alt={TranslateService.translate(eventStore, 'TRIPLAN')}
-				src={'/images/logo/new-logo.png'}
+				src={`/images/logo/new-logo${white ? '-white' : ''}.png`}
 				style={{ height: calcHeight }}
 			/>
 		</div>
