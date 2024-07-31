@@ -944,11 +944,11 @@
 	"FOOTER.AVG_SIDEBAR_ITEMS_IN_TRIP": "ממוצע פריטים בצד בטיול: {X}",
 	"FOOTER.AVG_TRIPS_PER_USER": "ממוצע טיולים למשתמש: {X}",
 	"FOOTER.TOTAL_PLACES_ON_CALENDAR": "סה\"כ מקומות בלוח שנה: {X}",
-	"FOOTER.TOTAL_PLACES_ON_SIDEBAR": "סה\"כ מקומות בצד: {X}",
+	"FOOTER.TOTAL_PLACES_ON_SIDEBAR": "סה\"כ מקומות בתפריט: {X}",
 	"FOOTER.POINT_OF_INTERESTS_STATS": "נקודות עניין",
 	"FOOTER.TOTAL_POIS": "סה\"כ נקודות עניין: {X}",
 	"FOOTER.TOTAL_DESTINATIONS_WITH_INTERESTS": "סה\"כ יעדים עם נקודות עניין: {X}",
 	"FOOTER.TOTAL_SAVED_COLLECTIONS": "סה\"כ אוספים שמורים: {X}",
-	"FOOTER.TOTAL_SAVED_ITEMS": "סה\"כ פריטים שמורים: {X}",
+	"FOOTER.TOTAL_SAVED_ITEMS": "סה\"כ מקומות שמורים: {X}",
 	"FOOTER.AVG_SAVED_ITEMS_PER_USER": "ממוצע פריטים שמורים למשתמש: {X}"
 }
