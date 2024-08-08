@@ -11,6 +11,7 @@ import React, {
 // @ts-ignore
 import GoogleMapReact from 'google-map-react';
 import MarkerClusterer from '@googlemaps/markerclustererplus';
+// @ts-ignore
 import * as _ from 'lodash';
 import { eventStoreContext } from '../../stores/events-store';
 import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
@@ -550,7 +551,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 			return refMarker;
 		};
-		markers = coordinates && coordinates.map((coordinate) => initMarkerFromCoordinate(coordinate));
+		markers = coordinates && coordinates.map((coordinate: Coordinate) => initMarkerFromCoordinate(coordinate));
 
 		if (eventStore.showEventOnMap) {
 			const eventId: number = eventStore.showEventOnMap!;

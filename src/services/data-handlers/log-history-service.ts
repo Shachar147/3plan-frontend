@@ -5,6 +5,7 @@ import { DBService } from './db-service';
 import { runInAction } from 'mobx';
 import { EventStore } from '../../stores/events-store';
 import { getCurrentUsername, jsonDiff } from '../../utils/utils';
+// @ts-ignore
 import _ from 'lodash';
 import { getUserId } from '../../helpers/auth';
 

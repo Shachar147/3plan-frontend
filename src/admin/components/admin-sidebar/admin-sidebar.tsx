@@ -1,5 +1,6 @@
 import React, { CSSProperties, useContext } from 'react';
 import { observer } from 'mobx-react';
+// @ts-ignore
 import * as _ from 'lodash';
 import { eventStoreContext } from '../../../stores/events-store';
 import { CalendarEvent, SidebarEvent } from '../../../utils/interfaces';

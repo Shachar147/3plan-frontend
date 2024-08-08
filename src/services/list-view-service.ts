@@ -9,6 +9,7 @@ import { GoogleTravelMode, ListViewSummaryMode, TriplanPriority } from '../utils
 import { priorityToColor } from '../utils/consts';
 import { BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString } from '../utils/utils';
 import { getEventDivHtml } from '../utils/ui-utils';
+// @ts-ignore
 import _ from 'lodash';
 
 const destinationRoutesAddFromAndTo = true;

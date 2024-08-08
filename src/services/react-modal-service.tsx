@@ -60,6 +60,7 @@ import { LimitationsService } from '../utils/limitations';
 import ToggleButton from '../components/toggle-button/toggle-button';
 import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
 import { ModalsStore } from '../stores/modals-store';
+// @ts-ignore
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
 import LogHistoryService from './data-handlers/log-history-service';
@@ -4559,7 +4560,7 @@ const ReactModalService = {
 			const updatedEvents: CalendarEvent[] = [];
 
 			const temp = _.cloneDeep(eventStore.calendarEvents);
-			temp.forEach((event) => {
+			temp.forEach((event: CalendarEvent) => {
 				const dtStart = new Date(event.start);
 				const dtEnd = new Date(event.end);
 				let duration = event.duration;

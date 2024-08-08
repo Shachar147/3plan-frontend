@@ -20,6 +20,7 @@ import MapContainer from '../../../components/map-container/map-container';
 import { AllEventsEvent } from '../../../services/data-handlers/data-handler-base';
 import { AdminViewMode, TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
 import { LocationData, WeeklyOpeningHoursData } from '../../../utils/interfaces';
+// @ts-ignore
 import _ from 'lodash';
 import { getTinderServerAddress } from '../../../config/config';
 import TriplanViewSelector from '../../../components/triplan-header/view-selector/triplan-view-selector';

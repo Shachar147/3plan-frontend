@@ -24,6 +24,7 @@ import Button, { ButtonFlavor } from '../../../components/common/button/button';
 import { apiDelete, apiPut } from '../../helpers/api';
 import ReactModalService from '../../../services/react-modal-service';
 import IconSelector from '../../../components/inputs/icon-selector/icon-selector';
+// @ts-ignore
 import * as _ from 'lodash';
 import { LocationData } from '../../../utils/interfaces';
 import SelectInput from '../../../components/inputs/select-input/select-input';

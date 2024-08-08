@@ -13,6 +13,7 @@ import { TripDataSource } from '../../utils/enums';
 import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
 import axios from 'axios';
 import { getToken } from '../../helpers/auth';
+// @ts-ignore
 import _ from 'lodash';
 import { addSeconds } from '../../utils/time-utils';
 import ReactModalService from '../react-modal-service';
@@ -153,7 +154,7 @@ export class DBService implements BaseDataHandler {
 
 	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
 		const arr = _.cloneDeep(calendarEvents);
-		arr.map((x) => {
+		arr.map((x: CalendarEvent) => {
 			x.className = (x.className ?? "").replace(' locked', '');
 
 			// @ts-ignore

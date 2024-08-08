@@ -10,6 +10,7 @@ import {
 } from '../../../utils/time-utils';
 import LogHistoryService from '../../../services/data-handlers/log-history-service';
 import { TripActions } from '../../../utils/interfaces';
+// @ts-ignore
 import _ from 'lodash';
 // @ts-ignore
 import RangePicker from "react-range-picker";

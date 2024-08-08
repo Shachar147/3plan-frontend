@@ -25,6 +25,7 @@ import LoadingComponent from '../../components/loading/loading-component';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import CustomDatesSelector from '../../components/triplan-sidebar/custom-dates-selector/custom-dates-selector';
+// @ts-ignore
 import _ from 'lodash';
 import { runInAction } from 'mobx';
 import { getWebSocketsServerAddress } from '../../config/config';

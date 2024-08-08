@@ -4,6 +4,7 @@ import { eventStoreContext } from '../../stores/events-store';
 import { addDays, formatDate, getEndDate } from '../../utils/time-utils';
 import { CalendarEvent } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
+// @ts-ignore
 import _ from 'lodash';
 import ReactModalService from '../../services/react-modal-service';
 import TranslateService from '../../services/translate-service';
