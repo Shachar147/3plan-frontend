@@ -99,6 +99,9 @@
 		"start:background": "npm run killbill && npm run start:dev:mac > /dev/null 2>&1 &",
 		"start:all": "concurrently \"npm run start:background\" \"cd ../3plan-server && npm run start:background\""
 	},
+	"engines": {
+		"node": "15.x"
+	},
 	"browserslist": [
 		">0.2%",
 		"not dead",
