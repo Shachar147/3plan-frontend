@@ -14,7 +14,7 @@ import { observer, Observer } from 'mobx-react';
 import { TriplanHeaderProps } from '../../triplan-header/triplan-header';
 
 // @ts-ignore
-import onClickOutside from 'react-onclickoutside';
+// import onClickOutside from 'react-onclickoutside';
 import ReactModalService from '../../../services/react-modal-service';
 import { runInAction } from 'mobx';
 import useIsAdmin from '../../../custom-hooks/use-is-admin';
@@ -216,4 +216,5 @@ var clickOutsideConfig = {
 	},
 };
 
-export default observer(onClickOutside(MobileNavbar, clickOutsideConfig));
+// export default observer(onClickOutside(MobileNavbar, clickOutsideConfig));
+export default observer(MobileNavbar);

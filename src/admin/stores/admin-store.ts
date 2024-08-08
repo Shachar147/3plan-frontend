@@ -30,7 +30,7 @@ export class AdminStore {
 			// @ts-ignore
 			const places: GetPlacesByDestinationResult = results[0];
 			// @ts-ignore
-			const stats: any[] = results[1];
+			const stats: any[] = results?.[1] ?? [];
 			runInAction(() => {
 				this.placesByDestination = observable.map<string, TinderItem[]>(places?.data);
 				this.userStats = observable.array<any[]>(stats);

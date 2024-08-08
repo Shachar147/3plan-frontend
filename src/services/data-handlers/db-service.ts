@@ -144,7 +144,7 @@ export class DBService implements BaseDataHandler {
 		}
 
 		const res: any = await apiGetPromise(this, endpoints.v1.admin.statistics, false);
-		return res.data;
+		return res?.data ?? [];
 	}
 
 	// --- SET ------------------------------------------------------------------------------

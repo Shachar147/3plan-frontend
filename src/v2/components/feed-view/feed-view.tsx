@@ -147,7 +147,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                 });
 
                 // Check if items are finished for this destination
-                allFinished = responses.every(response => response.isFinished);
+                allFinished = responses?.every(response => response.isFinished);
             }
 
             if (allFinished) {
@@ -183,7 +183,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                     });
 
                     // Check if items are finished for this destination
-                    allFinished = responses.every(response => response.isFinished);
+                    allFinished = responses?.every(response => response.isFinished);
                 }
 
                 if (allFinished) {
@@ -206,7 +206,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         feedStore.setCategories([...new Set([...feedStore.categories, ...uniqueCategories])]);
 
         // Check if all destinations have reached the end
-        const allReachedEndNow = eventStore.destinations.every(dest => _reachedEndPerDestination[dest]);
+        const allReachedEndNow = eventStore.destinations?.every(dest => _reachedEndPerDestination[dest]);
         feedStore.setReachedEndForDestinations(allReachedEndNow);
 
         setLoading(false);
@@ -224,7 +224,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
 
     // useEffect to update allReachedEnd state based on reachedEndForDestinations and other conditions
     useEffect(() => {
-        const allSourcesFinished = allSources.every(source => feedStore.finishedSources.includes(source));
+        const allSourcesFinished = allSources?.every(source => feedStore.finishedSources.includes(source));
 
         if (feedStore.reachedEndForDestinations && allSourcesFinished) {
             feedStore.setAllReachedEnd(true);

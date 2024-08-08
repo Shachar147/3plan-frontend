@@ -22,7 +22,9 @@ export class FeedStore {
     getSavedCollections = async () => {
         new FeedViewApiService().getSavedCollections().then((response) => {
             runInAction(() => {
-                this.savedCollections = response;
+                this.savedCollections = [
+                    ...response
+                ];
             })
         })
     }

@@ -7,7 +7,7 @@ import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import {observer} from "mobx-react";
 
 // @ts-ignore
-import onClickOutside from 'react-onclickoutside';
+// import onClickOutside from 'react-onclickoutside';
 import {cityImage, specificItemTabId} from "../../utils/consts";
 import {useLoadSuggestions, useMobileLockScroll} from "../../hooks/search-hooks";
 import {getParameterFromHash} from "../../utils/utils";
@@ -158,4 +158,5 @@ var clickOutsideConfig = {
     },
 };
 
-export default observer(onClickOutside(TriplanSearchV2, clickOutsideConfig));
+export default observer(TriplanSearchV2);
+// export default observer(onClickOutside(TriplanSearchV2, clickOutsideConfig));
