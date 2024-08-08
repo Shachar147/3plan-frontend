@@ -26,6 +26,19 @@
     border: 0 !important;
   }
 
+  .fa-times {
+    color: black;
+    margin-inline: 8px;
+    font-size: 18px;
+    font-weight: 100;
+    opacity: 0.2;
+    transition: opacity 0.2s ease-in-out;
+
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+
   .search-button {
     padding: 10px 20px;
     background-color: #007bff;

@@ -200,6 +200,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                         }
                         return handleAddToSaved();
                     }}
+                    key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
                     text={(isSearchResult || isViewItem) ? text : ""}
                     tooltip={mainFeed ? text : ""}

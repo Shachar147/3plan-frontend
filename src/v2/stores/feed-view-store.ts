@@ -15,6 +15,7 @@ export class FeedStore {
     @observable reachedEndForDestinations: boolean = false;
     @observable allReachedEnd: boolean = false;
     @observable savedCollections: SavedCollection[] = [];
+    @observable reRenderCounter = 0;
 
     @observable activeTab: string = "default";
 
@@ -25,6 +26,8 @@ export class FeedStore {
                 this.savedCollections = [
                     ...response
                 ];
+                this.reRenderCounter +=1;
+                console.log("here!" +  this.reRenderCounter);
             })
         })
     }

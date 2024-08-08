@@ -113,6 +113,14 @@ const TriplanSearchV2 = () => {
                     placeholder={TranslateService.translate(eventStore, `HEADER_SEARCH_PLACEHOLDER${isShort}`)}
                     autoComplete="off"
                 />
+                {searchQuery.length > 0 && <i className="fa fa-times" aria-hidden="true" onClick={() => {
+                    setSearchValueFromHash(false);
+                    setSearchQuery("");
+                    setSuggestions([]);
+                    setShowSuggestions(true);
+                    window.location.hash = "";
+                    rootStore.triggerTabsReRender();
+                }} />}
                 <button className="search-button" type="button" onClick={() => setChosenItem(searchQuery)}>
                     {TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
                 </button>
