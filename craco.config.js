@@ -1,9 +1,9 @@
-// craco.config.js
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
 module.exports = {
     webpack: {
-        configure: (webpackConfig, { env, paths }) => {
-            // Customize the webpack configuration here
-            return webpackConfig;
-        },
+        plugins: [
+            ...(process.env.NODE_ENV === 'development' ? [new ReactRefreshWebpackPlugin()] : []),
+        ],
     },
 };
