@@ -89,6 +89,7 @@
 		"start:dev:old": "craco start",
 		"start:dev:windows": "SET PORT=3000 && SET REACT_APP_MODE=development && craco start",
 		"start:dev": "PORT=3000 REACT_APP_MODE=development craco start",
+		"start:dev:mac": "PORT=3000 REACT_APP_MODE=development craco start",
 		"start:prod:mac": "PORT=3000 REACT_APP_MODE=production craco start",
 		"prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
 		"prettier-check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
