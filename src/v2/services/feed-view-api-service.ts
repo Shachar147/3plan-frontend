@@ -30,6 +30,27 @@ export default class FeedViewApiService {
         return {};
     }
 
+    getSearchResults = async (searchKeyword: string, page: number) => {
+        const source = "Local";
+        const url = endpoints.v2.poi.freeTextSearch(searchKeyword, page)
+        if (!url){
+            return Promise.resolve({
+                results: [],
+                isFinished: true,
+                source
+            })
+        }
+        const result = await apiGetPromise(this, url);
+        if (result) {
+            return result?.data;
+        }
+        return {
+            results: [],
+            isFinished: true,
+            source
+        };
+    }
+
     getItems = async (source: string, destination: string, page: number) => {
         const url = SourceToUrl(destination, page)[source];
         if (!url){

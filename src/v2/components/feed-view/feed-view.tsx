@@ -11,6 +11,7 @@ import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 import DestinationSelector from "../destination-selector/destination-selector";
 import Button, { ButtonFlavor } from "../../../components/common/button/button";
 import { feedStoreContext } from "../../stores/feed-view-store";
+import {runInAction} from "mobx";
 
 interface FeedViewProps {
     eventStore: EventStore;
@@ -110,7 +111,6 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             const destination = viewItemId.toString();
             eventStore.destinations = [destination];
 
-            // todo change to view specific item search
             const item = await apiService.getItemById(viewItemId);
             newItems.push(item);
             feedStore.setFinishedSources(["Locale"]);
@@ -118,8 +118,22 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
         }
         else if (searchKeyword){
+            // const destination = searchKeyword;
+            // eventStore.destinations = [destination];
+            //
+            // if (feedStore.finishedSources.includes("Local")) {
+            //     return;
+            // }
+            //
+            // const response = await apiService.getSearchResults(searchKeyword, page);
+            // newItems.push(...response.results);
+            // if (response.isFinished) {
+            //     runInAction(() => {
+            //         feedStore.allReachedEnd = true;
+            //     })
+            // }
+
             const destination = searchKeyword;
-            eventStore.destinations = [destination];
 
             const sources = allSources.filter(
                 source => (source === "Local" || (feedStore.sourceCounts[destination]?.[source] ?? 0) < cacheThreshold) && !feedStore.finishedSources.includes(source)
@@ -136,7 +150,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             let allFinished = false;
             if (destination != "[]") {
                 const responses = await Promise.all(
-                    sources.map(source => apiService.getItems(source, destination, page))
+                    sources.map(source => source === "Local" ? apiService.getSearchResults(destination, page) : apiService.getItems(source, destination, page))
                 );
 
                 responses.forEach(response => {
@@ -146,8 +160,9 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                     }
                 });
 
+
                 // Check if items are finished for this destination
-                allFinished = responses?.every(response => response.isFinished);
+                allFinished = responses?.filter(response => response.isFinished)?.length === responses.length;
             }
 
             if (allFinished) {
@@ -226,7 +241,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     useEffect(() => {
         const allSourcesFinished = allSources?.every(source => feedStore.finishedSources.includes(source));
 
-        if (feedStore.reachedEndForDestinations && allSourcesFinished) {
+        if ((searchKeyword || feedStore.reachedEndForDestinations) && allSourcesFinished) {
             feedStore.setAllReachedEnd(true);
         } else {
             feedStore.setAllReachedEnd(false);
@@ -352,7 +367,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     }
 
     return (
-        (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading}>
+        (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
             {renderFeedContent()}
         </LazyLoadComponent>
     );

@@ -10,9 +10,10 @@ interface LazyLoadComponentProps {
     isLoading: boolean;
     disableLoader: boolean;
     className?: string;
+    isReachedEnd?: boolean
 }
 
-const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, className }: LazyLoadComponentProps) => {
+const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, className, isReachedEnd }: LazyLoadComponentProps) => {
     const eventStore = useContext(eventStoreContext);
     const [page, setPage] = useState(1);
     const prevPage = useRef(0);
@@ -34,8 +35,10 @@ const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, clas
 
         const observer = new IntersectionObserver((entries) => {
             // console.log("hereeee", entries[0], loading);
-            if (entries[0].isIntersecting && !loading) {
-                setPage((prevPage) => prevPage + 1);
+            if (entries[0].isIntersecting && !loading && !isReachedEnd) {
+                setTimeout(() => {
+                    setPage((prevPage) => prevPage + 1);
+                }, 300);
             }
         }, options);
 

@@ -66,7 +66,8 @@ export const endpoints: Record<string, any> = {
                 dubaicoil: (destination: string, page: number) => `/poi/external-source/dubaicoil?destination=${destination}&page=${page}`
             },
             feed: '/poi/feed/',
-            searchSuggestions: '/poi/search-suggestions'
+            searchSuggestions: '/poi/search-suggestions',
+            freeTextSearch: (searchKeyword: string, page: number) => `/poi/search?q=${searchKeyword}&page=${page}`
         },
         savedCollections: {
             get: '/saved-collections/',

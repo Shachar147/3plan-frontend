@@ -79,7 +79,7 @@ const TriplanSearchV2 = () => {
     const handleSuggestionClick = (suggestion: SearchSuggestion) => {
         document.body.style.overflow = 'auto';
         setShowSuggestions(false);
-        setChosenItem(suggestion.name);
+        // setChosenItem(suggestion.name);
         if (suggestion.id) {
             setSearchQuery('');
             localStorage.setItem(`item-${suggestion.id}-name`, suggestion.name);
@@ -87,15 +87,18 @@ const TriplanSearchV2 = () => {
         } else {
             setSearchQuery(suggestion.name);
             window.location.hash = `q=${suggestion.name}`;
+
         }
 
-        // clear existing items & categories.
-        // todo - change to a different store of search results.
-        feedStore.setCategories([]);
-        feedStore.setItems([]);
+        window.location.reload();
 
-        rootStore.triggerTabsReRender();
-        setSuggestions([]);
+        // // clear existing items & categories.
+        // // todo - change to a different store of search results.
+        // feedStore.setCategories([]);
+        // feedStore.setItems([]);
+        //
+        // rootStore.triggerTabsReRender();
+        // setSuggestions([]);
     };
 
     const isShort = eventStore.isMobile ? '.SHORT' : '';
@@ -123,7 +126,7 @@ const TriplanSearchV2 = () => {
                     autoComplete="off"
                 />
                 {searchQuery.length > 0 && <i className="fa fa-times" aria-hidden="true" onClick={() => handleResetSearchClick()} />}
-                <button className="search-button" type="button" onClick={() => setChosenItem(searchQuery)}>
+                <button className="search-button" type="button" onClick={() => handleSuggestionClick({ name: searchQuery, type: 'city' } as unknown as SearchSuggestion)}>
                     {TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
                 </button>
             </div>
