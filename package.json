@@ -103,7 +103,8 @@
 		"start:all": "concurrently \"npm run start:background\" \"cd ../3plan-server && npm run start:background\""
 	},
 	"engines": {
-		"node": "15.x"
+		"node": "15.x",
+		"npm": "8.19.4"
 	},
 	"browserslist": [
 		">0.2%",
