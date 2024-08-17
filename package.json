@@ -82,8 +82,8 @@
 		"sass": "^1.53.0"
 	},
 	"scripts": {
-		"start": "craco start",
-		"build": "NODE_ENV=production craco build",
+		"start": "REACT_APP_MODE=production craco start",
+		"build": "REACT_APP_MODE=production craco build",
 		"test": "craco test",
 		"eject": "react-scripts eject",
 		"start:dev:old": "craco start",
