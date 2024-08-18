@@ -70,12 +70,10 @@
 		"*.{js,jsx,ts,tsx,html,less,scss,css}": "prettier --write"
 	},
 	"devDependencies": {
-		"@babel/plugin-proposal-private-property-in-object": "^7.21.11",
 		"@storybook/addon-links": "^6.5.15",
 		"@storybook/react": "^8.2.6",
 		"@storybook/testing-library": "^0.0.13",
 		"@types/react": "^18.0.17",
-		"babel-preset-react-app": "^10.0.1",
 		"husky": "^8.0.0",
 		"prop-types": "^15.8.1",
 		"react-router-dom": "^6.4.1",
