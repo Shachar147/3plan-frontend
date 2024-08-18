@@ -1,9 +1,10 @@
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const path = require('path');
 
 module.exports = {
     webpack: {
-        plugins: [
-            process.env.NODE_ENV === 'development' && new ReactRefreshWebpackPlugin(),
-        ].filter(Boolean),
+        alias: {
+            '@src': path.resolve(__dirname, 'src'),
+            '@node_modules': path.resolve(__dirname, 'node_modules'),
+        },
     },
 };
