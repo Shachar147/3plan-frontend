@@ -108612,7 +108612,7 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
-        "value": "Taiwan, Province of China",
+        "value": "Taiwan",
         "label": "Taiwan, Province of China",
         "type": "country",
         "flagClass": "fi fi-tw",
@@ -111277,6 +111277,20 @@ const countriesAndCities = [
         "type": "city",
         "flagClass": "fi fi-th",
         "isPopular": false
+    },
+    {
+        "value": "Koh Phi-Phi",
+        "label": "Koh Phi-Phi, Thailand",
+        "type": "island",
+        "flagClass": "fi fi-th",
+        "isPopular": true
+    },
+    {
+        "value": "Koh Tao",
+        "label": "Koh Tao, Thailand",
+        "type": "island",
+        "flagClass": "fi fi-th",
+        "isPopular": true
     },
     {
         "value": "Amnat Charoen",
