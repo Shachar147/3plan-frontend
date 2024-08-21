@@ -7,7 +7,14 @@ import {CalendarEvent, LocationData} from '../utils/interfaces';
 import {runInAction} from 'mobx';
 import {GoogleTravelMode, ListViewSummaryMode, TriplanCurrency, TriplanPriority} from '../utils/enums';
 import {priorityToColor} from '../utils/consts';
-import {BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString} from '../utils/utils';
+import {
+	BuildEventUrl,
+	getCoordinatesRangeKey,
+	isFlightCategory,
+	isMatching,
+	padTo2Digits,
+	toDistanceString
+} from '../utils/utils';
 import {getEventDivHtml} from '../utils/ui-utils';
 // @ts-ignore
 import _ from 'lodash';
@@ -590,14 +597,14 @@ const ListViewService = {
 					const amount = eventStore.tasks.filter((t) => t.eventId == event.id)?.length;
 					if (amount == 1) {
 						const openTasks = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OPEN_TASK', { amount });
-						taskIndication = `<span class='task-indication' style='font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;'>&nbsp;<u>${openTasks}</u></span>`;
+						taskIndication = `<span class='task-indication' style='font-size: 22px; padding-inline: 5px; line-height: 18px; color:${todoCompleteColor}; font-weight:bold;'>&nbsp;<u>${openTasks}</u></span>`;
 					} else if (amount > 1) {
 						const openTasks = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OPEN_TASKS', { amount });
-						taskIndication = `<span class='task-indication' style='font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;'>&nbsp;<u>${openTasks}</u></span>`;
+						taskIndication = `<span class='task-indication' style='font-size: 22px; padding-inline: 5px; line-height: 18px; color:${todoCompleteColor}; font-weight:bold;'>&nbsp;<u>${openTasks}</u></span>`;
 					}
 				}
 				if (taskIndication == '' && hasDescriptionTasks) {
-					taskIndication = `<span class='task-indication' style="font-size: 22px; padding-inline: 5px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>`;
+					taskIndication = `<span class='task-indication' style="font-size: 22px; padding-inline: 5px; line-height: 18px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>`;
 				}
 
 				const orderedIndication = orderedKeywords.find(
@@ -605,7 +612,7 @@ const ListViewService = {
 						title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 ||
 						(event.description ?? '').toLowerCase().indexOf(x.toLowerCase()) !== -1
 				)
-					? `<span class='ordered-indication'  style="font-size: 22px; padding-inline: 5px; color:${orderedColor}; font-weight:bold;">&nbsp;<u>${ordered}</u></span>`
+					? `<span class='ordered-indication'  style="font-size: 22px; padding-inline: 5px; color:${orderedColor}; line-height: 18px; font-weight:bold;">&nbsp;<u>${ordered}</u></span>`
 					: '';
 
 				// if there's task indication (todo complete), and ordered, and if we check if there's a task, but without 'order' keywords there's no results - we do not need to show task indication since it was about 'need to order'
@@ -1043,7 +1050,7 @@ const ListViewService = {
 		}
 		return summaryPerDay;
 	},
-	getEstimatedPrice: (eventStore: EventStore, min: number, max: number, currency: TriplanCurrency, divClass?: string) => {
+	getEstimatedPrice: (eventStore: EventStore, min: number, max: number, currency: TriplanCurrency, divClass?: string, what?: string) => {
 		let estimatedPriceBlock = "";
 		let textKey = 'ESTIMATED_EXPANSES';
 		if (min == max) {
@@ -1054,6 +1061,7 @@ const ListViewService = {
 		}
 		if (estimatedPriceBlock != ""){
 			estimatedPriceBlock = TranslateService.translate(eventStore, textKey, {
+				what: what ? `${what} ` : '',
 				price: estimatedPriceBlock,
 				currency: TranslateService.translate(eventStore, `${currency}_sign`)
 			});
@@ -1076,6 +1084,26 @@ const ListViewService = {
 		// build summary per day and highlights
 		// todo complete: move highlights to the end? (since indent rules may change the order)
 		let { summaryPerDay, highlightsPerDay, totalPricePerDay, currency } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
+
+		const orderedKeywords = ['הוזמן', 'הזמנתי', 'ordered', 'booked', 'reserved'];
+		const bookedCalendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
+			eventStore,
+			calendarEvents.filter((c) => orderedKeywords.filter((k) => c.description.includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
+		);
+		const { totalPricePerDay: totalBookedPricePerDay } = ListViewService._buildSummaryPerDay(eventStore, bookedCalendarEventsPerDay);
+
+		function sumMaxValues(data: Record<string, MinMax>) {
+			let sum = 0;
+			for (const key in data) {
+				if (data[key] && typeof data[key].max === 'number') {
+					sum += data[key].max;
+				}
+			}
+			return sum;
+		}
+
+		let orderedItemsPrice = TranslateService.translate(eventStore, 'ORDERED_ITEMS_PRICE', { price: sumMaxValues(totalBookedPricePerDay), currency: TranslateService.translate(eventStore, `${currency}_sign`) });
+		orderedItemsPrice = `<div class="font-size-14 font-weight-bold"">💸 ${orderedItemsPrice}</div>`;
 
 		// handle or and indent rules
 		summaryPerDay = ListViewService._handleOrAndIndentRules(eventStore, summaryPerDay);
@@ -1122,7 +1150,7 @@ const ListViewService = {
 			return Object.keys(summaryPerDay).map((dayTitle) => {
 				const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : '';
 
-				let estimatedPriceBlock = ListViewService.getEstimatedPrice(eventStore, totalPricePerDay[dayTitle]["min"], totalPricePerDay[dayTitle]["max"], currency);
+				let estimatedPriceBlock = ListViewService.getEstimatedPrice(eventStore, totalPricePerDay[dayTitle]["min"], totalPricePerDay[dayTitle]["max"], currency, undefined, TranslateService.translate(eventStore, 'DAILY'));
 
 				// if there are notes, put it after them. otherwise, put them after the highlights.
 				const notesIndex = summaryPerDay[dayTitle].findIndex((e) => e.includes('"notes"'));
@@ -1162,6 +1190,7 @@ const ListViewService = {
             <h3><b><u>${tripSummaryTitle}</b></u></h3>
             <b>${noItemsPlaceholder}</b>
             ${estimatedPriceBlock}
+            ${orderedItemsPrice}
             ${estimatedPriceBlock != "" ? '<hr/>' : ""}
             ${getSummaryPerDayHTMLArray().join(divider)}
         </div>

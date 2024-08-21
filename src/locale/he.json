@@ -955,6 +955,8 @@
 	"FOOTER.AVG_SAVED_ITEMS_PER_USER": "ממוצע פריטים שמורים למשתמש: {X}",
 	"PRICE": "עלות: {price} {currency}",
 	"FREE_OF_CHARGE": "חינם",
-	"ESTIMATED_EXPANSES": "עלויות משוערות: {price} {currency}",
-	"ESTIMATED_EXPANSE": "עלות משוערת: {price} {currency}"
+	"DAILY": "יומית",
+	"ESTIMATED_EXPANSES": "עלות {what}משוערות: {price} {currency}",
+	"ESTIMATED_EXPANSE": "עלות {what}משוערת: {price} {currency}",
+	"ORDERED_ITEMS_PRICE": "עלויות של דברים שהוזמנו: {price} {currency}"
 }

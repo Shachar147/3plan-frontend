@@ -55,6 +55,8 @@
 	}
 
 	#locale-selector {
+		z-index: 500001;
+
 		div[class$='control'] {
 			background-color: transparent !important;
 			border: 0 !important;

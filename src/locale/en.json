@@ -840,6 +840,8 @@
 	"FOOTER.AVG_SAVED_ITEMS_PER_USER": "Total Saved Items per user: {X}",
 	"PRICE": "price: {price} {currency}",
 	"FREE_OF_CHARGE": "Free",
-	"ESTIMATED_EXPANSES": "Estimated expanses: {price} {currency}",
-	"ESTIMATED_EXPANSE": "Estimated expanse: {price} {currency}"
+	"DAILY": "daily",
+	"ESTIMATED_EXPANSES": "Estimated {what}expanses: {price} {currency}",
+	"ESTIMATED_EXPANSE": "Estimated {what}expanse: {price} {currency}",
+	"ORDERED_ITEMS_PRICE": "Ordered items price: {price} {currency}"
 }
