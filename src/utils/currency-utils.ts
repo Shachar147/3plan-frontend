@@ -15,3 +15,12 @@ export function getTotalInCurrency(priceList: Record<TriplanCurrency, number>, d
 
     return totalInDesiredCurrency.toFixed(2); // Returns rounded to two decimals
 }
+
+export function getSingleInCurrency(originalPrice: number, originalCurrency: TriplanCurrency, desiredCurrency: TriplanCurrency) {
+    // Convert to USD if needed
+    const totalInUSD = originalPrice / exchangeRates[originalCurrency as TriplanCurrency];
+
+    // Convert total USD to the desired currency
+    const totalInDesiredCurrency = totalInUSD * exchangeRates[desiredCurrency];
+    return totalInDesiredCurrency.toFixed(2); // Returns rounded to two decimals
+}

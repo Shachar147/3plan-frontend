@@ -373,7 +373,7 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 	const category = Number(calendarEvent.category!.toString());
 	const icon = calendarEvent.icon || eventStore.categoriesIcons[category];
 
-	const isOrdered = isEventAlreadyOrdered(calendarEvent);
+	const isOrdered = isEventAlreadyOrdered(eventStore, calendarEvent);
 	const isTripLocked = eventStore.isTripLocked;
 
 	// locked

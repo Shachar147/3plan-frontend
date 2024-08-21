@@ -70,8 +70,8 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 	function initSelectedCircle() {
 		setTimeout(() => {
 			const index = props.options.map((option) => option.key).indexOf(value);
-			const containerRect = containerRef.current.getBoundingClientRect();
-			const childRect = refs[index]!.getBoundingClientRect();
+			const containerRect = containerRef.current?.getBoundingClientRect();
+			const childRect = refs[index]?.getBoundingClientRect();
 			const width = Math.floor(childRect.width);
 
 			// take left / right based on current direction (for different languages)

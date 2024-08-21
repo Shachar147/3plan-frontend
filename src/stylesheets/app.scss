@@ -303,6 +303,10 @@ body {
 	padding-top: 70px;
 }
 
+.padding-top-80 {
+	padding-top: 80px;
+}
+
 .padding-top-150 {
 	padding-top: 150px;
 }
@@ -668,6 +672,12 @@ div[class$='-control'] {
 	}
 }
 
+.input-with-label .triplan-textarea-input textarea, .input-with-label .triplan-textarea-input input, .input-with-label .triplan-text-input textarea, .input-with-label .triplan-text-input input {
+	&:read-only {
+		border: 0 !important;
+	}
+}
+
 .textInput,
 .textAreaInput,
 .triplan-selector,
@@ -693,7 +703,7 @@ div[class$='-control'] {
 
 body.ltr {
 	.input-with-label label {
-		min-width: 140px;
+		min-width: 80px; // changed from 140 to 80 otherwise on edit mode it's just horrible
 	}
 }
 

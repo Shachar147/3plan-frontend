@@ -837,5 +837,11 @@
 	"FOOTER.TOTAL_DESTINATIONS_WITH_INTERESTS": "Total Destinations with interests: {X}",
 	"FOOTER.TOTAL_SAVED_COLLECTIONS": "Total Saved Collections: {X}",
 	"FOOTER.TOTAL_SAVED_ITEMS": "Total Saved Items: {X}",
-	"FOOTER.AVG_SAVED_ITEMS_PER_USER": "Total Saved Items per user: {X}"
+	"FOOTER.AVG_SAVED_ITEMS_PER_USER": "Total Saved Items per user: {X}",
+	"PRICE": "price: {price} {currency}",
+	"FREE_OF_CHARGE": "Free",
+	"DAILY": "daily",
+	"ESTIMATED_EXPANSES": "Estimated {what}expanses: {price} {currency}",
+	"ESTIMATED_EXPANSE": "Estimated {what}expanse: {price} {currency}",
+	"ORDERED_ITEMS_PRICE": "Ordered items price: {price} {currency}"
 }
