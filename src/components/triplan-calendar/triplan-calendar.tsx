@@ -267,7 +267,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			return;
 		}
 
-		const isOrdered = isEventAlreadyOrdered(changeInfo.oldEvent);
+		const isOrdered = isEventAlreadyOrdered(eventStore, changeInfo.oldEvent);
 		if (isOrdered) {
 			ReactModalService.internal.openModal(eventStore, {
 				...getDefaultSettings(eventStore),

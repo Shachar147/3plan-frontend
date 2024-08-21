@@ -298,6 +298,14 @@ export function isFlight(category: string, title: string) {
 	return isMatching(title, FLIGHT_KEYWORDS) || isMatching(category, FLIGHT_KEYWORDS);
 }
 
+export function isFlightCategory(eventStore: EventStore, categoryId: number) {
+	const category = eventStore.categories.find((c) => c.id == categoryId);
+	if (!category){
+		return false;
+	}
+	return (category.title == "טיסות" || category.title == TranslateService.translate(eventStore, 'CATEGORY.FLIGHTS'));
+}
+
 export function isDessert(category: string, title: string) {
 	return isMatching(category, ['desserts', 'קינוחים']) || isMatching(title, ['desserts', 'קינוחים', 'גלידה']);
 }
@@ -315,7 +323,7 @@ export function containsDuplicates(array: any[]) {
 }
 
 export function lockEvents(eventStore: EventStore, calendarEvent: CalendarEvent) {
-	const isOrdered = isEventAlreadyOrdered(calendarEvent);
+	const isOrdered = isEventAlreadyOrdered(eventStore, calendarEvent);
 	const isTripLocked = eventStore.isTripLocked;
 
 	if (isOrdered || isTripLocked) {
@@ -360,8 +368,10 @@ export function lockEvents(eventStore: EventStore, calendarEvent: CalendarEvent)
 	return calendarEvent;
 }
 
-export function isEventAlreadyOrdered(calendarEvent: EventInput) {
-	return calendarEvent.description && isMatching(calendarEvent.description?.toLowerCase(), ['הוזמן', 'ordered']);
+export function isEventAlreadyOrdered(eventStore: EventStore, calendarEvent: EventInput) {
+	return (calendarEvent.description && isMatching(calendarEvent.description?.toLowerCase(), ['הוזמן', 'ordered'])) || (
+		isFlightCategory(eventStore, calendarEvent.category!)
+	);
 }
 
 export function isDefined(value: any) {

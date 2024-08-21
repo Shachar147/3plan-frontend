@@ -416,6 +416,7 @@ const ListViewService = {
 			let counter = 0;
 			let lastGroupNum = 800;
 			prevLocation = undefined;
+
 			events.forEach((event: EventInput, index: number) => {
 				summaryPerDay[dayTitle] = summaryPerDay[dayTitle] || [];
 
@@ -445,6 +446,13 @@ const ListViewService = {
 				const endTime = ListViewService._formatTime(getEventDueDate(event).toLocaleTimeString());
 				const title = event.title;
 
+				let price = event.price != undefined ? ` (${TranslateService.translate(eventStore, 'PRICE', {
+					price: event.price > 0 ? event.price : TranslateService.translate(eventStore, 'FREE_OF_CHARGE'),
+					currency: event.price == 0 ? '' : TranslateService.translate(eventStore, `${event.currency}_sign`)
+				})})` : "";
+				if (price) {
+					price = `<span style="font-weight: normal">${price}</span>`;
+				}
 				const priority = event.priority;
 				const color =
 					[
@@ -675,7 +683,7 @@ const ListViewService = {
 
 				summaryPerDay[dayTitle].push(`
                     <span class="eventRow${rowClass}" style="${rowStyle}" data-eventId="${event.id}">
-                        ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${taskIndication}${orderedIndication}${navigation}</span>${description}
+                        ${icon}${iconIndent}${indent}${startTime} - ${endTime} ${prefix}<span style="color: ${color}; font-weight:${fontWeight};">${title}${price}${taskIndication}${orderedIndication}${navigation}</span>${description}
                     </span>
                 `);
 
