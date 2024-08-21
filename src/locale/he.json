@@ -954,5 +954,7 @@
 	"FOOTER.TOTAL_SAVED_ITEMS": "סה\"כ מקומות שמורים: {X}",
 	"FOOTER.AVG_SAVED_ITEMS_PER_USER": "ממוצע פריטים שמורים למשתמש: {X}",
 	"PRICE": "עלות: {price} {currency}",
-	"FREE_OF_CHARGE": "חינם"
+	"FREE_OF_CHARGE": "חינם",
+	"ESTIMATED_EXPANSES": "עלויות משוערות: {price} {currency}",
+	"ESTIMATED_EXPANSE": "עלות משוערת: {price} {currency}"
 }

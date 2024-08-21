@@ -1,16 +1,17 @@
-import { EventStore } from '../stores/events-store';
+import {EventStore} from '../stores/events-store';
 import moment from 'moment/moment';
 import TranslateService from './translate-service';
-import { EventInput } from '@fullcalendar/react';
-import { getEventDueDate, toDate } from '../utils/time-utils';
-import { CalendarEvent, LocationData } from '../utils/interfaces';
-import { runInAction } from 'mobx';
-import { GoogleTravelMode, ListViewSummaryMode, TriplanPriority } from '../utils/enums';
-import { priorityToColor } from '../utils/consts';
-import { BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString } from '../utils/utils';
-import { getEventDivHtml } from '../utils/ui-utils';
+import {EventInput} from '@fullcalendar/react';
+import {getEventDueDate, toDate} from '../utils/time-utils';
+import {CalendarEvent, LocationData} from '../utils/interfaces';
+import {runInAction} from 'mobx';
+import {GoogleTravelMode, ListViewSummaryMode, TriplanCurrency, TriplanPriority} from '../utils/enums';
+import {priorityToColor} from '../utils/consts';
+import {BuildEventUrl, getCoordinatesRangeKey, isMatching, padTo2Digits, toDistanceString} from '../utils/utils';
+import {getEventDivHtml} from '../utils/ui-utils';
 // @ts-ignore
 import _ from 'lodash';
+import {getSingleInCurrency} from "../utils/currency-utils";
 
 const destinationRoutesAddFromAndTo = true;
 
@@ -373,6 +374,47 @@ const ListViewService = {
 	_getSubitemIcon: (eventStore: EventStore) => {
 		return eventStore.getCurrentDirection() === 'rtl' ? '↵' : '↳';
 	},
+	_getEstimatedCosts: (eventStore: EventStore, calendarEventsPerDay: Record<string, EventInput>, desiredCurrency: TriplanCurrency) => {
+		let totalPricePerDay: Record<string, MinMax> = {};
+
+		Object.keys(calendarEventsPerDay).forEach((d) => {
+			let min = 0;
+			let max = 0;
+			const eventsToday = calendarEventsPerDay[d];
+			const totalEventsToday = calendarEventsPerDay[d].length;
+			let orGroup = [];
+			eventsToday.forEach((e, idx) => {
+				if (Object.keys(e).length == 0){
+					return;
+				}
+				const price = e.price ? Number(getSingleInCurrency(e.price, e.currency, desiredCurrency)) : 0;
+				console.log(e.title, e.price, price);
+				const prevLineWasOr = idx -1 >= 0 && Object.keys(eventsToday[idx-1]).length == 0;
+				const nextLineIsOr = idx + 1 < totalEventsToday && Object.keys(eventsToday[idx+1]).length == 0;
+				if (prevLineWasOr || nextLineIsOr){
+					orGroup.push(price);
+				} else if (orGroup.length > 0) {
+					min += Math.min(...orGroup);
+					max += Math.max(...orGroup);
+					orGroup = [];
+				} else {
+					min += price;
+					max += price;
+				}
+
+				if (idx + 1 == totalEventsToday && orGroup.length > 0) {
+					min += Math.min(...orGroup);
+					max += Math.max(...orGroup);
+				}
+			});
+
+			totalPricePerDay[d] = {
+				min, max
+			}
+		});
+
+		return totalPricePerDay;
+	},
 	_buildSummaryPerDay: (eventStore: EventStore, calendarEventsPerDay: Record<string, EventInput>) => {
 		const highlightsPerDay: Record<string, string> = {};
 
@@ -391,6 +433,9 @@ const ListViewService = {
 		} = ListViewService._initSummaryConfiguration();
 
 		let summaryPerDay: Record<string, string[]> = {};
+
+		const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
+		const totalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, calendarEventsPerDay, desiredCurrency);
 
 		Object.keys(calendarEventsPerDay).forEach((dayTitle) => {
 			const events = calendarEventsPerDay[dayTitle];
@@ -437,7 +482,7 @@ const ListViewService = {
 						(x) => x && x.trim().length
 					);
 					summaryPerDay[dayTitle].push(
-						`<span style="color:${notesColor}; font-size:10px; font-weight:bold;">${arr.join(' - ')}</span>`
+						`<span class="notes" style="color:${notesColor}; font-size:10px; font-weight:bold;">${arr.join(' - ')}</span>`
 					);
 					return;
 				}
@@ -714,7 +759,7 @@ const ListViewService = {
 			});
 		});
 
-		return { summaryPerDay, highlightsPerDay };
+		return { summaryPerDay, highlightsPerDay, totalPricePerDay, currency: desiredCurrency };
 	},
 	_addReachingNextDestinationInstructions: (
 		eventStore: EventStore,
@@ -998,6 +1043,26 @@ const ListViewService = {
 		}
 		return summaryPerDay;
 	},
+	getEstimatedPrice: (eventStore: EventStore, min: number, max: number, currency: TriplanCurrency, divClass?: string) => {
+		let estimatedPriceBlock = "";
+		let textKey = 'ESTIMATED_EXPANSES';
+		if (min == max) {
+			estimatedPriceBlock = min.toString();
+			textKey = 'ESTIMATED_EXPANSE';
+		} else {
+			estimatedPriceBlock = `${min} - ${max}`;
+		}
+		if (estimatedPriceBlock != ""){
+			estimatedPriceBlock = TranslateService.translate(eventStore, textKey, {
+				price: estimatedPriceBlock,
+				currency: TranslateService.translate(eventStore, `${currency}_sign`)
+			});
+
+			estimatedPriceBlock = `<div class="${divClass}">💸 ${estimatedPriceBlock}</div>`;
+		}
+
+		return estimatedPriceBlock;
+	},
 	buildHTMLSummary: (eventStore: EventStore, returnArray?: boolean) => {
 		let calendarEvents = eventStore.addSuggestedLeavingTime(eventStore.filteredCalendarEvents, eventStore); // used to be calendarEvents but now it also considering search and filters
 		const { tripSummaryTitle } = ListViewService._initTranslateKeys(eventStore);
@@ -1010,7 +1075,7 @@ const ListViewService = {
 
 		// build summary per day and highlights
 		// todo complete: move highlights to the end? (since indent rules may change the order)
-		let { summaryPerDay, highlightsPerDay } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
+		let { summaryPerDay, highlightsPerDay, totalPricePerDay, currency } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
 
 		// handle or and indent rules
 		summaryPerDay = ListViewService._handleOrAndIndentRules(eventStore, summaryPerDay);
@@ -1056,8 +1121,19 @@ const ListViewService = {
 		const getSummaryPerDayHTMLArray = () => {
 			return Object.keys(summaryPerDay).map((dayTitle) => {
 				const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : '';
+
+				let estimatedPriceBlock = ListViewService.getEstimatedPrice(eventStore, totalPricePerDay[dayTitle]["min"], totalPricePerDay[dayTitle]["max"], currency);
+
+				// if there are notes, put it after them. otherwise, put them after the highlights.
+				const notesIndex = summaryPerDay[dayTitle].findIndex((e) => e.includes('"notes"'));
+				if (notesIndex != -1) {
+					summaryPerDay[dayTitle].splice(notesIndex+1, 0, estimatedPriceBlock.replaceAll("div", "span"));
+					estimatedPriceBlock = "";
+				}
+
 				return `
                     <div class="list-view-day-title background-white"><div><b>${dayTitle}</b><span style="font-size:9px;">${highlights}</span></div></div>
+                    ${estimatedPriceBlock}  
                     ${summaryPerDay[dayTitle].join('<br/>').replaceAll('<br/><br/>', '<br/>')}
                 `;
 			});
@@ -1068,12 +1144,25 @@ const ListViewService = {
 		}
 
 		const FullSummary = () => {
+
+			let min = 0;
+			let max = 0;
+			Object.values(totalPricePerDay).forEach((minMax: MinMax) => {
+				min += minMax.min;
+				max += minMax.max;
+			});
+
+			let estimatedPriceBlock = ListViewService.getEstimatedPrice(eventStore, Number(min.toFixed(2)), Number(max.toFixed(2)), currency, "font-size-14 font-weight-bold");
+
+
 			// const divider = eventStore.isMobile ? '<br/><hr/>' : '<br/><hr/><br/>';
 			const divider = '<br/><hr/>';
 			return `
         <div style="max-width: 990px;">
             <h3><b><u>${tripSummaryTitle}</b></u></h3>
             <b>${noItemsPlaceholder}</b>
+            ${estimatedPriceBlock}
+            ${estimatedPriceBlock != "" ? '<hr/>' : ""}
             ${getSummaryPerDayHTMLArray().join(divider)}
         </div>
     `;
@@ -1082,5 +1171,10 @@ const ListViewService = {
 		return eventStore.listViewSummaryMode === ListViewSummaryMode.box ? InfoBoxSummary() : FullSummary();
 	},
 };
+
+interface MinMax {
+	min: number;
+	max: number;
+}
 
 export default ListViewService;

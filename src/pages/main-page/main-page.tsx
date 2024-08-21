@@ -257,7 +257,8 @@ function MainPage(props: MainPageProps) {
 		const onChange = (newVal: string) => eventStore.setListViewSummaryMode(newVal);
 
 		let content = null;
-		const paddingClass = eventStore.isMobile ? 'padding-top-70' : 'padding-top-60';
+		const haveEstimatedPrices = !!eventStore.calendarEvents.find((e) => e.price);
+		const paddingClass = eventStore.isMobile || haveEstimatedPrices ? 'padding-top-70' : 'padding-top-60';
 		if (eventStore.isMobile && eventStore.listViewShowDaysNavigator) {
 			const arr = ListViewService.buildHTMLSummary(eventStore, true);
 
