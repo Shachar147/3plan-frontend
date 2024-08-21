@@ -1,4 +1,4 @@
-import React, { CSSProperties, useContext } from 'react';
+import React, {CSSProperties, useContext} from 'react';
 import {
 	addLineBreaks,
 	calendarOrSidebarEventDetails,
@@ -13,8 +13,8 @@ import {
 	toDistanceString,
 	ucfirst,
 } from '../../utils/utils';
-import { TripDataSource, TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../utils/enums';
-import { eventStoreContext } from '../../stores/events-store';
+import {TripDataSource, TriplanCurrency, TriplanEventPreferredTime, TriplanPriority} from '../../utils/enums';
+import {eventStoreContext} from '../../stores/events-store';
 import {
 	CalendarEvent,
 	SidebarEvent,
@@ -23,21 +23,21 @@ import {
 	TriplanTask,
 	TriplanTaskStatus,
 } from '../../utils/interfaces';
-import { observer, Observer } from 'mobx-react';
+import {observer, Observer} from 'mobx-react';
 import './triplan-sidebar.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
-import Button, { ButtonFlavor } from '../common/button/button';
+import Button, {ButtonFlavor} from '../common/button/button';
 // @ts-ignore
 import * as _ from 'lodash';
-import { hotelColor, priorityToColor } from '../../utils/consts';
+import {hotelColor, priorityToColor} from '../../utils/consts';
 import ListViewService from '../../services/list-view-service';
-import ReactModalService, { ReactModalRenderHelper } from '../../services/react-modal-service';
-import { AllEventsEvent, DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
-import { runInAction } from 'mobx';
+import ReactModalService, {ReactModalRenderHelper} from '../../services/react-modal-service';
+import {AllEventsEvent, DateRangeFormatted} from '../../services/data-handlers/data-handler-base';
+import {runInAction} from 'mobx';
 import DistanceCalculator from './distance-calculator/distance-calculator';
-import { modalsStoreContext } from '../../stores/modals-store';
+import {modalsStoreContext} from '../../stores/modals-store';
 import TriplanSearch from '../triplan-header/triplan-search/triplan-search';
-import { DBService } from '../../services/data-handlers/db-service';
+import {DBService} from '../../services/data-handlers/db-service';
 import useAsyncMemo from '../../custom-hooks/use-async-memo';
 import {
 	addHours,
@@ -54,7 +54,8 @@ import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import LogHistoryService from '../../services/data-handlers/log-history-service';
 import TranslateService from '../../services/translate-service';
 import moment from 'moment/moment';
-import { withPlacesFinder } from '../../config/config';
+import {withPlacesFinder} from '../../config/config';
+import {getTotalInCurrency} from "../../utils/currency-utils";
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -1098,8 +1099,11 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					}
 					const locKey = locationToString(e.location);
 
+					priceList[currency] = priceList[currency] || 0;
+					priceList[currency] += price;
+
 					// if already seen
-					if ((locKey.length && seen[locKey]) || seen[e.title]) {
+					/*if ((locKey.length && seen[locKey]) || seen[e.title]) {
 						const prevDetails = locKey.length ? seen[locKey] : seen[e.title];
 						if (prevDetails.currency != currency) {
 							errors.push(`${e.title} - currency changed [${prevDetails.currency}, ${currency}]`);
@@ -1121,7 +1125,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 
 						priceList[currency] = priceList[currency] || 0;
 						priceList[currency] += price;
-					}
+					}*/
 				});
 
 			eventStore.allSidebarEvents
@@ -1308,7 +1312,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				const isUnknown = Object.keys(priceList).length == 0;
 				const isMultiCurrencies = Object.keys(priceList).length > 1;
 
-				const shouldShowPriceInline = isUnknown || !isMultiCurrencies;
+				const shouldShowPriceInline = isUnknown; // || !isMultiCurrencies; <- here we'll still want the total price in the desired currency
 				const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
 
 				const pricesSections = isUnknown
@@ -1320,6 +1324,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 							</div>
 					  ));
 
+				const currency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
 				return (
 					<div className="flex-col gap-4">
 						<div className="flex-row gap-8 align-items-center">
@@ -1330,6 +1335,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{!shouldShowPriceInline && (
 							<div className="flex-row gap-4 margin-inline-start-25">
 								{pricesSections.map((x, i) => (i > 0 ? <>+ {x}</> : x))}
+								<div className="font-weight-bold"> = {getTotalInCurrency(priceList, currency)} {TranslateService.translate(eventStore, `${currency}_sign`)}</div>
 							</div>
 						)}
 					</div>
