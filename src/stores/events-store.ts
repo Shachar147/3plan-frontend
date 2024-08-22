@@ -21,7 +21,7 @@ import {
 	TriplanPriority,
 	ViewMode,
 } from '../utils/enums';
-import { addDays, convertMsToHM, formatDate, getEndDate, toDate } from '../utils/time-utils';
+import {addDays, convertMsToHM, formatDate, getEndDate, serializeDuration, toDate} from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -405,7 +405,7 @@ export class EventStore {
 			// console.info(eachEventAndItsDirections);
 
 			const newEvents: CalendarEvent[] = [];
-			filteredEvents.forEach((e) => {
+			filteredEvents.forEach((e, idx) => {
 				// check opening hours
 				let isValidToOpenHours = true;
 				let errorReason = '';
@@ -503,6 +503,47 @@ export class EventStore {
 								});
 							}
 						}
+
+						const prev = idx > 0 ? filteredEvents[idx-1] : undefined;
+						let distanceKey = undefined;
+						let loc1, loc2;
+						let distanceResult: DistanceResult | undefined
+						let diffInSeconds = 0;
+						if (prev && e && prev.location && e.location){
+							loc1 = {
+								lat: prev.location.latitude,
+								lng: prev.location.longitude,
+								eventName: prev.title
+							};
+
+							loc2 = {
+								lat: e.location.latitude,
+								lng: e.location.longitude,
+								eventName: e.title
+							}
+
+							distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
+							distanceResult = eventStore.distanceResults.has(distanceKey)
+								? eventStore.distanceResults.get(distanceKey)
+								: undefined;
+							diffInSeconds = (new Date(e.start).getTime()/1000) - (new Date(prev.end).getTime()/1000);
+
+							if (diffInSeconds < (distanceResult?.duration_value ?? 0)) {
+								const missingTimeInSeconds = (distanceResult?.duration_value ?? 0) - diffInSeconds;
+								errorReason = TranslateService.translate(eventStore, 'YOU_WONT_MAKE_IT', {
+									missingTime: serializeDuration(this, missingTimeInSeconds)
+								});
+							}
+						}
+						console.log("Hereee!", toJS(eventStore.distanceResults), {
+							curr: e,
+							prev,
+							distanceKey,
+							distanceResult,
+							diffInSeconds,
+							requiredDiff: distanceResult?.duration_value ?? 0,
+							isOk: diffInSeconds >= (distanceResult?.duration_value ?? 0)
+						})
 
 						// console.log({
 						// 	isValidToOpenHours,

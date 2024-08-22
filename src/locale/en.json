@@ -844,5 +844,6 @@
 	"ESTIMATED_EXPANSES": "Estimated {what}expanses: {price} {currency}",
 	"ESTIMATED_EXPANSE": "Estimated {what}expanse: {price} {currency}",
 	"ORDERED_ITEMS_PRICE": "Ordered items price: {price} {currency}",
-	"ESTIMATED_PRICE_OF_BOOKED_ACTIVITIES": "Total price of booked activities:"
+	"ESTIMATED_PRICE_OF_BOOKED_ACTIVITIES": "Total price of booked activities:",
+	"YOU_WONT_MAKE_IT": "You won't make it. missing: {missingTime}"
 }

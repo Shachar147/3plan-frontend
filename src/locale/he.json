@@ -218,6 +218,12 @@
 	"DURATION.MIN": "דקה",
 	"DURATION.HOURS": "שעות",
 	"DURATION.HOUR": "שעה",
+	"day": "יום",
+	"days": "ימים",
+	"mins": "דקות",
+	"min": "דקה",
+	"hours": "שעות",
+	"hour": "שעה",
 	"DURATION.DAYS": "ימים",
 	"DURATION.DAY": "ימים",
 	"DISTANCE.KM": "קילומטר",
@@ -959,5 +965,6 @@
 	"DAILY": "יומית",
 	"ESTIMATED_EXPANSES": "עלות {what}משוערות: {price} {currency}",
 	"ESTIMATED_EXPANSE": "עלות {what}משוערת: {price} {currency}",
-	"ORDERED_ITEMS_PRICE": "עלויות של דברים שהוזמנו: {price} {currency}"
+	"ORDERED_ITEMS_PRICE": "עלויות של דברים שהוזמנו: {price} {currency}",
+	"YOU_WONT_MAKE_IT": "לא תספיקו. חסר: {missingTime}"
 }

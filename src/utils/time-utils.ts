@@ -349,3 +349,23 @@ export function getUserDateFormatLowercase(eventStore: EventStore){
 		return 'mm/dd/YYYY';
 	}
 }
+
+export function serializeDuration(eventStore: EventStore, seconds: number) {
+	const timeUnits = [
+		{ unit: 'day', seconds: 86400 },
+		{ unit: 'hour', seconds: 3600 },
+		{ unit: 'min', seconds: 60 }
+	];
+	let result = [];
+	for (let { unit, seconds: unitSeconds } of timeUnits) {
+		let value = Math.floor(seconds / unitSeconds);
+		if (value > 0) {
+			result.push(value + ' ' + TranslateService.translate(eventStore, unit + (value > 1 ? 's' : '')));
+			seconds %= unitSeconds;
+		}
+	}
+	if (seconds > 0 && result.length === 0) {
+		result.push(seconds + ' ' + TranslateService.translate(eventStore,'sec' + (seconds > 1 ? 's' : '')));
+	}
+	return result.join(' ');
+}

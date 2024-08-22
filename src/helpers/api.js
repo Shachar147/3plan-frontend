@@ -1,7 +1,5 @@
 import axios from 'axios';
 import { getServerAddress } from '../config/config';
-import { getToken } from './auth';
-import { addSeconds } from '../utils/time-utils';
 
 const unAuthorizedRoutes = ['signin'];
 
