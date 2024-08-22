@@ -1333,11 +1333,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				const nonCalendarMaxTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
 				const nonCalendarMinTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
 
-
-				console.log({
-					calendarTotalPricePerDay, bookedTotalPricePerDay, bookedTotal, calendarMinTotal, calendarMaxTotal, nonCalendarTotalPricePerDay, nonCalendarMaxTotal
-				});
-
 				const isMultiCurrencies = false;
 				let isUnknown = false;
 				if (titleKey == 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES') {

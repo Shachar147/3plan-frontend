@@ -90,8 +90,6 @@ function MyTripsTab(){
             images.push("/images/trip-photo-1.jpg");
         }
 
-        console.log(trip.name, images);
-
         const isSharedTrip = myTripsStore.mySharedTrips.find((s) => s.id == trip.id);
         const item = {
             ...trip,
