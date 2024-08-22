@@ -44,6 +44,7 @@ import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
 import LogHistoryService from '../services/data-handlers/log-history-service';
 import {endpoints} from "../v2/utils/endpoints";
+import {string} from "prop-types";
 
 const defaultModalSettings = {
 	show: false,
@@ -278,6 +279,51 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
+	validateArrivalTime = (filteredEvents: CalendarEvent[], eventStore: EventStore, e:CalendarEvent, idx: number): string => {
+		const prev = idx > 0 ? filteredEvents[idx-1] : undefined;
+		let distanceKey = undefined;
+		let loc1, loc2;
+		let distanceResult: DistanceResult | undefined
+		let diffInSeconds = 0;
+		if (prev && e && prev.location && e.location){
+			loc1 = {
+				lat: prev.location.latitude,
+				lng: prev.location.longitude,
+				eventName: prev.title
+			};
+
+			loc2 = {
+				lat: e.location.latitude,
+				lng: e.location.longitude,
+				eventName: e.title
+			}
+
+			distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
+			distanceResult = eventStore.distanceResults.has(distanceKey)
+				? eventStore.distanceResults.get(distanceKey)
+				: undefined;
+			diffInSeconds = (new Date(e.start).getTime()/1000) - (new Date(prev.end).getTime()/1000);
+
+			if (diffInSeconds < (distanceResult?.duration_value ?? 0)) {
+				const missingTimeInSeconds = (distanceResult?.duration_value ?? 0) - diffInSeconds;
+				return TranslateService.translate(eventStore, 'YOU_WONT_MAKE_IT', {
+					missingTime: serializeDuration(this, missingTimeInSeconds)
+				});
+			}
+		}
+		return '';
+
+		// console.log("Hereee!", toJS(eventStore.distanceResults), {
+		// 	curr: e,
+		// 	prev,
+		// 	distanceKey,
+		// 	distanceResult,
+		// 	diffInSeconds,
+		// 	requiredDiff: distanceResult?.duration_value ?? 0,
+		// 	isOk: diffInSeconds >= (distanceResult?.duration_value ?? 0)
+		// })
+	}
+
 	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[], eventStore: EventStore): CalendarEvent[] => {
 		if (this.showOnlyEventsWithDistanceProblems) {
 			return filteredEvents.map((x) => {
@@ -503,55 +549,10 @@ export class EventStore {
 								});
 							}
 						}
+					}
 
-						const prev = idx > 0 ? filteredEvents[idx-1] : undefined;
-						let distanceKey = undefined;
-						let loc1, loc2;
-						let distanceResult: DistanceResult | undefined
-						let diffInSeconds = 0;
-						if (prev && e && prev.location && e.location){
-							loc1 = {
-								lat: prev.location.latitude,
-								lng: prev.location.longitude,
-								eventName: prev.title
-							};
-
-							loc2 = {
-								lat: e.location.latitude,
-								lng: e.location.longitude,
-								eventName: e.title
-							}
-
-							distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
-							distanceResult = eventStore.distanceResults.has(distanceKey)
-								? eventStore.distanceResults.get(distanceKey)
-								: undefined;
-							diffInSeconds = (new Date(e.start).getTime()/1000) - (new Date(prev.end).getTime()/1000);
-
-							if (diffInSeconds < (distanceResult?.duration_value ?? 0)) {
-								const missingTimeInSeconds = (distanceResult?.duration_value ?? 0) - diffInSeconds;
-								errorReason = TranslateService.translate(eventStore, 'YOU_WONT_MAKE_IT', {
-									missingTime: serializeDuration(this, missingTimeInSeconds)
-								});
-							}
-						}
-						console.log("Hereee!", toJS(eventStore.distanceResults), {
-							curr: e,
-							prev,
-							distanceKey,
-							distanceResult,
-							diffInSeconds,
-							requiredDiff: distanceResult?.duration_value ?? 0,
-							isOk: diffInSeconds >= (distanceResult?.duration_value ?? 0)
-						})
-
-						// console.log({
-						// 	isValidToOpenHours,
-						// 	start: e.start,
-						// 	end: e.end,
-						// 	openingHours: openingHoursOnThisDay,
-						// 	errorReason,
-						// });
+					if (errorReason == ''){
+						errorReason = this.validateArrivalTime(filteredEvents, eventStore, e, idx);
 					}
 
 					if (errorReason !== '') {
