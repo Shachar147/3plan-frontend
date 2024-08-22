@@ -269,9 +269,10 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     function renderItemCategory(){
         return (
             <div className={getClasses("category-label", mainFeed && 'main-feed')}>
-                <div className="flex-row gap-8 flex-wrap-wrap">
+                <div className="flex-row gap-8 flex-wrap-wrap align-items-center">
                     {renderDestinationIcon()}
                     {renderCategoryName()}
+                    <span className="font-size-12">{item.imagesNames?.[currentSlide]}</span>
                 </div>
                 {(mainFeed) && renderSaveButton()}
             </div>

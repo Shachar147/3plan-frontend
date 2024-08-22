@@ -20,6 +20,7 @@ export interface IPointOfInterest {
     destination: string;
     description: string;
     images: string[];
+    imagesNames?: string[];
     source: string;
     more_info: string;
     category: string;

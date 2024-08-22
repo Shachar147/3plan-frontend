@@ -75,12 +75,12 @@ function MyTripsTab(){
     function renderTrip(trip: Trip){
         const classList = getClasses("align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
-        const itemsWithImages = trip.allEvents.filter((i) => i?.images?.length).filter((i) => {
+        const itemsWithImages = [...trip.calendarEvents, ...trip.allEvents].filter((i) => i?.images?.length).filter((i) => {
             const images = i.images.split(",");
             return !images[0].includes("googleapis");
         });
 
-        const images: string[] = itemsWithImages.map((i) => i.images.split(",")[0]);
+        const images: string[] = itemsWithImages.map((i) => i.images.split(",")[0].split("\n")[0]);
         const idxToDetails = {};
         itemsWithImages?.forEach((i, idx) =>
             idxToDetails[idx] = i
@@ -90,11 +90,14 @@ function MyTripsTab(){
             images.push("/images/trip-photo-1.jpg");
         }
 
+        console.log(trip.name, images);
+
         const isSharedTrip = myTripsStore.mySharedTrips.find((s) => s.id == trip.id);
         const item = {
             ...trip,
             tripId: trip.id,
             images: images,
+            imagesNames: images.map((i) => itemsWithImages.find((item) => item.images.includes(i))?.title),
             name: trip.name.replaceAll("-", " "),
             destination: trip.destinations?.join(", "),
             category: undefined,
