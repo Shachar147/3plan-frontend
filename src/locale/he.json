@@ -655,6 +655,7 @@
 	"usd_sign": "$",
 	"eur_sign": "€",
 	"ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES": "עלות משוערת לפי הפעילויות המשובצות:",
+	"ESTIMATED_PRICE_OF_BOOKED_ACTIVITIES": "עלות הפעילויות שהוזמנו:",
 	"ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES": "עלות משוערת לפי הפעילויות הלא המשובצות:",
 	"PUSH_TO_START": "מקם בראש הרשימה",
 	"MODALS.CATEGORY.ORDER": "מיקום",

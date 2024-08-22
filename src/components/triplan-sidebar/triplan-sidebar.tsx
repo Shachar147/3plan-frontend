@@ -6,7 +6,7 @@ import {
 	getCurrentUsername,
 	isBasketball,
 	isDessert,
-	isFlight,
+	isFlight, isFlightCategory,
 	isHotel,
 	isHotelsCategory,
 	locationToString,
@@ -30,7 +30,7 @@ import Button, {ButtonFlavor} from '../common/button/button';
 // @ts-ignore
 import * as _ from 'lodash';
 import {hotelColor, priorityToColor} from '../../utils/consts';
-import ListViewService from '../../services/list-view-service';
+import ListViewService, {MinMax} from '../../services/list-view-service';
 import ReactModalService, {ReactModalRenderHelper} from '../../services/react-modal-service';
 import {AllEventsEvent, DateRangeFormatted} from '../../services/data-handlers/data-handler-base';
 import {runInAction} from 'mobx';
@@ -56,6 +56,7 @@ import TranslateService from '../../services/translate-service';
 import moment from 'moment/moment';
 import {withPlacesFinder} from '../../config/config';
 import {getTotalInCurrency} from "../../utils/currency-utils";
+import {EventInput} from "@fullcalendar/react";
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -1309,20 +1310,87 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					console.log(errors);
 				}
 
-				const isUnknown = Object.keys(priceList).length == 0;
-				const isMultiCurrencies = Object.keys(priceList).length > 1;
 
-				const shouldShowPriceInline = isUnknown; // || !isMultiCurrencies; <- here we'll still want the total price in the desired currency
+				// build total booked prices, total calendar prices, total sidebar prices.
+				const orderedKeywords = ['הוזמן', 'הזמנתי', 'ordered', 'booked', 'reserved'];
+				const calendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
+					eventStore,
+					eventStore.calendarEvents
+				);
+				const bookedCalendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
+					eventStore,
+					eventStore.calendarEvents.filter((c) => orderedKeywords.filter((k) => c.description.includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
+				);
+				const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
+				const calendarTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, calendarEventsPerDay, desiredCurrency);
+				const bookedTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, bookedCalendarEventsPerDay, desiredCurrency);
+				const bookedTotal = Object.values(bookedTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
+				const calendarMinTotal = Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
+				const calendarMaxTotal = Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
+				const nonCalendarTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, {
+					"fakeDate": eventStore.allSidebarEvents
+				}, desiredCurrency);
+				const nonCalendarMaxTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
+				const nonCalendarMinTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
+
+
+				console.log({
+					calendarTotalPricePerDay, bookedTotalPricePerDay, bookedTotal, calendarMinTotal, calendarMaxTotal, nonCalendarTotalPricePerDay, nonCalendarMaxTotal
+				});
+
+				const isMultiCurrencies = false;
+				let isUnknown = false;
+				if (titleKey == 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES') {
+					isUnknown = Object.keys(calendarTotalPricePerDay).length == 0;
+					// @ts-ignore
+					priceList = {
+						// @ts-ignore
+						[desiredCurrency]: calendarMinTotal == calendarMaxTotal ? calendarMaxTotal : `${calendarMinTotal} - ${calendarMaxTotal}`
+					}
+				}
+				else if (titleKey == 'ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES') {
+					isUnknown = Object.keys(nonCalendarTotalPricePerDay).length == 0;
+					// @ts-ignore
+					priceList = {
+						// @ts-ignore
+						[desiredCurrency]: nonCalendarMinTotal == nonCalendarMaxTotal ? nonCalendarMaxTotal : `${nonCalendarMinTotal} - ${nonCalendarMaxTotal}`
+					}
+				}
+				else if (titleKey == 'ESTIMATED_PRICE_OF_BOOKED_ACTIVITIES') {
+					isUnknown = Object.keys(bookedTotalPricePerDay).length == 0;
+					// @ts-ignore
+					priceList = {
+						// @ts-ignore
+						[desiredCurrency]: bookedTotal
+					}
+				}
+				const shouldShowPriceInline = isUnknown || !Object.values(priceList)[0].includes("-");
 				const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
 
 				const pricesSections = isUnknown
 					? [<div className="font-weight-bold">{unknownText}</div>]
 					: Object.keys(priceList).map((currency) => (
-							<div className="font-weight-bold" key={`price-list-${currency}`}>
-								{priceList[currency as TriplanCurrency]}{' '}
-								{TranslateService.translate(eventStore, `${currency}_sign`)}
-							</div>
-					  ));
+						<div className="font-weight-bold" key={`price-list-${currency}`}>
+							{priceList[currency as TriplanCurrency]}{' '}
+							{TranslateService.translate(eventStore, `${currency}_sign`)}
+						</div>
+					));
+
+
+				// const isUnknown = Object.keys(priceList).length == 0;
+				// const isMultiCurrencies = Object.keys(priceList).length > 1;
+				//
+				// const shouldShowPriceInline = isUnknown; // || !isMultiCurrencies; <- here we'll still want the total price in the desired currency
+				// const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
+				//
+				// const pricesSections = isUnknown
+				// 	? [<div className="font-weight-bold">{unknownText}</div>]
+				// 	: Object.keys(priceList).map((currency) => (
+				// 			<div className="font-weight-bold" key={`price-list-${currency}`}>
+				// 				{priceList[currency as TriplanCurrency]}{' '}
+				// 				{TranslateService.translate(eventStore, `${currency}_sign`)}
+				// 			</div>
+				// 	  ));
 
 				const currency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
 				return (
@@ -1335,7 +1403,6 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						{!shouldShowPriceInline && (
 							<div className="flex-row gap-4 margin-inline-start-25">
 								{pricesSections.map((x, i) => (i > 0 ? <>+ {x}</> : x))}
-								<div className="font-weight-bold"> = {getTotalInCurrency(priceList, currency)} {TranslateService.translate(eventStore, `${currency}_sign`)}</div>
 							</div>
 						)}
 					</div>
@@ -1346,6 +1413,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				<div className={'sidebar-statistics margin-block-10'} key={`sidebar-statistics-money-title`}>
 					<div className="flex-col gap-8">
 						{getContent(priceList, 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES')}
+						{getContent(unscheduledPriceList, 'ESTIMATED_PRICE_OF_BOOKED_ACTIVITIES')}
 						{getContent(unscheduledPriceList, 'ESTIMATED_PRICE_OF_UNSCHEDULED_ACTIVITIES')}
 					</div>
 				</div>
