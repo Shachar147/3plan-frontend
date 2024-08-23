@@ -1428,7 +1428,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			groupTitle,
 			2,
 			undefined,
-			480
+			540
 		);
 		return (
 			<>
