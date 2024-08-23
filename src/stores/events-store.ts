@@ -280,7 +280,7 @@ export class EventStore {
 	// --- computed -------------------------------------------------------------
 
 	validateArrivalTime = (filteredEvents: CalendarEvent[], eventStore: EventStore, e:CalendarEvent, idx: number): string => {
-		return;
+		return "";
 
 		const prev = idx > 0 ? filteredEvents[idx-1] : undefined;
 		let distanceKey = undefined;

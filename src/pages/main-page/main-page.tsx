@@ -35,7 +35,6 @@ import axios from 'axios';
 import { BiEventsService } from '../../services/bi-events.service';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatDate } from '../../utils/time-utils';
-import PointOfInterest from "../../v2/components/point-of-interest/point-of-interest";
 import FeedView from "../../v2/components/feed-view/feed-view";
 
 interface MainPageProps {
