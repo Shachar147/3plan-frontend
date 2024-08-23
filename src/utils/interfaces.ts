@@ -162,6 +162,7 @@ export enum TripActions {
 	hideTrip = 'hideTrip',
 	unhideTrip = 'unhideTrip',
 	createdTrip = 'createdTrip',
+	ranDistanceCalculation = 'ranDistanceCalculation',
 
 	// share trips actions
 	sharedTrip = 'sharedTrip',

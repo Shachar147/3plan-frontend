@@ -218,6 +218,12 @@
 	"DURATION.MIN": "דקה",
 	"DURATION.HOURS": "שעות",
 	"DURATION.HOUR": "שעה",
+	"day": "יום",
+	"days": "ימים",
+	"mins": "דקות",
+	"min": "דקה",
+	"hours": "שעות",
+	"hour": "שעה",
 	"DURATION.DAYS": "ימים",
 	"DURATION.DAY": "ימים",
 	"DISTANCE.KM": "קילומטר",
@@ -823,6 +829,10 @@
 	"unhideTripFull": "{who} ביטל/ה את הסתרת הטיול",
 	"unhideTripYou": "ביטלת את הסתרת הטיול",
 	"unhideTripFullYou": "ביטלת את הסתרת הטיול",
+	"ranDistanceCalculation": "הריצ/ה חישוב מרחקים",
+	"ranDistanceCalculationYou": "הרצת חישוב מרחקים",
+	"ranDistanceCalculationFull": "{who} הריצ/ה חישוב מרחקים על {count2} נק׳ עניין",
+	"ranDistanceCalculationFullYou": "הרצת חישוב מרחקים על {count2} נק׳ עניין",
 	"createdTrip": "יצר/ה את הטיול",
 	"createdTripYou": "יצרת את הטיול",
 	"createdTripFull": "{who} יצר/ה את הטיול",
@@ -959,5 +969,6 @@
 	"DAILY": "יומית",
 	"ESTIMATED_EXPANSES": "עלות {what}משוערות: {price} {currency}",
 	"ESTIMATED_EXPANSE": "עלות {what}משוערת: {price} {currency}",
-	"ORDERED_ITEMS_PRICE": "עלויות של דברים שהוזמנו: {price} {currency}"
+	"ORDERED_ITEMS_PRICE": "עלויות של דברים שהוזמנו: {price} {currency}",
+	"YOU_WONT_MAKE_IT": "לא תספיקו. חסר: {missingTime}"
 }

@@ -4318,6 +4318,16 @@ const ReactModalService = {
 		};
 
 		const onConfirm = async () => {
+
+			// log
+			LogHistoryService.logHistory(
+				eventStore,
+				TripActions.ranDistanceCalculation,
+				{
+					count2: allLocations.length
+				}
+			);
+
 			const result = await apiPost(endpoints.v1.distance.calculateDistances, {
 				from: allLocations,
 				to: allLocations,

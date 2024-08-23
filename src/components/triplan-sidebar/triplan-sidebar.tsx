@@ -1319,7 +1319,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				);
 				const bookedCalendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
 					eventStore,
-					eventStore.calendarEvents.filter((c) => orderedKeywords.filter((k) => c.description.includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
+					eventStore.calendarEvents.filter((c) => orderedKeywords.filter((k) => (c.description ?? '').includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
 				);
 				const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
 				const calendarTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, calendarEventsPerDay, desiredCurrency);
@@ -1359,7 +1359,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						[desiredCurrency]: bookedTotal
 					}
 				}
-				const shouldShowPriceInline = isUnknown || !Object.values(priceList)[0].includes("-");
+				const shouldShowPriceInline = isUnknown || !Object.values(priceList)[0].includes("-") || eventStore.isMobile;
 				const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
 
 				const pricesSections = isUnknown
