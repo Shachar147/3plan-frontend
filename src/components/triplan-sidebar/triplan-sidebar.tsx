@@ -1359,7 +1359,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 						[desiredCurrency]: bookedTotal
 					}
 				}
-				const shouldShowPriceInline = isUnknown || !Object.values(priceList)[0].includes("-");
+				const shouldShowPriceInline = isUnknown || !Object.values(priceList)[0].includes("-") || eventStore.isMobile;
 				const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
 
 				const pricesSections = isUnknown
