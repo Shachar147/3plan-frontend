@@ -30,6 +30,8 @@ export class MyTripsStore {
            if (showLoader) {
                this.setIsLoading(false);
            }
+
+           this.hiddenTripsEnabled = !!this.myTrips.find((x) => x.isHidden) || !!this.mySharedTrips.find((x) => x.isHidden);
        })
    }
 
@@ -62,6 +64,11 @@ export class MyTripsStore {
 
     isTripOnEditMode(tripId:number): boolean{
        return !!this.tripsInEditMode[tripId];
+    }
+
+    @action
+    setShowHidden(showHidden: boolean){
+       this.showHidden = showHidden;
     }
 }
 

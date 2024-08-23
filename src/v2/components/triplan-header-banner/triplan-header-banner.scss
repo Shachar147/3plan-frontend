@@ -176,6 +176,12 @@ body.rtl {
     //}
   }
 
+  .triplan-header-banner-footer .tabular.menu {
+    > .item.active {
+      direction: rtl;
+    }
+  }
+
   .triplan-header-banner-slogan {
     text-align: right;
   }

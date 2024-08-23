@@ -970,5 +970,6 @@
 	"ESTIMATED_EXPANSES": "עלות {what}משוערות: {price} {currency}",
 	"ESTIMATED_EXPANSE": "עלות {what}משוערת: {price} {currency}",
 	"ORDERED_ITEMS_PRICE": "עלויות של דברים שהוזמנו: {price} {currency}",
-	"YOU_WONT_MAKE_IT": "לא תספיקו. חסר: {missingTime}"
+	"YOU_WONT_MAKE_IT": "לא תספיקו. חסר: {missingTime}",
+	"HIDDEN_TRIPS": "טיולים מוסתרים:"
 }

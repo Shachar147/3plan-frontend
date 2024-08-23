@@ -17,6 +17,7 @@ import LogHistoryService from "../../../services/data-handlers/log-history-servi
 import {TripActions} from "../../../utils/interfaces";
 import './my-trips-tab.scss';
 import moment from "moment";
+import Button, {ButtonFlavor} from "../../../components/common/button/button";
 
 
 function MyTripsTab(){
@@ -323,8 +324,24 @@ function MyTripsTab(){
     }
 
     return (
-        <div className="flex-row justify-content-center flex-wrap-wrap align-items-start" key={myTripsStore.myTrips?.length}>
-            {myTripsStore.allTripsSorted?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.allTripsSorted.map(renderTrip)}
+        <div className="flex-column align-items-start">
+            {myTripsStore.showHidden && <h2 style={{ marginInline: "80px", width: "100%", textAlign: "start" }}>{TranslateService.translate(eventStore, 'HIDDEN_TRIPS')}</h2>}
+            <div className="flex-row justify-content-center flex-wrap-wrap align-items-start" key={myTripsStore.myTrips?.length}>
+                {myTripsStore.allTripsSorted?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.allTripsSorted.map(renderTrip)}
+                {myTripsStore.hiddenTripsEnabled && (
+                    <Button
+                        onClick={() => {
+                            myTripsStore.setShowHidden(!myTripsStore.showHidden);
+                        }}
+                        flavor={ButtonFlavor.link}
+                        className="width-100-percents text-align-center"
+                        text={TranslateService.translate(
+                            eventStore,
+                            myTripsStore.showHidden ? 'SHOW_TRIPS_LIST' : 'SHOW_HIDDEN_TRIPS_LIST'
+                        )}
+                    />
+                )}
+            </div>
         </div>
     )
 

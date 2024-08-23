@@ -849,5 +849,6 @@
 	"ranDistanceCalculation": "Ran distance calculation",
 	"ranDistanceCalculationYou": "You ran distance calculation",
 	"ranDistanceCalculationFull": "{who} ran distance calculation on {count2} activities",
-	"ranDistanceCalculationFullYou": "You ran distance calculation on {count2} activities"
+	"ranDistanceCalculationFullYou": "You ran distance calculation on {count2} activities",
+	"HIDDEN_TRIPS": "Hidden Trips:"
 }

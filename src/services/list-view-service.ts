@@ -1087,7 +1087,7 @@ const ListViewService = {
 		const orderedKeywords = ['הוזמן', 'הזמנתי', 'ordered', 'booked', 'reserved'];
 		const bookedCalendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
 			eventStore,
-			calendarEvents.filter((c) => orderedKeywords.filter((k) => c.description.includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
+			calendarEvents.filter((c) => orderedKeywords.filter((k) => (c.description ?? "").includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
 		);
 		const { totalPricePerDay: totalBookedPricePerDay } = ListViewService._buildSummaryPerDay(eventStore, bookedCalendarEventsPerDay);
 
