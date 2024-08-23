@@ -272,7 +272,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 <div className="flex-row gap-8 flex-wrap-wrap align-items-center">
                     {renderDestinationIcon()}
                     {renderCategoryName()}
-                    <span className="font-size-12">{item.imagesNames?.[currentSlide]}</span>
+                    <span className="item-name font-size-12">{item.imagesNames?.[currentSlide]}</span>
                 </div>
                 {(mainFeed) && renderSaveButton()}
             </div>
@@ -313,7 +313,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
             <div className="poi-left">
                 <div className="carousel-wrapper" onClick={(e) => (item.images?.length > 1) && e.stopPropagation()}>
                     {/*todo complete - fix carousel on hebrew*/}
-                    <Carousel showThumbs={false} showIndicators={false} onChange={(idx) => {
+                    <Carousel showThumbs={false} showIndicators={false} infiniteLoop={true} onChange={(idx) => {
                         setCurrentSlide(idx);
                     }}>
                         {item.images?.map((image, index) => (
