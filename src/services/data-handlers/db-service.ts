@@ -101,6 +101,9 @@ export class DBService implements BaseDataHandler {
 
 	async getTripData(tripName?: string): Promise<Trip> {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getTripByName(tripName!));
+		if (!res){
+			window.location.href = "/login";
+		}
 		return res.data as Trip;
 	}
 

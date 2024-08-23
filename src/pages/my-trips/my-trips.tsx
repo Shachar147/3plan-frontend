@@ -29,6 +29,7 @@ import LogHistoryService from '../../services/data-handlers/log-history-service'
 import { TripActions } from '../../utils/interfaces';
 
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
+const loadingTripsPlaceholderIcon = './images/loadingTrips.gif';
 
 function MyTrips() {
 	const [dataSource, setDataSource] = useState<TripDataSource>(
@@ -156,8 +157,16 @@ function MyTrips() {
 					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder'],
 					// eventStore.isListView && 'hidden'
 				)}
+				style={{
+					backgroundImage: `url('${loadingTripsPlaceholderIcon}')`,
+					backgroundSize: 'auto 100%',
+					backgroundRepeat: 'no-repeat',
+					backgroundPositionX: 'center',
+					backgroundPositionY: '-20px',
+					paddingTop: "220px",
+					color: "var(--darkest-blue)"
+				}}
 			>
-				<img src={noTripsPlaceholderIcon} className="opacity-0-3" />
 				{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}
 			</div>
 		);
