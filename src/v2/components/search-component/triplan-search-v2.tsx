@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import './search-component.scss';
 import TranslateService from "../../../services/translate-service";
 import { eventStoreContext } from "../../../stores/events-store";
@@ -26,12 +26,18 @@ export interface SearchSuggestion {
 const AUTO_COMPLETE_MIN_CHARACTERS = 3;
 
 const TriplanSearchV2 = () => {
+    const [_searchQuery, _setSearchQuery] = useState<string>(getParameterFromHash('q') ?? '');
     const [searchQuery, setSearchQuery] = useState<string>(getParameterFromHash('q') ?? '');
     const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [chosenName, setChosenItem] = useState('');
     const [rerenderCounter, setReRenderCounter] = useState(0);
     const [searchValueFromHash, setSearchValueFromHash] = useState((getParameterFromHash('q')?.length ?? 0) > 0)
+    const debounceInputChange = useRef<NodeJS.Timeout | undefined>(undefined);
+
+    useEffect(() => {
+        _setSearchQuery(searchQuery);
+    }, [searchQuery])
 
     const eventStore = useContext(eventStoreContext);
     useHandleWindowResize();
@@ -57,16 +63,23 @@ const TriplanSearchV2 = () => {
     // Function to handle input change
     const handleInputChange = (event: any) => {
         const query = event.target.value;
-        setSearchValueFromHash(false);
-        setSearchQuery(query);
-        // Mocked suggestions for demo purpose
-        const filteredSuggestions = [{ name: TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT"), category: "", destination: "", hideImage: true}];
-        setSuggestions(filteredSuggestions);
-        setShowSuggestions(true);
-        rootStore.triggerTabsReRender();
+        _setSearchQuery(query);
+
+        clearTimeout(debounceInputChange.current);
+        debounceInputChange.current = setTimeout(() => {
+            setSearchValueFromHash(false);
+            setSearchQuery(query);
+            // Mocked suggestions for demo purpose
+            const filteredSuggestions = [{ name: TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT"), category: "", destination: "", hideImage: true}];
+            setSuggestions(filteredSuggestions);
+            setShowSuggestions(true);
+            rootStore.triggerTabsReRender();
+        }, 300)
     };
 
     const handleResetSearchClick = () => {
+        clearTimeout(debounceInputChange.current);
+
         setSearchValueFromHash(false);
         setSearchQuery("");
         setSuggestions([]);
@@ -120,13 +133,13 @@ const TriplanSearchV2 = () => {
                 <input
                     className="search-input"
                     type="text"
-                    value={searchQuery}
+                    value={_searchQuery}
                     onChange={handleInputChange}
                     placeholder={TranslateService.translate(eventStore, `HEADER_SEARCH_PLACEHOLDER${isShort}`)}
                     autoComplete="off"
                 />
-                {searchQuery.length > 0 && <i className="fa fa-times" aria-hidden="true" onClick={() => handleResetSearchClick()} />}
-                <button className="search-button" type="button" onClick={() => handleSuggestionClick({ name: searchQuery, type: 'city' } as unknown as SearchSuggestion)}>
+                {_searchQuery.length > 0 && <i className="fa fa-times" aria-hidden="true" onClick={() => handleResetSearchClick()} />}
+                <button className="search-button" type="button" onClick={() => handleSuggestionClick({ name: _searchQuery, type: 'city' } as unknown as SearchSuggestion)}>
                     {TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
                 </button>
             </div>
