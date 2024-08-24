@@ -514,13 +514,19 @@ const ListViewService = {
 				const endTime = ListViewService._formatTime(getEventDueDate(event).toLocaleTimeString());
 				const title = event.title;
 
-				let price = event.price != undefined ? ` (${TranslateService.translate(eventStore, 'PRICE', {
+				let price = event.price != undefined ? `${TranslateService.translate(eventStore, 'PRICE', {
 					price: event.price > 0 ? formatNumberWithCommas(event.price) : TranslateService.translate(eventStore, 'FREE_OF_CHARGE'),
 					currency: event.price == 0 ? '' : TranslateService.translate(eventStore, `${event.currency}_sign`)
-				})})` : "";
+				})}` : "";
 				if (price) {
-					price = price.replace(" )",")");
-					price = `<span style="font-weight: normal">${price}</span>`;
+					price = price.trim();
+
+					if (event.price != desiredCurrency && event.price != 0) {
+						const convertedPrice = getSingleInCurrency(event.price, event.currency, desiredCurrency);
+						price += ` = ${convertedPrice} ${TranslateService.translate(eventStore, desiredCurrency + '_sign')}`
+					}
+
+					price = `<span style="font-weight: normal"> (${price})</span>`;
 				}
 				const priority = event.priority;
 				const color =
