@@ -647,10 +647,10 @@
 	"changedTripDatesYou": "You changed trip dates",
 	"changedTripDatesFull": "{who} changed trip dates",
 	"changedTripDatesFullYou": "You Changed trip dates",
-	"clearedCalendar": "Cleared the calendar (removed {count} activities)",
-	"clearedCalendarYou": "You cleared the calendar (removed {count} activites )",
-	"clearedCalendarFull": "{who} cleared the calendar (removed {count} activities)",
-	"clearedCalendarFullYou": "You cleared the calendar (removed {count} activities)",
+	"clearedCalendar": "Cleared the calendar (removed {count2} activities)",
+	"clearedCalendarYou": "You cleared the calendar (removed {count2} activites )",
+	"clearedCalendarFull": "{who} cleared the calendar (removed {count2} activities)",
+	"clearedCalendarFullYou": "You cleared the calendar (removed {count2} activities)",
 	"unlockedTrip": "Unlocked the trip",
 	"unlockedTripYou": "You unlocked the trip",
 	"unlockedTripFull": "{who} unlocked the trip",
@@ -801,6 +801,7 @@
 	"CATEGORY.CITIES": "Cities",
 	"CATEGORY.BEACHES": "Beaches",
 	"CATEGORY.BEACH_BARS": "Beach bars",
+	"CATEGORY.CLUBS": "Clubs",
 	"CATEGORY.MUSEUMS": "Museums",
 	"X_IN_Y": "{X} in {Y}",
 	"TOP_PICKS": "Top picks",
@@ -850,5 +851,9 @@
 	"ranDistanceCalculationYou": "You ran distance calculation",
 	"ranDistanceCalculationFull": "{who} ran distance calculation on {count2} activities",
 	"ranDistanceCalculationFullYou": "You ran distance calculation on {count2} activities",
-	"HIDDEN_TRIPS": "Hidden Trips:"
+	"HIDDEN_TRIPS": "Hidden Trips:",
+	"CLEAR_CALENDAR_EVENTS.LOCKED_ITEM.DESCRIPTION": "There is one already ordered activity\ndo you want to clear it too?",
+	"CLEAR_CALENDAR_EVENTS.LOCKED_ITEMS.DESCRIPTION": "There are {count2} already ordered activities\ndo you want to clear them too?",
+	"CLEAR_ALL": "Clear all",
+	"CLEAR_ONLY_NON_ORDERED": "Clear only non-ordered"
 }

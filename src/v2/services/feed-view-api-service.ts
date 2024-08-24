@@ -15,7 +15,7 @@ export const SourceToUrl = (destination: string, page: number): Record<string, s
         'GetYourGuide': endpoints.v2.poi.external.getyourguide(destination, page),
         'TripAdvisor': endpoints.v2.poi.external.tripadvisor(destination, page),
     };
-    if (destination === "Dubai"){
+    if ("Dubai".includes(destination)){
         base["Dubai.co.il"] = endpoints.v2.poi.external.dubaicoil(destination, page);
     }
     return base;

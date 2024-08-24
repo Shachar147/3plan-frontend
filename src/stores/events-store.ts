@@ -25,7 +25,13 @@ import {addDays, convertMsToHM, formatDate, getEndDate, serializeDuration, toDat
 
 // @ts-ignore
 import _ from 'lodash';
-import { coordinateToString, generate_uuidv4, getCoordinatesRangeKey, lockEvents } from '../utils/utils';
+import {
+	coordinateToString,
+	generate_uuidv4,
+	getCoordinatesRangeKey,
+	isEventAlreadyOrdered,
+	lockEvents
+} from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
 import {
 	AllEventsEvent,
@@ -1049,7 +1055,57 @@ export class EventStore {
 
 		return Promise.all([promise1, promise2]).then(() => {
 			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
-				count,
+				count2: count,
+				type: 'all activities'
+			});
+		});
+	}
+
+	@computed
+	get orderedCalendarEvents(): CalendarEvent[]{
+		return this.calendarEvents.filter((x) => isEventAlreadyOrdered(this, x));
+	}
+
+	@computed
+	get nonOrderedCalendarEvents(): CalendarEvent[]{
+		return this.calendarEvents.filter((x) => !isEventAlreadyOrdered(this, x));
+	}
+
+	@action
+	clearNonOrderedCalendarEvents() {
+		// add back to sidebar
+		const newEvents = { ...this.sidebarEvents };
+		const eventToCategory: any = {};
+		const eventIdToEvent: any = {};
+		this.allEventsComputed.forEach((e) => {
+			eventToCategory[e.id] = e.category;
+			eventIdToEvent[e.id] = e;
+		});
+
+		const count = this.nonOrderedCalendarEvents.length;
+
+		this.nonOrderedCalendarEvents.forEach((event) => {
+			const eventId = event.id!;
+			const categoryId = eventToCategory[eventId];
+			const sidebarEvent = eventIdToEvent[eventId];
+			delete sidebarEvent.start;
+			delete sidebarEvent.end;
+
+			sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
+			sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
+
+			newEvents[categoryId] = newEvents[categoryId] || [];
+			newEvents[categoryId].push(sidebarEvent);
+		});
+
+		const promise1 = this.setSidebarEvents(newEvents);
+		this.allowRemoveAllCalendarEvents = true;
+		const promise2 = this.setCalendarEvents(this.orderedCalendarEvents);
+
+		return Promise.all([promise1, promise2]).then(() => {
+			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
+				count2: count,
+				type: 'non ordered'
 			});
 		});
 	}
@@ -1120,7 +1176,9 @@ export class EventStore {
 	@action
 	autoOpenDistanceSidebarGroup() {
 		// disable this feature for now, it's annoying.
-		// return;
+		if (localStorage.getItem('distanceSectionAutoOpened')) {
+			return;
+		}
 
 		if (this.closedDistanceAutoOpened) {
 			return;
@@ -1128,6 +1186,7 @@ export class EventStore {
 		this.openSidebarGroup(SidebarGroups.DISTANCES);
 		this.openSidebarGroup(SidebarGroups.DISTANCES_NEARBY);
 		this.distanceSectionAutoOpened = true;
+		localStorage.setItem('distanceSectionAutoOpened', "1")
 	}
 
 	@action

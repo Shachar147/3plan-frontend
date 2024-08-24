@@ -5,7 +5,7 @@ import {
 	getClasses,
 	getCurrentUsername,
 	isBasketball,
-	isDessert,
+	isDessert, isEventAlreadyOrdered,
 	isFlight, isFlightCategory,
 	isHotel,
 	isHotelsCategory,
@@ -203,7 +203,31 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 				text={TranslateService.translate(eventStore, 'CLEAR_CALENDAR_EVENTS.BUTTON_TEXT')}
 				disabledReason={disabledReason}
 				onClick={() => {
-					ReactModalService.openConfirmModal(eventStore, eventStore.clearCalendarEvents.bind(eventStore));
+					const orderedEvents = eventStore.orderedCalendarEvents;
+					if (orderedEvents.length > 0){
+						const descriptionKey = orderedEvents.length == 1 ? 'CLEAR_CALENDAR_EVENTS.LOCKED_ITEM.DESCRIPTION' : 'CLEAR_CALENDAR_EVENTS.LOCKED_ITEMS.DESCRIPTION';
+
+						const content = () => (
+							<div className="flex-col align-items-center justify-content-center gap-10">
+								<div>{TranslateService.translate(eventStore, descriptionKey, {
+									count2: orderedEvents.length
+								})}</div>
+								<Button
+									flavor={ButtonFlavor.secondary}
+									// className={className}
+									onClick={() => {
+										eventStore.clearCalendarEvents();
+										ReactModalService.internal.closeModal(eventStore);
+									}}
+									text={TranslateService.translate(eventStore, 'CLEAR_ALL')}
+								/>
+							</div>
+						)
+
+						ReactModalService.openConfirmModalContent(eventStore, eventStore.clearNonOrderedCalendarEvents.bind(eventStore), undefined, content, 'CLEAR_ONLY_NON_ORDERED');
+					} else {
+						ReactModalService.openConfirmModal(eventStore, eventStore.clearCalendarEvents.bind(eventStore));
+					}
 				}}
 				flavor={ButtonFlavor['movable-link']}
 			/>
@@ -1886,20 +1910,28 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					? formatTimeFromISODateString(updatedAtWithOffset.toISOString())
 					: formatDate(updatedAt);
 
+			let count = historyRow.actionParams.count;
+			if (count == undefined) {
+				if (historyRow.action == TripActions.changedCategory){
+					count = Object.keys(historyRow.actionParams).filter(
+						(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
+					).length - 1;
+				} else {
+					count = Object.keys(historyRow.actionParams).filter(
+						(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
+					).length;
+				}
+			}
+
+			historyRow.actionParams.count2 = historyRow.actionParams.count2 ?? historyRow.actionParams.count;
+
 			const title = TranslateService.translate(
 				eventStore,
 				historyRow.updatedBy !== getCurrentUsername() ? historyRow.action : historyRow.action + 'You',
 				{
 					...historyRow.actionParams,
 					eventName: historyRow.eventName,
-					count:
-						historyRow.actionParams.count ?? historyRow.action == TripActions.changedCategory
-							? Object.keys(historyRow.actionParams).filter(
-									(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
-							  ).length - 1
-							: Object.keys(historyRow.actionParams).filter(
-									(c) => ['openingHours', 'images', 'timingError', 'className', 'id'].indexOf(c) == -1
-							  ).length,
+					count,
 					categoryName: historyRow.actionParams?.categoryName,
 					count2: historyRow.actionParams.count2,
 					totalAffected:

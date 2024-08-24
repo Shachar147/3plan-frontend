@@ -129,6 +129,9 @@ export class DBService implements BaseDataHandler {
 	async getTripsShort(_: any): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getAllTripsShort);
 		const trips: Trip[] = [];
+		if (!res){
+			window.location.href = "/login";
+		}
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);
 		});

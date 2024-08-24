@@ -3939,6 +3939,28 @@ const ReactModalService = {
 			},
 		});
 	},
+	openConfirmModalContent: (
+		eventStore: EventStore,
+		callback: () => void,
+		titleKey = 'MODALS.ARE_YOU_SURE',
+		content: () => React.ReactNode,
+		continueKey = 'MODALS.CONTINUE',
+		confirmBtnCssClass?: string,
+	) => {
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, titleKey)}`,
+			content,
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, continueKey),
+			confirmBtnCssClass: getClasses('primary-button', confirmBtnCssClass),
+			onConfirm: async () => {
+				await callback();
+
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
 	openConfirmModal: (
 		eventStore: EventStore,
 		callback: () => void,
@@ -3946,13 +3968,14 @@ const ReactModalService = {
 		contentKey = 'MODALS.ARE_YOU_SURE.CONTENT',
 		continueKey = 'MODALS.CONTINUE',
 		contentParams?: TranslationParams,
-		confirmBtnCssClass?: string
+		confirmBtnCssClass?: string,
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: `${TranslateService.translate(eventStore, titleKey)}`,
 			content: (
 				<div
+					className="white-space-pre-line"
 					dangerouslySetInnerHTML={{
 						__html: TranslateService.translate(eventStore, contentKey, contentParams),
 					}}
