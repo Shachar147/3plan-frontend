@@ -1,11 +1,11 @@
 import React, {CSSProperties, useContext} from 'react';
 import {
 	addLineBreaks,
-	calendarOrSidebarEventDetails,
+	calendarOrSidebarEventDetails, formatNumberWithCommas,
 	getClasses,
 	getCurrentUsername,
 	isBasketball,
-	isDessert, isEventAlreadyOrdered,
+	isDessert,
 	isFlight, isFlightCategory,
 	isHotel,
 	isHotelsCategory,
@@ -1346,16 +1346,22 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 					eventStore.calendarEvents.filter((c) => orderedKeywords.filter((k) => (c.description ?? '').includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
 				);
 				const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
-				const calendarTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, calendarEventsPerDay, desiredCurrency);
-				const bookedTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, bookedCalendarEventsPerDay, desiredCurrency);
-				const bookedTotal = Object.values(bookedTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
-				const calendarMinTotal = Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
-				const calendarMaxTotal = Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
+				const calendarTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, calendarEventsPerDay, desiredCurrency, false);
+				const bookedTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, bookedCalendarEventsPerDay, desiredCurrency, false);
+				let bookedTotal = Object.values(bookedTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
+				let calendarMinTotal = Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
+				let calendarMaxTotal = Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
 				const nonCalendarTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, {
 					"fakeDate": eventStore.allSidebarEvents
-				}, desiredCurrency);
-				const nonCalendarMaxTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
-				const nonCalendarMinTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
+				}, desiredCurrency, false);
+				let nonCalendarMaxTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
+				let nonCalendarMinTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
+
+				bookedTotal = formatNumberWithCommas(bookedTotal);
+				nonCalendarMaxTotal = formatNumberWithCommas(nonCalendarMaxTotal);
+				nonCalendarMinTotal = formatNumberWithCommas(nonCalendarMinTotal);
+				calendarMaxTotal = formatNumberWithCommas(calendarMaxTotal);
+				calendarMinTotal = formatNumberWithCommas(calendarMinTotal);
 
 				const isMultiCurrencies = false;
 				let isUnknown = false;

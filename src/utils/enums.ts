@@ -6,8 +6,8 @@ export enum TriplanCurrency {
 }
 export const exchangeRates = {
 	[TriplanCurrency.usd]: 1,    // base currency
-	[TriplanCurrency.eur]: 0.9, // 1 USD = 0.9 EUR
-	[TriplanCurrency.ils]: 3.72, // 1 USD = 3.72 ILS
+	[TriplanCurrency.eur]: 0.89, // 1 USD = 0.9 EUR
+	[TriplanCurrency.ils]: 3.69, // 1 USD = 3.72 ILS
 	[TriplanCurrency.aed]: 3.67  // 1 USD = 3.67 AED
 };
 

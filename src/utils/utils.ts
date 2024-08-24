@@ -374,6 +374,10 @@ export function isEventAlreadyOrdered(eventStore: EventStore, calendarEvent: Eve
 	);
 }
 
+export function formatNumberWithCommas(number) {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 export function isDefined(value: any) {
 	return typeof value !== 'undefined';
 }

@@ -945,6 +945,10 @@
 		min-width: 100%;
 		min-height: 100px;
 	}
+
+	.btn-lg {
+		max-width: max-content;
+	}
 }
 
 @media only screen and (max-height: 500px){
