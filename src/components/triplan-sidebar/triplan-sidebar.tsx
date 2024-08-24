@@ -474,7 +474,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 			) : null;
 		};
 
-		const separator = eventStore.isEnglish ? '\n' : ' ';
+		const separator = ' '; // eventStore.isEnglish ? '\n' : ' ';
 		const noLocationWarning = renderNoLocationEventsStatistics();
 		const noOpeningHoursWarning = renderNoOpeningHoursEventsStatistics();
 		const eventsWithTodoComplete = renderEventsWithTodoCompleteStatistics();
@@ -1082,7 +1082,7 @@ const TriplanSidebar = (props: TriplanSidebarProps) => {
 		const groupTitleKey = 'SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.DETAILS';
 		const groupTitle = TranslateService.translate(eventStore, groupTitleKey);
 
-		const separator = eventStore.isEnglish ? '\n' : ' ';
+		const separator = ' '; // eventStore.isEnglish ? '\n' : ' ';
 
 		const calendarSidebarStatistics = (
 			<>
