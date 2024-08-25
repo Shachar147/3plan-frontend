@@ -130,10 +130,6 @@ function MyTripsTab(){
         );
     }
 
-    function renderNoTripsPlaceholder(){
-        return TranslateService.translate(eventStore, 'NO_SAVED_COLLECTIONS');
-    }
-
     if (myTripsStore.isLoading) {
         const loaderDetails = LOADER_DETAILS();
         return (
@@ -323,10 +319,33 @@ function MyTripsTab(){
         );
     }
 
+    function renderNoTripsPlaceholder(){
+        return (
+            <div className="my-trips-actionbar width-100-percents align-items-center">
+                <hr className="width-100-percents"/>
+                <img src="/images/new-trip.png" width="200" />
+                <div className="flex-column gap-25">
+                    <h3>{TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE')}</h3>
+                    <span className="white-space-pre-line" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.DESCRIPTION')}} />
+                    <Button
+                        text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
+                        flavor={ButtonFlavor.secondary}
+                        className="padding-inline-15"
+                        onClick={() => navigate('/getting-started')}
+                    />
+                </div>
+                <br/><br/><br/>
+                <hr className="width-100-percents"/>
+            </div>
+        );
+    }
+
     return (
-        <div className="flex-column align-items-start">
-            {myTripsStore.showHidden && <h2 style={{ marginInline: "80px", width: "100%", textAlign: "start" }}>{TranslateService.translate(eventStore, 'HIDDEN_TRIPS')}</h2>}
-            <div className="flex-row justify-content-center flex-wrap-wrap align-items-start" key={myTripsStore.myTrips?.length}>
+        <div className="flex-column align-items-start margin-top-10">
+            <h2 className="main-feed-header">{
+                TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')
+            }</h2>
+            <div className="flex-row justify-content-center flex-wrap-wrap align-items-start width-100-percents" key={myTripsStore.myTrips?.length}>
                 {myTripsStore.allTripsSorted?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.allTripsSorted.map(renderTrip)}
                 {myTripsStore.hiddenTripsEnabled && (
                     <Button

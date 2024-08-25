@@ -180,7 +180,7 @@
 	"SHOW_DONE_TASKS": "הצג את כל המשימות",
 	"GROUP_TASKS_BY_EVENT": "קבץ משימות לפי פעילות",
 	"SHOW_TASKS_UNGROUPPED": "הצג את כל המשימות באותה הרשימה",
-	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP": "צור טיול חדש",
+	"GETTING_STARTED_PAGE.CREATE_NEW_TRIP": "צרו טיול חדש",
 	"GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP": "מתי הטיול שלכם?",
 	"GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP": "בחרו שם לטיול",
 	"GETTING_STARTED_PAGE.FILL_IN_TRIP_NAME": "אנא מלאו את שם הטיול לפני הלחיצה על כפתור זה",
@@ -1061,5 +1061,8 @@
 	"Málaga": "מלאגה",
 	"Luxembourg City": "לוקסמבורג סיטי",
 	"Stuttgart": "שטוטגרט",
-	"Bergen": "ברגן"
+	"Bergen": "ברגן",
+	"CREATE_NEW_TRIP_TITLE": "צרו טיול חדש בכלום זמן!",
+	"NO_SAVED_COLLECTIONS.DESCRIPTION": "אל דאגה! יצירת מקומות שמורים זה קלי קלות!\nנווטו לטאב <a href='#explore' class='navigate-to-explore'>מצא נק׳ עניין</a> כדי למצוא מקומות שאתם רוצים לבקר בהם → לחצו על כפתור הלב וזה ייצור אוסף של היעד של המקום שבחרתם!",
+	"CREATE_NEW_TRIP_TITLE.DESCRIPTION": "הטיולים שתיצור יישמרו לחשבון שלך\naויהיו זמינים עבורך תמיד, מכל מחשב או מכשיר נייד!"
 }

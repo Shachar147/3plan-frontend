@@ -12,6 +12,7 @@ import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab"
 import {myTripsContext} from "../../stores/my-trips-store";
 import {getClasses} from "../../../utils/utils";
 import {
+    exploreTabId,
     mainPageContentTabLsKey,
     myTripsTabId,
     savedCollectionsTabId,
@@ -118,7 +119,7 @@ function MainPageContent(){
         }
         return [
             {
-                id: "explore",
+                id: exploreTabId,
                 order: 0,
                 name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
                 icon: "fa-search",
@@ -130,7 +131,7 @@ function MainPageContent(){
                 name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
                     X: feedStore.savedItems.length
                 }),
-                icon: "fa-save",
+                icon: "fa-bookmark-o",
                 render: () => <TriplanTabContent content={<SavedCollectionsTab />} />
             },
             {
