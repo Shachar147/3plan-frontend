@@ -1,9 +1,14 @@
 import {observer} from "mobx-react";
 import TranslateService from "../../../services/translate-service";
-import React, {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import DataServices, {Trip, tripNameToLSTripName} from "../../../services/data-handlers/data-handler-base";
-import {formatShortDateStringIsrael, getAmountOfDays, getUserDateFormat} from "../../../utils/time-utils";
+import {
+    formatShortDateStringIsrael,
+    getAmountOfDays,
+    getUserDateFormat,
+    validateDateRange
+} from "../../../utils/time-utils";
 import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
 import {useNavigate} from "react-router-dom";
 import PointOfInterest from "../../components/point-of-interest/point-of-interest";
@@ -15,12 +20,32 @@ import {TripActions} from "../../../utils/interfaces";
 import './my-trips-tab.scss';
 import moment from "moment";
 import Button, {ButtonFlavor} from "../../../components/common/button/button";
+import DestinationSelector from "../../components/destination-selector/destination-selector";
+import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
+import {defaultCalendarEvents, defaultDateRange, defaultEvents, getDefaultCategories} from "../../../utils/defaults";
+import {TripDataSource, ViewMode} from "../../../utils/enums";
+import {DEFAULT_VIEW_MODE_FOR_NEW_TRIPS} from "../../../utils/consts";
+import {upsertTripProps} from "../../../services/data-handlers/db-service";
 
 
 function MyTripsTab(){
     const eventStore = useContext(eventStoreContext);
     const myTripsStore = useContext(myTripsContext);
     const navigate = useNavigate();
+
+    const [addNewTripMode, setAddNewTripMode] = useState(false);
+    const [errors, setErrors] = useState<Record<string, boolean>>({});
+    useHandleWindowResize();
+    const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
+    const [selectedDestinations, setSelectedDestinations] = useState([]);
+    const [tripName, setTripName] = useState<string>('');
+
+    useEffect(() => {
+        document.querySelector('body').classList.remove('rtl');
+        document.querySelector('body').classList.remove('ltr');
+        document.querySelector('body').classList.add(eventStore.getCurrentDirection());
+        eventStore.dataService.setCalendarLocale(eventStore.calendarLocalCode);
+    }, [eventStore.calendarLocalCode]);
 
     async function onEditTripSave(tripId: number, tripName: string, newName: string) {
         let isOk = true;
@@ -316,26 +341,163 @@ function MyTripsTab(){
         );
     }
 
+    async function createNewTrip(tripName: string) {
+        const areDatesValid = validateDateRange(eventStore, customDateRange.start, customDateRange.end);
+        errors.start = !areDatesValid;
+        errors.end = !areDatesValid;
+
+        if (tripName.length == 0) {
+            ReactModalService.internal.alertMessage(eventStore, 'MODALS.ERROR.TITLE', 'TRIP_NAME_EMPTY', 'error');
+            setErrors({
+                ...errors,
+                title: true,
+            });
+            return;
+        }
+
+        if (!areDatesValid) {
+            setErrors({
+                ...errors,
+                start: true,
+                end: true,
+            });
+            return;
+        }
+
+        if (new Date(customDateRange.end).getTime() < new Date(customDateRange.start).getTime()) {
+            setErrors({
+                start: true,
+                end: true,
+            });
+            ReactModalService.internal.alertMessage(
+                eventStore,
+                'MODALS.ERROR.TITLE',
+                'MODALS.ERROR.START_DATE_SMALLER',
+                'error'
+            );
+            return;
+        }
+
+        setErrors({});
+
+        const TripName = tripName.replace(/\s/gi, '-');
+
+        // local mode
+        if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
+            eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+            eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+            eventStore.setCustomDateRange(customDateRange);
+            eventStore.dataService.setDateRange(customDateRange, TripName);
+            navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+        } else {
+            const tripData: upsertTripProps = {
+                name: TripName,
+                dateRange: customDateRange,
+                calendarLocale: eventStore.calendarLocalCode,
+                allEvents: [],
+                sidebarEvents: defaultEvents,
+                calendarEvents: defaultCalendarEvents,
+                categories: getDefaultCategories(eventStore),
+                destinations: selectedDestinations
+            };
+
+            // backup
+            let { viewMode, mobileViewMode } = eventStore;
+
+            // @ts-ignore
+            await DataServices.DBService.createTrip(
+                tripData,
+                (res: any) => {
+                    // switch to map view as  the default view.
+                    eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+                    eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+
+                    eventStore.setCustomDateRange(customDateRange);
+                    eventStore.dataService.setDateRange(customDateRange, TripName);
+
+                    // keep to history:
+                    LogHistoryService.logHistory(eventStore, TripActions.createdTrip, {
+                        tripName: TripName,
+                    });
+
+                    navigate(`/plan/${res.data.name}`);
+                    // navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+                },
+                (e) => {
+                    // restore to backup
+                    eventStore.setViewMode(viewMode);
+                    eventStore.setMobileViewMode(mobileViewMode);
+
+                    if (e.response.data.statusCode === 409) {
+                        setErrors({
+                            title: true,
+                        });
+                        ReactModalService.internal.alertMessage(
+                            eventStore,
+                            'MODALS.ERROR.TITLE',
+                            'TRIP_ALREADY_EXISTS',
+                            'error'
+                        );
+                    } else {
+                        ReactModalService.internal.alertMessage(
+                            eventStore,
+                            'MODALS.ERROR.TITLE',
+                            'OOPS_SOMETHING_WENT_WRONG',
+                            'error'
+                        );
+                    }
+                },
+                () => {}
+            );
+        }
+    }
+
+    function updateErrorsOnDateChange(start: string, end: string) {
+        // means user already clicked on submit at least once.
+        if (Object.keys(errors).length) {
+            const isValid = validateDateRange(eventStore, start, end, undefined, undefined, undefined, false);
+
+            setErrors({
+                ...errors,
+                start: !isValid,
+                end: !isValid,
+            });
+        }
+    }
+
     function renderAddTripButton(flavor: ButtonFlavor = ButtonFlavor.secondary){
         return (
             <Button
-                text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
+                text={TranslateService.translate(eventStore, addNewTripMode ? 'CREATE_TRIP' : 'LANDING_PAGE.START_NOW')}
                 flavor={flavor}
                 className="padding-inline-15 font-size-14 font-weight-normal"
                 icon="fa-plus-square-o"
-                onClick={() => navigate('/getting-started')}
+                onClick={() => {
+                    if (addNewTripMode) {
+                        createNewTrip(tripName);
+                    } else {
+                        setAddNewTripMode(true);
+                    }
+                    // navigate('/getting-started')
+                }}
             />
         )
+    }
+
+    function renderDescription(){
+        return (
+            <span className="white-space-pre-line margin-bottom-20" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.DESCRIPTION')}} />
+        );
     }
 
     function renderNoTripsPlaceholder(){
         return (
             <div className="my-trips-actionbar width-100-percents align-items-center">
                 <hr className="width-100-percents"/>
-                <img src="/images/new-trip.png" width="200" />
+                <img src="/images/new-trip.png" className="border-radius-round" width="200" />
                 <div className="flex-column gap-5">
                     <h3>{TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE')}</h3>
-                    <span className="white-space-pre-line margin-bottom-20" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.DESCRIPTION')}} />
+                    {renderDescription()}
                     {renderAddTripButton()}
                 </div>
                 <br/><br/><br/>
@@ -344,27 +506,134 @@ function MyTripsTab(){
         );
     }
 
+    function renderCreateTripPlaceholder(){
+        return (
+            <div className="my-trips-actionbar width-100-percents align-items-center">
+                <hr className="width-100-percents"/>
+                <img src="/images/new-trip.png" className={getClasses('border-radius-round', 'fa-spin-reverse')} width="200" />
+                <div className="flex-column gap-5">
+                    <h3>{TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP')}</h3>
+                    {renderCreateTripForm()}
+                    {renderAddTripButton()}
+                </div>
+                <br/><br/><br/>
+                <hr className="width-100-percents"/>
+            </div>
+        );
+    }
+
+    function renderCreateTripForm(){
+        return (
+            <div
+                className="custom-dates-container align-items-center margin-bottom-15"
+                style={{
+                    backgroundColor: 'transparent',
+                    border: 0,
+                }}
+            >
+                <div className="main-font font-size-20">
+                    {TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
+                </div>
+                <div className="trip-name-line margin-bottom-5">
+                    <input
+                        type={'text'}
+                        style={{
+                            paddingInline: '15px',
+                            height: '40px',
+                            maxWidth: '300px',
+                        }}
+                        placeholder={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
+                        value={tripName}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setTripName(value);
+
+                            if (errors['title']) {
+                                setErrors({
+                                    ...errors,
+                                    title: value.length == 0,
+                                });
+                            }
+                        }}
+                        className={getClasses(errors['title'] && 'red-border')}
+                    />
+                </div>
+
+                <div className="main-font font-size-20">
+                    {TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO')}
+                </div>
+                <div className="custom-dates-line flex-row align-items-center margin-bottom-5">
+                    <DestinationSelector onChange={setSelectedDestinations} />
+                </div>
+
+                <div className="main-font font-size-20">
+                    {TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
+                </div>
+                <div className="custom-dates-line flex-row align-items-center margin-bottom-5">
+                    <input
+                        type="date"
+                        onKeyDown={(e) => {
+                            e.preventDefault();
+                            return false;
+                        }}
+                        value={customDateRange.start}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setCustomDateRange({
+                                start: value,
+                                end: customDateRange.end,
+                            });
+                            updateErrorsOnDateChange(value, customDateRange.end);
+                        }}
+                        className={getClasses(errors['start'] && 'red-border')}
+                    />
+                    {TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.UNTIL')}
+                    <input
+                        type="date"
+                        onKeyDown={(e) => {
+                            e.preventDefault();
+                            return false;
+                        }}
+                        value={customDateRange.end}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setCustomDateRange({
+                                start: customDateRange.start,
+                                end: value,
+                            });
+                            updateErrorsOnDateChange(customDateRange.start, value);
+                        }}
+                        className={getClasses(errors['end'] && 'red-border')}
+                    />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="flex-column align-items-start margin-top-10">
             <h2 className="main-feed-header width-100-percents">
                 <span>{TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')}</span>
-                {myTripsStore.allTripsSorted.length > 0 && renderAddTripButton()}
+                {myTripsStore.allTripsSorted.length > 0 && !addNewTripMode && renderAddTripButton()}
             </h2>
             <div className="flex-row justify-content-center flex-wrap-wrap align-items-start width-100-percents" key={myTripsStore.myTrips?.length}>
-                {myTripsStore.allTripsSorted?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.allTripsSorted.map(renderTrip)}
-                {myTripsStore.hiddenTripsEnabled && (
-                    <Button
-                        onClick={() => {
-                            myTripsStore.setShowHidden(!myTripsStore.showHidden);
-                        }}
-                        flavor={ButtonFlavor.link}
-                        className="width-100-percents text-align-center"
-                        text={TranslateService.translate(
-                            eventStore,
-                            myTripsStore.showHidden ? 'SHOW_TRIPS_LIST' : 'SHOW_HIDDEN_TRIPS_LIST'
-                        )}
-                    />
-                )}
+                {addNewTripMode ? renderCreateTripPlaceholder() :
+                <>
+                    {myTripsStore.allTripsSorted?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.allTripsSorted.map(renderTrip)}
+                    {myTripsStore.hiddenTripsEnabled && (
+                        <Button
+                            onClick={() => {
+                                myTripsStore.setShowHidden(!myTripsStore.showHidden);
+                            }}
+                            flavor={ButtonFlavor.link}
+                            className="width-100-percents text-align-center"
+                            text={TranslateService.translate(
+                                eventStore,
+                                myTripsStore.showHidden ? 'SHOW_TRIPS_LIST' : 'SHOW_HIDDEN_TRIPS_LIST'
+                            )}
+                        />
+                    )}
+                </>}
             </div>
         </div>
     )

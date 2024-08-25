@@ -949,6 +949,11 @@
 	.btn-lg {
 		max-width: max-content;
 	}
+
+	.main-feed-header {
+		flex-direction: column;
+		gap: 20px;
+	}
 }
 
 @media only screen and (max-height: 500px){

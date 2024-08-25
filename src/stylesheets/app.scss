@@ -1501,6 +1501,10 @@ input[id^='react-select-'][id$='-input'] {
 	border-radius: 10px;
 }
 
+.border-radius-round {
+	border-radius: 50%;
+}
+
 .grayscale {
 	filter: grayscale(100%);
 }

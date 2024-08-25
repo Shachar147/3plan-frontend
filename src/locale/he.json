@@ -1063,6 +1063,8 @@
 	"Stuttgart": "שטוטגרט",
 	"Bergen": "ברגן",
 	"CREATE_NEW_TRIP_TITLE": "צרו טיול חדש בכלום זמן!",
+	"CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP": "איזה כיף! בואו נתחיל",
 	"NO_SAVED_COLLECTIONS.DESCRIPTION": "אל דאגה! יצירת מקומות שמורים זה קלי קלות!\nנווטו לטאב <a href='#explore' class='navigate-to-explore'>מצא נק׳ עניין</a> כדי למצוא מקומות שאתם רוצים לבקר בהם → לחצו על כפתור הלב וזה ייצור אוסף של היעד של המקום שבחרתם!",
-	"CREATE_NEW_TRIP_TITLE.DESCRIPTION": "הטיולים שתיצור יישמרו לחשבון שלך\naויהיו זמינים עבורך תמיד, מכל מחשב או מכשיר נייד!"
+	"CREATE_NEW_TRIP_TITLE.DESCRIPTION": "הטיולים שתיצור יישמרו לחשבון שלך\naויהיו זמינים עבורך תמיד, מכל מחשב או מכשיר נייד!",
+	"CREATE_TRIP": "צור טיול!"
 }

@@ -6,7 +6,7 @@ export const TRIP_MAX_SIZE_DAYS = 90;
 export const ACTIVITY_MAX_SIZE_DAYS = 1;
 export const ACTIVITY_MIN_SIZE_MINUTES = 10;
 
-export const DEFAULT_VIEW_MODE_FOR_NEW_TRIPS: ViewMode = ViewMode.map;
+export const DEFAULT_VIEW_MODE_FOR_NEW_TRIPS: ViewMode = ViewMode.feed; // ViewMode.map;
 
 export const priorityToColor: Record<string, string> = {
 	[TriplanPriority.must]: '#E06666FF',
