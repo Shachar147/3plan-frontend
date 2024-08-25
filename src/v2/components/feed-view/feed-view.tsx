@@ -46,6 +46,12 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
 
     useEffect(() => {
+        if (feedStore.savedCollections.length == 0) {
+            feedStore.getSavedCollections();
+        }
+    }, [])
+
+    useEffect(() => {
         const fetchCounts = async () => {
             if (haveNoDestinations) {
                 feedStore.setIsLoading(false);

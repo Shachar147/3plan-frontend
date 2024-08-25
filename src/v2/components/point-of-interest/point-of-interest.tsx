@@ -189,8 +189,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         if (myTrips) {
             return;
         }
+        const text = alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED");
+
         if (mainFeed || isSearchResult || isViewItem) {
-            const text = alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED");
             return (
                 <Button
                     flavor={mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary}
@@ -208,15 +209,32 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 />
             );
         }
+
         return (
-            <Button
-                flavor={alreadyInPlan ? ButtonFlavor.success : ButtonFlavor.primary}
-                onClick={handleAddToPlan}
-                icon={alreadyInPlan ? "fa fa-check" : undefined}
-                text={alreadyInPlan ? TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADDED_TO_PLAN') : TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADD_TO_PLAN')}
-                disabled={alreadyInPlan || eventStore.isTripLocked || !eventStore.canWrite}
-                className="padding-inline-15"
-            />
+            <>
+                <Button
+                    flavor={alreadyInPlan ? ButtonFlavor.success : ButtonFlavor.primary}
+                    onClick={handleAddToPlan}
+                    icon={alreadyInPlan ? "fa fa-check" : undefined}
+                    text={alreadyInPlan ? TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADDED_TO_PLAN') : TranslateService.translate(eventStore, 'POINT_OF_INTEREST.ADD_TO_PLAN')}
+                    disabled={alreadyInPlan || eventStore.isTripLocked || !eventStore.canWrite}
+                    className="padding-inline-15"
+                />
+                <Button
+                    flavor={mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.secondary}
+                    onClick={() => {
+                        if (alreadyInSaved){
+                            return handleRemoveFromSaved();
+                        }
+                        return handleAddToSaved();
+                    }}
+                    key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
+                    icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
+                    text={text}
+                    tooltip={text}
+                    className="padding-inline-15"
+                />
+            </>
         );
     }
 

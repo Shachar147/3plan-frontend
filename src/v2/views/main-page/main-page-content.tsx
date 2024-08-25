@@ -22,6 +22,7 @@ import {rootStoreContext} from "../../stores/root-store";
 import {getParameterFromHash} from "../../utils/utils";
 import {useMyTrips, useSavedCollections, useScrollWhenTabChanges} from "../../hooks/main-page-hooks";
 import {TabData} from "../../utils/interfaces";
+import FeedViewApiService, {allSources} from "../../services/feed-view-api-service";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -75,6 +76,16 @@ function MainPageContent(){
     useSavedCollections();
     useMyTrips();
     useScrollWhenTabChanges(tabs);
+
+
+    // search destinations randomly to increase the content of Triplan
+    const apiService = useMemo(() => new FeedViewApiService(), []);
+    useEffect(() => {
+        const destination = top100Cities[Math.floor(Math.random() * top100Cities.length)];
+        Promise.all(
+            allSources.map(source => apiService.getItems(source, destination, 1))
+        );
+    }, []);
 
     function getTabs():TabData[] {
         if (isInViewItem) {
@@ -161,3 +172,112 @@ function MainPageContent(){
 }
 
 export default observer(MainPageContent);
+
+const top100Cities = [
+    "Paris",
+    "Tokyo",
+    "New York",
+    "Rome",
+    "Barcelona",
+    "London",
+    "Dubai",
+    "Istanbul",
+    "Bangkok",
+    "Kyoto",
+    "Florence",
+    "Amsterdam",
+    "Venice",
+    "Singapore",
+    "Lisbon",
+    "Hong Kong",
+    "Sydney",
+    "Berlin",
+    "Vienna",
+    "Milan",
+    "Prague",
+    "Madrid",
+    "Seoul",
+    "Rio de Janeiro",
+    "Cape Town",
+    "Los Angeles",
+    "Mexico City",
+    "Copenhagen",
+    "Munich",
+    "Buenos Aires",
+    "San Francisco",
+    "Marrakesh",
+    "Shanghai",
+    "Edinburgh",
+    "Budapest",
+    "Lisbon",
+    "Hanoi",
+    "Beijing",
+    "Stockholm",
+    "Moscow",
+    "Toronto",
+    "Dublin",
+    "Kuala Lumpur",
+    "Vancouver",
+    "Melbourne",
+    "Lima",
+    "San Diego",
+    "Istanbul",
+    "Bruges",
+    "Osaka",
+    "Tel Aviv",
+    "Nice",
+    "Jerusalem",
+    "Naples",
+    "Zürich",
+    "Brussels",
+    "Ho Chi Minh City",
+    "Warsaw",
+    "Santiago",
+    "Casablanca",
+    "Brisbane",
+    "Athens",
+    "Helsinki",
+    "Doha",
+    "Abu Dhabi",
+    "Valencia",
+    "Seattle",
+    "Quebec City",
+    "Cairo",
+    "Ljubljana",
+    "Auckland",
+    "Montevideo",
+    "Kraków",
+    "Salzburg",
+    "Hamburg",
+    "Perth",
+    "Dubrovnik",
+    "Porto",
+    "Bratislava",
+    "Reykjavik",
+    "Cusco",
+    "Fukuoka",
+    "Palermo",
+    "Oslo",
+    "Chennai",
+    "Antwerp",
+    "Bali",
+    "Phuket",
+    "Malé",
+    "Manila",
+    "Kathmandu",
+    "Jakarta",
+    "Colombo",
+    "Havana",
+    "Zagreb",
+    "Aix-en-Provence",
+    "Guadalajara",
+    "Cartagena",
+    "Cape Town",
+    "Bordeaux",
+    "Nairobi",
+    "Bogotá",
+    "Málaga",
+    "Luxembourg City",
+    "Stuttgart",
+    "Bergen"
+];
