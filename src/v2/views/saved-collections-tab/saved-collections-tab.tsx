@@ -63,29 +63,37 @@ function SavedCollectionsTab(){
     function renderNoSavedCollectionsPlaceholder(){
         return (
             <div className="my-trips-actionbar width-100-percents align-items-center">
+                <hr className="width-100-percents margin-bottom-0"/>
                 <img src="/images/saved-collection.jpg" width="200" />
                 <div className="flex-column gap-8 align-items-center">
                     <h3>{TranslateService.translate(eventStore, 'NO_SAVED_COLLECTIONS')}</h3>
                     <span className="white-space-pre-line" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'NO_SAVED_COLLECTIONS.DESCRIPTION')}} />
-                    <img src="/images/saved-collection-example.png" width="200" style={{ marginTop: 20, borderBottom: "1px solid #ccc" }} />
+                    {/*<img src="/images/saved-collection-example.png" width="200" style={{ marginTop: 20 }} />*/}
                 </div>
+                <br/><br/><br/><br/>
+                <hr className="width-100-percents margin-top-0"/>
             </div>
         );
     }
 
     return (
         <div className="flex-row justify-content-center flex-wrap-wrap align-items-start" key={feedStore.savedCollections.length}>
-            {feedStore.savedCollections.length == 0 ? renderNoSavedCollectionsPlaceholder() : (
-                <div className="flex-column margin-top-10">
-                    <h2 className="main-feed-header">{
+            {
+                <div className="flex-column margin-top-10 width-100-percents">
+                    <h2 className="main-feed-header width-100-percents">{
                         TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.TITLE')
                     }</h2>
-                    <span className="main-feed-description white-space-pre-wrap text-align-start">{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.DESCRIPTION')}</span>
-                    <div className="flex-row justify-content-center flex-wrap-wrap align-items-start">
-                        {feedStore.savedCollections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
-                    </div>
+                    {feedStore.savedCollections.length == 0 ? renderNoSavedCollectionsPlaceholder() :
+                        <>
+                            <span
+                                className="main-feed-description white-space-pre-wrap text-align-start">{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.DESCRIPTION')}</span>
+                            <div className="flex-row justify-content-center flex-wrap-wrap align-items-start">
+                                {feedStore.savedCollections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
+                            </div>
+                        </>
+                    }
                 </div>
-            )}
+            }
         </div>
     )
 

@@ -2,10 +2,7 @@ import {observer} from "mobx-react";
 import TranslateService from "../../../services/translate-service";
 import React, {useContext} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
-import DataServices, {
-    Trip,
-    tripNameToLSTripName
-} from "../../../services/data-handlers/data-handler-base";
+import DataServices, {Trip, tripNameToLSTripName} from "../../../services/data-handlers/data-handler-base";
 import {formatShortDateStringIsrael, getAmountOfDays, getUserDateFormat} from "../../../utils/time-utils";
 import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
 import {useNavigate} from "react-router-dom";
@@ -319,20 +316,27 @@ function MyTripsTab(){
         );
     }
 
+    function renderAddTripButton(flavor: ButtonFlavor = ButtonFlavor.secondary){
+        return (
+            <Button
+                text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
+                flavor={flavor}
+                className="padding-inline-15 font-size-14 font-weight-normal"
+                icon="fa-plus-square-o"
+                onClick={() => navigate('/getting-started')}
+            />
+        )
+    }
+
     function renderNoTripsPlaceholder(){
         return (
             <div className="my-trips-actionbar width-100-percents align-items-center">
                 <hr className="width-100-percents"/>
                 <img src="/images/new-trip.png" width="200" />
-                <div className="flex-column gap-25">
+                <div className="flex-column gap-5">
                     <h3>{TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE')}</h3>
-                    <span className="white-space-pre-line" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.DESCRIPTION')}} />
-                    <Button
-                        text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
-                        flavor={ButtonFlavor.secondary}
-                        className="padding-inline-15"
-                        onClick={() => navigate('/getting-started')}
-                    />
+                    <span className="white-space-pre-line margin-bottom-20" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.DESCRIPTION')}} />
+                    {renderAddTripButton()}
                 </div>
                 <br/><br/><br/>
                 <hr className="width-100-percents"/>
@@ -342,9 +346,10 @@ function MyTripsTab(){
 
     return (
         <div className="flex-column align-items-start margin-top-10">
-            <h2 className="main-feed-header">{
-                TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')
-            }</h2>
+            <h2 className="main-feed-header width-100-percents">
+                <span>{TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')}</span>
+                {myTripsStore.allTripsSorted.length > 0 && renderAddTripButton()}
+            </h2>
             <div className="flex-row justify-content-center flex-wrap-wrap align-items-start width-100-percents" key={myTripsStore.myTrips?.length}>
                 {myTripsStore.allTripsSorted?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.allTripsSorted.map(renderTrip)}
                 {myTripsStore.hiddenTripsEnabled && (
