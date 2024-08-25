@@ -805,7 +805,8 @@
 	"CATEGORY.MUSEUMS": "Museums",
 	"X_IN_Y": "{X} in {Y}",
 	"TOP_PICKS": "Top picks",
-	"NO_SAVED_COLLECTIONS": "Oops... it seems like you don't have saved collections yet",
+	"NO_SAVED_COLLECTIONS": "Oops... it seems like you don't have saved collections yet!",
+	"NO_SAVED_COLLECTIONS.DESCRIPTION": "No worries!\nCreating saved collections is super-easy!\nJust navigate to <a href='#explore' class='navigate-to-explore'>Explore</a> tab to find the places you want to visit → click on the heart button \nand it'll create a collection for the destination of this place!",
 	"SAVED_COLLECTION_PREFIX": "Saved collection: ",
 	"SAVED_COLLECTION.ITEMS": "Total saved places: {X}",
 	"MY_TRIPS.ITEMS": "Total Activities: {X}",
@@ -856,5 +857,9 @@
 	"CLEAR_CALENDAR_EVENTS.LOCKED_ITEMS.DESCRIPTION": "There are {count2} already ordered activities\ndo you want to clear them too?",
 	"CLEAR_ALL": "Clear all",
 	"CLEAR_ONLY_NON_ORDERED": "Clear only non-ordered",
-	"FLIGHTS_AND_HOTELS_PRICE": "Flights and hotels price: {price} {currency}"
+	"FLIGHTS_AND_HOTELS_PRICE": "Flights and hotels price: {price} {currency}",
+	"CREATE_NEW_TRIP_TITLE": "Create a new trip in no-time!",
+	"CREATE_NEW_TRIP_TITLE.DESCRIPTION": "Trips you create will be saved to your account\nand be accessible for you forever, from each computer or mobile!",
+	"CREATE_TRIP": "Create",
+	"CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP": "Woohoo! let's start!"
 }

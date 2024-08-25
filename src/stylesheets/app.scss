@@ -380,6 +380,10 @@ body {
 	margin-inline-start: 25px;
 }
 
+.margin-top-0 {
+	margin-top: 0;
+}
+
 .margin-top-2 {
 	margin-top: 2px;
 }
@@ -1495,6 +1499,10 @@ input[id^='react-select-'][id$='-input'] {
 
 .border-radius-10 {
 	border-radius: 10px;
+}
+
+.border-radius-round {
+	border-radius: 50%;
 }
 
 .grayscale {

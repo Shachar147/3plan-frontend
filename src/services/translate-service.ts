@@ -1,4 +1,4 @@
-import { EventStore } from '../stores/events-store';
+import {EventStore, eventStoreContext} from '../stores/events-store';
 
 import he from '../locale/he.json';
 import en from '../locale/en.json';
