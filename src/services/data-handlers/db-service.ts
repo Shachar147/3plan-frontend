@@ -366,7 +366,7 @@ export class DBService implements BaseDataHandler {
 		return res.data;
 	}
 
-	async logHistory(tripId: number, action: string, actionParams?: object, eventId?: number, eventName?: string) {
+	async logHistory(tripId: number, action: string, actionParams?: any, eventId?: number, eventName?: string) {
 		return await apiPost(endpoints.v1.history.logHistory, {
 			tripId,
 			action,

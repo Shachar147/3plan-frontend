@@ -8,7 +8,7 @@ const translates = {
 	en,
 };
 
-export type TranslationParams = Record<string, string | number>;
+export type TranslationParams = Record<string, string | number | undefined>;
 
 const TranslateService = {
 	translate: (eventStore: EventStore, key: string, params: TranslationParams = {}) => {
