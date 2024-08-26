@@ -98,8 +98,8 @@
 	animation: fa-spin 2s infinite linear;
 }
 .fa-spin-reverse {
-	-webkit-animation: fa-spin 1.2s reverse linear;
-	animation: fa-spin 1.2s reverse linear;
+	-webkit-animation: fa-spin 1s reverse linear;
+	animation: fa-spin 1s reverse linear;
 }
 .fa-pulse {
 	-webkit-animation: fa-spin 1s infinite steps(8);

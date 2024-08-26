@@ -350,7 +350,18 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 <div className="name-container">
                     {renderName()}
                 </div>
-                <span className={getClasses("description", isShrinkedMode && 'max-height-100-ellipsis')}>{item.description}</span>
+                <span className={getClasses("description", isShrinkedMode && 'max-height-100-ellipsis')}>
+                    {item.description}
+                    {savedCollection && (
+                        <>
+                            <br/>
+                            <br/>
+                            <span className="white-space-pre-line">{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.YOU_ARE_LOOKING_AT', {
+                                X: item.imagesNames[currentSlide]
+                            })}</span>
+                        </>
+                    )}
+                </span>
                 <div className="poi-details">
                     {durationText && <span className="duration">{durationText}</span>}
                     {item.extra?.price && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {

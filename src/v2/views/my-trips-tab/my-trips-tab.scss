@@ -11,6 +11,11 @@
     display: none;
   }
 
+  .form-content {
+    border-inline: 1px solid #efefef;
+    padding-inline: 30px;
+  }
+
   .destination-selector-container {
     max-width: 450px;
   }
@@ -20,7 +25,7 @@
     color: #1a2b49;
   }
 
-  button {
+  .secondary-button {
     padding: 10px 20px;
     outline: 1px solid var(--blue) !important;
     background-color: white !important;

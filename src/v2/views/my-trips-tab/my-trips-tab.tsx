@@ -1,4 +1,3 @@
-import {observer} from "mobx-react";
 import TranslateService from "../../../services/translate-service";
 import React, {useContext, useEffect, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
@@ -20,12 +19,13 @@ import {TripActions} from "../../../utils/interfaces";
 import './my-trips-tab.scss';
 import moment from "moment";
 import Button, {ButtonFlavor} from "../../../components/common/button/button";
-import DestinationSelector from "../../components/destination-selector/destination-selector";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import {defaultCalendarEvents, defaultDateRange, defaultEvents, getDefaultCategories} from "../../../utils/defaults";
-import {TripDataSource, ViewMode} from "../../../utils/enums";
+import {TripDataSource} from "../../../utils/enums";
 import {DEFAULT_VIEW_MODE_FOR_NEW_TRIPS} from "../../../utils/consts";
 import {upsertTripProps} from "../../../services/data-handlers/db-service";
+import {observer} from "mobx-react";
+import DestinationSelector from "../../components/destination-selector/destination-selector";
 
 
 function MyTripsTab(){
@@ -467,20 +467,29 @@ function MyTripsTab(){
 
     function renderAddTripButton(flavor: ButtonFlavor = ButtonFlavor.secondary){
         return (
-            <Button
-                text={TranslateService.translate(eventStore, addNewTripMode ? 'CREATE_TRIP' : 'LANDING_PAGE.START_NOW')}
-                flavor={flavor}
-                className="padding-inline-15 font-size-14 font-weight-normal"
-                icon="fa-plus-square-o"
-                onClick={() => {
-                    if (addNewTripMode) {
-                        createNewTrip(tripName);
-                    } else {
-                        setAddNewTripMode(true);
-                    }
-                    // navigate('/getting-started')
-                }}
-            />
+            <>
+                <Button
+                    text={TranslateService.translate(eventStore, addNewTripMode ? 'CREATE_TRIP' : 'LANDING_PAGE.START_NOW')}
+                    flavor={flavor}
+                    className="padding-inline-15 font-size-14 font-weight-normal"
+                    icon="fa-plus-square-o"
+                    onClick={() => {
+                        if (addNewTripMode) {
+                            createNewTrip(tripName);
+                        } else {
+                            setAddNewTripMode(true);
+                        }
+                        // navigate('/getting-started')
+                    }}
+                />
+                {addNewTripMode && myTripsStore.allTripsSorted.length > 0 && (
+                    <Button
+                        text={TranslateService.translate(eventStore, 'GO_BACK')}
+                        flavor={ButtonFlavor.link}
+                        onClick={() => setAddNewTripMode(false)}
+                    />
+                )}
+            </>
         )
     }
 
@@ -511,7 +520,7 @@ function MyTripsTab(){
             <div className="my-trips-actionbar width-100-percents align-items-center">
                 <hr className="width-100-percents"/>
                 <img src="/images/new-trip.png" className={getClasses('border-radius-round', 'fa-spin-reverse')} width="200" />
-                <div className="flex-column gap-5">
+                <div className="flex-column gap-5 form-content">
                     <h3>{TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP')}</h3>
                     {renderCreateTripForm()}
                     {renderAddTripButton()}

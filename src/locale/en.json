@@ -861,5 +861,7 @@
 	"CREATE_NEW_TRIP_TITLE": "Create a new trip in no-time!",
 	"CREATE_NEW_TRIP_TITLE.DESCRIPTION": "Trips you create will be saved to your account\nand be accessible for you forever, from each computer or mobile!",
 	"CREATE_TRIP": "Create",
-	"CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP": "Woohoo! let's start!"
+	"CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP": "Woohoo! let's start!",
+	"GO_BACK": "Go back",
+	"SAVED_COLLECTIONS.YOU_ARE_LOOKING_AT": "You are looking at:\n{X}"
 }

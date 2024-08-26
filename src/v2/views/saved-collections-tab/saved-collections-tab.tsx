@@ -23,9 +23,10 @@ function SavedCollectionsTab(){
     function renderCollection(collection: SavedCollection){
         const classList = getClasses("align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
+        const idxToDetails = {};
+
         let item: any = collection.items?.[0]?.fullDetails ?? {};
 
-        const idxToDetails = {};
         collection.items?.forEach((i, idx) =>
             idxToDetails[idx] = i.fullDetails
         );
@@ -43,7 +44,8 @@ function SavedCollectionsTab(){
             more_info: undefined,
             source: undefined,
             description: TranslateService.translate(eventStore, 'SAVED_COLLECTION.ITEMS', {X: collection.items.length}),
-            idxToDetails
+            idxToDetails,
+            imagesNames: collection.items?.map((i) => i.fullDetails.name),
         }
 
         return (

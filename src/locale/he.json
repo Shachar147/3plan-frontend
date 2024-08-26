@@ -915,7 +915,7 @@
 	"WISHLIST": "שמורים",
 	"PROFILE": "פרופיל",
 	"SAVED_COLLECTIONS.TITLE": "המקומות ששמרת",
-	"SAVED_COLLECTIONS.DESCRIPTION": "כל המקומות ששמרת יופיעו כאן, מקובצים לפי מיקום!",
+	"SAVED_COLLECTIONS.DESCRIPTION": "כל המקומות ששמרת יופיעו כאן, מקובצים לפי מיקום ומסודרים מהיעד שכולל הכי הרבה מקומות שאהבת ליעד שהכי פחות!",
 	"SAVED_COLLECTIONS": "המקומות ששמרת ({X})",
 	"SAVED_COLLECTIONS.SHORT": "המקומות ששמרת ({X})",
 	"HEADER_SEARCH_PLACEHOLDER": "חפשו מקומות ודברים לעשות",
@@ -934,6 +934,7 @@
 	"NO_SAVED_COLLECTIONS": "אופס... נראה שאין לכם מקומות שמורים עדיין",
 	"SAVED_COLLECTION_PREFIX": "יעד: ",
 	"SAVED_COLLECTION.ITEMS": "סהֿ\"כ מקומות שמורים: {X}",
+	"SAVED_COLLECTIONS.YOU_ARE_LOOKING_AT": "אתם מסתכלים כרגע על:\n{X}",
 	"MY_TRIPS": "הטיולים שלי",
 	"MY_TRIPS.SHORT": "הטיולים שלי",
 	"MY_TRIPS_X": "הטיולים שלי ({X})",
@@ -1066,5 +1067,6 @@
 	"CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP": "איזה כיף! בואו נתחיל",
 	"NO_SAVED_COLLECTIONS.DESCRIPTION": "אל דאגה! יצירת מקומות שמורים זה קלי קלות!\nנווטו לטאב <a href='#explore' class='navigate-to-explore'>מצא נק׳ עניין</a> כדי למצוא מקומות שאתם רוצים לבקר בהם → לחצו על כפתור הלב וזה ייצור אוסף של היעד של המקום שבחרתם!",
 	"CREATE_NEW_TRIP_TITLE.DESCRIPTION": "הטיולים שתיצור יישמרו לחשבון שלך\naויהיו זמינים עבורך תמיד, מכל מחשב או מכשיר נייד!",
-	"CREATE_TRIP": "צור טיול!"
+	"CREATE_TRIP": "צור טיול!",
+	"GO_BACK": "חזור אחורה"
 }
