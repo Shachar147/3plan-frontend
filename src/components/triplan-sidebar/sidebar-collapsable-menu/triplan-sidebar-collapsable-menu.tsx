@@ -27,9 +27,9 @@ import {formatFromISODateString, israelDateFormatToUSA} from "../../../utils/tim
 import {DBService} from "../../../services/data-handlers/db-service";
 import moment from "moment/moment";
 import TriplanSearch from "../../triplan-header/triplan-search/triplan-search";
-import TriplanSidebarShareTripButton from "../triplan-sidebar-share-trip-button/triplan-sidebar-share-trip-button";
+import TriplanSidebarShareTripButton from "../sidebar-share-trip-button/triplan-sidebar-share-trip-button";
 import {renderLineWithText} from "../../../utils/ui-utils";
-import TriplanSidebarDraggableEvent from "../triplan-sidebar-draggable-event/triplan-sidebar-draggable-event";
+import TriplanSidebarDraggableEvent from "../sidebar-draggable-event/triplan-sidebar-draggable-event";
 import {modalsStoreContext} from "../../../stores/modals-store";
 
 interface TriplanSidebarCollapsableMenuProps {

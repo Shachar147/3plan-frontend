@@ -16,7 +16,7 @@ import {TriplanEventPreferredTime, TriplanPriority} from "../../../utils/enums";
 import {modalsStoreContext} from "../../../stores/modals-store";
 import './triplan-sidebar-categories.scss';
 import {renderLineWithText} from "../../../utils/ui-utils";
-import TriplanSidebarDraggableEvent from "../triplan-sidebar-draggable-event/triplan-sidebar-draggable-event";
+import TriplanSidebarDraggableEvent from "../sidebar-draggable-event/triplan-sidebar-draggable-event";
 import {observer} from "mobx-react";
 
 interface TriplanSidebarCategoriesProps {
