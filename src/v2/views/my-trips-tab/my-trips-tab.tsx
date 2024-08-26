@@ -453,9 +453,6 @@ function MyTripsTab(){
 
                 tripData.allEvents = allEvents;
                 tripData.sidebarEvents = sidebarEvents;
-
-                // todo complete - build categories and sidebar events
-                // todo complete - set selected destinations automatically
             }
 
             // backup
