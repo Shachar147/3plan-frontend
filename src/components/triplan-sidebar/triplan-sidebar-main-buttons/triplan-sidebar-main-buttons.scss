@@ -1,0 +1,20 @@
+.triplan-sidebar-main-buttons {
+  align-items: center;
+  background-color: #f2f5f8;
+  z-index: 1;
+  min-height: 50px;
+
+  .add-activity-button {
+    background-color: #f2f5f8;
+    display: flex;
+    flex: 1 1 0;
+    max-height: 40px;
+  }
+
+  .add-category-button {
+    background-color: #f2f5f8;
+    display: flex;
+    flex: 1 1 0;
+    max-height: 40px;
+  }
+}

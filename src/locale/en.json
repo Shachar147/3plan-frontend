@@ -864,7 +864,7 @@
 	"CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP": "Woohoo! let's start!",
 	"GO_BACK": "Go back",
 	"SAVED_COLLECTIONS.YOU_ARE_LOOKING_AT": "You are looking at:\n{X}",
-	"CREATE_TRIP_FROM_SAVED_COLLECTION": "Create a trip from this collection!",
+	"CREATE_TRIP_FROM_SAVED_COLLECTION": "Create trip from this collection!",
 	"BACK_TO_MY_TRIPS": "Back to my trips",
 	"MY_TRIP_TO_X": "My trip to {X}"
 }

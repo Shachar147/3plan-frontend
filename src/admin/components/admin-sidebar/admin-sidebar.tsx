@@ -17,6 +17,7 @@ import { TriplanTinderApiService } from '../../services/triplan-tinder-api-servi
 import { CreateInstagramItemsResult, DownloadMediaResult, FixItemsResult } from '../../helpers/interfaces';
 import { runInAction } from 'mobx';
 import { modalsStoreContext } from '../../../stores/modals-store';
+import {TriplanSidebarDivider} from "../../../components/triplan-sidebar/triplan-sidebar-divider";
 
 export interface TriplanAdminSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -922,7 +923,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					{renderCalendarSidebarStatistics()}
 					{renderPrioritiesLegend()}
 					<hr className={'margin-block-2'} />
-					<hr style={{ marginBlock: '20px 10px' }} />
+					<TriplanSidebarDivider />
 					{renderCategories()}
 				</div>
 			</div>
