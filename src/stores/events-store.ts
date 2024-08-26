@@ -1768,6 +1768,24 @@ export class EventStore {
 			});
 		}, duration + 100);
 	}
+
+	@action
+	resetFilters(){
+		this.setSearchValue('');
+		this.setSidebarSearchValue('');
+		this.setShowOnlyEventsWithNoLocation(false);
+		this.setShowOnlyEventsWithTodoComplete(false);
+		this.setShowOnlyEventsWithNoOpeningHours(false);
+		this.setShowOnlyEventsWithDistanceProblems(false);
+		this.setShowOnlyEventsWithOpeningHoursProblems(false);
+
+		setTimeout(() => {
+			document.getElementsByName('fc-search').forEach((element) => {
+				(element as HTMLInputElement).value = '';
+			});
+		}, 100);
+
+	}
 }
 
 export const eventStoreContext = createContext(new EventStore());
