@@ -13,10 +13,11 @@ import ReactModalService from "../../../services/react-modal-service";
 import React, {CSSProperties, useContext} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import {TriplanEventPreferredTime, TriplanPriority} from "../../../utils/enums";
-import {getDurationString} from "../../../utils/time-utils";
-import {observer} from "mobx-react";
 import {modalsStoreContext} from "../../../stores/modals-store";
 import './triplan-sidebar-categories.scss';
+import {renderLineWithText} from "../../../utils/ui-utils";
+import TriplanSidebarDraggableEvent from "../triplan-sidebar-draggable-event/triplan-sidebar-draggable-event";
+import {observer} from "mobx-react";
 
 interface TriplanSidebarCategoriesProps {
     removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -150,7 +151,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
                                 .replace('{Y}', sidebarItemsCount.toString())
                             : undefined;
 
-                    if ((eventStore.hideEmptyCategories || eventStore.isFiltered) && sidebarItemsCount === 0) {
+                    if ((eventStore.hideEmptyCategories || eventStore.isFiltered) && sidebarItemsCount === 0) { // itemsCount <- to prevent hiding non-empty category that all of it's items inside are scheduled.
                         return <></>;
                     }
                     totalDisplayedCategories++;
@@ -247,22 +248,17 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
         );
     }
 
-    const onEditCategory = (categoryId: number) => {
-        ReactModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
-    };
+    function onEditCategory(categoryId: number){
+        return ReactModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
+    }
 
     const renderAddSidebarEventButton = (category: TriPlanCategory) => {
         const isHotel = isHotelsCategory(category);
         return (
             <Button
                 flavor={ButtonFlavor.secondary}
-                style={{
-                    width: '100%',
-                    marginBlock: '10px',
-                }}
-                onClick={() => {
-                    ReactModalService.openAddSidebarEventModal(eventStore, category.id);
-                }}
+                className="width-100-percents margin-block-10"
+                onClick={() => ReactModalService.openAddSidebarEventModal(eventStore, category.id)}
                 text={TranslateService.translate(
                     eventStore,
                     isHotel ? 'ADD_HOTEL.BUTTON_TEXT' : 'ADD_EVENT.BUTTON_TEXT'
@@ -284,19 +280,14 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
             .forEach((preferredHour) => {
                 preferredHoursHash[preferredHour] = categoryEvents
                     .map((x) => {
-                        if (!x.preferredTime) {
-                            x.preferredTime = TriplanEventPreferredTime.unset;
-                        }
+                        x.preferredTime ||=  TriplanEventPreferredTime.unset;
                         x.title = addLineBreaks(x.title, ', ');
-                        if (x.description) {
+                        if (x.description != undefined) {
                             x.description = addLineBreaks(x.description, '&#10;');
                         }
                         return x;
                     })
-                    .filter(
-                        (x: any) =>
-                            x.preferredTime != undefined && x.preferredTime.toString() === preferredHour.toString()
-                    )
+                    .filter((x: SidebarEvent) => x.preferredTime?.toString() === preferredHour.toString())
                     .sort(sortByPriority);
             });
 
@@ -309,7 +300,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
         const eventsByPreferredHour = Object.keys(preferredHoursHash)
             .filter((x) => preferredHoursHash[x].length > 0)
             .map((preferredHour: string) => {
-                // @ts-ignore
                 const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
                 return (
                     <div key={`${categoryId}-${preferredHour}`}>
@@ -328,24 +318,16 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
         return (
             <>
                 {eventsByPreferredHour}
-                {scheduledEvents.length > 0 && <div key={`${categoryId}-scheduled-events`}>
-                    {renderLineWithText(
-                        `${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${scheduledEvents.length})`
-                    )}
-                    <div>{renderScheduledEvents(categoryId, scheduledEvents)}</div>
-                </div>}
+                {scheduledEvents.length > 0 && (
+                    <div key={`${categoryId}-scheduled-events`}>
+                        {renderLineWithText(
+                            `${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${scheduledEvents.length})`
+                        )}
+                        <div>{renderScheduledEvents(categoryId, scheduledEvents)}</div>
+                    </div>)
+                }
             </>
         )
-    };
-
-    const renderLineWithText = (text: string, className?: string) => {
-        return (
-            <div className={getClasses('preferred-time', className)}>
-                <div className={'preferred-time-divider'} style={{ maxWidth: '20px' }} />
-                <div className={'preferred-time-title'}>{text}</div>
-                <div className={'preferred-time-divider'} />
-            </div>
-        );
     };
 
     const sortByPriority = (a: SidebarEvent, b: SidebarEvent) => {
@@ -388,7 +370,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
             });
         return (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                {events.map((event) => renderEventDraggable(event, categoryId))}
+                {events.map((event) => <TriplanSidebarDraggableEvent event={event} categoryId={categoryId} removeEventFromSidebarById={removeEventFromSidebarById} addToEventsToCategories={addToEventsToCategories} />)}
             </div>
         );
     };
@@ -427,11 +409,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
             });
         return (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                {events.map((event, idx) => renderEventDraggable(
-                    event,
-                    categoryId,
-                    false,
-                    calendarOrSidebarEventDetails(eventStore, event),
+                {events.map((event, idx) => <TriplanSidebarDraggableEvent event={event} categoryId={categoryId} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} fullActions={false} eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)} onClick={
                     () => {
                         const calendarEvent = eventStore.calendarEvents.find(
                             (y) => y.id == event.id
@@ -454,104 +432,11 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
                             },
                             modalsStore
                         );
-                    }
-                ))}
+                    }} />
+                )}
             </div>
         );
     };
-
-    function renderEventDraggable(
-        event: SidebarEvent,
-        categoryId: number,
-        fullActions: boolean = true,
-        eventTitleSuffix: React.ReactNode | string | undefined = undefined,
-        _onClick?: () => void
-    ) {
-        const onClick = () => {
-            if (_onClick) {
-                _onClick();
-            } else {
-                modalsStore.switchToViewMode();
-                ReactModalService.openEditSidebarEventModal(
-                    eventStore,
-                    event,
-                    removeEventFromSidebarById,
-                    addToEventsToCategories,
-                    modalsStore
-                );
-            }
-        };
-
-        return (
-            <div
-                className={`fc-event flex-col align-items-start priority-${event.priority}`}
-                title={event.title}
-                data-id={event.id}
-                data-duration={event.duration}
-                data-category={categoryId}
-                data-icon={event.icon}
-                data-description={event.description}
-                data-priority={event.priority}
-                data-preferred-time={event.preferredTime}
-                data-location={Object.keys(event).includes('location') ? JSON.stringify(event.location) : undefined}
-                data-opening-hours={
-                    // used to be simply event.openingHours
-                    Object.keys(event).includes('openingHours') ? JSON.stringify(event.openingHours) : undefined
-                }
-                data-images={event.images} // add column 3
-                data-price={event.price}
-                data-currency={event.currency}
-                data-more-info={event.moreInfo}
-                key={event.id}
-            >
-                <div className="flex-row gap-5 align-items-start width-100-percents">
-					<span className={'sidebar-event-icon flex-grow-0'}>
-						{event.icon || eventStore.categoriesIcons[categoryId]}
-					</span>
-                    <span className="sidebar-event-title-container" title={'Edit'} onClick={onClick}>
-						<span className={'sidebar-event-title-text'}>{event.title}</span>
-						<span className={'sidebar-event-duration'}>
-							({getDurationString(eventStore, event.duration)})
-						</span>
-					</span>
-                    {fullActions && (
-                        <div
-                            className={getClasses('fc-duplicate-event', eventStore.isTripLocked && 'display-none')}
-                            onClick={() => {
-                                ReactModalService.openDuplicateSidebarEventModal(eventStore, event);
-                            }}
-                        >
-                            <img
-                                title={TranslateService.translate(eventStore, 'DUPLICATE')}
-                                alt={TranslateService.translate(eventStore, 'DUPLICATE')}
-                                src="/images/duplicate.png"
-                            />
-                        </div>
-                    )}
-                    {fullActions && (
-                        <a
-                            title={TranslateService.translate(eventStore, 'DELETE')}
-                            className={getClasses('fc-remove-event', eventStore.isTripLocked && 'display-none')}
-                            onClick={() => {
-                                ReactModalService.openDeleteSidebarEventModal(
-                                    eventStore,
-                                    removeEventFromSidebarById,
-                                    event
-                                );
-                            }}
-                        >
-                            X
-                        </a>
-                    )}
-                </div>
-                {eventTitleSuffix != undefined ? (
-                    <div className="flex-row align-items-start width-100-percents" onClick={onClick}>
-                        {eventTitleSuffix}
-                    </div>
-                ) : undefined}
-            </div>
-        );
-    }
 
     return (
         <>

@@ -28,10 +28,21 @@ import {DBService} from "../../../services/data-handlers/db-service";
 import moment from "moment/moment";
 import TriplanSearch from "../../triplan-header/triplan-search/triplan-search";
 import TriplanSidebarShareTripButton from "../triplan-sidebar-share-trip-button/triplan-sidebar-share-trip-button";
+import {renderLineWithText} from "../../../utils/ui-utils";
+import TriplanSidebarDraggableEvent from "../triplan-sidebar-draggable-event/triplan-sidebar-draggable-event";
+import {modalsStoreContext} from "../../../stores/modals-store";
 
-function TriplanSidebarCollapsableMenu(){
+interface TriplanSidebarCollapsableMenuProps {
+    removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
+    addToEventsToCategories: (event: SidebarEvent) => void;
+    addEventToSidebar: (event: SidebarEvent) => boolean;
+}
 
+function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps){
+
+    const {removeEventFromSidebarById, addToEventsToCategories, addEventToSidebar} = props;
     const eventStore = useContext(eventStoreContext);
+    const modalsStore = useContext(modalsStoreContext);
 
     const renderClearAll = () => {
         let isDisabled = eventStore.calendarEvents.length === 0;
@@ -724,12 +735,8 @@ function TriplanSidebarCollapsableMenu(){
                                                     className="nearby-result cursor-pointer flex-col gap-3"
                                                     key={`unscheduled-events-${x.event.category}-${idx}`}
                                                 >
-                                                    {renderEventDraggable(
-                                                        x.event,
-                                                        x.event.category,
-                                                        false,
-                                                        toDistanceString(eventStore, x, true, x.travelMode, true)
-                                                    )}
+                                                    <TriplanSidebarDraggableEvent
+                                                        event={x.event} categoryId={x.event.category} fullActions={false} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} eventTitleSuffix={toDistanceString(eventStore, x, true, x.travelMode, true)} />
                                                 </div>
                                             );
                                         })}
@@ -745,16 +752,12 @@ function TriplanSidebarCollapsableMenu(){
                                                 className="nearby-result cursor-pointer flex-col gap-3"
                                                 key={`scheduled-event-${x.event.category}-${idx}`}
                                             >
-                                                {renderEventDraggable(
-                                                    x.event,
-                                                    x.event.category,
-                                                    false,
-                                                    <div className="flex-col gap-5">
+                                                <TriplanSidebarDraggableEvent event={x.event} categoryId={x.event.category} fullActions={false} eventTitleSuffix={<div className="flex-col gap-5">
 														<span>
 															{toDistanceString(eventStore, x, true, x.travelMode, true)}
 														</span>
-                                                        {x.alternative && (
-                                                            <span>
+                                                    {x.alternative && (
+                                                        <span>
 																{toDistanceString(
                                                                     eventStore,
                                                                     x.alternative,
@@ -763,35 +766,34 @@ function TriplanSidebarCollapsableMenu(){
                                                                     true
                                                                 )}
 															</span>
-                                                        )}
-                                                        <span>
+                                                    )}
+                                                    <span>
 															{calendarOrSidebarEventDetails(eventStore, x.event)}
 														</span>
-                                                    </div>,
-                                                    () => {
-                                                        const calendarEvent = eventStore.calendarEvents.find(
-                                                            (y) => y.id == x.event.id
-                                                        )!;
-                                                        if (typeof calendarEvent.start === 'string') {
-                                                            calendarEvent.start = new Date(calendarEvent.start);
-                                                        }
-                                                        if (typeof calendarEvent.end === 'string') {
-                                                            calendarEvent.end = new Date(calendarEvent.end);
-                                                        }
-                                                        modalsStore.switchToViewMode();
-                                                        ReactModalService.openEditCalendarEventModal(
-                                                            eventStore,
-                                                            props.addEventToSidebar,
-                                                            {
-                                                                event: {
-                                                                    ...calendarEvent,
-                                                                    _def: calendarEvent,
-                                                                },
-                                                            },
-                                                            modalsStore
-                                                        );
+                                                </div>} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} _onClick={() => {
+                                                    const calendarEvent = eventStore.calendarEvents.find(
+                                                        (y) => y.id == x.event.id
+                                                    )!;
+                                                    if (typeof calendarEvent.start === 'string') {
+                                                        calendarEvent.start = new Date(calendarEvent.start);
                                                     }
-                                                )}
+                                                    if (typeof calendarEvent.end === 'string') {
+                                                        calendarEvent.end = new Date(calendarEvent.end);
+                                                    }
+                                                    modalsStore.switchToViewMode();
+                                                    ReactModalService.openEditCalendarEventModal(
+                                                        eventStore,
+                                                        addEventToSidebar,
+                                                        {
+                                                            event: {
+                                                                ...calendarEvent,
+                                                                _def: calendarEvent,
+                                                            },
+                                                        },
+                                                        modalsStore
+                                                    );
+                                                }}
+                                               />
                                             </div>
                                         ))}
                                     </div>

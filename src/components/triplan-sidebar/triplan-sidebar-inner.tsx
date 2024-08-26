@@ -250,9 +250,9 @@ const TriplanSidebarInner = (props: TriplanSidebarProps) => {
         <div>
             <TriplanSidebarMainButtons />
             <div>
-                <TriplanSidebarCollapsableMenu />
+                <TriplanSidebarCollapsableMenu {...props} />
                 <TriplanSidebarDivider />
-                <TriplanSidebarCategories addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} TriplanCalendarRef={TriplanCalendarRef} />
+                <TriplanSidebarCategories {...props} />
                 {!eventStore.isSharedTrip && <TriplanSidebarDivider />}
                 {!eventStore.isSharedTrip && renderShareTripPlaceholder()}
                 {!!historyRecords?.length && <TriplanSidebarDivider />}

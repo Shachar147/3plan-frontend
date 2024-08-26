@@ -437,3 +437,13 @@ export const renderFooterLine = (eventStore: EventStore, classList?: string) => 
 		</a>
 	</div>
 );
+
+export function renderLineWithText(text: string, className?: string){
+	return (
+		<div className={getClasses('preferred-time', className)}>
+			<div className="preferred-time-divider max-width-20" />
+			<div className="preferred-time-title">{text}</div>
+			<div className="preferred-time-divider" />
+		</div>
+	);
+}

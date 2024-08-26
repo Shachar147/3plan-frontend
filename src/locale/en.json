@@ -866,5 +866,6 @@
 	"SAVED_COLLECTIONS.YOU_ARE_LOOKING_AT": "You are looking at:\n{X}",
 	"CREATE_TRIP_FROM_SAVED_COLLECTION": "Create trip from this collection!",
 	"BACK_TO_MY_TRIPS": "Back to my trips",
-	"MY_TRIP_TO_X": "My trip to {X}"
+	"MY_TRIP_TO_X": "My trip to {X}",
+	"EVENT_NAME_WITH_DURATION": "{name} ({duration})"
 }
