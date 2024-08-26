@@ -23,6 +23,7 @@ interface TriplanSidebarCategoriesProps {
     removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
     addToEventsToCategories: (event: SidebarEvent) => void;
     TriplanCalendarRef: React.MutableRefObject<HTMLDivElement>;
+    addEventToSidebar: (event: SidebarEvent) => boolean;
 }
 
 function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){

@@ -1510,7 +1510,7 @@ export class EventStore {
 	setSelectedEventForNearBy(calendarEvent: CalendarEvent | SidebarEvent | undefined) {
 		// @ts-ignore
 		const location = calendarEvent?.location ?? calendarEvent?.extendedProps?.location;
-		if (!location) {
+		if (!location || !location.latitude || !location.longitude) {
 			this.selectedEventForNearBy = undefined;
 			this.selectedEventNearByPlaces = undefined;
 			this.modalValues['selectedCalendarEvent'] = undefined;
@@ -1520,7 +1520,6 @@ export class EventStore {
 				label: calendarEvent?.title,
 				value: calendarEvent?.id,
 			};
-
 			const from: Coordinate = {
 				lat: location.latitude!,
 				lng: location.longitude!,

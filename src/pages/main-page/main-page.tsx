@@ -222,7 +222,7 @@ function MainPage(props: MainPageProps) {
 		const newEventsToCategories = { ...eventsToCategories };
 		Object.keys(newEvents).forEach((category) => {
 			const categoryId = Number(category);
-			newEvents[categoryId] = newEvents[categoryId].filter((event) => event.id !== eventId);
+			newEvents[categoryId] = newEvents[categoryId].filter((event) => event.id != eventId);
 			if (newEvents[categoryId].length !== eventStore.sidebarEvents[categoryId].length) {
 				newEventsToCategories[eventId] = category;
 			}
