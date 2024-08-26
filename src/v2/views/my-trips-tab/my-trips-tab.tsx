@@ -26,19 +26,34 @@ import {DEFAULT_VIEW_MODE_FOR_NEW_TRIPS} from "../../../utils/consts";
 import {upsertTripProps} from "../../../services/data-handlers/db-service";
 import {observer} from "mobx-react";
 import DestinationSelector from "../../components/destination-selector/destination-selector";
+import {getParameterFromHash} from "../../utils/utils";
+import {feedStoreContext} from "../../stores/feed-view-store";
+import {IPointOfInterestToTripEvent} from "../../utils/interfaces";
 
 
 function MyTripsTab(){
     const eventStore = useContext(eventStoreContext);
     const myTripsStore = useContext(myTripsContext);
+    const feedStore = useContext(feedStoreContext);
     const navigate = useNavigate();
 
-    const [addNewTripMode, setAddNewTripMode] = useState(false);
+    const [addNewTripMode, setAddNewTripMode] = useState(window.location.hash.includes("createTrip"));
     const [errors, setErrors] = useState<Record<string, boolean>>({});
     useHandleWindowResize();
     const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
+
+    const savedCollectionId = window.location.hash.includes('createTrip') ? getParameterFromHash('id') : undefined;
+    const savedCollection = savedCollectionId ? feedStore.savedCollections.find((c) => c.id == savedCollectionId) : undefined;
+
+    const [tripName, setTripName] = useState<string>("");
     const [selectedDestinations, setSelectedDestinations] = useState([]);
-    const [tripName, setTripName] = useState<string>('');
+
+    useEffect(() => {
+        if (savedCollection?.destination) {
+            setTripName(TranslateService.translate(eventStore,'MY_TRIP_TO_X', { X: TranslateService.translate(eventStore, savedCollection.destination) }));
+            setSelectedDestinations([savedCollection.destination]);
+        }
+    }, [savedCollection])
 
     useEffect(() => {
         document.querySelector('body').classList.remove('rtl');
@@ -401,6 +416,45 @@ function MyTripsTab(){
                 destinations: selectedDestinations
             };
 
+            const categoryNameToId = tripData.categories.reduce((hash, category) => {
+                hash[category.title] = category.id;
+                return hash;
+            }, {})
+
+            if (savedCollection){
+                const items = savedCollection.items.map((i) => i.fullDetails);
+
+                const sidebarEvents = {};
+
+                const allEvents = items.map((i, idx) => {
+                    const parsedItem = IPointOfInterestToTripEvent(i, idx);
+
+                    i.category = i.category || "CATEGORY.GENERAL";
+
+                    let categoryId = categoryNameToId[i.category] ?? categoryNameToId[TranslateService.translate(eventStore, i.category)];
+                    if (!categoryId) {
+                        const maxCategoryId = Math.max(...Object.values(categoryNameToId));
+                        categoryId = maxCategoryId + 1;
+
+                        tripData.categories.push({
+                            id: maxCategoryId + 1,
+                            title: categoryId,
+                            icon: ''
+                        });
+                        categoryNameToId[i.category] = categoryId;
+                    }
+                    parsedItem.category = categoryId;
+
+                    sidebarEvents[categoryId] ||= [];
+                    sidebarEvents[categoryId].push(parsedItem);
+
+                    return parsedItem;
+                });
+
+                tripData.allEvents = allEvents;
+                tripData.sidebarEvents = sidebarEvents;
+            }
+
             // backup
             let { viewMode, mobileViewMode } = eventStore;
 
@@ -484,7 +538,7 @@ function MyTripsTab(){
                 />
                 {addNewTripMode && myTripsStore.allTripsSorted.length > 0 && (
                     <Button
-                        text={TranslateService.translate(eventStore, 'GO_BACK')}
+                        text={TranslateService.translate(eventStore, 'BACK_TO_MY_TRIPS')}
                         flavor={ButtonFlavor.link}
                         onClick={() => setAddNewTripMode(false)}
                     />
@@ -572,7 +626,7 @@ function MyTripsTab(){
                     {TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO')}
                 </div>
                 <div className="custom-dates-line flex-row align-items-center margin-bottom-5">
-                    <DestinationSelector onChange={setSelectedDestinations} />
+                    <DestinationSelector onChange={setSelectedDestinations} selectedDestinations={selectedDestinations} />
                 </div>
 
                 <div className="main-font font-size-20">

@@ -7,7 +7,8 @@ import {eventStoreContext} from "../../../stores/events-store";
 import {SavedCollection} from "../../utils/interfaces";
 import PointOfInterest from "../../components/point-of-interest/point-of-interest";
 import {rootStoreContext} from "../../stores/root-store";
-import {exploreTabId, mainPageContentTabLsKey, myTripsTabId} from "../../utils/consts";
+import {exploreTabId, mainPageContentTabLsKey} from "../../utils/consts";
+import './saved-collections-tab.scss';
 
 function SavedCollectionsTab(){
     const rootStore = useContext(rootStoreContext);
@@ -89,7 +90,7 @@ function SavedCollectionsTab(){
                         <>
                             <span
                                 className="main-feed-description white-space-pre-wrap text-align-start">{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.DESCRIPTION')}</span>
-                            <div className="flex-row justify-content-center flex-wrap-wrap align-items-start">
+                            <div className="saved-collections flex-row justify-content-center flex-wrap-wrap align-items-start">
                                 {feedStore.savedCollections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
                             </div>
                         </>
