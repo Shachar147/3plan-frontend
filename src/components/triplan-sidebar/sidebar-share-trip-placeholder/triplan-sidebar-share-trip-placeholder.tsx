@@ -68,8 +68,8 @@ const TriplanSidebarShareTripPlaceholder = () => {
         <div className="flex-col align-items-center justify-content-center">
             <b>{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.TITLE')}</b>
             <span className="white-space-pre-line text-align-center width-100-percents opacity-0-5">
-					{TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.CONTENT')}
-				</span>
+                {TranslateService.translate(eventStore, 'SHARE_TRIP.DESCRIPTION.CONTENT')}
+            </span>
             <TriplanSidebarShareTripButton isMoveAble={false} className="width-100-percents" />
             {!!collaborators?.length && (
                 <div className="flex-col align-items-center justify-content-center margin-block-10 width-100-percents">
