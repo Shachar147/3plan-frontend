@@ -117,6 +117,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
     let totalDisplayedCategories = 0;
 
     function renderCategories(){
+        // todo complete: remove inline style
         const closedStyle = {
             maxHeight: 0,
             overflowY: 'hidden',
