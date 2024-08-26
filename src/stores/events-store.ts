@@ -1508,7 +1508,6 @@ export class EventStore {
 
 	@action
 	setSelectedEventForNearBy(calendarEvent: CalendarEvent | SidebarEvent | undefined) {
-		// @ts-ignore
 		const location = calendarEvent?.location ?? calendarEvent?.extendedProps?.location;
 		if (!location || !location.latitude || !location.longitude) {
 			this.selectedEventForNearBy = undefined;

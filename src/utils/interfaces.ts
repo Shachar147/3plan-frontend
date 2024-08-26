@@ -21,6 +21,8 @@ export interface CalendarEvent {
 	suggestedEndTime?: any;
 	timingError?: any;
 	className?: string;
+
+	extendedProps?: Record<string, any>;
 }
 
 export function buildCalendarEvent(json: any): Partial<CalendarEvent> {
@@ -74,6 +76,8 @@ export interface SidebarEvent {
 	moreInfo?: string;
 	price?: number;
 	currency?: TriplanCurrency;
+
+	extendedProps?: Record<string, any>;
 }
 
 export interface TriPlanCategory {
