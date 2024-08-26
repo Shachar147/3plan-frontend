@@ -22,10 +22,10 @@ import {endpoints} from "../../v2/utils/endpoints";
 export interface upsertTripProps {
 	name?: string;
 	dateRange?: DateRangeFormatted;
-	categories?: any[];
-	calendarEvents?: any[];
-	sidebarEvents?: Record<number, any[]>;
-	allEvents?: any[];
+	categories?: TriPlanCategory[];
+	calendarEvents?: CalendarEvent[];
+	sidebarEvents?: Record<number, SidebarEvent[]>;
+	allEvents?: AllEventsEvent[];
 	calendarLocale?: LocaleCode;
 	destinations?: string[];
 }

@@ -1,5 +1,5 @@
 // DestinationSelector.tsx
-import React, {useState, useEffect, useMemo, useContext} from 'react';
+import React, {useState, useEffect, useMemo, useContext, useRef} from 'react';
 import Select, { MultiValue } from 'react-select';
 // import countryList from 'react-select-country-list';
 // import { getCities } from 'country-city';
@@ -56,6 +56,7 @@ const popularCities = [
 
 interface DestinationSelectorProps {
     onChange: (selectedValues: string[]) => void;
+    selectedDestinations?: string[]
 }
 
 export interface CityOrCountry {
@@ -150,12 +151,24 @@ const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
 };
 
 function DestinationSelector(props: DestinationSelectorProps) {
+    const prevSelectedDestinations = useRef<string[]>([]);
     const [selectedOptions, setSelectedOptions] = useState<MultiValue<OptionType>>([]);
     const [options, setOptions] = useState<OptionType[]>([]);
 
     const eventStore = useContext(eventStoreContext);
 
     const allOptions = useMemo<OptionType[]>(() => fetchCitiesAndSetOptions(), []);
+
+    useEffect(() => {
+        if (props.selectedDestinations) {
+            if (allOptions.length > 0 && JSON.stringify(prevSelectedDestinations.current) != JSON.stringify(props.selectedDestinations)) {
+                prevSelectedDestinations.current = props.selectedDestinations;
+                const optionsToSelect = allOptions.filter((o) => props.selectedDestinations.includes(o.value));
+
+                setSelectedOptions(optionsToSelect)
+            }
+        }
+    }, [props.selectedDestinations, allOptions])
 
     // Fetch cities and set options on component mount
     useEffect(() => {

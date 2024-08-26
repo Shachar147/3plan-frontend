@@ -1,0 +1,16 @@
+///* Ensuring that all divs take the height of the tallest div */
+//.saved-collections > div {
+//  flex: 1 1 auto; /* Allow the div to grow and shrink */
+//  display: flex; /* Ensure flexbox is applied inside as well */
+//  flex-direction: column; /* Ensure vertical alignment of contents */
+//}
+//
+///* Optional: This makes the divs take equal width */
+//.saved-collections > div {
+//  width: 100%;
+//  max-width: 298px; /* Adjust the max-width as needed */
+//}
+
+.saved-collections .poi-right {
+  min-height: 212px;
+}

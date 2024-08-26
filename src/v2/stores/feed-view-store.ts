@@ -27,7 +27,6 @@ export class FeedStore {
                     ...response
                 ];
                 this.reRenderCounter +=1;
-                console.log("here!" +  this.reRenderCounter);
             })
         })
     }

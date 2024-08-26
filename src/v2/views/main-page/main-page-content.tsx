@@ -48,6 +48,8 @@ function MainPageContent(){
     const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
     const isInViewItem = (viewItemId?.length ?? 0) > 0;
 
+    const isInAddItem = window.location.hash.includes('createTrip');
+
     const tabs: TabData[] = getTabs();
     const tabIdToIdx = useMemo<Record<string, number>>(getTabIdToIndexMapping, [tabs]);
 
@@ -58,6 +60,9 @@ function MainPageContent(){
         }
         if (isInSearch) {
             return searchResultsTabId;
+        }
+        if (isInAddItem) {
+            return myTripsTabId;
         }
         if (localStorage.getItem(mainPageContentTabLsKey)){
             return localStorage.getItem(mainPageContentTabLsKey);

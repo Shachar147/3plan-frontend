@@ -1,4 +1,7 @@
 import React from "react";
+import {AllEventsEvent} from "../../services/data-handlers/data-handler-base";
+import {TriplanCurrency, TriplanEventPreferredTime, TriplanPriority} from "../../utils/enums";
+import {LocationData, WeeklyOpeningHoursData} from "../../utils/interfaces";
 
 export interface SavedCollection {
     id: number;
@@ -42,6 +45,31 @@ export interface IPointOfInterest {
     addedBy?: Record<string, any>; // user
     updatedBy?: Record<string, any>; // user
     isSystemRecommendation: boolean;
+    duration?: string;
+}
+
+export function IPointOfInterestToTripEvent(i: IPointOfInterest, idx: number): AllEventsEvent {
+    return {
+        id: idx + 1,
+        title: i.name,
+        duration: i.duration || "01:00",
+        icon: "",
+        category: "", // todo complete
+        description: i.description,
+        priority: "", // todo complete
+        preferredTime: TriplanEventPreferredTime.unset,
+        // className: "",
+        location: {
+            ...(i.location ?? {}),
+            "address": i.location?.address ?? i.name
+        },
+        // allDay: false,
+        // openingHours? : WeeklyOpeningHoursData,
+        images: i.images,
+        moreInfo: i.more_info,
+        price: i.price,
+        currency: i.currency ? i.currency?.toLowerCase() : undefined
+    } as unknown as AllEventsEvent
 }
 
 export interface TabData {

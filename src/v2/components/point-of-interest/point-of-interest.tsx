@@ -17,6 +17,7 @@ import {runInAction} from "mobx";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {observer} from "mobx-react";
 import EditableLabel from "../editable-label/editable-label";
+import {newDesignRootPath} from "../../utils/consts";
 
 interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
@@ -400,6 +401,21 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     </div>}
                     {renderTripInfo?.()}
                 </div>
+                {savedCollection && (
+                    <div className="margin-bottom-20 flex-column width-100-percents">
+                        <Button
+                            icon="fa-rocket"
+                            className="cursor-pointer"
+                            type={ButtonFlavor.secondary}
+                            text={TranslateService.translate(eventStore, 'CREATE_TRIP_FROM_SAVED_COLLECTION')}
+                            onClick={() => {
+                                // window.location.href = `${newDesignRootPath}/#createTrip`;
+                                window.location.hash = `createTrip?id=${item.collectionId}`;
+                                window.location.reload();
+                            }}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );
