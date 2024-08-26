@@ -365,9 +365,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 </span>
                 <div className="poi-details">
                     {durationText && <span className="duration">{durationText}</span>}
-                    {item.extra?.price && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
-                        price: item.extra.price,
-                        currency: item.extra.currency === 'ILS' ? '₪' : item.extra.currency
+                    {(item.price ?? item.extra?.price) && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
+                        price: (item.price ?? item.extra?.price),
+                        currency: (item.currency === 'ILS' || item.extra?.currency === 'ILS') ? '₪' : item.currency ?? item.extra?.currency
                     })}</span>}
                     {!!item.rate && !!item.rate.rating && <div className="rate">
                         {renderStars(item.rate.rating)}
