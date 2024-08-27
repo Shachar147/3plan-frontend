@@ -291,7 +291,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 <div className="flex-row gap-8 flex-wrap-wrap align-items-center">
                     {renderDestinationIcon()}
                     {renderCategoryName()}
-                    <span className="item-name font-size-12">{item.imagesNames?.[currentSlide]}</span>
+                    {!savedCollection && <span className="item-name font-size-12">{item.imagesNames?.[currentSlide]}</span>}
                 </div>
                 {(mainFeed) && renderSaveButton()}
             </div>
@@ -365,7 +365,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 </span>
                 <div className="poi-details">
                     {durationText && <span className="duration">{durationText}</span>}
-                    {(item.price ?? item.extra?.price) && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
+                    {!savedCollection && !myTrips && (item.price ?? item.extra?.price) && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
                         price: (item.price ?? item.extra?.price),
                         currency: (item.currency === 'ILS' || item.extra?.currency === 'ILS') ? '₪' : item.currency ?? item.extra?.currency
                     })}</span>}
