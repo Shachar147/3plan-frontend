@@ -10,6 +10,7 @@ import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import {useHandleWindowResize} from '../../custom-hooks/use-window-size';
 import {getCurrentUsername} from "../../utils/utils";
+import {FeatureFlagsService} from "../../utils/feature-flags";
 
 const dataService = DataServices.LocalStorageService;
 const LandingPage = () => {
@@ -63,7 +64,7 @@ const LandingPage = () => {
 					/>
 				</div>
 				<div>
-					{getCurrentUsername()?.toLowerCase() == 'shachar' && <Button
+					{FeatureFlagsService.isNewDesignEnabled() && <Button
 						text="New site - Beta"
 						onClick={() => {
 							navigate('/new');

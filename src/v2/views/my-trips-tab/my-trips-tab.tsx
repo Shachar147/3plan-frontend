@@ -129,6 +129,9 @@ function MyTripsTab(){
         }
 
         const isSharedTrip = myTripsStore.mySharedTrips.find((s) => s.id == trip.id);
+
+        const numOfDestinations = trip.destinations?.length ?? 0
+
         const item = {
             ...trip,
             tripId: trip.id,
@@ -136,7 +139,7 @@ function MyTripsTab(){
             imagesNames: images.map((i) => itemsWithImages.find((item) => item.images.includes(i))?.title),
             name: trip.name.replaceAll("-", " "),
             destination: trip.destinations?.join(", "),
-            category: undefined,
+            category: numOfDestinations > 1 ? "DESTINATIONS" : numOfDestinations == 1 ? "DESTINATION" : undefined,
             rate: undefined,
             isSystemRecommendation: undefined,
             location: undefined,
@@ -144,7 +147,7 @@ function MyTripsTab(){
             source: undefined,
             description: undefined,
             idxToDetails,
-            isSharedTrip
+            isSharedTrip,
         }
 
         const isEditMode = myTripsStore.isTripOnEditMode(trip.id);

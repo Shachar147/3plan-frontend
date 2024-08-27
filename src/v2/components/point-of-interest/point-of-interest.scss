@@ -263,8 +263,7 @@ h2 {
       min-height: unset;
 
       height: 207px;
-      cursor: pointer !important;
-
+      //cursor: pointer !important;
     }
     .carousel .slide {
       img {
@@ -364,4 +363,16 @@ h2 {
       width: 100%;
     }
   }
+}
+
+.my-trips-current-displayed-place-name {
+  font-size: 11px;
+  margin-inline: 10px;
+  //position: absolute;
+  color: gray;
+  text-align: center;
+  //top: 215px;
+  width: 100%;
+  max-width: CALC(100% - 20px);
+  margin-top: 4px;
 }

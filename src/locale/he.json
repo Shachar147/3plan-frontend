@@ -1073,5 +1073,7 @@
 	"BACK_TO_MY_TRIPS": "חזור לטיולים שלי",
 	"MY_TRIP_TO_X": "טיול ל{X}",
 	"EVENT_NAME_WITH_DURATION": "{name} ({duration})",
-	"OPEN_TRIP": "פתח טיול זה"
+	"OPEN_TRIP": "פתח טיול זה",
+	"DESTINATION": "יעד: ",
+	"DESTINATIONS": "יעדים: "
 }

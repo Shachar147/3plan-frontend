@@ -17,7 +17,7 @@ import {runInAction} from "mobx";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {observer} from "mobx-react";
 import EditableLabel from "../editable-label/editable-label";
-import {exploreTabId, mainPageContentTabLsKey, myTripsTabId, newDesignRootPath} from "../../utils/consts";
+import {mainPageContentTabLsKey, myTripsTabId} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
 
 interface PointOfInterestProps {
@@ -56,7 +56,10 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         item.name ?? '',
         item.description ?? '',
     ].filter(Boolean))
-    item.category = item.category || category || "CATEGORY.GENERAL";
+
+    if (!myTrips) {
+        item.category = item.category || category || "CATEGORY.GENERAL";
+    }
 
     const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${item.location?.latitude},${item.location?.longitude}`;
 
@@ -242,17 +245,14 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     }
 
     function renderCategoryName(){
-        if (myTrips){
-            return;
-        }
-        if (savedCollection){
+        if (savedCollection || myTrips){
             return (
                 <div className="flex-row gap-3">
                     <span>
                         {TranslateService.translate(eventStore, item.category)}
                     </span>
                     <span>
-                        {TranslateService.translate(eventStore, item.destination)}
+                        {(item.destination ?? "").split(',').map((d) => TranslateService.translate(eventStore, d.trim())).join(', ')}
                     </span>
                 </div>
             )
@@ -293,7 +293,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 <div className="flex-row gap-8 flex-wrap-wrap align-items-center">
                     {renderDestinationIcon()}
                     {renderCategoryName()}
-                    {!savedCollection && <span className="item-name font-size-12">{item.imagesNames?.[currentSlide]}</span>}
+                    {!savedCollection && !myTrips && <span className="item-name font-size-12">{item.imagesNames?.[currentSlide]}</span>}
                 </div>
                 {(mainFeed) && renderSaveButton()}
             </div>
@@ -341,6 +341,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     {(mainFeed) && renderItemCategory()}
                     {renderTripActions?.()}
                 </div>
+                {/*{myTrips && (*/}
+                {/*    <div className="my-trips-current-displayed-place-name">{item?.imagesNames?.[currentSlide]}</div>*/}
+                {/*)}*/}
             </div>
             <div className="poi-right">
                 {(item.priority === 'high' || item.isSystemRecommendation) && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
