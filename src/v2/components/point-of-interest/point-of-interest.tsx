@@ -329,7 +329,6 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', isSearchResult && 'search-result', isViewItem && 'view-item')}>
             <div className="poi-left">
                 <div className="carousel-wrapper" onClick={(e) => (item.images?.length > 1) && e.stopPropagation()}>
-                    {/*todo complete - fix carousel on hebrew*/}
                     <Carousel showThumbs={false} showIndicators={false} infiniteLoop={true} onChange={(idx) => {
                         setCurrentSlide(idx);
                     }}>
