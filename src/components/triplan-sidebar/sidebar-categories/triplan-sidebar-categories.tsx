@@ -167,11 +167,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
                     return (
                         <div className="external-events" key={triplanCategory.id}>
                             <div
-                                className="sidebar-statistics cursor-pointer padding-inline-start-10"
+                                className="sidebar-statistics sidebar-group"
                                 style={{
-                                    backgroundColor: '#e5e9ef80',
                                     borderBottom: borderStyle,
-                                    height: '45px',
                                     borderTop: index === 0 ? borderStyle : '0',
                                 }}
                                 onClick={() => eventStore.toggleCategory(triplanCategory.id)}

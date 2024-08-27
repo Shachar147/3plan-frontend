@@ -6,6 +6,7 @@ import {observer} from 'mobx-react';
 import './triplan-sidebar-inner.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import {DateRangeFormatted} from '../../services/data-handlers/data-handler-base';
+import './triplan-sidebar.scss';
 
 // @ts-ignore
 import * as _ from 'lodash';
@@ -68,18 +69,9 @@ export const wrapWithSidebarGroup = (
 	return (
 		<>
 			<div
-				className={'sidebar-statistics'}
-				style={{
-					color: textColor,
-					paddingInlineStart: '10px',
-					cursor: 'pointer',
-					backgroundColor: '#e5e9ef80',
-					borderBottom: '1px solid #e5e9ef',
-					height: '45px',
-				}}
-				onClick={() => {
-					eventStore.toggleSidebarGroups(groupKey);
-				}}
+				className="sidebar-statistics sidebar-group"
+				style={{ color: textColor }}
+				onClick={() => eventStore.toggleSidebarGroups(groupKey)}
 			>
 				<i
 					className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}

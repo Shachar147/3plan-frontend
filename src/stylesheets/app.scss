@@ -363,6 +363,10 @@ body {
 	margin-block: 10px;
 }
 
+.margin-block-20-10 {
+	margin-block: 20px 10px;
+}
+
 .margin-inline-0 {
 	margin-inline: 0;
 }
@@ -1148,6 +1152,7 @@ input[type='text'] {
 	font-family: 'Arial';
 }
 
+.width-100-percent,
 .width-100-percents {
 	width: 100%;
 }

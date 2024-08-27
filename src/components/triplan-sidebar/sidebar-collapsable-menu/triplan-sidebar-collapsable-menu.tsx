@@ -1357,10 +1357,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
         return (
             <Button
                 flavor={ButtonFlavor.secondary}
-                style={{
-                    width: '100%',
-                    marginBlock: '10px',
-                }}
+                className="width-100-percents margin-block-10"
                 onClick={() => {
                     ReactModalService.openAddTaskModal(eventStore, eventStore.tripId);
                 }}
