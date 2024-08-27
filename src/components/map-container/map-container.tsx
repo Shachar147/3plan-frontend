@@ -357,7 +357,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	const initMarkers = (map = googleMapRef) => {
 		const getIconUrl = (event: any) => {
 			let icon = '';
-			let bgColor = priorityToMapColor[event.priority].replace('#', '');
+			let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
 			let category: string = props.allEvents
 				? event.category
 				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
@@ -452,7 +452,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		};
 
 		const getIconUrlByIdx = (event: any, idx: number) => {
-			const bgColor = priorityToMapColor[event.priority].replace('#', '');
+			const bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1738-blank-sequence_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0&color=ffffffff&psize=15&text=${idx}`;
 		};
 

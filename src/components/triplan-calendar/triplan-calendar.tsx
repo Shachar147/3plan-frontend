@@ -202,7 +202,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 
 		// callback
-		props.onEventReceive && props.onEventReceive(info.event.id);
+		props.onEventReceive?.(info.event.id);
 
 		const { id, classNames } = info.event;
 		const event = {
@@ -228,6 +228,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 
 		refreshSources();
+
+		eventStore.triggerCalendarReRender();
 	};
 
 	const onEventClick = (info: any) => {
@@ -640,7 +642,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	}, [eventStore.customDateRange]);
 
 	return (
-		<div className={'flex-col width-100-percents position-relative'}>
+		<div className="flex-col width-100-percents position-relative" key={eventStore.forceCalendarReRender}>
 			{eventStore.isSwitchDaysEnabled && !eventStore.isTripLocked && <DraggableList />}
 			<FullCalendar
 				initialView={'timeGridWeek'}

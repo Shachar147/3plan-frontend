@@ -114,11 +114,11 @@ function MyTripsTab(){
         const classList = getClasses("align-items-center", eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
         const itemsWithImages = [...trip.calendarEvents, ...trip.allEvents].filter((i) => i?.images?.length).filter((i) => {
-            const images = i.images.split(",");
+            const images = Array.isArray(i.images) ? i.images : i.images.split(",");
             return !images[0].includes("googleapis");
         });
 
-        const images: string[] = itemsWithImages.map((i) => i.images.split(",")[0].split("\n")[0]);
+        const images: string[] = itemsWithImages.map((i) => Array.isArray(i.images) ? i.images[0] : i.images.split(",")[0].split("\n")[0]);
         const idxToDetails = {};
         itemsWithImages?.forEach((i, idx) =>
             idxToDetails[idx] = i

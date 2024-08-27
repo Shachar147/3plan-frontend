@@ -126,6 +126,7 @@ export class EventStore {
 
 	@observable forceUpdate = 0;
 	@observable forceSetDraggable = 0;
+	@observable forceCalendarReRender = 0;
 
 	// map filters
 	@observable mapFiltersVisible: boolean = false;
@@ -1782,7 +1783,11 @@ export class EventStore {
 				(element as HTMLInputElement).value = '';
 			});
 		}, 100);
+	}
 
+	@action
+	triggerCalendarReRender(){
+		this.forceCalendarReRender += 1;
 	}
 }
 
