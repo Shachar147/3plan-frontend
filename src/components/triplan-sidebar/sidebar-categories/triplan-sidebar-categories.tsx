@@ -59,10 +59,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
                     icon="fa-plus-square-o"
                     text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
                 />
-                <div className={'sidebar-statistics'} style={{ padding: 0 }}>
-                    {' '}
-                    |{' '}
-                </div>
+                <div className="sidebar-statistics padding-0">{` | `}</div>
                 <Button
                     disabled={!expandMinimizedEnabled}
                     flavor={ButtonFlavor.link}
@@ -168,29 +165,25 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
                     const eventsStyle = isOpen ? openStyle : closedStyle;
 
                     return (
-                        <div className={'external-events'} key={triplanCategory.id}>
+                        <div className="external-events" key={triplanCategory.id}>
                             <div
-                                className={'sidebar-statistics'}
+                                className="sidebar-statistics cursor-pointer padding-inline-start-10"
                                 style={{
-                                    paddingInlineStart: '10px',
-                                    cursor: 'pointer',
                                     backgroundColor: '#e5e9ef80',
                                     borderBottom: borderStyle,
                                     height: '45px',
                                     borderTop: index === 0 ? borderStyle : '0',
                                 }}
-                                onClick={() => {
-                                    eventStore.toggleCategory(triplanCategory.id);
-                                }}
+                                onClick={() => eventStore.toggleCategory(triplanCategory.id)}
                             >
                                 <i
-                                    className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
+                                    className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
                                     aria-hidden="true"
                                 />
                                 <span>
-							{triplanCategory.icon ? `${triplanCategory.icon} ` : ''}
+							        {triplanCategory.icon ? `${triplanCategory.icon} ` : ''}
                                     {triplanCategory.title}
-						</span>
+						        </span>
                                 <div title={totalItemsCountTooltip}>
                                     ({sidebarItemsCount}/{itemsCount})
                                 </div>
@@ -208,8 +201,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
                                         }}
                                     />
                                     <i
-                                        className={getClasses('fa fa-trash-o', eventStore.isTripLocked && 'display-none')}
-                                        style={{ position: 'relative', top: '-1px' }}
+                                        className={getClasses('fa fa-trash-o', eventStore.isTripLocked && 'display-none', 'position-relative', 'top--1')}
                                         aria-hidden="true"
                                         onClick={(e) => {
                                             e.preventDefault();
@@ -370,8 +362,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
                 }
                 return 0;
             });
+
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <div className="flex-column gap-5">
                 {events.map((event) => <TriplanSidebarDraggableEvent event={event} categoryId={categoryId} removeEventFromSidebarById={removeEventFromSidebarById} addToEventsToCategories={addToEventsToCategories} />)}
             </div>
         );
@@ -410,7 +403,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
                 return 0;
             });
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <div className="flex-column gap-5">
                 {events.map((event, idx) => <TriplanSidebarDraggableEvent event={event} categoryId={categoryId} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} fullActions={false} eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)} onClick={
                     () => {
                         const calendarEvent = eventStore.calendarEvents.find(
