@@ -78,7 +78,6 @@ function TriplanHeaderLine(){
                             if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
                                 return;
                             }
-                            rootS
                             localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
                             window.location.hash = myTripsTabId;
                             rootStore.triggerTabsReRender();

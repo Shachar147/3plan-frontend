@@ -11,6 +11,7 @@ import { getClasses } from '../../utils/utils';
 import {myTripsTabId} from "../../v2/utils/consts";
 import {FeatureFlagsService} from "../../utils/feature-flags";
 import {rootStoreContext} from "../../v2/stores/root-store";
+import TriplanHeaderBanner from "../../v2/components/triplan-header-banner/triplan-header-banner";
 
 interface TriplanHeaderWrapperProps extends TriplanHeaderProps {
 	currentMobileView?: ViewMode;
