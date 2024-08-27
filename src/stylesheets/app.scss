@@ -211,6 +211,9 @@ body {
 }
 
 /* padding */
+.padding-0 {
+	padding: 0;
+}
 .padding-inline-start-10 {
 	padding-inline-start: 10px;
 }
@@ -237,6 +240,10 @@ body {
 
 .padding-inline-8 {
 	padding-inline: 8px;
+}
+
+.padding-inline-10 {
+	padding-inline: 10px;
 }
 
 .padding-inline-15 {
@@ -354,6 +361,10 @@ body {
 
 .margin-block-10 {
 	margin-block: 10px;
+}
+
+.margin-block-20-10 {
+	margin-block: 20px 10px;
 }
 
 .margin-inline-0 {
@@ -837,6 +848,10 @@ body.ltr {
 	}
 }
 
+
+.max-width-20 {
+	max-width: 20px;
+}
 .max-width-250 {
 	max-width: 250px;
 }
@@ -1137,6 +1152,7 @@ input[type='text'] {
 	font-family: 'Arial';
 }
 
+.width-100-percent,
 .width-100-percents {
 	width: 100%;
 }
@@ -1409,6 +1425,10 @@ input:read-only {
 }
 .min-height-20 {
 	min-height:20px;
+}
+
+.min-height-40 {
+	min-height: 40px;
 }
 
 body.admin-side {

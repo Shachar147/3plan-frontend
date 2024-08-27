@@ -126,6 +126,7 @@ export class EventStore {
 
 	@observable forceUpdate = 0;
 	@observable forceSetDraggable = 0;
+	@observable forceCalendarReRender = 0;
 
 	// map filters
 	@observable mapFiltersVisible: boolean = false;
@@ -1508,9 +1509,8 @@ export class EventStore {
 
 	@action
 	setSelectedEventForNearBy(calendarEvent: CalendarEvent | SidebarEvent | undefined) {
-		// @ts-ignore
 		const location = calendarEvent?.location ?? calendarEvent?.extendedProps?.location;
-		if (!location) {
+		if (!location || !location.latitude || !location.longitude) {
 			this.selectedEventForNearBy = undefined;
 			this.selectedEventNearByPlaces = undefined;
 			this.modalValues['selectedCalendarEvent'] = undefined;
@@ -1520,7 +1520,6 @@ export class EventStore {
 				label: calendarEvent?.title,
 				value: calendarEvent?.id,
 			};
-
 			const from: Coordinate = {
 				lat: location.latitude!,
 				lng: location.longitude!,
@@ -1767,6 +1766,28 @@ export class EventStore {
 				};
 			});
 		}, duration + 100);
+	}
+
+	@action
+	resetFilters(){
+		this.setSearchValue('');
+		this.setSidebarSearchValue('');
+		this.setShowOnlyEventsWithNoLocation(false);
+		this.setShowOnlyEventsWithTodoComplete(false);
+		this.setShowOnlyEventsWithNoOpeningHours(false);
+		this.setShowOnlyEventsWithDistanceProblems(false);
+		this.setShowOnlyEventsWithOpeningHoursProblems(false);
+
+		setTimeout(() => {
+			document.getElementsByName('fc-search').forEach((element) => {
+				(element as HTMLInputElement).value = '';
+			});
+		}, 100);
+	}
+
+	@action
+	triggerCalendarReRender(){
+		this.forceCalendarReRender += 1;
 	}
 }
 

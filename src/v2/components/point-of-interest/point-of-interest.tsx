@@ -17,7 +17,8 @@ import {runInAction} from "mobx";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {observer} from "mobx-react";
 import EditableLabel from "../editable-label/editable-label";
-import {newDesignRootPath} from "../../utils/consts";
+import {exploreTabId, mainPageContentTabLsKey, myTripsTabId, newDesignRootPath} from "../../utils/consts";
+import {rootStoreContext} from "../../stores/root-store";
 
 interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
@@ -45,6 +46,7 @@ interface PointOfInterestProps {
 
 const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
+    const rootStore = useContext(rootStoreContext);
 
     const isHebrew = eventStore.isHebrew;
     const feedId = `${item.source}-${item.name}-${item.url}`;
@@ -291,7 +293,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 <div className="flex-row gap-8 flex-wrap-wrap align-items-center">
                     {renderDestinationIcon()}
                     {renderCategoryName()}
-                    <span className="item-name font-size-12">{item.imagesNames?.[currentSlide]}</span>
+                    {!savedCollection && <span className="item-name font-size-12">{item.imagesNames?.[currentSlide]}</span>}
                 </div>
                 {(mainFeed) && renderSaveButton()}
             </div>
@@ -324,14 +326,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     }
 
     return (
-        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', !!onClick && 'cursor-pointer', isSearchResult && 'search-result', isViewItem && 'view-item')} onClick={() => {
-            if (!isEditMode) {
-                onClick?.();
-            }
-        }}>
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', isSearchResult && 'search-result', isViewItem && 'view-item')}>
             <div className="poi-left">
                 <div className="carousel-wrapper" onClick={(e) => (item.images?.length > 1) && e.stopPropagation()}>
-                    {/*todo complete - fix carousel on hebrew*/}
                     <Carousel showThumbs={false} showIndicators={false} infiniteLoop={true} onChange={(idx) => {
                         setCurrentSlide(idx);
                     }}>
@@ -365,7 +362,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 </span>
                 <div className="poi-details">
                     {durationText && <span className="duration">{durationText}</span>}
-                    {(item.price ?? item.extra?.price) && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
+                    {!savedCollection && !myTrips && (item.price ?? item.extra?.price) && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
                         price: (item.price ?? item.extra?.price),
                         currency: (item.currency === 'ILS' || item.extra?.currency === 'ILS') ? '₪' : item.currency ?? item.extra?.currency
                     })}</span>}
@@ -410,9 +407,23 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                             text={TranslateService.translate(eventStore, 'CREATE_TRIP_FROM_SAVED_COLLECTION')}
                             onClick={() => {
                                 // window.location.href = `${newDesignRootPath}/#createTrip`;
+                                localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
                                 window.location.hash = `createTrip?id=${item.collectionId}`;
-                                window.location.reload();
+                                rootStore.triggerTabsReRender();
+                                rootStore.triggerHeaderReRender();
+                                // window.location.reload();
                             }}
+                        />
+                    </div>
+                )}
+                {onClick && (
+                    <div className="margin-bottom-20 flex-column width-100-percents">
+                        <Button
+                            icon={`fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
+                            className="cursor-pointer"
+                            type={ButtonFlavor.secondary}
+                            text={TranslateService.translate(eventStore, 'OPEN_TRIP')}
+                            onClick={() => onClick()}
                         />
                     </div>
                 )}

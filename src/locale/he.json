@@ -1071,5 +1071,7 @@
 	"GO_BACK": "חזור אחורה",
 	"CREATE_TRIP_FROM_SAVED_COLLECTION": "צרו טיול מאוסף זה!",
 	"BACK_TO_MY_TRIPS": "חזור לטיולים שלי",
-	"MY_TRIP_TO_X": "טיול ל{X}"
+	"MY_TRIP_TO_X": "טיול ל{X}",
+	"EVENT_NAME_WITH_DURATION": "{name} ({duration})",
+	"OPEN_TRIP": "פתח טיול זה"
 }
