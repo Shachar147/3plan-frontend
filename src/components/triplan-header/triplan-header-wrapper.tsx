@@ -8,6 +8,9 @@ import TriplanSearch from './triplan-search/triplan-search';
 import { ViewMode } from '../../utils/enums';
 import TranslateService from '../../services/translate-service';
 import { getClasses } from '../../utils/utils';
+import {myTripsTabId} from "../../v2/utils/consts";
+import {FeatureFlagsService} from "../../utils/feature-flags";
+import {rootStoreContext} from "../../v2/stores/root-store";
 
 interface TriplanHeaderWrapperProps extends TriplanHeaderProps {
 	currentMobileView?: ViewMode;
@@ -18,6 +21,7 @@ interface TriplanHeaderWrapperProps extends TriplanHeaderProps {
 function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 	const navigate = useNavigate();
 	const eventStore = useContext(eventStoreContext);
+	const rootStore = useContext(rootStoreContext);
 	let { withSearch, currentMobileView, showTripName } = props;
 
 	if (eventStore.isMobile) {
@@ -66,7 +70,13 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 		<div className="triplan-header-spacer padding-20" style={{ width: '100%' }}>
 			<TriplanHeader
 				onLogoClick={() => navigate(homeUrl)}
-				onMyTripsClick={() => navigate('/my-trips')}
+				onMyTripsClick={() => {
+					if (FeatureFlagsService.isNewDesignEnabled()) {
+						rootStore.navigateToTab(myTripsTabId);
+					} else {
+						navigate('/my-trips')
+					}
+				}}
 				{...props}
 			/>
 		</div>
