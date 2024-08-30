@@ -32,7 +32,46 @@ export function useMobileLockScroll(rerenderCounter: number, setReRenderCounter:
     }, [shouldShowSuggestions, suggestions]);
 }
 
-export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggestions: SearchSuggestion[]) => void, setShowSuggestions: (show: boolean) => void) {
+export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggestions: SearchSuggestion[]) => void, setShowSuggestions: (show: boolean) => void, isInPlan: boolean) {
+    const eventStore = useContext(eventStoreContext);
+
+    function searchInTrip(){
+        const allOptions = eventStore.allEventsComputed;
+
+        const categoryIdToName = eventStore.categories.reduce((hash, category) => {
+            hash[category.id] = category.title;
+            return hash;
+        }, {})
+
+        const results = allOptions.filter((e) => {
+                //console.log(e.title, e.description, e.category, categoryIdToName[e.category]);
+                return e.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                categoryIdToName[e.category]?.toLowerCase().includes(searchQuery.toLowerCase())
+            }
+        ).map((e) => ({
+            name: e.title,
+            category: categoryIdToName[e.category],
+            destination: "test",
+            id: e.id,
+            image: e.images ? Array.isArray(e.images) ? e.images[0] : e.images.split(',')[0] : undefined,
+            hideImage: false
+        } as unknown as SearchSuggestion));
+
+        console.log(results);
+
+        setSuggestions(results);
+        setShowSuggestions(true);
+    }
+
+    if (isInPlan){
+        useEffect(() => {
+            searchInTrip();
+        }, [searchQuery])
+        return;
+    }
+
+    console.log("hereeee");
     const searchSuggestionsCaching = useRef<Record<string, SearchSuggestion[]>>({});
     const apiService = useMemo(() => new FeedViewApiService(), []);
 

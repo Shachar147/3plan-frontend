@@ -794,6 +794,8 @@
 	"SAVED_COLLECTIONS.SHORT": "Saved Collections ({X})",
 	"HEADER_SEARCH_PLACEHOLDER": "Find places and things to do",
 	"HEADER_SEARCH_PLACEHOLDER.SHORT": "Find places",
+	"HEADER_SPECIFIC_TRIP_SEARCH_PLACEHOLDER": "Find places on this trip",
+	"HEADER_SPECIFIC_TRIP_SEARCH_PLACEHOLDER.SHORT": "Find on this trip",
 	"KEEP_TO_SAVED": "Add to saved",
 	"REMOVE_FROM_SAVED": "Saved",
 	"CATEGORY.VIEWS": "Views",

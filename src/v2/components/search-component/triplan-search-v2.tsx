@@ -8,7 +8,7 @@ import {observer} from "mobx-react";
 
 // @ts-ignore
 // import onClickOutside from 'react-onclickoutside';
-import {cityImage, specificItemTabId} from "../../utils/consts";
+import {cityImage, newDesignRootPath, specificItemTabId} from "../../utils/consts";
 import {useLoadSuggestions, useMobileLockScroll} from "../../hooks/search-hooks";
 import {getParameterFromHash} from "../../utils/utils";
 import {rootStoreContext} from "../../stores/root-store";
@@ -23,8 +23,6 @@ export interface SearchSuggestion {
     hideImage?: boolean;
 }
 
-const AUTO_COMPLETE_MIN_CHARACTERS = 3;
-
 const TriplanSearchV2 = () => {
     const [_searchQuery, _setSearchQuery] = useState<string>(getParameterFromHash('q') ?? '');
     const [searchQuery, setSearchQuery] = useState<string>(getParameterFromHash('q') ?? '');
@@ -34,6 +32,9 @@ const TriplanSearchV2 = () => {
     const [rerenderCounter, setReRenderCounter] = useState(0);
     const [searchValueFromHash, setSearchValueFromHash] = useState((getParameterFromHash('q')?.length ?? 0) > 0)
     const debounceInputChange = useRef<NodeJS.Timeout | undefined>(undefined);
+
+    const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
+    const AUTO_COMPLETE_MIN_CHARACTERS = isInPlan ? 1 : 3;
 
     useEffect(() => {
         _setSearchQuery(searchQuery);
@@ -54,11 +55,10 @@ const TriplanSearchV2 = () => {
     }
 
     const rootStore = useContext(rootStoreContext);
-    const feedStore = useContext(feedStoreContext);
     const shouldShowSuggestions = suggestions.length > 0 && searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS && (chosenName == "" || !searchQuery.includes(chosenName) || searchQuery.trim().length > chosenName.length) && (!chosenName.includes(searchQuery)) && showSuggestions && !searchValueFromHash;
     useMobileLockScroll(rerenderCounter, setReRenderCounter, shouldShowSuggestions, showSuggestions, suggestions);
 
-    useLoadSuggestions(searchQuery, setSuggestions, setShowSuggestions);
+    useLoadSuggestions(searchQuery, setSuggestions, setShowSuggestions, isInPlan);
 
     // Function to handle input change
     const handleInputChange = (event: any) => {
@@ -70,11 +70,14 @@ const TriplanSearchV2 = () => {
             setSearchValueFromHash(false);
             setSearchQuery(query);
             // Mocked suggestions for demo purpose
+            if (isInPlan) {
+                return;
+            }
             const filteredSuggestions = [{ name: TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT"), category: "", destination: "", hideImage: true}];
             setSuggestions(filteredSuggestions);
             setShowSuggestions(true);
             rootStore.triggerTabsReRender();
-        }, 300)
+        }, 300);
     };
 
     const handleResetSearchClick = () => {
@@ -127,6 +130,9 @@ const TriplanSearchV2 = () => {
         }) : "";
     }
 
+
+    const placeholder = isInPlan ? `HEADER_SPECIFIC_TRIP_SEARCH_PLACEHOLDER${isShort}` : `HEADER_SEARCH_PLACEHOLDER${isShort}`;
+
     return (
         <div className={getClasses("search-container", shouldShowSuggestions && 'has-values')} key={`search-box-${rerenderCounter}`}>
             <div className="search-box">
@@ -135,7 +141,7 @@ const TriplanSearchV2 = () => {
                     type="text"
                     value={_searchQuery}
                     onChange={handleInputChange}
-                    placeholder={TranslateService.translate(eventStore, `HEADER_SEARCH_PLACEHOLDER${isShort}`)}
+                    placeholder={TranslateService.translate(eventStore, placeholder)}
                     autoComplete="off"
                 />
                 {_searchQuery.length > 0 && <i className="fa fa-times" aria-hidden="true" onClick={() => handleResetSearchClick()} />}

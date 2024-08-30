@@ -921,6 +921,8 @@
 	"SAVED_COLLECTIONS.SHORT": "המקומות ששמרת ({X})",
 	"HEADER_SEARCH_PLACEHOLDER": "חפשו מקומות ודברים לעשות",
 	"HEADER_SEARCH_PLACEHOLDER.SHORT": "חפשו מקומות",
+	"HEADER_SPECIFIC_TRIP_SEARCH_PLACEHOLDER": "חפשו פעילויות בטיול זה",
+	"HEADER_SPECIFIC_TRIP_SEARCH_PLACEHOLDER.SHORT": "חפשו בטיול זה",
 	"KEEP_TO_SAVED": "הוסף למקומות שמורים",
 	"REMOVE_FROM_SAVED": "הסר ממקומות שמורים",
 	"CATEGORY.VIEWS": "תצפיות",
