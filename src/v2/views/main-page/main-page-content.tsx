@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useMemo, useState} from "react";
+import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import TabMenu from "../../../components/common/tabs-menu/tabs-menu";
@@ -10,7 +10,7 @@ import MyTrips from "../my-trips-tab/my-trips-tab";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
 import {myTripsContext} from "../../stores/my-trips-store";
-import {getClasses} from "../../../utils/utils";
+import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
 import {
     exploreTabId,
     mainPageContentTabLsKey,
@@ -24,6 +24,12 @@ import {getParameterFromHash} from "../../utils/utils";
 import {useMyTrips, useSavedCollections, useScrollWhenTabChanges} from "../../hooks/main-page-hooks";
 import {TabData} from "../../utils/interfaces";
 import FeedViewApiService, {allSources} from "../../services/feed-view-api-service";
+import {useParams} from "react-router-dom";
+import {runInAction} from "mobx";
+import DataServices, {LocaleCode} from "../../../services/data-handlers/data-handler-base";
+import {TripDataSource} from "../../../utils/enums";
+import LoadingComponent from "../../../components/loading/loading-component";
+import MainPage from "../../../pages/main-page/main-page";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -35,11 +41,32 @@ function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
 
 const defaultTab = "explore";
 
+
+
 function MainPageContent(){
     const rootStore = useContext(rootStoreContext);
     const eventStore = useContext(eventStoreContext);
     const feedStore = useContext(feedStoreContext);
     const myTripsStore = useContext(myTripsContext);
+
+    const loaderDetails = useRef(LOADER_DETAILS());
+    const { tripName } = useParams();
+
+    useEffect(() => {
+        if (tripName && eventStore.tripName != tripName && !eventStore.isLoading) {
+            eventStore.setTripName(tripName);
+            // eventStore.setTripName(tripName).then(() => {
+            //     runInAction(() => {
+            //         eventStore.isLoading = false;
+            //     });
+            // });
+
+            // // must put it here, otherwise dates are incorrect
+            // if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
+            //     eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(tripName));
+            // }
+        }
+    }, [tripName, eventStore.isLoading]);
 
     const isShort = eventStore.isMobile ? '.SHORT' : '';
     const searchKeyword = getParameterFromHash('q');
@@ -48,13 +75,14 @@ function MainPageContent(){
     const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
     const isInViewItem = (viewItemId?.length ?? 0) > 0;
 
-    const isInAddItem = window.location.hash.includes('createTrip');
-
     const tabs: TabData[] = getTabs();
     const tabIdToIdx = useMemo<Record<string, number>>(getTabIdToIndexMapping, [tabs]);
 
     const tabFromHash = window.location.hash.replace('#', '');
-    const activeTab = useMemo(() => {
+
+    function getActiveTab(){
+        const isInAddItem = window.location.hash.includes('createTrip');
+
         if (isInViewItem) {
             return specificItemTabId;
         }
@@ -71,7 +99,8 @@ function MainPageContent(){
             return tabFromHash;
         }
         return defaultTab;
-    }, [isInSearch, tabs, tabFromHash, rootStore.tabMenuReRenderCounter]);
+    }
+    const activeTab = useMemo(getActiveTab, [isInSearch, tabs, tabFromHash, rootStore.tabMenuReRenderCounter]);
     const [activeTabIdx, setActiveTabIdx] = useState(tabIdToIdx[activeTab]);
 
     useEffect(() => {
@@ -94,6 +123,7 @@ function MainPageContent(){
     }, []);
 
     function getTabs():TabData[] {
+
         if (isInViewItem) {
             const itemName = localStorage.getItem(`item-${viewItemId}-name`)
             return  [{
@@ -157,6 +187,40 @@ function MainPageContent(){
             toReturn[tab.id] = idx
         });
         return toReturn;
+    }
+
+    if (eventStore.isLoading || (tripName && tripName != eventStore.tripName)){
+        return (
+            <LoadingComponent
+                title={TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE')}
+                message={TranslateService.translate(eventStore, 'LOADING_TRIP_PLACEHOLDER')}
+                loaderDetails={loaderDetails.current}
+            />
+        )
+    }
+
+    if (tripName && tripName == eventStore.tripName) {
+        // todo complete: make it appear with a tab viewer
+        return (
+            <>
+                <div className="plan-trip-tab-menu">
+                <TabMenu
+                    activeTab="planTrip"
+                    tabs={[
+                        {
+                            id: 'planTrip',
+                            order: 1,
+                            name: tripName,
+                            icon: "fa-plane",
+                            render: () => null
+                        }
+                    ]}
+                    onChange={() => {}}
+                />
+                </div>
+                <MainPage/>
+            </>
+        )
     }
 
     return (

@@ -29,6 +29,8 @@ import DestinationSelector from "../../components/destination-selector/destinati
 import {getParameterFromHash} from "../../utils/utils";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {IPointOfInterestToTripEvent} from "../../utils/interfaces";
+import {myTripsTabId, newDesignRootPath} from "../../utils/consts";
+import MainPage from "../../../pages/main-page/main-page";
 
 
 function MyTripsTab(){
@@ -38,12 +40,15 @@ function MyTripsTab(){
     const navigate = useNavigate();
 
     const [addNewTripMode, setAddNewTripMode] = useState(window.location.hash.includes("createTrip"));
+    const savedCollectionId = window.location.hash.includes('createTrip') ? getParameterFromHash('id') : undefined;
+    const savedCollection = savedCollectionId ? feedStore.savedCollections.find((c) => c.id == savedCollectionId) : undefined;
+
+    const [planTripMode, setPlanTripMode] = useState(window.location.hash.includes("planTrip"));
+    const [planTripName, setPlanTripName] = useState(undefined);
+
     const [errors, setErrors] = useState<Record<string, boolean>>({});
     useHandleWindowResize();
     const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
-
-    const savedCollectionId = window.location.hash.includes('createTrip') ? getParameterFromHash('id') : undefined;
-    const savedCollection = savedCollectionId ? feedStore.savedCollections.find((c) => c.id == savedCollectionId) : undefined;
 
     const [tripName, setTripName] = useState<string>("");
     const [selectedDestinations, setSelectedDestinations] = useState([]);
@@ -157,7 +162,14 @@ function MyTripsTab(){
                     key={trip.id}
                     item={item}
                     eventStore={eventStore}
-                    mainFeed myTrips onClick={() => navigate('/plan/' + trip.name, {})}
+                    mainFeed
+                    myTrips
+                    onClick={() => {
+                        // window.location.hash = `planTrip?name=${trip.name}`;
+                        // setPlanTripName(trip.name);
+                        // setPlanTripMode(true);
+                        navigate(`${newDesignRootPath}/plan/${trip.name}`, {})
+                    }}
                     renderTripActions={() => renderTripActions(trip)}
                     renderTripInfo={() => renderTripInfo(trip)}
                     namePrefix={isSharedTrip ? <span>{TranslateService.translate(eventStore, 'SHARED_TRIP')}:&nbsp;</span> : undefined}
@@ -522,6 +534,21 @@ function MyTripsTab(){
         }
     }
 
+    function renderGoBackButton() {
+        return (
+            <Button
+                text={TranslateService.translate(eventStore, 'BACK_TO_MY_TRIPS')}
+                flavor={ButtonFlavor.secondary}
+                className="padding-inline-15 font-size-14 font-weight-normal black"
+                icon={`fa-chevron-${eventStore.getCurrentDirectionStart()}`}
+                onClick={() => {
+                    window.location.hash = myTripsTabId;
+                    setAddNewTripMode(false);
+                }}
+            />
+        )
+    }
+
     function renderAddTripButton(flavor: ButtonFlavor = ButtonFlavor.secondary){
         return (
             <>
@@ -543,7 +570,10 @@ function MyTripsTab(){
                     <Button
                         text={TranslateService.translate(eventStore, 'BACK_TO_MY_TRIPS')}
                         flavor={ButtonFlavor.link}
-                        onClick={() => setAddNewTripMode(false)}
+                        onClick={() => {
+                            window.location.hash = myTripsTabId;
+                            setAddNewTripMode(false);
+                        }}
                     />
                 )}
             </>
@@ -681,9 +711,12 @@ function MyTripsTab(){
             <h2 className="main-feed-header width-100-percents">
                 <span>{TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')}</span>
                 {myTripsStore.allTripsSorted.length > 0 && !addNewTripMode && renderAddTripButton()}
+                {addNewTripMode && renderGoBackButton()}
             </h2>
             <div className="flex-row justify-content-center flex-wrap-wrap align-items-start width-100-percents" key={myTripsStore.myTrips?.length}>
-                {addNewTripMode ? renderCreateTripPlaceholder() :
+                {
+                    planTripMode ? <MainPage /> :
+                    addNewTripMode ? renderCreateTripPlaceholder() :
                 <>
                     {myTripsStore.allTripsSorted?.length == 0 ? renderNoTripsPlaceholder() : myTripsStore.allTripsSorted.map(renderTrip)}
                     {myTripsStore.hiddenTripsEnabled && (
