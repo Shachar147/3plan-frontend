@@ -98,3 +98,10 @@ body.rtl {
     align-items: center;
   }
 }
+
+.triplan-main-page-container:has(.plan-trip-tab-menu) {
+  .main-layout-container {
+    overflow-y: scroll;
+    margin-bottom: 20px;
+  }
+}

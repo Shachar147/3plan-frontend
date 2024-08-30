@@ -349,5 +349,7 @@ const top100Cities = [
     "Málaga",
     "Luxembourg City",
     "Stuttgart",
-    "Bergen"
+    "Bergen",
+    // added:
+    "Rhodes"
 ];

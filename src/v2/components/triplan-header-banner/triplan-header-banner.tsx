@@ -4,7 +4,6 @@ import './triplan-header-banner.scss';
 import {eventStoreContext} from "../../../stores/events-store";
 import TranslateService from "../../../services/translate-service";
 import {getClasses} from "../../../utils/utils";
-import { getServerAddress } from '../../../config/config';
 import TriplanHeaderLine from "./triplan-header-line";
 import {useParams} from "react-router-dom";
 
