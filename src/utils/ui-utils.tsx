@@ -261,6 +261,7 @@ export const getViewSelectorOptions = (
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
 			icon: <i className="fa fa-map-o black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-map selected-color" aria-hidden="true" />,
+			iconClass: 'fa-map-o'
 		},
 		{
 			key: ViewMode.calendar,
@@ -268,6 +269,7 @@ export const getViewSelectorOptions = (
 			icon: <i className="fa fa-calendar-o black-color" aria-hidden="true" />,
 			defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-calendar selected-color" aria-hidden="true" />,
+			iconClass: 'fa-calendar'
 		},
 		{
 			key: ViewMode.combined,
@@ -276,18 +278,21 @@ export const getViewSelectorOptions = (
 			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true" />,
 			desktopOnly: true,
+			iconClass: 'fa-compress'
 		},
 		{
 			key: ViewMode.list,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
 			icon: <i className="fa fa-list black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true" />,
+			iconClass: 'fa-list'
 		},
 		{
 			key: ViewMode.feed,
 			name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${eventStore.isMobile ? '.SHORT' : ''}`),
 			icon: <i className="fa fa-search black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-search selected-color" aria-hidden="true" />,
+			iconClass: 'fa-search'
 		},
 	];
 
@@ -298,6 +303,7 @@ export const getViewSelectorOptions = (
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.SIDEBAR_VIEW'),
 				icon: <i className="fa fa-star-o black-color" aria-hidden="true" />,
 				iconActive: <i className="fa fa-star selected-color" aria-hidden="true" />,
+				iconClass: 'fa-start-o'
 			},
 			...baseArray.filter((x) => !x.desktopOnly),
 		];

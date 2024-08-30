@@ -105,8 +105,12 @@ body.rtl {
     margin-bottom: 20px;
   }
   .triplan-header-actionbar {
-    .search-container {
+    .search-container, .view-selector {
       display: none;
+    }
+
+    .triplan-header-spacer {
+      padding: 0 !important;
     }
   }
 }

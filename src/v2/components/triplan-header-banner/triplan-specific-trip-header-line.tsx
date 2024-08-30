@@ -12,9 +12,11 @@ import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, savedCollectio
 import {rootStoreContext} from "../../stores/root-store";
 import {useNavigate, useParams} from "react-router-dom";
 import {getUser, isLoggedOn} from "../../../helpers/auth";
+import {getViewSelectorOptions} from "../../../utils/ui-utils";
+import {ViewMode} from "../../../utils/enums";
 
 
-function TriplanHeaderLine(){
+function TriplanSpecificTripHeaderLine(){
     const rootStore = useContext(rootStoreContext);
     const eventStore = useContext(eventStoreContext);
     const { tripName } = useParams();
@@ -41,52 +43,40 @@ function TriplanHeaderLine(){
 
     const baseClass = "triplan-header-banner-header-line";
     const isSticky = (!eventStore.isMobile && scrollY > 100) || tripName;
-    const isShort = eventStore.isMobile ? '.SHORT' : '';
+
+    const viewOptions = getViewSelectorOptions(eventStore, eventStore.isMobile).filter((x) => {
+        return !(eventStore.isMobile && (x as any).desktopOnly);
+    });
 
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
-            <div className={getClasses(baseClass, !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
+            <div className={getClasses(baseClass, 'padding-inline-150', !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
                 <div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
                     <TriplanSearchV2 />
                 </div>
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
-                    <Button
-                        icon="fa-heart"
-                        text={TranslateService.translate(eventStore, 'WISHLIST')}
-                        className={localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId && 'active'}
-                        onClick={() => {
-                            // if (localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId) {
-                            //     return;
-                            // }
-
-                            if (window.location.href == savedCollectionsTabId) {
-                                localStorage.setItem(mainPageContentTabLsKey, savedCollectionsTabId);
-                                window.location.hash = savedCollectionsTabId;
-                                rootStore.triggerTabsReRender();
-                                rootStore.triggerHeaderReRender();
-
-                                window.scrollTo({
-                                    top: 0,
-                                    behavior: 'smooth' // Optional: for smooth scrolling
-                                });
-                            }
-                            else {
-                                rootStore.navigateToTab(savedCollectionsTabId)
-                            }
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
+                    {viewOptions.map((v) => (
+                        <Button
+                            icon={(v as any).iconClass!}
+                            text={v.name}
+                            className={(eventStore.isMobile ? eventStore.mobileViewMode : eventStore.viewMode) == v.key && 'active'}
+                            onClick={() => {
+                                if (eventStore.isMobile) {
+                                    eventStore.setMobileViewMode(v.key as ViewMode);
+                                } else {
+                                    eventStore.setViewMode(v.key as ViewMode);
+                                }
+                            }}
+                            flavor={ButtonFlavor.link}
+                        />
+                    ))}
                     <Button
                         icon="fa-plane"
-                        text={TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
+                        text={TranslateService.translate(eventStore, `BACK_TO_MY_TRIPS`)}
                         className={localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
                         onClick={() => {
-                            // if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
-                            //     return;
-                            // }
-
                             if (window.location.href == newDesignRootPath) {
                                 localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
                                 window.location.hash = myTripsTabId;
@@ -112,8 +102,6 @@ function TriplanHeaderLine(){
                         flavor={ButtonFlavor.link}
                     />
                     <Button
-                        // icon="fa-user"
-                        // text={TranslateService.translate(eventStore, 'PROFILE')}
                         icon="fa-sign-out"
                         text={isLoggedIn ? eventStore.isMobile ? TranslateService.translate(eventStore, 'LOGOUT') : `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}` : `${TranslateService.translate(eventStore, 'LOGIN')}`}
                         onClick={() => {
@@ -127,4 +115,4 @@ function TriplanHeaderLine(){
     );
 }
 
-export default observer(TriplanHeaderLine)
+export default observer(TriplanSpecificTripHeaderLine)

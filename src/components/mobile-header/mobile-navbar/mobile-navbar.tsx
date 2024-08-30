@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 // ROUTING
 import { Link, useNavigate } from 'react-router-dom';
@@ -13,14 +13,16 @@ import { getClasses } from '../../../utils/utils';
 import { observer, Observer } from 'mobx-react';
 import { TriplanHeaderProps } from '../../triplan-header/triplan-header';
 
-// @ts-ignore
-// import onClickOutside from 'react-onclickoutside';
 import ReactModalService from '../../../services/react-modal-service';
 import { runInAction } from 'mobx';
 import useIsAdmin from '../../../custom-hooks/use-is-admin';
+import {FeatureFlagsService} from "../../../utils/feature-flags";
+import {myTripsTabId, newDesignRootPath} from "../../../v2/utils/consts";
+import {rootStoreContext} from "../../../v2/stores/root-store";
 
 const MobileNavbar = (options: TriplanHeaderProps) => {
 	const eventStore = useContext(eventStoreContext);
+	const rootStore = useContext(rootStoreContext);
 	const navigate = useNavigate();
 
 	// There are no instances, only the single Menu function, so if we
@@ -102,6 +104,7 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 			withMyTrips && eventStore.tripId && {
 				title: TranslateService.translate(eventStore, 'SWITCH_TRIPS'),
 				onClick: () => {
+
 					ReactModalService.openSwitchTripsModal(eventStore);
 				},
 				icon: 'fa-reply-all',
@@ -109,7 +112,13 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 			},
 			withMyTrips && {
 				title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
-				path: '/my-trips',
+				onClick: () => {
+					if (FeatureFlagsService.isNewDesignEnabled()) {
+						rootStore.navigateToTab(myTripsTabId);
+					} else {
+						window.location.href = '/my-trips';
+					}
+				},
 				icon: 'fa-street-view',
 				cName: getClasses('nav-text', window.location.href.indexOf('/my-trips') !== -1 && 'active'),
 			},
