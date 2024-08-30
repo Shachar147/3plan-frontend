@@ -42,6 +42,7 @@ function TriplanHeaderLine(){
     const baseClass = "triplan-header-banner-header-line";
     const isSticky = (!eventStore.isMobile && scrollY > 100) || tripName;
     const isShort = eventStore.isMobile ? '.SHORT' : '';
+
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />

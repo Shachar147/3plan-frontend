@@ -954,6 +954,55 @@
 		flex-direction: column;
 		gap: 20px;
 	}
+
+	// new design
+	.triplan-main-page-container:has(.plan-trip-tab-menu) {
+		.mobile-header {
+			background-image: url("../../images/banner/best/10.png");
+			background-position-y: center;
+			background-size: 100% auto;
+		}
+
+		.mobile-header-row {
+			// background: linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
+			background: linear-gradient(268deg,rgba(12,24,47,0) 34.23%,rgba(12,24,47,.6) 97.86%), linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
+		}
+
+		.mobile-header-trip-name-text {
+			color: white;
+			background-color: rgba(0, 0, 0, 0.7);
+			padding-inline: 8px;
+			min-width: 100px;
+			min-height: 33px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			border-radius: 18px;
+		}
+
+		.mobile-navbar {
+			background-color: transparent !important;
+
+			.hamburger-icon .black-background {
+				background-color: white !important;
+			}
+		}
+
+		.triplan-header-banner {
+			display: none;
+		}
+
+		.poi-idx {
+			display: none;
+		}
+	}
+	body.rtl .triplan-main-page-container:has(.plan-trip-tab-menu) {
+		.mobile-header-row {
+			// background: linear-gradient(268deg,rgba(12,24,47,0) 34.23%,rgba(12,24,47,.6) 97.86%), linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
+			background: linear-gradient(88deg, rgba(12,24,47,0) 34.23%, rgba(12,24,47,0.6) 97.86%), linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
+		}
+	}
 }
 
 @media only screen and (max-height: 500px){
