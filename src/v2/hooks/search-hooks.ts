@@ -54,24 +54,14 @@ export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggest
             category: categoryIdToName[e.category],
             destination: "test",
             id: e.id,
-            image: e.images ? Array.isArray(e.images) ? e.images[0] : e.images.split(',')[0] : undefined,
+            image: e.images ? Array.isArray(e.images) ? e.images[0] : e.images.split('\n')[0] : undefined,
             hideImage: false
         } as unknown as SearchSuggestion));
-
-        console.log(results);
 
         setSuggestions(results);
         setShowSuggestions(true);
     }
 
-    if (isInPlan){
-        useEffect(() => {
-            searchInTrip();
-        }, [searchQuery])
-        return;
-    }
-
-    console.log("hereeee");
     const searchSuggestionsCaching = useRef<Record<string, SearchSuggestion[]>>({});
     const apiService = useMemo(() => new FeedViewApiService(), []);
 
@@ -129,6 +119,10 @@ export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggest
     }
 
     useEffect(() => {
-        loadSuggestions();
-    }, [searchQuery])
+        if (isInPlan) {
+            searchInTrip();
+        } else {
+            loadSuggestions();
+        }
+    }, [searchQuery, isInPlan])
 }

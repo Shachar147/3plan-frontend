@@ -1003,6 +1003,29 @@
 			background: linear-gradient(88deg, rgba(12,24,47,0) 34.23%, rgba(12,24,47,0.6) 97.86%), linear-gradient(180deg, transparent, rgba(0,0,0,0.3));
 		}
 	}
+	.triplan-main-page-container {
+		.main-page {
+			&.sidebar > div.padding-inline-8 {
+				height: 0;
+			}
+		}
+
+		.main-layout-container {
+			.main-layout {
+				padding-top: 4px;
+			}
+
+			&.sidebar {
+				.main-layout {
+					padding-top: 16px;
+				}
+			}
+		}
+
+		.triplan-sidebar-main-buttons {
+			padding-bottom: 16px;
+		}
+	}
 }
 
 @media only screen and (max-height: 500px){

@@ -67,6 +67,8 @@ import LogHistoryService from './data-handlers/log-history-service';
 import {navigate} from "@storybook/addon-links";
 import {useNavigate} from "react-router-dom";
 import {endpoints} from "../v2/utils/endpoints";
+import {FeatureFlagsService} from "../utils/feature-flags";
+import {newDesignRootPath} from "../v2/utils/consts";
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -4548,7 +4550,11 @@ const ReactModalService = {
 							modalValueName={"select-other-trip"}
 							menuPortalTarget={document.body}
 							onChange={(data) => {
-								window.location.href = `/plan/${data.value}`;
+								if (FeatureFlagsService.isNewDesignEnabled()) {
+									window.location.href = `${newDesignRootPath}/plan/${data.value}`;
+								} else {
+									window.location.href = `/plan/${data.value}`;
+								}
 							}}
 						/>
 					</div>}

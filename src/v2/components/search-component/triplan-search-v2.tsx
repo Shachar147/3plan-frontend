@@ -13,6 +13,8 @@ import {useLoadSuggestions, useMobileLockScroll} from "../../hooks/search-hooks"
 import {getParameterFromHash} from "../../utils/utils";
 import {rootStoreContext} from "../../stores/root-store";
 import {feedStoreContext} from "../../stores/feed-view-store";
+import ReactModalService from "../../../services/react-modal-service";
+import {ViewMode} from "../../../utils/enums";
 
 export interface SearchSuggestion {
     name: string;
@@ -22,6 +24,8 @@ export interface SearchSuggestion {
     image?: string;
     hideImage?: boolean;
 }
+
+const AUTO_COMPLETE_MIN_CHARACTERS = 3;
 
 const TriplanSearchV2 = () => {
     const [_searchQuery, _setSearchQuery] = useState<string>(getParameterFromHash('q') ?? '');
@@ -34,7 +38,6 @@ const TriplanSearchV2 = () => {
     const debounceInputChange = useRef<NodeJS.Timeout | undefined>(undefined);
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
-    const AUTO_COMPLETE_MIN_CHARACTERS = isInPlan ? 1 : 3;
 
     useEffect(() => {
         _setSearchQuery(searchQuery);
@@ -59,6 +62,18 @@ const TriplanSearchV2 = () => {
     useMobileLockScroll(rerenderCounter, setReRenderCounter, shouldShowSuggestions, showSuggestions, suggestions);
 
     useLoadSuggestions(searchQuery, setSuggestions, setShowSuggestions, isInPlan);
+
+    // useEffect(() => {
+    //     if (isInPlan) {
+    //         eventStore.setSearchValue(searchQuery);
+    //     }
+    // }, [searchQuery]);
+
+    useEffect(() => {
+        if (isInPlan && eventStore.searchValue == "") {
+            handleResetSearchClick();
+        }
+    }, [eventStore.searchValue])
 
     // Function to handle input change
     const handleInputChange = (event: any) => {
@@ -93,6 +108,16 @@ const TriplanSearchV2 = () => {
 
     // Function to handle suggestion click
     const handleSuggestionClick = (suggestion: SearchSuggestion) => {
+        if (isInPlan) {
+            ReactModalService.internal.closeModal(eventStore);
+            eventStore.setViewMode(ViewMode.map);
+            eventStore.setMobileViewMode(ViewMode.map);
+            eventStore.showEventOnMap = suggestion.id!;
+
+            handleResetSearchClick();
+            return;
+        }
+
         document.body.style.overflow = 'auto';
         setShowSuggestions(false);
         // setChosenItem(suggestion.name);
@@ -130,6 +155,16 @@ const TriplanSearchV2 = () => {
         }) : "";
     }
 
+    function handleSearchClick(){
+        if (isInPlan) {
+            // todo: check why sidebar events are not displayed correctly on this state.
+            eventStore.setSidebarSearchValue(_searchQuery);
+            eventStore.setSearchValue(_searchQuery);
+            setShowSuggestions(false);
+        } else {
+            handleSuggestionClick({ name: _searchQuery, type: 'city' } as unknown as SearchSuggestion);
+        }
+    }
 
     const placeholder = isInPlan ? `HEADER_SPECIFIC_TRIP_SEARCH_PLACEHOLDER${isShort}` : `HEADER_SEARCH_PLACEHOLDER${isShort}`;
 
@@ -145,7 +180,7 @@ const TriplanSearchV2 = () => {
                     autoComplete="off"
                 />
                 {_searchQuery.length > 0 && <i className="fa fa-times" aria-hidden="true" onClick={() => handleResetSearchClick()} />}
-                <button className="search-button" type="button" onClick={() => handleSuggestionClick({ name: _searchQuery, type: 'city' } as unknown as SearchSuggestion)}>
+                <button className="search-button" type="button" onClick={() => handleSearchClick()}>
                     {TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
                 </button>
             </div>

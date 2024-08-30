@@ -104,4 +104,9 @@ body.rtl {
     overflow-y: scroll;
     margin-bottom: 20px;
   }
+  .triplan-header-actionbar {
+    .search-container {
+      display: none;
+    }
+  }
 }
