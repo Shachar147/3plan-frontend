@@ -1004,8 +1004,8 @@
 	}
 	.triplan-main-page-container {
 		.main-page {
-			&.sidebar > div.padding-inline-8 {
-				min-height: 0;
+			> div.padding-inline-8 {
+				min-height: 10px;
 				height: max-content;
 			}
 		}
