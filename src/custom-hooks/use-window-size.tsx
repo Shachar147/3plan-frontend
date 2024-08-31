@@ -37,7 +37,7 @@ export function useHandleWindowResize() {
 	const windowResolution = useWindowSize() ?? {};
 	useEffect(() => {
 		const { width = 1000, height = 1000 } = windowResolution;
-		const isMobile = width <= 600 || height <= 600;
+		const isMobile = width <= 750; // || height <= 600;
 
 		runInAction(() => {
 			if (!eventStore.isMobile && isMobile) {

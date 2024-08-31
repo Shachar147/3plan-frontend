@@ -200,7 +200,7 @@ const TriplanSearchV2 = () => {
                             >
                                 {!suggestion.hideImage && <div className="suggestion-item-image" style={{
                                     // backgroundImage: `url(${suggestion.image})`
-                                    backgroundImage: `url(${suggestion.image ?? "images/no-image.png"})`
+                                    backgroundImage: `url(${suggestion.image ?? "/images/no-image.png"})`
                                 }}/>}
                                 <div className="suggestion-item-text">
                                     <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>

@@ -50,7 +50,7 @@ function TriplanSpecificTripHeaderLine(){
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
-            <div className={getClasses(baseClass, eventStore.isHebrew ? 'padding-inline-150' : 'padding-inline-50', !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
+            <div className={getClasses(baseClass, 'specific-trip-header-line', eventStore.isHebrew ? 'padding-inline-150' : 'padding-inline-50', !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
                 <div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
                     <TriplanSearchV2 />
@@ -73,6 +73,7 @@ function TriplanSpecificTripHeaderLine(){
                     ))}
                     <Button
                         icon="fa-plane"
+                        className="back-to-my-trips"
                         text={TranslateService.translate(eventStore, `BACK_TO_MY_TRIPS`)}
                         onClick={() => {
                             if (window.location.href == newDesignRootPath) {
@@ -93,6 +94,7 @@ function TriplanSpecificTripHeaderLine(){
                     />
                     <Button
                         icon="fa-globe"
+                        className="select-language-header-button"
                         text={TranslateService.translate(eventStore, 'LANGUAGE')}
                         onClick={() => {
                             ReactModalService.openChangeLanguageModal(eventStore);

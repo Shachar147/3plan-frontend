@@ -2,9 +2,8 @@
 	/* For tablets: */
 }
 
-@media only screen and (max-width: 600px) {
-	/* For mobiles: */
-
+/* For mobiles: */
+@media only screen and (max-width: 750px) {
 	.main-page {
 		display: flex;
 		flex-direction: column;
@@ -1075,6 +1074,56 @@
 
 		img {
 			max-width: 20vh;
+		}
+	}
+}
+
+
+@media only screen and (max-width: 1640px) {
+	.specific-trip-header-line {
+		.back-to-my-trips {
+			display: none !important;
+		}
+	}
+}
+
+@media only screen and (max-width: 1500px) {
+	.specific-trip-header-line {
+		padding-inline: 30px !important;
+	}
+}
+
+@media only screen and (max-width: 1260px) {
+	.specific-trip-header-line {
+		.search-container {
+			width: 200px !important;
+		}
+		.search-input {
+			min-width: 200px !important;
+		}
+	}
+}
+
+@media only screen and (max-width: 1154px) {
+	.specific-trip-header-line {
+		.triplan-header-banner-header-line-right-side {
+			gap: 4px !important;
+		}
+	}
+}
+
+@media only screen and (max-width: 1088px) {
+	.specific-trip-header-line {
+		.select-language-header-button {
+			display: none !important;
+		}
+	}
+}
+
+@media only screen and (max-width: 1037px) {
+	.specific-trip-header-line {
+		.search-container {
+			display: none !important;
 		}
 	}
 }
