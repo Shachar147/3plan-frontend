@@ -146,7 +146,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
             },
             true,
             undefined,
-            TripActions.addedNewSidebarEventFromTinder
+            TripActions.addedNewSidebarEventFromExploreTab
         );
     };
 

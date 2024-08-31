@@ -42168,6 +42168,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "Rhodes",
+        "label": "Rhodes, Greece",
+        "type": "island",
+        "flagClass": "fi fi-gr",
+        "isPopular": true
+    },
+    {
         "value": "Adámas",
         "label": "Adámas, Greece",
         "type": "city",
