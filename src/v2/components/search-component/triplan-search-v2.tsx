@@ -145,6 +145,12 @@ const TriplanSearchV2 = () => {
     const isShort = eventStore.isMobile ? '.SHORT' : '';
 
     function getDescription(suggestion: SearchSuggestion) {
+        if (isInPlan){
+            return suggestion.destination || TranslateService.translate(eventStore, 'ON_CATEGORY', {
+                category: suggestion.category
+            });
+        }
+
         const isCityOrCountry = suggestion.image == cityImage;
         if (isCityOrCountry) {
             return suggestion.destination;

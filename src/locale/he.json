@@ -1081,5 +1081,7 @@
 	"EVENT_NAME_WITH_DURATION": "{name} ({duration})",
 	"OPEN_TRIP": "פתח טיול זה",
 	"DESTINATION": "יעד: ",
-	"DESTINATIONS": "יעדים: "
+	"DESTINATIONS": "יעדים: ",
+	"SCHEDULED_ON": "הפעילות משובצת ב{date} בין השעות {end} - {end} ({duration})",
+	"ON_CATEGORY": "הפעילות נמצאת בתפריט הצד בקטגוריה {category}"
 }

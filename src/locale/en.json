@@ -836,7 +836,7 @@
 	"FOOTER.AVG_TRIPS_PER_USER": "Average Trips per user: {X}",
 	"FOOTER.TOTAL_PLACES_ON_CALENDAR": "Total Places on calendar: {X}",
 	"FOOTER.TOTAL_PLACES_ON_SIDEBAR": "Total Places on sidebar: {X}",
-	"FOOTER.POINT_OF_INTERESTS_STATS": "Point Of Interests Stats",
+	"FOOTER.POINT_OF_INTERESTS_STATS": "Point of interests stats",
 	"FOOTER.TOTAL_POIS": "Total Point of interests: {X}",
 	"FOOTER.TOTAL_DESTINATIONS_WITH_INTERESTS": "Total Destinations with interests: {X}",
 	"FOOTER.TOTAL_SAVED_COLLECTIONS": "Total Saved Collections: {X}",
@@ -872,5 +872,7 @@
 	"EVENT_NAME_WITH_DURATION": "{name} ({duration})",
 	"OPEN_TRIP": "Open trip planning",
 	"DESTINATION": "Destination: ",
-	"DESTINATIONS": "Destinations: "
+	"DESTINATIONS": "Destinations: ",
+	"SCHEDULED_ON": "Activity scheduled on {date}, {start}-{end} ({duration})",
+	"ON_CATEGORY": "Activity is on the sidebar on {category} category"
 }
