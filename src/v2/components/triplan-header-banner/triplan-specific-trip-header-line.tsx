@@ -51,7 +51,7 @@ function TriplanSpecificTripHeaderLine(){
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
-            <div className={getClasses(baseClass, 'padding-inline-150', !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
+            <div className={getClasses(baseClass, eventStore.isHebrew ? 'padding-inline-150' : 'padding-inline-50', !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
                 <div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
                     <TriplanSearchV2 />
@@ -75,7 +75,6 @@ function TriplanSpecificTripHeaderLine(){
                     <Button
                         icon="fa-plane"
                         text={TranslateService.translate(eventStore, `BACK_TO_MY_TRIPS`)}
-                        className={localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
                         onClick={() => {
                             if (window.location.href == newDesignRootPath) {
                                 localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);

@@ -31,6 +31,7 @@ import DraggableList from '../draggable-list/draggable-list';
 import { getClasses, isEventAlreadyOrdered, jsonDiff, lockEvents } from '../../utils/utils';
 import { TripDataSource } from '../../utils/enums';
 import { DBService } from '../../services/data-handlers/db-service';
+import {FeatureFlagsService} from "../../utils/feature-flags";
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -414,7 +415,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridAllDays',
 		  };
 
-	const customButtons = {
+	const customButtons = FeatureFlagsService.isNewDesignEnabled() ? undefined : {
 		customTitle: {
 			text: `${eventStore.tripName.replaceAll('-', ' ')} (${getDateRangeString(
 				new Date(eventStore.customDateRange.start),
