@@ -489,7 +489,7 @@ function MyTripsTab(){
                         tripName: TripName,
                     });
 
-                    navigate(`/plan/${res.data.name}`);
+                    navigate(`${newDesignRootPath}/plan/${res.data.name}`);
                     // navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
                 },
                 (e) => {
