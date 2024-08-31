@@ -109,3 +109,19 @@
     }
   }
 }
+
+.triplan-main-page-container {
+  .triplan-sidebar-main-buttons, .add-activity-button, .add-category-button {
+    background-color: white;
+  }
+  .triplan-header-spacer {
+    padding-bottom: 0 !important;
+  }
+  .language-selector,
+  .triplan-header-starter {
+    display: none;
+  }
+  .triplan-header-actionbar {
+    justify-content: center !important;
+  }
+}

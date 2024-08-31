@@ -4,13 +4,15 @@ import './triplan-header-banner.scss';
 import {eventStoreContext} from "../../../stores/events-store";
 import TranslateService from "../../../services/translate-service";
 import {getClasses} from "../../../utils/utils";
-import { getServerAddress } from '../../../config/config';
 import TriplanHeaderLine from "./triplan-header-line";
+import {useParams} from "react-router-dom";
 
 
 function TriplanHeaderBanner(){
     const baseClass = "triplan-header-banner";
     const eventStore = useContext(eventStoreContext);
+
+    const { tripName } = useParams();
 
     // const bgs = ["6.jpg", "5.jpg", "7.jpg", "8.jpg", "9.jpg"];
     // const bgs = ["6.jpg"]
@@ -18,7 +20,7 @@ function TriplanHeaderBanner(){
     const random = Math.floor(Math.random() * bgs.length);
 
     return (
-        <div className={baseClass} style={{
+        <div className={getClasses(baseClass, tripName && 'trip-mode')} style={{
             backgroundImage: `url('/images/banner/${bgs[random]}')`
         }}>
             <div className={getClasses(`${baseClass}-shadow`, eventStore.isHebrew && 'flip-x')} />

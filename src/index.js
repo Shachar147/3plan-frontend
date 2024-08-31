@@ -46,6 +46,7 @@ import useIsAdmin from './custom-hooks/use-is-admin';
 import InviteLink from './pages/invite-link/invite-link';
 import MainPageV2 from "./v2/views/main-page/main-page";
 import {newDesignRootPath} from "./v2/utils/consts";
+import {FeatureFlagsService} from "./utils/feature-flags";
 
 // Dubai
 // Namos / Twiggy?
@@ -839,7 +840,7 @@ const RootRouter = () => {
 					{/*    <Route exact path='/' element={<LandingPage/>}/>*/}
 					{/*<Route exact path="/loginold" element={getUser() == undefined ? <LoginPageOld /> : <LandingPage />} />*/}
 					<Route exact path={newDesignRootPath} element={<MainPageV2 />} />
-					<Route exact path="/" element={getUser() == undefined ? <LoginPage /> : <LandingPage />} />
+					<Route exact path="/" element={getUser() == undefined ? <LoginPage /> : FeatureFlagsService.isNewDesignEnabled() ? <MainPageV2 /> : <LandingPage />} />
 					<Route exact path="/home" element={<LandingPage />} />
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
@@ -849,6 +850,7 @@ const RootRouter = () => {
 					<Route path={'/plan/create/:tripName/:locale'} element={<MainPage createMode={true} />} />
 					<Route path="/plan/:tripName/:locale" element={<MainPage />} />
 					<Route path="/plan/:tripName/" element={<MainPage />} />
+					<Route path={`${newDesignRootPath}/plan/:tripName/`} element={<MainPageV2 />} />
 					<Route path="/plan" element={<MainPage />} />
 					<Route path="/inviteLink" element={<InviteLink />} />
 					<Route path="/theme" element={<ThemeExample />} />

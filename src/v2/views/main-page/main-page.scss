@@ -10,6 +10,12 @@
   align-self: flex-start;
 }
 
+body.rtl {
+  .main-feed-header {
+    text-align: right;
+  }
+}
+
 .main-feed-header {
   font-weight: bold;
   font-size: 2.25rem;
@@ -90,5 +96,12 @@
     gap: 16px;
     text-align: center;
     align-items: center;
+  }
+}
+
+.triplan-main-page-container:has(.plan-trip-tab-menu) {
+  .main-layout-container {
+    overflow-y: scroll;
+    margin-bottom: 20px;
   }
 }

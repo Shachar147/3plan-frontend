@@ -10,13 +10,15 @@ import ReactModalService from "../../../services/react-modal-service";
 import {observer} from "mobx-react";
 import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, savedCollectionsTabId} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {getUser, isLoggedOn} from "../../../helpers/auth";
 
 
 function TriplanHeaderLine(){
     const rootStore = useContext(rootStoreContext);
     const eventStore = useContext(eventStoreContext);
+    const { tripName } = useParams();
+
     useHandleWindowResize();
 
     const isLoggedIn = isLoggedOn();
@@ -38,8 +40,9 @@ function TriplanHeaderLine(){
     }, []);
 
     const baseClass = "triplan-header-banner-header-line";
-    const isSticky = !eventStore.isMobile && scrollY > 100;
+    const isSticky = (!eventStore.isMobile && scrollY > 100) || tripName;
     const isShort = eventStore.isMobile ? '.SHORT' : '';
+
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
@@ -54,19 +57,24 @@ function TriplanHeaderLine(){
                         text={TranslateService.translate(eventStore, 'WISHLIST')}
                         className={localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId && 'active'}
                         onClick={() => {
-                            if (localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId) {
-                                return;
+                            // if (localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId) {
+                            //     return;
+                            // }
+
+                            if (window.location.href == savedCollectionsTabId) {
+                                localStorage.setItem(mainPageContentTabLsKey, savedCollectionsTabId);
+                                window.location.hash = savedCollectionsTabId;
+                                rootStore.triggerTabsReRender();
+                                rootStore.triggerHeaderReRender();
+
+                                window.scrollTo({
+                                    top: 0,
+                                    behavior: 'smooth' // Optional: for smooth scrolling
+                                });
                             }
-
-                            localStorage.setItem(mainPageContentTabLsKey, savedCollectionsTabId);
-                            window.location.hash = savedCollectionsTabId;
-                            rootStore.triggerTabsReRender();
-                            rootStore.triggerHeaderReRender();
-
-                            window.scrollTo({
-                                top: 0,
-                                behavior: 'smooth' // Optional: for smooth scrolling
-                            });
+                            else {
+                                rootStore.navigateToTab(savedCollectionsTabId)
+                            }
                         }}
                         flavor={ButtonFlavor.link}
                     />
@@ -75,18 +83,23 @@ function TriplanHeaderLine(){
                         text={TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
                         className={localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
                         onClick={() => {
-                            if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
-                                return;
-                            }
-                            localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
-                            window.location.hash = myTripsTabId;
-                            rootStore.triggerTabsReRender();
-                            rootStore.triggerHeaderReRender();
+                            // if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
+                            //     return;
+                            // }
 
-                            window.scrollTo({
-                                top: 0,
-                                behavior: 'smooth' // Optional: for smooth scrolling
-                            });
+                            if (window.location.href == newDesignRootPath) {
+                                localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
+                                window.location.hash = myTripsTabId;
+                                rootStore.triggerTabsReRender();
+                                rootStore.triggerHeaderReRender();
+
+                                window.scrollTo({
+                                    top: 0,
+                                    behavior: 'smooth' // Optional: for smooth scrolling
+                                });
+                            } else {
+                                rootStore.navigateToTab(myTripsTabId);
+                            }
                         }}
                         flavor={ButtonFlavor.link}
                     />

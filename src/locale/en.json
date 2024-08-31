@@ -868,5 +868,7 @@
 	"BACK_TO_MY_TRIPS": "Back to my trips",
 	"MY_TRIP_TO_X": "My trip to {X}",
 	"EVENT_NAME_WITH_DURATION": "{name} ({duration})",
-	"OPEN_TRIP": "Open trip planning"
+	"OPEN_TRIP": "Open trip planning",
+	"DESTINATION": "Destination: ",
+	"DESTINATIONS": "Destinations: "
 }

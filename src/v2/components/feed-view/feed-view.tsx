@@ -322,7 +322,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
 
         return feedStore.filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
-                {idx + 1}
+                {!eventStore.isMobile && <span className="poi-idx">{idx + 1}</span>}
                 <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}  />
             </div>
         ));
@@ -373,7 +373,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     }
 
     return (
-        (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
+        (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents flex-column align-items-center" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
             {renderFeedContent()}
         </LazyLoadComponent>
     );

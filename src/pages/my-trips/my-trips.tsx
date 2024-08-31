@@ -24,6 +24,7 @@ import { LocalStorageService } from '../../services/data-handlers/local-storage-
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 
+// @ts-ignore
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import LogHistoryService from '../../services/data-handlers/log-history-service';
 import { TripActions } from '../../utils/interfaces';

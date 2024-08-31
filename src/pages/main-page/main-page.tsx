@@ -152,18 +152,20 @@ function MainPage(props: MainPageProps) {
 	}, [MapContainerRef.current, eventStore.viewMode]);
 
 	useEffect(() => {
-		runInAction(() => {
-			eventStore.isLoading = true;
-		});
-		eventStore.setTripName(tripName, locale as LocaleCode, createMode).then(() => {
+		if (eventStore.tripName != tripName) {
 			runInAction(() => {
-				eventStore.isLoading = false;
+				eventStore.isLoading = true;
 			});
-		});
+			eventStore.setTripName(tripName, locale as LocaleCode, createMode).then(() => {
+				runInAction(() => {
+					eventStore.isLoading = false;
+				});
+			});
 
-		// must put it here, otherwise dates are incorrect
-		if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
-			eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(tripName));
+			// must put it here, otherwise dates are incorrect
+			if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
+				eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(tripName));
+			}
 		}
 	}, [tripName, locale]);
 
