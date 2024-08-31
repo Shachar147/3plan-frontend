@@ -259,7 +259,7 @@ function MainPage(props: MainPageProps) {
 
 		let content = null;
 		const haveEstimatedPrices = !!eventStore.calendarEvents.find((e) => e.price);
-		const paddingClass = eventStore.isMobile || haveEstimatedPrices ? 'padding-top-70' : 'padding-top-60';
+		const paddingClass = eventStore.isMobile || haveEstimatedPrices ? 'padding-top-70' : 'padding-top-65';
 		if (eventStore.isMobile && eventStore.listViewShowDaysNavigator) {
 			const arr = ListViewService.buildHTMLSummary(eventStore, true);
 

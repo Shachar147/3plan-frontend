@@ -31,6 +31,7 @@ import {feedStoreContext} from "../../stores/feed-view-store";
 import {IPointOfInterestToTripEvent} from "../../utils/interfaces";
 import {myTripsTabId, newDesignRootPath} from "../../utils/consts";
 import MainPage from "../../../pages/main-page/main-page";
+import {FeatureFlagsService} from "../../../utils/feature-flags";
 
 
 function MyTripsTab(){
@@ -489,7 +490,12 @@ function MyTripsTab(){
                         tripName: TripName,
                     });
 
-                    navigate(`/plan/${res.data.name}`);
+                    if (FeatureFlagsService.isNewDesignEnabled()) {
+                        navigate(`${newDesignRootPath}/plan/${res.data.name}`);
+                    } else {
+                        navigate(`/plan/${res.data.name}`);
+                    }
+
                     // navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
                 },
                 (e) => {
