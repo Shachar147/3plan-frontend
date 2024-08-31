@@ -15,7 +15,6 @@ import {getUser, isLoggedOn} from "../../../helpers/auth";
 import {getViewSelectorOptions} from "../../../utils/ui-utils";
 import {ViewMode} from "../../../utils/enums";
 
-
 function TriplanSpecificTripHeaderLine(){
     const rootStore = useContext(rootStoreContext);
     const eventStore = useContext(eventStoreContext);
