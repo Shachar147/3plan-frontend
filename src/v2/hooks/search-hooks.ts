@@ -4,6 +4,9 @@ import {cityImage} from "../utils/consts";
 import {SearchSuggestion} from "../components/search-component/triplan-search-v2";
 import FeedViewApiService from "../services/feed-view-api-service";
 import {CityOrCountry, fetchCitiesAndSetOptions} from "../components/destination-selector/destination-selector";
+import {CalendarEvent, SidebarEvent} from "../../utils/interfaces";
+import TranslateService from "../../services/translate-service";
+import {formatDate, formatTime, getDurationString, toDate} from "../../utils/time-utils";
 
 export function useMobileLockScroll(rerenderCounter: number, setReRenderCounter: (num: number) => void, shouldShowSuggestions: boolean, showSuggestions: boolean, suggestions: any[]){
     const eventStore = useContext(eventStoreContext);
@@ -32,7 +35,53 @@ export function useMobileLockScroll(rerenderCounter: number, setReRenderCounter:
     }, [shouldShowSuggestions, suggestions]);
 }
 
-export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggestions: SearchSuggestion[]) => void, setShowSuggestions: (show: boolean) => void) {
+export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggestions: SearchSuggestion[]) => void, setShowSuggestions: (show: boolean) => void, isInPlan: boolean) {
+    const eventStore = useContext(eventStoreContext);
+
+    function scheduledOn(e: SidebarEvent | CalendarEvent) {
+        const calendarEvent = e as CalendarEvent;
+        if (!calendarEvent.start || !calendarEvent.end) {
+            return;
+        }
+        const dtStart = toDate(calendarEvent.start);
+        const dtEnd = toDate(calendarEvent.end);
+        const dt = formatDate(dtStart);
+        const startTime = dtStart?.toLocaleTimeString('en-US', { hour12: false });
+        const endTime = dtEnd?.toLocaleTimeString('en-US', { hour12: false });
+        const start = formatTime(startTime);
+        const end = formatTime(endTime);
+
+        const duration = getDurationString(eventStore, calendarEvent.duration);
+        return { date: dt, start, end, duration }
+    }
+
+    function searchInTrip(){
+        const allOptions = eventStore.allEventsComputed;
+
+        const categoryIdToName = eventStore.categories.reduce((hash, category) => {
+            hash[category.id] = category.title;
+            return hash;
+        }, {});
+
+        const results = allOptions.filter((e) => {
+                //console.log(e.title, e.description, e.category, categoryIdToName[e.category]);
+                return e.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                categoryIdToName[e.category]?.toLowerCase().includes(searchQuery.toLowerCase())
+            }
+        ).map((e) => ({
+            name: e.title,
+            category: categoryIdToName[e.category],
+            destination: scheduledOn(e) ? TranslateService.translate(eventStore, 'SCHEDULED_ON', scheduledOn(e)) : undefined,
+            id: e.id,
+            image: e.images ? Array.isArray(e.images) ? e.images[0] : e.images.split('\n')[0] : undefined,
+            hideImage: false
+        } as unknown as SearchSuggestion));
+
+        setSuggestions(results);
+        setShowSuggestions(true);
+    }
+
     const searchSuggestionsCaching = useRef<Record<string, SearchSuggestion[]>>({});
     const apiService = useMemo(() => new FeedViewApiService(), []);
 
@@ -90,6 +139,10 @@ export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggest
     }
 
     useEffect(() => {
-        loadSuggestions();
-    }, [searchQuery])
+        if (isInPlan) {
+            searchInTrip();
+        } else {
+            loadSuggestions();
+        }
+    }, [searchQuery, isInPlan])
 }

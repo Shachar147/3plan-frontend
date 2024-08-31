@@ -490,12 +490,7 @@ function MyTripsTab(){
                         tripName: TripName,
                     });
 
-                    if (FeatureFlagsService.isNewDesignEnabled()) {
-                        navigate(`${newDesignRootPath}/plan/${res.data.name}`);
-                    } else {
-                        navigate(`/plan/${res.data.name}`);
-                    }
-
+                    navigate(`${newDesignRootPath}/plan/${res.data.name}`);
                     // navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
                 },
                 (e) => {

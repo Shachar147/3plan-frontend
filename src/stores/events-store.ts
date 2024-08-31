@@ -51,6 +51,8 @@ import { MapContainerRef } from '../components/map-container/map-container';
 import LogHistoryService from '../services/data-handlers/log-history-service';
 import {endpoints} from "../v2/utils/endpoints";
 import {string} from "prop-types";
+import {FeatureFlagsService} from "../utils/feature-flags";
+import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath} from "../v2/utils/consts";
 
 const defaultModalSettings = {
 	show: false,
@@ -1236,7 +1238,13 @@ export class EventStore {
 				'error'
 			);
 			setTimeout(() => {
-				window.location.href = '/my-trips';
+				if (FeatureFlagsService.isNewDesignEnabled()) {
+					localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
+					window.location.href = `${newDesignRootPath}#${myTripsTabId}`;
+				} else {
+					window.location.href = '/my-trips';
+				}
+
 				localStorage.removeItem([LS_CALENDAR_LOCALE, name].join('-'));
 				localStorage.removeItem([LS_SIDEBAR_EVENTS, name].join('-'));
 			}, 3000);
@@ -1269,7 +1277,12 @@ export class EventStore {
 		if (!createMode && !existingTrips.find((x) => x.name === name || x.name === lsTripNameToTripName(name))) {
 			ReactModalService.internal.alertMessage(this, 'MODALS.ERROR.TITLE', 'MODALS.ERROR.TRIP_NOT_EXIST', 'error');
 			setTimeout(() => {
-				window.location.href = '/my-trips';
+				if (FeatureFlagsService.isNewDesignEnabled()) {
+					localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
+					window.location.href = `${newDesignRootPath}#${myTripsTabId}`;
+				} else {
+					window.location.href = '/my-trips';
+				}
 				localStorage.removeItem([LS_CALENDAR_LOCALE, name].join('-'));
 				localStorage.removeItem([LS_SIDEBAR_EVENTS, name].join('-'));
 			}, 3000);
