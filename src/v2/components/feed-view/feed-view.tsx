@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useContext, useState} from "react";
-import { Observer, observer } from "mobx-react";
+import { observer } from "mobx-react";
 import PointOfInterest, {PointOfInterestShimmering} from "../point-of-interest/point-of-interest";
 import { EventStore, eventStoreContext } from "../../../stores/events-store";
 import FeedViewApiService, { allSources } from "../../services/feed-view-api-service";
@@ -11,7 +11,6 @@ import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 import DestinationSelector from "../destination-selector/destination-selector";
 import Button, { ButtonFlavor } from "../../../components/common/button/button";
 import { feedStoreContext } from "../../stores/feed-view-store";
-import {runInAction} from "mobx";
 
 interface FeedViewProps {
     eventStore: EventStore;

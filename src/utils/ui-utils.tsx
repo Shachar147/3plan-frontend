@@ -13,6 +13,7 @@ import { Observer } from 'mobx-react';
 import { EventApi, EventInput } from '@fullcalendar/react';
 import { getTimeStringFromDate, toDate } from './time-utils';
 import { buildCalendarEvent, CalendarEvent } from './interfaces';
+import {FeatureFlagsService} from "./feature-flags";
 
 export const renderLanguageSelector = (eventStore: EventStore) => {
 	const options: any[] = [
@@ -255,17 +256,21 @@ export const getViewSelectorOptions = (
 	eventStore: EventStore,
 	withMobileViews: boolean = false
 ): OptionToggleButton[] => {
+	const isShort = eventStore.isMobile && FeatureFlagsService.isNewDesignEnabled();
+
+	const suffix = isShort ? '.SHORT' : '';
+
 	const baseArray = [
 		{
 			key: ViewMode.map,
-			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW'),
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW' + suffix),
 			icon: <i className="fa fa-map-o black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-map selected-color" aria-hidden="true" />,
 			iconClass: 'fa-map-o'
 		},
 		{
 			key: ViewMode.calendar,
-			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.CALENDAR_VIEW'),
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.CALENDAR_VIEW' + suffix),
 			icon: <i className="fa fa-calendar-o black-color" aria-hidden="true" />,
 			defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-calendar selected-color" aria-hidden="true" />,
@@ -273,7 +278,7 @@ export const getViewSelectorOptions = (
 		},
 		{
 			key: ViewMode.combined,
-			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.COMBINED_VIEW'),
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.COMBINED_VIEW' + suffix),
 			icon: <i className="fa fa-compress black-color" aria-hidden="true" />,
 			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true" />,
@@ -282,7 +287,7 @@ export const getViewSelectorOptions = (
 		},
 		{
 			key: ViewMode.list,
-			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW'),
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW' + suffix),
 			icon: <i className="fa fa-list black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true" />,
 			iconClass: 'fa-list'

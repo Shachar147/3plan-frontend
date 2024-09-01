@@ -499,3 +499,15 @@ a.navigate-to {
 		opacity: 0.8;
 	}
 }
+
+.mobile-footer-navigator-option {
+	height : 60px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	min-width: 60px;
+}
+
+.selected-mobile-option {
+	border-top: 3px solid #0079ff;
+}

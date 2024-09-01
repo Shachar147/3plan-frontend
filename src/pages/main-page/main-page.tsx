@@ -36,6 +36,7 @@ import { BiEventsService } from '../../services/bi-events.service';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatDate } from '../../utils/time-utils';
 import FeedView from "../../v2/components/feed-view/feed-view";
+import {FeatureFlagsService} from "../../utils/feature-flags";
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -536,12 +537,12 @@ function MainPage(props: MainPageProps) {
 		const viewOptions = getViewSelectorOptions(eventStore, true);
 		const isModalOpened = eventStore.modalSettings.show || eventStore.secondModalSettings.show;
 		return (
-			<div className={getClasses('mobile-footer-navigator', isModalOpened && 'z-index-1000')}>
+			<div className={getClasses('mobile-footer-navigator', isModalOpened && 'z-index-1000', FeatureFlagsService.isNewDesignEnabled() && 'white-background')}>
 				{viewOptions.map((viewOption) => (
 					<a
 						title={viewOption.name}
 						onClick={() => eventStore.setMobileViewMode(viewOption.key as ViewMode)}
-						className={`mobile-footer-navigator-option-${viewOption.key}`}
+						className={getClasses('mobile-footer-navigator-option', `mobile-footer-navigator-option-${viewOption.key}`, eventStore.mobileViewMode === viewOption.key && 'selected-mobile-option')}
 						key={`mobile-footer-navigation-${viewOption.name}`}
 					>
 						{eventStore.mobileViewMode === viewOption.key ? viewOption.iconActive : viewOption.icon}
