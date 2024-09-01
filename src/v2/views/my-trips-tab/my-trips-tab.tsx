@@ -578,7 +578,12 @@ function MyTripsTab(){
                         } else {
                             setAddNewTripMode(true);
                         }
-                        // navigate('/getting-started')
+                        // navigate('/getting-started');
+
+                        window.scrollTo({
+                            top: eventStore.isMobile ? 250 : 500,
+                            behavior: 'smooth',
+                        });
                     }}
                 />
                 {addNewTripMode && myTripsStore.allTripsSorted.length > 0 && (

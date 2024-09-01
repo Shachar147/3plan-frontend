@@ -589,7 +589,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                                 // window.location.reload();
 
                                 window.scrollTo({
-                                    top: eventStore.isMobile ? 151 : 61,
+                                    top: eventStore.isMobile ? 151 : 500,
                                     behavior: 'smooth',
                                 });
                             }}
