@@ -31,17 +31,17 @@
 @media only screen and (max-width: 750px) {
   .scroll-top-container {
     position: fixed;
-    inset-inline-end: 6px;
+    inset-inline-end: 10px;
 
     &:not(.bottom-70) {
-      bottom: 10px;
+      bottom: 20px;
     }
 
     button {
-      padding: 12px;
+      padding: 20px;
 
       i {
-        font-size: 12px;
+        font-size: 16px;
       }
     }
   }

@@ -81,14 +81,13 @@ function TriplanSpecificTripHeaderLine(){
                                 window.location.hash = myTripsTabId;
                                 rootStore.triggerTabsReRender();
                                 rootStore.triggerHeaderReRender();
-
-                                window.scrollTo({
-                                    top: 0,
-                                    behavior: 'smooth' // Optional: for smooth scrolling
-                                });
                             } else {
                                 rootStore.navigateToTab(myTripsTabId);
                             }
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth' // Optional: for smooth scrolling
+                            });
                         }}
                         flavor={ButtonFlavor.link}
                     />
