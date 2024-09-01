@@ -51,6 +51,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     const isHebrew = eventStore.isHebrew;
     const feedId = `${item.source}-${item.name}-${item.url}`;
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [isAddingToSaved, setIsAddingToSaved] = useState(false);
 
     const category = extractCategory([
         item.name ?? '',
@@ -164,7 +165,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     const rating = getRating();
 
     const handleAddToSaved = () => {
-        new FeedViewApiService().saveItem(item).then((result) => {
+        return new FeedViewApiService().saveItem(item).then((result) => {
             runInAction(() => {
                 feedStore.getSavedCollections()
             })
@@ -175,7 +176,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         const collection = feedStore.savedCollections.find((c) => c.items.map((i) => i.poiId).includes(item.id));
         if (!collection){
             ReactModalService.internal.openOopsErrorModal(eventStore);
-            return;
+            return Promise.resolve();
         }
 
         // todo complete - if it's saved collection - remove the item we're looking at in the picture right now.
@@ -184,7 +185,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
             idToRemove = item.idxToDetails[currentSlide].id;
         }
 
-        new FeedViewApiService().unSaveItem(idToRemove, collection.id).then((result) => {
+        return new FeedViewApiService().unSaveItem(idToRemove, collection.id).then((result) => {
             runInAction(() => {
                 feedStore.getSavedCollections()
             })
@@ -202,11 +203,13 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 <Button
                     flavor={mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary}
                     onClick={() => {
+                        setIsAddingToSaved(true);
                         if (alreadyInSaved){
-                            return handleRemoveFromSaved();
+                            return handleRemoveFromSaved().then(() => setIsAddingToSaved(false));
                         }
-                        return handleAddToSaved();
+                        return handleAddToSaved().then(() => setIsAddingToSaved(false));
                     }}
+                    isLoading={isAddingToSaved}
                     key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
                     text={(isSearchResult || isViewItem) ? text : ""}
@@ -229,11 +232,13 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 <Button
                     flavor={mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.secondary}
                     onClick={() => {
+                        setIsAddingToSaved(true);
                         if (alreadyInSaved){
-                            return handleRemoveFromSaved();
+                            return handleRemoveFromSaved().then(() => setIsAddingToSaved(false));
                         }
-                        return handleAddToSaved();
+                        return handleAddToSaved().then(() => setIsAddingToSaved(false));
                     }}
+                    isLoading={isAddingToSaved}
                     key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
                     text={text}

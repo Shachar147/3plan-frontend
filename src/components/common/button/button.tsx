@@ -24,6 +24,7 @@ export interface ButtonProps {
 
 	iconPosition?: 'start' | 'end';
 	tooltip?: string;
+	isLoading?: boolean;
 }
 
 const Button = (props: ButtonProps) => {
@@ -43,10 +44,11 @@ const Button = (props: ButtonProps) => {
 			style={props.style}
 			title={props.disabled && props.disabledReason ? props.disabledReason : props.tooltip}
 		>
-			{props.image && <img alt={''} src={props.image} height={props.imageHeight} />}
-			{props.icon && iconPosition == 'start' && <i className={`fa ${props.icon}`} aria-hidden="true" />}
+			{props.isLoading && <img alt={''} src="/images/loading.gif" height={24} />}
+			{!props.isLoading && props.image && <img alt={''} src={props.image} height={props.imageHeight} />}
+			{!props.isLoading && props.icon && iconPosition == 'start' && <i className={`fa ${props.icon}`} aria-hidden="true" />}
 			{props.text && props.text.length && <span className="white-space-pre">{props.text}</span>}
-			{props.icon && iconPosition == 'end' && <i className={`fa ${props.icon}`} aria-hidden="true" />}
+			{!props.isLoading && props.icon && iconPosition == 'end' && <i className={`fa ${props.icon}`} aria-hidden="true" />}
 		</button>
 	);
 };
