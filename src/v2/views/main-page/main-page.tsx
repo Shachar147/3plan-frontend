@@ -5,6 +5,7 @@ import TriplanHeaderBanner from "../../components/triplan-header-banner/triplan-
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import MainPageContent from "./main-page-content";
 import TriplanFooter from "../../components/triplan-footer/triplan-footer";
+import ScrollToTopButton from "../../components/scroll-top/scroll-top";
 
 
 function MainPageV2(){
@@ -15,6 +16,7 @@ function MainPageV2(){
             <TriplanHeaderBanner />
             <MainPageContent />
             <TriplanFooter />
+            <ScrollToTopButton />
         </div>
     )
 }

@@ -297,22 +297,28 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         );
     }
 
+    function renderPageTitle() {
+        {/*<h2 className="main-feed-header">{*/}
+        {/*    TranslateService.translate(eventStore, 'TOP_PICKS')*/}
+        {/*}</h2>*/}
+
+        return (
+            <div className="flex-column gap-8 align-items-center width-100-percents">
+                <h3 className="main-feed-header width-100-percents">
+                    <span>{TranslateService.translate(eventStore, 'TOP_PICKS')}</span>
+                </h3>
+                <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MAIN_PAGE_FEED_VIEW.DESCRIPTION')}} />
+            </div>
+        )
+    }
+
     function renderItems() {
         const classList = getClasses("align-items-center", (!mainFeed && !searchKeyword) && 'width-100-percents', eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
         if (mainFeed) {
             return (
                 <div className="flex-column margin-top-10">
-                    {/*<h2 className="main-feed-header">{*/}
-                    {/*    TranslateService.translate(eventStore, 'TOP_PICKS')*/}
-                    {/*}</h2>*/}
-                    <div className="flex-column gap-8 align-items-center width-100-percents">
-                        <h3 className="main-feed-header width-100-percents">
-                            <span>{TranslateService.translate(eventStore, 'TOP_PICKS')}</span>
-                        </h3>
-                        <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MAIN_PAGE_FEED_VIEW.DESCRIPTION')}} />
-                    </div>
-
+                    {renderPageTitle()}
                     <div className="flex-row justify-content-center flex-wrap-wrap align-items-start">
                         {
                             feedStore.filteredItems.map((item, idx) => (
@@ -382,7 +388,8 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         const isSmall = mainFeed || eventStore.isMobile;
 
         return (
-            <div className="text-div width-100-percents text-align-center">
+            <div className={getClasses("text-div width-100-percents", mainFeed ? 'text-align-start margin-top-10' : 'text-align-center')}>
+                {mainFeed && renderPageTitle()}
                 {!mainFeed && <span className="height-60">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}
                 <div className={getClasses(isSmall ? 'flex-row justify-content-center flex-wrap-wrap align-items-start' : 'flex-column', "gap-4")}>
                     {Array.from({ length: eventStore.isMobile ? 3 : 12 }).map((_, index) => (

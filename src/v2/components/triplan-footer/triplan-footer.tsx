@@ -5,6 +5,8 @@ import {observer} from "mobx-react";
 import './triplan-footer.scss';
 import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
+import {getClasses} from "../../../utils/utils";
+import {newDesignRootPath} from "../../utils/consts";
 
 interface TriplanFooterSummaries {
     avgCalendarItemsInTrip: number
@@ -79,8 +81,10 @@ function TriplanFooter(){
         )
     }
 
+    const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
+
     return (
-        <div className="triplan-footer">
+        <div className={getClasses("triplan-footer", eventStore.isMobile && isInPlan && 'padding-bottom-80')}>
             {structure.map((dict) => (
                 <div>{renderStatsBlock(dict)}</div>
             ))}
