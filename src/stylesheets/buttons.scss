@@ -23,7 +23,9 @@ button:not(:disabled):hover {
 }
 button:disabled {
 	/*opacity: 0.6;*/
-	opacity: 0.4;
+	&:not(.no-disabled-style) {
+		opacity: 0.4;
+	}
 }
 
 .primary-success-button,

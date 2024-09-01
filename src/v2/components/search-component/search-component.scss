@@ -51,7 +51,9 @@
 }
 
 .search-button:hover {
-  background-color: #0056b3;
+  &:not(:disabled) {
+    background-color: #0056b3;
+  }
 }
 
 .rtl {

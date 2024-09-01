@@ -1026,6 +1026,19 @@
 			padding-bottom: 16px;
 		}
 	}
+
+
+	.triplan-header-banner-header-line.is-sticky {
+		padding-inline: 0 !important;
+		padding-block: 15px 5px !important;
+
+		.triplan-header-banner-header-line-left-side {
+			position: fixed;
+			top: 100px;
+			width: 300px;
+			left: calc(50vw - 145px);
+		}
+	}
 }
 
 @media only screen and (max-height: 500px){

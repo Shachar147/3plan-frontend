@@ -40,17 +40,20 @@ function TriplanHeaderLine(){
     }, []);
 
     const baseClass = "triplan-header-banner-header-line";
-    const isSticky = (!eventStore.isMobile && scrollY > 100) || tripName;
+    const isMobile = false;  // eventStore.isMobile;
+    const isSticky = (!isMobile && scrollY > 60) || tripName;
     const isShort = eventStore.isMobile ? '.SHORT' : '';
+
+    const hideSearch = scrollY > 160;
 
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
-            <div className={getClasses(baseClass, !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
-                <div className={`${baseClass}-left-side`}>
+            <div className={getClasses(baseClass, !isMobile && 'sticky', isSticky && 'is-sticky')}>
+                {<div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
-                    <TriplanSearchV2 />
-                </div>
+                    <div className={getClasses("bottom-0", hideSearch && 'display-none')}><TriplanSearchV2 /></div>
+                </div>}
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
                     <Button
                         icon="fa-heart"
@@ -66,15 +69,15 @@ function TriplanHeaderLine(){
                                 window.location.hash = savedCollectionsTabId;
                                 rootStore.triggerTabsReRender();
                                 rootStore.triggerHeaderReRender();
-
-                                window.scrollTo({
-                                    top: 0,
-                                    behavior: 'smooth' // Optional: for smooth scrolling
-                                });
                             }
                             else {
                                 rootStore.navigateToTab(savedCollectionsTabId)
                             }
+
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth' // Optional: for smooth scrolling
+                            });
                         }}
                         flavor={ButtonFlavor.link}
                     />
@@ -92,14 +95,14 @@ function TriplanHeaderLine(){
                                 window.location.hash = myTripsTabId;
                                 rootStore.triggerTabsReRender();
                                 rootStore.triggerHeaderReRender();
-
-                                window.scrollTo({
-                                    top: 0,
-                                    behavior: 'smooth' // Optional: for smooth scrolling
-                                });
                             } else {
                                 rootStore.navigateToTab(myTripsTabId);
                             }
+
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth' // Optional: for smooth scrolling
+                            });
                         }}
                         flavor={ButtonFlavor.link}
                     />

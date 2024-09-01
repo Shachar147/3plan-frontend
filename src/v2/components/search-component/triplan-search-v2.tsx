@@ -162,6 +162,10 @@ const TriplanSearchV2 = () => {
     }
 
     function handleSearchClick(){
+        if (_searchQuery.length == 0){
+            return;
+        }
+
         if (isInPlan) {
             // todo: check why sidebar events are not displayed correctly on this state.
             eventStore.setSidebarSearchValue(_searchQuery);
@@ -186,7 +190,7 @@ const TriplanSearchV2 = () => {
                     autoComplete="off"
                 />
                 {_searchQuery.length > 0 && <i className="fa fa-times" aria-hidden="true" onClick={() => handleResetSearchClick()} />}
-                <button className="search-button" type="button" onClick={() => handleSearchClick()}>
+                <button className="search-button no-disabled-style" type="button" onClick={() => handleSearchClick()} disabled={_searchQuery.length == 0}>
                     {TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
                 </button>
             </div>
