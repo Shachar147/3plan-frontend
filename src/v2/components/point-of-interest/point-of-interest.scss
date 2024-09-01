@@ -387,6 +387,16 @@ h2 {
   background-size: 1000px 100%;
 }
 
+.point-of-interest-shimmering.main-feed {
+  .category-label {
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2)) !important;
+
+    &.is-mobile {
+      margin-top: -125px;
+    }
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -300px 0;

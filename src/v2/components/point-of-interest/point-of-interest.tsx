@@ -9,7 +9,7 @@ import {TripActions} from "../../../utils/interfaces";
 import {TriplanPriority} from "../../../utils/enums";
 import {extractCategory, getClasses} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
-import {EventStore} from "../../../stores/events-store";
+import {EventStore, eventStoreContext} from "../../../stores/events-store";
 import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
 import FeedViewApiService from "../../services/feed-view-api-service";
 import {IPointOfInterest} from "../../utils/interfaces";
@@ -44,7 +44,9 @@ interface PointOfInterestProps {
     isViewItem?: boolean;
 }
 
-const PointOfInterestShimmering = () => {
+const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) => {
+
+    const eventStore = useContext(eventStoreContext);
 
     let a = Math.random();
     if (a < 0.5){
@@ -53,8 +55,8 @@ const PointOfInterestShimmering = () => {
     const b = Math.random();
 
     return (
-        <div className="point-of-interest" style={{
-            width: 1274
+        <div className={getClasses("point-of-interest point-of-interest-shimmering", isSmall && 'main-feed')} style={{
+            width: isSmall ? 300 : 1274
         }}>
             <div className="poi-left">
                 <div className="carousel-wrapper">
@@ -64,7 +66,8 @@ const PointOfInterestShimmering = () => {
                                     className="control-arrow control-prev control-disabled"/>
                             <div className="slider-wrapper axis-horizontal">
                                 <ul className="slider animated">
-                                    <div className="shimmer-animation" style={{ height: 266, width: 400 }} />
+                                    <div className="shimmer-animation" style={{
+                                        height: isSmall ? 200 : 266, width: isSmall ? 298 : 400 }} />
                                 </ul>
                             </div>
                             <button type="button" aria-label="next slide / item"
@@ -74,19 +77,58 @@ const PointOfInterestShimmering = () => {
                 </div>
             </div>
             <div className="poi-right">
-                <div className="category-label">
-                    <div className="flex-row gap-8 flex-wrap-wrap align-items-center"><i className="shimmer-animation" style={{
-                        width: 27,
-                        height: 22,
-                    }}/><span className="shimmer-animation" style={{ width: 100, height: 22, borderRadius: 10}} /></div>
+                <div className={getClasses("category-label", eventStore.isMobile && 'is-mobile')}>
+                    <div className={getClasses(isSmall && 'padding-bottom-4')}>
+                        <div className="flex-row gap-8 flex-wrap-wrap align-items-center"><i className="shimmer-animation" style={{
+                            width: 27,
+                            height: 22,
+                            marginBottom: 0
+                        }}/><span className="shimmer-animation" style={{ width: 100, height: 22, borderRadius: 10}} /></div>
+                    </div>
+                    {isSmall && <i className="fa fa fa-heart-o" aria-hidden="true" />}
                 </div>
-                <div className="name-container"><h2 className="shimmer-animation" style={{
-                    width: 828,
-                    height: 40,
-                    borderRadius: 10
-                }}/></div>
+                {
+                    isSmall ? (
+                        <div className="flex-column gap-4">
+                            <h2 className="shimmer-animation" style={{
+                                width: "100%",
+                                height: 25,
+                                borderRadius: 10
+                            }}/>
+                            <h2 className="shimmer-animation" style={{
+                                width: "90%",
+                                height: 25,
+                                borderRadius: 10
+                            }}/>
+                        </div>
+                    ) : (
+                        <div className="name-container"><h2 className="shimmer-animation" style={{
+                            width: 828,
+                            height: 40,
+                            borderRadius: 10
+                        }}/>
+                        </div>
+                    )
+                }
 
                 <div className="flex-column gap-4 margin-top-5">
+                    {isSmall ? <>
+                        <div className="shimmer-animation" style={{
+                            width: "100%",
+                            height: 18,
+                            borderRadius: 10
+                        }}/>
+                        <div className="shimmer-animation" style={{
+                            width: "100%",
+                            height: 18,
+                            borderRadius: 10
+                        }}/>
+                        <div className="shimmer-animation" style={{
+                            width: "60%",
+                            height: 18,
+                            borderRadius: 10
+                        }}/>
+                        </> : <>
                     <div className="shimmer-animation" style={{
                         width: 828 * Math.max(a,b),
                         height: 22,
@@ -97,6 +139,8 @@ const PointOfInterestShimmering = () => {
                         height: 22,
                         borderRadius: 10
                     }}/>
+                    </>}
+
                 </div>
 
                 <div className="poi-details"><span className="shimmer-animation" style={{
@@ -134,18 +178,18 @@ const PointOfInterestShimmering = () => {
                         </svg>
                     </div>
                     <div className="poi-footer">
-                        <div className="source-logo shimmer-animation" style={{
+                        {!isSmall && <div className="source-logo shimmer-animation" style={{
                             width: 60,
                             height: 22,
-                        }} />
-                        <div className="source-logo shimmer-animation" style={{
+                        }} />}
+                        {!isSmall && <div className="source-logo shimmer-animation" style={{
                             width: 40,
                             height: 22,
-                        }} />
-                        <div className="source-logo shimmer-animation" style={{
+                        }} />}
+                        {!isSmall && <div className="source-logo shimmer-animation" style={{
                             width: 92,
                             height: 22,
-                        }} />
+                        }} />}
 
                         <div className="source-logo shimmer-animation" style={{
                             width: 123,

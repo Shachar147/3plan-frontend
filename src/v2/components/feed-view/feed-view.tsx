@@ -380,26 +380,31 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     }
 
     function renderLoadingPlaceholder(){
-        // todo complete - add shimmering on mobile too (different css)
-        if (mainFeed || eventStore.isMobile) {
-            return null;
-        }
+        const isSmall = mainFeed || eventStore.isMobile;
 
         return (
             <div className="text-div width-100-percents text-align-center">
-                <span className="height-60">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>
-                {!mainFeed && <div className={getClasses(!mainFeed && 'flex-column', "gap-4", searchKeyword && !eventStore.isMobile && 'padding-inline-100')}>
-                    <PointOfInterestShimmering/>
-                    <PointOfInterestShimmering/>
-                    <PointOfInterestShimmering/>
-                </div>}
+                {!mainFeed && <span className="height-60">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}
+                <div className={getClasses(isSmall ? 'flex-row justify-content-center flex-wrap-wrap align-items-start' : 'flex-column', "gap-4")}>
+                    {Array.from({ length: eventStore.isMobile ? 3 : 12 }).map((_, index) => (
+                        <PointOfInterestShimmering key={index} isSmall={isSmall}/>
+                    ))}
+                </div>
             </div>
         )
     }
 
+    const [debouncePlaceholder, setDebouncePlaceholder] = useState(true);
+    useEffect(() => {
+        // make shimmering appear for at least X seconds
+        setTimeout(() => {
+            setDebouncePlaceholder(false);
+        }, 1000);
+    }, [])
+
     return (
         (feedStore.isLoading && !haveNoDestinations) ? renderLoadingPlaceholder() : <LazyLoadComponent className="width-100-percents flex-column align-items-center" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
-            {feedStore.items.length == 0 && renderLoadingPlaceholder()}
+            {(feedStore.items.length == 0 || debouncePlaceholder) && renderLoadingPlaceholder()}
             {renderFeedContent()}
         </LazyLoadComponent>
     );
