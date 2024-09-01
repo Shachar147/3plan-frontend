@@ -538,7 +538,7 @@ function MyTripsTab(){
     function renderGoBackButton() {
         return (
             <Button
-                text={TranslateService.translate(eventStore, 'BACK_TO_MY_TRIPS')}
+                text={eventStore.isMobile ? undefined : TranslateService.translate(eventStore, 'BACK_TO_MY_TRIPS')}
                 flavor={ButtonFlavor.secondary}
                 className="padding-inline-15 font-size-14 font-weight-normal black"
                 icon={`fa-chevron-${eventStore.getCurrentDirectionStart()}`}
@@ -551,10 +551,21 @@ function MyTripsTab(){
     }
 
     function renderAddTripButton(flavor: ButtonFlavor = ButtonFlavor.secondary){
+
+        function getBtnText(){
+            if (addNewTripMode) {
+                return TranslateService.translate(eventStore, 'CREATE_TRIP');
+            }
+            if (!eventStore.isMobile) {
+                return TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW');
+            }
+            return undefined; // on my trips tab if mobile
+        }
+
         return (
             <>
                 <Button
-                    text={TranslateService.translate(eventStore, addNewTripMode ? 'CREATE_TRIP' : 'LANDING_PAGE.START_NOW')}
+                    text={getBtnText()}
                     flavor={flavor}
                     className="padding-inline-15 font-size-14 font-weight-normal"
                     icon="fa-plus-square-o"
@@ -569,7 +580,7 @@ function MyTripsTab(){
                 />
                 {addNewTripMode && myTripsStore.allTripsSorted.length > 0 && (
                     <Button
-                        text={TranslateService.translate(eventStore, 'BACK_TO_MY_TRIPS')}
+                        text={eventStore.isMobile ? undefined : TranslateService.translate(eventStore, 'BACK_TO_MY_TRIPS')}
                         flavor={ButtonFlavor.link}
                         onClick={() => {
                             window.location.hash = myTripsTabId;
@@ -709,11 +720,21 @@ function MyTripsTab(){
 
     return (
         <div className="flex-column align-items-start margin-top-10">
-            <h2 className="main-feed-header width-100-percents">
-                <span>{TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')}</span>
-                {myTripsStore.allTripsSorted.length > 0 && !addNewTripMode && renderAddTripButton()}
-                {addNewTripMode && renderGoBackButton()}
-            </h2>
+            {/*<h2 className="main-feed-header width-100-percents">*/}
+            {/*    <span>{TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')}</span>*/}
+            {/*    {myTripsStore.allTripsSorted.length > 0 && !addNewTripMode && renderAddTripButton()}*/}
+            {/*    {addNewTripMode && renderGoBackButton()}*/}
+            {/*</h2>*/}
+
+            <div className="flex-column gap-8 align-items-center width-100-percents">
+                <h3 className={getClasses("main-feed-header width-100-percents", eventStore.isMobile && 'flex-row')}>
+                    <span>{TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')}</span>
+                    {myTripsStore.allTripsSorted.length > 0 && !addNewTripMode && renderAddTripButton()}
+                    {addNewTripMode && renderGoBackButton()}
+                </h3>
+                {!addNewTripMode && <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, myTripsStore.showHidden ? 'MY_TRIPS_HIDDEN_TAB.DESCRIPTION' : 'MY_TRIPS_TAB.DESCRIPTION')}} />}
+            </div>
+
             <div className="flex-row justify-content-center flex-wrap-wrap align-items-start width-100-percents" key={myTripsStore.myTrips?.length}>
                 {
                     planTripMode ? <MainPage /> :

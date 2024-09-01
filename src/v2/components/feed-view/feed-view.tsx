@@ -304,9 +304,16 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         if (mainFeed) {
             return (
                 <div className="flex-column margin-top-10">
-                    <h2 className="main-feed-header">{
-                        TranslateService.translate(eventStore, 'TOP_PICKS')
-                    }</h2>
+                    {/*<h2 className="main-feed-header">{*/}
+                    {/*    TranslateService.translate(eventStore, 'TOP_PICKS')*/}
+                    {/*}</h2>*/}
+                    <div className="flex-column gap-8 align-items-center width-100-percents">
+                        <h3 className="main-feed-header width-100-percents">
+                            <span>{TranslateService.translate(eventStore, 'TOP_PICKS')}</span>
+                        </h3>
+                        <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MAIN_PAGE_FEED_VIEW.DESCRIPTION')}} />
+                    </div>
+
                     <div className="flex-row justify-content-center flex-wrap-wrap align-items-start">
                         {
                             feedStore.filteredItems.map((item, idx) => (

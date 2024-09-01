@@ -26,10 +26,26 @@ function TabMenu(props: TabMenuProps){
 		}
 	}, [props.activeTab]);
 
+	useEffect(() => {
+		scrollToDiv(feedStore.activeTab);
+	}, [feedStore.activeTab]);
+
+	function scrollToDiv(tabId: string) {
+		const element = document.querySelector(`[data-tab-id='${tabId}']`);
+		const container = element.parentElement;
+		const containerScrollPosition = container.scrollLeft;
+		const elementOffsetLeft = element.offsetLeft;
+
+		container.scroll({
+			left: containerScrollPosition + elementOffsetLeft - container.offsetWidth / 2 + element.offsetWidth / 2,
+			behavior: 'smooth'
+		});
+	}
+
 	return (
 		<div key={feedStore.activeTab}>
 			<div className="ui top attached tabular menu">
-				{tabs.map((tab) => <div key={`tab-${tab.id}`} className={getClasses(feedStore.activeTab == tab.id && 'active', "item", feedStore.activeTab !== tab.id && 'cursor-pointer', 'flex-row gap-8 align-items-center')} onClick={() => {
+				{tabs.map((tab) => <div key={`tab-${tab.id}`} data-tab-id={tab.id} className={getClasses(feedStore.activeTab == tab.id && 'active', "item", feedStore.activeTab !== tab.id && 'cursor-pointer', 'flex-row gap-8 align-items-center')} onClick={(element) => {
 					if (feedStore.activeTab !== tab.id) {
 						feedStore.setActiveTab(tab.id);
 						onChange?.(tab.id);

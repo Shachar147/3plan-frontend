@@ -555,7 +555,7 @@
 	"DELETE_TRIP": "Delete Trip",
 	"HIDE_TRIP": "Hide Trip",
 	"UNHIDE_TRIP": "Un-Hide Trip",
-	"MODALS.HIDE_TRIP.CONTENT": "Hiding this trip will remove it from the list of trips<br/>and move it to a separate list of all hidden trips.<br/><br/>To view it, scroll down in the list of trips and click on <b>{X}</b>",
+	"MODALS.HIDE_TRIP.CONTENT": "Shhh!<br/>Planning to surprise your partner with a vacation abroad, and afraid that she will see the plan?<br/><br/>Hiding this trip will remove it from the list of trips<br/>and move it to a separate list of all hidden trips.<br/><br/>To view it, scroll down in the list of trips and click on <b>{X}</b>",
 	"ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS": "Oops! this action is not supported on local trips",
 	"SHOW_NAVIGATE_TO": "Show \"navigate to\" button",
 	"HIDE_NAVIGATE_TO": "Hide \"navigate to\" button",
@@ -878,5 +878,8 @@
 	"DESTINATION": "Destination: ",
 	"DESTINATIONS": "Destinations: ",
 	"SCHEDULED_ON": "Activity scheduled on {date}, {start}-{end} ({duration})",
-	"ON_CATEGORY": "Activity is on the sidebar on {category} category"
+	"ON_CATEGORY": "Activity is on the sidebar on {category} category",
+	"MY_TRIPS_TAB.DESCRIPTION": "The trips you created will appear here, available for you for view or edit anytime from any device!",
+	"MY_TRIPS_HIDDEN_TAB.DESCRIPTION": "Shhh... all the trips you hid will appear here. to get them back to the main view, click on the eye symbol.",
+	"MAIN_PAGE_FEED_VIEW.DESCRIPTION": "Discover top picks for global experiences, and save your favorites to your personal collection with a single click!"
 }
