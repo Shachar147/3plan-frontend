@@ -46,7 +46,7 @@ function TriplanHeaderLine(){
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
 
-    const hideSearch = scrollY > 160;
+    const hideSearch = eventStore.isMobile && scrollY > 160;
 
     return (
         <>
@@ -54,7 +54,7 @@ function TriplanHeaderLine(){
             <div className={getClasses(baseClass, !isMobile && 'sticky', isSticky && 'is-sticky')}>
                 {<div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
-                    <div className={getClasses("bottom-0", hideSearch && 'display-none')}><TriplanSearchV2 /></div>
+                    <div className={getClasses(eventStore.isMobile && "bottom-0", hideSearch && 'display-none')}><TriplanSearchV2 /></div>
                 </div>}
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
                     <Button

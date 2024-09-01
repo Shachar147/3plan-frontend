@@ -886,5 +886,7 @@
 	"ON_CATEGORY": "Activity is on the sidebar on {category} category",
 	"MY_TRIPS_TAB.DESCRIPTION": "The trips you created will appear here, available for you for view or edit anytime from any device!",
 	"MY_TRIPS_HIDDEN_TAB.DESCRIPTION": "Shhh... all the trips you hid will appear here. to get them back to the main view, click on the eye symbol.",
-	"MAIN_PAGE_FEED_VIEW.DESCRIPTION": "Discover top picks for global experiences, and save your favorites to your personal collection with a single click!"
+	"MAIN_PAGE_FEED_VIEW.DESCRIPTION": "Discover top picks for global experiences, and save your favorites to your personal collection with a single click!",
+	"LIKED_BUTTON": "Liked it, save!",
+	"UNLIKE_BUTTON": "Unlike"
 }

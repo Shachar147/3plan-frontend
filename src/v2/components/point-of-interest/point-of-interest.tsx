@@ -574,7 +574,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     {renderTripInfo?.()}
                 </div>
                 {savedCollection && (
-                    <div className="margin-bottom-20 flex-column width-100-percents">
+                    <div className="margin-bottom-20 margin-top-20 flex-column width-100-percents">
                         <Button
                             icon="fa-rocket"
                             className="cursor-pointer"
@@ -593,6 +593,26 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                                     behavior: 'smooth',
                                 });
                             }}
+                        />
+                    </div>
+                )}
+                {mainFeed && !myTrips && !savedCollection && (
+                    <div className="margin-bottom-20 flex-column width-100-percents">
+                        <Button
+                            flavor={alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.secondary}
+                            onClick={() => {
+                                setIsAddingToSaved(true);
+                                if (alreadyInSaved){
+                                    return handleRemoveFromSaved().then(() => setIsAddingToSaved(false));
+                                }
+                                return handleAddToSaved().then(() => setIsAddingToSaved(false));
+                            }}
+                            disabled={!item.id}
+                            isLoading={isAddingToSaved}
+                            key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
+                            icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
+                            text={alreadyInSaved ? TranslateService.translate(eventStore, 'UNLIKE_BUTTON') : TranslateService.translate(eventStore, 'LIKED_BUTTON')}
+                            className={getClasses("padding-inline-15", !alreadyInSaved, "black")}
                         />
                     </div>
                 )}
