@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useContext, useState} from "react";
 import { Observer, observer } from "mobx-react";
-import PointOfInterest from "../point-of-interest/point-of-interest";
+import PointOfInterest, {PointOfInterestShimmering} from "../point-of-interest/point-of-interest";
 import { EventStore, eventStoreContext } from "../../../stores/events-store";
 import FeedViewApiService, { allSources } from "../../services/feed-view-api-service";
 import CategoryFilter from "../category-filter/category-filter";
@@ -379,8 +379,27 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         );
     }
 
+    function renderLoadingPlaceholder(){
+        // todo complete - add shimmering on mobile too (different css)
+        if (mainFeed || eventStore.isMobile) {
+            return null;
+        }
+
+        return (
+            <div className="text-div width-100-percents text-align-center">
+                <span className="height-60">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>
+                {!mainFeed && <div className={getClasses(!mainFeed && 'flex-column', "gap-4", searchKeyword && !eventStore.isMobile && 'padding-inline-100')}>
+                    <PointOfInterestShimmering/>
+                    <PointOfInterestShimmering/>
+                    <PointOfInterestShimmering/>
+                </div>}
+            </div>
+        )
+    }
+
     return (
-        (feedStore.isLoading && !haveNoDestinations) ? <div className="height-60 width-100-percents text-align-center">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</div> : <LazyLoadComponent className="width-100-percents flex-column align-items-center" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
+        (feedStore.isLoading && !haveNoDestinations) ? renderLoadingPlaceholder() : <LazyLoadComponent className="width-100-percents flex-column align-items-center" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
+            {feedStore.items.length == 0 && renderLoadingPlaceholder()}
             {renderFeedContent()}
         </LazyLoadComponent>
     );

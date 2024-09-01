@@ -143,6 +143,10 @@ h2 {
   margin-bottom: 8px;
 }
 
+.rate.shimmering .star {
+  color: #ccc;
+}
+
 .star {
   color: gold;
   margin-right: 4px;
@@ -375,4 +379,20 @@ h2 {
   width: 100%;
   max-width: CALC(100% - 20px);
   margin-top: 4px;
+}
+
+.shimmer-animation {
+  animation : shimmer 3s infinite;
+  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+  background-size: 1000px 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -300px 0;
+  }
+
+  100% {
+    background-position: 300px 0;
+  }
 }

@@ -1567,3 +1567,13 @@ input[id^='react-select-'][id$='-input'] {
 	padding: 0 10px; /* Adjust padding as needed */
 	background: white; /* Match background to avoid overlap */
 }
+
+.text-div {
+	direction: ltr;
+}
+
+body.rtl {
+	.text-div {
+		direction: rtl;
+	}
+}

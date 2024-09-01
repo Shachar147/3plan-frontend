@@ -44,6 +44,127 @@ interface PointOfInterestProps {
     isViewItem?: boolean;
 }
 
+const PointOfInterestShimmering = () => {
+
+    let a = Math.random();
+    if (a < 0.5){
+        a += 0.5;
+    }
+    const b = Math.random();
+
+    return (
+        <div className="point-of-interest" style={{
+            width: 1274
+        }}>
+            <div className="poi-left">
+                <div className="carousel-wrapper">
+                    <div className="carousel-root">
+                        <div className="carousel carousel-slider width-100-percents">
+                            <button type="button" aria-label="previous slide / item"
+                                    className="control-arrow control-prev control-disabled"/>
+                            <div className="slider-wrapper axis-horizontal">
+                                <ul className="slider animated">
+                                    <div className="shimmer-animation" style={{ height: 266, width: 400 }} />
+                                </ul>
+                            </div>
+                            <button type="button" aria-label="next slide / item"
+                                    className="control-arrow control-next control-disabled"/>
+                            <p className="carousel-status">1 of 1</p></div>
+                    </div>
+                </div>
+            </div>
+            <div className="poi-right">
+                <div className="category-label">
+                    <div className="flex-row gap-8 flex-wrap-wrap align-items-center"><i className="shimmer-animation" style={{
+                        width: 27,
+                        height: 22,
+                    }}/><span className="shimmer-animation" style={{ width: 100, height: 22, borderRadius: 10}} /></div>
+                </div>
+                <div className="name-container"><h2 className="shimmer-animation" style={{
+                    width: 828,
+                    height: 40,
+                    borderRadius: 10
+                }}/></div>
+
+                <div className="flex-column gap-4 margin-top-5">
+                    <div className="shimmer-animation" style={{
+                        width: 828 * Math.max(a,b),
+                        height: 22,
+                        borderRadius: 10
+                    }}/>
+                    <div className="shimmer-animation" style={{
+                        width: 828 * Math.min(a,b),
+                        height: 22,
+                        borderRadius: 10
+                    }}/>
+                </div>
+
+                <div className="poi-details"><span className="shimmer-animation" style={{
+                    width: 200,
+                    height: 22,
+                    borderRadius: 10
+                }}/>
+                    <div className="rate shimmering" style={{
+                        marginTop: 10
+                    }}>
+                        <svg stroke="currentColor" fill="currentColor" viewBox="0 0 576 512"
+                             className="star" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/>
+                        </svg>
+                        <svg stroke="currentColor" fill="currentColor" viewBox="0 0 576 512"
+                             className="star" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/>
+                        </svg>
+                        <svg stroke="currentColor" fill="currentColor" viewBox="0 0 576 512"
+                             className="star" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/>
+                        </svg>
+                        <svg stroke="currentColor" fill="currentColor" viewBox="0 0 576 512"
+                             className="star" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/>
+                        </svg>
+                        <svg stroke="currentColor" fill="currentColor" viewBox="0 0 576 512"
+                             className="star" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/>
+                        </svg>
+                    </div>
+                    <div className="poi-footer">
+                        <div className="source-logo shimmer-animation" style={{
+                            width: 60,
+                            height: 22,
+                        }} />
+                        <div className="source-logo shimmer-animation" style={{
+                            width: 40,
+                            height: 22,
+                        }} />
+                        <div className="source-logo shimmer-animation" style={{
+                            width: 92,
+                            height: 22,
+                        }} />
+
+                        <div className="source-logo shimmer-animation" style={{
+                            width: 123,
+                            height: 38,
+                            borderRadius: 18
+                        }} />
+                        <div className="source-logo shimmer-animation" style={{
+                            width: 180,
+                            height: 38,
+                            borderRadius: 18
+                        }} />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
@@ -439,5 +560,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         </div>
     );
 };
+
+export { PointOfInterestShimmering };
 
 export default observer(PointOfInterest);
