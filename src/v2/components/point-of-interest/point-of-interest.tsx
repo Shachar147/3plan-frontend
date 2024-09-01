@@ -585,6 +585,11 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                                 rootStore.triggerTabsReRender();
                                 rootStore.triggerHeaderReRender();
                                 // window.location.reload();
+
+                                window.scrollTo({
+                                    top: eventStore.isMobile ? 151 : 61,
+                                    behavior: 'smooth',
+                                });
                             }}
                         />
                     </div>
