@@ -423,7 +423,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     <div className="margin-bottom-20 flex-column width-100-percents">
                         <Button
                             icon={`fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
-                            className="cursor-pointer"
+                            className={getClasses("cursor-pointer", eventStore.isMobile && 'black')}
                             type={ButtonFlavor.secondary}
                             text={TranslateService.translate(eventStore, 'OPEN_TRIP')}
                             onClick={() => onClick()}

@@ -567,10 +567,13 @@ function MyTripsTab(){
                 <Button
                     text={getBtnText()}
                     flavor={flavor}
-                    className="padding-inline-15 font-size-14 font-weight-normal"
-                    icon="fa-plus-square-o"
+                    className={getClasses("padding-inline-15 font-size-14 font-weight-normal", eventStore.isMobile && 'black')}
+                    icon={myTripsStore.showHidden ? `fa-chevron-${eventStore.getCurrentDirectionStart()}` : "fa-plus-square-o"}
                     onClick={() => {
-                        if (addNewTripMode) {
+                        if (myTripsStore.showHidden) {
+                            myTripsStore.setShowHidden(false);
+                        }
+                        else if (addNewTripMode) {
                             createNewTrip(tripName);
                         } else {
                             setAddNewTripMode(true);
