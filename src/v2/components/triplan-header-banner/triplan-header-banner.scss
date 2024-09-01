@@ -113,6 +113,12 @@
             background-color: rgba(0, 0, 0, 0.05) !important;
             color: black !important;
           }
+
+          &.active {
+            background-color: white !important;
+            color: #0079ff !important;
+            border-bottom: 3px solid #0079ff !important;
+          }
         }
       }
     }

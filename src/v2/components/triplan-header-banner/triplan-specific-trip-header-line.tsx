@@ -85,7 +85,7 @@ function TriplanSpecificTripHeaderLine(){
                                 rootStore.navigateToTab(myTripsTabId);
                             }
                             window.scrollTo({
-                                top: 0,
+                                top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
                                 behavior: 'smooth' // Optional: for smooth scrolling
                             });
                         }}

@@ -1032,6 +1032,10 @@
 		padding-inline: 0 !important;
 		padding-block: 15px 5px !important;
 
+		&+ .triplan-header-banner-slogan {
+			display: none !important;
+		}
+
 		.triplan-header-banner-header-line-left-side {
 			position: fixed;
 			top: 100px;

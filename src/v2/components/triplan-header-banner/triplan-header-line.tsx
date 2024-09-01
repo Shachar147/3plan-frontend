@@ -44,6 +44,8 @@ function TriplanHeaderLine(){
     const isSticky = (!isMobile && scrollY > 60) || tripName;
     const isShort = eventStore.isMobile ? '.SHORT' : '';
 
+    const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
+
     const hideSearch = scrollY > 160;
 
     return (
@@ -75,7 +77,7 @@ function TriplanHeaderLine(){
                             }
 
                             window.scrollTo({
-                                top: 0,
+                                top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
                                 behavior: 'smooth' // Optional: for smooth scrolling
                             });
                         }}
@@ -100,7 +102,7 @@ function TriplanHeaderLine(){
                             }
 
                             window.scrollTo({
-                                top: 0,
+                                top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
                                 behavior: 'smooth' // Optional: for smooth scrolling
                             });
                         }}

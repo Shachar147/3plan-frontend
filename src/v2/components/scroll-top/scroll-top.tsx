@@ -4,10 +4,15 @@ import {newDesignRootPath} from "../../utils/consts";
 import {getClasses} from "../../../utils/utils";
 import {eventStoreContext} from "../../../stores/events-store";
 
-const ScrollToTopButton = ({ scrollDistance = 4000 }) => {
+const ScrollToTopButton = ({ scrollDistance }) => {
     const [isVisible, setIsVisible] = useState(false);
 
     const eventStore = useContext(eventStoreContext);
+
+    if (!scrollDistance){
+        scrollDistance = eventStore.isMobile ? 4000 : 1600;
+    }
+
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
 
     useEffect(() => {
@@ -26,7 +31,7 @@ const ScrollToTopButton = ({ scrollDistance = 4000 }) => {
 
     const scrollToTop = () => {
         window.scrollTo({
-            top: 0,
+            top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
             behavior: 'smooth',
         });
     };
