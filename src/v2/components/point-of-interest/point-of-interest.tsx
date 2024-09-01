@@ -374,6 +374,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                         }
                         return handleAddToSaved().then(() => setIsAddingToSaved(false));
                     }}
+                    disabled={!item.id}
                     isLoading={isAddingToSaved}
                     key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
@@ -403,6 +404,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                         }
                         return handleAddToSaved().then(() => setIsAddingToSaved(false));
                     }}
+                    disabled={!item.id}
                     isLoading={isAddingToSaved}
                     key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
@@ -534,7 +536,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     )}
                 </span>
                 <div className="poi-details">
-                    {durationText && <span className="duration">{durationText}</span>}
+                    {!savedCollection && durationText && <span className="duration">{durationText}</span>}
                     {!savedCollection && !myTrips && (item.price ?? item.extra?.price) && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
                         price: (item.price ?? item.extra?.price),
                         currency: (item.currency === 'ILS' || item.extra?.currency === 'ILS') ? '₪' : item.currency ?? item.extra?.currency
