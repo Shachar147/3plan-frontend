@@ -15,6 +15,8 @@ import { LOGIN_DELAY } from '../../utils/consts';
 import { apiPostWithCallback } from '../../helpers/api';
 import './login-page.scss';
 import { useInviteLinkLSKey } from '../../services/data-handlers/db-service';
+import {FeatureFlagsService} from "../../utils/feature-flags";
+import {newDesignRootPath} from "../../v2/utils/consts";
 
 const defaultErrorField: Record<string, boolean> = {
 	username: false,
@@ -183,7 +185,7 @@ function LoginPage() {
 		);
 
 	if (redirect) {
-		let redirectTo = '/';
+		let redirectTo = FeatureFlagsService.isNewDesignEnabled(true) ? newDesignRootPath : '/';
 
 		const str = localStorage.getItem(useInviteLinkLSKey);
 		if (str) {
