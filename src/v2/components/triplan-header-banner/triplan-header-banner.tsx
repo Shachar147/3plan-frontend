@@ -30,7 +30,7 @@ function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = fal
             backgroundImage: `url('/images/banner/${bgs[random]}')`
         }}>
             <div className={getClasses(`${baseClass}-shadow`, eventStore.isHebrew && 'flip-x')} />
-            {!noHeader && (isInPlan ? <TriplanSpecificTripHeaderLine /> : <TriplanHeaderLine isInLogin />)}
+            {!noHeader && (isInPlan ? <TriplanSpecificTripHeaderLine /> : <TriplanHeaderLine isInLogin={isInLogin} />)}
             <div className={`${baseClass}-slogan black-text-shadow`} dangerouslySetInnerHTML={{ __html: withHr ? `${slogan}<hr/>` : slogan }}
             />
             <div className={`${baseClass}-bottom-shadow`} />
