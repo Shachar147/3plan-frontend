@@ -425,7 +425,7 @@ function LoginPageV2() {
 
     return (
         <div className="login-page-v2 flex-column" key={rootStore.tabMenuReRenderCounter}>
-            <TriplanHeaderBanner />
+            <TriplanHeaderBanner isInLogin />
             {renderTabView()}
         </div>
     )

@@ -14,14 +14,13 @@ import {useNavigate, useParams} from "react-router-dom";
 import {getUser, isLoggedOn} from "../../../helpers/auth";
 
 
-function TriplanHeaderLine(){
+function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
     const rootStore = useContext(rootStoreContext);
     const eventStore = useContext(eventStoreContext);
     const { tripName } = useParams();
 
     useHandleWindowResize();
 
-    const isInLogin = window.location.href.includes("/login") || window.location.href.includes("/register");
     const isLoggedIn = isLoggedOn() && !isInLogin;
     const navigate = useNavigate();
 

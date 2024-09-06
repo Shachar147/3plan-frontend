@@ -3,6 +3,8 @@ import {newDesignRootPath} from "../v2/utils/consts";
 
 export const FeatureFlagsService = {
     isNewDesignEnabled: (skipUrlCheck: boolean = false) => {
+        return true;
+
         const username = getCurrentUsername();
         if (!username?.length){
             return localStorage.getItem("triplan-new-design-enabled").toString() == "1";

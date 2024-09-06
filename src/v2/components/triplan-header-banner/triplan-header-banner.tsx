@@ -10,7 +10,7 @@ import {newDesignRootPath} from "../../utils/consts";
 import TriplanSpecificTripHeaderLine from "./triplan-specific-trip-header-line";
 
 
-function TriplanHeaderBanner({ noHeader = false, withHr = false, noSearch = false }: { noHeader?: boolean, withHr?: boolean, noSearch?: boolean }){
+function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = false }: { noHeader?: boolean, withHr?: boolean, isInLogin?: boolean }){
     const baseClass = "triplan-header-banner";
     const eventStore = useContext(eventStoreContext);
 
@@ -30,7 +30,7 @@ function TriplanHeaderBanner({ noHeader = false, withHr = false, noSearch = fals
             backgroundImage: `url('/images/banner/${bgs[random]}')`
         }}>
             <div className={getClasses(`${baseClass}-shadow`, eventStore.isHebrew && 'flip-x')} />
-            {!noHeader && (isInPlan ? <TriplanSpecificTripHeaderLine /> : <TriplanHeaderLine />)}
+            {!noHeader && (isInPlan ? <TriplanSpecificTripHeaderLine /> : <TriplanHeaderLine isInLogin />)}
             <div className={`${baseClass}-slogan black-text-shadow`} dangerouslySetInnerHTML={{ __html: withHr ? `${slogan}<hr/>` : slogan }}
             />
             <div className={`${baseClass}-bottom-shadow`} />

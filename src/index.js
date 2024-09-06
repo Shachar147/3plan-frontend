@@ -833,6 +833,8 @@ const RootRouter = () => {
 
 	const isAdmin = useIsAdmin();
 
+	const isNewDesign = FeatureFlagsService.isNewDesignEnabled(true);
+
 	return (
 		<>
 			<BrowserRouter>
@@ -841,10 +843,10 @@ const RootRouter = () => {
 					{/*    <Route exact path='/' element={<LandingPage/>}/>*/}
 					{/*<Route exact path="/loginold" element={getUser() == undefined ? <LoginPageOld /> : <LandingPage />} />*/}
 					<Route exact path={newDesignRootPath} element={<MainPageV2 />} />
-					<Route exact path="/" element={getUser() == undefined ? <LoginPage /> : FeatureFlagsService.isNewDesignEnabled(true) ? <MainPageV2 /> : <LandingPage />} />
+					<Route exact path="/" element={getUser() == undefined ? isNewDesign ? <LoginPageV2 /> : <LoginPage /> : isNewDesign ? <MainPageV2 /> : <LandingPage />} />
 					<Route exact path="/home" element={<LandingPage />} />
 					<Route path={`${newDesignRootPath}/login`} element={<LoginPageV2 />} />
-					<Route path="/login" element={FeatureFlagsService.isNewDesignEnabled(true) ? <LoginPageV2 /> : <LoginPage />} />
+					<Route path="/login" element={isNewDesign ? <LoginPageV2 /> : <LoginPage />} />
 					<Route path={`${newDesignRootPath}/register`} element={<LoginPageV2 />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/logout" element={<LogoutPage />} />
