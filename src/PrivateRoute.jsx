@@ -6,13 +6,15 @@
 import React from 'react';
 import { Route, Navigate, Outlet } from 'react-router-dom';
 import { isLoggedOn } from './helpers/auth';
+import {FeatureFlagsService} from "./utils/feature-flags";
+import {newDesignRootPath} from "./v2/utils/consts";
 
 const PrivateRoute = () => {
 	const isLoggedIn = isLoggedOn();
 
 	// If authorized, return an outlet that will render child elements
 	// If not, return element that will navigate to login page
-	return isLoggedIn ? <Outlet /> : <Navigate to="/login" />;
+	return isLoggedIn ? <Outlet /> : <Navigate to={FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : "/login"} />;
 };
 
 // const PrivateRoute = ({ component: Component, data, ...rest }) => {

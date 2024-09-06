@@ -47,6 +47,7 @@ import InviteLink from './pages/invite-link/invite-link';
 import MainPageV2 from "./v2/views/main-page/main-page";
 import {newDesignRootPath} from "./v2/utils/consts";
 import {FeatureFlagsService} from "./utils/feature-flags";
+import LoginPageV2 from "./v2/views/login-page/login-page";
 
 // Dubai
 // Namos / Twiggy?
@@ -843,6 +844,8 @@ const RootRouter = () => {
 					<Route exact path="/" element={getUser() == undefined ? <LoginPage /> : FeatureFlagsService.isNewDesignEnabled() ? <MainPageV2 /> : <LandingPage />} />
 					<Route exact path="/home" element={<LandingPage />} />
 					<Route path="/login" element={<LoginPage />} />
+					<Route path={`${newDesignRootPath}/login`} element={<LoginPageV2 />} />
+					<Route path={`${newDesignRootPath}/register`} element={<LoginPageV2 />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/logout" element={<LogoutPage />} />
 					<Route exact path="/getting-started" element={<GettingStartedPage />} />

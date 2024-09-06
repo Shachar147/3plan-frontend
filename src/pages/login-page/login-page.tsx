@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
 import TranslateService from '../../services/translate-service';

@@ -10,7 +10,7 @@ import {newDesignRootPath} from "../../utils/consts";
 import TriplanSpecificTripHeaderLine from "./triplan-specific-trip-header-line";
 
 
-function TriplanHeaderBanner(){
+function TriplanHeaderBanner({ noHeader = false, withHr = false, noSearch = false }: { noHeader?: boolean, withHr?: boolean, noSearch?: boolean }){
     const baseClass = "triplan-header-banner";
     const eventStore = useContext(eventStoreContext);
 
@@ -23,13 +23,16 @@ function TriplanHeaderBanner(){
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
 
+    const slogan = TranslateService.translate(eventStore, 'V2.TRIPLAN_HEADER_BANNER');
+
     return (
-        <div className={getClasses(baseClass, tripName && 'trip-mode')} style={{
+        <div className={getClasses(baseClass, tripName && 'trip-mode', noHeader && 'no-header')} style={{
             backgroundImage: `url('/images/banner/${bgs[random]}')`
         }}>
             <div className={getClasses(`${baseClass}-shadow`, eventStore.isHebrew && 'flip-x')} />
-            {isInPlan ? <TriplanSpecificTripHeaderLine /> : <TriplanHeaderLine />}
-            <div className={`${baseClass}-slogan black-text-shadow`} dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'V2.TRIPLAN_HEADER_BANNER')}} />
+            {!noHeader && (isInPlan ? <TriplanSpecificTripHeaderLine /> : <TriplanHeaderLine />)}
+            <div className={`${baseClass}-slogan black-text-shadow`} dangerouslySetInnerHTML={{ __html: withHr ? `${slogan}<hr/>` : slogan }}
+            />
             <div className={`${baseClass}-bottom-shadow`} />
         </div>
     );

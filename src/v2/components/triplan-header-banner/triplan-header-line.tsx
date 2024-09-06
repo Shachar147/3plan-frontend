@@ -21,7 +21,8 @@ function TriplanHeaderLine(){
 
     useHandleWindowResize();
 
-    const isLoggedIn = isLoggedOn();
+    const isInLogin = window.location.href.includes("/login") || window.location.href.includes("/register");
+    const isLoggedIn = isLoggedOn() && !isInLogin;
     const navigate = useNavigate();
 
     const [scrollY, setScrollY] = useState(0);
@@ -46,7 +47,66 @@ function TriplanHeaderLine(){
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
 
-    const hideSearch = eventStore.isMobile && scrollY > 160;
+    const hideSearch = !isLoggedIn || (eventStore.isMobile && scrollY > 160);
+
+    const wishlistBtn = (
+        <Button
+            icon="fa-heart"
+            text={TranslateService.translate(eventStore, 'WISHLIST')}
+            className={localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId && 'active'}
+            onClick={() => {
+                // if (localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId) {
+                //     return;
+                // }
+
+                if (window.location.href == savedCollectionsTabId) {
+                    localStorage.setItem(mainPageContentTabLsKey, savedCollectionsTabId);
+                    window.location.hash = savedCollectionsTabId;
+                    rootStore.triggerTabsReRender();
+                    rootStore.triggerHeaderReRender();
+                }
+                else {
+                    rootStore.navigateToTab(savedCollectionsTabId)
+                }
+
+                window.scrollTo({
+                    top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
+                    behavior: 'smooth' // Optional: for smooth scrolling
+                });
+            }}
+            disabled={!isLoggedIn}
+            flavor={ButtonFlavor.link}
+        />
+    );
+
+    const myTripsBtn = (
+        <Button
+            icon="fa-plane"
+            text={TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
+            className={isLoggedIn && localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
+            onClick={() => {
+                // if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
+                //     return;
+                // }
+
+                if (window.location.href == newDesignRootPath) {
+                    localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
+                    window.location.hash = myTripsTabId;
+                    rootStore.triggerTabsReRender();
+                    rootStore.triggerHeaderReRender();
+                } else {
+                    rootStore.navigateToTab(myTripsTabId);
+                }
+
+                window.scrollTo({
+                    top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
+                    behavior: 'smooth' // Optional: for smooth scrolling
+                });
+            }}
+            disabled={!isLoggedIn}
+            flavor={ButtonFlavor.link}
+        />
+    )
 
     return (
         <>
@@ -57,57 +117,8 @@ function TriplanHeaderLine(){
                     <div className={getClasses(eventStore.isMobile && "bottom-0", hideSearch && 'display-none')}><TriplanSearchV2 /></div>
                 </div>}
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
-                    <Button
-                        icon="fa-heart"
-                        text={TranslateService.translate(eventStore, 'WISHLIST')}
-                        className={localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId && 'active'}
-                        onClick={() => {
-                            // if (localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId) {
-                            //     return;
-                            // }
-
-                            if (window.location.href == savedCollectionsTabId) {
-                                localStorage.setItem(mainPageContentTabLsKey, savedCollectionsTabId);
-                                window.location.hash = savedCollectionsTabId;
-                                rootStore.triggerTabsReRender();
-                                rootStore.triggerHeaderReRender();
-                            }
-                            else {
-                                rootStore.navigateToTab(savedCollectionsTabId)
-                            }
-
-                            window.scrollTo({
-                                top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
-                                behavior: 'smooth' // Optional: for smooth scrolling
-                            });
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
-                    <Button
-                        icon="fa-plane"
-                        text={TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
-                        className={localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
-                        onClick={() => {
-                            // if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
-                            //     return;
-                            // }
-
-                            if (window.location.href == newDesignRootPath) {
-                                localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
-                                window.location.hash = myTripsTabId;
-                                rootStore.triggerTabsReRender();
-                                rootStore.triggerHeaderReRender();
-                            } else {
-                                rootStore.navigateToTab(myTripsTabId);
-                            }
-
-                            window.scrollTo({
-                                top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
-                                behavior: 'smooth' // Optional: for smooth scrolling
-                            });
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
+                    {isLoggedIn && wishlistBtn}
+                    {isLoggedIn && myTripsBtn}
                     <Button
                         icon="fa-globe"
                         text={TranslateService.translate(eventStore, 'LANGUAGE')}
@@ -119,13 +130,31 @@ function TriplanHeaderLine(){
                     <Button
                         // icon="fa-user"
                         // text={TranslateService.translate(eventStore, 'PROFILE')}
-                        icon="fa-sign-out"
+                        icon={isLoggedIn ? "fa-sign-out" : "fa-sign-in"}
                         text={isLoggedIn ? eventStore.isMobile ? TranslateService.translate(eventStore, 'LOGOUT') : `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}` : `${TranslateService.translate(eventStore, 'LOGIN')}`}
+                        className={window.location.href.includes("/login") && !(window.location.hash.includes("register")) && 'active'}
                         onClick={() => {
-                            navigate(isLoggedIn ? '/logout' : '/login',)
+                            const path = isLoggedIn ? '/logout' : `${newDesignRootPath}/login`;
+                            if (isInLogin){
+                                rootStore.navigateToTabOnLoginPage('login');
+                                return;
+                            }
+                            navigate(path)
                         }}
                         flavor={ButtonFlavor.link}
                     />
+                    {isInLogin && (
+                        <Button
+                            icon={"fa-user-plus"}
+                            text={TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
+                            className={window.location.href.includes("/login") && window.location.hash.includes("register") && 'active'}
+                            onClick={() => {
+                                rootStore.navigateToTabOnLoginPage(`register`);
+                                // window.location.href = `${newDesignRootPath}/register`;
+                            }}
+                            flavor={ButtonFlavor.link}
+                        />
+                    )}
                 </div>
             </div>
         </>

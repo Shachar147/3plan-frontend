@@ -28,6 +28,8 @@ import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import LogHistoryService from '../../services/data-handlers/log-history-service';
 import { TripActions } from '../../utils/interfaces';
+import {FeatureFlagsService} from "../../utils/feature-flags";
+import {newDesignRootPath} from "../../v2/utils/consts";
 
 const noTripsPlaceholderIcon = './images/search-placeholder.png';
 const loadingTripsPlaceholderIcon = './images/loadingTrips.gif';
@@ -143,7 +145,7 @@ function MyTrips() {
 							text={TranslateService.translate(eventStore, 'LOGIN')}
 							flavor={ButtonFlavor.secondary}
 							className="padding-inline-15"
-							onClick={() => navigate('/login')}
+							onClick={() => navigate(FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : '/login')}
 						/>
 					)}
 				</div>

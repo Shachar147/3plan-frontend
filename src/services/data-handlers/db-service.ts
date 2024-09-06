@@ -18,6 +18,8 @@ import _ from 'lodash';
 import { addSeconds } from '../../utils/time-utils';
 import ReactModalService from '../react-modal-service';
 import {endpoints} from "../../v2/utils/endpoints";
+import {FeatureFlagsService} from "../../utils/feature-flags";
+import {newDesignRootPath} from "../../v2/utils/consts";
 
 export interface upsertTripProps {
 	name?: string;
@@ -102,7 +104,7 @@ export class DBService implements BaseDataHandler {
 	async getTripData(tripName?: string): Promise<Trip> {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getTripByName(tripName!));
 		if (!res){
-			window.location.href = "/login";
+			window.location.href = FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : "/login";
 		}
 		return res.data as Trip;
 	}
@@ -130,7 +132,7 @@ export class DBService implements BaseDataHandler {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getAllTripsShort);
 		const trips: Trip[] = [];
 		if (!res){
-			window.location.href = "/login";
+			window.location.href = FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : "/login";
 		}
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);
