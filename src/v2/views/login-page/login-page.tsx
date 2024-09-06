@@ -310,7 +310,7 @@ function LoginPageV2() {
 
     function renderField({ name, placeholder, icon, type = 'text', ref }: any) {
         return (
-            <div className="field flex-column">
+            <div className="field flex-column gap-4">
                 <span>{placeholder}</span>
                 <input
                     name={name}
@@ -330,7 +330,7 @@ function LoginPageV2() {
     }
 
     const images = [
-        "/images/mobile-mac-preview-eng.jpeg"
+        eventStore.isHebrew ? "/images/mobile-mac-preview-he.jpeg" : "/images/mobile-mac-preview-eng.jpeg"
     ]
 
     function getTabs(){

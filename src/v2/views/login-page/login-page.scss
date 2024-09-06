@@ -137,7 +137,8 @@ body.rtl {
     text-align: right;
 
     .divider {
-      margin-inline-start: 20px;
+      margin-inline-start: -25px !important;
+      margin-inline-end: 60px !important;
     }
   }
 }
