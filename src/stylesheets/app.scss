@@ -1167,6 +1167,10 @@ input[type='text'] {
 	height: 100vh;
 }
 
+.height-100vh-important {
+	height: 100vh !important;
+}
+
 .bold {
 	font-weight: bold;
 }
@@ -1174,6 +1178,10 @@ input[type='text'] {
 .font-weight-bold {
 	font-weight: bold;
 	font-family: 'Arial';
+}
+
+.width-300 {
+	width: 300px;
 }
 
 .width-100-percent,
@@ -1587,5 +1595,11 @@ input[id^='react-select-'][id$='-input'] {
 body.rtl {
 	.text-div {
 		direction: rtl;
+	}
+
+	.plan-trip-tab-menu {
+		.item {
+			direction: rtl;
+		}
 	}
 }

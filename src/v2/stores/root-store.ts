@@ -1,6 +1,6 @@
 import {createContext} from "react";
 import {action, observable} from "mobx";
-import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath} from "../utils/consts";
+import {loginPageContentTabLsKey, mainPageContentTabLsKey, myTripsTabId, newDesignRootPath} from "../utils/consts";
 
 export class RootStore {
     @observable headerReRenderCounter = 0;
@@ -20,6 +20,14 @@ export class RootStore {
     navigateToTab(tabId: string) {
         localStorage.setItem(mainPageContentTabLsKey, tabId);
         window.location.href = `${newDesignRootPath}#${tabId}`;
+    }
+
+    @action
+    navigateToTabOnLoginPage(tabId: string) {
+        localStorage.setItem(loginPageContentTabLsKey, tabId);
+        window.location.href = `${newDesignRootPath}/login#${tabId}`;
+        this.triggerTabsReRender();
+        this.triggerHeaderReRender();
     }
 }
 
