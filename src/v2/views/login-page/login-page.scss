@@ -65,6 +65,7 @@ body:has(.login-page-v2){
     //padding-top: 50px;
   }
 
+  .register-page-container,
   .login-page-container {
     //width: 100vw;
     background-color: white;
@@ -97,6 +98,7 @@ body:has(.login-page-v2){
       color: var(--blue);
     }
 
+    .register-form,
     .login-form {
       display: flex;
       flex-direction: column;
@@ -149,6 +151,7 @@ body.rtl {
       height:max-content !important;
     }
 
+    .register-page-container,
     .login-page-container {
       flex-direction: column;
 
@@ -166,6 +169,7 @@ body.rtl {
         margin-block: 20px !important;
       }
 
+      .register-form-buttons,
       .login-form-buttons {
         margin-bottom: 20px !important;
       }

@@ -891,5 +891,7 @@
 	"UNLIKE_BUTTON": "Unlike",
 	"LOGIN_PAGE_V2.LOGIN.TITLE": "Log in to your account",
 	"LOGIN_PAGE_V2.LOGIN.DESCRIPTION": "Log in to your account to see all your saved collections and trips, and keep planning!",
+	"LOGIN_PAGE_V2.REGISTER.TITLE": "Create your account in 5 minutes!",
+	"LOGIN_PAGE_V2.REGISTER.DESCRIPTION": "Create your account and unlock tones of features that will help you plan your next trip!",
 	"TYPE_YOUR_X": "Type your {X}..."
 }
