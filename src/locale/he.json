@@ -336,6 +336,7 @@
 	"Cyprus": "קפריסין",
 	"Thailand": "תאילנד",
 	"koh pho-pi": "קופיפי",
+	"koh pho-phi": "קופיפי",
 	"Koh Phi Phi": "קופיפי",
 	"Firence": "פירנצה",
 	"Poland": "פולין",
@@ -1083,6 +1084,8 @@
 	"Luxembourg City": "לוקסמבורג סיטי",
 	"Stuttgart": "שטוטגרט",
 	"Bergen": "ברגן",
+	"Taiwan": "טייוואן",
+	"Hollywood": "הוליווד",
 	"CREATE_NEW_TRIP_TITLE": "צרו טיול חדש בכלום זמן!",
 	"CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP": "איזה כיף! בואו נתחיל",
 	"NO_SAVED_COLLECTIONS.DESCRIPTION": "אל דאגה! יצירת מקומות שמורים זה קלי קלות!\nנווטו לטאב <a href='#explore' class='navigate-to-explore'>מצא נק׳ עניין</a> כדי למצוא מקומות שאתם רוצים לבקר בהם → לחצו על כפתור הלב וזה ייצור אוסף של היעד של המקום שבחרתם!",
@@ -1104,5 +1107,6 @@
 	"LIKED_BUTTON": "אהבתי, שמור!",
 	"UNLIKE_BUTTON": "הסר מהמקומות השמורים",
 	"LOGIN_PAGE_V2.LOGIN.TITLE": "התחבר לחשבון שלך",
-	"LOGIN_PAGE_V2.LOGIN.DESCRIPTION": "התחבר לחשבון שלך על מנת לצפות בכל המקומות ששמרת והטיולים שלך ולהמשיך לתכנן!"
+	"LOGIN_PAGE_V2.LOGIN.DESCRIPTION": "התחבר לחשבון שלך על מנת לצפות בכל המקומות ששמרת והטיולים שלך ולהמשיך לתכנן!",
+	"TYPE_YOUR_X": "הזן {X}..."
 }

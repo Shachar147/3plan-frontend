@@ -104,7 +104,7 @@ export class DBService implements BaseDataHandler {
 	async getTripData(tripName?: string): Promise<Trip> {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getTripByName(tripName!));
 		if (!res){
-			window.location.href = FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : "/login";
+			window.location.href = FeatureFlagsService.isNewDesignEnabled(true) ? `${newDesignRootPath}/login` : "/login";
 		}
 		return res.data as Trip;
 	}
@@ -132,7 +132,7 @@ export class DBService implements BaseDataHandler {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getAllTripsShort);
 		const trips: Trip[] = [];
 		if (!res){
-			window.location.href = FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : "/login";
+			window.location.href = FeatureFlagsService.isNewDesignEnabled(true) ? `${newDesignRootPath}/login` : "/login";
 		}
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);

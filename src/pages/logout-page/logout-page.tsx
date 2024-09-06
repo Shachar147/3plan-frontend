@@ -9,7 +9,7 @@ const LogoutPage = () => {
 		setToken('');
 	}, []);
 
-	return <Navigate to={FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : "/login"} />;
+	return <Navigate to={FeatureFlagsService.isNewDesignEnabled(true) ? `${newDesignRootPath}/login` : "/login"} />;
 };
 
 export default LogoutPage;

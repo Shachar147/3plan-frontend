@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import { observer } from 'mobx-react';
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import {eventStoreContext} from "../../../stores/events-store";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import './login-page.scss';
 import TranslateService from "../../../services/translate-service";
 import {errorTestId, messageTestId} from "../../../pages/register-page-old/register-page";
@@ -15,6 +15,9 @@ import TriplanHeaderBanner from "../../components/triplan-header-banner/triplan-
 import '../main-page/main-page.scss';
 import TabMenu from "../../../components/common/tabs-menu/tabs-menu";
 import {rootStoreContext} from "../../stores/root-store";
+import {setToken} from "../../../helpers/auth";
+import axios from "axios";
+import {LOGIN_DELAY} from "../../../utils/consts";
 
 const defaultErrorField: Record<string, boolean> = {
     username: false,
@@ -63,7 +66,7 @@ function LoginPageV2() {
         );
 
     if (redirect) {
-        let redirectTo = newDesignRootPath; // FeatureFlagsService.isNewDesignEnabled(true) ? newDesignRootPath : '/';
+        let redirectTo = newDesignRootPath;
 
         const str = localStorage.getItem(useInviteLinkLSKey);
         if (str) {
@@ -73,11 +76,7 @@ function LoginPageV2() {
                 localStorage.removeItem(useInviteLinkLSKey);
             }
         }
-
         window.location.href = redirectTo;
-
-        // window.location.href = '/';
-        // navigate('/');
     }
 
 
@@ -115,21 +114,16 @@ function LoginPageV2() {
                     disabled={validating}
                     disabledReason={TranslateService.translate(eventStore, 'PLEASE_WAIT_WHILE_SAVING')}
                 />
+                <div className="width-300 text-align-center">
+                    {TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
+                    <Link data-testid='register' onClick={() => rootStore.navigateToTabOnLoginPage('register')}>
+                        {TranslateService.translate(eventStore, 'REGISTER')}
+                    </Link>
+                </div>
             </div>
         </div>
         )
     }
-
-    // const FooterLinkBlock = () => (
-    //     <span className={'register-link-container'} key={'register-link-container'}>
-	// 		<div style={{ direction: eventStore.getCurrentDirection() }}>
-	// 			{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
-    //             <Link data-testid={'register'} to={'/register'}>
-	// 				{TranslateService.translate(eventStore, 'REGISTER')}
-	// 			</Link>
-	// 		</div>
-	// 	</span>
-    // );
 
     const onKeyDown = (keyCode: number) => {
         if (keyCode === 13) {
@@ -193,24 +187,6 @@ function LoginPageV2() {
         }
     };
 
-    // const continueAsGuest = () => {
-    //     if (!DataServices.LocalStorageService.shouldShowContinueAsGuest()) {
-    //         window.location.href = '/home';
-    //         // navigate('/home');
-    //     } else {
-    //         ReactModalService.openConfirmModal(
-    //             eventStore,
-    //             () => {
-    //                 window.location.href = '/home';
-    //             },
-    //             'MODALS.ARE_YOU_SURE',
-    //             'CONTINUE_AS_GUEST_MODAL_CONTENT',
-    //             'CONTINUE_AS_GUEST'
-    //         );
-    //         DataServices.LocalStorageService.doNotShowContinueAsGuest();
-    //     }
-    // };
-
     function renderField({ name, placeholder, icon, type = 'text', ref }: any) {
         return (
             <div className="field flex-column">
@@ -219,7 +195,9 @@ function LoginPageV2() {
                     name={name}
                     className="textInput"
                     type={type}
-                    placeholder={eventStore.isMobile ? placeholder : undefined}
+                    placeholder={eventStore.isMobile ? placeholder : TranslateService.translate(eventStore, 'TYPE_YOUR_X', {
+                        X: placeholder
+                    })}
                     autoComplete="off"
                     data-testid="username"
                     ref={ref}
@@ -229,19 +207,6 @@ function LoginPageV2() {
             </div>
         );
     }
-
-    // return (
-    //     <div className="login-page">
-    //         <div className={getClasses('change-language-bar', eventStore.isMobile && 'mobile')}>
-    //             <TriplanHeaderWrapper {...headerProps} />
-    //         </div>
-    //         <div className="login-page-content">
-    //             <TriplanLogo onClick={() => !eventStore.isMobile && navigate('/home')} />
-
-    //             <FooterLinkBlock />
-    //         </div>
-    //     </div>
-    // );
 
     const images = [
         "/images/mobile-mac-preview-eng.jpeg"
@@ -279,7 +244,10 @@ function LoginPageV2() {
                         activeTab={activeTab}
                         tabs={getTabs()}
                         onChange={(tabId) => {
-                            setActiveTab(tabId)
+                            setActiveTab(tabId);
+                            localStorage.setItem(loginPageContentTabLsKey, tabId);
+                            window.location.hash = tabId;
+                            rootStore.triggerHeaderReRender();
                         }}
                     />
                     {activeTab == 'login' ? renderLoginContainer() : renderRegisterContainer()}
@@ -325,29 +293,6 @@ function LoginPageV2() {
             {renderTabView()}
         </div>
     )
-
-    // return (
-    //     <div className="login-page-v2">
-    //         <div className="login-page-container">
-    //             <img src={images[0]} />
-    //             {/*<Carousel showThumbs={false} showIndicators={false} infiniteLoop autoPlay>*/}
-    //             {/*    {images.map((image, index) => (*/}
-    //             {/*        <img src={image} />*/}
-    //             {/*    ))}*/}
-    //             {/*</Carousel>*/}
-    //             <div className="divider"/>
-    //             {renderLoginForm()}
-    //         </div>
-    //     </div>
-    // )
-
-    // return (
-    //     <div className="login-page-v2">
-    //         <div className="login-form-container">
-    //             {renderLoginForm()}
-    //         </div>
-    //     </div>
-    // )
 }
 
 export default observer(LoginPageV2);

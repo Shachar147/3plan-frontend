@@ -14,7 +14,7 @@ const PrivateRoute = () => {
 
 	// If authorized, return an outlet that will render child elements
 	// If not, return element that will navigate to login page
-	return isLoggedIn ? <Outlet /> : <Navigate to={FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : "/login"} />;
+	return isLoggedIn ? <Outlet /> : <Navigate to={FeatureFlagsService.isNewDesignEnabled(true) ? `${newDesignRootPath}/login` : "/login"} />;
 };
 
 // const PrivateRoute = ({ component: Component, data, ...rest }) => {

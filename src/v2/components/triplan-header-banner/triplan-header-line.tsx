@@ -108,6 +108,70 @@ function TriplanHeaderLine(){
         />
     )
 
+    const languageBtn = (
+        <Button
+            icon="fa-globe"
+            text={TranslateService.translate(eventStore, 'LANGUAGE')}
+            onClick={() => {
+                ReactModalService.openChangeLanguageModal(eventStore);
+            }}
+            flavor={ButtonFlavor.link}
+        />
+    );
+
+    const signInOutBtn = (
+        <Button
+            // icon="fa-user"
+            // text={TranslateService.translate(eventStore, 'PROFILE')}
+            icon={isLoggedIn ? "fa-sign-out" : "fa-sign-in"}
+            text={isLoggedIn ? eventStore.isMobile ? TranslateService.translate(eventStore, 'LOGOUT') : `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}` : `${TranslateService.translate(eventStore, 'LOGIN')}`}
+            className={window.location.href.includes("/login") && !(window.location.hash.includes("register")) && 'active'}
+            onClick={() => {
+                const path = isLoggedIn ? '/logout' : `${newDesignRootPath}/login`;
+                if (isInLogin){
+                    rootStore.navigateToTabOnLoginPage('login');
+                    return;
+                }
+                navigate(path)
+            }}
+            flavor={ButtonFlavor.link}
+        />
+    );
+
+    const registerBtn = (
+        <Button
+            icon={"fa-user-plus"}
+            text={TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
+            className={window.location.href.includes("/login") && window.location.hash.includes("register") && 'active'}
+            onClick={() => {
+                rootStore.navigateToTabOnLoginPage(`register`);
+                // window.location.href = `${newDesignRootPath}/register`;
+            }}
+            flavor={ButtonFlavor.link}
+        />
+    );
+
+    const renderHeaderButtons = () => {
+        if (isInLogin){
+            return (
+                <>
+                    {signInOutBtn}
+                    {registerBtn}
+                    {languageBtn}
+                </>
+            )
+        }
+
+        return (
+            <>
+                {wishlistBtn}
+                {myTripsBtn}
+                {languageBtn}
+                {signInOutBtn}
+            </>
+        )
+    }
+
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
@@ -117,44 +181,7 @@ function TriplanHeaderLine(){
                     <div className={getClasses(eventStore.isMobile && "bottom-0", hideSearch && 'display-none')}><TriplanSearchV2 /></div>
                 </div>}
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
-                    {isLoggedIn && wishlistBtn}
-                    {isLoggedIn && myTripsBtn}
-                    <Button
-                        icon="fa-globe"
-                        text={TranslateService.translate(eventStore, 'LANGUAGE')}
-                        onClick={() => {
-                            ReactModalService.openChangeLanguageModal(eventStore);
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
-                    <Button
-                        // icon="fa-user"
-                        // text={TranslateService.translate(eventStore, 'PROFILE')}
-                        icon={isLoggedIn ? "fa-sign-out" : "fa-sign-in"}
-                        text={isLoggedIn ? eventStore.isMobile ? TranslateService.translate(eventStore, 'LOGOUT') : `${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}` : `${TranslateService.translate(eventStore, 'LOGIN')}`}
-                        className={window.location.href.includes("/login") && !(window.location.hash.includes("register")) && 'active'}
-                        onClick={() => {
-                            const path = isLoggedIn ? '/logout' : `${newDesignRootPath}/login`;
-                            if (isInLogin){
-                                rootStore.navigateToTabOnLoginPage('login');
-                                return;
-                            }
-                            navigate(path)
-                        }}
-                        flavor={ButtonFlavor.link}
-                    />
-                    {isInLogin && (
-                        <Button
-                            icon={"fa-user-plus"}
-                            text={TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
-                            className={window.location.href.includes("/login") && window.location.hash.includes("register") && 'active'}
-                            onClick={() => {
-                                rootStore.navigateToTabOnLoginPage(`register`);
-                                // window.location.href = `${newDesignRootPath}/register`;
-                            }}
-                            flavor={ButtonFlavor.link}
-                        />
-                    )}
+                    {renderHeaderButtons()}
                 </div>
             </div>
         </>

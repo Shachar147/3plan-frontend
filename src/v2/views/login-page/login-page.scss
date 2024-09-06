@@ -45,6 +45,14 @@ body:has(.login-page-v2){
     font-size: 12px;
     width: 100% !important;
     min-width: 200px !important;
+
+    &::placeholder {
+      color: var(--gray) !important;
+    }
+
+    &:disabled {
+      border:1 px solid var(--gray) !important;
+    }
   }
 
   .login-page-container,
@@ -79,6 +87,14 @@ body:has(.login-page-v2){
 
     h3 {
       font-weight: bold;
+    }
+
+    .field.red {
+      color: var(--red);
+    }
+
+    .field.blue {
+      color: var(--blue);
     }
 
     .login-form {

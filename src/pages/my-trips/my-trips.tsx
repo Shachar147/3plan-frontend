@@ -145,7 +145,7 @@ function MyTrips() {
 							text={TranslateService.translate(eventStore, 'LOGIN')}
 							flavor={ButtonFlavor.secondary}
 							className="padding-inline-15"
-							onClick={() => navigate(FeatureFlagsService.isNewDesignEnabled() ? `${newDesignRootPath}/login` : '/login')}
+							onClick={() => navigate(FeatureFlagsService.isNewDesignEnabled(true) ? `${newDesignRootPath}/login` : '/login')}
 						/>
 					)}
 				</div>

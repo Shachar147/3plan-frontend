@@ -1180,6 +1180,10 @@ input[type='text'] {
 	font-family: 'Arial';
 }
 
+.width-300 {
+	width: 300px;
+}
+
 .width-100-percent,
 .width-100-percents {
 	width: 100%;
@@ -1591,5 +1595,11 @@ input[id^='react-select-'][id$='-input'] {
 body.rtl {
 	.text-div {
 		direction: rtl;
+	}
+
+	.plan-trip-tab-menu {
+		.item {
+			direction: rtl;
+		}
 	}
 }

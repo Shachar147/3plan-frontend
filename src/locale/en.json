@@ -274,7 +274,7 @@
 	"CLICK_HERE_TO_UPLOAD": "Click here to upload",
 	"NO_FILE_CHOSEN": "No file chosen",
 	"LOGIN": "Login",
-	"REGISTER_PREFIX": "Not a member?",
+	"REGISTER_PREFIX": "Not a member yet?",
 	"REGISTER": "sign up!",
 	"LOGIN_PAGE.WRONG_CREDENTIALS": "Username or Password are incorrect.",
 	"REGISTER_BUTTON": "Sign up",
@@ -890,5 +890,6 @@
 	"LIKED_BUTTON": "Liked it, save!",
 	"UNLIKE_BUTTON": "Unlike",
 	"LOGIN_PAGE_V2.LOGIN.TITLE": "Log in to your account",
-	"LOGIN_PAGE_V2.LOGIN.DESCRIPTION": "Log in to your account to see all your saved collections and trips, and keep planning!"
+	"LOGIN_PAGE_V2.LOGIN.DESCRIPTION": "Log in to your account to see all your saved collections and trips, and keep planning!",
+	"TYPE_YOUR_X": "Type your {X}..."
 }
