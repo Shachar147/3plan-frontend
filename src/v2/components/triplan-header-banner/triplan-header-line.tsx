@@ -188,7 +188,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
                     <div className="flex-column gap-4">
                         {renderHeaderButtons()}
-                        {shouldHaveSearch && eventStore.isMobile && scrollY > 250 && <div className="sticky-search-line">{search}</div>}
+                        {shouldHaveSearch && eventStore.isMobile && scrollY > 144 && <div className="sticky-search-line">{search}</div>}
                     </div>
                 </div>
             </div>
