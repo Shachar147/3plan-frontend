@@ -3,7 +3,7 @@ const mainPageContentTabLsKey = "triplan-main-page-content-tab";
 const myTripsTabId = "my-trips";
 const exploreTabId = "explore";
 const savedCollectionsTabId = "saved-collections";
-const newDesignRootPath = "/new";
+const newDesignRootPath = "/v2";
 const searchResultsTabId = "search-results";
 const specificItemTabId = "view-item";
 

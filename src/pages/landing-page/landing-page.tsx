@@ -11,6 +11,7 @@ import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header
 import {useHandleWindowResize} from '../../custom-hooks/use-window-size';
 import {getCurrentUsername} from "../../utils/utils";
 import {FeatureFlagsService} from "../../utils/feature-flags";
+import {newDesignRootPath} from "../../v2/utils/consts";
 
 const dataService = DataServices.LocalStorageService;
 const LandingPage = () => {
@@ -67,7 +68,7 @@ const LandingPage = () => {
 					{FeatureFlagsService.isNewDesignEnabled() && <Button
 						text="New site - Beta"
 						onClick={() => {
-							navigate('/new');
+							navigate(newDesignRootPath);
 						}}
 						flavor={ButtonFlavor.link}
 						className="black text-decoration-underline margin-top-20"
