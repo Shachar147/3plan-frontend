@@ -321,11 +321,12 @@ body.rtl {
   background-color: #ececec;
   width: 100vw;
   height: max-content;
-  margin-top: 4px;
+  //margin-top: 4px;
   padding-block: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 14px;
 
   .search-container {
     margin-bottom: 0 !important;

@@ -479,8 +479,19 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         const fallbacks = ["/images/trip-photo-1.jpg", "/images/trip-photo-2.png", "/images/trip-photo-3.png", "/images/trip-photo-4.png", "/images/trip-photo-5.png",  "/images/trip-photo-2.png"]
         const random = Math.floor(Math.random() * fallbacks.length);
 
+        const isSmall = eventStore.isMobile || mainFeed || savedCollection || myTrips;
         return (
-            <img src={src} alt={item.name} onError={() => setSrc(fallbacks[random])} className="zoomable" key={idx} />
+            <>
+                <div className="shimmer-animation" style={{
+                    height: isSmall ? 200 : 266, width: isSmall ? 298 : 400 }} />
+                <img src={src} className="display-none" alt={item.name} onError={() => setSrc(fallbacks[random])} onLoad={(e) => {
+                    const imgElement = e.target;
+                    imgElement.style.opacity = 1;
+                    const shimmer = imgElement.previousSibling;
+                    shimmer.style.display = 'none';
+
+                }} className="zoomable" key={idx} />
+            </>
         )
     }
 
