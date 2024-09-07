@@ -38,6 +38,11 @@ export function useMobileLockScroll(rerenderCounter: number, setReRenderCounter:
 export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggestions: SearchSuggestion[]) => void, setShowSuggestions: (show: boolean) => void, isInPlan: boolean) {
     const eventStore = useContext(eventStoreContext);
 
+    const translatedSearchQuery = TranslateService.translateFromTo(eventStore, searchQuery, undefined, 'he', 'en');
+    if (translatedSearchQuery != searchQuery) {
+        console.log("heree", searchQuery, ' -> ', translatedSearchQuery);
+    }
+
     function scheduledOn(e: SidebarEvent | CalendarEvent) {
         const calendarEvent = e as CalendarEvent;
         if (!calendarEvent.start || !calendarEvent.end) {
@@ -87,6 +92,11 @@ export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggest
 
     const citiesAndCountries = useMemo<CityOrCountry[]>(() => fetchCitiesAndSetOptions(), []);
 
+    function isMatchQuery(c: CityOrCountry) {
+        return c.label.toLowerCase().includes(searchQuery.toLowerCase().trim()) || (translatedSearchQuery && c.label.toLowerCase().includes(translatedSearchQuery.toLowerCase().trim()));
+
+    }
+
     async function loadSuggestions() {
         if (searchQuery.length >= 3) {
             const cachedKey = Object.keys(searchSuggestionsCaching.current).find((s) => s.includes(searchQuery.trim()));
@@ -99,21 +109,21 @@ export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggest
 
             let results: SearchSuggestion[] = await apiService.getSearchSuggestions(searchQuery.trim());
 
-            const countries = citiesAndCountries.filter((c) => c.label.toLowerCase().includes(searchQuery.toLowerCase().trim()) && c.type === "country").map((c) => ({
+            const countries = citiesAndCountries.filter((c) => isMatchQuery(c) && c.type === "country").map((c) => ({
                 name: c.value,
                 category: c.type,
                 destination: c.label,
                 image: cityImage
             }));
 
-            const cities = citiesAndCountries.filter((c) => c.label.toLowerCase().includes(searchQuery.toLowerCase().trim()) && c.type === "city").map((c) => ({
+            const cities = citiesAndCountries.filter((c) => isMatchQuery(c) && c.type === "city").map((c) => ({
                 name: c.value,
                 category: c.type,
                 destination: c.label,
                 image: cityImage
             }));
 
-            const others = citiesAndCountries.filter((c) => c.label.toLowerCase().includes(searchQuery.toLowerCase().trim()) && c.type !== "city" && c.type !== "country").map((c) => ({
+            const others = citiesAndCountries.filter((c) => isMatchQuery(c) && c.type !== "city" && c.type !== "country").map((c) => ({
                 name: c.value,
                 category: c.type,
                 destination: c.label,

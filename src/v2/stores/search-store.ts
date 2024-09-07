@@ -67,13 +67,13 @@ export class SearchStore {
     }
 
     @computed
-    get shouldShowSuggestions(){
-        return this.suggestions.length &&
+    get shouldShowSuggestions(): boolean{
+        return !!(this.suggestions.length &&
                this.searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS &&
                (this.chosenName == "" || !this.searchQuery.includes(this.chosenName) || this.searchQuery.trim().length > this.chosenName.length) &&
                (!this.chosenName.includes(this.searchQuery)) &&
                this.showSuggestions &&
-               !this.searchValueFromHash;
+               !this.searchValueFromHash);
     }
 }
 
