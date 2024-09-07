@@ -1039,11 +1039,9 @@
 
 		& + .mobile-search {
 			position: absolute;
-			top: 230px;
-
-			& + .triplan-header-banner-slogan {
-				//display: none;
-			}
+			top: 225px;
+			left: CALC(50% - 171px);
+			min-width: 341px;
 		}
 	}
 }

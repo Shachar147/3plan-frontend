@@ -315,3 +315,18 @@ body.rtl {
     }
   }
 }
+
+.sticky-search-line {
+  background-color: #ececec;
+  width: 100vw;
+  height: max-content;
+  margin-top: 4px;
+  padding-block: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .search-container {
+    margin-bottom: 0 !important;
+  }
+}
