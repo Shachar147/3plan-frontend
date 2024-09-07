@@ -4,6 +4,9 @@ import {newDesignRootPath} from "../../utils/consts";
 import {getClasses} from "../../../utils/utils";
 import {eventStoreContext} from "../../../stores/events-store";
 
+export const MOBILE_SCROLL_TOP = 115;
+export const DESKTOP_SCROLL_TOP = 61;
+
 const ScrollToTopButton = ({ scrollDistance }) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -31,7 +34,7 @@ const ScrollToTopButton = ({ scrollDistance }) => {
 
     const scrollToTop = () => {
         window.scrollTo({
-            top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
+            top: isInPlan ? 0 : eventStore.isMobile ? MOBILE_SCROLL_TOP : DESKTOP_SCROLL_TOP,
             behavior: 'smooth',
         });
     };

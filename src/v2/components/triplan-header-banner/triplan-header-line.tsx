@@ -12,6 +12,7 @@ import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, savedCollectio
 import {rootStoreContext} from "../../stores/root-store";
 import {useNavigate, useParams} from "react-router-dom";
 import {getUser, isLoggedOn} from "../../../helpers/auth";
+import {DESKTOP_SCROLL_TOP, MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
 
 
 function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
@@ -69,7 +70,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
                 }
 
                 window.scrollTo({
-                    top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
+                    top: isInPlan ? 0 : eventStore.isMobile ? MOBILE_SCROLL_TOP : DESKTOP_SCROLL_TOP,
                     behavior: 'smooth' // Optional: for smooth scrolling
                 });
             }}
@@ -98,7 +99,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
                 }
 
                 window.scrollTo({
-                    top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
+                    top: isInPlan ? 0 : eventStore.isMobile ? MOBILE_SCROLL_TOP : DESKTOP_SCROLL_TOP,
                     behavior: 'smooth' // Optional: for smooth scrolling
                 });
             }}

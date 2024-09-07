@@ -14,6 +14,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {getUser, isLoggedOn} from "../../../helpers/auth";
 import {getViewSelectorOptions} from "../../../utils/ui-utils";
 import {ViewMode} from "../../../utils/enums";
+import {DESKTOP_SCROLL_TOP, MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
 
 function TriplanSpecificTripHeaderLine(){
     const rootStore = useContext(rootStoreContext);
@@ -85,7 +86,7 @@ function TriplanSpecificTripHeaderLine(){
                                 rootStore.navigateToTab(myTripsTabId);
                             }
                             window.scrollTo({
-                                top: isInPlan ? 0 : eventStore.isMobile ? 151 : 61,
+                                top: isInPlan ? 0 : eventStore.isMobile ? MOBILE_SCROLL_TOP : DESKTOP_SCROLL_TOP,
                                 behavior: 'smooth' // Optional: for smooth scrolling
                             });
                         }}
