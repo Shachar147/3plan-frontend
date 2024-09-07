@@ -35,7 +35,7 @@ const TranslateService = {
 		// @ts-ignore
 		const sourceTranslations: Record<string, string> = translates[from];
 
-		const key = Object.keys(sourceTranslations).find((k) => sourceTranslations[k].toLowerCase() === value.toLowerCase());
+		const key = Object.keys(sourceTranslations).find((k) => sourceTranslations[k].toLowerCase().includes(value.toLowerCase()));
 		if (!key){
 			return undefined;
 		}

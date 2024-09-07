@@ -80,7 +80,9 @@ const TriplanSearchV2 = () => {
             const filteredSuggestions = [{ name: TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT"), category: "", destination: "", hideImage: true}];
             searchStore.setSuggestions(filteredSuggestions);
             searchStore.setShowSuggestions(true);
-            rootStore.triggerTabsReRender();
+
+            // rootStore.triggerTabsReRender();
+            
         }, 300);
     };
 
