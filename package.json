@@ -87,8 +87,9 @@
 		"start:dev:old": "craco start",
 		"start:dev:windows": "SET PORT=3000 && SET REACT_APP_MODE=development && craco start",
 		"start:dev": "FAST_REFRESH=false PORT=3000 REACT_APP_MODE=development craco start",
-		"start:dev:mac": "FAST_REFRESH=false PORT=3000 REACT_APP_MODE=development craco start",
-		"start:prod:mac": "FAST_REFRESH=false PORT=3000 REACT_APP_MODE=production craco start",
+		"start:dev:mac": "npm run start:dev",
+		"start:prod": "FAST_REFRESH=false PORT=3000 REACT_APP_MODE=production craco start",
+		"start:prod:mac": "npm run start:prod",
 		"prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
 		"prettier-check": "prettier --check 'src/**/*.{js,jsx,ts,tsx,html,less,scss,css}'",
 		"start:storybook": "start-storybook -p 6006 -s public",
@@ -98,7 +99,7 @@
 		"reinstall": "rm -rf node_modules && npm install && npm run killbill && npm run start:dev:mac",
 		"push-master": "git push origin master && git push heroku master",
 		"start:background": "npm run killbill && npm run start:dev:mac > /dev/null 2>&1 &",
-		"start:all": "concurrently \"npm run start:background\" \"cd ../3plan-server && npm run start:background\""
+		"start:all": "concurrently \"npm run start:background\" \"cd ../server && npm run start:background\""
 	},
 	"engines": {
 		"node": "16.20.2",

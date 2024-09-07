@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
 import {getClasses} from "../../../utils/utils";
@@ -171,18 +171,23 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
         )
     }
 
+    const search = useMemo(() => <TriplanSearchV2 />, [eventStore.isMobile]);
+
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
             <div className={getClasses(baseClass, !isMobile && 'sticky', isSticky && 'is-sticky')}>
                 {<div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
-                    <div className={getClasses(eventStore.isMobile && "bottom-0", hideSearch && 'display-none')}><TriplanSearchV2 /></div>
+                    {!eventStore.isMobile && <div className={getClasses(eventStore.isMobile && "bottom-0", hideSearch && 'display-none')}>{search}</div>}
                 </div>}
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
                     {renderHeaderButtons()}
                 </div>
             </div>
+            {eventStore.isMobile && <div className="mobile-search">
+                {search}
+            </div>}
         </>
     );
 }

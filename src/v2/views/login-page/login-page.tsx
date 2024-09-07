@@ -214,11 +214,13 @@ function LoginPageV2() {
                         setToken(token);
                         axios.defaults.headers.Authorization = `Bearer ${token}`;
 
-                        // set success message and redirect flag.
-                        setMessage('LOGGED_IN_SUCCESSFULLY');
-                        setTimeout(function () {
-                            setRedirect(true);
-                        }, LOGIN_DELAY);
+                        setRedirect(true);
+
+                        // // set success message and redirect flag.
+                        // setMessage('LOGGED_IN_SUCCESSFULLY');
+                        // setTimeout(function () {
+                        //     setRedirect(true);
+                        // }, LOGIN_DELAY);
                     } else {
                         setError('Oops, something went wrong');
                     }
