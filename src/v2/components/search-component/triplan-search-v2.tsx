@@ -23,8 +23,6 @@ export interface SearchSuggestion {
     hideImage?: boolean;
 }
 
-const AUTO_COMPLETE_MIN_CHARACTERS = 3;
-
 const TriplanSearchV2 = () => {
     const searchStore = useContext(searchStoreContext);
     const debounceInputChange = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -50,8 +48,7 @@ const TriplanSearchV2 = () => {
     }
 
     const rootStore = useContext(rootStoreContext);
-    const shouldShowSuggestions = searchStore.suggestions.length > 0 && searchStore.searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS && (searchStore.chosenName == "" || !searchStore.searchQuery.includes(searchStore.chosenName) || searchStore.searchQuery.trim().length > searchStore.chosenName.length) && (!searchStore.chosenName.includes(searchStore.searchQuery)) && searchStore.showSuggestions && !searchStore.searchValueFromHash;
-    useMobileLockScroll(searchStore.rerenderCounter, searchStore.setReRenderCounter, shouldShowSuggestions, searchStore.showSuggestions, searchStore.suggestions);
+    useMobileLockScroll(searchStore.rerenderCounter, searchStore.setReRenderCounter, searchStore.shouldShowSuggestions, searchStore.showSuggestions, searchStore.suggestions);
 
     useLoadSuggestions(searchStore.searchQuery, searchStore.setSuggestions, searchStore.setShowSuggestions, isInPlan);
 
@@ -171,7 +168,7 @@ const TriplanSearchV2 = () => {
     const placeholder = isInPlan ? `HEADER_SPECIFIC_TRIP_SEARCH_PLACEHOLDER${isShort}` : `HEADER_SEARCH_PLACEHOLDER${isShort}`;
 
     return (
-        <div className={getClasses("search-container", shouldShowSuggestions && 'has-values')} key={`search-box-${searchStore.rerenderCounter}`}>
+        <div className={getClasses("search-container", searchStore.shouldShowSuggestions && 'has-values')} key={`search-box-${searchStore.rerenderCounter}`}>
             <div className="search-box">
                 <input
                     className="search-input"
@@ -186,7 +183,7 @@ const TriplanSearchV2 = () => {
                     {TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
                 </button>
             </div>
-            {shouldShowSuggestions && (
+            {searchStore.shouldShowSuggestions && (
                 <div className="suggestions-container bright-scrollbar">
                     {searchStore.suggestions.map((suggestion, index) => (
                             <div

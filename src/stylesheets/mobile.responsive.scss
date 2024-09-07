@@ -1044,6 +1044,19 @@
 			min-width: 341px;
 		}
 	}
+
+	.suggestion-name,
+	.suggestion-descriptor{
+		text-align: start;
+		width: CALC(100vw - 100px);
+		word-break: break-word;
+	}
+
+	.suggestion-descriptor {
+		width: 100vw;
+		color: rgba(255,255,255,0.8) !important;
+		float: left !important;
+	}
 }
 
 @media only screen and (max-height: 500px){

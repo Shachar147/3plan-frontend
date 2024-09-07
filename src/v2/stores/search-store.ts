@@ -1,8 +1,10 @@
 
 import {createContext} from "react";
-import {action, observable, runInAction} from "mobx";
+import {action, computed, observable, runInAction} from "mobx";
 import {getParameterFromHash} from "../utils/utils";
 import {SearchSuggestion} from "../components/search-component/triplan-search-v2";
+
+const AUTO_COMPLETE_MIN_CHARACTERS = 3;
 
 export class SearchStore {
     @observable _searchQuery: string = "";
@@ -62,6 +64,16 @@ export class SearchStore {
     @action
     setSearchValueFromHash(value: boolean){
         this.searchValueFromHash = value;
+    }
+
+    @computed
+    get shouldShowSuggestions(){
+        return this.suggestions.length &&
+               this.searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS &&
+               (this.chosenName == "" || !this.searchQuery.includes(this.chosenName) || this.searchQuery.trim().length > this.chosenName.length) &&
+               (!this.chosenName.includes(this.searchQuery)) &&
+               this.showSuggestions &&
+               !this.searchValueFromHash;
     }
 }
 
