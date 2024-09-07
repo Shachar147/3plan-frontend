@@ -1125,7 +1125,25 @@
 	}
 }
 
+@media only screen and (max-width: 1450px){
+	.triplan-main-page-container {
+		.triplan-header-banner {
+			padding-inline: 200px !important;
+		}
+
+		.triplan-header-banner-footer {
+			padding-inline: 20px !important;
+		}
+	}
+}
+
 @media only screen and (max-width: 1260px) {
+	.triplan-main-page-container {
+		.triplan-header-banner {
+			padding-inline: 100px !important;
+		}
+	}
+
 	.specific-trip-header-line {
 		.search-container {
 			width: 200px !important;
@@ -1142,6 +1160,11 @@
 			gap: 4px !important;
 		}
 	}
+
+	.main-feed-header,
+	.main-feed-description {
+		padding-inline: 50px !important;
+	}
 }
 
 @media only screen and (max-width: 1088px) {
@@ -1150,12 +1173,36 @@
 			display: none !important;
 		}
 	}
+
+	.triplan-main-page-container {
+		.triplan-header-banner {
+			padding-inline: 50px !important;
+		}
+
+		.triplan-header-banner-footer {
+			padding-inline: 0 !important;
+		}
+	}
 }
 
 @media only screen and (max-width: 1037px) {
 	.specific-trip-header-line {
 		.search-container {
 			display: none !important;
+		}
+	}
+
+	.triplan-main-page-container {
+		.triplan-header-banner {
+			padding-inline: 20px !important;
+		}
+
+		.triplan-header-banner-footer {
+			padding-inline: 0 !important;
+
+			.tabular.menu {
+				padding-inline: 5px !important;
+			}
 		}
 	}
 }

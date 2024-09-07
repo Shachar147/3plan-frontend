@@ -39,9 +39,9 @@ export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggest
     const eventStore = useContext(eventStoreContext);
 
     const translatedSearchQuery = TranslateService.translateFromTo(eventStore, searchQuery, undefined, 'he', 'en');
-    if (translatedSearchQuery != searchQuery) {
-        console.log("heree", searchQuery, ' -> ', translatedSearchQuery);
-    }
+    // if (translatedSearchQuery != searchQuery) {
+    //     console.log("heree", searchQuery, ' -> ', translatedSearchQuery);
+    // }
 
     function scheduledOn(e: SidebarEvent | CalendarEvent) {
         const calendarEvent = e as CalendarEvent;

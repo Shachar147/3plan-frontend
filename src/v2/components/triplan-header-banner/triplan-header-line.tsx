@@ -47,7 +47,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
 
-    const hideSearch = !isLoggedIn || (eventStore.isMobile && scrollY > 160);
+    const hideSearch = !isLoggedIn; // || (eventStore.isMobile && scrollY > 160);
 
     const wishlistBtn = (
         <Button
@@ -152,7 +152,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
     );
 
     const renderHeaderButtons = () => {
-        const containerClass = "flex-row align-items-center justify-content-center";
+        const containerClass = "flex-row align-items-center justify-content-center gap-4";
         if (isInLogin){
             return (
                 <div className={containerClass}>
@@ -177,22 +177,26 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
 
     const search = useMemo(() => <TriplanSearchV2 />, [eventStore.isMobile]);
 
+    const condition1 = !eventStore.isMobile && !hideSearch;
+    const condition2 = shouldHaveSearch && eventStore.isMobile && scrollY > 144 && !hideSearch;
+    const condition3 = eventStore.isMobile && shouldHaveSearch && !hideSearch;
+
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
             <div className={getClasses(baseClass, !isMobile && 'sticky', isSticky && 'is-sticky')}>
                 {<div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
-                    {!eventStore.isMobile && <div className={getClasses(eventStore.isMobile && "bottom-0", hideSearch && 'display-none')}>{search}</div>}
+                    {condition1 && !condition2 && <div>{search}</div>}
                 </div>}
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
                     <div className="flex-column gap-4">
                         {renderHeaderButtons()}
-                        {shouldHaveSearch && eventStore.isMobile && scrollY > 144 && <div className="sticky-search-line">{search}</div>}
+                        {condition2 && <div className="sticky-search-line">{search}</div>}
                     </div>
                 </div>
             </div>
-            {eventStore.isMobile && shouldHaveSearch && <div className="mobile-search">
+            {condition3 && !condition1 && !condition2 && <div className="mobile-search">
                 {search}
             </div>}
         </>
