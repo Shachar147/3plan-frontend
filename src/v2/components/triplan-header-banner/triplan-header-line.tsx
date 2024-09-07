@@ -178,7 +178,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
     const search = useMemo(() => <TriplanSearchV2 />, [eventStore.isMobile]);
 
     const condition1 = !eventStore.isMobile && !hideSearch;
-    const condition2 = shouldHaveSearch && eventStore.isMobile && scrollY > 144 && !hideSearch;
+    const condition2 = shouldHaveSearch && eventStore.isMobile && scrollY >= 142 && !hideSearch;
     const condition3 = eventStore.isMobile && shouldHaveSearch && !hideSearch;
 
     return (
