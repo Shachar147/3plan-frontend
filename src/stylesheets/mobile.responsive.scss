@@ -140,12 +140,6 @@
 			align-items: center;
 			gap: 8px;
 			width: 100%;
-
-			.search-container {
-				padding-inline: 0;
-				margin-top: 8px;
-				width: 100%;
-			}
 		}
 
 		.main-part {
@@ -1041,6 +1035,13 @@
 			top: 100px;
 			width: 300px;
 			left: calc(50vw - 165px);
+		}
+
+		& + .mobile-search {
+			position: absolute;
+			top: 225px;
+			left: CALC(50% - 171px);
+			min-width: 341px;
 		}
 	}
 }

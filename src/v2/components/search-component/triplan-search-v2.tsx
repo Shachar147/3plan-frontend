@@ -44,7 +44,7 @@ const TriplanSearchV2 = () => {
     }, [searchQuery])
 
     const eventStore = useContext(eventStoreContext);
-    useHandleWindowResize();
+    // useHandleWindowResize();
 
     // @ts-ignore
     TriplanSearchV2.handleClickOutside = () => handleClickOutside();
