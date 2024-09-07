@@ -19,6 +19,7 @@ import {observer} from "mobx-react";
 import EditableLabel from "../editable-label/editable-label";
 import {mainPageContentTabLsKey, myTripsTabId} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
+import {MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
 
 interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
@@ -589,7 +590,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                                 // window.location.reload();
 
                                 window.scrollTo({
-                                    top: eventStore.isMobile ? 151 : 500,
+                                    top: eventStore.isMobile ? MOBILE_SCROLL_TOP : 500,
                                     behavior: 'smooth',
                                 });
                             }}
