@@ -1603,3 +1603,10 @@ body.rtl {
 		}
 	}
 }
+
+body:has(.loading-component) {
+	// prevent header from being shown when loading appears.
+	.triplan-header-banner-header-line {
+		display: none !important;
+	}
+}

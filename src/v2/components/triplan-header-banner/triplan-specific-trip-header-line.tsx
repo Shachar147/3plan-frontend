@@ -85,6 +85,7 @@ function TriplanSpecificTripHeaderLine(){
                             } else {
                                 rootStore.navigateToTab(myTripsTabId);
                             }
+                            const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
                             window.scrollTo({
                                 top: isInPlan ? 0 : eventStore.isMobile ? MOBILE_SCROLL_TOP : DESKTOP_SCROLL_TOP,
                                 behavior: 'smooth' // Optional: for smooth scrolling

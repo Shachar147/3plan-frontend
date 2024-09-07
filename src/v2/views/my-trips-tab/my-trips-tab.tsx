@@ -1,5 +1,5 @@
 import TranslateService from "../../../services/translate-service";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import DataServices, {Trip, tripNameToLSTripName} from "../../../services/data-handlers/data-handler-base";
 import {
@@ -183,8 +183,8 @@ function MyTripsTab(){
         );
     }
 
+    const loaderDetails = useMemo(() => LOADER_DETAILS(), []);
     if (myTripsStore.isLoading) {
-        const loaderDetails = LOADER_DETAILS();
         return (
             <LoadingComponent
                 title={TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE')}
@@ -553,6 +553,9 @@ function MyTripsTab(){
     function renderAddTripButton(flavor: ButtonFlavor = ButtonFlavor.secondary){
 
         function getBtnText(){
+            if (myTripsStore.showHidden){
+                return TranslateService.translate(eventStore, 'BACK_TO_MY_TRIPS');
+            }
             if (addNewTripMode) {
                 return TranslateService.translate(eventStore, 'CREATE_TRIP');
             }
