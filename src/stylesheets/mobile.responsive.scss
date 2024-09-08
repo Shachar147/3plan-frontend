@@ -982,9 +982,9 @@
 			}
 		}
 
-		.triplan-header-banner {
-			display: none;
-		}
+		//.triplan-header-banner {
+		//	display: none;
+		//}
 
 		.poi-idx {
 			display: none;
@@ -1056,6 +1056,22 @@
 		width: 100vw;
 		color: rgba(255,255,255,0.8) !important;
 		float: left !important;
+	}
+
+	// plan trip page
+	.triplan-plan-page-container {
+		.plan-trip-tab-menu {
+			width: 100vw;
+			top: -58px !important;
+
+			.main-page {
+				margin-top: 10px !important;
+			}
+		}
+		.trip-name-in-banner {
+			max-width: 100%;
+			text-align: center;
+		}
 	}
 }
 

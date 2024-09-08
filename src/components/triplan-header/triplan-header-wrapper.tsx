@@ -24,9 +24,9 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 	const rootStore = useContext(rootStoreContext);
 	let { withSearch, currentMobileView, showTripName } = props;
 
-	return null;
-
 	if (eventStore.isMobile) {
+		return null;
+
 		let showing, from;
 		if (currentMobileView === ViewMode.calendar) {
 			showing = eventStore.filteredCalendarEvents.length;

@@ -1,4 +1,4 @@
-import React, {useContext, useMemo, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import { observer } from 'mobx-react';
 import {eventStoreContext} from "../../../stores/events-store";
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -13,28 +13,16 @@ function PlanPageContent() {
     const rootStore = useContext(rootStoreContext);
     const [activeTab, setActiveTab] = useState(eventStore.isMobile ? eventStore.mobileViewMode : eventStore.viewMode);
 
+    useEffect(() => {
+        setActiveTab(eventStore.isMobile ? eventStore.mobileViewMode : eventStore.viewMode);
+    }, [eventStore.isMobile, eventStore.mobileViewMode, eventStore.viewMode])
+
     function getTabs(){
         const viewOptions = getViewSelectorOptions(eventStore, eventStore.isMobile).filter((x) => {
             return !(eventStore.isMobile && (x as any).desktopOnly);
         });
 
-        // {viewOptions.map((v) => (
-        //     <Button
-        //         icon={(v as any).iconClass!}
-        //         text={v.name}
-        //         className={(eventStore.isMobile ? eventStore.mobileViewMode : eventStore.viewMode) == v.key && 'active'}
-        //         onClick={() => {
-        //             if (eventStore.isMobile) {
-        //                 eventStore.setMobileViewMode(v.key as ViewMode);
-        //             } else {
-        //                 eventStore.setViewMode(v.key as ViewMode);
-        //             }
-        //         }}
-        //         flavor={ButtonFlavor.link}
-        //     />
-        // ))}
-
-        const tabs = viewOptions.map((v, idx) => (
+        let tabs = viewOptions.map((v, idx) => (
             {
                 id: v.key,
                 order: idx+1,
@@ -43,6 +31,10 @@ function PlanPageContent() {
                 render: () => null
             }
         ))
+
+        if (eventStore.isMobile){
+           tabs = tabs.filter((t) => t.id === activeTab);
+        }
 
         if (eventStore.isHebrew) {
             tabs.reverse();
