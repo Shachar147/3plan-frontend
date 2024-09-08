@@ -42,6 +42,14 @@
 }
 
 .plan-page-content {
+  .filter-tags-container {
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.03);
+    display: flex;
+    justify-content: center;
+    padding-block: 5px;
+    max-height: unset;
+  }
   .plan-trip-tab-menu {
     height: max-content !important;
     .item {

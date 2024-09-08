@@ -273,7 +273,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                 {/*<span>{TranslateService.translate(eventStore, "FEED_VIEW.EXPLORING", {*/}
                 {/*    destinations: eventStore.destinations?.join(", ") || "-"*/}
                 {/*})}</span>*/}
-                {isFiltering && <span>{ TranslateService.translate(eventStore, 'SHOWING_X_FROM_Y', {
+                {isFiltering && <span className="width-100-percents text-align-end">{ TranslateService.translate(eventStore, 'SHOWING_X_FROM_Y', {
                     0: feedStore.filteredItems.length,
                     1: feedStore.items.length
                 })}</span>}

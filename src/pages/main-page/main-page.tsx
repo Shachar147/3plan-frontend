@@ -605,6 +605,7 @@ function MainPage(props: MainPageProps) {
 					{eventStore.canWrite && (
 						<Button
 							flavor={ButtonFlavor.link}
+							isLoading={eventStore.togglingTripLock}
 							className={'text-decoration-underline min-height-20'}
 							onClick={() => {
 								eventStore.toggleTripLocked();

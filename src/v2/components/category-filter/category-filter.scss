@@ -4,8 +4,13 @@
   display: flex;
   gap: 4px;
   flex-direction: row;
-  direction: rtl;
   align-items: center;
+}
+
+body.rtl {
+  .category-filter {
+    direction: rtl;
+  }
 }
 
 .category-select {

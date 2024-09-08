@@ -157,6 +157,7 @@ export class EventStore {
 	@observable mapContainerRef: React.MutableRefObject<MapContainerRef> | null = null;
 	showEventOnMap: number | null = null;
 
+	@observable togglingTripLock: boolean = false;
 	@observable isTripLocked: boolean = false;
 
 	toastrClearTimeout: NodeJS.Timeout | null = null;
@@ -1595,7 +1596,9 @@ export class EventStore {
 
 	@action
 	async toggleTripLocked() {
+		this.togglingTripLock = true;
 		if (this.isSharedTrip && !this.canWrite) {
+			this.togglingTripLock = false;
 			return;
 		}
 
@@ -1607,9 +1610,16 @@ export class EventStore {
 			LogHistoryService.logHistory(this, TripActions.lockedTrip, {});
 		}
 
-		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
-			this.isTripLocked = !this.isTripLocked;
-		}
+		runInAction(() => {
+			if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
+				this.isTripLocked = !this.isTripLocked;
+			}
+
+			// slight delay since it takes time to re-render
+			setTimeout(() => {
+				this.togglingTripLock = false;
+			}, 300);
+		})
 	}
 
 	// --- private functions ----------------------------------------------------

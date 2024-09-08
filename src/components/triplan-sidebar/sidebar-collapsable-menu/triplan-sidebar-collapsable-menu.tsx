@@ -31,6 +31,7 @@ import TriplanSidebarShareTripButton from "../sidebar-share-trip-button/triplan-
 import {renderLineWithText} from "../../../utils/ui-utils";
 import TriplanSidebarDraggableEvent from "../sidebar-draggable-event/triplan-sidebar-draggable-event";
 import {modalsStoreContext} from "../../../stores/modals-store";
+import {rootStoreContext} from "../../../v2/stores/root-store";
 
 interface TriplanSidebarCollapsableMenuProps {
     removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -42,6 +43,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
     const {removeEventFromSidebarById, addToEventsToCategories, addEventToSidebar} = props;
     const eventStore = useContext(eventStoreContext);
+    const rootStore = useContext(rootStoreContext);
     const modalsStore = useContext(modalsStoreContext);
 
     const renderClearAll = () => {
@@ -95,12 +97,14 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
             <Button
                 // disabled={isDisabled}
                 icon={eventStore.isTripLocked ? 'fa-unlock-alt' : 'fa-lock'}
+                isLoading={eventStore.togglingTripLock}
                 text={TranslateService.translate(
                     eventStore,
                     eventStore.isTripLocked ? 'UNLOCK_TRIP.BUTTON_TEXT' : 'LOCK_TRIP.BUTTON_TEXT'
                 )}
                 onClick={() => {
                     eventStore.toggleTripLocked();
+                    rootStore.triggerTabsReRender();
                 }}
                 flavor={ButtonFlavor['movable-link']}
                 disabled={!eventStore.canWrite}
