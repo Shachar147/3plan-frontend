@@ -110,7 +110,7 @@ function MainPageContent(){
 
     useEffect(() => {
         setActiveTabIdx(tabIdToIdx[activeTab]);
-    }, [activeTab])
+    }, [activeTab]);
 
     useHandleWindowResize();
     useSavedCollections();
@@ -220,7 +220,7 @@ function MainPageContent(){
     }
 
     return (
-        <div className={getClasses("triplan-header-banner-footer", eventStore.isMobile && activeTabIdx === tabs.length -1 && 'padding-inline-end-10')} key={rootStore.tabMenuReRenderCounter}>
+        <div className={getClasses("triplan-header-banner-footer", eventStore.isMobile && activeTabIdx === tabs.length -1 && 'padding-inline-end-10', isInViewItem && 'view-item-content', searchKeyword && 'search-results-content')} key={rootStore.tabMenuReRenderCounter}>
             <TabMenu
                 activeTab={activeTab}
                 tabs={tabs}

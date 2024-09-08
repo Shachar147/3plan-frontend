@@ -535,7 +535,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 <div className="name-container">
                     {renderName()}
                 </div>
-                <span className={getClasses("description", isShrinkedMode && 'max-height-100-ellipsis')}>
+                <span className={getClasses("description", isShrinkedMode && !isViewItem && 'max-height-100-ellipsis')}>
                     {item.description}
                     {savedCollection && (
                         <>

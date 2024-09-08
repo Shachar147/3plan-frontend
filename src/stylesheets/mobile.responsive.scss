@@ -1096,6 +1096,14 @@
 			display: none;
 		}
 	}
+
+	.triplan-header-banner-footer:not(.search-results-content):not(.view-item-content) {
+		.tabular.menu {
+			.item {
+				font-size: 14px !important;
+			}
+		}
+	}
 }
 
 @media only screen and (max-height: 500px){

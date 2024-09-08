@@ -41,7 +41,7 @@ function PlanPageContent() {
         }
         return tabs;
     }
-    const tabs = useMemo(() => getTabs(), [activeTab]);
+    const tabs = useMemo(() => getTabs(), [activeTab, eventStore.isMobile]);
 
     function renderTabView(){
         return (

@@ -7,9 +7,11 @@ import {CityOrCountry, fetchCitiesAndSetOptions} from "../components/destination
 import {CalendarEvent, SidebarEvent} from "../../utils/interfaces";
 import TranslateService from "../../services/translate-service";
 import {formatDate, formatTime, getDurationString, toDate} from "../../utils/time-utils";
+import {searchStoreContext} from "../stores/search-store";
 
 export function useMobileLockScroll(rerenderCounter: number, setReRenderCounter: (num: number) => void, shouldShowSuggestions: boolean, showSuggestions: boolean, suggestions: any[]){
     const eventStore = useContext(eventStoreContext);
+    const searchStore = useContext(searchStoreContext);
     const prevShouldShowSuggestions = useRef(shouldShowSuggestions);
 
     useEffect(() => {
@@ -21,7 +23,7 @@ export function useMobileLockScroll(rerenderCounter: number, setReRenderCounter:
                 prevShouldShowSuggestions.current = shouldShowSuggestions;
             }
 
-            if (showSuggestions && suggestions.length > 0) {
+            if (searchStore.shouldShowSuggestions && showSuggestions && suggestions.length > 0) {
                 document.body.style.overflow = 'hidden';
             } else {
                 document.body.style.overflow = 'auto';
