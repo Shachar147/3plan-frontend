@@ -8,6 +8,7 @@ export interface Tab {
 	id: string;
 	name: string;
 	icon?: string;
+	renderIcon?: () => React.ReactNode | null;
 	render: () => React.ReactNode | null;
 }
 export interface TabMenuProps {
@@ -51,7 +52,7 @@ function TabMenu(props: TabMenuProps){
 						onChange?.(tab.id);
 					}
 				}} >
-					{tab.icon && <i className={`fa ${tab.icon}`} aria-hidden="true" />}
+					{tab.renderIcon ? tab.renderIcon() : tab.icon && <i className={`fa ${tab.icon}`} aria-hidden="true" />}
 					{tab.name}</div>)}
 			</div>
 			<div className="ui bottom attached active tab segment">

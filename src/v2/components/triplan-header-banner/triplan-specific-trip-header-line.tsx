@@ -12,8 +12,6 @@ import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, savedCollectio
 import {rootStoreContext} from "../../stores/root-store";
 import {useNavigate, useParams} from "react-router-dom";
 import {getUser, isLoggedOn} from "../../../helpers/auth";
-import {getViewSelectorOptions} from "../../../utils/ui-utils";
-import {ViewMode} from "../../../utils/enums";
 import {DESKTOP_SCROLL_TOP, MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
 
 function TriplanSpecificTripHeaderLine(){
@@ -44,10 +42,6 @@ function TriplanSpecificTripHeaderLine(){
     const baseClass = "triplan-header-banner-header-line";
     const isSticky = (!eventStore.isMobile && scrollY > 100) || tripName;
 
-    const viewOptions = getViewSelectorOptions(eventStore, eventStore.isMobile).filter((x) => {
-        return !(eventStore.isMobile && (x as any).desktopOnly);
-    });
-
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
@@ -57,21 +51,6 @@ function TriplanSpecificTripHeaderLine(){
                     <TriplanSearchV2 />
                 </div>
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
-                    {viewOptions.map((v) => (
-                        <Button
-                            icon={(v as any).iconClass!}
-                            text={v.name}
-                            className={(eventStore.isMobile ? eventStore.mobileViewMode : eventStore.viewMode) == v.key && 'active'}
-                            onClick={() => {
-                                if (eventStore.isMobile) {
-                                    eventStore.setMobileViewMode(v.key as ViewMode);
-                                } else {
-                                    eventStore.setViewMode(v.key as ViewMode);
-                                }
-                            }}
-                            flavor={ButtonFlavor.link}
-                        />
-                    ))}
                     <Button
                         icon="fa-plane"
                         className="back-to-my-trips"
