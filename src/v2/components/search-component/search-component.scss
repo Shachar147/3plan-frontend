@@ -116,7 +116,7 @@
   }
   .suggestions-container {
     width: 270px;
-    padding-bottom: 80px; // so we'll be able to click on the last item.
+    padding-bottom: 100px; // so we'll be able to click on the last item.
   }
 
   .triplan-header-banner-header-line-left-side:has(.search-container.has-values) + .triplan-header-banner-header-line-right-side,
@@ -153,6 +153,8 @@
       .suggestions-container {
         top: 85px;
         width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
         inset-inline-start: 0;
         max-height: CALC(100% - 100px);
         background-color: unset !important;

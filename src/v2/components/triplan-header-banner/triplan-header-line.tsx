@@ -13,6 +13,7 @@ import {rootStoreContext} from "../../stores/root-store";
 import {useNavigate, useParams} from "react-router-dom";
 import {getUser, isLoggedOn} from "../../../helpers/auth";
 import {DESKTOP_SCROLL_TOP, MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
+import {getParameterFromHash} from "../../utils/utils";
 
 
 function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
@@ -79,11 +80,13 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
         />
     );
 
+    const searchKeyword = getParameterFromHash('q');
+
     const myTripsBtn = (
         <Button
             icon="fa-plane"
             text={isInPlan ? TranslateService.translate(eventStore, `BACK_TO_MY_TRIPS`) : TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
-            className={isLoggedIn && !isInPlan && localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
+            className={isLoggedIn && !searchKeyword && !isInPlan && localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
             onClick={() => {
                 // if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
                 //     return;
