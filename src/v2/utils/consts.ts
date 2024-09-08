@@ -1,3 +1,5 @@
+import countriesAndCities from "../components/destination-selector/countries-and-cities";
+
 const loginPageContentTabLsKey = "triplan-login-page-content-tab";
 const mainPageContentTabLsKey = "triplan-main-page-content-tab";
 const myTripsTabId = "my-trips";
@@ -9,7 +11,9 @@ const specificItemTabId = "view-item";
 
 const cityImage = "images/city.jpg";
 
-const top100Cities = [
+const top100Cities = countriesAndCities.map((c) => c.value);
+
+const top100CitiesOld2 = [
     "Reykjavik",
     "Bora Bora",
     "Queenstown",

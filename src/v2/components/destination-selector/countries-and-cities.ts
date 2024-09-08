@@ -41468,6 +41468,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "Berlin",
+        "label": "Berlin, Germany",
+        "type": "city",
+        "flagClass": "fi fi-de",
+        "isPopular": true
+    },
+        {
         "value": "Überlingen",
         "label": "Überlingen, Germany",
         "type": "city",
@@ -56305,21 +56312,21 @@ const countriesAndCities = [
         "label": "Israel",
         "type": "country",
         "flagClass": "fi fi-il",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Tel Aviv-Yafo",
         "label": "Tel Aviv-Yafo, Israel",
         "type": "city",
         "flagClass": "fi fi-il",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Jerusalem",
         "label": "Jerusalem, Israel",
         "type": "city",
         "flagClass": "fi fi-il",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Herzeliyya",
@@ -78127,11 +78134,18 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "Amsterdam",
+        "label": "Amsterdam, Netherlands",
+        "type": "city",
+        "flagClass": "fi fi-nl",
+        "isPopular": true
+    },
+    {
         "value": "Rotterdam",
         "label": "Rotterdam, Netherlands",
         "type": "city",
         "flagClass": "fi fi-nl",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Den Haag",
@@ -94371,7 +94385,7 @@ const countriesAndCities = [
         "label": "Bucharest, Romania",
         "type": "city",
         "flagClass": "fi fi-ro",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Bucuresci",
@@ -99229,7 +99243,7 @@ const countriesAndCities = [
         "label": "Seychelles",
         "type": "country",
         "flagClass": "fi fi-sc",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Victoria",
@@ -103537,11 +103551,25 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
-        "value": "Las Rozas de Madrid",
-        "label": "Las Rozas de Madrid, Spain",
+        "value": "Madrid",
+        "label": "Madrid, Spain",
         "type": "city",
         "flagClass": "fi fi-es",
-        "isPopular": false
+        "isPopular": true
+    },
+    {
+        "value": "Barcelona",
+        "label": "Barcelona, Spain",
+        "type": "city",
+        "flagClass": "fi fi-es",
+        "isPopular": true
+    },
+    {
+        "value": "Ibiza",
+        "label": "Ibiza, Spain",
+        "type": "island",
+        "flagClass": "fi fi-es",
+        "isPopular": true
     },
     {
         "value": "Huesca",
@@ -109904,7 +109932,7 @@ const countriesAndCities = [
         "label": "Zanzibar, Tanzania, United Republic of",
         "type": "city",
         "flagClass": "fi fi-tz",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Singida",
@@ -119424,7 +119452,7 @@ const countriesAndCities = [
         "label": "Las Vegas, United States",
         "type": "city",
         "flagClass": "fi fi-us",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Hawaii",
@@ -119956,7 +119984,7 @@ const countriesAndCities = [
         "label": "Hollywood, United States",
         "type": "city",
         "flagClass": "fi fi-us",
-        "isPopular": false
+        "isPopular": true
     },
     {
         "value": "Schaumburg",
