@@ -27,14 +27,17 @@
   }
 
   &.trip-mode {
-    height: 200px;
+    //height: 200px;
+    height: 400px;
 
     .triplan-header-banner-bottom-shadow {
-      top: 100px;
+      //top: 100px;
+      top: 300px;
     }
 
     .triplan-header-banner-slogan {
-      display: none;
+      //display: none;
+      top: 150px;
     }
   }
 
@@ -333,4 +336,9 @@ body.rtl {
   .search-container {
     margin-bottom: 0 !important;
   }
+}
+
+.trip-name-in-banner {
+  max-width: 80%;
+  word-break: break-word;
 }

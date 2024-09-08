@@ -42,7 +42,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
 
     const baseClass = "triplan-header-banner-header-line";
     const isMobile = false;  // eventStore.isMobile;
-    const isSticky = (!isMobile && scrollY > 60) || tripName;
+    const isSticky = (!isMobile && scrollY > 60) || (tripName && scrollY > 60);
     const isShort = eventStore.isMobile ? '.SHORT' : '';
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
@@ -82,8 +82,8 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
     const myTripsBtn = (
         <Button
             icon="fa-plane"
-            text={TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
-            className={isLoggedIn && localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
+            text={isInPlan ? TranslateService.translate(eventStore, `BACK_TO_MY_TRIPS`) : TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
+            className={isLoggedIn && !isInPlan && localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
             onClick={() => {
                 // if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
                 //     return;
@@ -165,7 +165,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
 
         return (
             <div className={containerClass}>
-                {wishlistBtn}
+                {!isInPlan && wishlistBtn}
                 {myTripsBtn}
                 {languageBtn}
                 {signInOutBtn}

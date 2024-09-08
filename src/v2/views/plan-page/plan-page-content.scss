@@ -1,0 +1,75 @@
+.plan-page-content {
+  height: max-content;
+  min-height: 600px;
+
+  .textInput {
+    min-width: 0;
+    border: 1px solid #ccc;
+  }
+}
+
+.plan-trip-tab-menu {
+  top: -59px;
+  position: relative;
+  margin-inline: 200px;
+  z-index: 222;
+  height: 0;
+
+  .ui.tabular.menu .active.item {
+    font-size: 20px;
+    padding-inline: 60px;
+    min-width: 300px;
+    text-align: center;
+    justify-content: center;
+    border-top-left-radius: 30px !important;
+    border-top-right-radius: 30px !important;
+  }
+
+  .menu {
+    justify-content: center;
+    border-top-left-radius: 30px !important;
+    border-top-right-radius: 30px !important;
+  }
+  .tab {
+    display: none !important;
+  }
+}
+
+.triplan-main-page-container {
+  .triplan-header-spacer {
+    width: max-content !important;
+  }
+}
+
+.plan-page-content {
+  .plan-trip-tab-menu {
+    height: max-content !important;
+    .item {
+      font-size: 20px !important;
+
+      &.active {
+        i {
+          color: var(--selected-color) !important;
+        }
+      }
+
+      &:not(.active) {
+        color: white !important;
+
+        i {
+          color: white !important;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .triplan-header-banner-footer {
+    padding-inline-end: 0;
+  }
+
+  .plan-trip-tab-menu {
+    padding-inline: 0 !important;
+  }
+}

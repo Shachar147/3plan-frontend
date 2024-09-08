@@ -1,8 +1,9 @@
-import React, { forwardRef, Ref, useContext, useImperativeHandle, useState } from 'react';
+import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useState} from 'react';
 import { getClasses } from '../../../utils/utils';
 import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
 import { observer } from 'mobx-react';
+import './text-input.scss';
 
 export interface TextInputProps {
 	modalValueName: string;
@@ -32,6 +33,9 @@ export interface TextInputProps {
 	onlyInput?: boolean;
 	key?: string;
 	dataTestId?: string;
+
+	updateValueWhenPropsChanged?: boolean;
+	resetCallback?: () => void;
 }
 export interface TextInputRef {
 	getValue(): string;
@@ -56,6 +60,8 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		key,
 		autoComplete = 'true',
 		dataTestId,
+		updateValueWhenPropsChanged,
+		resetCallback
 	} = props;
 	const initialValue = props.value
 		? props.value
@@ -63,6 +69,12 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		? eventStore.modalValues[modalValueName]
 		: undefined;
 	const [value, setValue] = useState(initialValue);
+
+	useEffect(() => {
+		if (updateValueWhenPropsChanged) {
+			setValue(props.value);
+		}
+	}, [props.value])
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({
@@ -119,6 +131,9 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		<div className={getClasses('triplan-text-input', wrapperClassName)}>
 			{icon_block}
 			{input}
+			{resetCallback && (
+				<i className={getClasses("fa fa-times", value === "" && 'opacity-0')} aria-hidden="true" onClick={() => resetCallback()} />
+			)}
 		</div>
 	);
 }

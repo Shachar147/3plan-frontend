@@ -1,7 +1,9 @@
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useMemo} from "react";
 import {feedStoreContext} from "../stores/feed-view-store";
 import {myTripsContext} from "../stores/my-trips-store";
 import {TabData} from "../utils/interfaces";
+import FeedViewApiService, {allSources} from "../services/feed-view-api-service";
+import {top100Cities} from "../utils/consts";
 
 export function useSavedCollections(){
     const feedStore = useContext(feedStoreContext);
@@ -39,4 +41,15 @@ export function useScrollWhenTabChanges(tabs: TabData[]) {
             });
         });
     }, [tabs]);
+}
+
+export function useLoadRandomPlacePOIs(){
+    // search destinations randomly to increase the content of Triplan
+    const apiService = useMemo(() => new FeedViewApiService(), []);
+    useEffect(() => {
+        const destination = top100Cities[Math.floor(Math.random() * top100Cities.length)];
+        Promise.all(
+            allSources.map(source => apiService.getItems(source, destination, 1))
+        );
+    }, []);
 }

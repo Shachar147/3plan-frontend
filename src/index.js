@@ -48,6 +48,7 @@ import MainPageV2 from "./v2/views/main-page/main-page";
 import {newDesignRootPath} from "./v2/utils/consts";
 import {FeatureFlagsService} from "./utils/feature-flags";
 import LoginPageV2 from "./v2/views/login-page/login-page";
+import PlanPageV2 from "./v2/views/plan-page/plan-page";
 
 // Dubai
 // Namos / Twiggy?
@@ -855,7 +856,7 @@ const RootRouter = () => {
 					<Route path={'/plan/create/:tripName/:locale'} element={<MainPage createMode={true} />} />
 					<Route path="/plan/:tripName/:locale" element={<MainPage />} />
 					<Route path="/plan/:tripName/" element={<MainPage />} />
-					<Route path={`${newDesignRootPath}/plan/:tripName/`} element={<MainPageV2 />} />
+					<Route path={`${newDesignRootPath}/plan/:tripName/`} element={<PlanPageV2 />} />
 					<Route path="/plan" element={<MainPage />} />
 					<Route path="/inviteLink" element={<InviteLink />} />
 					<Route path="/theme" element={<ThemeExample />} />

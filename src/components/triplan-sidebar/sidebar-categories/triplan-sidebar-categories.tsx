@@ -18,6 +18,8 @@ import './triplan-sidebar-categories.scss';
 import {renderLineWithText} from "../../../utils/ui-utils";
 import TriplanSidebarDraggableEvent from "../sidebar-draggable-event/triplan-sidebar-draggable-event";
 import {observer} from "mobx-react";
+import {rootStoreContext} from "../../../v2/stores/root-store";
+import SidebarSearch from "../sidebar-search/sidebar-search";
 
 interface TriplanSidebarCategoriesProps {
     removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -30,18 +32,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
     const { removeEventFromSidebarById, addToEventsToCategories, TriplanCalendarRef } = props;
     const eventStore = useContext(eventStoreContext);
     const modalsStore = useContext(modalsStoreContext);
-
-    function renderSearch() {
-        return (
-            <div className="sidebar-search-container">
-                <TriplanSearch
-                    value={eventStore.sidebarSearchValue}
-                    onChange={(val: any) => eventStore.setSidebarSearchValue(val)}
-                    placeholder={TranslateService.translate(eventStore, 'SIDEBAR_SEARCH_PLACEHOLDER')}
-                />
-            </div>
-        );
-    }
 
     function renderExpandCollapse() {
         const eyeIcon = eventStore.hideEmptyCategories || eventStore.isFiltered ? 'fa-eye' : 'fa-eye-slash';
@@ -434,7 +424,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
     return (
         <>
             {renderExpandCollapse()}
-            {renderSearch()}
+            <SidebarSearch/>
             {totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
             {renderCategories()}
             {totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
