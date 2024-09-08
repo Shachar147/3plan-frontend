@@ -1104,6 +1104,11 @@
 			}
 		}
 	}
+
+	.carousel-wrapper {
+		max-height: 228px;
+		overflow-y: hidden;
+	}
 }
 
 @media only screen and (max-height: 500px){

@@ -56,6 +56,9 @@ export const endpoints: Record<string, any> = {
         biEvents: '/bi-events'
     },
     v2: {
+        placesPhotos: {
+            get: (destination: string) => `/places-photos?place=${destination}`
+        },
         poi: {
             getPoiById: (poiId: number) => `/poi/${poiId}`,
             count: '/poi/count/by-source',
