@@ -4,6 +4,7 @@ import {myTripsContext} from "../stores/my-trips-store";
 import {TabData} from "../utils/interfaces";
 import FeedViewApiService, {allSources} from "../services/feed-view-api-service";
 import {top100Cities} from "../utils/consts";
+import PlacesPhotosApiService from "../services/places-photos-api-service";
 
 export function useSavedCollections(){
     const feedStore = useContext(feedStoreContext);
@@ -51,5 +52,8 @@ export function useLoadRandomPlacePOIs(){
         Promise.all(
             allSources.map(source => apiService.getItems(source, destination, 1))
         );
+
+        // search photos of that place
+        new PlacesPhotosApiService().getPhoto(destination);
     }, []);
 }

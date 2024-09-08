@@ -1,8 +1,5 @@
-// DestinationSelector.tsx
 import React, {useState, useEffect, useMemo, useContext, useRef} from 'react';
 import Select, { MultiValue } from 'react-select';
-// import countryList from 'react-select-country-list';
-// import { getCities } from 'country-city';
 import 'flag-icons/css/flag-icons.min.css';
 import './destination-selector.scss';
 import { OptionType } from './types';
@@ -70,7 +67,7 @@ export interface CityOrCountry {
 // Function to fetch cities for each country and set options
 const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
     // const countries = countryList().getData();
-    let allOptions: CityOrCountry[] = [];
+    const allOptions: CityOrCountry[] = [];
 
     // Add popular cities to options
     popularCities.forEach(({ city, countryCode, countryLabel }) => {
