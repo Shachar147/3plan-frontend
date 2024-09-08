@@ -40,12 +40,12 @@ function TriplanSpecificTripHeaderLine(){
     }, []);
 
     const baseClass = "triplan-header-banner-header-line";
-    const isSticky = (!eventStore.isMobile && scrollY > 100) || tripName;
+    const isSticky = (!eventStore.isMobile && scrollY > 100); // || tripName;
 
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
-            <div className={getClasses(baseClass, 'specific-trip-header-line', eventStore.isHebrew ? 'padding-inline-150' : 'padding-inline-50', !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
+            <div className={getClasses(baseClass, 'specific-trip-header-line', !eventStore.isMobile && 'sticky', isSticky && 'is-sticky')}>
                 <div className={`${baseClass}-left-side`}>
                     {!eventStore.isMobile && <TriplanLogo onClick={() => window.location.href = newDesignRootPath } white={!isSticky} height={60} />}
                     <TriplanSearchV2 />
