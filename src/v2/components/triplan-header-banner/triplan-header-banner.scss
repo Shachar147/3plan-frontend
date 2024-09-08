@@ -318,7 +318,8 @@ body.rtl {
 }
 
 .sticky-search-line {
-  background-color: #ececec;
+  background-color: rgba(236, 236, 236, 0.5);
+  border-block:1px solid rgba(236, 236, 236, 1);
   width: 100vw;
   height: max-content;
   //margin-top: 4px;
