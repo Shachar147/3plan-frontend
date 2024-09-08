@@ -23,14 +23,15 @@ function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = fal
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
     const [backgroundImage, setBackgroundImage] = useState("/images/banner/best/10.png")
 
-    // @ts-ignore
+    // ------------------------------------------------------------
+    // load picture for the destination we're looking at right now
+    // ------------------------------------------------------------
     useEffect(() => {
         const searchKeyword = getParameterFromHash('q');
         const citiesAndCountries = fetchCitiesAndSetOptions();
         if ((isInPlan && eventStore.destinations) || (searchKeyword && citiesAndCountries.find((c) => c.value == searchKeyword))) {
             const destinations = searchKeyword ? [searchKeyword] : eventStore.destinations;
             Promise.all(destinations.map((d) => new PlacesPhotosApiService().getPhoto(d))).then((results) => {
-                console.log(results);
                 // const bgs = results.map((r) => r["data"]?.[0]?.["photo"]).filter(Boolean);
                 const bgs = results.map((r) => r["data"]?.[0]?.["other_photos"]).filter(Boolean).map((b) => JSON.parse(b)).flat();
                 if (bgs.length) {
@@ -39,7 +40,8 @@ function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = fal
                 }
             });
         }
-    }, [eventStore.destinations])
+    }, [eventStore.destinations]);
+    // ------------------------------------------------------------
 
     const slogan = TranslateService.translate(eventStore, 'V2.TRIPLAN_HEADER_BANNER');
 

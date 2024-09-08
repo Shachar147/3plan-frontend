@@ -1,13 +1,10 @@
 import {createContext} from "react";
 import {action, observable} from "mobx";
 import {loginPageContentTabLsKey, mainPageContentTabLsKey, myTripsTabId, newDesignRootPath} from "../utils/consts";
-import {CityOrCountry} from "../components/destination-selector/destination-selector";
 
 export class RootStore {
     @observable headerReRenderCounter = 0;
     @observable tabMenuReRenderCounter = 0;
-
-    citiesAndCountries: CityOrCountry[] = [];
 
     @action
     triggerHeaderReRender() {
