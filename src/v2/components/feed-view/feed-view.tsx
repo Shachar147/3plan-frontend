@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useContext, useState} from "react";
+import React, {useEffect, useMemo, useContext, useState, useRef} from "react";
 import { observer } from "mobx-react";
 import PointOfInterest, {PointOfInterestShimmering} from "../point-of-interest/point-of-interest";
 import { EventStore, eventStoreContext } from "../../../stores/events-store";
@@ -20,6 +20,7 @@ interface FeedViewProps {
 }
 
 const cacheThreshold = 300;
+const MAX_PAGES_WITH_EMPTY_FILTER_RESULTS = 8;
 
 function SelectDestinationPlaceholder() {
     const eventStore = useContext(eventStoreContext);
@@ -40,6 +41,9 @@ function SelectDestinationPlaceholder() {
 }
 
 const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewProps) => {
+    const currentPage = useRef(1);
+    const emptyResultsCountPerCategory = useRef({});
+    const prevPageTotalResults = useRef(0);
     const feedStore = useContext(feedStoreContext);
     const apiService = useMemo(() => new FeedViewApiService(), []);
     const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
@@ -85,6 +89,16 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     };
 
     const fetchItems = async (page, setLoading) => {
+        currentPage.current = page;
+        prevPageTotalResults.current = feedStore.filteredItems.length;
+
+        if (feedStore.selectedCategory && (emptyResultsCountPerCategory.current[feedStore.selectedCategory] ?? 0) > MAX_PAGES_WITH_EMPTY_FILTER_RESULTS) {
+            feedStore.setAllReachedEnd(true);
+            return;
+        } else {
+            feedStore.setAllReachedEnd(false);
+        }
+
         setLoading(true);
         const newItems = [];
         let _reachedEndPerDestination = feedStore.reachedEndPerDestination ?? {};
@@ -218,7 +232,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             uniqueNewItems = [];
         }
         feedStore.setItems(filterUniqueItems([...feedStore.items, ...uniqueNewItems]));
-        handleCategoryChange(feedStore.selectedCategory, filterUniqueItems([...feedStore.items, ...uniqueNewItems]));
+        handleCategoryChange(feedStore.selectedCategory);
 
         const uniqueCategories = Array.from(
             new Set(uniqueNewItems.map(item => item.category || 'CATEGORY.GENERAL'))
@@ -232,14 +246,8 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         setLoading(false);
     };
 
-    const handleCategoryChange = (category, items) => {
+    const handleCategoryChange = (category) => {
         feedStore.setSelectedCategory(category);
-        if (category == "") {
-            feedStore.setFilteredItems(items); // Show all items if no category selected
-        } else {
-            const filtered = items.filter((item) => item.category === category);
-            feedStore.setFilteredItems(filtered);
-        }
     };
 
     // useEffect to update allReachedEnd state based on reachedEndForDestinations and other conditions
@@ -287,10 +295,10 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             return null;
         }
         return (
-            <div className={getClasses("feed-view-filter-bar justify-content-space-between", eventStore.isHebrew ? 'hebrew-mode flex-row-reverse' : 'flex-row')}>
+            <div className={getClasses("feed-view-filter-bar width-100-percents justify-content-space-between", eventStore.isHebrew ? 'hebrew-mode flex-row' : 'flex-row')}>
                 <CategoryFilter
                     categories={feedStore.categories}
-                    onFilterChange={(category) => handleCategoryChange(category, feedStore.items)}
+                    onFilterChange={(category) => handleCategoryChange(category)}
                 />
                 {renderShowingResultsText()}
             </div>
@@ -332,6 +340,14 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             )
         }
 
+        if (feedStore.filteredItems.length == prevPageTotalResults.current && feedStore.selectedCategory.length){
+            emptyResultsCountPerCategory.current[feedStore.selectedCategory] ||= 0;
+            emptyResultsCountPerCategory.current[feedStore.selectedCategory] += 1;
+            prevPageTotalResults.current = feedStore.filteredItems.length;
+        } else {
+            emptyResultsCountPerCategory.current[feedStore.selectedCategory] = 0;
+        }
+
         return feedStore.filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
                 {!eventStore.isMobile && <span className="poi-idx">{idx + 1}</span>}
@@ -352,11 +368,16 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             return null;
         }
         if (isFiltered() && feedStore.filteredItems.length == 0) {
-            return null;
+            return (
+                <div className="width-100-percents text-align-center margin-top-20">
+                    {TranslateService.translate(eventStore, 'NO_RESULTS_TRY_DIFFERENT_CATEGORY')}
+                </div>
+            );
+            // return null;
         }
 
         return (
-            <div className="width-100-percents text-align-center">
+            <div className="width-100-percents text-align-center margin-top-20">
                 {TranslateService.translate(eventStore, feedStore.items.length == 0 ? 'MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS' : 'NO_MORE_ITEMS')}
             </div>
         );
@@ -375,7 +396,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
 
     function renderFeedContent(){
         return (
-            <div className={getClasses(!mainFeed && 'flex-column', "gap-4", searchKeyword && !eventStore.isMobile && 'padding-inline-100')}>
+            <div className={getClasses(!mainFeed && 'flex-column', "gap-4 width-100-percents", searchKeyword && !eventStore.isMobile && 'padding-inline-100')}>
                 {renderCategoryFilter()}
                 {renderItems()}
                 {renderReachedEnd()}

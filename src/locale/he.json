@@ -1117,5 +1117,8 @@
 	"LOGIN_PAGE_V2.REGISTER.TITLE": "צור את החשבון שלך ב5 דקות!",
 	"LOGIN_PAGE_V2.REGISTER.DESCRIPTION": "צור את החשבון שלך והתחל להשתמש בעשרות יכולות שיעזרו לך לתכנן את הטיול הבא שלך!",
 	"TYPE_YOUR_X": "הזן {X}...",
-	"username must be longer than or equal to 4 characters": "שם המשתמש חייב להיות באורך של לפחות 4 תווים"
+	"username must be longer than or equal to 4 characters": "שם המשתמש חייב להיות באורך של לפחות 4 תווים",
+	"FILTER_BY": "סנן לפי:",
+	"NO_RESULTS_TRY_DIFFERENT_CATEGORY": "לא נמצאו תוצאות, נסה לסנן לפי קטגוריה אחרת",
+	"ALL_CATEGORIES": "כל הקטגוריות"
 }

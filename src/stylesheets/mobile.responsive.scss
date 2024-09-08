@@ -1080,6 +1080,7 @@
 
 		.plan-trip-tab-menu {
 			width: 100vw;
+			min-height: 600px; // otherwise when there are no results, tab appears misplaced.
 			top: -58px !important;
 
 			.main-page {

@@ -1,7 +1,11 @@
 .category-filter {
   position: relative;
-  display: inline-block;
-  width: 100%;
+
+  display: flex;
+  gap: 4px;
+  flex-direction: row;
+  direction: rtl;
+  align-items: center;
 }
 
 .category-select {

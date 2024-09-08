@@ -21,7 +21,7 @@ const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, clas
     const loader = useRef(null);
 
     useEffect (() => {
-        if (page != prevPage.current) {
+        if (page != prevPage.current && !isReachedEnd) {
             fetchData(page, setLoading);
         }
     }, [page]);
@@ -51,7 +51,7 @@ const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, clas
                 observer.unobserve(loader.current);
             }
         };
-    }, [loading]);
+    }, [loading, isReachedEnd]);
 
     return (
         <div className={className}>

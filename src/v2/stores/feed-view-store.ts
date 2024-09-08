@@ -5,7 +5,6 @@ import FeedViewApiService from "../services/feed-view-api-service";
 
 export class FeedStore {
     @observable items: IPointOfInterest[] = [];
-    @observable filteredItems: IPointOfInterest[] = [];
     @observable categories: string[] = [];
     @observable selectedCategory: string = "";
     @observable isLoading: boolean = true;
@@ -34,11 +33,6 @@ export class FeedStore {
     @action
     setItems = (items: any[]) => {
         this.items = items;
-    };
-
-    @action
-    setFilteredItems = (filteredItems: any[]) => {
-        this.filteredItems = filteredItems;
     };
 
     @action
@@ -89,6 +83,14 @@ export class FeedStore {
     @computed
     get savedItems(){
         return this.savedCollections.map((c) => c.items).flat();
+    }
+
+    @computed
+    get filteredItems() {
+        if (this.selectedCategory == ""){
+            return this.items;
+        }
+        return this.items.filter((item) => item.category === this.selectedCategory);
     }
 }
 

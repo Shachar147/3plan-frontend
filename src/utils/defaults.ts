@@ -83,6 +83,20 @@ export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] 
 	];
 };
 
+export const defaultCategoriesKeys: string[] = [
+	'CATEGORY.GENERAL',
+	'CATEGORY.FLIGHTS',
+	'CATEGORY.HOTELS',
+	'CATEGORY.FOOD',
+	'CATEGORY.DESSERTS',
+	'CATEGORY.BARS_AND_NIGHTLIFE',
+	'CATEGORY.SHOPPING',
+	'CATEGORY.ATTRACTIONS',
+	'CATEGORY.GIMMICKS',
+	'CATEGORY.NATURE',
+	'CATEGORY.TOURISM',
+]
+
 export const defaultCategoriesOldold: TriPlanCategory[] = [];
 export const defaultCategoriesHeb: TriPlanCategory[] = [
 	{ id: 2, icon: '', title: 'לוגיסטיקה' },

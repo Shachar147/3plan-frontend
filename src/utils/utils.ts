@@ -551,3 +551,9 @@ export function extractCategory(arr: string[]): string {
 	});
 	return toReturn;
 }
+
+export function mergeArraysUnique(arr1, arr2){
+	return Array.from(
+		new Set(arr1.concat(arr2))
+	)
+}

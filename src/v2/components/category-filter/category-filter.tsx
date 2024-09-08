@@ -2,6 +2,8 @@ import React, {useContext, useState} from "react";
 import './category-filter.scss';
 import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
+import {defaultCategoriesKeys, getDefaultCategories} from "../../../utils/defaults";
+import {mergeArraysUnique} from "../../../utils/utils";
 
 const CategoryFilter = ({ categories, onFilterChange }) => {
     const eventStore = useContext(eventStoreContext);
@@ -15,14 +17,15 @@ const CategoryFilter = ({ categories, onFilterChange }) => {
 
     return (
         <div className="category-filter">
+            <span>{TranslateService.translate(eventStore, 'FILTER_BY')}</span>
             <select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
                 className="category-select"
                 placeholder={TranslateService.translate(eventStore, 'MODALS.CATEGORY')}
             >
-                <option value="">{TranslateService.translate(eventStore, 'MODALS.CATEGORY')}</option>
-                {categories.map((category) => (
+                <option value="">{TranslateService.translate(eventStore, 'ALL_CATEGORIES')}</option>
+                {mergeArraysUnique(categories, defaultCategoriesKeys).map((category) => (
                     <option key={category} value={category}>
                         {TranslateService.translate(eventStore, category)}
                     </option>
