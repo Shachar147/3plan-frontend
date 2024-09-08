@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, useContext, useImperativeHandle, useState } from 'react';
+import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useState} from 'react';
 import { getClasses } from '../../../utils/utils';
 import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
@@ -32,6 +32,8 @@ export interface TextInputProps {
 	onlyInput?: boolean;
 	key?: string;
 	dataTestId?: string;
+
+	updateValueWhenPropsChanged?: boolean;
 }
 export interface TextInputRef {
 	getValue(): string;
@@ -56,6 +58,7 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		key,
 		autoComplete = 'true',
 		dataTestId,
+		updateValueWhenPropsChanged
 	} = props;
 	const initialValue = props.value
 		? props.value
@@ -63,6 +66,12 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		? eventStore.modalValues[modalValueName]
 		: undefined;
 	const [value, setValue] = useState(initialValue);
+
+	useEffect(() => {
+		if (updateValueWhenPropsChanged) {
+			setValue(props.value);
+		}
+	}, [props.value])
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({

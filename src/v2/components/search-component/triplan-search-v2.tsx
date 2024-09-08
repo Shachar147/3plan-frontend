@@ -82,7 +82,7 @@ const TriplanSearchV2 = () => {
             searchStore.setShowSuggestions(true);
 
             // rootStore.triggerTabsReRender();
-            
+
         }, 300);
     };
 
@@ -94,6 +94,7 @@ const TriplanSearchV2 = () => {
         searchStore.setSuggestions([]);
         searchStore.setShowSuggestions(true);
         window.location.hash = "";
+        eventStore.resetFilters();
         rootStore.triggerTabsReRender();
     }
 

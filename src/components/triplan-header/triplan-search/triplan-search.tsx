@@ -32,6 +32,7 @@ function TriplanSearch(props: TriplanSearchProps) {
 					}
 				}}
 				placeholder={props.placeholder ?? TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+				updateValueWhenPropsChanged
 			/>
 		</div>
 	);
