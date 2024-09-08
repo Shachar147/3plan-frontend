@@ -1060,6 +1060,24 @@
 
 	// plan trip page
 	.triplan-plan-page-container {
+		.triplan-header-banner-slogan {
+			top: 100px !important;
+
+			.trip-name-in-banner {
+				text-align: center !important;
+			}
+
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			word-break: break-word;
+			max-height: calc(2 * 1.2em); /* 2 lines with line-height of 1.2em */
+			line-height: 1.2em;
+			padding-inline: 20px;
+			-webkit-line-clamp: 2;
+		}
+
 		.plan-trip-tab-menu {
 			width: 100vw;
 			top: -58px !important;
@@ -1071,6 +1089,10 @@
 		.trip-name-in-banner {
 			max-width: 100%;
 			text-align: center;
+		}
+
+		.triplan-footer {
+			display: none;
 		}
 	}
 }
@@ -1127,7 +1149,7 @@
 }
 
 
-@media only screen and (max-width: 1640px) {
+@media only screen and (max-width: 1640px) and (min-width: 750px) {
 	.specific-trip-header-line {
 		.back-to-my-trips {
 			display: none !important;
@@ -1135,13 +1157,13 @@
 	}
 }
 
-@media only screen and (max-width: 1500px) {
+@media only screen and (max-width: 1500px) and (min-width: 750px) {
 	.specific-trip-header-line {
 		padding-inline: 30px !important;
 	}
 }
 
-@media only screen and (max-width: 1450px){
+@media only screen and (max-width: 1450px) and (min-width: 750px) {
 	.triplan-main-page-container {
 		.triplan-header-banner {
 			padding-inline: 200px !important;
@@ -1153,7 +1175,7 @@
 	}
 }
 
-@media only screen and (max-width: 1260px) {
+@media only screen and (max-width: 1260px) and (min-width: 750px) {
 	.triplan-main-page-container {
 		.triplan-header-banner {
 			padding-inline: 100px !important;
@@ -1170,7 +1192,7 @@
 	}
 }
 
-@media only screen and (max-width: 1154px) {
+@media only screen and (max-width: 1154px) and (min-width: 750px) {
 	.specific-trip-header-line {
 		.triplan-header-banner-header-line-right-side {
 			gap: 4px !important;
@@ -1183,7 +1205,7 @@
 	}
 }
 
-@media only screen and (max-width: 1088px) {
+@media only screen and (max-width: 1088px) and (min-width: 750px) {
 	.specific-trip-header-line {
 		.select-language-header-button {
 			display: none !important;
@@ -1201,7 +1223,7 @@
 	}
 }
 
-@media only screen and (max-width: 1037px) {
+@media only screen and (max-width: 1037px) and (min-width: 750px) {
 	.specific-trip-header-line {
 		.search-container {
 			display: none !important;

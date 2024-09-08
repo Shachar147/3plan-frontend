@@ -97,7 +97,14 @@ body.rtl {
 .triplan-main-page-container:has(.plan-trip-tab-menu) {
   .main-layout-container {
     overflow-y: scroll;
-    margin-bottom: 20px;
+    //margin-bottom: 20px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+
+    .main-layout, .map-container {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
   }
   .triplan-header-actionbar {
     .search-container, .view-selector {

@@ -148,7 +148,7 @@
       background-color: rgba(0,0,0, 0.7);
       position: fixed;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       height: 100vh;
       width: 100vw;
       padding-top: 20px;
@@ -159,7 +159,7 @@
       .suggestions-container {
         top: 85px;
         width: 100%;
-        left: 0;
+        inset-inline-start: 0;
         max-height: CALC(100% - 100px);
         background-color: unset !important;
 
