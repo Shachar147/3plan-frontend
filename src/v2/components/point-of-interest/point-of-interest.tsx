@@ -364,10 +364,11 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         }
         const text = alreadyInSaved ? TranslateService.translate(eventStore, "REMOVE_FROM_SAVED") : TranslateService.translate(eventStore, "KEEP_TO_SAVED");
 
+        const flavor = mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary;
         if (mainFeed || isSearchResult || isViewItem) {
             return (
                 <Button
-                    flavor={mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary}
+                    flavor={flavor}
                     onClick={() => {
                         setIsAddingToSaved(true);
                         if (alreadyInSaved){
@@ -376,7 +377,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                         return handleAddToSaved().then(() => setIsAddingToSaved(false));
                     }}
                     disabled={!item.id}
-                    isLoading={isAddingToSaved}
+                    isLoading={flavor != ButtonFlavor.link && isAddingToSaved}
                     key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
                     text={(isSearchResult || isViewItem) ? text : ""}
@@ -385,6 +386,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 />
             );
         }
+
 
         return (
             <>
@@ -397,7 +399,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     className="padding-inline-15"
                 />
                 <Button
-                    flavor={mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.secondary}
+                    flavor={flavor}
                     onClick={() => {
                         setIsAddingToSaved(true);
                         if (alreadyInSaved){
@@ -406,7 +408,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                         return handleAddToSaved().then(() => setIsAddingToSaved(false));
                     }}
                     disabled={!item.id}
-                    isLoading={isAddingToSaved}
+                    isLoading={flavor != ButtonFlavor.link && isAddingToSaved}
                     key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
                     icon={alreadyInSaved ? "fa fa-heart" : "fa fa-heart-o"}
                     text={text}
