@@ -22,6 +22,7 @@ import {
 import {rootStoreContext} from "../../stores/root-store";
 import {getParameterFromHash} from "../../utils/utils";
 import {
+    useCreateRandomTemplate,
     useLoadRandomPlacePOIs,
     useMyTrips,
     useSavedCollections,
@@ -117,6 +118,7 @@ function MainPageContent(){
     useMyTrips();
     useScrollWhenTabChanges(tabs);
     useLoadRandomPlacePOIs();
+    useCreateRandomTemplate();
 
     function getTabs():TabData[] {
 

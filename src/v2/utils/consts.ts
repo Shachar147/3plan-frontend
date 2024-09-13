@@ -157,7 +157,8 @@ const top100CitiesOld = [
     "Naples",
     "Zürich",
     "Brussels",
-    "Ho Chi Minh City",
+    "Thailand",
+    // "Ho Chi Minh City",
     "Warsaw",
     "Santiago",
     "Casablanca",
@@ -213,6 +214,7 @@ const top100CitiesOld = [
 
 export {
     top100Cities,
+    top100CitiesOld,
     mainPageContentTabLsKey,
     loginPageContentTabLsKey,
     myTripsTabId,

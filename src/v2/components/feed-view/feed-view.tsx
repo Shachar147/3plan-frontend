@@ -408,6 +408,11 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     function renderLoadingPlaceholder(){
         const isSmall = mainFeed || eventStore.isMobile;
 
+        // to prevent situation of showing shimmering while there are no results.
+        if (feedStore.allReachedEnd){
+            return null;
+        }
+
         return (
             <div className={getClasses("text-div width-100-percents", mainFeed ? 'text-align-start margin-top-10' : 'text-align-center')}>
                 {mainFeed && renderPageTitle()}

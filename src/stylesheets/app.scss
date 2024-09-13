@@ -1449,11 +1449,14 @@ input:read-only {
 	align-items: center;
 	justify-content: center;
 	min-height: 33px;
-	background-color: #fcf9f1;
+	//background-color: #fcf9f1;
 	border-radius: 18px;
 	text-align: center;
 	margin-inline: 30px;
 	margin-block: 8px;
+
+	background-color: rgb(239 246 255);
+	border: 1px solid rgb(29 78 216);
 }
 
 .fa-filter + span {

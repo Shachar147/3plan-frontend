@@ -79,6 +79,9 @@ export const endpoints: Record<string, any> = {
         },
         statistics: {
             summaries: '/admin-statistics/summaries'
+        },
+        ai: {
+            createTemplate: '/ai/template'
         }
     },
 }

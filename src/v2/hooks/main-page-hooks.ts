@@ -3,8 +3,9 @@ import {feedStoreContext} from "../stores/feed-view-store";
 import {myTripsContext} from "../stores/my-trips-store";
 import {TabData} from "../utils/interfaces";
 import FeedViewApiService, {allSources} from "../services/feed-view-api-service";
-import {top100Cities} from "../utils/consts";
+import {top100Cities, top100CitiesOld} from "../utils/consts";
 import PlacesPhotosApiService from "../services/places-photos-api-service";
+import AiApiService from "../services/ai-api-service";
 
 export function useSavedCollections(){
     const feedStore = useContext(feedStoreContext);
@@ -55,5 +56,15 @@ export function useLoadRandomPlacePOIs(){
 
         // search photos of that place
         new PlacesPhotosApiService().getPhoto(destination);
+    }, []);
+}
+
+export function useCreateRandomTemplate(){
+    // search destinations randomly to increase the content of Triplan
+    const apiService = useMemo(() => new AiApiService(), []);
+
+    useEffect(() => {
+        const destination = top100CitiesOld[Math.floor(Math.random() * top100CitiesOld.length)];
+        apiService.createTemplate(destination);
     }, []);
 }

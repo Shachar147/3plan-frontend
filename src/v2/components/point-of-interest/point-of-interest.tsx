@@ -7,7 +7,7 @@ import './point-of-interest.scss';
 import ReactModalService from "../../../services/react-modal-service";
 import {TripActions} from "../../../utils/interfaces";
 import {TriplanPriority} from "../../../utils/enums";
-import {extractCategory, getClasses} from "../../../utils/utils";
+import {extractCategory, getClasses, getCurrentUsername} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore, eventStoreContext} from "../../../stores/events-store";
 import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
@@ -498,8 +498,19 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     }
 
     function renderName() {
+        const isTemplate = getCurrentUsername() == 'templates' && myTrips;
+
+        let overridePreview;
+        if (isTemplate) {
+            if (eventStore.isHebrew) {
+                overridePreview = item.name.split('|')?.[1]?.trim() ?? item.name;
+            } else {
+                overridePreview = item.name.split('|')[0].trim();
+            }
+        }
+
         const name = (
-            <EditableLabel name="trip-name" value={item.name.replaceAll("-", " ")} placeholder={TranslateService.translate(eventStore, 'name')} isEditMode={isEditMode} onEditSave={onEditSave} key={`edit-label-${item.name}`} />
+            <EditableLabel name="trip-name" value={item.name.replaceAll("-", " ")} placeholder={TranslateService.translate(eventStore, 'name')} isEditMode={isEditMode} onEditSave={onEditSave} key={`edit-label-${item.name}`} overridePreview={overridePreview} />
         )
         if (isShrinkedMode) {
             return (

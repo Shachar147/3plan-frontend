@@ -557,3 +557,9 @@ export function mergeArraysUnique(arr1, arr2){
 		new Set(arr1.concat(arr2))
 	)
 }
+
+export function getRandomEnumValue<T>(enumObject: T): T[keyof T] {
+	const values = Object.values(enumObject);
+	const randomIndex = Math.floor(Math.random() * values.length);
+	return values[randomIndex] as T[keyof T];
+}
