@@ -83,8 +83,6 @@ function LoginPageV2() {
     function renderLoginForm(){
         return (
         <div className="login-form">
-            {message_block}
-            {error_block}
             {renderField({
                 name: 'username',
                 placeholder: TranslateService.translate(eventStore, 'USERNAME'),
@@ -98,6 +96,8 @@ function LoginPageV2() {
                 icon: 'lock',
                 ref: passwordRef,
             })}
+            {message_block}
+            {error_block}
             <div className="login-form-buttons">
                 {/*<Button*/}
                 {/*    text={TranslateService.translate(eventStore, 'CONTINUE_AS_GUEST')}*/}
@@ -128,8 +128,6 @@ function LoginPageV2() {
     function renderRegisterForm(){
         return (
             <div className="register-form">
-                {message_block}
-                {error_block}
                 {renderField({
                     name: 'username',
                     placeholder: TranslateService.translate(eventStore, 'USERNAME'),
@@ -150,6 +148,8 @@ function LoginPageV2() {
                     icon: 'lock',
                     ref: passwordAgainRef,
                 })}
+                {message_block}
+                {error_block}
                 <div className="register-form-buttons">
                     <Button
                         text={TranslateService.translate(eventStore, 'REGISTER_BUTTON')}

@@ -486,13 +486,13 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
             <>
                 <div className="shimmer-animation" style={{
                     height: isSmall ? 200 : 266, width: isSmall ? 298 : 400 }} />
-                <img src={src} className="display-none" alt={item.name} onError={() => setSrc(fallbacks[random])} onLoad={(e) => {
+                <img src={src} alt={item.name} onError={() => setSrc(fallbacks[random])} onLoad={(e) => {
                     const imgElement = e.target;
-                    imgElement.style.opacity = 1;
+                    imgElement.classList.remove('display-none');
                     const shimmer = imgElement.previousSibling;
                     shimmer.style.display = 'none';
 
-                }} className="zoomable" key={idx} />
+                }} className="display-none zoomable" key={idx} />
             </>
         )
     }

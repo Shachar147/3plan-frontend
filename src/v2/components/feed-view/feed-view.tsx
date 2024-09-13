@@ -264,9 +264,9 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     function renderShowingResultsText() {
         const isFiltering = feedStore.items.length !== feedStore.filteredItems.length;
 
-        if (!eventStore.destinations?.length || eventStore.destinations == '[]') {
-            return;
-        }
+        // if (!eventStore.destinations?.length || eventStore.destinations == '[]') {
+        //     return;
+        // }
 
         return (
             <div className={getClasses("flex-1-1-0 min-width-max-content gap-4", eventStore.getCurrentDirection() === 'rtl' && 'direction-rtl')}>

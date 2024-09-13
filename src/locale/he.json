@@ -1120,5 +1120,6 @@
 	"username must be longer than or equal to 4 characters": "שם המשתמש חייב להיות באורך של לפחות 4 תווים",
 	"FILTER_BY": "סנן לפי:",
 	"NO_RESULTS_TRY_DIFFERENT_CATEGORY": "לא נמצאו תוצאות, נסה לסנן לפי קטגוריה אחרת",
-	"ALL_CATEGORIES": "כל הקטגוריות"
+	"ALL_CATEGORIES": "כל הקטגוריות",
+	"Network Error": "שגיאת רשת"
 }
