@@ -1105,7 +1105,7 @@
 	"OPEN_TRIP": "פתח טיול זה",
 	"DESTINATION": "יעד: ",
 	"DESTINATIONS": "יעדים: ",
-	"SCHEDULED_ON": "הפעילות משובצת ב{date} בין השעות {end} - {end} ({duration})",
+	"SCHEDULED_ON": "הפעילות משובצת ב{date} בין השעות {start} - {end} ({duration})",
 	"ON_CATEGORY": "הפעילות נמצאת בתפריט הצד בקטגוריה {category}",
 	"MY_TRIPS_TAB.DESCRIPTION": "כל הטיולים שיצרת יופיעו כאן, זמינים עבורך לצפייה או עריכה מכל מכשיר!",
 	"MY_TRIPS_HIDDEN_TAB.DESCRIPTION": "ששש... כל הטיולים שהסתרת יופיעו כאן. להחזרתם לתפריט הראשי לחץ על סמל העין",
