@@ -21,6 +21,7 @@ export interface SearchSuggestion {
     id?: number; // when its' loaded from the server
     image?: string;
     hideImage?: boolean;
+    rating?: number;
 }
 
 const TriplanSearchV2 = () => {
@@ -136,6 +137,15 @@ const TriplanSearchV2 = () => {
 
     const isShort = eventStore.isMobile ? '.SHORT' : '';
 
+    function getRating(suggestion: SearchSuggestion) {
+        if (suggestion.rating){
+            return ` (${TranslateService.translate(eventStore,'RATED_X_OF_Y', {
+                X: suggestion.rating,
+                Y: 5
+            })})`;
+        }
+    }
+
     function getDescription(suggestion: SearchSuggestion) {
         if (isInPlan){
             return suggestion.destination || TranslateService.translate(eventStore, 'ON_CATEGORY', {
@@ -200,7 +210,10 @@ const TriplanSearchV2 = () => {
                                 }}/>}
                                 <div className="suggestion-item-text">
                                     <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>
-                                    <small className="suggestion-descriptor">{getDescription(suggestion)}</small>
+                                    <small className="suggestion-descriptor">
+                                        {getDescription(suggestion)}
+                                        {getRating(suggestion)}
+                                    </small>
                                 </div>
                             </div>
                         ))

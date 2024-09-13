@@ -896,5 +896,6 @@
 	"TYPE_YOUR_X": "Type your {X}...",
 	"FILTER_BY": "Filter by:",
 	"NO_RESULTS_TRY_DIFFERENT_CATEGORY": "No results found, try filter by a different category",
-	"ALL_CATEGORIES": "All categories"
+	"ALL_CATEGORIES": "All categories",
+	"RATED_X_OF_Y": "rated {X}/{Y}"
 }

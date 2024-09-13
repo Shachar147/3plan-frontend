@@ -1053,7 +1053,7 @@
 	}
 
 	.suggestion-descriptor {
-		width: 100vw;
+		//width: 100vw; <- causes the text to be overflow on mobile
 		color: rgba(255,255,255,0.8) !important;
 		float: left !important;
 	}

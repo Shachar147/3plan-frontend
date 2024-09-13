@@ -1121,5 +1121,6 @@
 	"FILTER_BY": "סנן לפי:",
 	"NO_RESULTS_TRY_DIFFERENT_CATEGORY": "לא נמצאו תוצאות, נסה לסנן לפי קטגוריה אחרת",
 	"ALL_CATEGORIES": "כל הקטגוריות",
-	"Network Error": "שגיאת רשת"
+	"Network Error": "שגיאת רשת",
+	"RATED_X_OF_Y": "מדורג {X}/{Y}"
 }
