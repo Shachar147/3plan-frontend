@@ -994,7 +994,7 @@
 	"PRICE": "עלות: {price} {currency}",
 	"FREE_OF_CHARGE": "חינם",
 	"DAILY": "יומית",
-	"ESTIMATED_EXPANSES": "עלות {what}משוערות: {price} {currency}",
+	"ESTIMATED_EXPANSES": "עלות {what}משוערת: {price} {currency}",
 	"ESTIMATED_EXPANSE": "עלות {what}משוערת: {price} {currency}",
 	"ORDERED_ITEMS_PRICE": "עלויות של דברים אחרים שהוזמנו: {price} {currency}",
 	"FLIGHTS_AND_HOTELS_PRICE": "עלויות של בתי מלון וטיסות: {price} {currency}",
