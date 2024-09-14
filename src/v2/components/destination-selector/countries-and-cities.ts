@@ -826,6 +826,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "Munich",
+        "label": "Munich, Germany",
+        "type": "city",
+        "flagClass": "fi fi-de",
+        "isPopular": true
+    },
+    {
         "value": "Tiranë",
         "label": "Tiranë, Albania",
         "type": "city",
@@ -99533,13 +99540,6 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
-        "value": "Singapore",
-        "label": "Singapore, Singapore",
-        "type": "city",
-        "flagClass": "fi fi-sg",
-        "isPopular": false
-    },
-    {
         "value": "Sint Maarten (Dutch part)",
         "label": "Sint Maarten (Dutch part)",
         "type": "country",
@@ -123126,6 +123126,13 @@ const countriesAndCities = [
         "value": "Vietnam",
         "label": "Vietnam",
         "type": "country",
+        "flagClass": "fi fi-vn",
+        "isPopular": false
+    },
+    {
+        "value": "Hanoi",
+        "label": "Hanoi, Vietnam",
+        "type": "city",
         "flagClass": "fi fi-vn",
         "isPopular": false
     },

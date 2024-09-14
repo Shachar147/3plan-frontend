@@ -7,6 +7,7 @@ import TranslateService from "../../../services/translate-service";
 import {observer} from "mobx-react";
 import {modalsStoreContext} from "../../../stores/modals-store";
 import {eventStoreContext} from "../../../stores/events-store";
+import {runInAction} from "mobx";
 
 interface TriplanSidebarDraggableEventProps {
     event: SidebarEvent;
@@ -16,6 +17,7 @@ interface TriplanSidebarDraggableEventProps {
     fullActions?: boolean;
     eventTitleSuffix?: React.ReactNode | string | undefined;
     _onClick?: () => void;
+    addEventToSidebar: () => void;
 }
 
 function TriplanSidebarDraggableEvent(props: TriplanSidebarDraggableEventProps) {
@@ -36,6 +38,34 @@ function TriplanSidebarDraggableEvent(props: TriplanSidebarDraggableEventProps) 
         if (_onClick) {
             _onClick();
         } else {
+
+            const eventId = event.id;
+            const isCalendarEvent = !!eventStore.calendarEvents.find((c) => c.id.toString() == eventId.toString());
+            if (isCalendarEvent) {
+                const info = {
+                    event: {
+                        _def: {
+                            publicId: event.id
+                        },
+                        extendedProps: {},
+                        ...event,
+                        start: new Date(event.start),
+                        end: new Date(event.end)
+                    }
+                };
+                runInAction(() => {
+                    eventStore.isModalMinimized = false;
+                    modalsStore.switchToEditMode();
+                });
+                ReactModalService.openEditCalendarEventModal(
+                    eventStore,
+                    undefined,
+                    info,
+                    modalsStore
+                );
+                return;
+            }
+
             modalsStore.switchToViewMode();
             ReactModalService.openEditSidebarEventModal(
                 eventStore,

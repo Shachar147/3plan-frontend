@@ -740,7 +740,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                                                     key={`unscheduled-events-${x.event.category}-${idx}`}
                                                 >
                                                     <TriplanSidebarDraggableEvent
-                                                        event={x.event} categoryId={x.event.category} fullActions={false} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} eventTitleSuffix={toDistanceString(eventStore, x, true, x.travelMode, true)} />
+                                                        event={x.event} categoryId={x.event.category} fullActions={false} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} addEventToSidebar={(e) => props.addEventToSidebar(e)} eventTitleSuffix={toDistanceString(eventStore, x, true, x.travelMode, true)} />
                                                 </div>
                                             );
                                         })}
@@ -756,7 +756,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                                                 className="nearby-result cursor-pointer flex-col gap-3"
                                                 key={`scheduled-event-${x.event.category}-${idx}`}
                                             >
-                                                <TriplanSidebarDraggableEvent event={x.event} categoryId={x.event.category} fullActions={false} eventTitleSuffix={<div className="flex-col gap-5">
+                                                <TriplanSidebarDraggableEvent event={x.event} categoryId={x.event.category} fullActions={false} addEventToSidebar={(e) => props.addEventToSidebar(e)} eventTitleSuffix={<div className="flex-col gap-5">
 														<span>
 															{toDistanceString(eventStore, x, true, x.travelMode, true)}
 														</span>

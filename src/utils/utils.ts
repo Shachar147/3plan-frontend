@@ -429,6 +429,17 @@ export function calendarOrSidebarEventDetails(eventStore: EventStore, event: Sid
 	return undefined;
 }
 
+export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventStore) {
+	if (isTemplate()) {
+		if (eventStore.isHebrew) {
+			return calendarEvent.title.split('|')?.[1]?.trim() ?? calendarEvent.title;
+		}
+		return calendarEvent.title.split('|')?.[0]?.trim();
+	}
+
+	return calendarEvent.title;
+}
+
 export function isTemplate(){
 	return getCurrentUsername() == TEMPLATES_USER_NAME;
 }

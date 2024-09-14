@@ -5,7 +5,7 @@ import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ToggleButton, { OptionToggleButton } from '../components/toggle-button/toggle-button';
 import { ViewMode } from './enums';
-import { getClasses, isEventAlreadyOrdered } from './utils';
+import {getClasses, getEventTitle, isEventAlreadyOrdered, isTemplate} from './utils';
 import TriplanTag from '../components/common/triplan-tag/triplan-tag';
 import { getUser } from '../helpers/auth';
 import Select from 'react-select';
@@ -419,7 +419,9 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 		lockIconIfNeeded = '<span class="locked-icon">🔒</span>';
 	}
 
-	return `<div title="${tooltip}">${icon} ${calendarEvent.title}${lockIconIfNeeded}</div>
+	const title = getEventTitle(calendarEvent, eventStore);
+
+	return `<div title="${tooltip}">${icon} ${title}${lockIconIfNeeded}</div>
                 ${
 					calendarEvent.allDay
 						? ''

@@ -1267,17 +1267,30 @@ body.rtl {
 	white-space: pre-line;
 }
 
-.triplan-text-input {
-	position: relative;
+body.rtl {
+	.triplan-text-input {
+		position: relative;
 
-	i.fa {
-		position: absolute;
-		top: 9px;
-		left: 10px;
+		i.fa {
+			position: absolute;
+			top: 9px;
+			left: 10px;
+		}
 	}
 }
 
 body.ltr {
+
+	.triplan-text-input {
+		position: relative;
+
+		i.fa {
+			position: absolute;
+			top: 9px;
+			right: 10px;
+		}
+	}
+
 	.body-text-align {
 		text-align: left;
 	}
