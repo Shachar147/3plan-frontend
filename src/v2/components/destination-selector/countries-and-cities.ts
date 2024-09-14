@@ -94283,6 +94283,13 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
+        "value": "Doha",
+        "label": "Doha, Qatar",
+        "type": "city",
+        "flagClass": "fi fi-qa",
+        "isPopular": false
+    },
+    {
         "value": "ad-Dawhah",
         "label": "ad-Dawhah, Qatar",
         "type": "city",

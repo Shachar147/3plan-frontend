@@ -5,8 +5,8 @@ import {observer} from "mobx-react";
 import './triplan-footer.scss';
 import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
-import {getClasses} from "../../../utils/utils";
-import {newDesignRootPath} from "../../utils/consts";
+import {getClasses, getCurrentUsername} from "../../../utils/utils";
+import {newDesignRootPath, TEMPLATES_USER_NAME} from "../../utils/consts";
 
 interface TriplanFooterSummaries {
     avgCalendarItemsInTrip: number
@@ -24,6 +24,9 @@ interface TriplanFooterSummaries {
     avgSavedItemsPerUser: number;
     totalDestinations: number;
     totalSavedCollections: number;
+
+    totalTemplates: number;
+    totalApprovedTemplates?: number;
 }
 
 function TriplanFooter(){
@@ -36,6 +39,8 @@ function TriplanFooter(){
             setSummaries(response.data);
         })
     }, [])
+
+
 
     const structure: any = [
         {
@@ -52,7 +57,7 @@ function TriplanFooter(){
                 {"FOOTER.AVG_SIDEBAR_ITEMS_IN_TRIP": summaries?.avgSidebarItemsInTrip},
                 {"FOOTER.AVG_TRIPS_PER_USER": summaries?.avgTripsPerUser},
                 {"FOOTER.TOTAL_PLACES_ON_CALENDAR": summaries?.totalPlacesOnCalendar},
-                {"FOOTER.TOTAL_PLACES_ON_SIDEBAR": summaries?.totalPlacesOnSidebar}
+                {"FOOTER.TOTAL_PLACES_ON_SIDEBAR": summaries?.totalPlacesOnSidebar},
             ]
         }, {
             "FOOTER.POINT_OF_INTERESTS_STATS": [
@@ -64,6 +69,17 @@ function TriplanFooter(){
             ]
         }
     ]
+
+    if (['Shachar', TEMPLATES_USER_NAME].includes(getCurrentUsername())) {
+        structure[1]['FOOTER.TRIPS_STATS'].push(...[
+            {"FOOTER.TOTAL_TEMPLATES": summaries?.totalTemplates},
+            {"FOOTER.TOTAL_APPROVED_TEMPLATES": summaries?.totalApprovedTemplates}
+        ])
+    } else {
+        structure[1]['FOOTER.TRIPS_STATS'].push(...[
+            {"FOOTER.TOTAL_TEMPLATES": summaries?.totalApprovedTemplates}
+        ])
+    }
 
 
     function renderStatsBlock(stats: Record<string, any>) {

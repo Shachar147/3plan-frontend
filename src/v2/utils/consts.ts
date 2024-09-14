@@ -11,6 +11,8 @@ const specificItemTabId = "view-item";
 
 const cityImage = "images/city.jpg";
 
+export const TEMPLATES_USER_NAME = "templates";
+
 const top100Cities = countriesAndCities.map((c) => c.value);
 
 const top100CitiesOld2 = [

@@ -3,7 +3,7 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React, { useEffect, useMemo, useState } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import { getClasses, getCurrentUsername, isHotel, isHotelsCategory, ucfirst, ucword } from '../utils/utils';
+import {getClasses, getCurrentUsername, isHotel, isHotelsCategory, isTemplate, ucfirst, ucword} from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -1811,6 +1811,41 @@ const ReactModalService = {
 		onConfirm?: () => void
 	) => {
 		const tripName = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
+
+		async function hideTrip(){
+			if (tripDataSource === TripDataSource.DB) {
+				await DataServices.DBService.hideTripByName(tripName)
+					.then(() => {
+						LogHistoryService.logHistory(eventStore, TripActions.hideTrip, {
+							tripName,
+						});
+
+						if (onConfirm) {
+							onConfirm();
+							ReactModalService.internal.closeModal(eventStore);
+						} else {
+							window.location.reload();
+						}
+					})
+					.catch(() => {
+						ReactModalService.internal.openOopsErrorModal(eventStore);
+					});
+			} else {
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'MODALS.ERROR.TITLE',
+					'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+					'error'
+				);
+				return;
+			}
+		}
+
+		if (isTemplate()){
+			hideTrip();
+			return;
+		}
+
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: `${TranslateService.translate(eventStore, 'HIDE_TRIP')}: ${tripName}`,
@@ -1826,34 +1861,7 @@ const ReactModalService = {
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, 'HIDE_TRIP'),
 			confirmBtnCssClass: 'primary-button',
-			onConfirm: async () => {
-				if (tripDataSource === TripDataSource.DB) {
-					await DataServices.DBService.hideTripByName(tripName)
-						.then(() => {
-							LogHistoryService.logHistory(eventStore, TripActions.hideTrip, {
-								tripName,
-							});
-
-							if (onConfirm) {
-								onConfirm();
-								ReactModalService.internal.closeModal(eventStore);
-							} else {
-								window.location.reload();
-							}
-						})
-						.catch(() => {
-							ReactModalService.internal.openOopsErrorModal(eventStore);
-						});
-				} else {
-					ReactModalService.internal.alertMessage(
-						eventStore,
-						'MODALS.ERROR.TITLE',
-						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
-						'error'
-					);
-					return;
-				}
-			},
+			onConfirm: hideTrip,
 		});
 	},
 	openShareTripModal: (eventStore: EventStore) => {

@@ -7,7 +7,7 @@ import './point-of-interest.scss';
 import ReactModalService from "../../../services/react-modal-service";
 import {TripActions} from "../../../utils/interfaces";
 import {TriplanPriority} from "../../../utils/enums";
-import {extractCategory, getClasses, getCurrentUsername} from "../../../utils/utils";
+import {extractCategory, getClasses, getCurrentUsername, isTemplate} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore, eventStoreContext} from "../../../stores/events-store";
 import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
@@ -17,7 +17,7 @@ import {runInAction} from "mobx";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {observer} from "mobx-react";
 import EditableLabel from "../editable-label/editable-label";
-import {mainPageContentTabLsKey, myTripsTabId} from "../../utils/consts";
+import {mainPageContentTabLsKey, myTripsTabId, TEMPLATES_USER_NAME} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
 import {MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
 
@@ -498,10 +498,8 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     }
 
     function renderName() {
-        const isTemplate = getCurrentUsername() == 'templates' && myTrips;
-
         let overridePreview;
-        if (isTemplate) {
+        if (isTemplate() && myTrips) {
             if (eventStore.isHebrew) {
                 overridePreview = item.name.split('|')?.[1]?.trim() ?? item.name;
             } else {
@@ -647,7 +645,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                             icon={`fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
                             className={getClasses("cursor-pointer", eventStore.isMobile && 'black')}
                             type={ButtonFlavor.secondary}
-                            text={TranslateService.translate(eventStore, 'OPEN_TRIP')}
+                            text={TranslateService.translate(eventStore, isTemplate() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
                             onClick={() => onClick()}
                         />
                     </div>
