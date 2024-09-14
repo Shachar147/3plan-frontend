@@ -8,7 +8,7 @@ import {
     getUserDateFormat,
     validateDateRange
 } from "../../../utils/time-utils";
-import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
+import {getClasses, isTemplate, LOADER_DETAILS} from "../../../utils/utils";
 import {useNavigate} from "react-router-dom";
 import PointOfInterest from "../../components/point-of-interest/point-of-interest";
 import {myTripsContext} from "../../stores/my-trips-store";
@@ -31,8 +31,6 @@ import {feedStoreContext} from "../../stores/feed-view-store";
 import {IPointOfInterestToTripEvent} from "../../utils/interfaces";
 import {myTripsTabId, newDesignRootPath} from "../../utils/consts";
 import MainPage from "../../../pages/main-page/main-page";
-import {FeatureFlagsService} from "../../../utils/feature-flags";
-
 
 function MyTripsTab(){
     const eventStore = useContext(eventStoreContext);
@@ -329,6 +327,23 @@ function MyTripsTab(){
         );
     }
 
+    function getHideUnHideIcon(){
+        if (isTemplate()) {
+            if (myTripsStore.showHidden) {
+                return 'fa-thumbs-o-up';
+            } else {
+                return 'fa-thumbs-o-down';
+            }
+        }
+        else {
+            if (myTripsStore.showHidden) {
+                return 'fa-eye';
+            } else {
+                return 'fa-eye-slash';
+            }
+        }
+    }
+
     function renderTripActions(trip: Trip) {
         // @ts-ignore
         const { isSharedTrip } = trip;
@@ -362,9 +377,9 @@ function MyTripsTab(){
                 )}
                 {!isSharedTrip && (
                     <i
-                        className={getClasses('fa', myTripsStore.showHidden ? 'fa-eye' : 'fa-eye-slash')}
+                        className={getClasses('fa', getHideUnHideIcon())}
                         aria-hidden="true"
-                        title={TranslateService.translate(eventStore, myTripsStore.showHidden ? 'UNHIDE_TRIP' : 'HIDE_TRIP')}
+                        title={TranslateService.translate(eventStore, myTripsStore.showHidden ? `UNHIDE_${what}` : `HIDE_${what}`)}
                         onClick={(e) => onHideUnhideTrip(e, LSTripName)}
                     />
                 )}
@@ -560,7 +575,7 @@ function MyTripsTab(){
                 return TranslateService.translate(eventStore, 'CREATE_TRIP');
             }
             if (!eventStore.isMobile) {
-                return TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW');
+                return TranslateService.translate(eventStore, what == "TRIP" ? 'LANDING_PAGE.START_NOW' : "CREATE_NEW_TEMPLATE");
             }
             return undefined; // on my trips tab if mobile
         }
@@ -605,7 +620,7 @@ function MyTripsTab(){
 
     function renderDescription(){
         return (
-            <span className="white-space-pre-line margin-bottom-20" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.DESCRIPTION')}} />
+            <span className="white-space-pre-line margin-bottom-20" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, `CREATE_NEW_${what}_TITLE.DESCRIPTION`)}} />
         );
     }
 
@@ -615,7 +630,7 @@ function MyTripsTab(){
                 <hr className="width-100-percents"/>
                 <img src="/images/new-trip.png" className="border-radius-round" width="200" />
                 <div className="flex-column gap-5">
-                    <h3>{TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE')}</h3>
+                    <h3>{TranslateService.translate(eventStore, `CREATE_NEW_${what}_TITLE`)}</h3>
                     {renderDescription()}
                     {renderAddTripButton()}
                 </div>
@@ -729,21 +744,34 @@ function MyTripsTab(){
         );
     }
 
+    function getPageTitle(){
+        let key = 'MY_TRIPS';
+        if (myTripsStore.showHidden) {
+            key = 'HIDDEN_TRIPS';
+        }
+
+        if (isTemplate()) {
+            if (myTripsStore.showHidden) {
+                key = 'UNAPPROVED_TEMPLATES';
+            } else {
+                key = 'TRIP_TEMPLATES';
+            }
+        }
+
+        return TranslateService.translate(eventStore, key);
+    }
+
+    const what = isTemplate() ? 'TEMPLATE' : 'TRIP';
+
     return (
         <div className="flex-column align-items-start margin-top-10">
-            {/*<h2 className="main-feed-header width-100-percents">*/}
-            {/*    <span>{TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')}</span>*/}
-            {/*    {myTripsStore.allTripsSorted.length > 0 && !addNewTripMode && renderAddTripButton()}*/}
-            {/*    {addNewTripMode && renderGoBackButton()}*/}
-            {/*</h2>*/}
-
             <div className="flex-column gap-8 align-items-center width-100-percents">
                 <h3 className={getClasses("main-feed-header width-100-percents", eventStore.isMobile && 'flex-row')}>
-                    <span>{TranslateService.translate(eventStore, myTripsStore.showHidden ? 'HIDDEN_TRIPS' : 'MY_TRIPS')}</span>
+                    <span>{TranslateService.translate(eventStore, getPageTitle())}</span>
                     {myTripsStore.allTripsSorted.length > 0 && !addNewTripMode && renderAddTripButton()}
                     {addNewTripMode && renderGoBackButton()}
                 </h3>
-                {!addNewTripMode && <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, myTripsStore.showHidden ? 'MY_TRIPS_HIDDEN_TAB.DESCRIPTION' : 'MY_TRIPS_TAB.DESCRIPTION')}} />}
+                {!addNewTripMode && <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, myTripsStore.showHidden ? `MY_${what}S_HIDDEN_TAB.DESCRIPTION` : `MY_${what}S_TAB.DESCRIPTION`)}} />}
             </div>
 
             <div className="flex-row justify-content-center flex-wrap-wrap align-items-start width-100-percents" key={myTripsStore.myTrips?.length}>
@@ -761,7 +789,7 @@ function MyTripsTab(){
                             className="width-100-percents text-align-center"
                             text={TranslateService.translate(
                                 eventStore,
-                                myTripsStore.showHidden ? 'SHOW_TRIPS_LIST' : 'SHOW_HIDDEN_TRIPS_LIST'
+                                myTripsStore.showHidden ? `SHOW_${what}S_LIST` : `SHOW_HIDDEN_${what}S_LIST`
                             )}
                         />
                     )}

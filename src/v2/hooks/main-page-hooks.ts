@@ -60,10 +60,15 @@ export function useLoadRandomPlacePOIs(){
 }
 
 export function useCreateRandomTemplate(){
+
     // search destinations randomly to increase the content of Triplan
     const apiService = useMemo(() => new AiApiService(), []);
 
     useEffect(() => {
+        if (window.location.href.includes("localhost")){
+            return;
+        }
+
         const destination = top100CitiesOld[Math.floor(Math.random() * top100CitiesOld.length)];
         apiService.createTemplate(destination);
     }, []);

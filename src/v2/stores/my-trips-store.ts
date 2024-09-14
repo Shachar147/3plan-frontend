@@ -70,6 +70,11 @@ export class MyTripsStore {
     setShowHidden(showHidden: boolean){
        this.showHidden = showHidden;
     }
+
+    @computed
+    get totalTrips(){
+        return this.myTrips.filter((x) => x.isHidden == this.showHidden).length + this.mySharedTrips.filter((x) => x.isHidden == this.showHidden).length;
+    }
 }
 
 export const myTripsContext = createContext(new MyTripsStore());

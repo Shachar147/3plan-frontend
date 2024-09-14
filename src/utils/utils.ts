@@ -9,6 +9,7 @@ import { formatDate, formatTime, toDate } from './time-utils';
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 import { HOTELS_DESCRIPTION } from './defaults';
+import {TEMPLATES_USER_NAME} from "../v2/utils/consts";
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');
@@ -426,6 +427,10 @@ export function calendarOrSidebarEventDetails(eventStore: EventStore, event: Sid
 		return `${TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO')}: ${dt} ${end}-${start}`;
 	}
 	return undefined;
+}
+
+export function isTemplate(){
+	return getCurrentUsername() == TEMPLATES_USER_NAME;
 }
 
 export function getCurrentUsername(): string | null {

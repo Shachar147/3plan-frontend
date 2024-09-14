@@ -10,14 +10,14 @@ import MyTrips from "../my-trips-tab/my-trips-tab";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
 import {myTripsContext} from "../../stores/my-trips-store";
-import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
+import {getClasses, getCurrentUsername, isTemplate, LOADER_DETAILS} from "../../../utils/utils";
 import {
     exploreTabId,
     mainPageContentTabLsKey,
     myTripsTabId,
     savedCollectionsTabId,
     searchResultsTabId,
-    specificItemTabId
+    specificItemTabId, TEMPLATES_USER_NAME
 } from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
 import {getParameterFromHash} from "../../utils/utils";
@@ -170,8 +170,8 @@ function MainPageContent(){
             {
                 id: myTripsTabId,
                 order: 2,
-                name: TranslateService.translate(eventStore, `MY_TRIPS_X${isShort}`, {
-                    X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
+                name: TranslateService.translate(eventStore, `${isTemplate() ? 'TEMPLATES' : 'MY_TRIPS'}_X${isShort}`, {
+                    X: myTripsStore.totalTrips
                 }),
                 icon: "fa-plane",
                 render: () => <TriplanTabContent content={<MyTrips />} />
