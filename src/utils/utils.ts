@@ -440,6 +440,17 @@ export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventSto
 	return calendarEvent.title;
 }
 
+export function getEventDescription(calendarEvent: CalendarEvent, eventStore: EventStore) {
+	if (isTemplate()) {
+		if (eventStore.isHebrew) {
+			return calendarEvent.description.split('|')?.[1]?.trim() ?? calendarEvent.description;
+		}
+		return calendarEvent.description.split('|')?.[0]?.trim();
+	}
+
+	return calendarEvent.description;
+}
+
 export function isTemplate(){
 	return getCurrentUsername() == TEMPLATES_USER_NAME;
 }

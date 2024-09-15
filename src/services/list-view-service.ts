@@ -9,7 +9,7 @@ import {GoogleTravelMode, ListViewSummaryMode, TriplanCurrency, TriplanPriority}
 import {priorityToColor} from '../utils/consts';
 import {
 	BuildEventUrl, formatNumberWithCommas,
-	getCoordinatesRangeKey,
+	getCoordinatesRangeKey, getEventDescription, getEventTitle,
 	isFlightCategory,
 	isMatching,
 	padTo2Digits,
@@ -472,7 +472,8 @@ const ListViewService = {
 					(x: EventInput) =>
 						x.priority && (x.priority == TriplanPriority.must || x.priority == TriplanPriority.high)
 				)
-				.map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
+				.map((x: EventInput) => getEventTitle(x as unknown as CalendarEvent, eventStore).split('-')[0].split('?')[0].trim());
+				// .map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
 			highlightEvents = [...Array.from(new Set(highlightEvents))];
 			highlightsPerDay[dayTitle] = highlightEvents.join(', ');
 
@@ -501,7 +502,7 @@ const ListViewService = {
 				// }
 
 				if (event.allDay) {
-					const arr = [event.title, ListViewService._formatDescription(event.description)].filter(
+					const arr = [getEventTitle(event as unknown as CalendarEvent, eventStore), ListViewService._formatDescription(getEventDescription(event as unknown as CalendarEvent, eventStore))].filter(
 						(x) => x && x.trim().length
 					);
 					summaryPerDay[dayTitle].push(
@@ -512,7 +513,7 @@ const ListViewService = {
 
 				const startTime = ListViewService._formatTime(toDate(event.start!).toLocaleTimeString());
 				const endTime = ListViewService._formatTime(getEventDueDate(event).toLocaleTimeString());
-				const title = event.title;
+				const title = getEventTitle(event as unknown as CalendarEvent, eventStore);
 
 				let price = event.price != undefined ? `${TranslateService.translate(eventStore, 'PRICE', {
 					price: event.price > 0 ? formatNumberWithCommas(event.price) : TranslateService.translate(eventStore, 'FREE_OF_CHARGE'),
@@ -576,9 +577,9 @@ const ListViewService = {
 						: `${ListViewService._randomElement(middlePrefixes)} `;
 
 				const description =
-					event.description && eventStore.shouldRenderDescriptionOnListView
+					event.description?.trim()?.length > 0 && eventStore.shouldRenderDescriptionOnListView
 						? `<br><span style="opacity:0;">${indent}</span><span style="color:#999999">${ListViewService._formatDescription(
-								event.description
+								getEventDescription(event as unknown as CalendarEvent, eventStore)
 						  )}</span>`
 						: '';
 
@@ -704,7 +705,7 @@ const ListViewService = {
 
 					const url = BuildEventUrl(event.location);
 					const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${
-						event.title
+						getEventTitle(event as unknown as CalendarEvent, eventStore)
 						// event.location.address.split(' - ')[0]
 					}</a></span>`;
 
@@ -751,7 +752,7 @@ const ListViewService = {
 								eventStore,
 								'NAVIGATE_TO',
 								{
-									to: event.title!,
+									to: getEventTitle(event as unknown as CalendarEvent, eventStore),
 								}
 						  )}' class='navigate-to' ><img src="/images/navigation.png"/></a>`
 						: '';
@@ -778,7 +779,7 @@ const ListViewService = {
 
 					// instead of showing the address in the destination route, show activity name.
 					if (prevLocation) {
-						prevLocation.eventName = event.title!;
+						prevLocation.eventName = getEventTitle(event as unknown as CalendarEvent, eventStore);
 					}
 				}
 
@@ -960,12 +961,12 @@ const ListViewService = {
 
 				const thisLocation = x.event.location;
 				if (thisLocation) {
-					thisLocation.eventName = x.event.title!;
+					thisLocation.eventName = getEventTitle(x.event as unknown as CalendarEvent, eventStore)
 				}
 				if (prevLocation && thisLocation && prevLocation.address != thisLocation.address) {
-					loggerArr.push('~ ' + prevTitle + ' -> ' + x.event.title);
+					loggerArr.push('~ ' + prevTitle + ' -> ' + getEventTitle(x.event as unknown as CalendarEvent, eventStore));
 
-					let distanceToNextEvent = calculateDistance(eventStore, prevLocation, thisLocation); // prevTitle + " -> " + x.event.title;
+					let distanceToNextEvent = calculateDistance(eventStore, prevLocation, thisLocation); // prevTitle + " -> " + getEventTitle(x.event as unknown as CalendarEvent, eventStore);
 
 					if (distanceToNextEvent !== '') {
 						const arrow = eventStore.getCurrentDirection() === 'rtl' ? '✈' : '✈';
@@ -989,7 +990,7 @@ const ListViewService = {
 
 						const url = BuildEventUrl(thisLocation);
 						const urlBlock = `<span><a href="${url}" target="_blank" style="color: inherit">${
-							x.event.title
+							getEventTitle(x.event as unknown as CalendarEvent, eventStore)
 							// thisLocation.address.split(' - ')[0]
 						}</a></span>`;
 
@@ -1023,9 +1024,9 @@ const ListViewService = {
 
 				const temp = parentIsOr ? ' (parent is or)' : '';
 				if (x.indent) {
-					loggerArr.push('... ' + x.event.title + temp);
+					loggerArr.push('... ' + getEventTitle(x.event as unknown as CalendarEvent, eventStore) + temp);
 				} else {
-					loggerArr.push(x.event.title + temp);
+					loggerArr.push(getEventTitle(x.event as unknown as CalendarEvent, eventStore) + temp);
 				}
 
 				if (x.or && i + 1 < details.length && !details[i + 1].differentOrGroup) {
@@ -1034,7 +1035,7 @@ const ListViewService = {
 
 				if (!x.or) {
 					prevLocation = thisLocation;
-					prevTitle = x.event.title;
+					prevTitle = getEventTitle(x.event as unknown as CalendarEvent, eventStore);
 				}
 
 				if ((x.or || x.indent) && i + 1 < details.length && !(details[i + 1].or || details[i + 1].indent)) {
