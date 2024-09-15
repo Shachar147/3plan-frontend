@@ -1,3 +1,5 @@
+$biggestZIndex: 99999999999;
+
 .triplan-header-banner {
   height: 700px;
   padding-inline: 196px + 96px;
@@ -123,7 +125,7 @@
         padding-bottom: 10px;
         top: 0;
         left: 0;
-        z-index: 99999999999;
+        z-index: $biggestZIndex;
         padding-inline: 196px + 96px;
         //border-bottom: 1px solid var(--gray);
         box-shadow: 0 4px 20px 4px #0000001a;
@@ -205,6 +207,19 @@
         color: white;
         display: flex;
         flex-direction: column;
+      }
+    }
+  }
+}
+
+// override so if modal appears, the header won't appear over it.
+body:has(.triplan-react-modal) {
+  .triplan-header-banner {
+    .triplan-header-banner-header-line {
+      &.sticky {
+        &.is-sticky {
+          z-index: 100 !important;
+        }
       }
     }
   }

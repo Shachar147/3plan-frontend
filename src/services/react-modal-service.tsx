@@ -3338,7 +3338,8 @@ const ReactModalService = {
 
 		const handleDeleteEventResult = (
 			currentEvent: CalendarEvent,
-			addEventToSidebar: (event: SidebarEvent) => boolean
+			addEventToSidebar: (event: SidebarEvent) => boolean,
+			isDeleteComplete: boolean = false
 		) => {
 			const original = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
 
@@ -3379,7 +3380,7 @@ const ReactModalService = {
 					}
 				},
 				'MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE',
-				'MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT',
+				isDeleteComplete ? 'MODALS.REMOVE_EVENT_FROM_CALENDAR_COMPLETELY.CONTENT' : 'MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT',
 				undefined,
 				{
 					X: categoryName,
@@ -3769,6 +3770,10 @@ const ReactModalService = {
 			// await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
 		};
 
+		const onDeleteCompleteClick = () => {
+			handleDeleteEventResult(currentEvent as unknown as CalendarEvent, () => true, true);
+		};
+
 		const onDeleteClick = () => {
 			handleDeleteEventResult(currentEvent as unknown as CalendarEvent, addEventToSidebar);
 		};
@@ -3841,8 +3846,20 @@ const ReactModalService = {
 					modalValueName: 'irrelevant',
 					type: 'custom-group',
 					extra: {
-						customGroupClassName: getClasses('actions', eventStore.isEnglish && 'flex-column'),
+						customGroupClassName: 'actions flex-column',
 						content: [
+							{
+								settings: {
+									type: 'button',
+									extra: {
+										onClick: onDeleteCompleteClick,
+										flavor: ButtonFlavor.primary,
+										className: 'red',
+									},
+								},
+								textKey: 'MODALS.REMOVE_EVENT_COMPLETELY',
+								// className: 'border-top-gray'
+							},
 							{
 								settings: {
 									type: 'button',
