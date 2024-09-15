@@ -1141,5 +1141,7 @@
 	"NO_RESULTS_TRY_DIFFERENT_CATEGORY": "לא נמצאו תוצאות, נסה לסנן לפי קטגוריה אחרת",
 	"ALL_CATEGORIES": "כל הקטגוריות",
 	"Network Error": "שגיאת רשת",
-	"RATED_X_OF_Y": "מדורג {X}/{Y}"
+	"RATED_X_OF_Y": "מדורג {X}/{Y}",
+	"SUGGESTED_TRIP_TEMPLATES": "טיולים מומלצים",
+	"SUGGESTED_TRIP_TEMPLATES.DESCRIPTION": "בנה את הטיול שלך בקלות ובמהירות על ידי שימוש בטמפלייטים מוכנים שצוות המומחים שלנו בנו עבורך!"
 }

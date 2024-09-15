@@ -7,8 +7,6 @@ import {eventStoreContext} from "../../../stores/events-store";
 function SidebarSearch() {
     const eventStore = useContext(eventStoreContext);
 
-    console.log("heree", eventStore.sidebarSearchValue);
-
     return (
         <div className="sidebar-search-container">
             <TriplanSearch

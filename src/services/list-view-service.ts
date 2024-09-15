@@ -286,7 +286,7 @@ const ListViewService = {
 		};
 	},
 	_sortEvents: (calendarEvents: CalendarEvent[]) => {
-		return calendarEvents.sort((a, b) => {
+		return calendarEvents.slice().sort((a, b) => {
 			const aTime = toDate(a.start).getTime();
 			const bTime = toDate(b.start).getTime();
 			if (aTime === bTime) {

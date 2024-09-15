@@ -915,5 +915,7 @@
 	"FILTER_BY": "Filter by:",
 	"NO_RESULTS_TRY_DIFFERENT_CATEGORY": "No results found, try filter by a different category",
 	"ALL_CATEGORIES": "All categories",
-	"RATED_X_OF_Y": "rated {X}/{Y}"
+	"RATED_X_OF_Y": "rated {X}/{Y}",
+	"SUGGESTED_TRIP_TEMPLATES": "Suggested trips",
+	"SUGGESTED_TRIP_TEMPLATES.DESCRIPTION": "Create your trip easily and quickly using the predefined templates our experts team created for you!"
 }

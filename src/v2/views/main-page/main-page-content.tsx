@@ -10,14 +10,14 @@ import MyTrips from "../my-trips-tab/my-trips-tab";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
 import {myTripsContext} from "../../stores/my-trips-store";
-import {getClasses, getCurrentUsername, isTemplate, LOADER_DETAILS} from "../../../utils/utils";
+import {getClasses, isTemplate, LOADER_DETAILS} from "../../../utils/utils";
 import {
     exploreTabId,
     mainPageContentTabLsKey,
     myTripsTabId,
     savedCollectionsTabId,
     searchResultsTabId,
-    specificItemTabId, TEMPLATES_USER_NAME
+    specificItemTabId
 } from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
 import {getParameterFromHash} from "../../utils/utils";
@@ -29,13 +29,10 @@ import {
     useScrollWhenTabChanges
 } from "../../hooks/main-page-hooks";
 import {TabData} from "../../utils/interfaces";
-import FeedViewApiService, {allSources} from "../../services/feed-view-api-service";
 import {useParams} from "react-router-dom";
-import {runInAction} from "mobx";
-import DataServices, {LocaleCode} from "../../../services/data-handlers/data-handler-base";
-import {TripDataSource} from "../../../utils/enums";
 import LoadingComponent from "../../../components/loading/loading-component";
 import MainPage from "../../../pages/main-page/main-page";
+import TemplatesView from "../../components/templates-view/templates-view";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -156,7 +153,12 @@ function MainPageContent(){
                 order: 0,
                 name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
                 icon: "fa-search",
-                render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />
+                render: () => <TriplanTabContent content={
+                    <div className="flex-col gap-20">
+                        <TemplatesView />
+                        <FeedView eventStore={eventStore} mainFeed />
+                    </div>
+                } />
             },
             {
                 id: savedCollectionsTabId,

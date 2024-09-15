@@ -573,7 +573,7 @@ export class EventStore {
 						e.className = e.className || '';
 						e.className = e.className.replaceAll(' red-background', '') + ' red-background';
 						e.className += ' red-background';
-						console.log({ id: e.id, timingError: errorReason });
+						// console.log({ id: e.id, timingError: errorReason });
 						eventsWithOpeningHoursProblems.push({ id: e.id, timingError: errorReason });
 					} else {
 						e.timingError = '';
@@ -1401,7 +1401,7 @@ export class EventStore {
 		const key2 = 'auto-locked-' + this.tripId;
 		if (!isLocked) {
 			if (new Date().getTime() > new Date(endDate).getTime()) {
-				console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
+				// console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
 				if (!localStorage.getItem(key) && !localStorage.getItem(key2)) {
 					this.dataService.lockTrip(this.tripName);
 					localStorage.setItem(key, '1');
