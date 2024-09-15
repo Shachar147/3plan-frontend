@@ -765,7 +765,7 @@ function MyTripsTab(){
 
     return (
         <div className="flex-column align-items-start margin-top-10">
-            <div className="flex-column gap-8 align-items-center width-100-percents">
+            <div className="flex-column align-items-center width-100-percents">
                 <h3 className={getClasses("main-feed-header width-100-percents", eventStore.isMobile && 'flex-row')}>
                     <span>{TranslateService.translate(eventStore, getPageTitle())}</span>
                     {myTripsStore.allTripsSorted.length > 0 && !addNewTripMode && renderAddTripButton()}
