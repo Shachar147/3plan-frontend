@@ -80,19 +80,22 @@ function TemplatesView(){
     const baseClass = "templates-view"
 
     return (
-        <div className={baseClass}>
-            <div className={`${baseClass}-title`}>
-                <h3 className="main-feed-header width-100-percents">{title}</h3>
-                <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: description}} />
+        <>
+            {!eventStore.isMobile && <div className={`${baseClass}-gray-bg`}/>}
+            <div className={getClasses(baseClass, eventStore.isMobile && 'with-divider')}>
+                <div className={`${baseClass}-title`}>
+                    <h3 className="main-feed-header width-100-percents">{title}</h3>
+                    <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: description}} />
+                </div>
+                <div className={getClasses("main-feed-header gap-20 width-100-percents align-items-center", eventStore.isMobile ? 'flex-col' : 'flex-row')}>
+                    {tripTemplatesStore.isLoading ? <TemplateShimmeringPlaceholder/> : (
+                        <>
+                            {tripTemplatesStore.tripTemplates.map((t, idx) => <Template key={idx} trip={t} />)}
+                        </>
+                    )}
+                </div>
             </div>
-            <div className={getClasses(eventStore.isMobile ? 'flex-col' : 'flex-row', "gap-20 width-100-percents", tripTemplatesStore.isLoading ? 'align-items-center' : 'align-items-center', 'padding-inline-100')}>
-                {tripTemplatesStore.isLoading ? <TemplateShimmeringPlaceholder/> : (
-                    <>
-                        {tripTemplatesStore.tripTemplates.map((t, idx) => <Template key={idx} trip={t} />)}
-                    </>
-                )}
-            </div>
-        </div>
+        </>
     )
 }
 
