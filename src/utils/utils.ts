@@ -429,8 +429,11 @@ export function calendarOrSidebarEventDetails(eventStore: EventStore, event: Sid
 	return undefined;
 }
 
-export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventStore) {
-	if (isTemplate()) {
+export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventStore, isTemplate?: boolean) {
+	if (!calendarEvent.title){
+		return null;
+	}
+	if (isTemplate || isTemplateUsername()) {
 		if (eventStore.isHebrew) {
 			return calendarEvent.title.split('|')?.[1]?.trim() ?? calendarEvent.title;
 		}
@@ -441,7 +444,7 @@ export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventSto
 }
 
 export function getEventDescription(calendarEvent: CalendarEvent, eventStore: EventStore) {
-	if (isTemplate()) {
+	if (isTemplateUsername()) {
 		if (eventStore.isHebrew) {
 			return calendarEvent.description.split('|')?.[1]?.trim() ?? calendarEvent.description;
 		}
@@ -451,7 +454,7 @@ export function getEventDescription(calendarEvent: CalendarEvent, eventStore: Ev
 	return calendarEvent.description;
 }
 
-export function isTemplate(){
+export function isTemplateUsername(){
 	return getCurrentUsername() == TEMPLATES_USER_NAME;
 }
 

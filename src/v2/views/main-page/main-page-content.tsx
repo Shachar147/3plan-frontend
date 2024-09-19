@@ -10,7 +10,7 @@ import MyTrips from "../my-trips-tab/my-trips-tab";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
 import {myTripsContext} from "../../stores/my-trips-store";
-import {getClasses, isTemplate, LOADER_DETAILS} from "../../../utils/utils";
+import {getClasses, isTemplateUsername, LOADER_DETAILS} from "../../../utils/utils";
 import {
     exploreTabId,
     mainPageContentTabLsKey,
@@ -172,7 +172,7 @@ function MainPageContent(){
             {
                 id: myTripsTabId,
                 order: 2,
-                name: TranslateService.translate(eventStore, `${isTemplate() ? 'TEMPLATES' : 'MY_TRIPS'}_X${isShort}`, {
+                name: TranslateService.translate(eventStore, `${isTemplateUsername() ? 'TEMPLATES' : 'MY_TRIPS'}_X${isShort}`, {
                     X: myTripsStore.totalTrips
                 }),
                 icon: "fa-plane",

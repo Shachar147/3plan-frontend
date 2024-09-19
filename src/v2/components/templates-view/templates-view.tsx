@@ -6,6 +6,8 @@ import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
 import PlacesPhotosApiService from "../../services/places-photos-api-service";
 import './templates-view.scss';
+import {newDesignRootPath} from "../../utils/consts";
+import {getTripTemplatePhoto} from "../../views/trip-template-page/utils";
 
 function TemplateShimmeringPlaceholder() {
     const baseClass = "trip-template";
@@ -36,30 +38,25 @@ function Template({ trip }) {
     const baseClass = "trip-template";
 
     useEffect(() => {
-        Promise.all(trip.destinations.map((d) => new PlacesPhotosApiService().getPhoto(d))).then((results) => {
-            // const bgs = results.map((r) => r["data"]?.[0]?.["photo"]).filter(Boolean);
-            let bgs = results.map((r) => r["data"]?.[0]?.["other_photos"]).filter(Boolean).map((b) => JSON.parse(b)).flat();
-            if (!bgs.length){
-                bgs = results.map((r) => r["data"]?.[0]?.["photo"]).filter(Boolean).map((b) => JSON.parse(b)).flat();
-            }
-
-            if (bgs.length) {
-                let random = Math.floor(Math.random() * bgs.length);
-                setBackgroundImage(bgs[random]);
+        getTripTemplatePhoto(trip).then((bgImage: string | undefined) => {
+            if (bgImage){
+                setBackgroundImage(bgImage);
                 setIsLoading(false);
             }
-        });
+        })
     }, [])
 
     return (
-        <div className={baseClass}>
+        <div className={baseClass} onClick={() => {
+            window.location.href = `${newDesignRootPath}/template/${trip.id}`;
+        }}>
             <div className={getClasses(`${baseClass}-background`, isLoading && 'shimmer-animation')} style={{
                 backgroundImage: isLoading ? undefined : `url('${backgroundImage}')`,
             }}/>
 
             {!isLoading && <div className={getClasses(`${baseClass}-content`)}>
                 <div className={`${baseClass}-content-bottom-shadow`}>
-                    {getEventTitle({ title: trip.name }, eventStore)}
+                    {getEventTitle({ title: trip.name }, eventStore, true)}
                 </div>
             </div>}
         </div>

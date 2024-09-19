@@ -7,7 +7,7 @@ import './point-of-interest.scss';
 import ReactModalService from "../../../services/react-modal-service";
 import {TripActions} from "../../../utils/interfaces";
 import {TriplanPriority} from "../../../utils/enums";
-import {extractCategory, getClasses, getCurrentUsername, isTemplate} from "../../../utils/utils";
+import {extractCategory, getClasses, isTemplateUsername} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore, eventStoreContext} from "../../../stores/events-store";
 import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
@@ -499,7 +499,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
 
     function renderName() {
         let overridePreview;
-        if (isTemplate() && myTrips) {
+        if (isTemplateUsername() && myTrips) {
             if (eventStore.isHebrew) {
                 overridePreview = item.name.split('|')?.[1]?.trim() ?? item.name;
             } else {
@@ -645,7 +645,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                             icon={`fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
                             className={getClasses("cursor-pointer", eventStore.isMobile && 'black')}
                             type={ButtonFlavor.secondary}
-                            text={TranslateService.translate(eventStore, isTemplate() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
+                            text={TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
                             onClick={() => onClick()}
                         />
                     </div>

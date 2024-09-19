@@ -137,6 +137,11 @@ interface MapContainerProps {
 	getNameLink?: (x: AllEventsEvent) => string;
 	isCombined?: boolean;
 	addToEventsToCategories: (event: SidebarEvent) => void;
+
+	noHeader?: boolean;
+	noFilters?: boolean;
+	isReadOnly?: boolean;
+	zoom?: number;
 }
 
 export interface MapContainerRef {
@@ -1240,7 +1245,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 												info.event
 											);
 										}}
-										title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
+										title={props.isReadOnly ? undefined : TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
 									/>
 								);
 
@@ -1249,7 +1254,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 										<i
 											className="fa fa-calendar-check-o visible-items-calendar-indicator"
 											aria-hidden="true"
-											title={TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
+											title={props.isReadOnly ? undefined : TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
 										/>
 									);
 								}
@@ -1260,6 +1265,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 									key={`filtered-visible-item-${idx}`}
 									className={`fc-event priority-${info.event.priority}`}
 									onClick={() => {
+										if (props.isReadOnly) {
+											return;
+										}
 										onVisibleItemClick(info.event, info.marker);
 									}}
 								>
@@ -1300,15 +1308,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		);
 	}
 
-	return (
-		<div
-			className={getClasses(
-				'map-container',
-				props.isCombined && 'combined',
-				eventStore.isMobile && 'resize-none'
-			)}
-		>
-			{locations.length > 0 && renderMapFilters()}
+	function renderMapHeader(){
+		return (
 			<div className="map-header">
 				<div
 					className={getClasses(
@@ -1350,6 +1351,19 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					</div>
 				</div>
 			</div>
+		)
+	}
+
+	return (
+		<div
+			className={getClasses(
+				'map-container',
+				props.isCombined && 'combined',
+				eventStore.isMobile && 'resize-none'
+			)}
+		>
+			{!props.noFilters && locations.length > 0 && renderMapFilters()}
+			{!props.noHeader && renderMapHeader()}
 			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
 				{locations.length == 0 && renderNoItemsOnMapPlaceholder()}
 				<GoogleMapReact
@@ -1365,7 +1379,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 							? { lat: coordinates[0].lat, lng: coordinates[0].lng }
 							: undefined
 					}
-					zoom={searchCoordinates.length > 0 || center ? 14 : 7}
+					zoom={props.zoom ?? (searchCoordinates.length > 0 || center ? 14 : 7)}
 					yesIWantToUseGoogleMapApiInternals
 					// @ts-ignore
 					onGoogleApiLoaded={({ map, maps }) => initMap(map, maps)}

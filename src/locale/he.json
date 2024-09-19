@@ -1143,5 +1143,6 @@
 	"Network Error": "שגיאת רשת",
 	"RATED_X_OF_Y": "מדורג {X}/{Y}",
 	"SUGGESTED_TRIP_TEMPLATES": "טיולים מומלצים",
-	"SUGGESTED_TRIP_TEMPLATES.DESCRIPTION": "בנה את הטיול שלך בקלות ובמהירות על ידי שימוש בטמפלייטים מוכנים שצוות המומחים שלנו בנו עבורך!"
+	"SUGGESTED_TRIP_TEMPLATES.DESCRIPTION": "בנה את הטיול שלך בקלות ובמהירות על ידי שימוש בטמפלייטים מוכנים שצוות המומחים שלנו בנו עבורך!",
+	"DAY_X": "יום {X}"
 }

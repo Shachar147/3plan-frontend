@@ -16,7 +16,7 @@ import {DESKTOP_SCROLL_TOP, MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
 import {getParameterFromHash} from "../../utils/utils";
 
 
-function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
+function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isInLogin?: boolean, isAlwaysSticky?: boolean }){
     const rootStore = useContext(rootStoreContext);
     const eventStore = useContext(eventStoreContext);
     const { tripName } = useParams();
@@ -43,7 +43,7 @@ function TriplanHeaderLine({ isInLogin = false }: { isInLogin?:boolean }){
 
     const baseClass = "triplan-header-banner-header-line";
     const isMobile = false;  // eventStore.isMobile;
-    const isSticky = (!isMobile && scrollY > 60) || (tripName && scrollY > 60);
+    const isSticky = (!isMobile && scrollY > 60) || (tripName && scrollY > 60) || isAlwaysSticky;
     const isShort = eventStore.isMobile ? '.SHORT' : '';
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);

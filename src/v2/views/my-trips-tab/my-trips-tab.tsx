@@ -8,7 +8,7 @@ import {
     getUserDateFormat,
     validateDateRange
 } from "../../../utils/time-utils";
-import {getClasses, isTemplate, LOADER_DETAILS} from "../../../utils/utils";
+import {getClasses, isTemplateUsername, LOADER_DETAILS} from "../../../utils/utils";
 import {useNavigate} from "react-router-dom";
 import PointOfInterest from "../../components/point-of-interest/point-of-interest";
 import {myTripsContext} from "../../stores/my-trips-store";
@@ -328,7 +328,7 @@ function MyTripsTab(){
     }
 
     function getHideUnHideIcon(){
-        if (isTemplate()) {
+        if (isTemplateUsername()) {
             if (myTripsStore.showHidden) {
                 return 'fa-thumbs-o-up';
             } else {
@@ -750,7 +750,7 @@ function MyTripsTab(){
             key = 'HIDDEN_TRIPS';
         }
 
-        if (isTemplate()) {
+        if (isTemplateUsername()) {
             if (myTripsStore.showHidden) {
                 key = 'UNAPPROVED_TEMPLATES';
             } else {
@@ -761,7 +761,7 @@ function MyTripsTab(){
         return TranslateService.translate(eventStore, key);
     }
 
-    const what = isTemplate() ? 'TEMPLATE' : 'TRIP';
+    const what = isTemplateUsername() ? 'TEMPLATE' : 'TRIP';
 
     return (
         <div className="flex-column align-items-start margin-top-10">

@@ -5,7 +5,7 @@ import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ToggleButton, { OptionToggleButton } from '../components/toggle-button/toggle-button';
 import { ViewMode } from './enums';
-import {getClasses, getEventTitle, isEventAlreadyOrdered, isTemplate} from './utils';
+import {getClasses, getEventTitle, isEventAlreadyOrdered, isTemplateUsername} from './utils';
 import TriplanTag from '../components/common/triplan-tag/triplan-tag';
 import { getUser } from '../helpers/auth';
 import Select from 'react-select';
