@@ -630,9 +630,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 				infoWindow.setContent(buildInfoWindowContent(event));
 				if (marker) infoWindow.open(googleMapRef, marker);
-				else {
-					alert("no marker");
-				}
 				// else {
 				// 	setTimeout(() => {
 				// 		initMarkers();
@@ -640,8 +637,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				// 		if (marker) infoWindow.open(googleMapRef, marker);
 				// 	}, 1000);
 				// }
-			} else {
-				alert("no google map ref or no info window");
 			}
 		};
 	}, [googleMapRef, infoWindow, markers]);
