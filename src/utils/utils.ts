@@ -443,12 +443,12 @@ export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventSto
 	return calendarEvent.title;
 }
 
-export function getEventDescription(calendarEvent: CalendarEvent, eventStore: EventStore) {
-	if (isTemplateUsername()) {
+export function getEventDescription(calendarEvent: CalendarEvent, eventStore: EventStore, isTemplate?: boolean) {
+	if (isTemplate || isTemplateUsername()) {
 		if (eventStore.isHebrew) {
-			return calendarEvent.description.split('|')?.[1]?.trim() ?? calendarEvent.description;
+			return calendarEvent.description?.split('|')?.[1]?.trim() ?? calendarEvent.description;
 		}
-		return calendarEvent.description.split('|')?.[0]?.trim();
+		return calendarEvent.description?.split('|')?.[0]?.trim();
 	}
 
 	return calendarEvent.description;

@@ -29,7 +29,7 @@ import {
 	coordinateToString,
 	generate_uuidv4,
 	getCoordinatesRangeKey,
-	isEventAlreadyOrdered,
+	isEventAlreadyOrdered, isTemplateUsername,
 	lockEvents
 } from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
@@ -1253,7 +1253,7 @@ export class EventStore {
 			const sharedTrip = sharedTrips.find((s) => s.name === name);
 			this.isSharedTrip = !!sharedTrip;
 			if (!!sharedTrip) {
-				this.isTripLocked = !!sharedTrip.isLocked;
+				this.isTripLocked = !!sharedTrip.isLocked && !isTemplateUsername();
 				this.canRead = sharedTrip.canRead;
 				this.canWrite = sharedTrip.canWrite;
 
@@ -1377,7 +1377,7 @@ export class EventStore {
 		this.customDateRange = dateRange;
 		this.allEvents = allEvents;
 		this.categories = categories;
-		this.isTripLocked = !!isLocked;
+		this.isTripLocked = !!isLocked && !isTemplateUsername();
 		this.destinations = tripData.destinations;
 
 		if ('canRead' in Object.keys(tripData) || 'canWrite' in Object.keys(tripData)) {
@@ -1612,7 +1612,7 @@ export class EventStore {
 
 		runInAction(() => {
 			if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
-				this.isTripLocked = !this.isTripLocked;
+				this.isTripLocked = !this.isTripLocked && !isTemplateUsername();
 			}
 
 			// slight delay since it takes time to re-render

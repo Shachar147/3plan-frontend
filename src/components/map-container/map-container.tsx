@@ -367,7 +367,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				? event.category
 				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
 
-			category = category ? category.toLowerCase() : '';
+			category = category ? category.toString().toLowerCase() : '';
 			const title = event.title.toLowerCase();
 
 			const iconsMap = {

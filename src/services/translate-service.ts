@@ -32,6 +32,10 @@ const TranslateService = {
 	},
 
 	translateFromTo: (eventStore: EventStore, value: string, params: TranslationParams = {}, from: LocaleCode, to: LocaleCode) => {
+		if (from == to){
+			return value;
+		}
+
 		// @ts-ignore
 		const sourceTranslations: Record<string, string> = translates[from];
 
