@@ -262,7 +262,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		if (preferredTime) {
 			preferredTime = TriplanEventPreferredTime[preferredTime];
 		} else {
-			preferredTime = TriplanEventPreferredTime.unset;
+			preferredTime = TriplanEventPreferredTime[TriplanEventPreferredTime.unset];
 		}
 
 		if (preferredTime == 'unset' && eventStore.isHebrew) {

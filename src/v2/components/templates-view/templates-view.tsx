@@ -4,7 +4,6 @@ import {tripTemplatesContext} from "../../stores/templates-store";
 import {getClasses, getEventTitle} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
-import PlacesPhotosApiService from "../../services/places-photos-api-service";
 import './templates-view.scss';
 import {newDesignRootPath} from "../../utils/consts";
 import {getTripTemplatePhoto} from "../../views/trip-template-page/utils";
