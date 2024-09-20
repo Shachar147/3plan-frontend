@@ -141,6 +141,7 @@
 
   .trip-template-itinerary {
     width: 50vw;
+    max-width: 65vw;
   }
 
   .trip-template-page-cover {
@@ -172,6 +173,7 @@ body.rtl {
     .trip-template-itinerary {
       resize: none !important;
       width: 100vw !important;
+      max-width: unset !important;
 
       &-content-bottom-shadow {
         font-size: 32px;
