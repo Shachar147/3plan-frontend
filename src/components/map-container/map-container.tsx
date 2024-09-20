@@ -264,6 +264,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		} else {
 			preferredTime = TriplanEventPreferredTime.unset;
 		}
+
+		if (preferredTime == 'unset' && eventStore.isHebrew) {
+			preferredTime = "unset.male";
+		}
+
 		const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(
 			eventStore,
 			preferredTime

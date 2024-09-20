@@ -63,7 +63,7 @@ function TripTemplatePageContent(){
 
         if (!isLoading) {
             content = (
-                <div className="map-container flex-1-1-0" key={`${eventStore.forceMapReRender}-${JSON.stringify(eventStore.allEventsFilteredComputed)}`}>
+                <div className="map-container flex-row" key={`${eventStore.forceMapReRender}-${JSON.stringify(eventStore.allEventsFilteredComputed)}`}>
                     <Observer>
                         {() => <MapContainer allEvents={eventStore.calendarEvents} ref={MapContainerRef} addToEventsToCategories={() => false} noHeader noFilters isReadOnly zoom={eventStore.showEventOnMap ? 14 : 12} isTemplate />}
                     </Observer>
@@ -72,7 +72,7 @@ function TripTemplatePageContent(){
         }
 
         return (
-            <div className="flex-1-1-0 max-width-50-percents">{content}</div>
+            <div className="map-container-wrapper flex-1-1-0">{content}</div>
         )
     }
 
@@ -114,7 +114,7 @@ function TripTemplatePageContent(){
         }
 
         return (
-            <div className={getClasses("flex-1-1-0", !eventStore.isMobile ? "max-width-50-percents" : "max-width-100-percents")}>{content}</div>
+            <div className={getClasses("flex-row", `${baseClass}-wrapper`, eventStore.isMobile && "max-width-100-percents")}>{content}</div>
         )
     }
 

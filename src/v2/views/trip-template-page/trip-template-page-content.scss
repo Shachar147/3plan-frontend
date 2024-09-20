@@ -133,6 +133,16 @@
     }
   }
 
+  .trip-template-itinerary,
+  .map-container {
+    resize: horizontal;
+    min-width: 35vw;
+  }
+
+  .trip-template-itinerary {
+    width: 50vw;
+  }
+
   .trip-template-page-cover {
     width: 100%;
     background-size: cover;
@@ -160,6 +170,9 @@ body.rtl {
 @media only screen and (max-width: 750px) {
   .trip-template-page-content {
     .trip-template-itinerary {
+      resize: none !important;
+      width: 100vw !important;
+
       &-content-bottom-shadow {
         font-size: 32px;
       }

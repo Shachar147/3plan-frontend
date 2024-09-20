@@ -72,7 +72,7 @@ function TripTemplateDay({ events, baseClass, idx, counter }: { events: Calendar
 
                 return (
                     (
-                        <div className={`${baseClass}-activity`} onClick={() => markActivityOnMap()}>
+                        <div className={`${baseClass}-activity`} onClick={() => !eventStore.isMobile && markActivityOnMap()}>
                             <div className={`${baseClass}-activity-marker-icon`}>
                                 <i className="fa fa-map-marker" />
                                 <span>{counter + idx2 + 1 - notesCounter}</span>
