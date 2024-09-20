@@ -6,7 +6,7 @@ import TranslateService from "../../../services/translate-service";
 import {observer} from "mobx-react";
 import FeedView from "../../components/feed-view/feed-view";
 import './main-page-content.scss'
-import MyTrips from "../my-trips-tab/my-trips-tab";
+import MyTripsTab from "../my-trips-tab/my-trips-tab";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
 import {myTripsContext} from "../../stores/my-trips-store";
@@ -176,7 +176,7 @@ function MainPageContent(){
                     X: myTripsStore.totalTrips
                 }),
                 icon: "fa-plane",
-                render: () => <TriplanTabContent content={<MyTrips />} />
+                render: () => <TriplanTabContent content={<MyTripsTab />} />
             },
         ];
     }

@@ -31,10 +31,15 @@
       display: flex;
       flex-direction: column;
       justify-content: end;
-      color: white;
-      font-size: 50px;
-      font-weight: bold;
-      text-align: center;
+      align-items: center;
+      gap: 8px;
+
+      > span {
+        color: white;
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+      }
       padding-bottom: 20px;
     }
 
@@ -181,7 +186,9 @@ body.rtl {
       max-width: unset !important;
 
       &-content-bottom-shadow {
-        font-size: 32px;
+        > span {
+          font-size: 32px;
+        }
       }
 
       &-activity {

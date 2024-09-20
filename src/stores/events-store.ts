@@ -1813,6 +1813,15 @@ export class EventStore {
 	triggerCalendarReRender(){
 		this.forceCalendarReRender += 1;
 	}
+
+	@computed
+	get formattedTripName(){
+		if (!this.tripName) {
+			return undefined;
+		}
+		return this.tripName.includes(" ") ? this.tripName : this.tripName.replaceAll('-',' ').replaceAll('   ',' - ');
+
+	}
 }
 
 export const eventStoreContext = createContext(new EventStore());

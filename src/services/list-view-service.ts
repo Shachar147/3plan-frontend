@@ -210,8 +210,9 @@ const ListViewService = {
 			'',
 		];
 		const or = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OR');
+
 		const tripSummaryTitle =
-			TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE') + ' - ' + eventStore.tripName;
+			TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE') + ' - ' + eventStore.formattedTripName;
 
 		// if we're on no description mode, do not show also prefixes.
 		if (eventStore.listViewSummaryMode === ListViewSummaryMode.noDescriptions) {

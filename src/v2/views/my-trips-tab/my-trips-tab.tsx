@@ -3,24 +3,31 @@ import React, {useContext, useEffect, useMemo, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import DataServices, {Trip, tripNameToLSTripName} from "../../../services/data-handlers/data-handler-base";
 import {
+    addDays,
     formatShortDateStringIsrael,
     getAmountOfDays,
     getUserDateFormat,
     validateDateRange
 } from "../../../utils/time-utils";
-import {getClasses, isTemplateUsername, LOADER_DETAILS} from "../../../utils/utils";
+import {getClasses, getEventDescription, getEventTitle, isTemplateUsername, LOADER_DETAILS} from "../../../utils/utils";
 import {useNavigate} from "react-router-dom";
 import PointOfInterest from "../../components/point-of-interest/point-of-interest";
 import {myTripsContext} from "../../stores/my-trips-store";
 import LoadingComponent from "../../../components/loading/loading-component";
 import ReactModalService from "../../../services/react-modal-service";
 import LogHistoryService from "../../../services/data-handlers/log-history-service";
-import {TripActions} from "../../../utils/interfaces";
+import {CalendarEvent, TripActions, TriPlanCategory} from "../../../utils/interfaces";
 import './my-trips-tab.scss';
 import moment from "moment";
 import Button, {ButtonFlavor} from "../../../components/common/button/button";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
-import {defaultCalendarEvents, defaultDateRange, defaultEvents, getDefaultCategories} from "../../../utils/defaults";
+import {
+    defaultCalendarEvents,
+    defaultDateRange,
+    defaultEvents,
+    formatDateString,
+    getDefaultCategories
+} from "../../../utils/defaults";
 import {TripDataSource} from "../../../utils/enums";
 import {DEFAULT_VIEW_MODE_FOR_NEW_TRIPS} from "../../../utils/consts";
 import {upsertTripProps} from "../../../services/data-handlers/db-service";
@@ -31,16 +38,21 @@ import {feedStoreContext} from "../../stores/feed-view-store";
 import {IPointOfInterestToTripEvent} from "../../utils/interfaces";
 import {myTripsTabId, newDesignRootPath} from "../../utils/consts";
 import MainPage from "../../../pages/main-page/main-page";
+import {tripTemplatesContext} from "../../stores/templates-store";
 
 function MyTripsTab(){
     const eventStore = useContext(eventStoreContext);
     const myTripsStore = useContext(myTripsContext);
     const feedStore = useContext(feedStoreContext);
+    const templatesStore = useContext(tripTemplatesContext)
     const navigate = useNavigate();
 
     const [addNewTripMode, setAddNewTripMode] = useState(window.location.hash.includes("createTrip"));
     const savedCollectionId = window.location.hash.includes('createTrip') ? getParameterFromHash('id') : undefined;
     const savedCollection = savedCollectionId ? feedStore.savedCollections.find((c) => c.id == savedCollectionId) : undefined;
+
+    const templateId = window.location.hash.includes('createTrip') ? getParameterFromHash('tid') : undefined;
+    const [template, setTemplate] = useState(templateId ? templatesStore.tripTemplates.find((t) => t.id == templateId) : undefined);
 
     const [planTripMode, setPlanTripMode] = useState(window.location.hash.includes("planTrip"));
     const [planTripName, setPlanTripName] = useState(undefined);
@@ -57,7 +69,33 @@ function MyTripsTab(){
             setTripName(TranslateService.translate(eventStore,'MY_TRIP_TO_X', { X: TranslateService.translate(eventStore, savedCollection.destination) }));
             setSelectedDestinations([savedCollection.destination]);
         }
-    }, [savedCollection])
+    }, [savedCollection]);
+
+    useEffect(() => {
+        if (templatesStore.tripTemplates.length == 0) {
+            templatesStore.loadTemplates().then(() => {
+                setTemplate(templateId ? templatesStore.tripTemplates.find((t) => t.id == templateId) : undefined);
+            });
+        }
+    }, [])
+
+    useEffect(() => {
+        if (template) {
+            // @ts-ignore
+            setTripName(getEventTitle({
+                title: template.name
+            }, eventStore, true));
+            setSelectedDestinations(template.destinations);
+
+            const dateDiff = daysBetween(new Date(template.dateRange.start), new Date(template.dateRange.end))
+            const dateRange = {
+                start: formatDateString(addDays(new Date(), 7)),
+                end: formatDateString(addDays(new Date(), 7 + dateDiff))
+            };
+            setCustomDateRange(dateRange);
+
+        }
+    }, [template])
 
     useEffect(() => {
         document.querySelector('body').classList.remove('rtl');
@@ -387,6 +425,26 @@ function MyTripsTab(){
         );
     }
 
+    function formatTemplateEvent(e: CalendarEvent, diff?: number) {
+        e.description = getEventDescription(e, eventStore, true);
+        e.title = getEventTitle(e, eventStore, true);
+
+        if (e.start && diff){
+            e.start = addDays(new Date(e.start), diff);
+            e.end = addDays(new Date(e.end), diff);
+        }
+
+        return e;
+    }
+
+    function formatTemplateCategory(c: TriPlanCategory) {
+        if (eventStore.isHebrew) {
+            c.title = TranslateService.translateFromTo(eventStore, c.title, undefined, 'en', 'he') ?? c.title
+        }
+
+        return c;
+    }
+
     async function createNewTrip(tripName: string) {
         const areDatesValid = validateDateRange(eventStore, customDateRange.start, customDateRange.end);
         errors.start = !areDatesValid;
@@ -484,6 +542,23 @@ function MyTripsTab(){
 
                 tripData.allEvents = allEvents;
                 tripData.sidebarEvents = sidebarEvents;
+            }
+
+            if (template){
+
+                const dayOne = new Date(customDateRange.start);
+                const templateDayOne = new Date(template.dateRange.start);
+                const diff = daysBetween(templateDayOne, dayOne);
+
+                tripData.allEvents = template.allEvents.map(formatTemplateEvent);
+                const sidebarEvents = {};
+                Object.keys(template.sidebarEvents).forEach((c) => {
+                    sidebarEvents[c] = template.sidebarEvents[c].map(formatTemplateEvent)
+                })
+
+                tripData.sidebarEvents = sidebarEvents;
+                tripData.calendarEvents = template.calendarEvents.map((c) => formatTemplateEvent(c, diff));
+                tripData.categories = template.categories.map(formatTemplateCategory);
             }
 
             // backup

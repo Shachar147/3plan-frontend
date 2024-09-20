@@ -61,7 +61,7 @@ function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = fal
         }}>
             <div className={getClasses(`${baseClass}-shadow`, eventStore.isHebrew && 'flip-x')} />
             {!noHeader && <TriplanHeaderLine isInLogin={isInLogin} isAlwaysSticky={isAlwaysSticky} />}
-            <div className={`${baseClass}-slogan black-text-shadow`} dangerouslySetInnerHTML={{ __html: isInPlan ? `<div class="trip-name-in-banner">${eventStore.tripName}</div>` : withHr ? `${slogan}<hr/>` : slogan }}
+            <div className={`${baseClass}-slogan black-text-shadow`} dangerouslySetInnerHTML={{ __html: isInPlan ? `<div class="trip-name-in-banner">${eventStore.formattedTripName}</div>` : withHr ? `${slogan}<hr/>` : slogan }}
             />
             <div className={`${baseClass}-bottom-shadow`} />
         </div>
