@@ -12,13 +12,14 @@ export class TripTemplatesStore {
         this.setIsLoading(true);
         const tripTemplates = await new TripTemplatesApiService().getMainFeedTemplates();
         runInAction(() => {
-            this.tripTemplates = [
-                ...tripTemplates.results,
-                ...tripTemplates.results,
-                ...tripTemplates.results,
-                ...tripTemplates.results,
-                ...tripTemplates.results
-            ];
+            this.tripTemplates = tripTemplates;
+            // this.tripTemplates = [
+            //     ...tripTemplates.results,
+            //     ...tripTemplates.results,
+            //     ...tripTemplates.results,
+            //     ...tripTemplates.results,
+            //     ...tripTemplates.results
+            // ];
             this.setIsLoading(false);
         })
     }

@@ -278,7 +278,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		// const lng = event.location.longitude.toFixed(7);
 		// const url = `https://maps.google.com/maps?q=${lat},${lng}`;
 		const url = BuildEventUrl(event.location);
-		const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`;
+		const urlBlock = `<span><a href="${url}" target="_blank">${TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a></span>`;
 
 		const moreInfoUrl = event.moreInfo;
 		const moreInfoBlock = moreInfoUrl
