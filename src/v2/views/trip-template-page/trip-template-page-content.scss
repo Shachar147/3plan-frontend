@@ -52,6 +52,15 @@
       gap: 16px;
       padding: 20px;
       width: 100%;
+      cursor: pointer;
+      border-radius: 30px;
+      transition: background-color 0.3s ease-in-out;
+      opacity: 0.9;
+
+      &:hover {
+        background-color: #f6f6f6;
+        opacity: 1;
+      }
 
       &.notes-background {
         background-color: #f6f6f6;
@@ -74,7 +83,7 @@
         //justify-content: center;
       }
 
-      &-title {
+      &-content-title {
         font-weight: bold;
       }
 
@@ -133,6 +142,39 @@ body.rtl {
       &-days {
         direction: rtl;
         text-align: right;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .trip-template-page-content {
+    .trip-template-itinerary {
+      &-content-bottom-shadow {
+        font-size: 32px;
+      }
+
+      &-activity {
+        &-image {
+          width: 120px;
+          height: 90px;
+          max-width: 120px;
+          max-height: 90px;
+        }
+
+        &-marker-icon {
+          i {
+            font-size: 22px;
+          }
+        }
+
+        &-content-title {
+          font-size: 22px;
+        }
+
+        &-content-description {
+          word-break: break-all;
+        }
       }
     }
   }

@@ -250,7 +250,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		}
 
 		let category = event.category;
-		if (!props.allEvents) {
+		// if (!props.allEvents) {
+		if (!Number.isNaN(Number(event.category))) {
 			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 		}
 		const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
@@ -515,6 +516,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 			// for visible items to be able to get more info about this marker
 			refMarker.eventId = event.id;
+			refMarker.latitude = coordinate.lat;
+			refMarker.longitude = coordinate.lng;
 
 			// on click event
 			googleRef.event.addListener(
@@ -621,6 +624,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 				infoWindow.setContent(buildInfoWindowContent(event));
 				if (marker) infoWindow.open(googleMapRef, marker);
+				else {
+					alert("no marker");
+				}
 				// else {
 				// 	setTimeout(() => {
 				// 		initMarkers();
@@ -628,6 +634,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				// 		if (marker) infoWindow.open(googleMapRef, marker);
 				// 	}, 1000);
 				// }
+			} else {
+				alert("no google map ref or no info window");
 			}
 		};
 	}, [googleMapRef, infoWindow, markers]);
@@ -836,7 +844,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		);
 		for (let i = 0; i < allEvents.length; i++) {
 			const event = allEvents[i];
-			const marker = markers.find((x: any) => event.id.toString() === x.eventId.toString());
+			// const marker = markers.find((x: any) => event.id.toString() === x.eventId.toString());
+			const marker = markers.find((x: any) => event.location && event.location.longitude === x.longitude && event.location.latitude == x.latitude);
 			visibleItems.push({ event, marker });
 		}
 		return visibleItems.sort((a, b) => (a.event.title > b.event.title ? 1 : -1));

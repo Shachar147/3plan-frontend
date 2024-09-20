@@ -176,7 +176,8 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
         )
     }
 
-    const shouldHaveSearch = isLoggedIn;
+    const isInTemplate = window.location.href.includes(`${newDesignRootPath}/template/`);
+    const shouldHaveSearch = isLoggedIn && !isInTemplate;
 
     const search = useMemo(() => <TriplanSearchV2 />, [eventStore.isMobile]);
 

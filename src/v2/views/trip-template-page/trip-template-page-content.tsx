@@ -111,14 +111,14 @@ function TripTemplatePageContent(){
         }
 
         return (
-            <div className="flex-1-1-0 max-width-50-percents">{content}</div>
+            <div className={getClasses("flex-1-1-0", !eventStore.isMobile ? "max-width-50-percents" : "max-width-100-percents")}>{content}</div>
         )
     }
 
     return (
         <div className="trip-template-page-content">
             {renderItinerary()}
-            {renderMap()}
+            {!eventStore.isMobile && renderMap()}
         </div>
     )
 }

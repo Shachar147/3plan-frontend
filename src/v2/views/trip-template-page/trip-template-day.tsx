@@ -7,6 +7,7 @@ import {getClasses, getEventDescription, getEventTitle} from "../../../utils/uti
 import {Image} from "../../components/point-of-interest/point-of-interest";
 import {ViewMode} from "../../../utils/enums";
 import {runInAction} from "mobx";
+import ScrollToTopButton from "../../components/scroll-top/scroll-top";
 
 function wrapLinks(text: string | undefined): React.ReactNode {
     if (!text){
