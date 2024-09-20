@@ -54,7 +54,7 @@ function TripTemplateDay({ events, baseClass, idx, counter }: { events: Calendar
                             </div>
                             <div className={`${baseClass}-activity-content`}>
                                 <h4 className={`${baseClass}-activity-content-title`}>{getEventTitle(e, eventStore, true)}</h4>
-                                <div className={`${baseClass}-activity-content-description`}>{description}</div>
+                                <div className={`${baseClass}-activity-content-description notes-description`}>{description}</div>
                             </div>
                         </div>
                     )
@@ -67,6 +67,9 @@ function TripTemplateDay({ events, baseClass, idx, counter }: { events: Calendar
                     })
                 }
 
+                const categoryTagEng = eventStore.categories.find((c) => c.id == e.category).title;
+                const categoryTag = TranslateService.translateFromTo(eventStore, categoryTagEng, {}, 'en', eventStore.calendarLocalCode)
+
                 return (
                     (
                         <div className={`${baseClass}-activity`} onClick={() => markActivityOnMap()}>
@@ -77,7 +80,7 @@ function TripTemplateDay({ events, baseClass, idx, counter }: { events: Calendar
                             <Image className={`${baseClass}-activity-image`} image={ e.images?.split("\n")?.[0] ?? "/images/no-image-fallback.png"} isSmall alt={""} key={e.id + idx2} idx={`item-${e.id}-idx-${idx2}`} backgroundImage />
                             <div className={`${baseClass}-activity-content`}>
                                 <h2 className={`${baseClass}-activity-content-title`}>{getEventTitle(e, eventStore, true)}</h2>
-                                <div className={`${baseClass}-activity-category-tag`}>{TranslateService.translateFromTo(eventStore, eventStore.categories.find((c) => c.id == e.category).title, {}, 'en', eventStore.calendarLocalCode)}</div>
+                                <div className={`${baseClass}-activity-category-tag`}>{categoryTag ?? categoryTagEng}</div>
                                 <div className={`${baseClass}-activity-content-description`}>{description}</div>
                             </div>
                         </div>

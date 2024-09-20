@@ -1,5 +1,8 @@
 .scroll-top-container {
-  position: fixed;
+
+  &:not(.position-sticky) {
+    position: fixed;
+  }
   inset-inline-end: 30px;
   display: flex;
   justify-content: flex-end;

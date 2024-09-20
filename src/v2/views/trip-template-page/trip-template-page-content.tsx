@@ -14,12 +14,14 @@ import {getTripTemplatePhoto} from "./utils";
 import {getClasses} from "../../../utils/utils";
 import TripTemplateBanner from "./trip-template-banner";
 import TripTemplateDay from "./trip-template-day";
+import ScrollToTopButton from "../../components/scroll-top/scroll-top";
 
 function TripTemplatePageContent(){
     const { templateId } = useParams();
     const eventStore = useContext(eventStoreContext);
     const templatesStore = useContext(tripTemplatesContext);
 
+    const containerRef = useRef<any>(null);
     const MapContainerRef = useRef<any>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(undefined);
@@ -96,7 +98,7 @@ function TripTemplatePageContent(){
 
             let counter = 0;
             content = (
-                <div className={getClasses(baseClass, "bright-scrollbar")}>
+                <div className={getClasses(baseClass, "bright-scrollbar")} ref={containerRef}>
                     <TripTemplateBanner baseClass={baseClass} coverImage={coverImage} />
                     {Object.keys(calendarEventsPerDay).map((d, idx) => {
                         if (idx > 0){
@@ -106,6 +108,7 @@ function TripTemplatePageContent(){
                             <TripTemplateDay baseClass={baseClass} idx={idx} events={calendarEventsPerDay[d]} counter={counter} />
                         )
                     })}
+                    <ScrollToTopButton containerRef={containerRef} scrollDistance={600} isSticky/>
                 </div>
             )
         }

@@ -12,6 +12,7 @@
     gap: 8px;
     width: 100%;
     overflow-y: auto;
+    position: relative;
 
     &-content-bottom-shadow {
       background: linear-gradient(180deg, transparent, #000);
@@ -88,6 +89,10 @@
 
         &-description {
           word-break: break-all;
+
+          &.notes-description {
+            word-break: break-word;
+          }
         }
       }
 
@@ -141,6 +146,7 @@
 body.rtl {
   .trip-template-page-content {
     direction: rtl;
+    text-align: right;
 
     .trip-template-itinerary {
       &-days {
