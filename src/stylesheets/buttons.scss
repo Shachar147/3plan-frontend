@@ -99,12 +99,14 @@ button.secondary-button {
 	&.black {
 		color: var(--black) !important;
 		border: 1px solid var(--gray);
+		transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out, color 0.3s ease-in-out;
 
 		&:not(:disabled):hover {
 			/*border: 1px solid var(--black) !important;*/
 			//border-color: #aaa !important;
 			//border: 1px solid var(--white) !important;
-			background-color: #f3f3f3 !important; // #eaeff4
+			//background-color: #f3f3f3 !important; // #eaeff4
+			color: gray !important;
 		}
 	}
 

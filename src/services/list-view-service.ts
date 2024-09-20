@@ -210,8 +210,9 @@ const ListViewService = {
 			'',
 		];
 		const or = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OR');
+
 		const tripSummaryTitle =
-			TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE') + ' - ' + eventStore.tripName;
+			TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE') + ' - ' + eventStore.formattedTripName;
 
 		// if we're on no description mode, do not show also prefixes.
 		if (eventStore.listViewSummaryMode === ListViewSummaryMode.noDescriptions) {
@@ -286,7 +287,7 @@ const ListViewService = {
 		};
 	},
 	_sortEvents: (calendarEvents: CalendarEvent[]) => {
-		return calendarEvents.sort((a, b) => {
+		return calendarEvents.slice().sort((a, b) => {
 			const aTime = toDate(a.start).getTime();
 			const bTime = toDate(b.start).getTime();
 			if (aTime === bTime) {

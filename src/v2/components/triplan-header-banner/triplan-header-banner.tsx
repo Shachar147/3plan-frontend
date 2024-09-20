@@ -13,7 +13,7 @@ import {fetchCitiesAndSetOptions} from "../destination-selector/destination-sele
 import {feedStoreContext} from "../../stores/feed-view-store";
 
 
-function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = false }: { noHeader?: boolean, withHr?: boolean, isInLogin?: boolean }){
+function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = false, isAlwaysSticky = false }: { noHeader?: boolean, withHr?: boolean, isInLogin?: boolean, isAlwaysSticky?: boolean }){
     const baseClass = "triplan-header-banner";
     const eventStore = useContext(eventStoreContext);
     const feedStore = useContext(feedStoreContext);
@@ -60,8 +60,8 @@ function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = fal
             backgroundImage: `url('${backgroundImage}')`
         }}>
             <div className={getClasses(`${baseClass}-shadow`, eventStore.isHebrew && 'flip-x')} />
-            {!noHeader && <TriplanHeaderLine isInLogin={isInLogin} />}
-            <div className={`${baseClass}-slogan black-text-shadow`} dangerouslySetInnerHTML={{ __html: isInPlan ? `<div class="trip-name-in-banner">${eventStore.tripName}</div>` : withHr ? `${slogan}<hr/>` : slogan }}
+            {!noHeader && <TriplanHeaderLine isInLogin={isInLogin} isAlwaysSticky={isAlwaysSticky} />}
+            <div className={`${baseClass}-slogan black-text-shadow`} dangerouslySetInnerHTML={{ __html: isInPlan ? `<div class="trip-name-in-banner">${eventStore.formattedTripName}</div>` : withHr ? `${slogan}<hr/>` : slogan }}
             />
             <div className={`${baseClass}-bottom-shadow`} />
         </div>

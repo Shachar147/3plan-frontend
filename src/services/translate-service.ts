@@ -32,12 +32,22 @@ const TranslateService = {
 	},
 
 	translateFromTo: (eventStore: EventStore, value: string, params: TranslationParams = {}, from: LocaleCode, to: LocaleCode) => {
+		if (from == to){
+			return value;
+		}
+
 		// @ts-ignore
 		const sourceTranslations: Record<string, string> = translates[from];
 
-		const key = Object.keys(sourceTranslations).find((k) => sourceTranslations[k].toLowerCase().includes(value.toLowerCase()));
+		let key = Object.keys(sourceTranslations).find((k) => sourceTranslations[k].toLowerCase() === value.toLowerCase());
 		if (!key){
-			return undefined;
+			// @ts-ignore
+			const sourceTranslations2 = translates[to];
+			key = Object.keys(sourceTranslations2).find((k) => k.toLowerCase() === value.toLowerCase());
+
+			if (!key) {
+				return undefined;
+			}
 		}
 
 		// @ts-ignore

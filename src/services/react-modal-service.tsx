@@ -3,7 +3,7 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React, { useEffect, useMemo, useState } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import {getClasses, getCurrentUsername, isHotel, isHotelsCategory, isTemplate, ucfirst, ucword} from '../utils/utils';
+import {getClasses, getCurrentUsername, isHotel, isHotelsCategory, isTemplateUsername, ucfirst, ucword} from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -1841,7 +1841,7 @@ const ReactModalService = {
 			}
 		}
 
-		if (isTemplate()){
+		if (isTemplateUsername()){
 			hideTrip();
 			return;
 		}

@@ -82,6 +82,9 @@ export const endpoints: Record<string, any> = {
         },
         ai: {
             createTemplate: '/ai/template'
+        },
+        templates: {
+            feed: '/templates/feed/',
         }
     },
 }

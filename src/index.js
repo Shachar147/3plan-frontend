@@ -49,6 +49,7 @@ import {newDesignRootPath} from "./v2/utils/consts";
 import {FeatureFlagsService} from "./utils/feature-flags";
 import LoginPageV2 from "./v2/views/login-page/login-page";
 import PlanPageV2 from "./v2/views/plan-page/plan-page";
+import TripTemplatePageV2 from "./v2/views/trip-template-page/trip-template-page";
 
 // Dubai
 // Namos / Twiggy?
@@ -840,9 +841,6 @@ const RootRouter = () => {
 		<>
 			<BrowserRouter>
 				<Routes>
-					{/*<Route exact path='/' element={<PrivateRoute/>}>*/}
-					{/*    <Route exact path='/' element={<LandingPage/>}/>*/}
-					{/*<Route exact path="/loginold" element={getUser() == undefined ? <LoginPageOld /> : <LandingPage />} />*/}
 					<Route exact path={newDesignRootPath} element={<MainPageV2 />} />
 					<Route exact path="/" element={getUser() == undefined ? isNewDesign ? <LoginPageV2 /> : <LoginPage /> : isNewDesign ? <MainPageV2 /> : <LandingPage />} />
 					<Route exact path="/home" element={<LandingPage />} />
@@ -857,6 +855,7 @@ const RootRouter = () => {
 					<Route path="/plan/:tripName/:locale" element={<MainPage />} />
 					<Route path="/plan/:tripName/" element={<MainPage />} />
 					<Route path={`${newDesignRootPath}/plan/:tripName/`} element={<PlanPageV2 />} />
+					<Route path={`${newDesignRootPath}/template/:templateId/`} element={<TripTemplatePageV2 />} />
 					<Route path="/plan" element={<MainPage />} />
 					<Route path="/inviteLink" element={<InviteLink />} />
 					<Route path="/theme" element={<ThemeExample />} />

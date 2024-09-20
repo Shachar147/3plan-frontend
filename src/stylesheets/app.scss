@@ -391,6 +391,10 @@ body {
 	margin-inline: 0;
 }
 
+.margin-inline-end-10 {
+	margin-inline-end: 10px;
+}
+
 .margin-inline-2 {
 	margin-inline: 2px;
 }
@@ -626,6 +630,10 @@ body {
 
 .gap-30 {
 	gap: 30px;
+}
+
+.gap-40 {
+	gap: 40px;
 }
 
 .flex-gap-5 {
@@ -900,6 +908,14 @@ body.ltr {
 	max-width: 650px;
 }
 
+.max-width-50-percents {
+	max-width: 50%;
+}
+
+.max-width-100-percents {
+	max-width: 100%;
+}
+
 .align-items-start {
 	align-items: self-start;
 }
@@ -1062,6 +1078,10 @@ a.disabled {
 
 .top--1 {
 	top: -1px;
+}
+
+.top-120 {
+	top: 120px;
 }
 
 .text-align-center {
@@ -1573,6 +1593,10 @@ input[id^='react-select-'][id$='-input'] {
 	border-radius: 10px;
 }
 
+.border-radius-20 {
+	border-radius: 20px;
+}
+
 .border-radius-round {
 	border-radius: 50%;
 }
@@ -1629,4 +1653,10 @@ body:has(.loading-component) {
 	.triplan-header-banner-header-line {
 		display: none !important;
 	}
+}
+
+.shimmer-animation {
+	animation : shimmer 3s infinite;
+	background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+	background-size: 1000px 100%;
 }

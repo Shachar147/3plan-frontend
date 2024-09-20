@@ -20,7 +20,7 @@ import { formatDate, formatTime, getDurationString, toDate } from '../../utils/t
 import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../../utils/enums';
 import {
 	BuildEventUrl,
-	getClasses,
+	getClasses, getEventDescription, getEventTitle,
 	isBasketball,
 	isDessert,
 	isFlight,
@@ -137,6 +137,12 @@ interface MapContainerProps {
 	getNameLink?: (x: AllEventsEvent) => string;
 	isCombined?: boolean;
 	addToEventsToCategories: (event: SidebarEvent) => void;
+
+	noHeader?: boolean;
+	noFilters?: boolean;
+	isReadOnly?: boolean;
+	zoom?: number;
+	isTemplate?: boolean;
 }
 
 export interface MapContainerRef {
@@ -217,11 +223,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	const rowContainerStyle = 'display: flex; flex-direction: row; align-items: center; gap: 10px;';
 
 	const buildInfoWindowContent = (event: any) => {
-		const title = `<div style="font-size:20px; margin-inline-end: 5px;" class='map-info-window-title'><b><u>${event.title}</u></b></div>`;
+		const title = `<div style="font-size:20px; margin-inline-end: 5px;" class='map-info-window-title'><b><u>${getEventTitle(event, eventStore, props.isTemplate)}</u></b></div>`;
 		const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${event.location.address}</span></span>`;
 
-		const description = event.description
-			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${event.description}</span></span>`
+		const description = event.description?.trim()?.length
+			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${getEventDescription(event, eventStore, props.isTemplate)}</span></span>`
 			: '';
 
 		let scheduledTo = '';
@@ -245,7 +251,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		}
 
 		let category = event.category;
-		if (!props.allEvents) {
+		// if (!props.allEvents) {
+		if (!Number.isNaN(Number(event.category))) {
 			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 		}
 		const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
@@ -257,6 +264,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		} else {
 			preferredTime = TriplanEventPreferredTime.unset;
 		}
+
+		if (preferredTime == 'unset' && eventStore.isHebrew) {
+			preferredTime = "unset.male";
+		}
+
 		const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(
 			eventStore,
 			preferredTime
@@ -362,7 +374,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				? event.category
 				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
 
-			category = category ? category.toLowerCase() : '';
+			category = category ? category.toString().toLowerCase() : '';
 			const title = event.title.toLowerCase();
 
 			const iconsMap = {
@@ -510,6 +522,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 			// for visible items to be able to get more info about this marker
 			refMarker.eventId = event.id;
+			refMarker.latitude = coordinate.lat;
+			refMarker.longitude = coordinate.lng;
 
 			// on click event
 			googleRef.event.addListener(
@@ -616,6 +630,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 				infoWindow.setContent(buildInfoWindowContent(event));
 				if (marker) infoWindow.open(googleMapRef, marker);
+				else {
+					alert("no marker");
+				}
 				// else {
 				// 	setTimeout(() => {
 				// 		initMarkers();
@@ -623,6 +640,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				// 		if (marker) infoWindow.open(googleMapRef, marker);
 				// 	}, 1000);
 				// }
+			} else {
+				alert("no google map ref or no info window");
 			}
 		};
 	}, [googleMapRef, infoWindow, markers]);
@@ -831,7 +850,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		);
 		for (let i = 0; i < allEvents.length; i++) {
 			const event = allEvents[i];
-			const marker = markers.find((x: any) => event.id.toString() === x.eventId.toString());
+			// const marker = markers.find((x: any) => event.id.toString() === x.eventId.toString());
+			const marker = markers.find((x: any) => event.location && event.location.longitude === x.longitude && event.location.latitude == x.latitude);
 			visibleItems.push({ event, marker });
 		}
 		return visibleItems.sort((a, b) => (a.event.title > b.event.title ? 1 : -1));
@@ -847,6 +867,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		const allMarkers = getAllMarkers('');
 		const found = allMarkers.find((m: any) => Number(m.event.id) == eventId);
 		if (found) {
+			setCenter({ lat: found.event.location.latitude, lng: found.event.location.longitude });
 			onVisibleItemClick(found.event, found.marker);
 		}
 	};
@@ -1240,7 +1261,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 												info.event
 											);
 										}}
-										title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
+										title={props.isReadOnly ? undefined : TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
 									/>
 								);
 
@@ -1249,7 +1270,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 										<i
 											className="fa fa-calendar-check-o visible-items-calendar-indicator"
 											aria-hidden="true"
-											title={TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
+											title={props.isReadOnly ? undefined : TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
 										/>
 									);
 								}
@@ -1260,6 +1281,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 									key={`filtered-visible-item-${idx}`}
 									className={`fc-event priority-${info.event.priority}`}
 									onClick={() => {
+										if (props.isReadOnly) {
+											return;
+										}
 										onVisibleItemClick(info.event, info.marker);
 									}}
 								>
@@ -1300,15 +1324,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		);
 	}
 
-	return (
-		<div
-			className={getClasses(
-				'map-container',
-				props.isCombined && 'combined',
-				eventStore.isMobile && 'resize-none'
-			)}
-		>
-			{locations.length > 0 && renderMapFilters()}
+	function renderMapHeader(){
+		return (
 			<div className="map-header">
 				<div
 					className={getClasses(
@@ -1350,6 +1367,19 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					</div>
 				</div>
 			</div>
+		)
+	}
+
+	return (
+		<div
+			className={getClasses(
+				'map-container',
+				props.isCombined && 'combined',
+				eventStore.isMobile && 'resize-none'
+			)}
+		>
+			{!props.noFilters && locations.length > 0 && renderMapFilters()}
+			{!props.noHeader && renderMapHeader()}
 			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
 				{locations.length == 0 && renderNoItemsOnMapPlaceholder()}
 				<GoogleMapReact
@@ -1365,7 +1395,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 							? { lat: coordinates[0].lat, lng: coordinates[0].lng }
 							: undefined
 					}
-					zoom={searchCoordinates.length > 0 || center ? 14 : 7}
+					zoom={props.zoom ?? (searchCoordinates.length > 0 || center ? 14 : 7)}
 					yesIWantToUseGoogleMapApiInternals
 					// @ts-ignore
 					onGoogleApiLoaded={({ map, maps }) => initMap(map, maps)}

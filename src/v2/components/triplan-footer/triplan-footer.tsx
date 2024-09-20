@@ -88,10 +88,10 @@ function TriplanFooter(){
         return (
             <>
                 <h5>{TranslateService.translate(eventStore, title)}</h5>
-                {values.map((r) => {
+                {values.map((r, idx) => {
                     const key = Object.keys(r)[0];
                     const value = r[Object.keys(r)[0]] ?? "-";
-                    return <div>{TranslateService.translate(eventStore, key, { X: value })}</div>
+                    return <div key={idx}>{TranslateService.translate(eventStore, key, { X: value })}</div>
                 })}
             </>
         )
@@ -101,8 +101,8 @@ function TriplanFooter(){
 
     return (
         <div className={getClasses("triplan-footer", eventStore.isMobile && isInPlan && 'padding-bottom-80')}>
-            {structure.map((dict) => (
-                <div>{renderStatsBlock(dict)}</div>
+            {structure.map((dict, idx) => (
+                <div key={idx}>{renderStatsBlock(dict)}</div>
             ))}
         </div>
     )

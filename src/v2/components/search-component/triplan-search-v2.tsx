@@ -29,6 +29,7 @@ const TriplanSearchV2 = () => {
     const debounceInputChange = useRef<NodeJS.Timeout | undefined>(undefined);
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
+    const isInTemplate = window.location.href.includes(`${newDesignRootPath}/template/`);
 
     useEffect(() => {
         searchStore._setSearchQuery(searchStore.searchQuery);
@@ -111,6 +112,11 @@ const TriplanSearchV2 = () => {
             return;
         }
 
+        let redirectUrl;
+        if (isInTemplate){
+            redirectUrl = newDesignRootPath;
+        }
+
         document.body.style.overflow = 'auto';
         searchStore.setShowSuggestions(false);
         // setChosenItem(suggestion.name);
@@ -121,10 +127,13 @@ const TriplanSearchV2 = () => {
         } else {
             searchStore.setSearchQuery(suggestion.name);
             window.location.hash = `q=${suggestion.name}`;
-
         }
 
-        window.location.reload();
+        if (redirectUrl){
+            window.location.assign(`${redirectUrl}${window.location.hash}`);
+        } else {
+            window.location.reload();
+        }
 
         // // clear existing items & categories.
         // // todo - change to a different store of search results.

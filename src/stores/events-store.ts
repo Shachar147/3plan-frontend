@@ -29,7 +29,7 @@ import {
 	coordinateToString,
 	generate_uuidv4,
 	getCoordinatesRangeKey,
-	isEventAlreadyOrdered,
+	isEventAlreadyOrdered, isTemplateUsername,
 	lockEvents
 } from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
@@ -129,6 +129,7 @@ export class EventStore {
 	@observable forceUpdate = 0;
 	@observable forceSetDraggable = 0;
 	@observable forceCalendarReRender = 0;
+	@observable forceMapReRender = 0; // v2
 
 	// map filters
 	@observable mapFiltersVisible: boolean = false;
@@ -573,7 +574,7 @@ export class EventStore {
 						e.className = e.className || '';
 						e.className = e.className.replaceAll(' red-background', '') + ' red-background';
 						e.className += ' red-background';
-						console.log({ id: e.id, timingError: errorReason });
+						// console.log({ id: e.id, timingError: errorReason });
 						eventsWithOpeningHoursProblems.push({ id: e.id, timingError: errorReason });
 					} else {
 						e.timingError = '';
@@ -1253,7 +1254,7 @@ export class EventStore {
 			const sharedTrip = sharedTrips.find((s) => s.name === name);
 			this.isSharedTrip = !!sharedTrip;
 			if (!!sharedTrip) {
-				this.isTripLocked = !!sharedTrip.isLocked;
+				this.isTripLocked = !!sharedTrip.isLocked && !isTemplateUsername();
 				this.canRead = sharedTrip.canRead;
 				this.canWrite = sharedTrip.canWrite;
 
@@ -1377,7 +1378,7 @@ export class EventStore {
 		this.customDateRange = dateRange;
 		this.allEvents = allEvents;
 		this.categories = categories;
-		this.isTripLocked = !!isLocked;
+		this.isTripLocked = !!isLocked && !isTemplateUsername();
 		this.destinations = tripData.destinations;
 
 		if ('canRead' in Object.keys(tripData) || 'canWrite' in Object.keys(tripData)) {
@@ -1401,7 +1402,7 @@ export class EventStore {
 		const key2 = 'auto-locked-' + this.tripId;
 		if (!isLocked) {
 			if (new Date().getTime() > new Date(endDate).getTime()) {
-				console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
+				// console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
 				if (!localStorage.getItem(key) && !localStorage.getItem(key2)) {
 					this.dataService.lockTrip(this.tripName);
 					localStorage.setItem(key, '1');
@@ -1612,7 +1613,7 @@ export class EventStore {
 
 		runInAction(() => {
 			if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
-				this.isTripLocked = !this.isTripLocked;
+				this.isTripLocked = !this.isTripLocked && !isTemplateUsername();
 			}
 
 			// slight delay since it takes time to re-render
@@ -1811,6 +1812,15 @@ export class EventStore {
 	@action
 	triggerCalendarReRender(){
 		this.forceCalendarReRender += 1;
+	}
+
+	@computed
+	get formattedTripName(){
+		if (!this.tripName) {
+			return undefined;
+		}
+		return this.tripName.includes(" ") ? this.tripName : this.tripName.replaceAll('-',' ').replaceAll('   ',' - ');
+
 	}
 }
 

@@ -7,7 +7,7 @@ import './point-of-interest.scss';
 import ReactModalService from "../../../services/react-modal-service";
 import {TripActions} from "../../../utils/interfaces";
 import {TriplanPriority} from "../../../utils/enums";
-import {extractCategory, getClasses, getCurrentUsername, isTemplate} from "../../../utils/utils";
+import {extractCategory, getClasses, isTemplateUsername} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore, eventStoreContext} from "../../../stores/events-store";
 import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
@@ -43,6 +43,36 @@ interface PointOfInterestProps {
 
     // specific item
     isViewItem?: boolean;
+}
+
+const Image = ({ image, idx, isSmall, alt, className, backgroundImage }: { image: string, idx: number, alt:string, isSmall?: boolean, className?: string, backgroundImage?: boolean }) => {
+    const [src, setSrc] = useState(image);
+
+    const fallbacks = ["/images/trip-photo-1.jpg", "/images/trip-photo-2.png", "/images/trip-photo-3.png", "/images/trip-photo-4.png", "/images/trip-photo-5.png",  "/images/trip-photo-2.png"]
+    const random = Math.floor(Math.random() * fallbacks.length);
+
+    return (
+        <>
+            <div className={getClasses("shimmer-animation", className)} style={{
+                height: isSmall ? 200 : 266, width: isSmall ? 298 : 400 }} />
+            <img src={src} alt={alt} onError={() => setSrc(fallbacks[random])} onLoad={(e) => {
+                const imgElement = e.target;
+                if (backgroundImage) {
+                    imgElement.nextSibling.classList.remove('display-none');
+                } else {
+                    imgElement.classList.remove('display-none');
+                }
+                const shimmer = imgElement.previousSibling;
+                shimmer.style.display = 'none';
+
+            }} className={getClasses("display-none zoomable", className)} key={idx} />
+            <div className={getClasses(className, !backgroundImage && 'display-none')} style={{
+                backgroundImage: `url('${src}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+            }} />
+        </>
+    )
 }
 
 const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) => {
@@ -475,31 +505,9 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         )
     }
 
-    const Image = ({ image, idx }: { image: string, idx: number}) => {
-        const [src, setSrc] = useState(image);
-
-        const fallbacks = ["/images/trip-photo-1.jpg", "/images/trip-photo-2.png", "/images/trip-photo-3.png", "/images/trip-photo-4.png", "/images/trip-photo-5.png",  "/images/trip-photo-2.png"]
-        const random = Math.floor(Math.random() * fallbacks.length);
-
-        const isSmall = eventStore.isMobile || mainFeed || savedCollection || myTrips;
-        return (
-            <>
-                <div className="shimmer-animation" style={{
-                    height: isSmall ? 200 : 266, width: isSmall ? 298 : 400 }} />
-                <img src={src} alt={item.name} onError={() => setSrc(fallbacks[random])} onLoad={(e) => {
-                    const imgElement = e.target;
-                    imgElement.classList.remove('display-none');
-                    const shimmer = imgElement.previousSibling;
-                    shimmer.style.display = 'none';
-
-                }} className="display-none zoomable" key={idx} />
-            </>
-        )
-    }
-
     function renderName() {
         let overridePreview;
-        if (isTemplate() && myTrips) {
+        if (isTemplateUsername() && myTrips) {
             if (eventStore.isHebrew) {
                 overridePreview = item.name.split('|')?.[1]?.trim() ?? item.name;
             } else {
@@ -520,6 +528,8 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         );
     }
 
+    const isSmall = eventStore.isMobile || mainFeed || savedCollection || myTrips;
+
     return (
         <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', isSearchResult && 'search-result', isViewItem && 'view-item')}>
             <div className="poi-left">
@@ -529,7 +539,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     }}>
                         {item.images?.map((image, index) => (
                             <div key={`item-${item.id}-image-${index}`}>
-                                <Image image={image} key={item.id + index} idx={`item-${item.id}-idx-${index}`} />
+                                <Image image={image} alt={item.name} key={item.id + index} idx={`item-${item.id}-idx-${index}`} isSmall={isSmall} />
                             </div>
                         ))}
                     </Carousel>
@@ -645,7 +655,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                             icon={`fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
                             className={getClasses("cursor-pointer", eventStore.isMobile && 'black')}
                             type={ButtonFlavor.secondary}
-                            text={TranslateService.translate(eventStore, isTemplate() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
+                            text={TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
                             onClick={() => onClick()}
                         />
                     </div>
@@ -655,6 +665,6 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     );
 };
 
-export { PointOfInterestShimmering };
+export { PointOfInterestShimmering, Image };
 
 export default observer(PointOfInterest);
