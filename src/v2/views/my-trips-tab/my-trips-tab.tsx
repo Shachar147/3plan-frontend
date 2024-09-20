@@ -87,7 +87,7 @@ function MyTripsTab(){
             }, eventStore, true));
             setSelectedDestinations(template.destinations);
 
-            const dateDiff = daysBetween(new Date(template.dateRange.start), new Date(template.dateRange.end))
+            const dateDiff = daysBetween(new Date(template.dateRange.start), new Date(template.dateRange.end), false)
             const dateRange = {
                 start: formatDateString(addDays(new Date(), 7)),
                 end: formatDateString(addDays(new Date(), 7 + dateDiff))
@@ -287,13 +287,13 @@ function MyTripsTab(){
         // ReactModalService.openDeleteTripModal(eventStore, LSTripName, dataSource);
     }
 
-    function daysBetween(date1, date2) {
+    function daysBetween(date1, date2, isAbs: boolean = true) {
         // Parse the dates
         const d1 = new Date(date1);
         const d2 = new Date(date2);
 
         // Calculate the difference in milliseconds
-        const diffTime = Math.abs(d2 - d1);
+        const diffTime = isAbs ? Math.abs(d2 - d1) : d2 - d1;
 
         // Convert milliseconds to days
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
@@ -548,7 +548,7 @@ function MyTripsTab(){
 
                 const dayOne = new Date(customDateRange.start);
                 const templateDayOne = new Date(template.dateRange.start);
-                const diff = daysBetween(templateDayOne, dayOne);
+                const diff = daysBetween(templateDayOne, dayOne, false);
 
                 tripData.allEvents = template.allEvents.map(formatTemplateEvent);
                 const sidebarEvents = {};
