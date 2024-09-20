@@ -21,10 +21,10 @@ function TemplateShimmeringPlaceholder() {
     return (
         <>
             {renderItem()}
-            {renderItem()}
-            {renderItem()}
-            {renderItem()}
-            {renderItem()}
+            {/*{renderItem()}*/}
+            {/*{renderItem()}*/}
+            {/*{renderItem()}*/}
+            {/*{renderItem()}*/}
         </>
     )
 }
