@@ -53,7 +53,7 @@ const Image = ({ image, idx, isSmall, alt, className, backgroundImage }: { image
 
     return (
         <>
-            <div className="shimmer-animation" style={{
+            <div className={getClasses("shimmer-animation", className)} style={{
                 height: isSmall ? 200 : 266, width: isSmall ? 298 : 400 }} />
             <img src={src} alt={alt} onError={() => setSrc(fallbacks[random])} onLoad={(e) => {
                 const imgElement = e.target;

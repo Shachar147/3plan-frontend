@@ -852,6 +852,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		const allMarkers = getAllMarkers('');
 		const found = allMarkers.find((m: any) => Number(m.event.id) == eventId);
 		if (found) {
+			setCenter({ lat: found.event.location.latitude, lng: found.event.location.longitude });
 			onVisibleItemClick(found.event, found.marker);
 		}
 	};

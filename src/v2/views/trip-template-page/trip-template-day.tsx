@@ -5,6 +5,8 @@ import {CalendarEvent} from "../../../utils/interfaces";
 import {observer} from "mobx-react";
 import {getClasses, getEventDescription, getEventTitle} from "../../../utils/utils";
 import {Image} from "../../components/point-of-interest/point-of-interest";
+import {ViewMode} from "../../../utils/enums";
+import {runInAction} from "mobx";
 
 function wrapLinks(text: string | undefined): React.ReactNode {
     if (!text){
@@ -56,9 +58,17 @@ function TripTemplateDay({ events, baseClass, idx, counter }: { events: Calendar
                         </div>
                     )
                 }
+
+                function markActivityOnMap(){
+                    eventStore.showEventOnMap = Number(e.id);
+                    runInAction(() => {
+                        eventStore.forceMapReRender += 1;
+                    })
+                }
+
                 return (
                     (
-                        <div className={`${baseClass}-activity`}>
+                        <div className={`${baseClass}-activity`} onClick={() => markActivityOnMap()}>
                             <div className={`${baseClass}-activity-marker-icon`}>
                                 <i className="fa fa-map-marker" />
                                 <span>{counter + idx2 + 1 - notesCounter}</span>

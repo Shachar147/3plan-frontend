@@ -129,6 +129,7 @@ export class EventStore {
 	@observable forceUpdate = 0;
 	@observable forceSetDraggable = 0;
 	@observable forceCalendarReRender = 0;
+	@observable forceMapReRender = 0; // v2
 
 	// map filters
 	@observable mapFiltersVisible: boolean = false;

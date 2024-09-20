@@ -61,9 +61,9 @@ function TripTemplatePageContent(){
 
         if (!isLoading) {
             content = (
-                <div className="map-container flex-1-1-0" key={JSON.stringify(eventStore.allEventsFilteredComputed)}>
+                <div className="map-container flex-1-1-0" key={`${eventStore.forceMapReRender}-${JSON.stringify(eventStore.allEventsFilteredComputed)}`}>
                     <Observer>
-                        {() => <MapContainer allEvents={eventStore.calendarEvents} ref={MapContainerRef} addToEventsToCategories={() => false} noHeader noFilters isReadOnly zoom={12} />}
+                        {() => <MapContainer allEvents={eventStore.calendarEvents} ref={MapContainerRef} addToEventsToCategories={() => false} noHeader noFilters isReadOnly zoom={eventStore.showEventOnMap ? 14 : 12} />}
                     </Observer>
                 </div>
             )
