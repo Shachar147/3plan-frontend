@@ -81,10 +81,14 @@
         display: flex;
         flex-direction: column;
         //justify-content: center;
-      }
 
-      &-content-title {
-        font-weight: bold;
+        &-title {
+          font-weight: bold;
+        }
+
+        &-description {
+          word-break: break-all;
+        }
       }
 
       &-category-tag {
@@ -170,10 +174,6 @@ body.rtl {
 
         &-content-title {
           font-size: 22px;
-        }
-
-        &-content-description {
-          word-break: break-all;
         }
       }
     }

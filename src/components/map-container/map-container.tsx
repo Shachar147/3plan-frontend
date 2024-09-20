@@ -20,7 +20,7 @@ import { formatDate, formatTime, getDurationString, toDate } from '../../utils/t
 import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../../utils/enums';
 import {
 	BuildEventUrl,
-	getClasses,
+	getClasses, getEventDescription, getEventTitle,
 	isBasketball,
 	isDessert,
 	isFlight,
@@ -142,6 +142,7 @@ interface MapContainerProps {
 	noFilters?: boolean;
 	isReadOnly?: boolean;
 	zoom?: number;
+	isTemplate?: boolean;
 }
 
 export interface MapContainerRef {
@@ -222,11 +223,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	const rowContainerStyle = 'display: flex; flex-direction: row; align-items: center; gap: 10px;';
 
 	const buildInfoWindowContent = (event: any) => {
-		const title = `<div style="font-size:20px; margin-inline-end: 5px;" class='map-info-window-title'><b><u>${event.title}</u></b></div>`;
+		const title = `<div style="font-size:20px; margin-inline-end: 5px;" class='map-info-window-title'><b><u>${getEventTitle(event, eventStore, props.isTemplate)}</u></b></div>`;
 		const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${event.location.address}</span></span>`;
 
-		const description = event.description
-			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${event.description}</span></span>`
+		const description = event.description?.trim()?.length
+			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${getEventDescription(event, eventStore, props.isTemplate)}</span></span>`
 			: '';
 
 		let scheduledTo = '';
