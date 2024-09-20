@@ -14,8 +14,13 @@
     overflow-y: auto;
     position: relative;
 
+    &:not(.trip-template-itinerary-shimmering) {
+      .trip-template-itinerary-content-bottom-shadow {
+        background: linear-gradient(180deg, transparent, #000);
+      }
+    }
+
     &-content-bottom-shadow {
-      background: linear-gradient(180deg, transparent, #000);
       position: absolute;
       bottom: 0;
       width: 100%;
@@ -140,7 +145,7 @@
   }
 
   .trip-template-itinerary {
-    width: 50vw;
+    width: 40vw;
     max-width: 65vw;
   }
 

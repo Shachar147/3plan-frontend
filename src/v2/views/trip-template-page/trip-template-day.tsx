@@ -3,11 +3,9 @@ import React, {useContext} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import {CalendarEvent} from "../../../utils/interfaces";
 import {observer} from "mobx-react";
-import {getClasses, getEventDescription, getEventTitle} from "../../../utils/utils";
+import {getEventDescription, getEventTitle} from "../../../utils/utils";
 import {Image} from "../../components/point-of-interest/point-of-interest";
-import {ViewMode} from "../../../utils/enums";
 import {runInAction} from "mobx";
-import ScrollToTopButton from "../../components/scroll-top/scroll-top";
 
 function wrapLinks(text: string | undefined): React.ReactNode {
     if (!text){

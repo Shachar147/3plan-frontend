@@ -7,14 +7,73 @@ import {tripTemplatesContext} from "../../stores/templates-store";
 import {useParams} from "react-router-dom";
 import TranslateService from "../../../services/translate-service";
 import {runInAction} from "mobx";
-import {PointOfInterestShimmering} from "../../components/point-of-interest/point-of-interest";
+import {Image, PointOfInterestShimmering} from "../../components/point-of-interest/point-of-interest";
 import {EventInput} from "@fullcalendar/react";
 import ListViewService from "../../../services/list-view-service";
 import {getTripTemplatePhoto} from "./utils";
-import {getClasses} from "../../../utils/utils";
+import {getClasses, getEventDescription, getEventTitle} from "../../../utils/utils";
 import TripTemplateBanner from "./trip-template-banner";
 import TripTemplateDay from "./trip-template-day";
 import ScrollToTopButton from "../../components/scroll-top/scroll-top";
+import {CalendarEvent} from "../../../utils/interfaces";
+
+function TripTemplateDayShimmering({baseClass, idx = 0, counter = 0, notesCounter = 0}){
+    const eventStore = useContext(eventStoreContext);
+
+    // @ts-ignore
+    const events: CalendarEvent[] = [{},{},{},{},{}];
+    return (
+        <div className={`${baseClass}-day-container`}>
+            <h3 className={`${baseClass}-day-title`}>{TranslateService.translate(eventStore, 'DAY_X', { X: idx+1})}</h3>
+            {events.map((e, idx2) => {
+                return (
+                    (
+                        <div className={`${baseClass}-activity`}>
+                            <div className={`${baseClass}-activity-marker-icon`}>
+                                <i className="fa fa-map-marker" />
+                                <span>{counter + idx2 + 1 - notesCounter}</span>
+                            </div>
+                            <div className={`${baseClass}-activity-image shimmer-animation`} />
+                            <div className={`${baseClass}-activity-content`}>
+                                <h2 className={`${baseClass}-activity-content-title shimmer-animation`} style={{
+                                    width: 90,
+                                    height: 33
+                                }} />
+                                <div className={`${baseClass}-activity-category-tag shimmer-animation`} style={{
+                                    width: 50,
+                                    height: 18
+                                }} />
+                                <div className={`${baseClass}-activity-content-description shimmer-animation`} style={{
+                                    width: 300,
+                                    height: 21
+                                }} />
+                                <div className={`${baseClass}-activity-content-description shimmer-animation`} style={{
+                                    width: 300,
+                                    height: 21
+                                }} />
+                                <div className={`${baseClass}-activity-content-description shimmer-animation`} style={{
+                                    width: 220,
+                                    height: 21
+                                }} />
+                            </div>
+                        </div>
+                    )
+                )
+            })}
+        </div>
+    )
+}
+
+function ItineraryShimmering({baseClass}) {
+    return (
+        <div className={getClasses(baseClass, "trip-template-itinerary-shimmering bright-scrollbar")}>
+            <TripTemplateBanner baseClass={baseClass} isShimmering />
+            <TripTemplateDayShimmering baseClass={baseClass} />
+            <TripTemplateDayShimmering baseClass={baseClass} idx={1} counter={5} />
+            <TripTemplateDayShimmering baseClass={baseClass} idx={2} counter={10} />
+        </div>
+    )
+}
 
 function TripTemplatePageContent(){
     const { templateId } = useParams();
@@ -58,7 +117,14 @@ function TripTemplatePageContent(){
         }
 
         let content = (
-            <span className="width-100-percents flex-col align-items-center justify-content-center text-align-center">{TranslateService.translate(eventStore, 'MAP_VIEW.LOADING_PLACEHOLDER')}</span>
+            <div className="width-100-percents flex-col align-items-center justify-content-center text-align-center" style={{
+                backgroundColor: "#fafafa",
+                backgroundImage: `url('/loaders/map-loader.gif')`,
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat"
+            }}>
+                <div className="position-relative top-120">{TranslateService.translate(eventStore, 'MAP_VIEW.LOADING_PLACEHOLDER')}</div>
+            </div>
         );
 
         if (!isLoading) {
@@ -80,13 +146,7 @@ function TripTemplatePageContent(){
 
         const baseClass = "trip-template-itinerary";
 
-        let content = <div className="flex-col width-100-percents align-items-center justify-content-center padding-block-10" style={{ transform: 'scale(0.5)'}}>
-            <PointOfInterestShimmering />
-            <PointOfInterestShimmering />
-            <PointOfInterestShimmering />
-            <PointOfInterestShimmering />
-            <PointOfInterestShimmering />
-        </div>;
+        let content = <ItineraryShimmering baseClass={baseClass} />;
 
         if (!isLoading) {
             const calendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
