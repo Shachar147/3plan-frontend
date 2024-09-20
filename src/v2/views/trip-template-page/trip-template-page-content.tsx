@@ -91,6 +91,7 @@ function TripTemplatePageContent(){
             await templatesStore.loadTemplates();
         }
         const tripData = templatesStore.tripTemplates.find((t) => t.id == templateId);
+
         if (!tripData){
             setErrorMessage(TranslateService.translate(eventStore, 'OOPS_SOMETHING_WENT_WRONG'));
             setIsLoading(false);
@@ -175,6 +176,25 @@ function TripTemplatePageContent(){
 
         return (
             <div className={getClasses("flex-row", `${baseClass}-wrapper`, eventStore.isMobile && "max-width-100-percents")}>{content}</div>
+        )
+    }
+
+    if (!isLoading && errorMessage) {
+        return (
+            <div className="width-100-percents flex-col align-items-center justify-content-center text-align-center" style={{
+                height: "CALC(100vh - 100px)",
+                maxHeight: "400px",
+                backgroundImage: `url('/loaders/error-gif.gif')`,
+                backgroundSize: "contain",
+                backgroundPositionX: "center",
+                backgroundPositionY: "bottom",
+                backgroundRepeat: "no-repeat",
+                marginTop: eventStore.isMobile ? 0 : 100
+            }}>
+                <div className="position-relative font-weight-bold" style={{
+                    top: eventStore.isMobile ? 120 : 150
+                }}>{errorMessage}</div>
+            </div>
         )
     }
 
