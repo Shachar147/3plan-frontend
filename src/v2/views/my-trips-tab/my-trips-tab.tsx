@@ -81,10 +81,12 @@ function MyTripsTab(){
 
     useEffect(() => {
         if (template) {
+
             // @ts-ignore
             setTripName(getEventTitle({
                 title: template.name
             }, eventStore, true));
+
             setSelectedDestinations(template.destinations);
 
             const dateDiff = daysBetween(new Date(template.dateRange.start), new Date(template.dateRange.end), false)

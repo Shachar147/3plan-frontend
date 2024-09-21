@@ -1786,7 +1786,7 @@ const ReactModalService = {
 
 				if (tripDataSource === TripDataSource.DB) {
 					await DataServices.DBService.deleteTripByName(
-						tripName.replaceAll(" ","-"),
+						tripName,
 						() => {
 							window.location.reload();
 						},

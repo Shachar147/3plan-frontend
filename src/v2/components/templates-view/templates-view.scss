@@ -71,12 +71,14 @@ $borderRadius: 18px;
     border-radius: $borderRadius;
     position: absolute;
     bottom: 0;
+    width: 100%;
 
     &-bottom-shadow {
       padding: 15px;
       background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.6));
       border-bottom-right-radius: 18px;
       border-bottom-left-radius: 18px;
+      width: 100%;
     }
   }
 }
