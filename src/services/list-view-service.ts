@@ -408,7 +408,7 @@ const ListViewService = {
 					}
 				}
 
-				const price = e.price ? Number(getSingleInCurrency(e.price, e.currency, desiredCurrency)) : 0;
+				const price = e.price && e.currency ? Number(getSingleInCurrency(e.price, e.currency, desiredCurrency)) : 0;
 				const prevLineWasOr = idx -1 >= 0 && Object.keys(eventsToday[idx-1]).length == 0;
 				const nextLineIsOr = idx + 1 < totalEventsToday && Object.keys(eventsToday[idx+1]).length == 0;
 

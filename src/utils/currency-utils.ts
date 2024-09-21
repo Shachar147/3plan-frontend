@@ -17,6 +17,10 @@ export function getTotalInCurrency(priceList: Record<TriplanCurrency, number>, d
 }
 
 export function getSingleInCurrency(originalPrice: number, originalCurrency: TriplanCurrency, desiredCurrency: TriplanCurrency) {
+    if (!originalCurrency || !desiredCurrency) {
+        return 0;
+    }
+
     // Convert to USD if needed
     const totalInUSD = originalPrice / exchangeRates[originalCurrency.toLowerCase() as TriplanCurrency];
 
