@@ -18,13 +18,13 @@ function POIForm() {
     const eventStore = useContext(eventStoreContext);
 
     const fields = [
-        { name: 'more_info', label: TranslateService.translate(eventStore, 'SOURCE_OR_LINK'), type: 'text', isLink: true, placeholderKey: 'LINKS_ONLY' },
+        { name: 'more_info', label: TranslateService.translate(eventStore, 'SOURCE_OR_LINK'), type: 'text', isLink: true, placeholderKey: 'LINKS_ONLY', isRequired: true },
         { name: 'name', label: TranslateService.translate(eventStore, 'EVENT_NAME'), type: 'text', isRequired: true },
         { name: 'destination', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESTINATION'), type: 'destination-selector', isRequired: true },
         { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
         { name: 'duration', label: TranslateService.translate(eventStore, 'MODALS.DURATION'), type: 'text', isRequired: true},
         { name: 'images', label: TranslateService.translate(eventStore, 'MODALS.IMAGES'), type: 'image-upload', isRequired: true},
-        { name: 'description', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESCRIPTION'), type: 'textarea' },
+        { name: 'description', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESCRIPTION'), type: 'textarea', isRequired: true },
         { name: 'category', label: TranslateService.translate(eventStore, 'TEMPLATE.CATEGORY'), type: 'category-selector' },
         // { name: 'rate.quantity', label: 'Rate Quantity', type: 'number' },
         // { name: 'rate.rating', label: 'Rate Rating (Out of 5)', type: 'number', max: 5, min: -1 },
@@ -99,7 +99,7 @@ function POIForm() {
         });
 
         const paths = await Promise.all(promises);
-        console.log("hereeee", { paths });
+        // console.log("hereeee", { paths });
         setFormData({ ...formData, imagePaths: paths });
         return paths;
     };
@@ -139,7 +139,7 @@ function POIForm() {
             updatedFormData = { ...formData, [name]: value };
         }
 
-        console.log("hereee", updatedFormData);
+        // console.log("hereee", updatedFormData);
         setFormData(updatedFormData);
     };
 
@@ -173,8 +173,6 @@ function POIForm() {
                 'error',
             );
             isOk = false;
-        } else {
-            alert(getDurationInMs(formData['duration']));
         }
 
         if (formData['price'] && !formData['currency']) {
@@ -207,8 +205,8 @@ function POIForm() {
 
         try {
             const images = await handleImageProcessing(); // Process images first
+            // console.log({images});
 
-            console.log({images});
             const poiData = {
                 ...formData,
                 images,
