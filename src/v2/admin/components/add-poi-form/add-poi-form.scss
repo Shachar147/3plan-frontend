@@ -26,7 +26,23 @@
       }
     }
 
-    input[type=text], textarea {
+    .triplan-selector {
+      width: 100% !important;
+      min-width: 200px !important;
+
+      div[class$=-control] {
+        border: 1px solid var(--gray);
+        border-radius: 8px;
+      }
+
+      #react-select-1-input,
+      #react-select-2-input,
+      #react-select-3-input{
+        border:0 !important;
+      }
+    }
+
+    input[type=text], textarea, input[type=number] {
       background-color: transparent !important;
       outline: none;
       border: 1px solid var(--gray);

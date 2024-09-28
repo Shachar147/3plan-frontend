@@ -1154,5 +1154,6 @@
 	"ADMIN_PAGE_V2.ADD_POIS": "הוסף נקודות עניין",
 	"ADMIN_PAGE_V2.ADD_POIS.SHORT": "הוסף נק' עניין",
 	"CHOOSE_A_FILE": "בחר קבצים",
-	"X_FILES_CHOSEN": "{X} קבצים נבחרו"
+	"X_FILES_CHOSEN": "{X} קבצים נבחרו",
+	"SOURCE_OR_LINK": "מקור / לינק למידע נוסף"
 }
