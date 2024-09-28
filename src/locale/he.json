@@ -1157,5 +1157,6 @@
 	"X_FILES_CHOSEN": "{X} קבצים נבחרו",
 	"SOURCE_OR_LINK": "מקור / לינק למידע נוסף",
 	"PLEASE_FILL_IN_X_BEFORE_YOU_PROCEED": "אנא מלאו את {X} לפני שאתם ממשיכים.",
-	"DURATION_IS_INVALID": "שדה משך זמן לא מולא כראוי"
+	"DURATION_IS_INVALID": "שדה משך זמן לא מולא כראוי",
+	"LINKS_ONLY": "לינקים בלבד"
 }

@@ -16,7 +16,7 @@ function POIForm() {
     const eventStore = useContext(eventStoreContext);
 
     const fields = [
-        { name: 'more_info', label: TranslateService.translate(eventStore, 'SOURCE_OR_LINK'), type: 'text', isLink: true },
+        { name: 'more_info', label: TranslateService.translate(eventStore, 'SOURCE_OR_LINK'), type: 'text', isLink: true, placeholderKey: 'LINKS_ONLY' },
         { name: 'name', label: TranslateService.translate(eventStore, 'EVENT_NAME'), type: 'text', isRequired: true },
         { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
         { name: 'duration', label: TranslateService.translate(eventStore, 'MODALS.DURATION'), type: 'text', isRequired: true},
@@ -217,10 +217,10 @@ function POIForm() {
         );
     }
 
-    function renderInput({ type, name, max, isLink}: { type: string, name: string, max?: number, isLink?: boolean }){
+    function renderInput({ type, name, max, isLink, placeholderKey}: { type: string, name: string, max?: number, isLink?: boolean, placeholderKey?: string }){
         if (type == 'textarea'){
             return (
-                <textarea name={name} value={formData[name]} onChange={handleChange} required />
+                <textarea name={name} value={formData[name]} onChange={handleChange} placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined} required />
             )
         }
 
@@ -243,6 +243,7 @@ function POIForm() {
                     {
                         name,
                         value: formData[name],
+                        placeholderKey,
                         // @ts-ignore
                         onChange: (data) => handleChange({
                             target: {
@@ -289,7 +290,7 @@ function POIForm() {
                     modalValueName="location"
                     onClick={initLocation}
                     onKeyUp={setManualLocation}
-                    placeholder={TranslateService.translate(eventStore, 'MODALS.LOCATION.PLACEHOLDER')}
+                    placeholder={TranslateService.translate(eventStore, placeholderKey ?? 'MODALS.LOCATION.PLACEHOLDER')}
                     // placeholderKey={extra.placeholderKey}
                     autoComplete="off"
                     readOnly={false}
@@ -308,6 +309,7 @@ function POIForm() {
                     {
                         name,
                         value: formData[name],
+                        placeholderKey,
                         // @ts-ignore
                         onChange: (data) => handleChange({
                             target: {
@@ -328,7 +330,7 @@ function POIForm() {
         }
 
         return (
-            <input type={type} name={name} value={formData[name]} onChange={(e) => {
+            <input type={type} name={name} placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined} value={formData[name]} onChange={(e) => {
                 if (isLink && e.target.value.length > 0 && !(e.target.value.startsWith("http://") || e.target.value.startsWith("https://"))){
                     return false;
                 }
@@ -347,10 +349,10 @@ function POIForm() {
     return (
         <div className="add-poi-form-container">
             <div className="add-poi-form">
-                {fields.map(({ name, label, type, max, isLink, isRequired }) => (
-                    <div key={name}>
-                        {renderLabel(label, isRequired)}
-                        {renderInput({ name, type, max, isLink })}
+                {fields.map((field) => (
+                    <div key={field.name}>
+                        {renderLabel(field.label, field.isRequired)}
+                        {renderInput(field)}
                     </div>
                 ))}
                 <Button flavor={ButtonFlavor.primary} onClick={handleSubmit} text={TranslateService.translate(eventStore, 'MODALS.SAVE')} />
