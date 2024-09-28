@@ -1660,3 +1660,18 @@ body:has(.loading-component) {
 	background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
 	background-size: 1000px 100%;
 }
+
+// fix carousel rtl bug
+.carousel-wrapper {
+	position: relative;
+}
+
+body.rtl {
+	.carousel-wrapper {
+		direction: ltr; // to fix the gallery view in hebrew
+
+		.category-label, .trips-list-trip-actions-v2 {
+			direction: rtl;
+		}
+	}
+}

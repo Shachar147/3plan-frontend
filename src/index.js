@@ -50,7 +50,7 @@ import {FeatureFlagsService} from "./utils/feature-flags";
 import LoginPageV2 from "./v2/views/login-page/login-page";
 import PlanPageV2 from "./v2/views/plan-page/plan-page";
 import TripTemplatePageV2 from "./v2/views/trip-template-page/trip-template-page";
-import AdminPageV2 from "./v2/views/admin-page/admin-page";
+import AdminPageV2 from "./v2/admin/views/admin-page/admin-page";
 
 // Dubai
 // Namos / Twiggy?

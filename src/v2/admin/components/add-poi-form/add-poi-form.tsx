@@ -1,12 +1,12 @@
 import React, {useContext, useState} from 'react';
-import FileUploadApiService from "../../v2/services/file-upload-api-service";
+import FileUploadApiService from "../../../services/file-upload-api-service";
 import './add-poi-form.scss';
-import Button, {ButtonFlavor} from "../common/button/button";
-import TranslateService from "../../services/translate-service";
-import {eventStoreContext} from "../../stores/events-store";
+import Button, {ButtonFlavor} from "../../../../components/common/button/button";
+import TranslateService from "../../../../services/translate-service";
+import {eventStoreContext} from "../../../../stores/events-store";
 import {Carousel} from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import {Image} from "../../v2/components/point-of-interest/point-of-interest";
+import {Image} from "../../../components/point-of-interest/point-of-interest";
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
@@ -98,13 +98,15 @@ function POIForm() {
     function renderPreview() {
         // @ts-ignore
         return (
-            <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true}>
-                {imagePaths?.map((image, index) => (
-                    <div key={`item-image-${index}`}>
-                        <Image image={image} alt={`Image #${Number(index + 1)}`} key={index} idx={`item--idx-${index}`} isSmall />
-                    </div>
-                ))}
-            </Carousel>
+            <div className="carousel-wrapper margin-bottom-5">
+                <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true}>
+                    {imagePaths?.map((image, index) => (
+                        <div key={`item-image-${index}`}>
+                            <Image image={image} alt={`Image #${Number(index + 1)}`} key={index} idx={`item--idx-${index}`} isSmall />
+                        </div>
+                    ))}
+                </Carousel>
+            </div>
         )
     }
 
@@ -137,7 +139,7 @@ function POIForm() {
                         required
                     />
                 </div>
-                <div className="flex-column">
+                <div className="flex-column gap-4">
                     <label>{TranslateService.translate(eventStore, 'MODALS.IMAGES')}:</label>
                     {imagePaths.length > 0 && renderPreview()}
                     <label className="file-label" htmlFor="file-upload">{TranslateService.translate(eventStore, 'CHOOSE_A_FILE')}</label>

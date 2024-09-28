@@ -1,16 +1,16 @@
 import React, {useContext, useMemo, useRef, useState} from "react";
-import {eventStoreContext} from "../../../stores/events-store";
-import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
-import TabMenu from "../../../components/common/tabs-menu/tabs-menu";
-import TranslateService from "../../../services/translate-service";
+import {eventStoreContext} from "../../../../stores/events-store";
+import {useHandleWindowResize} from "../../../../custom-hooks/use-window-size";
+import TabMenu from "../../../../components/common/tabs-menu/tabs-menu";
+import TranslateService from "../../../../services/translate-service";
 import {observer} from "mobx-react";
 import './admin-page-content.scss'
-import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
-import {rootStoreContext} from "../../stores/root-store";
-import {TabData} from "../../utils/interfaces";
-import LoadingComponent from "../../../components/loading/loading-component";
-import POIForm from "../../../components/add-poi-form/add-poi-form";
-import useIsAdminV2 from "../../../custom-hooks/use-is-admin-v2";
+import {getClasses, LOADER_DETAILS} from "../../../../utils/utils";
+import {rootStoreContext} from "../../../stores/root-store";
+import {TabData} from "../../../utils/interfaces";
+import LoadingComponent from "../../../../components/loading/loading-component";
+import POIForm from "../../components/add-poi-form/add-poi-form";
+import useIsAdminV2 from "../../../../custom-hooks/use-is-admin-v2";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
