@@ -928,5 +928,6 @@
 	"ADMIN_PAGE_V2.ADD_POIS.SHORT": "Add POIs",
 	"CHOOSE_A_FILE": "Choose file/s",
 	"X_FILES_CHOSEN": "{X} files chosen",
-	"SOURCE_OR_LINK": "Source / Link"
+	"SOURCE_OR_LINK": "Source / Link",
+	"PLEASE_FILL_IN_X_BEFORE_YOU_PROCEED": "Please fill in {X} before you proceed."
 }
