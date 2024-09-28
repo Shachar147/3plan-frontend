@@ -58,13 +58,9 @@ function POIForm() {
             e.preventDefault();
             e.stopPropagation();
 
-            console.log("here");
-
             await handleImageProcessing(); // Set the image paths based on the POI name
 
             setRenderCounter(renderCounter + 1);
-
-            console.log("there");
 
             // const poiData = {
             //     name,
@@ -98,7 +94,7 @@ function POIForm() {
     function renderPreview() {
         // @ts-ignore
         return (
-            <div className="carousel-wrapper margin-bottom-5">
+            <div className="carousel-wrapper margin-bottom-5" key={renderCounter}>
                 <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true}>
                     {imagePaths?.map((image, index) => (
                         <div key={`item-image-${index}`}>
