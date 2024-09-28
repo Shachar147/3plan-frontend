@@ -1,0 +1,107 @@
+.add-poi-form-container {
+  .add-poi-form {
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .file-input {
+      display: none;
+    }
+
+    .file-label {
+      display: inline-block;
+      padding-block: 5px;
+      padding-inline: 10px;
+      background-color: #eaeaea;
+      width: max-content;
+      color: black;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: opacity 0.2s ease-in-out;
+
+      &.remove {
+        background-color: var(--red);
+        color: white;
+      }
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+
+    .location-input-container {
+      .fa.fa-map-marker {
+        top: 3px !important;
+      }
+    }
+
+    .destination-selector-container {
+      max-width: 400px;
+      width: 100%;
+
+      .select__control {
+        border-radius: 8px !important;
+      }
+      .select__input {
+        border: 0 !important;
+      }
+    }
+
+    .triplan-selector {
+      width: 100% !important;
+      min-width: 200px !important;
+
+      div[class$=-control] {
+        border: 1px solid var(--gray);
+        border-radius: 8px;
+      }
+
+      #react-select-1-input,
+      #react-select-2-input,
+      #react-select-3-input{
+        border:0 !important;
+      }
+
+      #react-select-1-placeholder,
+      #react-select-2-placeholder,
+      #react-select-3-placeholder {
+        color: #cccccc !important;
+      }
+    }
+
+    input[type=text], textarea, input[type=number] {
+      background-color: transparent !important;
+      outline: none;
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      height: 40px;
+      line-height: 40px;
+      padding-inline-start: 8px;
+      font-size: 12px;
+      width: 100% !important;
+      min-width: 200px !important;
+
+      &::placeholder {
+        color: var(--gray) !important;
+      }
+
+      &:disabled {
+        border: 1px solid var(--gray) !important;
+      }
+    }
+
+    textarea {
+      line-height: normal;
+      height: 70px;
+    }
+  }
+}
+
+body.rtl {
+  .add-poi-form-container {
+    direction: rtl;
+    text-align: right;
+  }
+}

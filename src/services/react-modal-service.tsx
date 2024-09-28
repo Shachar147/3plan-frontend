@@ -306,9 +306,10 @@ export const ReactModalRenderHelper = {
 		eventStore: EventStore,
 		modalValueName: string,
 		extra: { id?: string; name?: string; value: any },
-		ref?: any
+		ref?: any,
+		categories?: TriPlanCategory[]
 	) => {
-		const options = eventStore.categories
+		const options = categories ?? eventStore.categories
 			.sort((a, b) => a.id - b.id)
 			.map((x, index) => ({
 				value: x.id,

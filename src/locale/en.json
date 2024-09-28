@@ -923,5 +923,18 @@
 	"SUGGESTED_TRIP_TEMPLATES": "Suggested trips",
 	"SUGGESTED_TRIP_TEMPLATES.DESCRIPTION": "Create your trip easily and quickly using the predefined templates our experts team created for you!",
 	"DAY_X": "Day {X}",
-	"CREATE_TRIP_FROM_TEMPLATE.BUTTON.TEXT": "Make it mine!"
+	"CREATE_TRIP_FROM_TEMPLATE.BUTTON.TEXT": "Make it mine!",
+	"ADMIN_PAGE_V2.ADD_POIS": "Add Point Of Interests",
+	"ADMIN_PAGE_V2.ADD_POIS.SHORT": "Add POIs",
+	"CHOOSE_A_FILE": "Choose file/s",
+	"X_FILES_CHOSEN": "{X} files chosen",
+	"SOURCE_OR_LINK": "Source / Link",
+	"PLEASE_FILL_IN_X_BEFORE_YOU_PROCEED": "Please fill in {X} before you proceed.",
+	"DURATION_IS_INVALID": "Duration is invalid",
+	"LINKS_ONLY": "Links only",
+	"REMOVE_FILES": "Remove files",
+	"CHANGE_FILES": "Change files",
+	"POI_ADDED_SUCCESSFULLY": "Point of interest added successfully!",
+	"POI_UPDATED_SUCCESSFULLY": "Point of interest updated successfully!",
+	"FAILED_TO_ADD_POI": "Failed to add Point of interest"
 }

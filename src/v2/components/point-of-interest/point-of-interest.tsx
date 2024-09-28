@@ -576,7 +576,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     })}</span>}
                     {!!item.rate && !!item.rate.rating && <div className="rate">
                         {renderStars(item.rate.rating)}
-                        <span>{TranslateService.translate(eventStore, item.rate.quantity ? 'POINT_OF_INTEREST.REVIEWS' : 'POINT_OF_INTEREST.REVIEWS.SHORT', {
+                        <span>{TranslateService.translate(eventStore, item.rate.quantity && item.source !== 'System' ? 'POINT_OF_INTEREST.REVIEWS' : 'POINT_OF_INTEREST.REVIEWS.SHORT', {
                             rate: rating,
                             rateMax: 5,
                             quantity: item.rate.quantity

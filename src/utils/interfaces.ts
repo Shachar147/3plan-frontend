@@ -85,6 +85,7 @@ export interface TriPlanCategory {
 	title: string;
 	icon: string;
 	description?: string;
+	titleKey?: string;
 }
 
 export interface LocationData {

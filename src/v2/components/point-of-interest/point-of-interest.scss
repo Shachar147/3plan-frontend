@@ -27,20 +27,6 @@
   min-height: 267px;
 }
 
-.carousel-wrapper {
-  position: relative;
-}
-
-body.rtl {
-  .carousel-wrapper {
-    direction: ltr; // to fix the gallery view in hebrew
-
-    .category-label, .trips-list-trip-actions-v2 {
-      direction: rtl;
-    }
-  }
-}
-
 .heart-icon {
   position: absolute;
   top: 16px;

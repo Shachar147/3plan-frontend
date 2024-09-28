@@ -54,6 +54,7 @@ const popularCities = [
 interface DestinationSelectorProps {
     onChange: (selectedValues: string[]) => void;
     selectedDestinations?: string[]
+    isSingle?: boolean
 }
 
 export interface CityOrCountry {
@@ -196,6 +197,10 @@ function DestinationSelector(props: DestinationSelectorProps) {
     };
 
     const handleChange = (selected: MultiValue<OptionType>) => {
+        // since the whole code depdends on that this component is multiselect.
+        if (props.isSingle) {
+            selected = [selected];
+        }
         setSelectedOptions(selected || []);
         props.onChange((selected || []).map((i) => i.value));
     };
@@ -203,7 +208,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
     return (
         <div className="destination-selector-container">
             <Select
-                isMulti
+                isMulti={!props.isSingle}
                 options={options}
                 value={selectedOptions}
                 onChange={handleChange}
