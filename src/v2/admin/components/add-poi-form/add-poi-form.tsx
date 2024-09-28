@@ -22,8 +22,8 @@ function POIForm() {
         { name: 'category', label: TranslateService.translate(eventStore, 'TEMPLATE.CATEGORY'), type: 'category-selector' },
         // { name: 'rate.quantity', label: 'Rate Quantity', type: 'number' },
         // { name: 'rate.rating', label: 'Rate Rating (Out of 5)', type: 'number', max: 5, min: -1 },
-        { name: 'price', label: 'Price', type: 'number' },
-        { name: 'currency', label: 'Currency', type: 'text' },
+        { name: 'price', label: TranslateService.translate(eventStore, 'MODALS.PRICE'), type: 'number' },
+        { name: 'currency', label: TranslateService.translate(eventStore, 'MODALS.CURRENCY'), type: 'currency-selector' },
         { name: 'images', label: TranslateService.translate(eventStore, 'MODALS.IMAGES'), type: 'image-upload', isRequired: true}
     ];
 
@@ -139,6 +139,19 @@ function POIForm() {
             }
         }
 
+        if (formData['price'] && !formData['currency']) {
+            ReactModalService.internal.alertMessage(
+                eventStore,
+                'MODALS.ERROR.TITLE',
+                'PLEASE_FILL_IN_X_BEFORE_YOU_PROCEED',
+                'error',
+                {
+                    X: fields.find((f) => f.name == 'currency')!.label
+                }
+            );
+            isOk = false;
+        }
+
         return isOk;
     }
 
@@ -203,6 +216,28 @@ function POIForm() {
                     <span id="file-name">{TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}</span>
                 </div>
             )
+        }
+
+        if (type == 'currency-selector') {
+            return (
+                ReactModalRenderHelper.renderCurrencySelector(
+                    eventStore,
+                    'currency',
+                    {
+                        name,
+                        value: formData[name],
+                        // @ts-ignore
+                        onChange: (data) => handleChange({
+                            target: {
+                                name,
+                                value: data?.value?.toUpperCase()
+                            }
+                        }),
+                        placeholderKey: 'MODALS.CURRENCY',
+                    },
+                    eventStore.modalValuesRefs['currency']
+                )
+            );
         }
 
         if (type == 'location-selector') {
