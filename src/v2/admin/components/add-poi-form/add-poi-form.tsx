@@ -10,6 +10,7 @@ import { Image } from "../../../components/point-of-interest/point-of-interest";
 import ReactModalService, {ReactModalRenderHelper} from "../../../../services/react-modal-service";
 import {getDefaultCategories} from "../../../../utils/defaults";
 import LocationInput from "../../../../components/inputs/location-input/location-input";
+import {formatDuration, getDurationInMs} from "../../../../utils/time-utils";
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
@@ -18,18 +19,20 @@ function POIForm() {
         { name: 'more_info', label: TranslateService.translate(eventStore, 'SOURCE_OR_LINK'), type: 'text', isLink: true },
         { name: 'name', label: TranslateService.translate(eventStore, 'EVENT_NAME'), type: 'text', isRequired: true },
         { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
+        { name: 'duration', label: TranslateService.translate(eventStore, 'MODALS.DURATION'), type: 'text', isRequired: true},
+        { name: 'images', label: TranslateService.translate(eventStore, 'MODALS.IMAGES'), type: 'image-upload', isRequired: true},
         { name: 'description', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESCRIPTION'), type: 'textarea' },
         { name: 'category', label: TranslateService.translate(eventStore, 'TEMPLATE.CATEGORY'), type: 'category-selector' },
         // { name: 'rate.quantity', label: 'Rate Quantity', type: 'number' },
         // { name: 'rate.rating', label: 'Rate Rating (Out of 5)', type: 'number', max: 5, min: -1 },
         { name: 'price', label: TranslateService.translate(eventStore, 'MODALS.PRICE'), type: 'number' },
         { name: 'currency', label: TranslateService.translate(eventStore, 'MODALS.CURRENCY'), type: 'currency-selector' },
-        { name: 'images', label: TranslateService.translate(eventStore, 'MODALS.IMAGES'), type: 'image-upload', isRequired: true}
     ];
 
     const [formData, setFormData] = useState({
         name: undefined, // required
         location: undefined, // required
+        duration: '01:00',
         description: '',
         source: 'System',
         more_info: '',
@@ -42,6 +45,8 @@ function POIForm() {
         currency: '',
         images: [] as File[], // required
         imagePaths: [] as string[],
+        isVerified: true,
+        isSystemRecommendation: true,
     });
     const [renderCounter, setRenderCounter] = useState(0);
 
@@ -137,6 +142,18 @@ function POIForm() {
                 isOk = false;
                 break;
             }
+        }
+
+        if (formData['duration'].split(':').length != 2 || !getDurationInMs(formData['duration'])) {
+            ReactModalService.internal.alertMessage(
+                eventStore,
+                'MODALS.ERROR.TITLE',
+                'DURATION_IS_INVALID',
+                'error',
+            );
+            isOk = false;
+        } else {
+            alert(getDurationInMs(formData['duration']));
         }
 
         if (formData['price'] && !formData['currency']) {

@@ -76,6 +76,18 @@ export function convertMsToHM(milliseconds: number): string {
 	return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
 }
 
+export function getDurationInMs(duration: string){
+	if (!duration) {
+		return 0;
+	}
+	duration = fixDuration(duration);
+
+	const hours = parseInt(duration.split(':')[0]);
+	const minutes = parseInt(duration.split(':')[1]);
+	const milliseconds = minutes * 60000 + hours * 3600000;
+	return milliseconds;
+}
+
 export function formatDuration(duration: string) {
 	duration = fixDuration(duration);
 
