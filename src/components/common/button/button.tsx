@@ -11,7 +11,7 @@ export enum ButtonFlavor {
 
 export interface ButtonProps {
 	text: string;
-	onClick: () => void;
+	onClick: (e: MouseEvent) => void;
 	flavor: ButtonFlavor;
 	className?: string;
 	disabled?: boolean;
@@ -37,8 +37,8 @@ const Button = (props: ButtonProps) => {
 				props.className,
 				props.disabled && 'cursor-default'
 			)}
-			onClick={() => {
-				!props.disabled && props.onClick();
+			onClick={(e) => {
+				!props.disabled && props.onClick(e);
 			}}
 			disabled={props.disabled}
 			style={props.style}

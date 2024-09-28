@@ -923,5 +923,9 @@
 	"SUGGESTED_TRIP_TEMPLATES": "Suggested trips",
 	"SUGGESTED_TRIP_TEMPLATES.DESCRIPTION": "Create your trip easily and quickly using the predefined templates our experts team created for you!",
 	"DAY_X": "Day {X}",
-	"CREATE_TRIP_FROM_TEMPLATE.BUTTON.TEXT": "Make it mine!"
+	"CREATE_TRIP_FROM_TEMPLATE.BUTTON.TEXT": "Make it mine!",
+	"ADMIN_PAGE_V2.ADD_POIS": "Add Point Of Interests",
+	"ADMIN_PAGE_V2.ADD_POIS.SHORT": "Add POIs",
+	"CHOOSE_A_FILE": "Choose file/s",
+	"X_FILES_CHOSEN": "{X} files chosen"
 }

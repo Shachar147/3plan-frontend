@@ -1150,5 +1150,9 @@
 	"SUGGESTED_TRIP_TEMPLATES": "טיולים מומלצים",
 	"SUGGESTED_TRIP_TEMPLATES.DESCRIPTION": "בנה את הטיול שלך בקלות ובמהירות על ידי שימוש בטמפלייטים מוכנים שצוות המומחים שלנו בנו עבורך!",
 	"DAY_X": "יום {X}",
-	"CREATE_TRIP_FROM_TEMPLATE.BUTTON.TEXT": "צור טיול מטמפלייט זה!"
+	"CREATE_TRIP_FROM_TEMPLATE.BUTTON.TEXT": "צור טיול מטמפלייט זה!",
+	"ADMIN_PAGE_V2.ADD_POIS": "הוסף נקודות עניין",
+	"ADMIN_PAGE_V2.ADD_POIS.SHORT": "הוסף נק' עניין",
+	"CHOOSE_A_FILE": "בחר קבצים",
+	"X_FILES_CHOSEN": "{X} קבצים נבחרו"
 }

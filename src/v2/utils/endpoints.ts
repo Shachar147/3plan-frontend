@@ -56,6 +56,7 @@ export const endpoints: Record<string, any> = {
         biEvents: '/bi-events'
     },
     v2: {
+        fileUpload: '/file-upload',
         placesPhotos: {
             get: (destination: string) => `/places-photos?place=${destination}`
         },

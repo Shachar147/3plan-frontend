@@ -1,0 +1,55 @@
+.add-poi-form-container {
+  .add-poi-form {
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .file-input {
+      display: none;
+    }
+
+    .file-label {
+      display: inline-block;
+      padding-block: 5px;
+      padding-inline: 10px;
+      background-color: #eaeaea;
+      width: max-content;
+      color: black;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: opacity 0.2s ease-in-out;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+
+    input[type=text], textarea {
+      background-color: transparent !important;
+      outline: none;
+      border: 1px solid var(--gray);
+      border-radius: 8px;
+      padding-inline-start: 8px;
+      font-size: 12px;
+      width: 100% !important;
+      min-width: 200px !important;
+
+      &::placeholder {
+        color: var(--gray) !important;
+      }
+
+      &:disabled {
+        border: 1px solid var(--gray) !important;
+      }
+    }
+  }
+}
+
+body.rtl {
+  .add-poi-form-container {
+    direction: rtl;
+    text-align: right;
+  }
+}
