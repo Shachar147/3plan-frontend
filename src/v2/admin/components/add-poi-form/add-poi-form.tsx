@@ -11,6 +11,8 @@ import ReactModalService, {ReactModalRenderHelper} from "../../../../services/re
 import {getDefaultCategories} from "../../../../utils/defaults";
 import LocationInput from "../../../../components/inputs/location-input/location-input";
 import {getDurationInMs} from "../../../../utils/time-utils";
+import AdminAddPoiApiService from "../../services/add-poi-api-service";
+import DestinationSelector from "../../../components/destination-selector/destination-selector";
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
@@ -18,6 +20,7 @@ function POIForm() {
     const fields = [
         { name: 'more_info', label: TranslateService.translate(eventStore, 'SOURCE_OR_LINK'), type: 'text', isLink: true, placeholderKey: 'LINKS_ONLY' },
         { name: 'name', label: TranslateService.translate(eventStore, 'EVENT_NAME'), type: 'text', isRequired: true },
+        { name: 'destination', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESTINATION'), type: 'destination-selector', isRequired: true },
         { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
         { name: 'duration', label: TranslateService.translate(eventStore, 'MODALS.DURATION'), type: 'text', isRequired: true},
         { name: 'images', label: TranslateService.translate(eventStore, 'MODALS.IMAGES'), type: 'image-upload', isRequired: true},
@@ -34,16 +37,15 @@ function POIForm() {
         name: undefined, // required
         location: undefined, // required
         duration: '01:00',
-        description: '',
+        description: undefined,
         source: 'System',
-        more_info: '',
+        more_info: undefined,
         category: 'CATEGORY.GENERAL',
         rate: {
-            rating: 5,
-            quantity: 999999
+            rating: 5
         },
         price: undefined,
-        currency: '',
+        currency: undefined,
         images: [] as File[], // required
         imagePaths: [] as string[],
         isVerified: true,
@@ -93,12 +95,13 @@ function POIForm() {
 
         const promises = formData.images.map((file, index) => {
             const extension = file.name.split('.').pop();
-            return fileUploadService.uploadPhoto(file, `/images/pois/${sanitizedPOIName}-${index + 1}.${extension}`)
-                .then(() => `/images/pois/${sanitizedPOIName}-${index + 1}.${extension}`);
+            return fileUploadService.uploadPhoto(file, `/images/pois/${sanitizedPOIName}-${index + 1}.${extension}`);
         });
 
         const paths = await Promise.all(promises);
+        console.log("hereeee", { paths });
         setFormData({ ...formData, imagePaths: paths });
+        return paths;
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -203,26 +206,42 @@ function POIForm() {
         }
 
         try {
-            await handleImageProcessing(); // Process images first
+            const images = await handleImageProcessing(); // Process images first
 
+            console.log({images});
             const poiData = {
                 ...formData,
-                images: formData.imagePaths,
+                images,
             };
 
-            const response = await fetch('http://localhost:3001/api/pois', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(poiData),
-            });
 
-            if (response.ok) {
-                alert('POI added successfully');
+            const response = await new AdminAddPoiApiService().addPoi(poiData);
+
+            if (response.totalUpdated) {
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            } else if (response.totalAdded) {
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_ADDED_SUCCESSFULLY',
+                    'success'
+                );
             } else {
-                alert('Failed to add POI');
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.ERROR.TITLE',
+                    'FAILED_TO_ADD_POI',
+                    'error'
+                );
             }
         } catch (error) {
             console.error('Error uploading POI:', error);
+            ReactModalService.internal.openOopsErrorModal(eventStore);
         }
     };
 
@@ -284,6 +303,19 @@ function POIForm() {
                     eventStore.modalValuesRefs['currency']
                 )
             );
+        }
+
+        if (type == 'destination-selector') {
+            return (
+                <DestinationSelector isSingle onChange={(destinations: string[]) => {
+                    handleChange({
+                        target: {
+                            name,
+                            value: destinations?.[0]
+                        }
+                    })
+                }} />
+            )
         }
 
         if (type == 'location-selector') {

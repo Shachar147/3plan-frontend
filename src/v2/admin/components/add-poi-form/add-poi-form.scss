@@ -37,6 +37,18 @@
       }
     }
 
+    .destination-selector-container {
+      max-width: 400px;
+      width: 100%;
+
+      .select__control {
+        border-radius: 8px !important;
+      }
+      .select__input {
+        border: 0 !important;
+      }
+    }
+
     .triplan-selector {
       width: 100% !important;
       min-width: 200px !important;

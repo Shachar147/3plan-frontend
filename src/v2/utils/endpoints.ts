@@ -56,6 +56,11 @@ export const endpoints: Record<string, any> = {
         biEvents: '/bi-events'
     },
     v2: {
+        admin: {
+            poi: {
+                add: '/poi/upsert/system-recommendation',
+            }
+        },
         fileUpload: '/file-upload',
         placesPhotos: {
             get: (destination: string) => `/places-photos?place=${destination}`

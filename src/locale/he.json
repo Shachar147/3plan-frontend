@@ -1160,5 +1160,8 @@
 	"DURATION_IS_INVALID": "שדה משך זמן לא מולא כראוי",
 	"LINKS_ONLY": "לינקים בלבד",
 	"REMOVE_FILES": "הסר את הקבצים",
-	"CHANGE_FILES": "החלף את הקבצים"
+	"CHANGE_FILES": "החלף את הקבצים",
+	"POI_ADDED_SUCCESSFULLY": "נקודת העניין נוספה בהצלחה!",
+	"POI_UPDATED_SUCCESSFULLY": "נקודת העניין עודכנה בהצלחה!",
+	"FAILED_TO_ADD_POI": "הוספת נקודת העניין נכשלה"
 }

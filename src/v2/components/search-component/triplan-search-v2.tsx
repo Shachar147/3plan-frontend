@@ -29,6 +29,7 @@ const TriplanSearchV2 = () => {
     const debounceInputChange = useRef<NodeJS.Timeout | undefined>(undefined);
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
+    const isInAdmin = window.location.href.includes(`${newDesignRootPath}/admin`);
     const isInTemplate = window.location.href.includes(`${newDesignRootPath}/template/`);
 
     useEffect(() => {
@@ -127,6 +128,11 @@ const TriplanSearchV2 = () => {
         } else {
             searchStore.setSearchQuery(suggestion.name);
             window.location.hash = `q=${suggestion.name}`;
+        }
+
+        if (isInAdmin){
+            window.location.href = `${newDesignRootPath}/${window.location.hash}`;
+            return;
         }
 
         if (redirectUrl){
