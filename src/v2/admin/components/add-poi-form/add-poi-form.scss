@@ -21,6 +21,11 @@
       cursor: pointer;
       transition: opacity 0.2s ease-in-out;
 
+      &.remove {
+        background-color: var(--red);
+        color: white;
+      }
+
       &:hover {
         opacity: 0.6;
       }

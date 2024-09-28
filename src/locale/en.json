@@ -931,5 +931,7 @@
 	"SOURCE_OR_LINK": "Source / Link",
 	"PLEASE_FILL_IN_X_BEFORE_YOU_PROCEED": "Please fill in {X} before you proceed.",
 	"DURATION_IS_INVALID": "Duration is invalid",
-	"LINKS_ONLY": "Links only"
+	"LINKS_ONLY": "Links only",
+	"REMOVE_FILES": "Remove files",
+	"CHANGE_FILES": "Change files"
 }

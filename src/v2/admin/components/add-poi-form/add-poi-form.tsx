@@ -10,7 +10,7 @@ import { Image } from "../../../components/point-of-interest/point-of-interest";
 import ReactModalService, {ReactModalRenderHelper} from "../../../../services/react-modal-service";
 import {getDefaultCategories} from "../../../../utils/defaults";
 import LocationInput from "../../../../components/inputs/location-input/location-input";
-import {formatDuration, getDurationInMs} from "../../../../utils/time-utils";
+import {getDurationInMs} from "../../../../utils/time-utils";
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
@@ -29,6 +29,7 @@ function POIForm() {
         { name: 'currency', label: TranslateService.translate(eventStore, 'MODALS.CURRENCY'), type: 'currency-selector' },
     ];
 
+    const [previewUrls, setPreviewUrls] = useState([]);
     const [formData, setFormData] = useState({
         name: undefined, // required
         location: undefined, // required
@@ -54,11 +55,25 @@ function POIForm() {
         return name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
     };
 
+    const handleImageRemoval = () => {
+        setFormData({ ...formData, images: [] });
+        setPreviewUrls([]);
+        const fileName = TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
+        document.getElementById('file-name').innerText = fileName;
+    }
+
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            setFormData({ ...formData, images: Array.from(e.target.files) });
+            const uploadedFiles = Array.from(e.target.files);
+
+            setFormData({ ...formData, images: uploadedFiles });
+
+            // Create object URLs for the uploaded files
+            const urls = uploadedFiles.map(file => URL.createObjectURL(file));
+            setPreviewUrls(urls);
+
         } else {
-            setFormData({ ...formData, images: [] });
+            handleImageRemoval();
         }
 
         const fileName = e.target.files.length === 0
@@ -68,6 +83,8 @@ function POIForm() {
                 : e.target.files[0].name;
 
         document.getElementById('file-name').innerText = fileName;
+
+        setRenderCounter(renderCounter + 1);
     };
 
     const handleImageProcessing = async () => {
@@ -118,6 +135,7 @@ function POIForm() {
             }
             updatedFormData = { ...formData, [name]: value };
         }
+
         console.log("hereee", updatedFormData);
         setFormData(updatedFormData);
     };
@@ -169,6 +187,11 @@ function POIForm() {
             isOk = false;
         }
 
+        // remove currency if no price was set.
+        if (!formData['price']){
+            formData['currency'] = undefined;
+        }
+
         return isOk;
     }
 
@@ -207,7 +230,8 @@ function POIForm() {
         return (
             <div className="carousel-wrapper margin-bottom-5" key={renderCounter}>
                 <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true}>
-                    {formData.imagePaths.map((image, index) => (
+                    {/*{formData.imagePaths.map((image, index) => (*/}
+                    {previewUrls.map((image, index) => (
                         <div key={`item-image-${index}`}>
                             <Image image={image} alt={`Image #${index + 1}`} key={index} idx={`item--idx-${index}`} isSmall />
                         </div>
@@ -227,8 +251,12 @@ function POIForm() {
         if (type == 'image-upload') {
             return (
                 <div className="flex-column gap-4">
-                    {formData.imagePaths.length > 0 && renderPreview()}
-                    <label className="file-label" htmlFor="file-upload">{TranslateService.translate(eventStore, 'CHOOSE_A_FILE')}</label>
+                    {/*{formData.imagePaths.length > 0 && renderPreview()}*/}
+                    {previewUrls.length > 0 && renderPreview()}
+                    <div className="flex-row gap-8">
+                        <label className="file-label" htmlFor="file-upload">{TranslateService.translate(eventStore, previewUrls.length > 0 ? 'CHANGE_FILES' : 'CHOOSE_A_FILE')}</label>
+                        {previewUrls.length > 0 && <label className="file-label remove" onClick={handleImageRemoval}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
+                    </div>
                     <input type="file" id="file-upload" className="file-input" multiple onChange={handleImageUpload} />
                     <span id="file-name">{TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}</span>
                 </div>
