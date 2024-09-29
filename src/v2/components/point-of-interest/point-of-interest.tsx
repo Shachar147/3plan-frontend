@@ -572,7 +572,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     {!savedCollection && durationText && <span className="duration">{durationText}</span>}
                     {!savedCollection && !myTrips && (item.price ?? item.extra?.price) && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
                         price: (item.price ?? item.extra?.price),
-                        currency: (item.currency === 'ILS' || item.extra?.currency === 'ILS') ? '₪' : item.currency ?? item.extra?.currency
+                        currency: (item.currency === 'ILS' || item.extra?.currency === 'ILS') ? '₪' : (item.currency ?? item.extra?.currency) ? TranslateService.translate(eventStore, (item.currency ?? item.extra?.currency)?.toString()) : undefined
                     })}</span>}
                     {!!item.rate && !!item.rate.rating && <div className="rate">
                         {renderStars(item.rate.rating)}
