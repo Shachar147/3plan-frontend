@@ -83,7 +83,7 @@ function TemplatesView(){
                     <h3 className="main-feed-header width-100-percents">{title}</h3>
                     <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: description}} />
                 </div>
-                <div className={getClasses("main-feed-header gap-20 width-100-percents align-items-center", eventStore.isMobile ? 'flex-col' : 'flex-row')}>
+                <div className={getClasses("main-feed-header gap-20 width-100-percents align-items-center justify-content-center", eventStore.isMobile ? 'flex-col' : 'flex-row')}>
                     {tripTemplatesStore.isLoading ? <TemplateShimmeringPlaceholder/> : (
                         <>
                             {tripTemplatesStore.tripTemplates.map((t, idx) => <Template key={idx} trip={t} />)}

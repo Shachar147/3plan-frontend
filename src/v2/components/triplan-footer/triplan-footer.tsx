@@ -1,12 +1,13 @@
 import {endpoints} from "../../utils/endpoints";
-import { apiGetNew } from '../../../helpers/api';
+import {apiGetNew} from '../../../helpers/api';
 import React, {useContext, useEffect, useState} from "react";
-import {observer} from "mobx-react";
 import './triplan-footer.scss';
 import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
-import {getClasses, getCurrentUsername} from "../../../utils/utils";
+import {getClasses, getCurrentUsername, isAdmin} from "../../../utils/utils";
 import {newDesignRootPath, TEMPLATES_USER_NAME} from "../../utils/consts";
+import Button, {ButtonFlavor} from "../../../components/common/button/button";
+import {observer} from "mobx-react";
 
 interface TriplanFooterSummaries {
     avgCalendarItemsInTrip: number
@@ -99,12 +100,21 @@ function TriplanFooter(){
 
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
 
+    const isInAdmin = window.location.href.includes(`${newDesignRootPath}/admin`);
+
     return (
+        <>
         <div className={getClasses("triplan-footer", eventStore.isMobile && isInPlan && 'padding-bottom-80')}>
             {structure.map((dict, idx) => (
                 <div key={idx}>{renderStatsBlock(dict)}</div>
             ))}
         </div>
+            {isAdmin() && (
+                <Button flavor={ButtonFlavor.link} className="white-color" onClick={() =>{
+                    window.location.href = isInAdmin ? newDesignRootPath : `${newDesignRootPath}/admin`;
+                }}  text={TranslateService.translate(eventStore, isInAdmin ? 'MOBILE_NAVBAR.USER_SIDE' : 'MOBILE_NAVBAR.ADMIN_SIDE')}/>
+            )}
+        </>
     )
 }
 

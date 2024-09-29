@@ -458,6 +458,10 @@ export function isTemplateUsername(){
 	return getCurrentUsername() == TEMPLATES_USER_NAME;
 }
 
+export function isAdmin(){
+	return getCurrentUsername() == "Shachar";
+}
+
 export function getCurrentUsername(): string | null {
 	const token = axios.defaults.headers.Authorization?.toString().replace(`Bearer `, '');
 	if (!token) {

@@ -530,6 +530,19 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
 
     const isSmall = eventStore.isMobile || mainFeed || savedCollection || myTrips;
 
+    const getCurrencySign = (item) => {
+        if (item.currency === 'ILS' || item.extra?.currency === 'ILS') {
+            return '₪';
+        }
+        else if (item.currency === 'USD' || item.extra?.currency === 'USD') {
+            return '$';
+        }
+        else if (item.currency ?? item.extra?.currency){
+            return TranslateService.translate(eventStore, (item.currency ?? item.extra?.currency)?.toString());
+        }
+        return undefined;
+    };
+
     return (
         <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', isSearchResult && 'search-result', isViewItem && 'view-item')}>
             <div className="poi-left">
@@ -572,7 +585,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     {!savedCollection && durationText && <span className="duration">{durationText}</span>}
                     {!savedCollection && !myTrips && (item.price ?? item.extra?.price) && <span className="price">{TranslateService.translate(eventStore, 'POINT_OF_INTEREST.PRICE', {
                         price: (item.price ?? item.extra?.price),
-                        currency: (item.currency === 'ILS' || item.extra?.currency === 'ILS') ? '₪' : (item.currency ?? item.extra?.currency) ? TranslateService.translate(eventStore, (item.currency ?? item.extra?.currency)?.toString()) : undefined
+                        currency: getCurrencySign(item)
                     })}</span>}
                     {!!item.rate && !!item.rate.rating && <div className="rate">
                         {renderStars(item.rate.rating)}
