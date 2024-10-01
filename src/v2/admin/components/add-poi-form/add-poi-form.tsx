@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import FileUploadApiService from "../../../services/file-upload-api-service";
 import './add-poi-form.scss';
 import Button, { ButtonFlavor } from "../../../../components/common/button/button";
@@ -13,6 +13,7 @@ import LocationInput from "../../../../components/inputs/location-input/location
 import {getDurationInMs} from "../../../../utils/time-utils";
 import AdminAddPoiApiService from "../../services/add-poi-api-service";
 import DestinationSelector, {fetchCitiesAndSetOptions} from "../../../components/destination-selector/destination-selector";
+import {runInAction} from "mobx";
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
@@ -33,6 +34,8 @@ function POIForm() {
     ];
 
     const [previewUrls, setPreviewUrls] = useState([]);
+    const [fileNames, setFileNames] = useState([]);
+    const currentIdx = useRef(0);
     const [formData, setFormData] = useState({
         name: undefined, // required
         location: undefined, // required
@@ -55,18 +58,47 @@ function POIForm() {
     const [renderCounter, setRenderCounter] = useState(0);
 
     useEffect(() => {
+        // so the auto-find-category once Location changes will work
         const categories = getDefaultCategories(eventStore);
-        eventStore.setCategories(categories)
+        runInAction(() => {
+            eventStore.categories = categories;
+        })
+
     }, [])
 
     const sanitizeFileName = (name: string): string => {
         return name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
     };
 
-    const handleImageRemoval = () => {
-        setFormData({ ...formData, images: [] });
-        setPreviewUrls([]);
-        const fileName = TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
+    const handleImageRemoval = (idx: number = undefined) => {
+        if (idx != undefined) {
+            formData.images.splice(idx, 1);
+            setFormData({ ...formData });
+            previewUrls.splice(idx, 1);
+            setPreviewUrls(previewUrls);
+            fileNames.splice(idx, 1);
+            setFileNames(fileNames);
+
+        } else {
+            setFormData({ ...formData, images: [] });
+            setPreviewUrls([]);
+            fileNames.splice(0,fileNames.length);
+            setFileNames([]);
+        }
+
+        updateChosenFileText();
+
+        setRenderCounter(renderCounter + 1);
+        currentIdx.current = 0;
+    }
+
+    const updateChosenFileText = () => {
+        const fileName = fileNames.length === 0
+            ? TranslateService.translate(eventStore, 'NO_FILE_CHOSEN') :
+            fileNames.length > 1
+                ? TranslateService.translate(eventStore, 'X_FILES_CHOSEN', { X: fileNames.length }) :
+                fileNames[0];
+
         document.getElementById('file-name').innerText = fileName;
     }
 
@@ -78,6 +110,7 @@ function POIForm() {
 
             // Create object URLs for the uploaded files
             const urls = uploadedFiles.map(file => URL.createObjectURL(file));
+            setFileNames(uploadedFiles.map((f) => f.name));
             setPreviewUrls(urls);
 
         } else {
@@ -122,29 +155,33 @@ function POIForm() {
             if (!value?.latitude || !value?.longitude) {
                 value = undefined;
             } else {
-                // if (!formData.name?.length) {
+                if (!formData.more_info) {
+                    // if (!formData.name?.length) {
                     formData.name = eventStore.modalValues['name'];
-                // }
-                // if (!formData.destination) {
+                    // }
+                    // if (!formData.destination) {
                     formData.destination = fetchCitiesAndSetOptions().filter((x) => x.type == 'country').find((x) =>
                         (value.address ?? "").toLowerCase().includes(x.value.toLowerCase())
                     )?.value
-                // }
-                // if (!formData.more_info) {
-                    formData.more_info = eventStore.modalValues['more-info'];
-                // }
-                if (eventStore.modalValues['category']?.label) {
-                    formData.category = eventStore.modalValues['category']?.label;
-                }
+                    // }
 
-                /*
-                const images = eventStore.modalValues['images']?.split("\n") ?? [];
-                formData.images = images
-                setPreviewUrls(images);
-                */
+                    // if (!formData.more_info) {
+                    // formData.more_info = eventStore.modalValues['more-info'];
+                    // }
 
-                if (!formData.description) {
-                    // formData.description = eventStore.modalValues['description'];
+                    if (eventStore.modalValues['category']?.label) {
+                        formData.category = eventStore.modalValues['category']?.label;
+                    }
+
+                    /*
+                    const images = eventStore.modalValues['images']?.split("\n") ?? [];
+                    formData.images = images
+                    setPreviewUrls(images);
+                    */
+
+                    if (!formData.description) {
+                        // formData.description = eventStore.modalValues['description'];
+                    }
                 }
             }
         }
@@ -279,7 +316,9 @@ function POIForm() {
     function renderPreview() {
         return (
             <div className="carousel-wrapper margin-bottom-5" key={renderCounter}>
-                <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true}>
+                <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true} onChange={(idx) => {
+                    currentIdx.current = idx;
+                }}>
                     {/*{formData.imagePaths.map((image, index) => (*/}
                     {previewUrls.map((image, index) => (
                         <div key={`item-image-${index}`}>
@@ -305,7 +344,8 @@ function POIForm() {
                     {previewUrls.length > 0 && renderPreview()}
                     <div className="flex-row gap-8">
                         <label className="file-label" htmlFor="file-upload">{TranslateService.translate(eventStore, previewUrls.length > 0 ? 'CHANGE_FILES' : 'CHOOSE_A_FILE')}</label>
-                        {previewUrls.length > 0 && <label className="file-label remove" onClick={handleImageRemoval}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
+                        {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(undefined)}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
+                        {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(currentIdx.current)}>{TranslateService.translate(eventStore, 'REMOVE_FILE')}</label>}
                     </div>
                     <input type="file" id="file-upload" className="file-input" multiple onChange={handleImageUpload} />
                     <span id="file-name">{TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}</span>
