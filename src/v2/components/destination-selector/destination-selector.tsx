@@ -198,7 +198,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
 
     const handleChange = (selected: MultiValue<OptionType>) => {
         // since the whole code depdends on that this component is multiselect.
-        if (props.isSingle) {
+        if (props.isSingle && selected) {
             selected = [selected];
         }
         setSelectedOptions(selected || []);
@@ -209,6 +209,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
         <div className="destination-selector-container">
             <Select
                 isMulti={!props.isSingle}
+                isClearable
                 options={options}
                 value={selectedOptions}
                 onChange={handleChange}

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import FileUploadApiService from "../../../services/file-upload-api-service";
 import './add-poi-form.scss';
 import Button, { ButtonFlavor } from "../../../../components/common/button/button";
@@ -12,16 +12,16 @@ import {getDefaultCategories} from "../../../../utils/defaults";
 import LocationInput from "../../../../components/inputs/location-input/location-input";
 import {getDurationInMs} from "../../../../utils/time-utils";
 import AdminAddPoiApiService from "../../services/add-poi-api-service";
-import DestinationSelector from "../../../components/destination-selector/destination-selector";
+import DestinationSelector, {fetchCitiesAndSetOptions} from "../../../components/destination-selector/destination-selector";
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
 
     const fields = [
+        { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
         { name: 'more_info', label: TranslateService.translate(eventStore, 'SOURCE_OR_LINK'), type: 'text', isLink: true, placeholderKey: 'LINKS_ONLY', isRequired: true },
         { name: 'name', label: TranslateService.translate(eventStore, 'EVENT_NAME'), type: 'text', isRequired: true },
         { name: 'destination', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESTINATION'), type: 'destination-selector', isRequired: true },
-        { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
         { name: 'duration', label: TranslateService.translate(eventStore, 'MODALS.DURATION'), type: 'text', isRequired: true},
         { name: 'images', label: TranslateService.translate(eventStore, 'MODALS.IMAGES'), type: 'image-upload', isRequired: true},
         { name: 'description', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESCRIPTION'), type: 'textarea', isRequired: true },
@@ -50,8 +50,14 @@ function POIForm() {
         imagePaths: [] as string[],
         isVerified: true,
         isSystemRecommendation: true,
+        destination: undefined,
     });
     const [renderCounter, setRenderCounter] = useState(0);
+
+    useEffect(() => {
+        const categories = getDefaultCategories(eventStore);
+        eventStore.setCategories(categories)
+    }, [])
 
     const sanitizeFileName = (name: string): string => {
         return name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
@@ -112,8 +118,35 @@ function POIForm() {
                 e.target.value = undefined;
             }
         }
-        if (name == 'location' && (!value?.latitude || !value?.longitude)) {
-            value = undefined;
+        if (name == 'location') {
+            if (!value?.latitude || !value?.longitude) {
+                value = undefined;
+            } else {
+                // if (!formData.name?.length) {
+                    formData.name = eventStore.modalValues['name'];
+                // }
+                // if (!formData.destination) {
+                    formData.destination = fetchCitiesAndSetOptions().filter((x) => x.type == 'country').find((x) =>
+                        (value.address ?? "").toLowerCase().includes(x.value.toLowerCase())
+                    )?.value
+                // }
+                // if (!formData.more_info) {
+                    formData.more_info = eventStore.modalValues['more-info'];
+                // }
+                if (eventStore.modalValues['category']?.label) {
+                    formData.category = eventStore.modalValues['category']?.label;
+                }
+
+                /*
+                const images = eventStore.modalValues['images']?.split("\n") ?? [];
+                formData.images = images
+                setPreviewUrls(images);
+                */
+
+                if (!formData.description) {
+                    // formData.description = eventStore.modalValues['description'];
+                }
+            }
         }
         let updatedFormData;
 
@@ -305,7 +338,7 @@ function POIForm() {
 
         if (type == 'destination-selector') {
             return (
-                <DestinationSelector isSingle onChange={(destinations: string[]) => {
+                <DestinationSelector selectedDestinations={formData.destination ? [formData.destination] : undefined} isSingle onChange={(destinations: string[]) => {
                     handleChange({
                         target: {
                             name,
