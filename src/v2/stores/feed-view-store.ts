@@ -16,6 +16,8 @@ export class FeedStore {
     @observable savedCollections: SavedCollection[] = [];
     @observable reRenderCounter = 0;
 
+    @observable systemRecommendations: IPointOfInterest[] = [];
+
     @observable activeTab: string = "default";
 
     @action

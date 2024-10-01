@@ -33,6 +33,7 @@ import {useParams} from "react-router-dom";
 import LoadingComponent from "../../../components/loading/loading-component";
 import MainPage from "../../../pages/main-page/main-page";
 import TemplatesView from "../../components/templates-view/templates-view";
+import SystemRecommendationsView from "../../components/system-recommendations-view/system-recommendations-view";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -156,6 +157,7 @@ function MainPageContent(){
                 render: () => <TriplanTabContent content={
                     <div className="flex-col gap-20">
                         <TemplatesView />
+                        <SystemRecommendationsView />
                         <FeedView eventStore={eventStore} mainFeed />
                     </div>
                 } />

@@ -872,7 +872,10 @@ const RootRouter = () => {
 							<Route path="/admin/item/:id" element={<AManageItem />} />
 						</>
 					) : (
-						<Route path="/admin" element={getUser() == undefined ? <LoginPage /> : <LandingPage />} />
+						<>
+							<Route path={`${newDesignRootPath}/admin`} element={getUser() == undefined ? <LoginPage /> : <MainPageV2 />} />
+							<Route path="/admin" element={getUser() == undefined ? <LoginPage /> : <MainPageV2 />} />
+						</>
 					)}
 				</Routes>
 			</BrowserRouter>

@@ -96,8 +96,20 @@ export default class FeedViewApiService {
         return await apiPost(url)
     }
 
+    getSystemRecommendations = async () => {
+        const result = await apiGetPromise(this,  endpoints.v2.poi.systemRecommendations);
+        if (result) {
+            return result?.data;
+        }
+        return {
+            results: [],
+            isFinished: true,
+            source: "Local"
+        };
+    }
+
     getMainFeedItems = async () => {
-        const result = await apiGetPromise(this,  endpoints.v2.poi.feed);
+        const result = await apiGetPromise(this, `${endpoints.v2.poi.feed}?withoutSystemRecommendations=1`);
         if (result) {
             return result?.data;
         }
