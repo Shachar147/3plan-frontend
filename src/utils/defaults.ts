@@ -94,6 +94,30 @@ export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] 
 	];
 };
 
+export const getDefaultCategoriesExtended = (eventStore: EventStore): TriPlanCategory[] => {
+	return [
+		...getDefaultCategories(eventStore),
+		{
+			id: 20,
+			icon: '🌆️',
+			title: TranslateService.translate(eventStore, 'CATEGORY.CITIES'),
+			titleKey: 'CATEGORY.CITIES',
+		},
+		{
+			id: 21,
+			icon: '🏝',
+			title: TranslateService.translate(eventStore, 'CATEGORY.ISLANDS'),
+			titleKey: 'CATEGORY.ISLANDS',
+		},
+		{
+			id: 22,
+			icon: '🏛',
+			title: TranslateService.translate(eventStore, 'CATEGORY.MUSEUMS'),
+			titleKey: 'CATEGORY.MUSEUMS',
+		},
+	];
+};
+
 export const defaultCategoriesKeys: string[] = [
 	'CATEGORY.GENERAL',
 	'CATEGORY.FLIGHTS',

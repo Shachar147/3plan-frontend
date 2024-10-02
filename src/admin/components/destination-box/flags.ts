@@ -869,6 +869,10 @@ export const countriesFlags: Record<string, any> = {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/th.png',
 		normal: 'http://flags.fmcdn.net/data/flags/normal/th.png',
 	},
+	'Ko Samui': {
+		mini: 'http://flags.fmcdn.net/data/flags/mini/th.png',
+		normal: 'http://flags.fmcdn.net/data/flags/normal/th.png',
+	},
 	// same as Thailand
 	Phuket: {
 		mini: 'http://flags.fmcdn.net/data/flags/mini/th.png',

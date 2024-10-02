@@ -111328,6 +111328,20 @@ const countriesAndCities = [
         "isPopular": true
     },
     {
+        "value": "Koh Samui",
+        "label": "Koh Samui, Thailand",
+        "type": "island",
+        "flagClass": "fi fi-th",
+        "isPopular": true
+    },
+    {
+        "value": "Ko Samui",
+        "label": "Ko Samui, Thailand",
+        "type": "island",
+        "flagClass": "fi fi-th",
+        "isPopular": true
+    },
+    {
         "value": "Koh Tao",
         "label": "Koh Tao, Thailand",
         "type": "island",
