@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import FileUploadApiService from "../../../services/file-upload-api-service";
 import './add-poi-form.scss';
 import Button, { ButtonFlavor } from "../../../../components/common/button/button";
@@ -8,20 +8,98 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Image } from "../../../components/point-of-interest/point-of-interest";
 import ReactModalService, {ReactModalRenderHelper} from "../../../../services/react-modal-service";
-import {getDefaultCategories} from "../../../../utils/defaults";
+import {getDefaultCategoriesExtended} from "../../../../utils/defaults";
 import LocationInput from "../../../../components/inputs/location-input/location-input";
 import {getDurationInMs} from "../../../../utils/time-utils";
 import AdminAddPoiApiService from "../../services/add-poi-api-service";
-import DestinationSelector from "../../../components/destination-selector/destination-selector";
+import DestinationSelector, {fetchCitiesAndSetOptions} from "../../../components/destination-selector/destination-selector";
+import {runInAction} from "mobx";
+import SelectInput from "../../../../components/inputs/select-input/select-input";
+
+function CategorySelector(props: {
+    name: string,
+    value: string,
+    placeholderKey: string,
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+}){
+    const eventStore = useContext(eventStoreContext);
+
+    const allOptions = getDefaultCategoriesExtended(eventStore);
+    const selectOptions = allOptions.sort((a, b) => a.id - b.id)
+        .map((x, index) => ({
+            value: x.id.toString(),
+            label: x.icon ? `${x.icon} ${x.title}` : x.title,
+        }));
+
+    // const _value = useMemo(() => {
+    //     return selectOptions.find((o) => o.label.includes(TranslateService.translate(eventStore, props.value)))?.value;
+    // }, [props.value])
+
+    // alert("before:" + props.value);
+    const foundCategory = selectOptions.find((o) => o.label.includes(TranslateService.translate(eventStore, props.value)));
+    const _value = foundCategory?.value;
+    // alert("after:" + _value);
+    
+    useEffect(() => {
+        runInAction(() => {
+            eventStore.modalValues['category'] = foundCategory;
+        })
+    }, [_value])
+
+    return (
+        <SelectInput
+            ref={eventStore.modalValuesRefs['category']}
+            // readOnly={extra.readOnly}
+            name={"category"}
+            options={selectOptions}
+            // value={extra.value != undefined ? extra.options.find((o) => o.value == extra.value) : undefined}
+            value={props.value}
+            placeholderKey={props.placeholderKey}
+            modalValueName={'category'}
+            // maxMenuHeight={extra.maxMenuHeight}
+            // removeDefaultClass={extra.removeDefaultClass}
+            onChange={(data) => props.onChange({
+                target: {
+                    name: props.name,
+                    value: data ? allOptions.find((c) => c.id == data.value)?.titleKey : undefined // 'CATEGORY.GENERAL'
+                }
+            })}
+            // onClear={extra.onClear}
+            // isClearable={extra.isClearable ?? true}
+            // wrapperClassName={wrapperClassName}
+        />
+    )
+
+    return (
+        <div key={props.value}>{
+        ReactModalRenderHelper.renderSelector(
+            eventStore,
+            'category',
+            {
+                ...props,
+                value: _value,
+                onChange: (data) => props.onChange({
+                    target: {
+                        name: props.name,
+                        value: data ? allOptions.find((c) => c.id == data.value)?.titleKey : undefined // 'CATEGORY.GENERAL'
+                    }
+                })
+            },
+            // { placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
+            // undefined,
+            selectOptions
+        )}</div>
+    );
+}
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
 
     const fields = [
+        { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
         { name: 'more_info', label: TranslateService.translate(eventStore, 'SOURCE_OR_LINK'), type: 'text', isLink: true, placeholderKey: 'LINKS_ONLY', isRequired: true },
         { name: 'name', label: TranslateService.translate(eventStore, 'EVENT_NAME'), type: 'text', isRequired: true },
         { name: 'destination', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESTINATION'), type: 'destination-selector', isRequired: true },
-        { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
         { name: 'duration', label: TranslateService.translate(eventStore, 'MODALS.DURATION'), type: 'text', isRequired: true},
         { name: 'images', label: TranslateService.translate(eventStore, 'MODALS.IMAGES'), type: 'image-upload', isRequired: true},
         { name: 'description', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESCRIPTION'), type: 'textarea', isRequired: true },
@@ -33,6 +111,8 @@ function POIForm() {
     ];
 
     const [previewUrls, setPreviewUrls] = useState([]);
+    const [fileNames, setFileNames] = useState([]);
+    const currentIdx = useRef(0);
     const [formData, setFormData] = useState({
         name: undefined, // required
         location: undefined, // required
@@ -50,17 +130,52 @@ function POIForm() {
         imagePaths: [] as string[],
         isVerified: true,
         isSystemRecommendation: true,
+        destination: undefined,
     });
     const [renderCounter, setRenderCounter] = useState(0);
+
+    useEffect(() => {
+        // so the auto-find-category once Location changes will work
+        const categories = getDefaultCategoriesExtended(eventStore);
+        runInAction(() => {
+            eventStore.categories = categories;
+        })
+
+    }, [])
 
     const sanitizeFileName = (name: string): string => {
         return name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
     };
 
-    const handleImageRemoval = () => {
-        setFormData({ ...formData, images: [] });
-        setPreviewUrls([]);
-        const fileName = TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
+    const handleImageRemoval = (idx: number = undefined) => {
+        if (idx != undefined) {
+            formData.images.splice(idx, 1);
+            setFormData({ ...formData });
+            previewUrls.splice(idx, 1);
+            setPreviewUrls(previewUrls);
+            fileNames.splice(idx, 1);
+            setFileNames(fileNames);
+
+        } else {
+            setFormData({ ...formData, images: [] });
+            setPreviewUrls([]);
+            fileNames.splice(0,fileNames.length);
+            setFileNames([]);
+        }
+
+        updateChosenFileText();
+
+        setRenderCounter(renderCounter + 1);
+        currentIdx.current = 0;
+    }
+
+    const updateChosenFileText = () => {
+        const fileName = fileNames.length === 0
+            ? TranslateService.translate(eventStore, 'NO_FILE_CHOSEN') :
+            fileNames.length > 1
+                ? TranslateService.translate(eventStore, 'X_FILES_CHOSEN', { X: fileNames.length }) :
+                fileNames[0];
+
         document.getElementById('file-name').innerText = fileName;
     }
 
@@ -72,6 +187,7 @@ function POIForm() {
 
             // Create object URLs for the uploaded files
             const urls = uploadedFiles.map(file => URL.createObjectURL(file));
+            setFileNames(uploadedFiles.map((f) => f.name));
             setPreviewUrls(urls);
 
         } else {
@@ -112,11 +228,64 @@ function POIForm() {
                 e.target.value = undefined;
             }
         }
-        if (name == 'location' && (!value?.latitude || !value?.longitude)) {
-            value = undefined;
+        if (name == 'location') {
+            if (!value?.latitude || !value?.longitude) {
+                value = undefined;
+            } else {
+                if (!formData.more_info) {
+                    // if (!formData.name?.length) {
+                    formData.name = eventStore.modalValues['name'];
+                    // }
+                    // if (!formData.destination) {
+                    formData.destination = fetchCitiesAndSetOptions().filter((x) => x.type == 'country').find((x) =>
+                        (value.address ?? "").toLowerCase().includes(x.value.toLowerCase())
+                    )?.value
+                    // }
+
+                    // if (!formData.more_info) {
+                    // formData.more_info = eventStore.modalValues['more-info'];
+                    // }
+
+                    const foundCategory = eventStore.modalValues['category']?.label && !eventStore.modalValues['category']?.label.includes(TranslateService.translate(eventStore, 'CATEGORY.GENERAL'));
+                    if (foundCategory) {
+                        formData.category = eventStore.modalValues['category']?.label;
+                        // renderCounter += 1;
+                        // alert("found Category" + formData.category);
+                    } else {
+                        const cities = fetchCitiesAndSetOptions().filter((x) => x.type == 'city');
+                        const islands = fetchCitiesAndSetOptions().filter((x) => x.type == 'island');
+
+                        if (cities.find((c) => c.value.toLowerCase() == formData.name.toLowerCase())) {
+                            // alert("city!");
+                            formData.category = "CATEGORY.CITIES";
+                            // renderCounter += 1
+                        }
+                        else if (islands.find((c) => c.value.toLowerCase() == formData.name.toLowerCase())) {
+                            // alert("island!");
+                            formData.category = "CATEGORY.ISLANDS";
+                            // renderCounter += 1
+                        }
+                    }
+                    if (formData.category == "CATEGORY.HOTELS" || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.HOTELS'))) {
+                        formData.duration = "120:00"  // 5 days
+                    } else if (formData.duration == "120:00") {
+                        formData.duration = "01:00"; // reset back to default
+                    }
+
+                    /*
+                    const images = eventStore.modalValues['images']?.split("\n") ?? [];
+                    formData.images = images
+                    setPreviewUrls(images);
+                    */
+
+                    if (!formData.description) {
+                        // formData.description = eventStore.modalValues['description'];
+                    }
+                }
+            }
         }
         let updatedFormData;
-
+        
         if (name.startsWith('rate')) {
             const rateField = name.split('.')[1]; // e.g., 'quantity' or 'rating'
             if (Number(value) < 0){
@@ -246,7 +415,9 @@ function POIForm() {
     function renderPreview() {
         return (
             <div className="carousel-wrapper margin-bottom-5" key={renderCounter}>
-                <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true}>
+                <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true} onChange={(idx) => {
+                    currentIdx.current = idx;
+                }}>
                     {/*{formData.imagePaths.map((image, index) => (*/}
                     {previewUrls.map((image, index) => (
                         <div key={`item-image-${index}`}>
@@ -272,7 +443,8 @@ function POIForm() {
                     {previewUrls.length > 0 && renderPreview()}
                     <div className="flex-row gap-8">
                         <label className="file-label" htmlFor="file-upload">{TranslateService.translate(eventStore, previewUrls.length > 0 ? 'CHANGE_FILES' : 'CHOOSE_A_FILE')}</label>
-                        {previewUrls.length > 0 && <label className="file-label remove" onClick={handleImageRemoval}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
+                        {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(undefined)}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
+                        {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(currentIdx.current)}>{TranslateService.translate(eventStore, 'REMOVE_FILE')}</label>}
                     </div>
                     <input type="file" id="file-upload" className="file-input" multiple onChange={handleImageUpload} />
                     <span id="file-name">{TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}</span>
@@ -305,7 +477,7 @@ function POIForm() {
 
         if (type == 'destination-selector') {
             return (
-                <DestinationSelector isSingle onChange={(destinations: string[]) => {
+                <DestinationSelector selectedDestinations={formData.destination ? [formData.destination] : undefined} isSingle onChange={(destinations: string[]) => {
                     handleChange({
                         target: {
                             name,
@@ -326,7 +498,7 @@ function POIForm() {
                             value: window['selectedLocation']
                         }
                     })
-                }, eventStore);
+                }, eventStore, true);
             };
 
             const setManualLocation = () => {
@@ -361,30 +533,10 @@ function POIForm() {
 
         if (type === 'category-selector'){
             return (
-                ReactModalRenderHelper.renderSelector(
-                    eventStore,
-                    'category',
-                    {
-                        name,
-                        value: formData[name],
-                        placeholderKey,
-                        // @ts-ignore
-                        onChange: (data) => handleChange({
-                            target: {
-                                name,
-                                value: data ? getDefaultCategories(eventStore).find((c) => c.id == data.value)?.titleKey : 'CATEGORY.GENERAL'
-                            }
-                        })
-                    },
-                    // { placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
-                    // undefined,
-                    getDefaultCategories(eventStore).sort((a, b) => a.id - b.id)
-                        .map((x, index) => ({
-                            value: x.id.toString(),
-                            label: x.icon ? `${x.icon} ${x.title}` : x.title,
-                        }))
-                )
-            );
+                <div key={renderCounter}>
+                    <CategorySelector name={name} value={formData[name]} placeholderKey={placeholderKey} onChange={(e) => handleChange(e)} />
+                </div>
+            )
         }
 
         return (

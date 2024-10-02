@@ -7,7 +7,7 @@ import {observer} from "mobx-react";
 
 // @ts-ignore
 // import onClickOutside from 'react-onclickoutside';
-import {cityImage, newDesignRootPath, specificItemTabId} from "../../utils/consts";
+import {cityImage, islandImage, newDesignRootPath, specificItemTabId} from "../../utils/consts";
 import {useLoadSuggestions, useMobileLockScroll} from "../../hooks/search-hooks";
 import {rootStoreContext} from "../../stores/root-store";
 import ReactModalService from "../../../services/react-modal-service";
@@ -168,7 +168,7 @@ const TriplanSearchV2 = () => {
             });
         }
 
-        const isCityOrCountry = suggestion.image == cityImage;
+        const isCityOrCountry = suggestion.image == cityImage || suggestion.image == islandImage;
         if (isCityOrCountry) {
             return suggestion.destination;
         }

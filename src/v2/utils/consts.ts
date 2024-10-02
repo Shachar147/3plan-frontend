@@ -9,7 +9,8 @@ const newDesignRootPath = "/v2";
 const searchResultsTabId = "search-results";
 const specificItemTabId = "view-item";
 
-const cityImage = "images/city.jpg";
+const cityImage = "/images/city.jpg";
+const islandImage = "/images/island.png";
 
 export const TEMPLATES_USER_NAME = "templates";
 
@@ -224,6 +225,7 @@ export {
     newDesignRootPath,
     savedCollectionsTabId,
     cityImage,
+    islandImage,
     searchResultsTabId,
     specificItemTabId
 }

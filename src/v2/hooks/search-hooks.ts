@@ -1,6 +1,6 @@
 import {useContext, useEffect, useMemo, useRef} from "react";
 import {eventStoreContext} from "../../stores/events-store";
-import {cityImage} from "../utils/consts";
+import {cityImage, islandImage} from "../utils/consts";
 import {SearchSuggestion} from "../components/search-component/triplan-search-v2";
 import FeedViewApiService from "../services/feed-view-api-service";
 import {CityOrCountry, fetchCitiesAndSetOptions} from "../components/destination-selector/destination-selector";
@@ -125,17 +125,17 @@ export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggest
                 image: cityImage
             }));
 
-            const others = citiesAndCountries.filter((c) => isMatchQuery(c) && c.type !== "city" && c.type !== "country").map((c) => ({
+            const islands = citiesAndCountries.filter((c) => isMatchQuery(c) && c.type == 'island').map((c) => ({
                 name: c.value,
                 category: c.type,
                 destination: c.label,
-                image: cityImage
+                image: islandImage
             }));
 
             results = [
                 ...countries,
                 ...cities,
-                ...others,
+                ...islands,
                 ...results,
             ]
 

@@ -40,7 +40,6 @@ const popularCities = [
     { city: 'Bangkok', countryCode: 'TH', countryLabel: 'Thailand' },
     { city: 'Phuket', countryCode: 'TH', countryLabel: 'Thailand' },
     { city: 'Chiang Mai', countryCode: 'TH', countryLabel: 'Thailand' },
-    { city: 'Ko Samui', countryCode: 'TH', countryLabel: 'Thailand' },
     { city: 'Ko Pha Ngan', countryCode: 'TH', countryLabel: 'Thailand' },
     { city: 'Krabi', countryCode: 'TH', countryLabel: 'Thailand' },
     // Additional popular places in Mexico
@@ -198,7 +197,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
 
     const handleChange = (selected: MultiValue<OptionType>) => {
         // since the whole code depdends on that this component is multiselect.
-        if (props.isSingle) {
+        if (props.isSingle && selected) {
             selected = [selected];
         }
         setSelectedOptions(selected || []);
@@ -209,6 +208,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
         <div className="destination-selector-container">
             <Select
                 isMulti={!props.isSingle}
+                isClearable
                 options={options}
                 value={selectedOptions}
                 onChange={handleChange}

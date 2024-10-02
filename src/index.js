@@ -432,7 +432,7 @@ const RootRouter = () => {
             `;
 	};
 
-	function updatePlaceDetails(place) {
+	function updatePlaceDetails(place, overrideName) {
 		runInAction(() => {
 			const descriptionArr = [];
 			if (place.international_phone_number) {
@@ -444,7 +444,12 @@ const RootRouter = () => {
 			// console.log('before', eventStore.modalValues);
 
 			// update name
-			eventStore.modalValues['name'] = eventStore.modalValues['name'] ?? place.name;
+			if (overrideName) {
+				eventStore.modalValues['name'] = place.name;
+			} else {
+				eventStore.modalValues['name'] = eventStore.modalValues['name'] ?? place.name;
+			}
+
 
 			// update images
 			if (eventStore.modalValues['images'] && eventStore.modalValues['images'].indexOf('maps.google') !== -1) {
@@ -480,6 +485,11 @@ const RootRouter = () => {
 					value: x.id,
 					label: x.icon ? `${x.icon} ${x.title}` : x.title,
 				}));
+
+			if (overrideName){
+				eventStore.modalValues['category'] = undefined;
+			}
+
 			if (place.name && !eventStore.modalValues['category']) {
 				if (isMatching(place.name, HOTEL_KEYWORDS) || isMatching(place.website ?? '', HOTEL_KEYWORDS)) {
 					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, HOTEL_KEYWORDS));
@@ -658,7 +668,8 @@ const RootRouter = () => {
 		className = 'location-input',
 		variableName = 'selectedLocation',
 		placeChangedCallback,
-		eventStore
+		eventStore,
+		overrideName = false
 	) => {
 		const autoCompleteRef = document.querySelector(`.${className}`);
 		const autocomplete = new google.maps.places.Autocomplete(autoCompleteRef);
@@ -731,7 +742,7 @@ const RootRouter = () => {
 					longitude,
 				};
 
-				updatePlaceDetails(place);
+				updatePlaceDetails(place, overrideName);
 			}
 
 			window.placeInfo = {
