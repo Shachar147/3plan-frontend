@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import FileUploadApiService from "../../../services/file-upload-api-service";
 import './add-poi-form.scss';
 import Button, { ButtonFlavor } from "../../../../components/common/button/button";
@@ -8,12 +8,89 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Image } from "../../../components/point-of-interest/point-of-interest";
 import ReactModalService, {ReactModalRenderHelper} from "../../../../services/react-modal-service";
-import {getDefaultCategories} from "../../../../utils/defaults";
+import {getDefaultCategoriesExtended} from "../../../../utils/defaults";
 import LocationInput from "../../../../components/inputs/location-input/location-input";
 import {getDurationInMs} from "../../../../utils/time-utils";
 import AdminAddPoiApiService from "../../services/add-poi-api-service";
 import DestinationSelector, {fetchCitiesAndSetOptions} from "../../../components/destination-selector/destination-selector";
 import {runInAction} from "mobx";
+import SelectInput from "../../../../components/inputs/select-input/select-input";
+
+function CategorySelector(props: {
+    name: string,
+    value: string,
+    placeholderKey: string,
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+}){
+    const eventStore = useContext(eventStoreContext);
+
+    const allOptions = getDefaultCategoriesExtended(eventStore);
+    const selectOptions = allOptions.sort((a, b) => a.id - b.id)
+        .map((x, index) => ({
+            value: x.id.toString(),
+            label: x.icon ? `${x.icon} ${x.title}` : x.title,
+        }));
+
+    // const _value = useMemo(() => {
+    //     return selectOptions.find((o) => o.label.includes(TranslateService.translate(eventStore, props.value)))?.value;
+    // }, [props.value])
+
+    // alert("before:" + props.value);
+    const foundCategory = selectOptions.find((o) => o.label.includes(TranslateService.translate(eventStore, props.value)));
+    const _value = foundCategory?.value;
+    // alert("after:" + _value);
+    
+    useEffect(() => {
+        runInAction(() => {
+            eventStore.modalValues['category'] = foundCategory;
+        })
+    }, [_value])
+
+    return (
+        <SelectInput
+            ref={eventStore.modalValuesRefs['category']}
+            // readOnly={extra.readOnly}
+            name={"category"}
+            options={selectOptions}
+            // value={extra.value != undefined ? extra.options.find((o) => o.value == extra.value) : undefined}
+            value={props.value}
+            placeholderKey={props.placeholderKey}
+            modalValueName={'category'}
+            // maxMenuHeight={extra.maxMenuHeight}
+            // removeDefaultClass={extra.removeDefaultClass}
+            onChange={(data) => props.onChange({
+                target: {
+                    name: props.name,
+                    value: data ? allOptions.find((c) => c.id == data.value)?.titleKey : undefined // 'CATEGORY.GENERAL'
+                }
+            })}
+            // onClear={extra.onClear}
+            // isClearable={extra.isClearable ?? true}
+            // wrapperClassName={wrapperClassName}
+        />
+    )
+
+    return (
+        <div key={props.value}>{
+        ReactModalRenderHelper.renderSelector(
+            eventStore,
+            'category',
+            {
+                ...props,
+                value: _value,
+                onChange: (data) => props.onChange({
+                    target: {
+                        name: props.name,
+                        value: data ? allOptions.find((c) => c.id == data.value)?.titleKey : undefined // 'CATEGORY.GENERAL'
+                    }
+                })
+            },
+            // { placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
+            // undefined,
+            selectOptions
+        )}</div>
+    );
+}
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
@@ -59,7 +136,7 @@ function POIForm() {
 
     useEffect(() => {
         // so the auto-find-category once Location changes will work
-        const categories = getDefaultCategories(eventStore);
+        const categories = getDefaultCategoriesExtended(eventStore);
         runInAction(() => {
             eventStore.categories = categories;
         })
@@ -169,8 +246,30 @@ function POIForm() {
                     // formData.more_info = eventStore.modalValues['more-info'];
                     // }
 
-                    if (eventStore.modalValues['category']?.label) {
+                    const foundCategory = eventStore.modalValues['category']?.label && !eventStore.modalValues['category']?.label.includes(TranslateService.translate(eventStore, 'CATEGORY.GENERAL'));
+                    if (foundCategory) {
                         formData.category = eventStore.modalValues['category']?.label;
+                        // renderCounter += 1;
+                        // alert("found Category" + formData.category);
+                    } else {
+                        const cities = fetchCitiesAndSetOptions().filter((x) => x.type == 'city');
+                        const islands = fetchCitiesAndSetOptions().filter((x) => x.type == 'island');
+
+                        if (cities.find((c) => c.value.toLowerCase() == formData.name.toLowerCase())) {
+                            // alert("city!");
+                            formData.category = "CATEGORY.CITIES";
+                            // renderCounter += 1
+                        }
+                        else if (islands.find((c) => c.value.toLowerCase() == formData.name.toLowerCase())) {
+                            // alert("island!");
+                            formData.category = "CATEGORY.ISLANDS";
+                            // renderCounter += 1
+                        }
+                    }
+                    if (formData.category == "CATEGORY.HOTELS" || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.HOTELS'))) {
+                        formData.duration = "120:00"  // 5 days
+                    } else if (formData.duration == "120:00") {
+                        formData.duration = "01:00"; // reset back to default
                     }
 
                     /*
@@ -186,7 +285,7 @@ function POIForm() {
             }
         }
         let updatedFormData;
-
+        
         if (name.startsWith('rate')) {
             const rateField = name.split('.')[1]; // e.g., 'quantity' or 'rating'
             if (Number(value) < 0){
@@ -399,7 +498,7 @@ function POIForm() {
                             value: window['selectedLocation']
                         }
                     })
-                }, eventStore);
+                }, eventStore, true);
             };
 
             const setManualLocation = () => {
@@ -434,30 +533,10 @@ function POIForm() {
 
         if (type === 'category-selector'){
             return (
-                ReactModalRenderHelper.renderSelector(
-                    eventStore,
-                    'category',
-                    {
-                        name,
-                        value: formData[name],
-                        placeholderKey,
-                        // @ts-ignore
-                        onChange: (data) => handleChange({
-                            target: {
-                                name,
-                                value: data ? getDefaultCategories(eventStore).find((c) => c.id == data.value)?.titleKey : 'CATEGORY.GENERAL'
-                            }
-                        })
-                    },
-                    // { placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
-                    // undefined,
-                    getDefaultCategories(eventStore).sort((a, b) => a.id - b.id)
-                        .map((x, index) => ({
-                            value: x.id.toString(),
-                            label: x.icon ? `${x.icon} ${x.title}` : x.title,
-                        }))
-                )
-            );
+                <div key={renderCounter}>
+                    <CategorySelector name={name} value={formData[name]} placeholderKey={placeholderKey} onChange={(e) => handleChange(e)} />
+                </div>
+            )
         }
 
         return (

@@ -485,6 +485,11 @@ const RootRouter = () => {
 					value: x.id,
 					label: x.icon ? `${x.icon} ${x.title}` : x.title,
 				}));
+
+			if (overrideName){
+				eventStore.modalValues['category'] = undefined;
+			}
+
 			if (place.name && !eventStore.modalValues['category']) {
 				if (isMatching(place.name, HOTEL_KEYWORDS) || isMatching(place.website ?? '', HOTEL_KEYWORDS)) {
 					eventStore.modalValues['category'] = options.find((x) => isMatching(x.label, HOTEL_KEYWORDS));
