@@ -1169,6 +1169,7 @@
 	"REMOVE_FILE": "הסר את הקובץ הנוכחי",
 	"REMOVE_FILES": "הסר את הקבצים",
 	"CHANGE_FILES": "החלף את הקבצים",
+	"ADD_FILES": "הוסף קבצים",
 	"POI_ADDED_SUCCESSFULLY": "נקודת העניין נוספה בהצלחה!",
 	"POI_UPDATED_SUCCESSFULLY": "נקודת העניין עודכנה בהצלחה!",
 	"FAILED_TO_ADD_POI": "הוספת נקודת העניין נכשלה"
