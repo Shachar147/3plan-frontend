@@ -11,7 +11,7 @@ import ReactModalService, {ReactModalRenderHelper} from "../../../../services/re
 import {getDefaultCategoriesExtended} from "../../../../utils/defaults";
 import LocationInput from "../../../../components/inputs/location-input/location-input";
 import {getDurationInMs} from "../../../../utils/time-utils";
-import AdminAddPoiApiService from "../../services/add-poi-api-service";
+import AdminPoiApiService from "../../services/add-poi-api-service";
 import DestinationSelector, {fetchCitiesAndSetOptions} from "../../../components/destination-selector/destination-selector";
 import {runInAction} from "mobx";
 import SelectInput from "../../../../components/inputs/select-input/select-input";
@@ -220,7 +220,7 @@ function POIForm() {
         return paths;
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         let { name, value } = e.target;
         if (name == 'price' || name == 'rate'){
             if (value == undefined || Number(value) < 0){
@@ -266,9 +266,12 @@ function POIForm() {
                             // renderCounter += 1
                         }
                     }
-                    if (formData.category == "CATEGORY.HOTELS" || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.HOTELS'))) {
+                    if (formData.category == "CATEGORY.CITIES" || formData.category == "CATEGORY.ISLANDS" || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.CITIES')) || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.ISLANDS'))) {
+                        formData.duration = "24:00"  // 1 day
+                    }
+                    else if (formData.category == "CATEGORY.HOTELS" || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.HOTELS'))) {
                         formData.duration = "120:00"  // 5 days
-                    } else if (formData.duration == "120:00") {
+                    } else if (formData.duration == "120:00" || formData.duration == "24:00") {
                         formData.duration = "01:00"; // reset back to default
                     }
 
@@ -306,6 +309,11 @@ function POIForm() {
                 value = undefined;
             }
             updatedFormData = { ...formData, [name]: value };
+        }
+
+        if (name === 'more_info' && value?.includes("http")) {
+            const response = await new AdminPoiApiService().extractInfo(value);
+            console.log("hereee", response);
         }
 
         // console.log("hereee", updatedFormData);
@@ -382,7 +390,7 @@ function POIForm() {
             };
 
 
-            const response = await new AdminAddPoiApiService().addPoi(poiData);
+            const response = await new AdminPoiApiService().addPoi(poiData);
 
             if (response.totalUpdated) {
                 ReactModalService.internal.alertMessage(

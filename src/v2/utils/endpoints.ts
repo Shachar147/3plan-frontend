@@ -59,6 +59,7 @@ export const endpoints: Record<string, any> = {
         admin: {
             poi: {
                 add: '/poi/upsert/system-recommendation',
+                infoExtractor: '/info-extractor'
             }
         },
         fileUpload: '/file-upload',
