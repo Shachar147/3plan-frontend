@@ -25,6 +25,7 @@ interface TriplanFooterSummaries {
     avgSavedItemsPerUser: number;
     totalDestinations: number;
     totalSavedCollections: number;
+    totalSystemRecommendations: number;
 
     totalTemplates: number;
     totalApprovedTemplates?: number;
@@ -66,7 +67,8 @@ function TriplanFooter(){
                 {"FOOTER.TOTAL_DESTINATIONS_WITH_INTERESTS": summaries?.totalDestinations},
                 {"FOOTER.TOTAL_SAVED_COLLECTIONS": summaries?.totalSavedCollections},
                 {"FOOTER.TOTAL_SAVED_ITEMS": summaries?.totalSavedItems},
-                {"FOOTER.AVG_SAVED_ITEMS_PER_USER": summaries?.avgSavedItemsPerUser}
+                {"FOOTER.AVG_SAVED_ITEMS_PER_USER": summaries?.avgSavedItemsPerUser},
+                {"FOOTER.TOTAL_SYSTEM_RECOMMENDATIONS": summaries?.totalSystemRecommendations},
             ]
         }
     ]

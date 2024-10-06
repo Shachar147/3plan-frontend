@@ -872,6 +872,7 @@
 	"FOOTER.TOTAL_TEMPLATES": "Total Templates: {X}",
 	"FOOTER.TOTAL_APPROVED_TEMPLATES": "Total Approved Templates: {X}",
 	"FOOTER.AVG_SAVED_ITEMS_PER_USER": "Total Saved Items per user: {X}",
+	"FOOTER.TOTAL_SYSTEM_RECOMMENDATIONS": "Total System Recommendations: {X}",
 	"PRICE": "price: {price} {currency}",
 	"FREE_OF_CHARGE": "Free",
 	"DAILY": "daily",
