@@ -105,7 +105,7 @@ function SystemRecommendationsView(){
         }
     }
 
-    function renderContent(){
+    function renderContent() {
         if (eventStore.isMobile) {
             return (
                 <LazyLoadComponent className="width-100-percents flex-column align-items-center" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading} isReachedEnd={isReachedEnd}>
@@ -145,12 +145,10 @@ function SystemRecommendationsView(){
             <div className={getClasses('system-recommendations-view', eventStore.isMobile && 'with-divider')}>
                 <div className="flex-col">
                     <h3 className="main-feed-header width-100-percents">{title}</h3>
-                    <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: description}} />}
+                    <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: description }} />
                 </div>
                 <div className={getClasses("justify-content-center flex-wrap-wrap align-items-start", eventStore.isMobile ? 'flex-col' : 'flex-row')}>
-                    {isLoading ? <SystemRecommendationsShimmeringPlaceholder/> : (
-                        renderContent()
-                    )}
+                    {isLoading ? <SystemRecommendationsShimmeringPlaceholder/> : renderContent()}
                 </div>
             </div>
         </>
