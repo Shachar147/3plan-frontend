@@ -940,6 +940,8 @@
 	"X_HOURS": "{X} שעות",
 	"ONE_DAY": "יום אחד",
 	"X_DAYS": "{X} ימים",
+	"ONE_AND_A_HALF_HOUR": "שעה וחצי",
+	"X_AND_A_HALF_HOURS": "{X} וחצי שעות",
 	"X_HOURS_Y_MINUTES":"{X} שעות, {Y} דקות",
 	"NO_MORE_ITEMS": "אין פריטים נוספים",
 	"DESTINATION_SELECTOR.POPULAR_DESTINATION": "יעד פופולרי",

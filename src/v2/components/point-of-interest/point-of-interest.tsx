@@ -295,6 +295,8 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         if (hours === 0 && minutes > 0) return TranslateService.translate(eventStore, 'X_MINUTES', { X: minutes });
         if (hours === 1 && minutes === 0) return TranslateService.translate(eventStore, 'ONE_HOUR');
         if (hours > 0 && minutes === 0) return TranslateService.translate(eventStore, 'X_HOURS', { X: hours});
+        if (hours === 1 && minutes === 30) return TranslateService.translate(eventStore, 'ONE_AND_A_HALF_HOUR');
+        if (hours > 0 && minutes === 30) return TranslateService.translate(eventStore, 'X_AND_A_HALF_HOURS', { X: hours});
         if (hours > 0 && minutes > 0) return TranslateService.translate(eventStore, 'X_HOURS_Y_MINUTES', { X: hours, Y: minutes});
 
         return TranslateService.translate(eventStore, 'X_HOURS');

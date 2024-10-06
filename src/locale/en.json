@@ -794,6 +794,8 @@
 	"X_HOURS": "{X} hours",
 	"ONE_DAY": "One day",
 	"X_DAYS": "{X} days",
+	"ONE_AND_A_HALF_HOUR": "One and a half hour",
+	"X_AND_A_HALF_HOURS": "{X} and a half hours",
 	"X_HOURS_Y_MINUTES":"{X} hours, {Y} minutes",
 	"VIEW_ON_GOOGLE_MAPS": "View on google maps",
 	"NO_MORE_ITEMS": "No more items",
