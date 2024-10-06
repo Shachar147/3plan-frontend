@@ -115,6 +115,18 @@ export const getDefaultCategoriesExtended = (eventStore: EventStore): TriPlanCat
 			title: TranslateService.translate(eventStore, 'CATEGORY.MUSEUMS'),
 			titleKey: 'CATEGORY.MUSEUMS',
 		},
+		{
+			id: 23,
+			icon: '🏖🍻',
+			title: TranslateService.translate(eventStore, 'CATEGORY.BEACH_BARS'),
+			titleKey: 'CATEGORY.BEACH_BARS',
+		},
+		{
+			id: 24,
+			icon: '🏖',
+			title: TranslateService.translate(eventStore, 'CATEGORY.BEACHES'),
+			titleKey: 'CATEGORY.BEACHES',
+		},
 	];
 };
 

@@ -285,10 +285,18 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         if (!duration) return null;
 
         const [hours, minutes] = duration.split(':').map(Number);
+        if (hours == 24) {
+            return TranslateService.translate(eventStore, 'ONE_DAY');
+        }
+        if (hours > 24) {
+            return TranslateService.translate(eventStore, 'X_DAYS', { X: Math.ceil(hours/24) });
+        }
+
         if (hours === 0 && minutes > 0) return TranslateService.translate(eventStore, 'X_MINUTES', { X: minutes });
         if (hours === 1 && minutes === 0) return TranslateService.translate(eventStore, 'ONE_HOUR');
         if (hours > 0 && minutes === 0) return TranslateService.translate(eventStore, 'X_HOURS', { X: hours});
         if (hours > 0 && minutes > 0) return TranslateService.translate(eventStore, 'X_HOURS_Y_MINUTES', { X: hours, Y: minutes});
+
         return TranslateService.translate(eventStore, 'X_HOURS');
     };
 

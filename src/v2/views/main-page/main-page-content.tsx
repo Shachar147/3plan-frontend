@@ -154,8 +154,8 @@ function MainPageContent(){
             tabs.push({
                 id: mobileSuggestedTripsTabId,
                 order: 0,
-                name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
-                icon: "fa-search",
+                name: TranslateService.translate(eventStore, 'SUGGESTED_TRIP_TEMPLATES'),
+                icon: "fa-suitcase",
                 render: () => <TriplanTabContent content={
                     <TemplatesView />
                 } />
@@ -164,7 +164,7 @@ function MainPageContent(){
                 id: exploreTabId,
                 order: 1,
                 name: TranslateService.translate(eventStore, 'SYSTEM_RECOMMENDATIONS'),
-                icon: "fa-search",
+                icon: "fa-thumbs-up",
                 render: () => <TriplanTabContent content={
                     <SystemRecommendationsView />
                 } />

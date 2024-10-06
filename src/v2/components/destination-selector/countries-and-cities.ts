@@ -56504,8 +56504,8 @@ const countriesAndCities = [
         "isPopular": false
     },
     {
-        "value": "Elat",
-        "label": "Elat, Israel",
+        "value": "Eilat",
+        "label": "Eilat, Israel",
         "type": "city",
         "flagClass": "fi fi-il",
         "isPopular": false
