@@ -429,13 +429,22 @@ export function calendarOrSidebarEventDetails(eventStore: EventStore, event: Sid
 	return undefined;
 }
 
+function containsHebrew(text) {
+	const hebrewPattern = /[\u0590-\u05FF]/;
+	return hebrewPattern.test(text);
+}
+
 export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventStore, isTemplate?: boolean) {
 	if (!calendarEvent.title){
 		return null;
 	}
 	if (isTemplate || isTemplateUsername()) {
 		if (eventStore.isHebrew) {
-			return calendarEvent.title.split('|')?.[1]?.trim() ?? calendarEvent.title;
+			let title = calendarEvent.title.split('|')?.[1]?.trim() ?? calendarEvent.title;
+			if (!containsHebrew(title) && containsHebrew(calendarEvent.title.split('|')?.[0]?.trim())) {
+				return calendarEvent.title.split('|')?.[0]?.trim();
+			}
+			return title;
 		}
 		return calendarEvent.title.split('|')?.[0]?.trim();
 	}
@@ -446,7 +455,11 @@ export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventSto
 export function getEventDescription(calendarEvent: CalendarEvent, eventStore: EventStore, isTemplate?: boolean) {
 	if (isTemplate || isTemplateUsername()) {
 		if (eventStore.isHebrew) {
-			return calendarEvent.description?.split('|')?.[1]?.trim() ?? calendarEvent.description;
+			let description = calendarEvent.description?.split('|')?.[1]?.trim() ?? calendarEvent.description;
+			if (!containsHebrew(description) && containsHebrew(calendarEvent.description?.split('|')?.[0]?.trim())) {
+				return calendarEvent.description?.split('|')?.[0]?.trim();
+			}
+			return description;
 		}
 		return calendarEvent.description?.split('|')?.[0]?.trim();
 	}
