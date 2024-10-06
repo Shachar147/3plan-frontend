@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {observer} from "mobx-react";
 import {getClasses, getEventDescription, getEventTitle} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
@@ -7,8 +7,9 @@ import PointOfInterest, {PointOfInterestShimmering} from "../point-of-interest/p
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {runInAction} from "mobx";
 import './system-recommendations-view.scss';
-import FeedViewApiService from "../../services/feed-view-api-service";
+import FeedViewApiService, {allSources} from "../../services/feed-view-api-service";
 import {CalendarEvent} from "../../../utils/interfaces";
+import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 
 function SystemRecommendationsShimmeringPlaceholder() {
     function renderItem(index: number) {
@@ -30,25 +31,50 @@ function SystemRecommendationsView(){
     const feedStore = useContext(feedStoreContext);
     const eventStore = useContext(eventStoreContext);
     const [isLoading, setIsLoading] = useState(true);
+    const currentPage = useRef(1);
+    const prevPageTotalResults = useRef(0);
+    const [isReachedEnd, setIsReachedEnd] = useState(!eventStore.isMobile);
+
+
+    const fetchItems = async (page, setLoading) => {
+        if (isReachedEnd) {
+            return;
+        }
+        currentPage.current = page;
+        prevPageTotalResults.current = feedStore.systemRecommendations.length;
+
+        setLoading(true);
+        const updatedResults = await loadRecommendations(page);
+        setLoading(false);
+        setIsReachedEnd(updatedResults.length === prevPageTotalResults.current);
+    };
 
     useEffect( () => {
-        loadRecommendations();
+        if (eventStore.isMobile) {
+            fetchItems(1, setIsLoading)
+        } else {
+            loadRecommendations();
+        }
     }, [])
 
-    async function loadRecommendations(){
+    async function loadRecommendations(page?: number){
         const apiService = new FeedViewApiService();
         const responses = await Promise.all(
             [
-                apiService.getSystemRecommendations()
+                apiService.getSystemRecommendations(page)
             ]);
 
-        const systemRecommendations = [];
+        const systemRecommendations = page ? [...feedStore.systemRecommendations] : [];
         responses.forEach(response => {
             systemRecommendations.push(...response.results);
         });
-        feedStore.systemRecommendations = systemRecommendations;
+        runInAction(() => {
+            feedStore.systemRecommendations = systemRecommendations;
+        })
 
         setIsLoading(false);
+
+        return systemRecommendations;
     }
 
     // useEffect(() => {
@@ -79,6 +105,41 @@ function SystemRecommendationsView(){
         }
     }
 
+    function renderContent(){
+        if (eventStore.isMobile) {
+            return (
+                <LazyLoadComponent className="width-100-percents flex-column align-items-center" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading} isReachedEnd={isReachedEnd}>
+                    {feedStore.systemRecommendations.map((item, idx) => (
+                        <div key={item.id} className={classList}>
+                            <PointOfInterest key={item.id} item={{
+                                ...item,
+                                name: getEventTitle({
+                                    title: item.name
+                                } as unknown as CalendarEvent, eventStore, true)!,
+                                description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
+                            }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId} />
+                        </div>
+                    ))}
+                </LazyLoadComponent>
+            )
+        }
+        return (
+            <>
+                {feedStore.systemRecommendations.map((item, idx) => (
+                    <div key={item.id} className={classList}>
+                        <PointOfInterest key={item.id} item={{
+                            ...item,
+                            name: getEventTitle({
+                                title: item.name
+                            } as unknown as CalendarEvent, eventStore, true)!,
+                            description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
+                        }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId} />
+                    </div>
+                ))}
+            </>
+        );
+    }
+
     return (
         <>
             <div className={getClasses('system-recommendations-view', eventStore.isMobile && 'with-divider')}>
@@ -88,19 +149,7 @@ function SystemRecommendationsView(){
                 </div>
                 <div className={getClasses("justify-content-center flex-wrap-wrap align-items-start", eventStore.isMobile ? 'flex-col' : 'flex-row')}>
                     {isLoading ? <SystemRecommendationsShimmeringPlaceholder/> : (
-                        <>
-                            {feedStore.systemRecommendations.map((item, idx) => (
-                                <div key={item.id} className={classList}>
-                                    <PointOfInterest key={item.id} item={{
-                                        ...item,
-                                        name: getEventTitle({
-                                            title: item.name
-                                        } as unknown as CalendarEvent, eventStore, true)!,
-                                        description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
-                                    }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId} />
-                                </div>
-                            ))}
-                        </>
+                        renderContent()
                     )}
                 </div>
             </div>
