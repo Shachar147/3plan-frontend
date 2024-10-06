@@ -63,7 +63,7 @@ function SystemRecommendationsView(){
     // }, [feedStore.filteredItems]);
 
     const title = TranslateService.translate(eventStore, 'SYSTEM_RECOMMENDATIONS');
-    const description = TranslateService.translate(eventStore, 'SYSTEM_RECOMMENDATIONS.DESCRIPTION');
+    let description = TranslateService.translate(eventStore, 'SYSTEM_RECOMMENDATIONS.DESCRIPTION');
 
     const mainFeed = true;
     const searchKeyword = false;
@@ -71,7 +71,11 @@ function SystemRecommendationsView(){
     const classList = getClasses("align-items-center", (!mainFeed && !searchKeyword) && 'width-100-percents', eventStore.isHebrew ? 'flex-row-reverse' : "flex-row");
 
     if (!isLoading && !feedStore.systemRecommendations?.length) {
-        return null;
+        if (eventStore.isMobile){
+            description = TranslateService.translate(eventStore, 'NO_SYSTEM_RECOMMENDATIONS')
+        } else {
+            return null;
+        }
     }
 
     return (

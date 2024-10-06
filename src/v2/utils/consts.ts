@@ -4,6 +4,9 @@ const loginPageContentTabLsKey = "triplan-login-page-content-tab";
 const mainPageContentTabLsKey = "triplan-main-page-content-tab";
 const myTripsTabId = "my-trips";
 const exploreTabId = "explore";
+const mobileSuggestedTripsTabId = "suggested-trips";
+const mobileTopPicksTabId = "top-picks";
+const mobileSystemRecommendationsTabId = "system-recommendations";
 const savedCollectionsTabId = "saved-collections";
 const newDesignRootPath = "/v2";
 const searchResultsTabId = "search-results";
@@ -227,5 +230,8 @@ export {
     cityImage,
     islandImage,
     searchResultsTabId,
-    specificItemTabId
+    specificItemTabId,
+    mobileSuggestedTripsTabId,
+    mobileSystemRecommendationsTabId,
+    mobileTopPicksTabId
 }

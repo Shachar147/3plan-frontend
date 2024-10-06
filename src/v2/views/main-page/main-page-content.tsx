@@ -13,7 +13,7 @@ import {myTripsContext} from "../../stores/my-trips-store";
 import {getClasses, isTemplateUsername, LOADER_DETAILS} from "../../../utils/utils";
 import {
     exploreTabId,
-    mainPageContentTabLsKey,
+    mainPageContentTabLsKey, mobileSuggestedTripsTabId, mobileSystemRecommendationsTabId, mobileTopPicksTabId,
     myTripsTabId,
     savedCollectionsTabId,
     searchResultsTabId,
@@ -148,8 +148,38 @@ function MainPageContent(){
                 } />
             }];
         }
-        return [
-            {
+
+        const tabs = [];
+        if (eventStore.isMobile) {
+            tabs.push({
+                id: mobileSuggestedTripsTabId,
+                order: 0,
+                name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
+                icon: "fa-search",
+                render: () => <TriplanTabContent content={
+                    <TemplatesView />
+                } />
+            })
+            tabs.push({
+                id: exploreTabId,
+                order: 1,
+                name: TranslateService.translate(eventStore, 'SYSTEM_RECOMMENDATIONS'),
+                icon: "fa-search",
+                render: () => <TriplanTabContent content={
+                    <SystemRecommendationsView />
+                } />
+            })
+            tabs.push({
+                id: mobileTopPicksTabId,
+                order: 2,
+                name: TranslateService.translate(eventStore, 'TOP_PICKS'),
+                icon: "fa-search",
+                render: () => <TriplanTabContent content={
+                    <FeedView eventStore={eventStore} mainFeed />
+                } />
+            })
+        } else {
+            tabs.push({
                 id: exploreTabId,
                 order: 0,
                 name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
@@ -161,10 +191,14 @@ function MainPageContent(){
                         <FeedView eventStore={eventStore} mainFeed />
                     </div>
                 } />
-            },
+            })
+        }
+
+        return [
+            ...tabs,
             {
                 id: savedCollectionsTabId,
-                order: 1,
+                order: tabs.length,
                 name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
                     X: feedStore.savedItems.length
                 }),
@@ -173,7 +207,7 @@ function MainPageContent(){
             },
             {
                 id: myTripsTabId,
-                order: 2,
+                order: tabs.length+1,
                 name: TranslateService.translate(eventStore, `${isTemplateUsername() ? 'TEMPLATES' : 'MY_TRIPS'}_X${isShort}`, {
                     X: myTripsStore.totalTrips
                 }),
