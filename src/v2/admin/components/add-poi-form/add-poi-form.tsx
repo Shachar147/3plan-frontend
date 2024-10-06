@@ -34,8 +34,8 @@ function POIForm() {
         { name: 'currency', label: TranslateService.translate(eventStore, 'MODALS.CURRENCY'), type: 'currency-selector' },
     ];
 
-    const [previewUrls, setPreviewUrls] = useState([]);
-
+    const imageDataSource = useRef<'device'|'url'>('device');
+    const initialImages = useRef<string[]>([]);
     const [formData, setFormData] = useState({
         name: undefined, // required
         location: undefined, // required
@@ -178,7 +178,10 @@ function POIForm() {
 
         if (name === 'more_info' && value?.includes("http")) {
             const response = await new AdminPoiApiService().extractInfo(value);
-            console.log("hereee", response);
+            if (response?.images && response.images?.length > 0 && response.images?.[0] != null) {
+                imageDataSource.current = 'url';
+                initialImages.current = response.images;
+            }
         }
 
         // console.log("hereee", updatedFormData);
@@ -294,7 +297,7 @@ function POIForm() {
 
         if (type == 'image-upload') {
             return (
-                <ImageUpload previewUrls={previewUrls} setPreviewUrls={setPreviewUrls} setRenderCounter={setRenderCounter} renderCounter={renderCounter} formData={formData} setFormData={setFormData} />
+                <ImageUpload dataSource={imageDataSource.current} setRenderCounter={setRenderCounter} initialImages={initialImages.current} renderCounter={renderCounter} formData={formData} setFormData={setFormData} />
             )
         }
 

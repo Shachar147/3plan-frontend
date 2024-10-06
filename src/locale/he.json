@@ -1172,5 +1172,7 @@
 	"ADD_FILES": "הוסף קבצים",
 	"POI_ADDED_SUCCESSFULLY": "נקודת העניין נוספה בהצלחה!",
 	"POI_UPDATED_SUCCESSFULLY": "נקודת העניין עודכנה בהצלחה!",
-	"FAILED_TO_ADD_POI": "הוספת נקודת העניין נכשלה"
+	"FAILED_TO_ADD_POI": "הוספת נקודת העניין נכשלה",
+	"UPLOAD_FROM_YOUR_DEVICE": "העלה תמונות מהמכשיר שלך",
+	"UPLOAD_FROM_URL": "העלה תמונות מכתובת אינטרנט"
 }

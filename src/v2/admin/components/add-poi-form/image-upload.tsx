@@ -1,24 +1,59 @@
-import React, {useContext, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {eventStoreContext} from "../../../../stores/events-store";
 import {Carousel} from "react-responsive-carousel";
 import {Image} from "../../../components/point-of-interest/point-of-interest";
 import TranslateService from "../../../../services/translate-service";
 import {observer} from "mobx-react";
+import ToggleButton from "../../../../components/toggle-button/toggle-button";
+import {getClasses} from "../../../../utils/utils";
 
 interface ImageUploadProps {
-    previewUrls: string[]
     renderCounter: number;
     formData: Record<string, any>;
-    setPreviewUrls: (previewUrls: string[]) => void;
     setFormData: (formData: Record<string, any>) => void;
     setRenderCounter: (counter: number) => void;
+    dataSource?: 'url' | 'device';
+    initialImages?: string[];
 }
 function ImageUpload(props: ImageUploadProps){
     const eventStore = useContext(eventStoreContext);
+    const isChangedByProps = useRef(false);
     const currentIdx = useRef(0);
     let [fileNames, setFileNames] = useState([]);
+    const [dataSource, setDataSource] = useState<'url'|'device'>(props.dataSource ?? 'device');
+    const [previewUrls, setPreviewUrls] = useState([]);
 
-    const { renderCounter, setFormData, previewUrls, formData, setPreviewUrls, setRenderCounter } = props;
+    const { renderCounter, setFormData, formData, setRenderCounter } = props;
+
+    useEffect(() => {
+
+        if (props.initialImages?.length) {
+            const images = props.initialImages;
+            setPreviewUrls(images);
+
+            const names = [];
+            for (let i = 1; i <= images.length; i++) {
+                names.push(`file ${i}`);
+            }
+
+            setFileNames(names);
+            setFormData({...formData, images});
+            currentIdx.current = 0
+            setRenderCounter(renderCounter + 1);
+        }
+
+    }, [props.initialImages])
+
+    useEffect(() => {
+        isChangedByProps.current = true;
+        setDataSource(props.dataSource);
+    }, [props.dataSource])
+
+    useEffect(() => {
+        if (!isChangedByProps.current) {
+            handleImageRemoval();
+        }
+    }, [dataSource])
 
     function renderPreview() {
         return (
@@ -109,16 +144,63 @@ function ImageUpload(props: ImageUploadProps){
         setRenderCounter(renderCounter + 1);
     };
 
+    function renderDataSourceSelector() {
+        const options = [
+            {
+                key: 'device',
+                name: TranslateService.translate(eventStore, 'UPLOAD_FROM_YOUR_DEVICE'),
+            },
+            {
+                key: 'url',
+                name: TranslateService.translate(eventStore, 'UPLOAD_FROM_URL'),
+            },
+        ];
+
+        return (
+            <div className="margin-bottom-10">
+                <ToggleButton value={dataSource} onChange={(d: 'url' | 'device') => {
+                    isChangedByProps.current = false;
+                    setDataSource(d);
+                }} options={options} customStyle="white" />
+            </div>
+        );
+    }
+
+    function renderFileUpload(){
+        if (dataSource === 'device') {
+            return (
+                <input type="file" id="file-upload" className="file-input" multiple onChange={handleImageUpload} />
+            )
+        } else {
+            return (
+                <textarea placeholder={TranslateService.translate(eventStore, 'MODALS.IMAGES_PLACEHOLDER')} value={previewUrls.join("\n")} onChange={(e) => {
+                    const images = e.target.value.split('\n');
+                    setPreviewUrls(images);
+
+                    const names = [];
+                    for (let i = 1; i<= images.length; i++){
+                        names.push(`file ${i}`);
+                    }
+                    setFileNames(names);
+                    setFormData({ ...formData, images });
+                    currentIdx.current = 0
+                    setRenderCounter(renderCounter + 1);
+                }} />
+            )
+        }
+    }
+
     return (
         <div className="flex-column gap-4">
+            {renderDataSourceSelector()}
             {previewUrls.length > 0 && renderPreview()}
-            <div className="flex-row gap-8">
+            {dataSource === 'device' && <div className="flex-row gap-8">
                 <label className="file-label" htmlFor="file-upload">{TranslateService.translate(eventStore, previewUrls.length > 0 ? 'ADD_FILES' : 'CHOOSE_A_FILE')}</label>
                 {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(undefined)}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
                 {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(currentIdx.current)}>{TranslateService.translate(eventStore, 'REMOVE_FILE')}</label>}
-            </div>
-            <input type="file" id="file-upload" className="file-input" multiple onChange={handleImageUpload} />
-            <span id="file-name">{TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}</span>
+            </div>}
+            {renderFileUpload()}
+            <span id="file-name" className={getClasses(dataSource !== 'device' && 'display-none')}>{TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}</span>
         </div>
     )
 }
