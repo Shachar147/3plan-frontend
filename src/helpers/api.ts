@@ -33,6 +33,14 @@ export function apiGetPromise(self, url, handleUnAuthorized = true) {
 	});
 }
 
+export function apiPostPromise(url, data, handleUnAuthorized = true) {
+	return axios.post(getServerAddress() + url, data).catch((error) => {
+		if (handleUnAuthorized) {
+			handleUnauthorizedError(error, url);
+		}
+	});
+}
+
 async function handleUnauthorizedError(error, url, redirectUnautirhized = true) {
 	if (error?.response?.status === 401) {
 		if (redirectUnautirhized) {

@@ -938,7 +938,10 @@
 	"REMOVE_FILE": "Remove current file",
 	"REMOVE_FILES": "Remove files",
 	"CHANGE_FILES": "Change files",
+	"ADD_FILES": "Add files",
 	"POI_ADDED_SUCCESSFULLY": "Point of interest added successfully!",
 	"POI_UPDATED_SUCCESSFULLY": "Point of interest updated successfully!",
-	"FAILED_TO_ADD_POI": "Failed to add Point of interest"
+	"FAILED_TO_ADD_POI": "Failed to add Point of interest",
+	"UPLOAD_FROM_YOUR_DEVICE": "Upload from your device",
+	"UPLOAD_FROM_URL": "Upload from url"
 }

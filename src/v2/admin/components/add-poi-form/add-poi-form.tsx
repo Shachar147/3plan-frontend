@@ -1,96 +1,20 @@
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import FileUploadApiService from "../../../services/file-upload-api-service";
 import './add-poi-form.scss';
 import Button, { ButtonFlavor } from "../../../../components/common/button/button";
 import TranslateService from "../../../../services/translate-service";
 import { eventStoreContext } from "../../../../stores/events-store";
-import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Image } from "../../../components/point-of-interest/point-of-interest";
 import ReactModalService, {ReactModalRenderHelper} from "../../../../services/react-modal-service";
 import {getDefaultCategoriesExtended} from "../../../../utils/defaults";
 import LocationInput from "../../../../components/inputs/location-input/location-input";
 import {getDurationInMs} from "../../../../utils/time-utils";
-import AdminAddPoiApiService from "../../services/add-poi-api-service";
+import AdminPoiApiService from "../../services/add-poi-api-service";
 import DestinationSelector, {fetchCitiesAndSetOptions} from "../../../components/destination-selector/destination-selector";
 import {runInAction} from "mobx";
-import SelectInput from "../../../../components/inputs/select-input/select-input";
+import ImageUpload from "./image-upload";
+import CategorySelector from "./category-selector";
 
-function CategorySelector(props: {
-    name: string,
-    value: string,
-    placeholderKey: string,
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-}){
-    const eventStore = useContext(eventStoreContext);
-
-    const allOptions = getDefaultCategoriesExtended(eventStore);
-    const selectOptions = allOptions.sort((a, b) => a.id - b.id)
-        .map((x, index) => ({
-            value: x.id.toString(),
-            label: x.icon ? `${x.icon} ${x.title}` : x.title,
-        }));
-
-    // const _value = useMemo(() => {
-    //     return selectOptions.find((o) => o.label.includes(TranslateService.translate(eventStore, props.value)))?.value;
-    // }, [props.value])
-
-    // alert("before:" + props.value);
-    const foundCategory = selectOptions.find((o) => o.label.includes(TranslateService.translate(eventStore, props.value)));
-    const _value = foundCategory?.value;
-    // alert("after:" + _value);
-    
-    useEffect(() => {
-        runInAction(() => {
-            eventStore.modalValues['category'] = foundCategory;
-        })
-    }, [_value])
-
-    return (
-        <SelectInput
-            ref={eventStore.modalValuesRefs['category']}
-            // readOnly={extra.readOnly}
-            name={"category"}
-            options={selectOptions}
-            // value={extra.value != undefined ? extra.options.find((o) => o.value == extra.value) : undefined}
-            value={props.value}
-            placeholderKey={props.placeholderKey}
-            modalValueName={'category'}
-            // maxMenuHeight={extra.maxMenuHeight}
-            // removeDefaultClass={extra.removeDefaultClass}
-            onChange={(data) => props.onChange({
-                target: {
-                    name: props.name,
-                    value: data ? allOptions.find((c) => c.id == data.value)?.titleKey : undefined // 'CATEGORY.GENERAL'
-                }
-            })}
-            // onClear={extra.onClear}
-            // isClearable={extra.isClearable ?? true}
-            // wrapperClassName={wrapperClassName}
-        />
-    )
-
-    return (
-        <div key={props.value}>{
-        ReactModalRenderHelper.renderSelector(
-            eventStore,
-            'category',
-            {
-                ...props,
-                value: _value,
-                onChange: (data) => props.onChange({
-                    target: {
-                        name: props.name,
-                        value: data ? allOptions.find((c) => c.id == data.value)?.titleKey : undefined // 'CATEGORY.GENERAL'
-                    }
-                })
-            },
-            // { placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
-            // undefined,
-            selectOptions
-        )}</div>
-    );
-}
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
@@ -110,9 +34,8 @@ function POIForm() {
         { name: 'currency', label: TranslateService.translate(eventStore, 'MODALS.CURRENCY'), type: 'currency-selector' },
     ];
 
-    const [previewUrls, setPreviewUrls] = useState([]);
-    const [fileNames, setFileNames] = useState([]);
-    const currentIdx = useRef(0);
+    const imageDataSource = useRef<'device'|'url'>('device');
+    const initialImages = useRef<string[]>([]);
     const [formData, setFormData] = useState({
         name: undefined, // required
         location: undefined, // required
@@ -147,64 +70,6 @@ function POIForm() {
         return name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
     };
 
-    const handleImageRemoval = (idx: number = undefined) => {
-        if (idx != undefined) {
-            formData.images.splice(idx, 1);
-            setFormData({ ...formData });
-            previewUrls.splice(idx, 1);
-            setPreviewUrls(previewUrls);
-            fileNames.splice(idx, 1);
-            setFileNames(fileNames);
-
-        } else {
-            setFormData({ ...formData, images: [] });
-            setPreviewUrls([]);
-            fileNames.splice(0,fileNames.length);
-            setFileNames([]);
-        }
-
-        updateChosenFileText();
-
-        setRenderCounter(renderCounter + 1);
-        currentIdx.current = 0;
-    }
-
-    const updateChosenFileText = () => {
-        const fileName = fileNames.length === 0
-            ? TranslateService.translate(eventStore, 'NO_FILE_CHOSEN') :
-            fileNames.length > 1
-                ? TranslateService.translate(eventStore, 'X_FILES_CHOSEN', { X: fileNames.length }) :
-                fileNames[0];
-
-        document.getElementById('file-name').innerText = fileName;
-    }
-
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const uploadedFiles = Array.from(e.target.files);
-
-            setFormData({ ...formData, images: uploadedFiles });
-
-            // Create object URLs for the uploaded files
-            const urls = uploadedFiles.map(file => URL.createObjectURL(file));
-            setFileNames(uploadedFiles.map((f) => f.name));
-            setPreviewUrls(urls);
-
-        } else {
-            handleImageRemoval();
-        }
-
-        const fileName = e.target.files.length === 0
-            ? TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')
-            : e.target.files.length > 1
-                ? TranslateService.translate(eventStore, 'X_FILES_CHOSEN', { X: e.target.files.length })
-                : e.target.files[0].name;
-
-        document.getElementById('file-name').innerText = fileName;
-
-        setRenderCounter(renderCounter + 1);
-    };
-
     const handleImageProcessing = async () => {
         const sanitizedPOIName = sanitizeFileName(formData.name);
         const fileUploadService = new FileUploadApiService();
@@ -220,7 +85,7 @@ function POIForm() {
         return paths;
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         let { name, value } = e.target;
         if (name == 'price' || name == 'rate'){
             if (value == undefined || Number(value) < 0){
@@ -266,9 +131,12 @@ function POIForm() {
                             // renderCounter += 1
                         }
                     }
-                    if (formData.category == "CATEGORY.HOTELS" || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.HOTELS'))) {
+                    if (formData.category == "CATEGORY.CITIES" || formData.category == "CATEGORY.ISLANDS" || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.CITIES')) || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.ISLANDS'))) {
+                        formData.duration = "24:00"  // 1 day
+                    }
+                    else if (formData.category == "CATEGORY.HOTELS" || formData.category.includes(TranslateService.translate(eventStore, 'CATEGORY.HOTELS'))) {
                         formData.duration = "120:00"  // 5 days
-                    } else if (formData.duration == "120:00") {
+                    } else if (formData.duration == "120:00" || formData.duration == "24:00") {
                         formData.duration = "01:00"; // reset back to default
                     }
 
@@ -306,6 +174,14 @@ function POIForm() {
                 value = undefined;
             }
             updatedFormData = { ...formData, [name]: value };
+        }
+
+        if (name === 'more_info' && value?.includes("http")) {
+            const response = await new AdminPoiApiService().extractInfo(value);
+            if (response?.images && response.images?.length > 0 && response.images?.[0] != null) {
+                imageDataSource.current = 'url';
+                initialImages.current = response.images;
+            }
         }
 
         // console.log("hereee", updatedFormData);
@@ -382,7 +258,7 @@ function POIForm() {
             };
 
 
-            const response = await new AdminAddPoiApiService().addPoi(poiData);
+            const response = await new AdminPoiApiService().addPoi(poiData);
 
             if (response.totalUpdated) {
                 ReactModalService.internal.alertMessage(
@@ -412,23 +288,6 @@ function POIForm() {
         }
     };
 
-    function renderPreview() {
-        return (
-            <div className="carousel-wrapper margin-bottom-5" key={renderCounter}>
-                <Carousel key={renderCounter} showThumbs={false} showIndicators={false} infiniteLoop={true} onChange={(idx) => {
-                    currentIdx.current = idx;
-                }}>
-                    {/*{formData.imagePaths.map((image, index) => (*/}
-                    {previewUrls.map((image, index) => (
-                        <div key={`item-image-${index}`}>
-                            <Image image={image} alt={`Image #${index + 1}`} key={index} idx={`item--idx-${index}`} isSmall />
-                        </div>
-                    ))}
-                </Carousel>
-            </div>
-        );
-    }
-
     function renderInput({ type, name, max, isLink, placeholderKey}: { type: string, name: string, max?: number, isLink?: boolean, placeholderKey?: string }){
         if (type == 'textarea'){
             return (
@@ -438,17 +297,7 @@ function POIForm() {
 
         if (type == 'image-upload') {
             return (
-                <div className="flex-column gap-4">
-                    {/*{formData.imagePaths.length > 0 && renderPreview()}*/}
-                    {previewUrls.length > 0 && renderPreview()}
-                    <div className="flex-row gap-8">
-                        <label className="file-label" htmlFor="file-upload">{TranslateService.translate(eventStore, previewUrls.length > 0 ? 'CHANGE_FILES' : 'CHOOSE_A_FILE')}</label>
-                        {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(undefined)}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
-                        {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(currentIdx.current)}>{TranslateService.translate(eventStore, 'REMOVE_FILE')}</label>}
-                    </div>
-                    <input type="file" id="file-upload" className="file-input" multiple onChange={handleImageUpload} />
-                    <span id="file-name">{TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}</span>
-                </div>
+                <ImageUpload dataSource={imageDataSource.current} setRenderCounter={setRenderCounter} initialImages={initialImages.current} renderCounter={renderCounter} formData={formData} setFormData={setFormData} />
             )
         }
 
