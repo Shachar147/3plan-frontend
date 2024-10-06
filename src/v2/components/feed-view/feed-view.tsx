@@ -104,23 +104,33 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         let _reachedEndPerDestination = feedStore.reachedEndPerDestination ?? {};
 
         if (mainFeed) {
-            if (page > 1 || feedStore.items.length) {
-                return;
-            }
-            const destination = "MainFeed";
-            const responses = await Promise.all(
-                [
-                    apiService.getMainFeedItems()
-                ]);
-
-            responses.forEach(response => {
+            if (eventStore.isMobile){
+                if (feedStore.allReachedEnd) {
+                    return;
+                }
+                const response = await apiService.getMainFeedItems(page)
                 newItems.push(...response.results);
-                response.isFinished = true;
-                feedStore.setFinishedSources([...feedStore.finishedSources, response.source]);
-            });
+                feedStore.setAllReachedEnd(response.isFinished);
+            }
+            else {
+                if (page > 1 || feedStore.items.length) {
+                    return;
+                }
+                const destination = "MainFeed";
+                const responses = await Promise.all(
+                    [
+                        apiService.getMainFeedItems()
+                    ]);
 
-            _reachedEndPerDestination[destination] = true;
-            feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
+                responses.forEach(response => {
+                    newItems.push(...response.results);
+                    response.isFinished = true;
+                    feedStore.setFinishedSources([...feedStore.finishedSources, response.source]);
+                });
+
+                _reachedEndPerDestination[destination] = true;
+                feedStore.setReachedEndPerDestination(_reachedEndPerDestination);
+            }
         }
         else if (viewItemId) {
             if (page > 1){
@@ -228,7 +238,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         }
 
         let uniqueNewItems = filterUniqueItems(newItems);
-        if (mainFeed && feedStore.items.length > 0){
+        if (mainFeed && feedStore.items.length > 0 && !eventStore.isMobile){
             uniqueNewItems = [];
         }
         feedStore.setItems(filterUniqueItems([...feedStore.items, ...uniqueNewItems]));
@@ -431,7 +441,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     }, [])
 
     return (
-        (feedStore.isLoading && !haveNoDestinations) ? renderLoadingPlaceholder() : <LazyLoadComponent className="width-100-percents flex-column align-items-center" disableLoader={mainFeed || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
+        (feedStore.isLoading && !haveNoDestinations) ? renderLoadingPlaceholder() : <LazyLoadComponent className="width-100-percents flex-column align-items-center" disableLoader={(mainFeed && !eventStore.isMobile) || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
             {!haveNoDestinations && (feedStore.items.length == 0 || debouncePlaceholder) && renderLoadingPlaceholder()}
             {renderFeedContent()}
         </LazyLoadComponent>

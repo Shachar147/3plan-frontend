@@ -109,8 +109,9 @@ export default class FeedViewApiService {
         };
     }
 
-    getMainFeedItems = async () => {
-        const result = await apiGetPromise(this, `${endpoints.v2.poi.feed}?withoutSystemRecommendations=1`);
+    getMainFeedItems = async (page?: number) => {
+        const url = page ? `${endpoints.v2.poi.feed}?withoutSystemRecommendations=1&p=${page}` : `${endpoints.v2.poi.feed}?withoutSystemRecommendations=1`;
+        const result = await apiGetPromise(this, url);
         if (result) {
             return result?.data;
         }
