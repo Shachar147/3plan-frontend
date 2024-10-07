@@ -54,6 +54,7 @@ interface DestinationSelectorProps {
     onChange: (selectedValues: string[]) => void;
     selectedDestinations?: string[]
     isSingle?: boolean
+    isDisabled?: boolean;
 }
 
 export interface CityOrCountry {
@@ -225,6 +226,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
                         )}
                     </div>
                 )}
+                isDisabled={props.isDisabled}
             />
             <div className="selected-chips">
                 {selectedOptions.map((option, index) => (

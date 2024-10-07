@@ -1178,5 +1178,7 @@
 	"POI_ADDED_SUCCESSFULLY": "נקודת העניין נוספה בהצלחה!",
 	"POI_UPDATED_SUCCESSFULLY": "נקודת העניין עודכנה בהצלחה!",
 	"FAILED_TO_ADD_POI": "הוספת נקודת העניין נכשלה",
-	"NO_SYSTEM_RECOMMENDATIONS": "אוופס, לא נמצאו המלצות מערכת"
+	"NO_SYSTEM_RECOMMENDATIONS": "אוופס, לא נמצאו המלצות מערכת",
+	"UPLOADING_PHOTOS_X_OF_Y": "מעלה תמונה {X} מתוך {Y}...",
+	"SAVING": "שומר..."
 }

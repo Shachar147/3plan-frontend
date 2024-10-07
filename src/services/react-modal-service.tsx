@@ -412,7 +412,7 @@ export const ReactModalRenderHelper = {
 	renderCurrencySelector: (
 		eventStore: EventStore,
 		modalValueName: string,
-		extra: { id?: string; name?: string; value: any },
+		extra: { id?: string; name?: string; value: any, readOnly?: boolean },
 		ref?: any
 	) => {
 		const values = Object.keys(TriplanCurrency);

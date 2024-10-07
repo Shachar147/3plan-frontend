@@ -21,12 +21,16 @@
       cursor: pointer;
       transition: opacity 0.2s ease-in-out;
 
+      &.disabled {
+        cursor: default !important;
+      }
+
       &.remove {
         background-color: var(--red);
         color: white;
       }
 
-      &:hover {
+      &:not(.disabled):hover {
         opacity: 0.6;
       }
     }

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import FileUploadApiService from "../../../services/file-upload-api-service";
 import './add-poi-form.scss';
 import Button, { ButtonFlavor } from "../../../../components/common/button/button";
@@ -15,12 +15,14 @@ import AdminAddPoiApiService from "../../services/add-poi-api-service";
 import DestinationSelector, {fetchCitiesAndSetOptions} from "../../../components/destination-selector/destination-selector";
 import {runInAction} from "mobx";
 import SelectInput from "../../../../components/inputs/select-input/select-input";
+import {getClasses} from "../../../../utils/utils";
 
 function CategorySelector(props: {
     name: string,
     value: string,
     placeholderKey: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+    isDisabled?: boolean
 }){
     const eventStore = useContext(eventStoreContext);
 
@@ -49,7 +51,7 @@ function CategorySelector(props: {
     return (
         <SelectInput
             ref={eventStore.modalValuesRefs['category']}
-            // readOnly={extra.readOnly}
+            readOnly={props.isDisabled}
             name={"category"}
             options={selectOptions}
             // value={extra.value != undefined ? extra.options.find((o) => o.value == extra.value) : undefined}
@@ -69,31 +71,14 @@ function CategorySelector(props: {
             // wrapperClassName={wrapperClassName}
         />
     )
-
-    return (
-        <div key={props.value}>{
-        ReactModalRenderHelper.renderSelector(
-            eventStore,
-            'category',
-            {
-                ...props,
-                value: _value,
-                onChange: (data) => props.onChange({
-                    target: {
-                        name: props.name,
-                        value: data ? allOptions.find((c) => c.id == data.value)?.titleKey : undefined // 'CATEGORY.GENERAL'
-                    }
-                })
-            },
-            // { placeholderKey: 'SELECT_CATEGORY_PLACEHOLDER' },
-            // undefined,
-            selectOptions
-        )}</div>
-    );
 }
 
 function POIForm() {
     const eventStore = useContext(eventStoreContext);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isUploadingPictures, setIsUploadingPictures] = useState(false);
+    const uploadedPhotos = useRef<number>(0);
+    const [savingText, setSavingText] = useState<string | undefined>(undefined);
 
     const fields = [
         { name: 'location', label: TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.LOCATION'), type: 'location-selector', isRequired: true },
@@ -148,6 +133,10 @@ function POIForm() {
     };
 
     const handleImageRemoval = (idx: number = undefined) => {
+        if (isSaving) {
+            return;
+        }
+
         if (idx != undefined) {
             formData.images.splice(idx, 1);
             setFormData({ ...formData });
@@ -180,6 +169,9 @@ function POIForm() {
     }
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (isSaving) {
+            return;
+        }
         if (e.target.files) {
             const uploadedFiles = Array.from(e.target.files);
 
@@ -211,10 +203,17 @@ function POIForm() {
 
         const promises = formData.images.map((file, index) => {
             const extension = file.name.split('.').pop();
-            return fileUploadService.uploadPhoto(file, `/images/pois/${sanitizedPOIName}-${index + 1}.${extension}`);
+            const localPrefix = window.location.href.includes("localhost") ? "local-" : "";
+            return fileUploadService.uploadPhoto(file, `/images/pois/${localPrefix}${sanitizedPOIName}-${index + 1}.${extension}`)
+                .then(photo => {
+                    // Increment uploadedPhotos.current
+                    uploadedPhotos.current += 1;
+                    return photo; // Return the photo as the result
+                });
         });
 
         const paths = await Promise.all(promises);
+
         // console.log("hereeee", { paths });
         setFormData({ ...formData, imagePaths: paths });
         return paths;
@@ -366,6 +365,9 @@ function POIForm() {
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
+        setIsSaving(true);
+        uploadedPhotos.current = 0;
+
         e.preventDefault();
 
         if (!validateBeforeSubmit()){
@@ -373,8 +375,21 @@ function POIForm() {
         }
 
         try {
+            setIsUploadingPictures(true);
+
+            const interval = setInterval(() => {
+                setSavingText(getSavingText())
+            }, 200);
+
             const images = await handleImageProcessing(); // Process images first
+            setIsUploadingPictures(false);
+
+            setTimeout(() => {
+                setSavingText(getSavingText());
+            }, 1000);
+
             // console.log({images});
+            clearInterval(interval);
 
             const poiData = {
                 ...formData,
@@ -383,6 +398,7 @@ function POIForm() {
 
 
             const response = await new AdminAddPoiApiService().addPoi(poiData);
+            setIsSaving(false);
 
             if (response.totalUpdated) {
                 ReactModalService.internal.alertMessage(
@@ -410,6 +426,7 @@ function POIForm() {
             console.error('Error uploading POI:', error);
             ReactModalService.internal.openOopsErrorModal(eventStore);
         }
+        setIsSaving(false);
     };
 
     function renderPreview() {
@@ -432,7 +449,7 @@ function POIForm() {
     function renderInput({ type, name, max, isLink, placeholderKey}: { type: string, name: string, max?: number, isLink?: boolean, placeholderKey?: string }){
         if (type == 'textarea'){
             return (
-                <textarea name={name} value={formData[name]} onChange={handleChange} placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined} required />
+                <textarea disabled={isSaving} name={name} value={formData[name]} onChange={handleChange} placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined} required />
             )
         }
 
@@ -442,11 +459,11 @@ function POIForm() {
                     {/*{formData.imagePaths.length > 0 && renderPreview()}*/}
                     {previewUrls.length > 0 && renderPreview()}
                     <div className="flex-row gap-8">
-                        <label className="file-label" htmlFor="file-upload">{TranslateService.translate(eventStore, previewUrls.length > 0 ? 'CHANGE_FILES' : 'CHOOSE_A_FILE')}</label>
+                        <label className={getClasses("file-label", isSaving && 'disabled')} htmlFor="file-upload">{TranslateService.translate(eventStore, previewUrls.length > 0 ? 'CHANGE_FILES' : 'CHOOSE_A_FILE')}</label>
                         {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(undefined)}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
                         {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(currentIdx.current)}>{TranslateService.translate(eventStore, 'REMOVE_FILE')}</label>}
                     </div>
-                    <input type="file" id="file-upload" className="file-input" multiple onChange={handleImageUpload} />
+                    <input disabled={isSaving} type="file" id="file-upload" className="file-input" multiple onChange={handleImageUpload} />
                     <span id="file-name">{TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}</span>
                 </div>
             )
@@ -460,7 +477,7 @@ function POIForm() {
                     {
                         name,
                         value: formData[name],
-                        placeholderKey,
+                        readOnly: isSaving,
                         // @ts-ignore
                         onChange: (data) => handleChange({
                             target: {
@@ -477,7 +494,7 @@ function POIForm() {
 
         if (type == 'destination-selector') {
             return (
-                <DestinationSelector selectedDestinations={formData.destination ? [formData.destination] : undefined} isSingle onChange={(destinations: string[]) => {
+                <DestinationSelector isDisabled={isSaving} selectedDestinations={formData.destination ? [formData.destination] : undefined} isSingle onChange={(destinations: string[]) => {
                     handleChange({
                         target: {
                             name,
@@ -523,8 +540,8 @@ function POIForm() {
                     placeholder={TranslateService.translate(eventStore, placeholderKey ?? 'MODALS.LOCATION.PLACEHOLDER')}
                     // placeholderKey={extra.placeholderKey}
                     autoComplete="off"
-                    readOnly={false}
-                    disabled={false}
+                    readOnly={isSaving}
+                    disabled={isSaving}
                     // showOnMapLink={extra.readOnly}
                     // eventId={extra.eventId}
                 />
@@ -534,13 +551,13 @@ function POIForm() {
         if (type === 'category-selector'){
             return (
                 <div key={renderCounter}>
-                    <CategorySelector name={name} value={formData[name]} placeholderKey={placeholderKey} onChange={(e) => handleChange(e)} />
+                    <CategorySelector isDisabled={isSaving} name={name} value={formData[name]} placeholderKey={placeholderKey} onChange={(e) => handleChange(e)} />
                 </div>
             )
         }
 
         return (
-            <input type={type} name={name} placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined} value={formData[name]} onChange={(e) => {
+            <input disabled={isSaving} readOnly={isSaving} type={type} name={name} placeholder={placeholderKey ? TranslateService.translate(eventStore, placeholderKey) : undefined} value={formData[name]} onChange={(e) => {
                 if (isLink && e.target.value.length > 0 && !(e.target.value.startsWith("http://") || e.target.value.startsWith("https://"))){
                     return false;
                 }
@@ -556,6 +573,21 @@ function POIForm() {
         )
     }
 
+    function getSavingText(){
+        if (!isSaving) {
+            return null;
+        }
+        if (isUploadingPictures) {
+            return (
+                TranslateService.translate(eventStore, 'UPLOADING_PHOTOS_X_OF_Y', {
+                    X: uploadedPhotos.current + 1,
+                    Y: formData.images.length
+                })
+            )
+        }
+        return TranslateService.translate(eventStore, 'PLEASE_WAIT_WHILE_SAVING');
+    }
+
     return (
         <div className="add-poi-form-container">
             <div className="add-poi-form">
@@ -565,7 +597,8 @@ function POIForm() {
                         {renderInput(field)}
                     </div>
                 ))}
-                <Button flavor={ButtonFlavor.primary} onClick={handleSubmit} text={TranslateService.translate(eventStore, 'MODALS.SAVE')} />
+                {savingText != undefined ? <span>{savingText}</span> : undefined}
+                <Button isLoading={isSaving} tooltip={isSaving ? TranslateService.translate(eventStore, 'PLEASE_WAIT_WHILE_SAVING') : undefined} flavor={ButtonFlavor.primary} onClick={handleSubmit} text={TranslateService.translate(eventStore, isSaving ? 'SAVING' : 'MODALS.SAVE')} />
             </div>
         </div>
     );
