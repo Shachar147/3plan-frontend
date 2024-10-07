@@ -77,7 +77,8 @@ export const endpoints: Record<string, any> = {
             feed: '/poi/feed/',
             systemRecommendations: '/poi/system-recommendations',
             searchSuggestions: '/poi/search-suggestions',
-            freeTextSearch: (searchKeyword: string, page: number) => `/poi/search?q=${searchKeyword}&page=${page}`
+            freeTextSearch: (searchKeyword: string, page: number) => `/poi/search?q=${searchKeyword}&page=${page}`,
+            update: (poiId: number) => `/poi/${poiId}`,
         },
         savedCollections: {
             get: '/saved-collections/',

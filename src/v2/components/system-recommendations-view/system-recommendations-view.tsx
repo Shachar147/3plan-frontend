@@ -10,6 +10,7 @@ import './system-recommendations-view.scss';
 import FeedViewApiService, {allSources} from "../../services/feed-view-api-service";
 import {CalendarEvent} from "../../../utils/interfaces";
 import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
+import ReactModalService from "../../../services/react-modal-service";
 
 function SystemRecommendationsShimmeringPlaceholder() {
     function renderItem(index: number) {
@@ -34,7 +35,7 @@ function SystemRecommendationsView(){
     const currentPage = useRef(1);
     const prevPageTotalResults = useRef(0);
     const [isReachedEnd, setIsReachedEnd] = useState(!eventStore.isMobile);
-
+    const [isEditMode, setIsEditMode] = useState<Record<number, boolean>>({});
 
     const fetchItems = async (page, setLoading) => {
         if (isReachedEnd) {
@@ -105,6 +106,35 @@ function SystemRecommendationsView(){
         }
     }
 
+    async function onPoiRenamed(poiId: number, oldName: string, newName: string){
+        if (newName.length == 0){
+            return;
+        }
+        if (oldName != newName) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                name: newName
+            });
+            runInAction(() => {
+                feedStore.systemRecommendations.find((s) => s.id == poiId).name = updatedResponse.name;
+            })
+
+            if (updatedResponse.name != newName) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
+    }
+
     function renderContent() {
         if (eventStore.isMobile) {
             return (
@@ -113,11 +143,22 @@ function SystemRecommendationsView(){
                         <div key={item.id} className={classList}>
                             <PointOfInterest key={item.id} item={{
                                 ...item,
-                                name: getEventTitle({
+                                name: isEditMode[item.id] ? item.name : getEventTitle({
                                     title: item.name
                                 } as unknown as CalendarEvent, eventStore, true)!,
                                 description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
-                            }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId} />
+                            }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
+                            onLabelClick={() => {
+                                 setIsEditMode({
+                                     ...isEditMode,
+                                     [item.id]: !!!isEditMode[item.id]
+                                 })
+                             }}
+                             isEditMode={isEditMode[item.id] ?? false}
+                             onEditSave={(newName: string) => {
+                                 onPoiRenamed(item.id, item.name, newName)
+                             }}
+                            />
                         </div>
                     ))}
                 </LazyLoadComponent>
@@ -129,11 +170,22 @@ function SystemRecommendationsView(){
                     <div key={item.id} className={classList}>
                         <PointOfInterest key={item.id} item={{
                             ...item,
-                            name: getEventTitle({
+                            name: isEditMode[item.id] ? item.name : getEventTitle({
                                 title: item.name
                             } as unknown as CalendarEvent, eventStore, true)!,
                             description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
-                        }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId} />
+                        }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
+                             onLabelClick={() => {
+                                 setIsEditMode({
+                                     ...isEditMode,
+                                     [item.id]: !!!isEditMode[item.id]
+                                 })
+                             }}
+                             isEditMode={isEditMode[item.id] ?? false}
+                             onEditSave={(newName: string) => {
+                                 onPoiRenamed(item.id, item.name, newName)
+                             }}
+                        />
                     </div>
                 ))}
             </>

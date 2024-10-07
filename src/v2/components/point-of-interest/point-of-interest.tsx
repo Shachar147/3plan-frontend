@@ -43,6 +43,8 @@ interface PointOfInterestProps {
 
     // specific item
     isViewItem?: boolean;
+
+    onLabelClick?: () => void; // edit mode for POIs
 }
 
 const Image = ({ image, idx, isSmall, alt, className, backgroundImage }: { image: string, idx: number, alt:string, isSmall?: boolean, className?: string, backgroundImage?: boolean }) => {
@@ -240,7 +242,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) =>
     );
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
 
@@ -526,7 +528,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         }
 
         const name = (
-            <EditableLabel name="trip-name" value={item.name.replaceAll("-", " ")} placeholder={TranslateService.translate(eventStore, 'name')} isEditMode={isEditMode} onEditSave={onEditSave} key={`edit-label-${item.name}`} overridePreview={overridePreview} />
+            <EditableLabel onLabelClick={onLabelClick} name="trip-name" value={item.name.replaceAll("-", " ")} placeholder={TranslateService.translate(eventStore, 'name')} isEditMode={isEditMode} onEditSave={onEditSave} key={`edit-label-${item.name}`} overridePreview={overridePreview} />
         )
         if (isShrinkedMode) {
             return (

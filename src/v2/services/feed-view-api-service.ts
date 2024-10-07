@@ -1,4 +1,4 @@
-import {apiGetPromise, apiPost} from "../../helpers/api";
+import {apiGetPromise, apiPost, apiPut} from "../../helpers/api";
 import {endpoints} from "../utils/endpoints";
 import {IPointOfInterest, SavedCollection} from "../utils/interfaces";
 
@@ -73,6 +73,11 @@ export default class FeedViewApiService {
 
     getItemById = async (poiId: number): Promise<IPointOfInterest> => {
         const result = await apiGetPromise(this, endpoints.v2.poi.getPoiById(poiId));
+        return result?.data;
+    }
+
+    updatePoi = async (poiId: number, dataToUpdate: Partial<IPointOfInterest>): Promise<IPointOfInterest> => {
+        const result = await apiPut(endpoints.v2.poi.update(poiId), dataToUpdate);
         return result?.data;
     }
 

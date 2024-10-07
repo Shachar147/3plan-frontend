@@ -12,6 +12,7 @@ interface EditableLabelProps {
     onEditSave: (newValue: string) => void;
     placeholder?: string;
     overridePreview?: string;
+    onLabelClick?: () => void;
 }
 function EditableLabel(props: EditableLabelProps){
     const eventStore = useContext(eventStoreContext);
@@ -43,7 +44,7 @@ function EditableLabel(props: EditableLabelProps){
             </div>
         )
     }
-    return <>{props.overridePreview ?? value}</>
+    return <span onClick={() => props.onLabelClick?.()}>{props.overridePreview ?? value}</span>
 }
 
 export default observer(EditableLabel);
