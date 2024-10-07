@@ -51,7 +51,10 @@ const TriplanSearchV2 = () => {
     }
 
     const rootStore = useContext(rootStoreContext);
-    useMobileLockScroll(searchStore.rerenderCounter, searchStore.setReRenderCounter, searchStore.shouldShowSuggestions, searchStore.showSuggestions, searchStore.suggestions);
+
+    const shouldShowSuggestions = eventStore.isMobile ? searchStore.shouldShowSuggestions && searchStore.suggestions.length > 0 && searchStore.suggestions[0].name != TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT") : searchStore.shouldShowSuggestions;
+
+    useMobileLockScroll(searchStore.rerenderCounter, searchStore.setReRenderCounter, shouldShowSuggestions, searchStore.showSuggestions, searchStore.suggestions);
 
     useLoadSuggestions(searchStore.searchQuery, searchStore.setSuggestions, searchStore.setShowSuggestions, isInPlan);
 
@@ -196,7 +199,7 @@ const TriplanSearchV2 = () => {
     const placeholder = isInPlan ? `HEADER_SPECIFIC_TRIP_SEARCH_PLACEHOLDER${isShort}` : `HEADER_SEARCH_PLACEHOLDER${isShort}`;
 
     return (
-        <div className={getClasses("search-container", searchStore.shouldShowSuggestions && 'has-values')} key={`search-box-${searchStore.rerenderCounter}`}>
+        <div className={getClasses("search-container", shouldShowSuggestions && 'has-values')} key={`search-box-${searchStore.rerenderCounter}`}>
             <div className="search-box">
                 <input
                     className="search-input"
