@@ -31,6 +31,8 @@ interface PointOfInterestProps {
 
     // my trips
     onClick?: () => void;
+    onClickText?: string;
+    onClickIcon?: string;
     myTrips?: boolean;
     renderTripActions?: () => void;
     renderTripInfo?: () => void;
@@ -242,7 +244,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) =>
     );
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
 
@@ -677,10 +679,10 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 {onClick && (
                     <div className="margin-bottom-20 flex-column width-100-percents">
                         <Button
-                            icon={`fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
+                            icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
                             className={getClasses("cursor-pointer", eventStore.isMobile && 'black')}
                             type={ButtonFlavor.secondary}
-                            text={TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
+                            text={onClickText ?? TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
                             onClick={() => onClick()}
                         />
                     </div>

@@ -131,6 +131,15 @@ export function apiPut(url, data, onSuccess, onError, onFinish) {
 		});
 }
 
+export async function apiDeletePromise(url) {
+	return await axios
+		.delete(getServerAddress() + url, {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+		});
+}
+
 export function apiDelete(self, url, onSuccess, onError, onFinish) {
 	const httpClient = axios.create();
 	httpClient.defaults.timeout = 600000;
@@ -152,13 +161,13 @@ export function apiDelete(self, url, onSuccess, onError, onFinish) {
 		.catch(function (error) {
 			handleUnauthorizedError(error, url).then((isRedirected) => {
 				if (!isRedirected) {
-					onError(error, () => {
+					onError?.(error, () => {
 						self.setState({ error: '' });
 					});
 				}
 			});
 		})
 		.then(function () {
-			onFinish();
+			onFinish?.();
 		});
 }

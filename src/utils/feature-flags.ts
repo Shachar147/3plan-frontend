@@ -2,6 +2,10 @@ import { getCurrentUsername } from './utils';
 import {newDesignRootPath} from "../v2/utils/consts";
 
 export const FeatureFlagsService = {
+    isDeleteEnabled: () => {
+        const username = getCurrentUsername();
+        return username === 'Shachar';
+    },
     isNewDesignEnabled: (skipUrlCheck: boolean = false) => {
         return true;
 

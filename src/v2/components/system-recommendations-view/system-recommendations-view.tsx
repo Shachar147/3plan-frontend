@@ -11,6 +11,8 @@ import FeedViewApiService, {allSources} from "../../services/feed-view-api-servi
 import {CalendarEvent} from "../../../utils/interfaces";
 import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 import ReactModalService from "../../../services/react-modal-service";
+import {IPointOfInterest} from "../../utils/interfaces";
+import {FeatureFlagsService} from "../../../utils/feature-flags";
 
 function SystemRecommendationsShimmeringPlaceholder() {
     function renderItem(index: number) {
@@ -141,24 +143,7 @@ function SystemRecommendationsView(){
                 <LazyLoadComponent className="width-100-percents flex-column align-items-center" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading} isReachedEnd={isReachedEnd}>
                     {feedStore.systemRecommendations.map((item, idx) => (
                         <div key={item.id} className={classList}>
-                            <PointOfInterest key={item.id} item={{
-                                ...item,
-                                name: isEditMode[item.id] ? item.name : getEventTitle({
-                                    title: item.name
-                                } as unknown as CalendarEvent, eventStore, true)!,
-                                description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
-                            }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
-                            onLabelClick={() => {
-                                 setIsEditMode({
-                                     ...isEditMode,
-                                     [item.id]: !!!isEditMode[item.id]
-                                 })
-                             }}
-                             isEditMode={isEditMode[item.id] ?? false}
-                             onEditSave={(newName: string) => {
-                                 onPoiRenamed(item.id, item.name, newName)
-                             }}
-                            />
+                            {renderPoi(item)}
                         </div>
                     ))}
                 </LazyLoadComponent>
@@ -168,28 +153,46 @@ function SystemRecommendationsView(){
             <>
                 {feedStore.systemRecommendations.map((item, idx) => (
                     <div key={item.id} className={classList}>
-                        <PointOfInterest key={item.id} item={{
-                            ...item,
-                            name: isEditMode[item.id] ? item.name : getEventTitle({
-                                title: item.name
-                            } as unknown as CalendarEvent, eventStore, true)!,
-                            description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
-                        }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
+                        {renderPoi(item)}
+                    </div>
+                ))}
+            </>
+        );
+    }
+
+    function renderPoi(item: IPointOfInterest) {
+
+        return (
+            <PointOfInterest key={item.id} item={{
+                ...item,
+                name: isEditMode[item.id] ? item.name : getEventTitle({
+                    title: item.name
+                } as unknown as CalendarEvent, eventStore, true)!,
+                description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
+            }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
                              onLabelClick={() => {
                                  setIsEditMode({
                                      ...isEditMode,
                                      [item.id]: !!!isEditMode[item.id]
                                  })
                              }}
-                             isEditMode={isEditMode[item.id] ?? false}
+                             isEditMode={!FeatureFlagsService.isDeleteEnabled() ? false : (isEditMode[item.id] ?? false)}
                              onEditSave={(newName: string) => {
+                                 if (!FeatureFlagsService.isDeleteEnabled()){
+                                     return;
+                                 }
                                  onPoiRenamed(item.id, item.name, newName)
                              }}
-                        />
-                    </div>
-                ))}
-            </>
-        );
+                             onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
+                                 alert("hey");
+                                 const result = await new FeedViewApiService().deletePoi(item.id);
+                                 console.log(result);
+                                 alert("here");
+                             } : undefined}
+                             onClickText={FeatureFlagsService.isDeleteEnabled() ? TranslateService.translate(eventStore, 'DELETE') : undefined}
+                             onClickIcon="fa-times"
+            />
+        )
     }
 
     return (
