@@ -11,6 +11,9 @@ import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 import DestinationSelector from "../destination-selector/destination-selector";
 import Button, { ButtonFlavor } from "../../../components/common/button/button";
 import { feedStoreContext } from "../../stores/feed-view-store";
+import {runInAction} from "mobx";
+import ReactModalService from "../../../services/react-modal-service";
+import {FeatureFlagsService} from "../../../utils/feature-flags";
 
 interface FeedViewProps {
     eventStore: EventStore;
@@ -47,6 +50,9 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     const feedStore = useContext(feedStoreContext);
     const apiService = useMemo(() => new FeedViewApiService(), []);
     const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
+
+    // for editing items
+    const [isEditMode, setIsEditMode] = useState<Record<number, boolean>>({});
 
     useEffect(() => {
         if (feedStore.savedCollections.length == 0) {
@@ -315,6 +321,35 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         );
     }
 
+    async function onPoiRenamed(poiId: number, oldName: string, newName: string){
+        if (newName.length == 0){
+            return;
+        }
+        if (oldName != newName) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                name: newName
+            });
+            runInAction(() => {
+                feedStore.items.find((s) => s.id == poiId).name = updatedResponse.name;
+            })
+
+            if (updatedResponse.name != newName) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
+    }
+
     function renderPageTitle() {
         return (
             <div className="flex-column align-items-center width-100-percents">
@@ -337,7 +372,30 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                         {
                             feedStore.filteredItems.map((item, idx) => (
                                 <div key={item.id} className={classList}>
-                                    <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId} />
+                                    <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
+                                         onLabelClick={() => {
+                                             FeatureFlagsService.isDeleteEnabled() && setIsEditMode({
+                                                 ...isEditMode,
+                                                 [item.id]: !!!isEditMode[item.id]
+                                             })
+                                         }}
+                                         isEditMode={!FeatureFlagsService.isDeleteEnabled() ? false : (isEditMode[item.id] ?? false)}
+                                         onEditSave={(newName: string) => {
+                                             if (!FeatureFlagsService.isDeleteEnabled()){
+                                                 return;
+                                             }
+                                             debugger;
+                                             onPoiRenamed(item.id, item.name, newName)
+                                         }}
+                                         onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
+                                             await new FeedViewApiService().deletePoi(item.id);
+                                             runInAction(() => {
+                                                 feedStore.items = feedStore.items.filter((s) => s.id != item.id);
+                                             })
+                                         } : undefined}
+                                         onClickText={FeatureFlagsService.isDeleteEnabled() ? TranslateService.translate(eventStore, 'DELETE') : undefined}
+                                         onClickIcon="fa-times"
+                                    />
                                 </div>
                             ))
                         }
@@ -357,7 +415,31 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         return feedStore.filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
                 {!eventStore.isMobile && <span className="poi-idx">{idx + 1}</span>}
-                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}  />
+                <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
+                                 onLabelClick={() => {
+                                     FeatureFlagsService.isDeleteEnabled() && setIsEditMode({
+                                         ...isEditMode,
+                                         [item.id]: !!!isEditMode[item.id]
+                                     })
+                                 }}
+                                 isEditMode={!FeatureFlagsService.isDeleteEnabled() ? false : (isEditMode[item.id] ?? false)}
+                                 onEditSave={(newName: string) => {
+                                     if (!FeatureFlagsService.isDeleteEnabled()){
+                                         return;
+                                     }
+                                     debugger;
+                                     onPoiRenamed(item.id, item.name, newName)
+                                 }}
+                                 onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
+                                     await new FeedViewApiService().deletePoi(item.id);
+                                     runInAction(() => {
+                                         feedStore.items = feedStore.items.filter((s) => s.id != item.id);
+                                     })
+                                 } : undefined}
+                                 onClickText={FeatureFlagsService.isDeleteEnabled() ? TranslateService.translate(eventStore, 'DELETE') : undefined}
+                                 onClickIcon="fa-times"
+
+                />
             </div>
         ));
     }

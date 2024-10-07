@@ -677,7 +677,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     </div>
                 )}
                 {onClick && (
-                    <div className="margin-bottom-20 flex-column width-100-percents">
+                    <div className={getClasses("margin-bottom-20 flex-column", !isSmall ? 'margin-top-20' : 'width-100-percents')}>
                         <Button
                             icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
                             className={getClasses("cursor-pointer", eventStore.isMobile && 'black')}

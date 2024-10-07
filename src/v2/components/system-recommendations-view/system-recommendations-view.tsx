@@ -171,7 +171,7 @@ function SystemRecommendationsView(){
                 description: getEventDescription(item as unknown as CalendarEvent, eventStore, true),
             }} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
                              onLabelClick={() => {
-                                 setIsEditMode({
+                                 FeatureFlagsService.isDeleteEnabled() && setIsEditMode({
                                      ...isEditMode,
                                      [item.id]: !!!isEditMode[item.id]
                                  })
@@ -184,10 +184,10 @@ function SystemRecommendationsView(){
                                  onPoiRenamed(item.id, item.name, newName)
                              }}
                              onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
-                                 alert("hey");
-                                 const result = await new FeedViewApiService().deletePoi(item.id);
-                                 console.log(result);
-                                 alert("here");
+                                 await new FeedViewApiService().deletePoi(item.id);
+                                 runInAction(() => {
+                                     feedStore.systemRecommendations = feedStore.systemRecommendations.filter((s) => s.id != item.id);
+                                 })
                              } : undefined}
                              onClickText={FeatureFlagsService.isDeleteEnabled() ? TranslateService.translate(eventStore, 'DELETE') : undefined}
                              onClickIcon="fa-times"
