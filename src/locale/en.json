@@ -948,5 +948,6 @@
 	"FAILED_TO_ADD_POI": "Failed to add Point of interest",
 	"NO_SYSTEM_RECOMMENDATIONS": "No system recommendations found",
 	"UPLOADING_PHOTOS_X_OF_Y": "Uploading photo {X}/{Y}...",
-	"SAVING": "Saving..."
+	"SAVING": "Saving...",
+	"KEEPING_TO_SAVED_COLLECTIONS": "Adding to your saved collections..."
 }

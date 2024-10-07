@@ -1172,7 +1172,7 @@
 	"PLEASE_FILL_IN_X_BEFORE_YOU_PROCEED": "אנא מלאו את {X} לפני שאתם ממשיכים.",
 	"DURATION_IS_INVALID": "שדה משך זמן לא מולא כראוי",
 	"LINKS_ONLY": "לינקים בלבד",
-	"REMOVE_FILE": "הסר את הקובץ הנוכחי",
+	"REMOVE_FILE": "הסר קובץ נוכחי",
 	"REMOVE_FILES": "הסר את הקבצים",
 	"CHANGE_FILES": "החלף את הקבצים",
 	"POI_ADDED_SUCCESSFULLY": "נקודת העניין נוספה בהצלחה!",
@@ -1180,5 +1180,6 @@
 	"FAILED_TO_ADD_POI": "הוספת נקודת העניין נכשלה",
 	"NO_SYSTEM_RECOMMENDATIONS": "אוופס, לא נמצאו המלצות מערכת",
 	"UPLOADING_PHOTOS_X_OF_Y": "מעלה תמונה {X} מתוך {Y}...",
-	"SAVING": "שומר..."
+	"SAVING": "שומר...",
+	"KEEPING_TO_SAVED_COLLECTIONS": "מוסיף לרשימת השמורים שלך..."
 }

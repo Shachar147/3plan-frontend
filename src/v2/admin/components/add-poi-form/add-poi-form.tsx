@@ -16,6 +16,8 @@ import DestinationSelector, {fetchCitiesAndSetOptions} from "../../../components
 import {runInAction} from "mobx";
 import SelectInput from "../../../../components/inputs/select-input/select-input";
 import {getClasses} from "../../../../utils/utils";
+import FeedViewApiService from "../../../services/feed-view-api-service";
+import {IPointOfInterest} from "../../../utils/interfaces";
 
 function CategorySelector(props: {
     name: string,
@@ -77,6 +79,7 @@ function POIForm() {
     const eventStore = useContext(eventStoreContext);
     const [isSaving, setIsSaving] = useState(false);
     const [isUploadingPictures, setIsUploadingPictures] = useState(false);
+    const [isSavingToSavedCollections, setIsSavingToSavedCollections] = useState(false);
     const uploadedPhotos = useRef<number>(0);
     const [savingText, setSavingText] = useState<string | undefined>(undefined);
 
@@ -364,7 +367,16 @@ function POIForm() {
         return isOk;
     }
 
+    const handleAddToSaved = (destination: string, id: number) => {
+        return new FeedViewApiService().saveItem({
+            destination,
+            id
+        } as unknown as IPointOfInterest);
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
+        setIsSavingToSavedCollections(false);
+        setIsUploadingPictures(false);
         setIsSaving(true);
         uploadedPhotos.current = 0;
 
@@ -398,6 +410,14 @@ function POIForm() {
 
 
             const response = await new AdminAddPoiApiService().addPoi(poiData);
+
+            // save system recommendations to Saved Collections as well
+            const pois = response.results;
+            setIsSavingToSavedCollections(true);
+            await handleAddToSaved(formData.destination, pois[0].id)
+            setIsSavingToSavedCollections(false);
+            setSavingText(getSavingText());
+
             setIsSaving(false);
 
             if (response.totalUpdated) {
@@ -458,7 +478,7 @@ function POIForm() {
                 <div className="flex-column gap-4">
                     {/*{formData.imagePaths.length > 0 && renderPreview()}*/}
                     {previewUrls.length > 0 && renderPreview()}
-                    <div className="flex-row gap-8">
+                    <div className="image-upload-buttons">
                         <label className={getClasses("file-label", isSaving && 'disabled')} htmlFor="file-upload">{TranslateService.translate(eventStore, previewUrls.length > 0 ? 'CHANGE_FILES' : 'CHOOSE_A_FILE')}</label>
                         {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(undefined)}>{TranslateService.translate(eventStore, 'REMOVE_FILES')}</label>}
                         {previewUrls.length > 0 && <label className="file-label remove" onClick={() => handleImageRemoval(currentIdx.current)}>{TranslateService.translate(eventStore, 'REMOVE_FILE')}</label>}
@@ -576,6 +596,9 @@ function POIForm() {
     function getSavingText(){
         if (!isSaving) {
             return null;
+        }
+        if (isSavingToSavedCollections) {
+            return TranslateService.translate(eventStore, 'KEEPING_TO_SAVED_COLLECTIONS')
         }
         if (isUploadingPictures) {
             return (

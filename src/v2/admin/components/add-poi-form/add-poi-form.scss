@@ -6,6 +6,12 @@
     flex-direction: column;
     gap: 16px;
 
+    .image-upload-buttons {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+    }
+
     .file-input {
       display: none;
     }
@@ -107,5 +113,27 @@ body.rtl {
   .add-poi-form-container {
     direction: rtl;
     text-align: right;
+  }
+}
+
+// mobile
+@media only screen and (max-width: 600px) {
+  .add-poi-form {
+    padding-inline: 20px;
+
+    .image-upload-buttons {
+      flex-wrap: wrap;
+      gap: 4px !important;
+      /*
+      flex-direction: column !important;
+      gap: 0 !important;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+
+      label {
+        text-align: center;
+      }*/
+    }
   }
 }
