@@ -7,7 +7,13 @@ import './point-of-interest.scss';
 import ReactModalService from "../../../services/react-modal-service";
 import {TripActions} from "../../../utils/interfaces";
 import {TriplanPriority} from "../../../utils/enums";
-import {extractCategory, getClasses, isTemplateUsername} from "../../../utils/utils";
+import {
+    extractCategory,
+    getClasses,
+    getEventDescription,
+    getEventTitle,
+    isTemplateUsername
+} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore, eventStoreContext} from "../../../stores/events-store";
 import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
@@ -38,7 +44,8 @@ interface PointOfInterestProps {
     renderTripInfo?: () => void;
     namePrefix?: React.ReactNode;
     isEditMode?: boolean;
-    onEditSave?: () => void;
+    onEditSave?: (newName: string) => void;
+    onEditDescriptionSave?: (newDescription: string) => void;
 
     // search result
     isSearchResult?: boolean;
@@ -244,7 +251,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) =>
     );
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
 
@@ -521,16 +528,18 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
 
     function renderName() {
         let overridePreview;
-        if (isTemplateUsername() && myTrips) {
-            if (eventStore.isHebrew) {
-                overridePreview = item.name.split('|')?.[1]?.trim() ?? item.name;
-            } else {
-                overridePreview = item.name.split('|')[0].trim();
-            }
-        }
+        // if (isTemplateUsername() && myTrips) {
+        //     if (eventStore.isHebrew) {
+        //         overridePreview = item.name.split('|')?.[1]?.trim() ?? item.name;
+        //     } else {
+        //         overridePreview = item.name.split('|')[0].trim();
+        //     }
+        // }
+
+        overridePreview = getEventTitle({ title: item.name }, eventStore, true);
 
         const name = (
-            <EditableLabel onLabelClick={onLabelClick} name="trip-name" value={item.name.replaceAll("-", " ")} placeholder={TranslateService.translate(eventStore, 'name')} isEditMode={isEditMode} onEditSave={onEditSave} key={`edit-label-${item.name}`} overridePreview={overridePreview} />
+            <EditableLabel onLabelClick={onLabelClick} name="trip-name" value={item.name.replaceAll("-", " ")} placeholder={TranslateService.translate(eventStore, 'name')} isEditMode={isEditMode} onEditSave={onEditSave} key={`edit-label-${item.name}`} overridePreview={overridePreview} onCancelClick={onLabelClick} />
         )
         if (isShrinkedMode) {
             return (
@@ -580,11 +589,11 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
             <div className="poi-right">
                 {(item.priority === 'high' || item.isSystemRecommendation) && <div className="top-pick-label">{TranslateService.translate(eventStore, 'TOP_PICK')}</div>}
                 {item.category && !mainFeed && renderItemCategory()}
-                <div className="name-container">
+                <div className={getClasses("name-container", isEditMode && 'margin-bottom-10')}>
                     {renderName()}
                 </div>
                 <span className={getClasses("description", isShrinkedMode && !isViewItem && 'max-height-100-ellipsis')}>
-                    {item.description}
+                    {onEditDescriptionSave ? <EditableLabel inputType="textarea" onLabelClick={onLabelClick} name={`${item.id}-description`} value={item.description} placeholder={TranslateService.translate(eventStore, 'TEMPLATE.DESCRIPTION')} isEditMode={isEditMode} onEditSave={onEditDescriptionSave} key={`edit-description-${item.description}`} overridePreview={getEventDescription(item, eventStore, true)} onCancelClick={onLabelClick} /> : item.description}
                     {savedCollection && (
                         <>
                             <br/>

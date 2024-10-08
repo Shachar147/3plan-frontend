@@ -108,6 +108,35 @@ function SystemRecommendationsView(){
         }
     }
 
+    async function onPoiDescriptionChanged(poiId: number, oldDescription: string, newDescription: string){
+        if (newDescription.length == 0){
+            return;
+        }
+        if (oldDescription != newDescription) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                description: newDescription
+            });
+            if (updatedResponse.description != newDescription) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                runInAction(() => {
+                    feedStore.items.find((s) => s.id == poiId).description = updatedResponse.description;
+                })
+
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
+    }
+
     async function onPoiRenamed(poiId: number, oldName: string, newName: string){
         if (newName.length == 0){
             return;
@@ -116,13 +145,14 @@ function SystemRecommendationsView(){
             const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
                 name: newName
             });
-            runInAction(() => {
-                feedStore.systemRecommendations.find((s) => s.id == poiId).name = updatedResponse.name;
-            })
 
             if (updatedResponse.name != newName) {
                 ReactModalService.internal.openOopsErrorModal(eventStore);
             } else {
+                runInAction(() => {
+                    feedStore.systemRecommendations.find((s) => s.id == poiId).name = updatedResponse.name;
+                })
+
                 ReactModalService.internal.alertMessage(
                     eventStore,
                     'MODALS.CREATE.TITLE',
@@ -182,6 +212,12 @@ function SystemRecommendationsView(){
                                      return;
                                  }
                                  onPoiRenamed(item.id, item.name, newName)
+                             }}
+                             onEditDescriptionSave={(newDescription: string) => {
+                                 if (!FeatureFlagsService.isDeleteEnabled()){
+                                     return;
+                                 }
+                                 onPoiDescriptionChanged(item.id, item.description, newDescription)
                              }}
                              onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
                                  await new FeedViewApiService().deletePoi(item.id);
