@@ -44,7 +44,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
     const baseClass = "triplan-header-banner-header-line";
     const isMobile = false;  // eventStore.isMobile;
     const isSticky = (!isMobile && scrollY > 60) || (tripName && scrollY > 60) || isAlwaysSticky;
-    const isShort = eventStore.isMobile ? '.SHORT' : '';
+    const isShort = isAdmin() && eventStore.isMobile ? '.SHORT' : ''; // because only admin have a lot of buttons here.
 
     const isInAdmin = window.location.href.includes(`${newDesignRootPath}/admin`);
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
@@ -191,7 +191,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
 
         return (
             <div className={containerClass}>
-                {isAdmin() && isInAdmin ? goToUserSideBtn : goToAdminSideBtn}
+                {isAdmin() ? (isInAdmin ? goToUserSideBtn : goToAdminSideBtn) : undefined}
                 {!isInPlan && wishlistBtn}
                 {myTripsBtn}
                 {languageBtn}
