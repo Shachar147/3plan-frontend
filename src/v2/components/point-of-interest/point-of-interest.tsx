@@ -686,10 +686,10 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     </div>
                 )}
                 {onClick && (
-                    <div className={getClasses("margin-bottom-20 flex-column", !isSmall ? 'margin-top-20' : 'width-100-percents')}>
+                    <div className={getClasses("margin-bottom-20 flex-column", (!isSmall || eventStore.isMobile) ? 'margin-top-20 align-items-center' : 'width-100-percents')}>
                         <Button
                             icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
-                            className={getClasses("cursor-pointer", eventStore.isMobile && 'black')}
+                            className={getClasses("cursor-pointer", eventStore.isMobile && 'black', eventStore.isMobile && 'width-150')}
                             type={ButtonFlavor.secondary}
                             text={onClickText ?? TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
                             onClick={() => onClick()}

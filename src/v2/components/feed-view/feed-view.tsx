@@ -244,6 +244,16 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         }
 
         let uniqueNewItems = filterUniqueItems(newItems);
+        uniqueNewItems = uniqueNewItems.sort((a, b) => {
+            // First, sort by isSystemRecommendation (true values first)
+            if (a.isSystemRecommendation !== b.isSystemRecommendation) {
+                return a.isSystemRecommendation ? -1 : 1;
+            }
+
+            // Then, sort by rate?.rating in descending order
+            return (b.rate?.rating || 0) - (a.rate?.rating || 0);
+        });
+
         if (mainFeed && feedStore.items.length > 0 && !eventStore.isMobile){
             uniqueNewItems = [];
         }
