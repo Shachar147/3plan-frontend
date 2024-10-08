@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useMemo, useState} from "react";
 import {eventStoreContext} from "../../../stores/events-store";
 import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
-import {getClasses} from "../../../utils/utils";
+import {getClasses, isAdmin} from "../../../utils/utils";
 import TriplanLogo from "../../../components/triplan-header/logo/triplan-logo";
 import TriplanSearchV2 from "../search-component/triplan-search-v2";
 import Button, {ButtonFlavor} from "../../../components/common/button/button";
@@ -46,6 +46,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
     const isSticky = (!isMobile && scrollY > 60) || (tripName && scrollY > 60) || isAlwaysSticky;
     const isShort = eventStore.isMobile ? '.SHORT' : '';
 
+    const isInAdmin = window.location.href.includes(`${newDesignRootPath}/admin`);
     const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
 
     const hideSearch = !isLoggedIn; // || (eventStore.isMobile && scrollY > 160);
@@ -86,7 +87,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
         <Button
             icon="fa-plane"
             text={isInPlan ? TranslateService.translate(eventStore, `BACK_TO_MY_TRIPS`) : TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)}
-            className={isLoggedIn && !searchKeyword && !isInPlan && localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && 'active'}
+            className={isLoggedIn && !searchKeyword && !isInPlan && localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId && !isInAdmin && 'active'}
             onClick={() => {
                 // if (localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId) {
                 //     return;
@@ -114,7 +115,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
     const languageBtn = (
         <Button
             icon="fa-globe"
-            text={TranslateService.translate(eventStore, 'LANGUAGE')}
+            text={TranslateService.translate(eventStore, `LANGUAGE${isShort}`)}
             onClick={() => {
                 ReactModalService.openChangeLanguageModal(eventStore);
             }}
@@ -166,8 +167,31 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
             )
         }
 
+        const goToAdminSideBtn = (
+            <Button
+                icon="fa-star"
+                text={TranslateService.translate(eventStore, 'MOBILE_NAVBAR.ADMIN_SIDE.SHORT')}
+                onClick={() => {
+                    window.location.href = `${newDesignRootPath}/admin`;
+                }}
+                flavor={ButtonFlavor.link}
+            />
+        )
+
+        const goToUserSideBtn = (
+            <Button
+                icon="fa-home"
+                text={TranslateService.translate(eventStore, 'MOBILE_NAVBAR.HOME')}
+                onClick={() => {
+                    window.location.href = `${newDesignRootPath}`;
+                }}
+                flavor={ButtonFlavor.link}
+            />
+        )
+
         return (
             <div className={containerClass}>
+                {isAdmin() && isInAdmin ? goToUserSideBtn : goToAdminSideBtn}
                 {!isInPlan && wishlistBtn}
                 {myTripsBtn}
                 {languageBtn}
