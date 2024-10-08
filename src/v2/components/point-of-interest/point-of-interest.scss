@@ -391,6 +391,17 @@ h2 {
   }
 }
 
+.carousel .slide {
+  // cause small height photos to still take all the height so we'll not have white background
+  display: flex;
+  justify-content: center;
+
+  > div {
+    display: flex;
+    flex: 1 1 0;
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: -300px 0;
