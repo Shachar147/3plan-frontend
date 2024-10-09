@@ -69,7 +69,7 @@ function EditableLabel(props: EditableLabelProps){
             </div>
         )
     }
-    return <span onClick={() => props.onLabelClick?.()}>{props.overridePreview ?? value}</span>
+    return <span className="white-space-pre-line" onClick={() => props.onLabelClick?.()}>{props.overridePreview ?? value}</span>
 }
 
 export default observer(EditableLabel);
