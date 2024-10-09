@@ -10,10 +10,10 @@ import {endpoints} from "../../v2/utils/endpoints";
 
 export const TriplanTinderApiService = {
 	async getPlacesByDestination(): Promise<GetPlacesByDestinationResult> {
-		const result = await apiGet(endpoints.v1.tinderPlacesFinder.placesByDestination);
-		if (result) {
-			return result?.data as GetPlacesByDestinationResult;
-		}
+		// const result = await apiGet(endpoints.v1.tinderPlacesFinder.placesByDestination);
+		// if (result) {
+		// 	return result?.data as GetPlacesByDestinationResult;
+		// }
 		return {} as GetPlacesByDestinationResult;
 	},
 
