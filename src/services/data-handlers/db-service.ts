@@ -149,8 +149,12 @@ export class DBService implements BaseDataHandler {
 			axios.defaults.headers.Authorization = `Bearer ${token}`;
 		}
 
-		const res: any = await apiGetPromise(this, endpoints.v1.admin.statistics, false);
-		return res?.data ?? [];
+		try {
+			const res: any = await apiGetPromise(this, endpoints.v1.admin.statistics, false);
+			return res?.data ?? [];
+		} catch {
+			return [];
+		}
 	}
 
 	// --- SET ------------------------------------------------------------------------------
