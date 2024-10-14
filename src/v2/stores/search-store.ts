@@ -3,6 +3,7 @@ import {createContext} from "react";
 import {action, computed, observable, runInAction} from "mobx";
 import {getParameterFromHash} from "../utils/utils";
 import {SearchSuggestion} from "../components/search-component/triplan-search-v2";
+import TranslateService from "../../services/translate-service";
 
 const AUTO_COMPLETE_MIN_CHARACTERS = 3;
 
@@ -68,11 +69,14 @@ export class SearchStore {
 
     @computed
     get shouldShowSuggestions(): boolean{
+        const haveSuggestions = this.suggestions.length > 0 && !this.suggestions[0].name.includes("Loading")&& !this.suggestions[0].name.includes("המתינו");
+
         return !!(this.suggestions.length &&
                this.searchQuery.length >= AUTO_COMPLETE_MIN_CHARACTERS &&
                (this.chosenName == "" || !this.searchQuery.includes(this.chosenName) || this.searchQuery.trim().length > this.chosenName.length) &&
                (!this.chosenName.includes(this.searchQuery)) &&
                this.showSuggestions &&
+               haveSuggestions &&
                !this.searchValueFromHash);
     }
 }

@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef} from 'react';
 import './search-component.scss';
 import TranslateService from "../../../services/translate-service";
 import { eventStoreContext } from "../../../stores/events-store";
-import { getClasses } from "../../../utils/utils";
+import {getClasses, getEventTitle} from "../../../utils/utils";
 import {observer} from "mobx-react";
 
 // @ts-ignore
@@ -13,6 +13,7 @@ import {rootStoreContext} from "../../stores/root-store";
 import ReactModalService from "../../../services/react-modal-service";
 import {ViewMode} from "../../../utils/enums";
 import {searchStoreContext} from "../../stores/search-store";
+import {CalendarEvent} from "../../../utils/interfaces";
 
 export interface SearchSuggestion {
     name: string;
@@ -52,7 +53,8 @@ const TriplanSearchV2 = () => {
 
     const rootStore = useContext(rootStoreContext);
 
-    const shouldShowSuggestions = eventStore.isMobile ? searchStore.shouldShowSuggestions && searchStore.suggestions.length > 0 && searchStore.suggestions[0].name != TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT") : searchStore.shouldShowSuggestions;
+    const haveSuggestions = searchStore.suggestions.length > 0 && searchStore.suggestions[0].name != TranslateService.translate(eventStore, "LOADING_TRIPS.TEXT");
+    const shouldShowSuggestions = eventStore.isMobile ? searchStore.shouldShowSuggestions && haveSuggestions : searchStore.shouldShowSuggestions;
 
     useMobileLockScroll(searchStore.rerenderCounter, searchStore.setReRenderCounter, shouldShowSuggestions, searchStore.showSuggestions, searchStore.suggestions);
 
@@ -227,7 +229,7 @@ const TriplanSearchV2 = () => {
                                     backgroundImage: `url(${suggestion.image ?? "/images/no-image.png"})`
                                 }}/>}
                                 <div className="suggestion-item-text">
-                                    <p className="suggestion-name">{TranslateService.translate(eventStore,suggestion.name)}</p>
+                                    <p className="suggestion-name">{TranslateService.translate(eventStore,getEventTitle({ title: suggestion.name } as unknown as CalendarEvent, eventStore, true))}</p>
                                     <small className="suggestion-descriptor">
                                         {getDescription(suggestion)}
                                         {getRating(suggestion)}
