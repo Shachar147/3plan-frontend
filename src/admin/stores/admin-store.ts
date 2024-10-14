@@ -25,20 +25,18 @@ export class AdminStore {
 
 	// --- init -------------------------------------------------
 	init() {
-		// moved to comment for now due to a problem - trying to query admin-statistics while user is not even logged in.
-
-		// const promises = [TriplanTinderApiService.getPlacesByDestination(), DataServices.DBService.getUserStats()];
-		// Promise.all(promises).then((results) => {
-		// 	// @ts-ignore
-		// 	const places: GetPlacesByDestinationResult = results[0];
-		// 	// @ts-ignore
-		// 	const stats: any[] = results?.[1] ?? [];
-		// 	runInAction(() => {
-		// 		this.placesByDestination = observable.map<string, TinderItem[]>(places?.data);
-		// 		this.userStats = observable.array<any[]>(stats);
-		// 		this.hasInit = true;
-		// 	});
-		// });
+		const promises = [TriplanTinderApiService.getPlacesByDestination(), DataServices.DBService.getUserStats()];
+		Promise.all(promises).then((results) => {
+			// @ts-ignore
+			const places: GetPlacesByDestinationResult = results[0];
+			// @ts-ignore
+			const stats: any[] = results?.[1] ?? [];
+			runInAction(() => {
+				this.placesByDestination = observable.map<string, TinderItem[]>(places?.data);
+				this.userStats = observable.array<any[]>(stats);
+				this.hasInit = true;
+			});
+		});
 	}
 
 	// --- computed ---------------------------------------------
