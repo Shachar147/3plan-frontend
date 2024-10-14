@@ -254,6 +254,10 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             return (b.rate?.rating || 0) - (a.rate?.rating || 0);
         });
 
+        if (viewItemId){
+            feedStore.items = [];
+        }
+
         if (mainFeed && feedStore.items.length > 0 && !eventStore.isMobile){
             uniqueNewItems = [];
         }

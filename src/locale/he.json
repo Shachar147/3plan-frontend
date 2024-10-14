@@ -119,6 +119,7 @@
 	"ADD_CATEGORY_MODAL.TITLE.ADD_CATEGORY": "הוסף קטגוריה",
 	"ADD_CATEGORY_MODAL.CATEGORY_NAME.PLACEHOLDER": "הזן שם קטגוריה...",
 	"MODALS.CREATE.TITLE": "ווהו!",
+	"OPEN_ITEM": "פתח",
 	"MODALS.CREATE_CATEGORY.CONTENT": "הקטגוריה נוצרה בהצלחה",
 	"MODALS.EDIT_COLLABORATOR_PERMISSIONS.CHANGED.CONTENT": "ההרשאות שונו בהצלחה",
 	"MODALS.ERROR.CATEGORY_NAME_ALREADY_EXIST": "קטגוריה עם השם הזה כבר קיימת",

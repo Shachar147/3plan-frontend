@@ -11,7 +11,7 @@ import {
     extractCategory,
     getClasses,
     getEventDescription,
-    getEventTitle,
+    getEventTitle, isAdmin,
     isTemplateUsername
 } from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
@@ -23,9 +23,10 @@ import {runInAction} from "mobx";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import {observer} from "mobx-react";
 import EditableLabel from "../editable-label/editable-label";
-import {mainPageContentTabLsKey, myTripsTabId, TEMPLATES_USER_NAME} from "../../utils/consts";
+import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, specificItemTabId} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
 import {MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
+import {searchStoreContext} from "../../stores/search-store";
 
 interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
@@ -254,6 +255,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) =>
 const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
+    const searchStore = useContext(searchStoreContext);
 
     const isHebrew = eventStore.isHebrew;
     const feedId = `${item.source}-${item.name}-${item.url}`;
@@ -418,6 +420,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         const flavor = mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary;
         if (mainFeed || isSearchResult || isViewItem) {
             return (
+                <>
                 <Button
                     flavor={flavor}
                     onClick={() => {
@@ -435,6 +438,35 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     tooltip={mainFeed ? text : ""}
                     className="padding-inline-15"
                 />
+                    {!isViewItem && !isSmall && (
+                        <div className={getClasses(isSmall && "flex-column align-items-center margin-bottom-10")}>
+                            <Button
+                                flavor={ButtonFlavor.secondary}
+                                onClick={() => {
+                                    localStorage.setItem(`item-${item.id}-name`, item.name);
+                                    window.location.hash = `${specificItemTabId}?id=${item.id}`;
+                                    window.location.href = `${newDesignRootPath}${window.location.hash}`;
+                                    // window.location.assign(`${newDesignRootPath}${window.location.hash}`);
+                                    rootStore.triggerTabsReRender();
+                                    rootStore.triggerHeaderReRender();
+                                }}
+                                key={`open-button-${item.id}-${feedStore.reRenderCounter}`}
+                                icon={`fa-chevron-${eventStore.getCurrentDirectionEnd()}`}
+                                text={TranslateService.translate(eventStore, 'OPEN_ITEM')}
+                                className="padding-inline-15 black"
+                            />
+                        </div>
+                    )}
+                    {isAdmin() && !isSmall && (
+                        <Button
+                            icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
+                            className={getClasses("cursor-pointer", 'black', eventStore.isMobile && 'min-width-150 padding-inline-15')}
+                            flavor={ButtonFlavor.secondary}
+                            text={onClickText ?? TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
+                            onClick={() => onClick()}
+                        />
+                    )}
+                </>
             );
         }
 
@@ -466,6 +498,23 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     tooltip={text}
                     className="padding-inline-15"
                 />
+                <div className={getClasses(isSmall && "flex-column align-items-center margin-bottom-10")}>
+                    <Button
+                        flavor={flavor}
+                        onClick={() => {
+                            localStorage.setItem(`item-${item.id}-name`, item.name);
+                            window.location.hash = `${specificItemTabId}?id=${item.id}`;
+                            window.location.href = `${newDesignRootPath}${window.location.hash}`;
+                            // window.location.assign(`${newDesignRootPath}${window.location.hash}`)
+                            rootStore.triggerTabsReRender();
+                            rootStore.triggerHeaderReRender();
+                        }}
+                        key={`open-button-${item.id}-${feedStore.reRenderCounter}`}
+                        icon={`fa-chevron-${eventStore.getCurrentDirectionEnd()}`}
+                        text={TranslateService.translate(eventStore, 'OPEN_ITEM')}
+                        className="padding-inline-15"
+                    />
+                </div>
             </>
         );
     }
@@ -685,11 +734,30 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                         />
                     </div>
                 )}
+                {(mainFeed || (isSearchResult && isSmall)) && !myTrips && !savedCollection && (
+                    <div className={getClasses(isSmall && "flex-column align-items-center margin-bottom-10")}>
+                        <Button
+                            flavor={ButtonFlavor.secondary}
+                            onClick={() => {
+                                localStorage.setItem(`item-${item.id}-name`, item.name);
+                                window.location.hash = `${specificItemTabId}?id=${item.id}`;
+                                window.location.href = `${newDesignRootPath}${window.location.hash}`;
+                                // window.location.assign(`${newDesignRootPath}${window.location.hash}`)
+                                rootStore.triggerTabsReRender();
+                                rootStore.triggerHeaderReRender();
+                            }}
+                            key={`open-button-${item.id}-${feedStore.reRenderCounter}`}
+                            icon={`fa-chevron-${eventStore.getCurrentDirectionEnd()}`}
+                            text={TranslateService.translate(eventStore, 'OPEN_ITEM')}
+                            className="min-width-150 width-max-content padding-inline-15 black"
+                        />
+                    </div>
+                )}
                 {onClick && (
                     <div className={getClasses("margin-bottom-20 flex-column", (!isSmall || eventStore.isMobile) ? 'margin-top-20 align-items-center' : 'width-100-percents')}>
                         <Button
                             icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
-                            className={getClasses("cursor-pointer", eventStore.isMobile && 'black', eventStore.isMobile && 'width-150')}
+                            className={getClasses("cursor-pointer", eventStore.isMobile && 'black', eventStore.isMobile && 'min-width-150 padding-inline-15')}
                             type={ButtonFlavor.secondary}
                             text={onClickText ?? TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')}
                             onClick={() => onClick()}
