@@ -10,7 +10,7 @@ import MyTripsTab from "../my-trips-tab/my-trips-tab";
 import {feedStoreContext} from "../../stores/feed-view-store";
 import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
 import {myTripsContext} from "../../stores/my-trips-store";
-import {getClasses, isTemplateUsername, LOADER_DETAILS} from "../../../utils/utils";
+import {getClasses, getEventTitle, isTemplateUsername, LOADER_DETAILS} from "../../../utils/utils";
 import {
     exploreTabId,
     mainPageContentTabLsKey, mobileSuggestedTripsTabId, mobileSystemRecommendationsTabId, mobileTopPicksTabId,
@@ -34,6 +34,7 @@ import LoadingComponent from "../../../components/loading/loading-component";
 import MainPage from "../../../pages/main-page/main-page";
 import TemplatesView from "../../components/templates-view/templates-view";
 import SystemRecommendationsView from "../../components/system-recommendations-view/system-recommendations-view";
+import {CalendarEvent} from "../../../utils/interfaces";
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
     return (
@@ -126,7 +127,7 @@ function MainPageContent(){
                 id: specificItemTabId,
                 order: 0,
                 name: TranslateService.translate(eventStore, (isShort || !itemName) ? 'VIEW_ITEM.SHORT' : 'VIEW_ITEM', {
-                    X: itemName
+                    X: getEventTitle({ title: itemName} as unknown as CalendarEvent, eventStore, true)
                 }),
                 icon: "fa-info",
                 render: () => <TriplanTabContent content={
