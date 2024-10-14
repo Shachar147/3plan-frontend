@@ -121,7 +121,10 @@ function SystemRecommendationsView(){
                 ReactModalService.internal.openOopsErrorModal(eventStore);
             } else {
                 runInAction(() => {
-                    feedStore.items.find((s) => s.id == poiId).description = updatedResponse.description;
+                    const found = feedStore.systemRecommendations.find((s) => s.id == poiId);
+                    if (found) {
+                        found.description = updatedResponse.description;
+                    }
                 })
 
                 ReactModalService.internal.alertMessage(
