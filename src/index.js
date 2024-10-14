@@ -839,7 +839,11 @@ const RootRouter = () => {
 		}
 	};
 
-	axios.defaults.headers.Authorization = `Bearer ${getToken()}`;
+	// fix error when user have no token - used to display white screen.
+	// reason - getToken was undefined and then the authorization sent Bearer undefined.
+	if (getToken()) {
+		axios.defaults.headers.Authorization = `Bearer ${getToken()}`;
+	}
 
 	function isDevMode() {
 		return window.location.href.indexOf('localhost') !== -1 || window.location.href.indexOf('0.0.0.0') !== -1;
