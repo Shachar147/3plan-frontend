@@ -54,7 +54,8 @@ function SystemRecommendationsView(){
 
     useEffect( () => {
         if (eventStore.isMobile) {
-            fetchItems(1, setIsLoading)
+            setIsLoading(false);
+            // fetchItems(1, setIsLoading)
         } else {
             loadRecommendations();
         }
