@@ -44,6 +44,10 @@ export async function apiDelete(url: string) {
 }
 
 function _apiGet(url: string, accessToken: string) {
+	if (!accessToken) {
+		window.location.href = '/login';
+		return;
+	}
 	return axios
 		.get(getTinderServerAddress() + url, {
 			headers: {

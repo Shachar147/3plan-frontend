@@ -146,7 +146,9 @@ export class DBService implements BaseDataHandler {
 	async getUserStats(): Promise<any[]> {
 		if (!axios.defaults.headers.Authorization) {
 			const token = getToken();
-			axios.defaults.headers.Authorization = `Bearer ${token}`;
+			if (token) {
+				axios.defaults.headers.Authorization = `Bearer ${token}`;
+			}
 		}
 
 		try {
