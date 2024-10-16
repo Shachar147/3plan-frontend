@@ -439,7 +439,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     className="padding-inline-15"
                 />
                     {!isViewItem && !isSmall && (
-                        <div className={getClasses(isSmall && "flex-column align-items-center margin-bottom-10")}>
+                        <div className={getClasses(isSmall && "flex-column align-items-center", isSmall && !eventStore.isMobile && 'margin-bottom-10')}>
                             <Button
                                 flavor={ButtonFlavor.secondary}
                                 onClick={() => {
@@ -498,7 +498,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     tooltip={text}
                     className="padding-inline-15"
                 />
-                <div className={getClasses(isSmall && "flex-column align-items-center margin-bottom-10")}>
+                <div className={getClasses(isSmall && "flex-column align-items-center", isSmall && !eventStore.isMobile && 'margin-bottom-10')}>
                     <Button
                         flavor={flavor}
                         onClick={() => {
@@ -735,7 +735,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     </div>
                 )}
                 {(mainFeed || (isSearchResult && isSmall)) && !myTrips && !savedCollection && (
-                    <div className={getClasses(isSmall && "flex-column align-items-center margin-bottom-10")}>
+                    <div className={getClasses(isSmall && "flex-column align-items-center", isSmall && !eventStore.isMobile && 'margin-bottom-10')}>
                         <Button
                             flavor={ButtonFlavor.secondary}
                             onClick={() => {

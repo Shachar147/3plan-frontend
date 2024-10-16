@@ -8,7 +8,13 @@ import Button, {ButtonFlavor} from "../../../components/common/button/button";
 import TranslateService from "../../../services/translate-service";
 import ReactModalService from "../../../services/react-modal-service";
 import {observer} from "mobx-react";
-import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, savedCollectionsTabId} from "../../utils/consts";
+import {
+    mainPageContentTabLsKey,
+    myTripsTabId,
+    newDesignRootPath,
+    savedCollectionsTabId,
+    specificItemTabId
+} from "../../utils/consts";
 import {rootStoreContext} from "../../stores/root-store";
 import {useNavigate, useParams} from "react-router-dom";
 import {getUser, isLoggedOn} from "../../../helpers/auth";
@@ -188,6 +194,22 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
                 flavor={ButtonFlavor.link}
             />
         )
+
+        const searchKeyword = getParameterFromHash('q');
+        const isInSearch = (searchKeyword?.length ?? 0) > 0;
+        const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
+        const isInViewItem = (viewItemId?.length ?? 0) > 0;
+
+        if (isInSearch || isInViewItem || isInPlan) {
+            return (
+                <div className={containerClass}>
+                    {goToUserSideBtn}
+                    {isAdmin() && goToAdminSideBtn}
+                    {languageBtn}
+                    {signInOutBtn}
+                </div>
+            )
+        }
 
         return (
             <div className={containerClass}>
