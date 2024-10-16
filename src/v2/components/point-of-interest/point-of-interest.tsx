@@ -262,6 +262,8 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isAddingToSaved, setIsAddingToSaved] = useState(false);
 
+    const isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
+
     const category = extractCategory([
         item.name ?? '',
         item.description ?? '',
@@ -438,7 +440,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     tooltip={mainFeed ? text : ""}
                     className="padding-inline-15"
                 />
-                    {!isViewItem && !isSmall && (
+                    {!isViewItem && !isSmall && !isInPlan && (
                         <div className={getClasses(isSmall && "flex-column align-items-center", isSmall && !eventStore.isMobile && 'margin-bottom-10')}>
                             <Button
                                 flavor={ButtonFlavor.secondary}
@@ -498,7 +500,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                     tooltip={text}
                     className="padding-inline-15"
                 />
-                <div className={getClasses(isSmall && "flex-column align-items-center", isSmall && !eventStore.isMobile && 'margin-bottom-10')}>
+                {!isInPlan && <div className={getClasses(isSmall && "flex-column align-items-center", isSmall && !eventStore.isMobile && 'margin-bottom-10')}>
                     <Button
                         flavor={flavor}
                         onClick={() => {
@@ -514,7 +516,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                         text={TranslateService.translate(eventStore, 'OPEN_ITEM')}
                         className="padding-inline-15"
                     />
-                </div>
+                </div>}
             </>
         );
     }
@@ -734,7 +736,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                         />
                     </div>
                 )}
-                {(mainFeed || (isSearchResult && isSmall)) && !myTrips && !savedCollection && (
+                {(mainFeed || (isSearchResult && isSmall)) && !myTrips && !savedCollection && !isInPlan && (
                     <div className={getClasses(isSmall && "flex-column align-items-center", isSmall && !eventStore.isMobile && 'margin-bottom-10')}>
                         <Button
                             flavor={ButtonFlavor.secondary}
