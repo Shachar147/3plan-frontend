@@ -77,7 +77,7 @@ export const endpoints: Record<string, any> = {
             feed: '/poi/feed/',
             systemRecommendations: '/poi/system-recommendations',
             searchSuggestions: '/poi/search-suggestions',
-            freeTextSearch: (searchKeyword: string, page: number) => `/poi/search?q=${searchKeyword}&page=${page}`,
+            freeTextSearch: (searchKeyword: string, page: number, isDestination?: boolean) => isDestination ? `/poi/search?q=${searchKeyword}&page=${page}&destination=1` : `/poi/search?q=${searchKeyword}&page=${page}`,
             update: (poiId: number) => `/poi/${poiId}`,
             delete: (poiId: number) => `/poi/${poiId}`,
         },

@@ -115,21 +115,24 @@ export function useLoadSuggestions(searchQuery: string, setSuggestions: (suggest
                 name: c.value,
                 category: c.type,
                 destination: c.label,
-                image: cityImage
+                image: cityImage,
+                isFromCitiesAndCountries: true
             }));
 
             const cities = citiesAndCountries.filter((c) => isMatchQuery(c) && c.type === "city").map((c) => ({
                 name: c.value,
                 category: c.type,
                 destination: c.label,
-                image: cityImage
+                image: cityImage,
+                isFromCitiesAndCountries: true
             }));
 
             const islands = citiesAndCountries.filter((c) => isMatchQuery(c) && c.type == 'island').map((c) => ({
                 name: c.value,
                 category: c.type,
                 destination: c.label,
-                image: islandImage
+                image: islandImage,
+                isFromCitiesAndCountries: true
             }));
 
             results = [

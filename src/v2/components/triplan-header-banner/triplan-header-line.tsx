@@ -87,7 +87,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
         />
     );
 
-    const searchKeyword = getParameterFromHash('q');
+    const searchKeyword = getParameterFromHash('q') ?? getParameterFromHash('d');
 
     const myTripsBtn = (
         <Button
@@ -195,7 +195,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
             />
         )
 
-        const searchKeyword = getParameterFromHash('q');
+        const searchKeyword = getParameterFromHash('q') ?? getParameterFromHash('d');
         const isInSearch = (searchKeyword?.length ?? 0) > 0;
         const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
         const isInViewItem = (viewItemId?.length ?? 0) > 0;

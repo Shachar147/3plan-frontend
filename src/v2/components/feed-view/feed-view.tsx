@@ -14,6 +14,7 @@ import { feedStoreContext } from "../../stores/feed-view-store";
 import {runInAction} from "mobx";
 import ReactModalService from "../../../services/react-modal-service";
 import {FeatureFlagsService} from "../../../utils/feature-flags";
+import {getParameterFromHash} from "../../utils/utils";
 
 interface FeedViewProps {
     eventStore: EventStore;
@@ -50,6 +51,8 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     const feedStore = useContext(feedStoreContext);
     const apiService = useMemo(() => new FeedViewApiService(), []);
     const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
+
+    const filterByDestination = !!getParameterFromHash('d');
 
     // for editing items
     const [isEditMode, setIsEditMode] = useState<Record<number, boolean>>({});
@@ -185,7 +188,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             let allFinished = false;
             if (destination != "[]") {
                 const responses = await Promise.all(
-                    sources.map(source => source === "Local" ? apiService.getSearchResults(destination, page) : apiService.getItems(source, destination, page))
+                    sources.map(source => source === "Local" ? apiService.getSearchResults(destination, page, filterByDestination) : apiService.getItems(source, destination, page))
                 );
 
                 responses.forEach(response => {

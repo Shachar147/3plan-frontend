@@ -31,7 +31,7 @@ function TriplanHeaderBanner({ noHeader = false, withHr = false, isInLogin = fal
     // ------------------------------------------------------------
     useEffect(() => {
         isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
-        const searchKeyword = getParameterFromHash('q');
+        const searchKeyword = getParameterFromHash('q') ?? getParameterFromHash('d');
         const citiesAndCountries = fetchCitiesAndSetOptions();
         const inPlanWithDestinations = isInPlan && eventStore.destinations;
         const inSearchOfKnownCountryOrCity = searchKeyword && citiesAndCountries.find((c) => c.value.toLowerCase().trim() == searchKeyword.toLowerCase().trim());
