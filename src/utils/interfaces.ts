@@ -154,6 +154,7 @@ export enum TripActions {
 	changedSidebarEvent = 'changedSidebarEvent',
 	duplicatedSidebarEvent = 'duplicatedSidebarEvent',
 	createdTask = 'createdTask',
+	updatedTask = 'updatedTask',
 
 	// categories
 	addedCategory = 'addedCategory',

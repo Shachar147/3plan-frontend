@@ -447,6 +447,15 @@ function MyTripsTab(){
         return c;
     }
 
+    function splitTitleAndIcons(input: string) {
+        const iconRegex = /^[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F1E0}-\u{1F1FF}]+/u;
+        const iconMatch = input.match(iconRegex);
+        const icon = iconMatch ? iconMatch[0] : '';
+        const title = icon ? input.replace(icon, '').trim() : input;
+
+        return { title, icon };
+    }
+
     async function createNewTrip(tripName: string) {
         const areDatesValid = validateDateRange(eventStore, customDateRange.start, customDateRange.end);
         errors.start = !areDatesValid;
@@ -522,15 +531,25 @@ function MyTripsTab(){
 
                     i.category = i.category || "CATEGORY.GENERAL";
 
-                    let categoryId = categoryNameToId[i.category] ?? categoryNameToId[TranslateService.translate(eventStore, i.category)];
+                    // @ts-ignore
+                    parsedItem.images = i.images?.join("\n");
+
+                    const {title, icon} = splitTitleAndIcons(i.category);
+
+                    let categoryId = categoryNameToId[title] ?? categoryNameToId[TranslateService.translate(eventStore, title)] ??
+                        categoryNameToId[TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)] ??
+                        categoryNameToId[TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)];
+
                     if (!categoryId) {
                         const maxCategoryId = Math.max(...Object.values(categoryNameToId));
                         categoryId = maxCategoryId + 1;
 
                         tripData.categories.push({
                             id: maxCategoryId + 1,
-                            title: categoryId,
-                            icon: ''
+                            title,
+                            icon
+                            // title: i.category,
+                            // icon: ''
                         });
                         categoryNameToId[i.category] = categoryId;
                     }

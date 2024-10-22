@@ -16,7 +16,7 @@ import {
 } from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore, eventStoreContext} from "../../../stores/events-store";
-import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
+import DestinationSelector, {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
 import FeedViewApiService from "../../services/feed-view-api-service";
 import {IPointOfInterest} from "../../utils/interfaces";
 import {runInAction} from "mobx";
@@ -27,6 +27,7 @@ import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, specificItemTa
 import {rootStoreContext} from "../../stores/root-store";
 import {MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
 import {searchStoreContext} from "../../stores/search-store";
+import CategorySelector from "../../admin/components/category-selector/category-selector";
 
 interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
@@ -47,6 +48,8 @@ interface PointOfInterestProps {
     isEditMode?: boolean;
     onEditSave?: (newName: string) => void;
     onEditDescriptionSave?: (newDescription: string) => void;
+    onEditCategorySave?: (newCategory: string) => void;
+    onEditDestinationsSave?: (newDestinations: string[]) => void;
 
     // search result
     isSearchResult?: boolean;
@@ -252,7 +255,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) =>
     );
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave, onEditCategorySave, onEditDestinationsSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
     const searchStore = useContext(searchStoreContext);
@@ -345,12 +348,13 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 );
             }
         }
+        eventStore.modalValues['duration'] = item.duration;
         ReactModalService.openAddSidebarEventModal(
             eventStore,
             categoryId,
             {
                 ...item,
-                images: item.images?.join(","),
+                images: item.images?.join("\n"),
                 priority: !item.priority ? TriplanPriority.unset : TriplanPriority[item.priority],
                 title: item.name,
                 location: item.location ? {
@@ -539,21 +543,44 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
             Y: TranslateService.translate(eventStore, item.destination)
         }).replace(" בהאיים"," באיים");
 
+        if (isEditMode) {
+            // todo complete: see if we can indicate saving so it'll appear disabled.
+            const isSaving = false;
+            return (
+                <div className="flex-row gap-10 justify-content-center align-items-center">
+                    <CategorySelector isDisabled={isSaving} name="category" value={item.category} placeholderKey={"CATEGORY"} onChange={(e) => onEditCategorySave?.(e.target.value)} />
+                    <i className="fa fa-close cursor-pointer" onClick={onLabelClick}/>
+                </div>
+            )
+        }
+
         return (
-            <span>{name}</span>
+            <span onClick={onLabelClick}>{name}</span>
         )
     }
 
     function renderDestinationIcon(){
         const destinations = item.destination.split(",");
         const sources = fetchCitiesAndSetOptions();
+
+        if (isEditMode) {
+            // todo complete: see if we can indicate saving so it'll appear disabled.
+            const isSaving = false;
+            return (
+                <div className="flex-row gap-10 justify-content-center align-items-center">
+                    <DestinationSelector hideSelectedChips onChange={(newDestinations) => onEditDestinationsSave?.(newDestinations)} selectedDestinations={destinations} />
+                    <i className="fa fa-close cursor-pointer" onClick={onLabelClick}/>
+                </div>
+            )
+        }
+
         return (
             <>
                 {destinations.map((destination) => {
                     const found = sources.find((c) => c.value === destination.trim());
                     if (found){
                         return (
-                            <i className={found.flagClass} alt={destination.trim()} title={destination.trim()} />
+                            <i className={found.flagClass} alt={destination.trim()} title={destination.trim()} onClick={onLabelClick} />
                         )
                     }
                 }).filter(Boolean)}

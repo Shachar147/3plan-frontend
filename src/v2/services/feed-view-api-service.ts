@@ -30,9 +30,9 @@ export default class FeedViewApiService {
         return {};
     }
 
-    getSearchResults = async (searchKeyword: string, page: number) => {
+    getSearchResults = async (searchKeyword: string, page: number, isDestination?: boolean) => {
         const source = "Local";
-        const url = endpoints.v2.poi.freeTextSearch(searchKeyword, page)
+        const url = endpoints.v2.poi.freeTextSearch(searchKeyword, page, isDestination)
         if (!url){
             return Promise.resolve({
                 results: [],

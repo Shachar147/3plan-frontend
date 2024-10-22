@@ -397,6 +397,16 @@ export class DBService implements BaseDataHandler {
 		return await apiPost(endpoints.v1.tasks.createTask, data);
 	}
 
+	async updateTask(taskId: number, data: {
+		description: string;
+		title: string;
+		status: TriplanTaskStatus;
+		eventId?: number;
+		mustBeDoneBefore?: number;
+	}) {
+		return await apiPut(endpoints.v1.tasks.updateTaskStatus(taskId), data);
+	}
+
 	async updateTaskStatus(taskId: number, status: TriplanTaskStatus) {
 		return await apiPut(endpoints.v1.tasks.updateTaskStatus(taskId), { status });
 	}

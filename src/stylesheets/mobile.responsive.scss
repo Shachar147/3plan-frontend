@@ -1258,3 +1258,17 @@
 		}
 	}
 }
+
+
+/* Banner on small screens or when f12 is opened */
+@media only screen and (max-height: 350px) and (min-width: 650px) {
+	.triplan-header-banner-bottom-shadow {
+		display: none !important;
+	}
+}
+
+@media only screen and (max-height: 310px) and (min-width: 650px) {
+	.triplan-header-banner-header-line-top-shadow {
+		height: 100px !important;
+	}
+}

@@ -411,3 +411,12 @@ h2 {
     background-position: 300px 0;
   }
 }
+
+// when we're on edit mode, we show editable labels, category selectors, etc - override their width to fit point-of-interest small view.
+.main-feed {
+  .category-label {
+    div[class$='control'] {
+      max-width: 230px;
+    }
+  }
+}

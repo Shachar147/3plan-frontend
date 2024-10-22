@@ -18,9 +18,9 @@ export class SearchStore {
 
     constructor() {
         runInAction(() => {
-            this._searchQuery = getParameterFromHash('q') ?? "";
-            this.searchQuery = getParameterFromHash('q') ?? "";
-            this.searchValueFromHash = (getParameterFromHash('q')?.length ?? 0) > 0;
+            this._searchQuery = getParameterFromHash('q') ?? getParameterFromHash('d') ?? "";
+            this.searchQuery = getParameterFromHash('q') ?? getParameterFromHash('d') ?? "";
+            this.searchValueFromHash = (getParameterFromHash('q')?.length ?? getParameterFromHash('d')?.length ?? 0) > 0;
         });
 
         this._setSearchQuery = this._setSearchQuery.bind(this);

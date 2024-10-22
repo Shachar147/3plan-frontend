@@ -14,6 +14,7 @@ import { feedStoreContext } from "../../stores/feed-view-store";
 import {runInAction} from "mobx";
 import ReactModalService from "../../../services/react-modal-service";
 import {FeatureFlagsService} from "../../../utils/feature-flags";
+import {getParameterFromHash} from "../../utils/utils";
 
 interface FeedViewProps {
     eventStore: EventStore;
@@ -50,6 +51,8 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     const feedStore = useContext(feedStoreContext);
     const apiService = useMemo(() => new FeedViewApiService(), []);
     const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
+
+    const filterByDestination = !!getParameterFromHash('d');
 
     // for editing items
     const [isEditMode, setIsEditMode] = useState<Record<number, boolean>>({});
@@ -185,7 +188,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             let allFinished = false;
             if (destination != "[]") {
                 const responses = await Promise.all(
-                    sources.map(source => source === "Local" ? apiService.getSearchResults(destination, page) : apiService.getItems(source, destination, page))
+                    sources.map(source => source === "Local" ? apiService.getSearchResults(destination, page, filterByDestination) : apiService.getItems(source, destination, page))
                 );
 
                 responses.forEach(response => {
@@ -366,6 +369,38 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         });
     }
 
+    async function onPoiCategoryChanged(poiId: number, oldCategory: string, newCategory: string){
+        if (newCategory.length == 0){
+            return;
+        }
+        if (oldCategory != newCategory) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                category: newCategory
+            });
+            if (updatedResponse.category != newCategory) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                runInAction(() => {
+                    const found = feedStore.systemRecommendations.find((s) => s.id == poiId);
+                    if (found) {
+                        found.category = updatedResponse.category;
+                    }
+                })
+
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
+    }
+
     async function onPoiDescriptionChanged(poiId: number, oldDescription: string, newDescription: string){
         if (newDescription.length == 0){
             return;
@@ -379,6 +414,43 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
             } else {
                 runInAction(() => {
                     feedStore.items.find((s) => s.id == poiId).description = updatedResponse.description;
+                })
+
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
+    }
+
+    async function onPoiDestinationsChanged(poiId: number, oldDestinations: string, newDestinations: string){
+        if (newDestinations.length == 0){
+            return;
+        }
+        if (oldDestinations != newDestinations) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                destination: newDestinations
+            });
+            if (updatedResponse.destination != newDestinations) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                runInAction(() => {
+                    const found = feedStore.systemRecommendations.find((s) => s.id == poiId);
+                    if (found) {
+                        found.destination = updatedResponse.destination;
+                    }
+
+                    const found2 = feedStore.items.find((s) => s.id == poiId);
+                    if (found2) {
+                        found2.destination = updatedResponse.destination;
+                    }
                 })
 
                 ReactModalService.internal.alertMessage(
@@ -437,6 +509,18 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                                              }
                                              onPoiDescriptionChanged(item.id, item.description, newDescription)
                                          }}
+                                         onEditCategorySave={(newCategory: string) => {
+                                             if (!FeatureFlagsService.isDeleteEnabled()){
+                                                 return;
+                                             }
+                                             onPoiCategoryChanged(item.id, item.description, newCategory)
+                                         }}
+                                         onEditDestinationsSave={(newDestinations: string[]) => {
+                                             if (!FeatureFlagsService.isDeleteEnabled()){
+                                                 return;
+                                             }
+                                             onPoiDestinationsChanged(item.id, item.destination, newDestinations.join(","))
+                                         }}
                                          onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
                                              await new FeedViewApiService().deletePoi(item.id);
                                              runInAction(() => {
@@ -484,6 +568,18 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                              return;
                          }
                          onPoiDescriptionChanged(item.id, item.description, newDescription)
+                     }}
+                     onEditCategorySave={(newCategory: string) => {
+                         if (!FeatureFlagsService.isDeleteEnabled()){
+                             return;
+                         }
+                         onPoiCategoryChanged(item.id, item.description, newCategory)
+                     }}
+                     onEditDestinationsSave={(newDestinations: string[]) => {
+                         if (!FeatureFlagsService.isDeleteEnabled()){
+                             return;
+                         }
+                         onPoiDestinationsChanged(item.id, item.destination, newDestinations.join(","))
                      }}
                      onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
                          await new FeedViewApiService().deletePoi(item.id);

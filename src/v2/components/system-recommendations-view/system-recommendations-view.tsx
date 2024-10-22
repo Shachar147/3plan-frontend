@@ -13,6 +13,8 @@ import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 import ReactModalService from "../../../services/react-modal-service";
 import {IPointOfInterest} from "../../utils/interfaces";
 import {FeatureFlagsService} from "../../../utils/feature-flags";
+import {specificItemTabId} from "../../utils/consts";
+import {getParameterFromHash} from "../../utils/utils";
 
 function SystemRecommendationsShimmeringPlaceholder() {
     function renderItem(index: number) {
@@ -107,6 +109,80 @@ function SystemRecommendationsView(){
         } else {
             return null;
         }
+    }
+
+    async function onPoiDestinationsChanged(poiId: number, oldDestinations: string, newDestinations: string){
+        if (newDestinations.length == 0){
+            return;
+        }
+        if (oldDestinations != newDestinations) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                destination: newDestinations
+            });
+            if (updatedResponse.destination != newDestinations) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                runInAction(() => {
+                    const found = feedStore.systemRecommendations.find((s) => s.id == poiId);
+                    if (found) {
+                        found.destination = updatedResponse.destination;
+                    }
+
+                    const found2 = feedStore.items.find((s) => s.id == poiId);
+                    if (found2) {
+                        found2.destination = updatedResponse.destination;
+                    }
+                })
+
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
+    }
+
+    async function onPoiCategoryChanged(poiId: number, oldCategory: string, newCategory: string){
+        if (newCategory.length == 0){
+            return;
+        }
+        if (oldCategory != newCategory) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                category: newCategory
+            });
+            if (updatedResponse.category != newCategory) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                runInAction(() => {
+                    const found = feedStore.systemRecommendations.find((s) => s.id == poiId);
+                    if (found) {
+                        found.category = updatedResponse.category;
+                    }
+
+                    const found2 = feedStore.items.find((s) => s.id == poiId);
+                    if (found2) {
+                        found2.category = updatedResponse.category;
+                    }
+                })
+
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
     }
 
     async function onPoiDescriptionChanged(poiId: number, oldDescription: string, newDescription: string){
@@ -222,6 +298,18 @@ function SystemRecommendationsView(){
                                      return;
                                  }
                                  onPoiDescriptionChanged(item.id, item.description, newDescription)
+                             }}
+                             onEditCategorySave={(newCategory: string) => {
+                                 if (!FeatureFlagsService.isDeleteEnabled()){
+                                     return;
+                                 }
+                                 onPoiCategoryChanged(item.id, item.description, newCategory)
+                             }}
+                             onEditDestinationsSave={(newDestinations: string[]) => {
+                                 if (!FeatureFlagsService.isDeleteEnabled()){
+                                 return;
+                             }
+                                 onPoiDestinationsChanged(item.id, item.destination, newDestinations.join(","))
                              }}
                              onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
                                  await new FeedViewApiService().deletePoi(item.id);

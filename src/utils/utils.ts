@@ -289,8 +289,12 @@ export function isMatching(str: string = '', options: string[]) {
 	let isMatch = false;
 	let idx = 0;
 	while (!isMatch && idx < options.length) {
-		isMatch = str.toLowerCase().indexOf(options[idx].toLowerCase()) !== -1;
-		idx++;
+		try {
+			isMatch = str.toString().toLowerCase().indexOf(options[idx].toLowerCase()) !== -1;
+			idx++;
+		} catch {
+			// debugger;
+		}
 	}
 	return isMatch;
 }

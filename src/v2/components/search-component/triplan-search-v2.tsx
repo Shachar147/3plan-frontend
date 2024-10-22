@@ -23,6 +23,8 @@ export interface SearchSuggestion {
     image?: string;
     hideImage?: boolean;
     rating?: number;
+
+    isFromCitiesAndCountries?: boolean
 }
 
 const TriplanSearchV2 = () => {
@@ -132,7 +134,13 @@ const TriplanSearchV2 = () => {
             window.location.hash = `${specificItemTabId}?id=${suggestion.id}`;
         } else {
             searchStore.setSearchQuery(suggestion.name);
-            window.location.hash = `q=${suggestion.name}`;
+
+            if (suggestion.isFromCitiesAndCountries) {
+                window.location.hash = `d=${suggestion.name}`;
+            }
+            else {
+                window.location.hash = `q=${suggestion.name}`;
+            }
         }
 
         if (isInAdmin){

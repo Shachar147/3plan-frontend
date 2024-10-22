@@ -74,7 +74,7 @@ function MainPageContent(){
     }, [tripName, eventStore.isLoading]);
 
     const isShort = eventStore.isMobile ? '.SHORT' : '';
-    const searchKeyword = getParameterFromHash('q');
+    const searchKeyword = getParameterFromHash('q') ?? getParameterFromHash('d');
     const isInSearch = (searchKeyword?.length ?? 0) > 0;
 
     const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
