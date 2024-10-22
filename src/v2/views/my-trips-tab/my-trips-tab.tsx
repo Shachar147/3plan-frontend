@@ -531,13 +531,15 @@ function MyTripsTab(){
 
                     i.category = i.category || "CATEGORY.GENERAL";
 
+                    // @ts-ignore
+                    parsedItem.images = i.images?.join("\n");
+
                     const {title, icon} = splitTitleAndIcons(i.category);
 
                     let categoryId = categoryNameToId[title] ?? categoryNameToId[TranslateService.translate(eventStore, title)] ??
                         categoryNameToId[TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)] ??
                         categoryNameToId[TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)];
 
-                    debugger;
                     if (!categoryId) {
                         const maxCategoryId = Math.max(...Object.values(categoryNameToId));
                         categoryId = maxCategoryId + 1;

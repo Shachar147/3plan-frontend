@@ -348,12 +348,13 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 );
             }
         }
+        eventStore.modalValues['duration'] = item.duration;
         ReactModalService.openAddSidebarEventModal(
             eventStore,
             categoryId,
             {
                 ...item,
-                images: item.images?.join(","),
+                images: item.images?.join("\n"),
                 priority: !item.priority ? TriplanPriority.unset : TriplanPriority[item.priority],
                 title: item.name,
                 location: item.location ? {
