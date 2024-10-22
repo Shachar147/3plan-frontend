@@ -369,6 +369,38 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         });
     }
 
+    async function onPoiCategoryChanged(poiId: number, oldCategory: string, newCategory: string){
+        if (newCategory.length == 0){
+            return;
+        }
+        if (oldCategory != newCategory) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                category: newCategory
+            });
+            if (updatedResponse.category != newCategory) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                runInAction(() => {
+                    const found = feedStore.systemRecommendations.find((s) => s.id == poiId);
+                    if (found) {
+                        found.category = updatedResponse.category;
+                    }
+                })
+
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
+    }
+
     async function onPoiDescriptionChanged(poiId: number, oldDescription: string, newDescription: string){
         if (newDescription.length == 0){
             return;
@@ -440,6 +472,12 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                                              }
                                              onPoiDescriptionChanged(item.id, item.description, newDescription)
                                          }}
+                                         onEditCategorySave={(newCategory: string) => {
+                                             if (!FeatureFlagsService.isDeleteEnabled()){
+                                                 return;
+                                             }
+                                             onPoiCategoryChanged(item.id, item.description, newCategory)
+                                         }}
                                          onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
                                              await new FeedViewApiService().deletePoi(item.id);
                                              runInAction(() => {
@@ -487,6 +525,12 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                              return;
                          }
                          onPoiDescriptionChanged(item.id, item.description, newDescription)
+                     }}
+                     onEditCategorySave={(newCategory: string) => {
+                         if (!FeatureFlagsService.isDeleteEnabled()){
+                             return;
+                         }
+                         onPoiCategoryChanged(item.id, item.description, newCategory)
                      }}
                      onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
                          await new FeedViewApiService().deletePoi(item.id);

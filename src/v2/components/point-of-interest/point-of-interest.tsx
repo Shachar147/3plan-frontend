@@ -27,6 +27,7 @@ import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath, specificItemTa
 import {rootStoreContext} from "../../stores/root-store";
 import {MOBILE_SCROLL_TOP} from "../scroll-top/scroll-top";
 import {searchStoreContext} from "../../stores/search-store";
+import CategorySelector from "../../admin/components/category-selector/category-selector";
 
 interface PointOfInterestProps {
     item: IPointOfInterest, // getyourguide / dubaicoil result
@@ -47,6 +48,7 @@ interface PointOfInterestProps {
     isEditMode?: boolean;
     onEditSave?: (newName: string) => void;
     onEditDescriptionSave?: (newDescription: string) => void;
+    onEditCategorySave?: (newCategory: string) => void;
 
     // search result
     isSearchResult?: boolean;
@@ -252,7 +254,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) =>
     );
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave, onEditCategorySave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
     const searchStore = useContext(searchStoreContext);
@@ -539,8 +541,18 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
             Y: TranslateService.translate(eventStore, item.destination)
         }).replace(" בהאיים"," באיים");
 
+        if (isEditMode) {
+            const isSaving = false;
+            return (
+                <div className="flex-row gap-10 justify-content-center align-items-center">
+                    <CategorySelector isDisabled={isSaving} name="category" value={item.category} placeholderKey={"CATEGORY"} onChange={(e) => onEditCategorySave?.(e.target.value)} />
+                    <i className="fa fa-close cursor-pointer" onClick={onLabelClick}/>
+                </div>
+            )
+        }
+
         return (
-            <span>{name}</span>
+            <span onClick={onLabelClick}>{name}</span>
         )
     }
 
