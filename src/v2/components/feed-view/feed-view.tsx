@@ -21,6 +21,7 @@ interface FeedViewProps {
     mainFeed?: boolean;
     searchKeyword?: string;
     viewItemId?: number;
+    filterByDestination?: boolean;
 }
 
 const cacheThreshold = 300;
@@ -44,7 +45,7 @@ function SelectDestinationPlaceholder() {
     )
 }
 
-const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewProps) => {
+const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDestination }: FeedViewProps) => {
     const currentPage = useRef(1);
     const emptyResultsCountPerCategory = useRef({});
     const prevPageTotalResults = useRef(0);
@@ -52,7 +53,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
     const apiService = useMemo(() => new FeedViewApiService(), []);
     const haveNoDestinations = eventStore.destinations == "[]" || eventStore.destinations?.[0] == "[]" || eventStore.destinations?.length == 0;
 
-    const filterByDestination = !!getParameterFromHash('d');
+    filterByDestination = filterByDestination || !!getParameterFromHash('d');
 
     // for editing items
     const [isEditMode, setIsEditMode] = useState<Record<number, boolean>>({});

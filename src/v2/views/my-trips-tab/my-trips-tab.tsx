@@ -207,6 +207,7 @@ function MyTripsTab(){
                         // window.location.hash = `planTrip?name=${trip.name}`;
                         // setPlanTripName(trip.name);
                         // setPlanTripMode(true);
+                        feedStore.setItems([]);
                         navigate(`${newDesignRootPath}/plan/${trip.name}`, {})
                     }}
                     renderTripActions={() => renderTripActions(trip)}

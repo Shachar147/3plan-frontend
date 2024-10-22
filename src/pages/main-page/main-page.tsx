@@ -379,7 +379,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderFeedView() {
-		return <FeedView eventStore={eventStore} />
+		return <FeedView eventStore={eventStore} filterByDestination />
 	}
 
 	function renderMapView(shouldShow: boolean = true) {
