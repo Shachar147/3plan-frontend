@@ -544,6 +544,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         }).replace(" בהאיים"," באיים");
 
         if (isEditMode) {
+            // todo complete: see if we can indicate saving so it'll appear disabled.
             const isSaving = false;
             return (
                 <div className="flex-row gap-10 justify-content-center align-items-center">
@@ -563,6 +564,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         const sources = fetchCitiesAndSetOptions();
 
         if (isEditMode) {
+            // todo complete: see if we can indicate saving so it'll appear disabled.
             const isSaving = false;
             return (
                 <div className="flex-row gap-10 justify-content-center align-items-center">

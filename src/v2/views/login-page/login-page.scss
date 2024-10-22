@@ -184,6 +184,7 @@ body.rtl {
   }
 }
 
+// login page when F12 is opened or height is too small.
 @media only screen and (max-height: 800px) and (min-width: 650px) {
   body:has(.login-page-container), body:has(.register-page-container) {
     .triplan-header-banner {
