@@ -16,7 +16,7 @@ import {
 } from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import {EventStore, eventStoreContext} from "../../../stores/events-store";
-import {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
+import DestinationSelector, {fetchCitiesAndSetOptions} from "../destination-selector/destination-selector";
 import FeedViewApiService from "../../services/feed-view-api-service";
 import {IPointOfInterest} from "../../utils/interfaces";
 import {runInAction} from "mobx";
@@ -49,6 +49,7 @@ interface PointOfInterestProps {
     onEditSave?: (newName: string) => void;
     onEditDescriptionSave?: (newDescription: string) => void;
     onEditCategorySave?: (newCategory: string) => void;
+    onEditDestinationsSave?: (newDestinations: string[]) => void;
 
     // search result
     isSearchResult?: boolean;
@@ -254,7 +255,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) =>
     );
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave, onEditCategorySave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave, onEditCategorySave, onEditDestinationsSave }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
     const searchStore = useContext(searchStoreContext);
@@ -559,13 +560,24 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     function renderDestinationIcon(){
         const destinations = item.destination.split(",");
         const sources = fetchCitiesAndSetOptions();
+
+        if (isEditMode) {
+            const isSaving = false;
+            return (
+                <div className="flex-row gap-10 justify-content-center align-items-center">
+                    <DestinationSelector hideSelectedChips onChange={(newDestinations) => onEditDestinationsSave?.(newDestinations)} selectedDestinations={destinations} />
+                    <i className="fa fa-close cursor-pointer" onClick={onLabelClick}/>
+                </div>
+            )
+        }
+
         return (
             <>
                 {destinations.map((destination) => {
                     const found = sources.find((c) => c.value === destination.trim());
                     if (found){
                         return (
-                            <i className={found.flagClass} alt={destination.trim()} title={destination.trim()} />
+                            <i className={found.flagClass} alt={destination.trim()} title={destination.trim()} onClick={onLabelClick} />
                         )
                     }
                 }).filter(Boolean)}

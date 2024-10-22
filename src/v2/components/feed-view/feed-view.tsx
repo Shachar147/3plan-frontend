@@ -430,6 +430,43 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
         });
     }
 
+    async function onPoiDestinationsChanged(poiId: number, oldDestinations: string, newDestinations: string){
+        if (newDestinations.length == 0){
+            return;
+        }
+        if (oldDestinations != newDestinations) {
+            const updatedResponse = await new FeedViewApiService().updatePoi(poiId, {
+                destination: newDestinations
+            });
+            if (updatedResponse.destination != newDestinations) {
+                ReactModalService.internal.openOopsErrorModal(eventStore);
+            } else {
+                runInAction(() => {
+                    const found = feedStore.systemRecommendations.find((s) => s.id == poiId);
+                    if (found) {
+                        found.destination = updatedResponse.destination;
+                    }
+
+                    const found2 = feedStore.items.find((s) => s.id == poiId);
+                    if (found2) {
+                        found2.destination = updatedResponse.destination;
+                    }
+                })
+
+                ReactModalService.internal.alertMessage(
+                    eventStore,
+                    'MODALS.CREATE.TITLE',
+                    'POI_UPDATED_SUCCESSFULLY',
+                    'success'
+                );
+            }
+        }
+        setIsEditMode({
+            ...isEditMode,
+            [poiId]: false
+        });
+    }
+
     function renderPageTitle() {
         return (
             <div className="flex-column align-items-center width-100-percents">
@@ -477,6 +514,12 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                                                  return;
                                              }
                                              onPoiCategoryChanged(item.id, item.description, newCategory)
+                                         }}
+                                         onEditDestinationsSave={(newDestinations: string[]) => {
+                                             if (!FeatureFlagsService.isDeleteEnabled()){
+                                                 return;
+                                             }
+                                             onPoiDestinationsChanged(item.id, item.destination, newDestinations.join(","))
                                          }}
                                          onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
                                              await new FeedViewApiService().deletePoi(item.id);
@@ -531,6 +574,12 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId }: FeedViewP
                              return;
                          }
                          onPoiCategoryChanged(item.id, item.description, newCategory)
+                     }}
+                     onEditDestinationsSave={(newDestinations: string[]) => {
+                         if (!FeatureFlagsService.isDeleteEnabled()){
+                             return;
+                         }
+                         onPoiDestinationsChanged(item.id, item.destination, newDestinations.join(","))
                      }}
                      onClick={FeatureFlagsService.isDeleteEnabled() ? async () => {
                          await new FeedViewApiService().deletePoi(item.id);

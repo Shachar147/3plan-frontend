@@ -411,3 +411,11 @@ h2 {
     background-position: 300px 0;
   }
 }
+
+.main-feed {
+  .category-label {
+    div[class$='control'] {
+      max-width: 230px;
+    }
+  }
+}

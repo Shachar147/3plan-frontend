@@ -55,6 +55,7 @@ interface DestinationSelectorProps {
     selectedDestinations?: string[]
     isSingle?: boolean
     isDisabled?: boolean;
+    hideSelectedChips?: boolean;
 }
 
 export interface CityOrCountry {
@@ -228,14 +229,14 @@ function DestinationSelector(props: DestinationSelectorProps) {
                 )}
                 isDisabled={props.isDisabled}
             />
-            <div className="selected-chips">
+            {!props.hideSelectedChips && <div className="selected-chips">
                 {selectedOptions.map((option, index) => (
                     <div className="chip" key={index}>
                         <span className={option.flagClass} />
                         &nbsp;{option.value.split(',')[0]} {/* Display only city name */}
                     </div>
                 ))}
-            </div>
+            </div>}
         </div>
     );
 }
