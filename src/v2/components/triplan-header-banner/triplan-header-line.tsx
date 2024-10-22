@@ -200,7 +200,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
         const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
         const isInViewItem = (viewItemId?.length ?? 0) > 0;
 
-        if (isInSearch || isInViewItem || isInPlan) {
+        if (isInSearch || isInViewItem) {
             return (
                 <div className={containerClass}>
                     {goToUserSideBtn}
@@ -213,9 +213,10 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
 
         return (
             <div className={containerClass}>
+                {isInPlan && goToUserSideBtn}
                 {isAdmin() ? (isInAdmin ? goToUserSideBtn : goToAdminSideBtn) : undefined}
                 {!isInPlan && wishlistBtn}
-                {myTripsBtn}
+                {!eventStore.isMobile && myTripsBtn}
                 {languageBtn}
                 {signInOutBtn}
             </div>
