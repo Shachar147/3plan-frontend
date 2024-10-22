@@ -527,6 +527,8 @@ function MyTripsTab(){
                         const maxCategoryId = Math.max(...Object.values(categoryNameToId));
                         categoryId = maxCategoryId + 1;
 
+                        debugger;
+
                         tripData.categories.push({
                             id: maxCategoryId + 1,
                             title: categoryId,
@@ -544,6 +546,8 @@ function MyTripsTab(){
 
                 tripData.allEvents = allEvents;
                 tripData.sidebarEvents = sidebarEvents;
+
+                debugger;
             }
 
             if (template){

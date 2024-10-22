@@ -183,3 +183,27 @@ body.rtl {
     }
   }
 }
+
+@media only screen and (max-height: 800px) and (min-width: 650px) {
+  body:has(.login-page-container), body:has(.register-page-container) {
+    .triplan-header-banner {
+      height: 40% !important;
+    }
+
+    .triplan-header-banner-slogan {
+      display: none !important;
+    }
+
+    .triplan-header-banner-bottom-shadow {
+      top: unset !important;
+      bottom: 0 !important;
+    }
+
+    .login-page-v2 .login-page-container, .login-page-v2 .register-page-container,
+    .plan-trip-tab-menu > div + div {
+      position: relative;
+      top: 20px;
+      height: max-content !important;
+    }
+  }
+}

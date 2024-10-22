@@ -4,10 +4,13 @@ import TranslateService from "../../../services/translate-service";
 import {eventStoreContext} from "../../../stores/events-store";
 import {defaultCategoriesKeys, getDefaultCategories} from "../../../utils/defaults";
 import {mergeArraysUnique} from "../../../utils/utils";
+import {getParameterFromHash} from "../../utils/utils";
 
 const CategoryFilter = ({ categories, onFilterChange }) => {
     const eventStore = useContext(eventStoreContext);
     const [selectedCategory, setSelectedCategory] = useState('');
+
+    const filteredByDestination = getParameterFromHash('d');
 
     const handleCategoryChange = (event) => {
         const category = event.target.value;
@@ -31,6 +34,9 @@ const CategoryFilter = ({ categories, onFilterChange }) => {
                     </option>
                 ))}
             </select>
+            {!!filteredByDestination && (
+                <div>{TranslateService.translate(eventStore, 'DESTINATION')}: {filteredByDestination}</div>
+            )}
         </div>
     );
 };
