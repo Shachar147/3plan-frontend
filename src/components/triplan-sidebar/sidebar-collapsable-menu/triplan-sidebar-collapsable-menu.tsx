@@ -259,6 +259,25 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                         </div>
                     </div>
                     <i
+                        className="fa cursor-pointer fa-pencil"
+                        onClick={() => {
+                            ReactModalService.openEditTaskModal(eventStore, task)
+                            // (eventStore.dataService as DBService)
+                            //     .updateTaskStatus(
+                            //         task.id,
+                            //         task.status == TriplanTaskStatus.CANCELLED
+                            //             ? TriplanTaskStatus.TODO
+                            //             : TriplanTaskStatus.CANCELLED
+                            //     )
+                            //     .then(() => {
+                            //         runInAction(() => {
+                            //             eventStore.reloadTasks();
+                            //         });
+                            //     });
+                        }}
+                        aria-hidden="true"
+                    />
+                    <i
                         className={getClasses(
                             'fa cursor-pointer',
                             task.status == TriplanTaskStatus.CANCELLED ? 'fa-undo' : 'fa-trash-o'

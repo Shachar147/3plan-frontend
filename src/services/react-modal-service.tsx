@@ -5283,8 +5283,6 @@ const ReactModalService = {
 						mustBeDoneBefore: mustBeDoneBefore ? new Date(mustBeDoneBefore).getTime() / 1000 : undefined,
 					};
 
-					console.log(data);
-
 					await DataServices.DBService.createTask(data)
 						.then((response) => {
 							const { data } = response.data;
@@ -5303,6 +5301,175 @@ const ReactModalService = {
 								eventStore,
 								'MODALS.CREATE.TITLE',
 								'MODALS.CREATE_TASK.CONTENT',
+								'success'
+							);
+
+							setTimeout(() => {
+								eventStore.reloadTasks();
+							}, 1000);
+						})
+						.catch((e) => {
+							if (e.response.data.statusCode === 409) {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'MODALS.ERROR.TITLE',
+									'TASK_ALREADY_EXISTS',
+									'error'
+								);
+							} else {
+								ReactModalService.internal.openOopsErrorModal(eventStore);
+							}
+						});
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
+	},
+	openEditTaskModal(eventStore: EventStore, task: TriplanTask) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const event_options = eventStore.allEventsComputed.map((x) => ({ value: x.id, label: x.title }));
+
+		const status_options = Object.keys(TriplanTaskStatus).map((x) => ({
+			value: x,
+			label: ucword(TranslateService.translate(eventStore, x).replaceAll('_', ' ')),
+		}));
+
+		const rows = [
+			{
+				textKey: 'MODALS.TITLE',
+				component: ReactModalRenderHelper.renderTextInput(eventStore, 'add-task-title', {
+					placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
+					id: 'add-task-title',
+					value: task.title,
+					className: 'min-width-100-important',
+				}),
+				required: true,
+			},
+			{
+				textKey: 'CHOOSE_TASK_STATUS.LABEL',
+				component: ReactModalRenderHelper.renderSelectInput(
+					eventStore,
+					'add-task-status',
+					{
+						options: status_options,
+						placeholderKey: 'CHOOSE_TASK_STATUS.PLACEHOLDER',
+						removeDefaultClass: true,
+						value: task.status,
+						isClearable: false,
+						maxMenuHeight: eventStore.isMobile ? 45 * Math.min(status_options.length, 4) : undefined,
+					},
+					'add-task-selector'
+				),
+				required: true,
+			},
+			{
+				textKey: 'ASSIGN_TASK_TO_EVENT.LABEL',
+				component: ReactModalRenderHelper.renderSelectInput(
+					eventStore,
+					'add-task-event-id',
+					{
+						options: event_options,
+						placeholderKey: 'ASSIGN_TASK_TO_EVENT.PLACEHOLDER',
+						removeDefaultClass: true,
+						value: task.eventId,
+						isClearable: true,
+						maxMenuHeight: eventStore.isMobile ? 45 * Math.min(event_options.length, 4) : undefined,
+					},
+					'add-task-selector'
+				),
+			},
+			{
+				textKey: 'MUST_BE_DONE_BEFORE.LABEL',
+				component: ReactModalRenderHelper.renderDatePickerInput(
+					eventStore,
+					'add-task-must-be-done-before',
+					{
+						placeholderKey: 'MUST_BE_DONE_BEFORE.PLACEHOLDER',
+						value: task.mustBeDoneBefore ? new Date(task.mustBeDoneBefore * 1000).toISOString().split('.')[0] : undefined,
+					},
+					eventStore.modalValuesRefs['add-task-must-be-done-before']
+				),
+			},
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'EDIT_TASK.MODAL_TITLE', {
+				taskName: task.title
+			})}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.ADD_TASK.CONTENT'),
+						}}
+					/>
+					<div>
+						{rows.map((row, idx) =>
+							ReactModalRenderHelper.renderInputWithLabel(
+								eventStore,
+								row.textKey,
+								row.component,
+								getClasses('padding-bottom-20', idx == 0 && 'border-top-gray', 'border-bottom-gray'),
+								undefined,
+								'add-task-label',
+								row.required
+							)
+						)}
+					</div>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				const title: string = eventStore.modalValues['add-task-title']?.length
+					? eventStore.modalValues['add-task-title']
+					: undefined;
+				const eventId: number = Number(eventStore.modalValues['add-task-event-id']?.value);
+				const status: TriplanTaskStatus =
+					eventStore.modalValues['add-task-status']?.value ?? TriplanTaskStatus.TODO;
+				const description: string = eventStore.modalValues['add-task-content'];
+				const mustBeDoneBefore: number = eventStore.modalValues['add-task-must-be-done-before'];
+
+				if (tripDataSource === TripDataSource.DB) {
+					const data = {
+						tripId: eventStore.tripId,
+						title,
+						eventId,
+						status,
+						description,
+						mustBeDoneBefore: mustBeDoneBefore ? new Date(mustBeDoneBefore).getTime() / 1000 : undefined,
+					};
+
+					await DataServices.DBService.updateTask(task.id, data)
+						.then((response) => {
+							const { data } = response.data;
+
+							// log history
+							LogHistoryService.logHistory(eventStore, TripActions.updatedTask, {
+								name: title,
+								eventName: eventId
+									? eventStore.allEventsComputed.find((e) => Number(e.id) == Number(eventId))?.title
+									: undefined,
+							});
+
+							ReactModalService.internal.closeModal(eventStore);
+
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.CREATE.TITLE',
+								'MODALS.UPDATE_TASK.CONTENT',
 								'success'
 							);
 
