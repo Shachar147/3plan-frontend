@@ -329,6 +329,15 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
 
     const durationText = formatDuration(item.duration);
 
+    function splitTitleAndIcons(input: string) {
+        const iconRegex = /^[\u{1F300}-\u{1FAFF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F1E0}-\u{1F1FF}]+/u;
+        const iconMatch = input.match(iconRegex);
+        const icon = iconMatch ? iconMatch[0] : '';
+        const title = icon ? input.replace(icon, '').trim() : input;
+
+        return { title, icon };
+    }
+
     const handleAddToPlan = () => {
         if (mainFeed || isSearchResult || isViewItem){
             return; // since we're not on specific trip.
@@ -337,18 +346,31 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         let categoryId = undefined;
 
         if (item.category) {
-            const existingCategory = eventStore.categories.filter((c) => c.title === item.category || c.title === TranslateService.translate(eventStore, item.category));
+            let existingCategory = eventStore.categories.filter((c) => c.title === item.category || c.title === TranslateService.translate(eventStore, item.category));
+
+            if (existingCategory.length == 0){
+                const {title, icon} = splitTitleAndIcons(item.category);
+                existingCategory = eventStore.categories.filter((c) => c.title === title
+                    || c.title === TranslateService.translate(eventStore, title)
+                    || c.title == TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
+                    || c.title == TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode));
+            }
+
             if (existingCategory.length > 0) {
                 categoryId = existingCategory[0].id;
+                item.category = existingCategory[0].title;
             } else {
+
+                const {title, icon} = splitTitleAndIcons(item.category);
+
                 categoryId = eventStore.createCategoryId();
                 eventStore.setCategories(
                     [
                         ...eventStore.categories,
                         {
                             id: categoryId,
-                            title: TranslateService.translate(eventStore, item.category),
-                            icon: '',
+                            title: TranslateService.translate(eventStore, title),
+                            icon,
                         },
                     ],
                     false
@@ -650,7 +672,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     };
 
     return (
-        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', (mainFeed || isSmall) && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', isSearchResult && 'search-result', isViewItem && 'view-item', suggestionsMode && 'suggestions')}>
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', (mainFeed || isSmall) && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', isSearchResult && 'search-result', isViewItem && 'view-item', suggestionsMode && 'suggestions')} onClick={suggestionsMode && handleAddToPlan}>
             <div className="poi-left">
                 <div className="carousel-wrapper" onClick={(e) => (item.images?.length > 1) && e.stopPropagation()}>
                     <Carousel showThumbs={false} showIndicators={false} infiniteLoop={true} onChange={(idx) => {

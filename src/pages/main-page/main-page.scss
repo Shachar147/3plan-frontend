@@ -519,9 +519,22 @@ a.navigate-to {
 	overflow-y: auto;
 
 	.point-of-interest {
-		transition: min-height 0.3s ease, padding 0.3s ease, margin 0.3s ease, opacity 0.3s ease;
+		//transition: min-height 0.3s ease, padding 0.3s ease, margin 0.3s ease, opacity 0.3s ease;
+		transition: all 0.3s ease; /* Smooth transition for other properties */
+
 		cursor: pointer;
-		opacity: 0.6;
+		opacity: 0.8;
+
+		/* This rule will apply the animation effect after the hover delay */
+		.description,
+		.poi-details .duration,
+		.price,
+		.poi-footer-links,
+		.poi-footer,
+		.poi-details+div,
+		.poi-right {
+			transition: all 0.3s ease;
+		}
 
 		&:hover {
 			opacity: 1;
@@ -533,18 +546,10 @@ a.navigate-to {
 		}
 	}
 
-	.point-of-interest .description,
-	.point-of-interest .poi-details .duration,
-	.point-of-interest .price,
-	.point-of-interest .poi-footer-links,
-	.point-of-interest .poi-footer,
-	.point-of-interest .poi-details+div,
-	.point-of-interest .poi-right {
-		transition: height 0.3s ease, opacity 0.3s ease, min-height 0.3s ease, margin 0.3s ease, padding 0.3s ease;
-	}
-
-	.point-of-interest:not(:hover) {
+	// .point-of-interest:not(:hover) {
+	.point-of-interest {
 		min-height: 0 !important;
+		padding-bottom: 20px !important;
 		.description, .poi-details .duration, .price, .poi-footer-links, .poi-footer, .poi-details+div {
 			height: 0 !important;
 			opacity: 0;
