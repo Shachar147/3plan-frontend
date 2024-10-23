@@ -1198,5 +1198,6 @@
 	"NO_SYSTEM_RECOMMENDATIONS": "אוופס, לא נמצאו המלצות מערכת",
 	"UPLOADING_PHOTOS_X_OF_Y": "מעלה תמונה {X} מתוך {Y}...",
 	"SAVING": "שומר...",
-	"KEEPING_TO_SAVED_COLLECTIONS": "מוסיף לרשימת השמורים שלך..."
+	"KEEPING_TO_SAVED_COLLECTIONS": "מוסיף לרשימת השמורים שלך...",
+	"SUGGESTIONS_SIDEBAR_TITLE": "אולי יעניין אותך:"
 }

@@ -353,7 +353,12 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 existingCategory = eventStore.categories.filter((c) => c.title === title
                     || c.title === TranslateService.translate(eventStore, title)
                     || c.title == TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
-                    || c.title == TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode));
+                    || c.title == TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
+                    || c.title == TranslateService.translateFromTo(eventStore, `CATEGORY.${title.toUpperCase()}`.replace("CATEGORY.CATEGORY.","CATEGORY."), {}, 'en', eventStore.calendarLocalCode)
+                    || c.title == TranslateService.translateFromTo(eventStore, `CATEGORY.${title.toUpperCase()}`.replace("CATEGORY.CATEGORY.","CATEGORY."), {}, 'he', eventStore.calendarLocalCode)
+                    || c.title == TranslateService.translateFromTo(eventStore, `CATEGORY.${title.toUpperCase()}`.replace("CATEGORY.CATEGORY.","CATEGORY."), {}, 'en', 'he')
+                    || c.title == TranslateService.translateFromTo(eventStore, `CATEGORY.${title.toUpperCase()}`.replace("CATEGORY.CATEGORY.","CATEGORY."), {}, 'he', 'en')
+                );
             }
 
             if (existingCategory.length > 0) {
@@ -364,12 +369,17 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
                 const {title, icon} = splitTitleAndIcons(item.category);
 
                 categoryId = eventStore.createCategoryId();
+                let categoryName = TranslateService.translate(eventStore, `CATEGORY.${title.toUpperCase()}`);
+                debugger;
+                if (categoryName.includes("CATEGORY.")) {
+                    categoryName = TranslateService.translate(eventStore, title);
+                }
                 eventStore.setCategories(
                     [
                         ...eventStore.categories,
                         {
                             id: categoryId,
-                            title: TranslateService.translate(eventStore, title),
+                            title: categoryName,
                             icon,
                         },
                     ],

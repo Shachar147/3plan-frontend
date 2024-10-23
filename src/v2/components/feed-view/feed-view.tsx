@@ -476,12 +476,15 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
     }
 
     function renderPageTitle() {
+
+        const key = suggestionsMode ? 'SUGGESTIONS_SIDEBAR_TITLE' : 'TOP_PICKS';
+
         return (
-            <div className="flex-column align-items-center width-100-percents">
+            <div className={getClasses("flex-column width-100-percents", !suggestionsMode && 'align-items-center')}>
                 <h3 className="main-feed-header width-100-percents">
-                    <span>{TranslateService.translate(eventStore, 'TOP_PICKS')}</span>
+                    <span>{TranslateService.translate(eventStore, key)}</span>
                 </h3>
-                <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MAIN_PAGE_FEED_VIEW.DESCRIPTION')}} />
+                {!suggestionsMode && <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MAIN_PAGE_FEED_VIEW.DESCRIPTION')}} />}
             </div>
         )
     }
@@ -648,6 +651,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
         return (
             <div className={getClasses(!mainFeed && 'flex-column', "gap-4 width-100-percents", searchKeyword && !eventStore.isMobile && 'padding-inline-100')}>
                 {!suggestionsMode && renderCategoryFilter()}
+                {suggestionsMode && renderPageTitle()}
                 {renderItems()}
                 {!suggestionsMode && renderReachedEnd()}
                 {!suggestionsMode && renderSelectDestinationPlaceholder()}
@@ -665,8 +669,8 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
 
         return (
             <div className={getClasses("text-div width-100-percents", mainFeed ? 'text-align-start margin-top-10' : 'text-align-center')}>
-                {mainFeed && renderPageTitle()}
-                {!mainFeed && <span className="height-60">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}
+                {(mainFeed || suggestionsMode) && renderPageTitle()}
+                {!mainFeed && !suggestionsMode && <span className="height-60">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}
                 <div className={getClasses(isSmall ? 'flex-row justify-content-center flex-wrap-wrap align-items-start' : 'flex-column', "gap-4")}>
                     {Array.from({ length: suggestionsMode ? 1 : eventStore.isMobile ? 3 : 12 }).map((_, index) => (
                         <PointOfInterestShimmering key={index} isSmall={isSmall}/>

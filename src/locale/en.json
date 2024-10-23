@@ -960,5 +960,6 @@
 	"NO_SYSTEM_RECOMMENDATIONS": "No system recommendations found",
 	"UPLOADING_PHOTOS_X_OF_Y": "Uploading photo {X}/{Y}...",
 	"SAVING": "Saving...",
-	"KEEPING_TO_SAVED_COLLECTIONS": "Adding to your saved collections..."
+	"KEEPING_TO_SAVED_COLLECTIONS": "Adding to your saved collections...",
+	"SUGGESTIONS_SIDEBAR_TITLE": "Suggestions:"
 }
