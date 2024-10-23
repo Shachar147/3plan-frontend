@@ -22,6 +22,7 @@ interface FeedViewProps {
     searchKeyword?: string;
     viewItemId?: number;
     filterByDestination?: boolean;
+    suggestionsMode?: boolean;
 }
 
 const cacheThreshold = 300;
@@ -45,7 +46,7 @@ function SelectDestinationPlaceholder() {
     )
 }
 
-const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDestination }: FeedViewProps) => {
+const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDestination, suggestionsMode }: FeedViewProps) => {
     const currentPage = useRef(1);
     const emptyResultsCountPerCategory = useRef({});
     const prevPageTotalResults = useRef(0);
@@ -57,6 +58,12 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
 
     // for editing items
     const [isEditMode, setIsEditMode] = useState<Record<number, boolean>>({});
+
+    useEffect(() => {
+        if (suggestionsMode){
+            fetchItems(1, (isLoading) => {});
+        }
+    }, [suggestionsMode])
 
     useEffect(() => {
         if (feedStore.savedCollections.length == 0) {
@@ -530,6 +537,8 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
                                          } : undefined}
                                          onClickText={FeatureFlagsService.isDeleteEnabled() ? TranslateService.translate(eventStore, 'DELETE') : undefined}
                                          onClickIcon="fa-times"
+                                         isSmall={suggestionsMode}
+                                         suggestionsMode
                                     />
                                 </div>
                             ))
@@ -549,7 +558,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
 
         return feedStore.filteredItems.map((item, idx) => (
             <div key={item.id} className={classList}>
-                {!eventStore.isMobile && <span className="poi-idx">{idx + 1}</span>}
+                {!eventStore.isMobile && !suggestionsMode && <span className="poi-idx">{idx + 1}</span>}
                 <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
                      onLabelClick={() => {
                          FeatureFlagsService.isDeleteEnabled() && setIsEditMode({
@@ -590,7 +599,8 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
                      } : undefined}
                      onClickText={FeatureFlagsService.isDeleteEnabled() ? TranslateService.translate(eventStore, 'DELETE') : undefined}
                      onClickIcon="fa-times"
-
+                     isSmall={suggestionsMode}
+                     suggestionsMode
                 />
             </div>
         ));
@@ -637,16 +647,16 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
     function renderFeedContent(){
         return (
             <div className={getClasses(!mainFeed && 'flex-column', "gap-4 width-100-percents", searchKeyword && !eventStore.isMobile && 'padding-inline-100')}>
-                {renderCategoryFilter()}
+                {!suggestionsMode && renderCategoryFilter()}
                 {renderItems()}
-                {renderReachedEnd()}
-                {renderSelectDestinationPlaceholder()}
+                {!suggestionsMode && renderReachedEnd()}
+                {!suggestionsMode && renderSelectDestinationPlaceholder()}
             </div>
         );
     }
 
     function renderLoadingPlaceholder(){
-        const isSmall = mainFeed || eventStore.isMobile;
+        const isSmall = suggestionsMode || mainFeed || eventStore.isMobile;
 
         // to prevent situation of showing shimmering while there are no results.
         if (feedStore.allReachedEnd){
@@ -658,7 +668,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
                 {mainFeed && renderPageTitle()}
                 {!mainFeed && <span className="height-60">{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}
                 <div className={getClasses(isSmall ? 'flex-row justify-content-center flex-wrap-wrap align-items-start' : 'flex-column', "gap-4")}>
-                    {Array.from({ length: eventStore.isMobile ? 3 : 12 }).map((_, index) => (
+                    {Array.from({ length: suggestionsMode ? 1 : eventStore.isMobile ? 3 : 12 }).map((_, index) => (
                         <PointOfInterestShimmering key={index} isSmall={isSmall}/>
                     ))}
                 </div>
@@ -673,6 +683,18 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
             setDebouncePlaceholder(false);
         }, 1000);
     }, [])
+
+    if (suggestionsMode){
+        if (feedStore.isLoading && !haveNoDestinations){
+            return renderLoadingPlaceholder();
+        }
+
+        if (!haveNoDestinations && (feedStore.items.length == 0 || debouncePlaceholder)) {
+            return renderLoadingPlaceholder();
+        }
+
+        return renderFeedContent();
+    }
 
     return (
         (feedStore.isLoading && !haveNoDestinations) ? renderLoadingPlaceholder() : <LazyLoadComponent className="width-100-percents flex-column align-items-center" disableLoader={(mainFeed && !eventStore.isMobile) || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>

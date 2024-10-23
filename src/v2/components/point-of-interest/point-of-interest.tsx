@@ -58,6 +58,9 @@ interface PointOfInterestProps {
     isViewItem?: boolean;
 
     onLabelClick?: () => void; // edit mode for POIs
+
+    isSmall ?: boolean;
+    suggestionsMode?: boolean;
 }
 
 const Image = ({ image, idx, isSmall, alt, className, backgroundImage }: { image: string, idx: number, alt:string, isSmall?: boolean, className?: string, backgroundImage?: boolean }) => {
@@ -255,10 +258,14 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean}) =>
     );
 }
 
-const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave, onEditCategorySave, onEditDestinationsSave }: PointOfInterestProps) => {
+const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewItem, savedCollection, myTrips, onClick, onClickText, onClickIcon, onLabelClick, renderTripActions, renderTripInfo, namePrefix, isEditMode, onEditSave, onEditDescriptionSave, onEditCategorySave, onEditDestinationsSave, isSmall, suggestionsMode }: PointOfInterestProps) => {
     const feedStore = useContext(feedStoreContext);
     const rootStore = useContext(rootStoreContext);
     const searchStore = useContext(searchStoreContext);
+
+    if (isSmall == undefined) {
+        isSmall = eventStore.isMobile || mainFeed || savedCollection || myTrips;
+    }
 
     const isHebrew = eventStore.isHebrew;
     const feedId = `${item.source}-${item.name}-${item.url}`;
@@ -589,7 +596,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
 
     }
 
-    const isShrinkedMode = eventStore.isMobile || mainFeed;
+    const isShrinkedMode = eventStore.isMobile || mainFeed || isSmall;
 
     function renderItemCategory(){
         return (
@@ -629,8 +636,6 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
         );
     }
 
-    const isSmall = eventStore.isMobile || mainFeed || savedCollection || myTrips;
-
     const getCurrencySign = (item) => {
         if (item.currency === 'ILS' || item.extra?.currency === 'ILS') {
             return '₪';
@@ -645,7 +650,7 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
     };
 
     return (
-        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', mainFeed && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', isSearchResult && 'search-result', isViewItem && 'view-item')}>
+        <div className={getClasses('point-of-interest', isHebrew && 'hebrew-mode', (mainFeed || isSmall) && 'main-feed', savedCollection && 'saved-collection', myTrips && 'my-trips-poi', isSearchResult && 'search-result', isViewItem && 'view-item', suggestionsMode && 'suggestions')}>
             <div className="poi-left">
                 <div className="carousel-wrapper" onClick={(e) => (item.images?.length > 1) && e.stopPropagation()}>
                     <Carousel showThumbs={false} showIndicators={false} infiniteLoop={true} onChange={(idx) => {

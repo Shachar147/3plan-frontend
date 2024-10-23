@@ -691,6 +691,11 @@ export class EventStore {
 	}
 
 	@computed
+	get shouldRenderSuggestions(){
+		return !this.isMobile && this.viewMode != ViewMode.feed;
+	}
+
+	@computed
 	get isHebrew() {
 		return this.calendarLocalCode === 'he';
 	}

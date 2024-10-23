@@ -442,6 +442,14 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function renderSuggestions(){
+		return (
+			<div className="suggestions-sidebar bright-scrollbar">
+				<FeedView eventStore={eventStore} filterByDestination suggestionsMode />
+			</div>
+		)
+	}
+
 	function addToEventsToCategories(newEvent: any) {
 		setEventsToCategories({
 			...eventsToCategories,
@@ -652,6 +660,7 @@ function MainPage(props: MainPageProps) {
 								{eventStore.isListView && renderListView()}
 								{eventStore.isCalendarView && renderCalendarView()}
 								{eventStore.isCombinedView && renderCombinedView()}
+								{eventStore.shouldRenderSuggestions && renderSuggestions()}
 							</>
 						)}
 					</div>

@@ -511,3 +511,52 @@ a.navigate-to {
 .selected-mobile-option {
 	border-top: 3px solid #0079ff;
 }
+
+/* suggestions sidebar */
+.suggestions-sidebar {
+	width: max-content;
+	max-height: 100vh;
+	overflow-y: auto;
+
+	.point-of-interest {
+		transition: min-height 0.3s ease, padding 0.3s ease, margin 0.3s ease, opacity 0.3s ease;
+		cursor: pointer;
+		opacity: 0.6;
+
+		&:hover {
+			opacity: 1;
+		}
+
+		.poi-footer {
+			flex-direction: column;
+			padding-bottom: 15px;
+		}
+	}
+
+	.point-of-interest .description,
+	.point-of-interest .poi-details .duration,
+	.point-of-interest .price,
+	.point-of-interest .poi-footer-links,
+	.point-of-interest .poi-footer,
+	.point-of-interest .poi-details+div,
+	.point-of-interest .poi-right {
+		transition: height 0.3s ease, opacity 0.3s ease, min-height 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+	}
+
+	.point-of-interest:not(:hover) {
+		min-height: 0 !important;
+		.description, .poi-details .duration, .price, .poi-footer-links, .poi-footer, .poi-details+div {
+			height: 0 !important;
+			opacity: 0;
+			min-height: 0 !important;
+			margin: 0;
+			padding: 0;
+		}
+		.poi-footer-links {
+			display: none !important;
+		}
+		.poi-right {
+			min-height: 0 !important;
+		}
+	}
+}
