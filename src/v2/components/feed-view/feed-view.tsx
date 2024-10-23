@@ -11,7 +11,7 @@ import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 import DestinationSelector from "../destination-selector/destination-selector";
 import Button, { ButtonFlavor } from "../../../components/common/button/button";
 import { feedStoreContext } from "../../stores/feed-view-store";
-import {runInAction} from "mobx";
+import {runInAction, toJS} from "mobx";
 import ReactModalService from "../../../services/react-modal-service";
 import {FeatureFlagsService} from "../../../utils/feature-flags";
 import {getParameterFromHash} from "../../utils/utils";
@@ -559,7 +559,22 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
             emptyResultsCountPerCategory.current[feedStore.selectedCategory] = 0;
         }
 
-        return feedStore.filteredItems.map((item, idx) => (
+        return feedStore.filteredItems.filter((i) => {
+            if (suggestionsMode){
+                const foundByName = eventStore.allEventsComputed.find((e) => e.title == i.name);
+                // if (foundByName) {
+                //     console.log("hereeee", i.name, toJS(foundByName), toJS(foundByName?.location), toJS(i.location));
+                // }
+                const foundByLocation = eventStore.allEventsComputed.find((e) => e.location?.latitude == i.location?.latitude && e.location?.longitude == i.location?.longitude)
+                // if (foundByLocation){
+                //     console.log("thereeee", i.name, toJS(foundByLocation.location), toJS(i.location));
+                // }
+                const shouldRender = !foundByLocation && !foundByName;
+                // console.log("should render - ", i.name, shouldRender)
+                return shouldRender;
+            }
+            return true;
+        }).map((item, idx) => (
             <div key={item.id} className={classList}>
                 {!eventStore.isMobile && !suggestionsMode && <span className="poi-idx">{idx + 1}</span>}
                 <PointOfInterest key={item.id} item={item} eventStore={eventStore} mainFeed={mainFeed} isSearchResult={!!searchKeyword} isViewItem={!!viewItemId}
