@@ -443,6 +443,9 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderSuggestions(){
+		if (!eventStore.destinations) {
+			return null;
+		}
 		return (
 			<div className="suggestions-sidebar bright-scrollbar">
 				<FeedView eventStore={eventStore} filterByDestination suggestionsMode />

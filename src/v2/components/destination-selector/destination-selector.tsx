@@ -66,6 +66,17 @@ export interface CityOrCountry {
     "isPopular": boolean
 }
 
+function customSort(allOptions) {
+    allOptions.sort((a, b) => {
+        // First, compare types: 'country' should come first
+        if (a.type === 'country' && b.type !== 'country') return -1;
+        if (a.type !== 'country' && b.type === 'country') return 1;
+
+        // If both are countries or both are not countries, sort alphabetically by title
+        return a.title - b.title;
+    });
+}
+
 // Function to fetch cities for each country and set options
 const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
     // const countries = countryList().getData();
@@ -144,6 +155,8 @@ const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
     //         }
     //     });
     // });
+
+    customSort(allOptions);
 
     // @ts-ignore
     return allOptions;
