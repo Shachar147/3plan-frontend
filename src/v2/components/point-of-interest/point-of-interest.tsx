@@ -11,7 +11,8 @@ import {
     extractCategory,
     getClasses,
     getEventDescription,
-    getEventTitle, isAdmin,
+    getEventTitle,
+    isAdmin,
     isTemplateUsername
 } from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
@@ -388,13 +389,14 @@ const PointOfInterest = ({ item, eventStore, mainFeed, isSearchResult, isViewIte
             }
         }
         eventStore.modalValues['duration'] = item.duration;
+        eventStore.modalValues['currency'] = item.currency;
         ReactModalService.openAddSidebarEventModal(
             eventStore,
             categoryId,
             {
                 ...item,
                 images: item.images?.join("\n"),
-                priority: !item.priority ? TriplanPriority.unset : TriplanPriority[item.priority],
+                priority: !item.priority ? item.isSystemRecommendation ? TriplanPriority.must : item.rate?.rating && item.rate?.rating == 5 ? TriplanPriority.high : TriplanPriority.unset : TriplanPriority[item.priority],
                 title: item.name,
                 location: item.location ? {
                     ...item.location,
