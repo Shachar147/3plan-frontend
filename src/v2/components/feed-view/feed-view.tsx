@@ -1,17 +1,17 @@
-import React, {useEffect, useMemo, useContext, useState, useRef} from "react";
-import { observer } from "mobx-react";
+import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
+import {observer} from "mobx-react";
 import PointOfInterest, {PointOfInterestShimmering} from "../point-of-interest/point-of-interest";
-import { EventStore, eventStoreContext } from "../../../stores/events-store";
-import FeedViewApiService, { allSources } from "../../services/feed-view-api-service";
+import {EventStore, eventStoreContext, hideSuggestionsLsKey} from "../../../stores/events-store";
+import FeedViewApiService, {allSources} from "../../services/feed-view-api-service";
 import CategoryFilter from "../category-filter/category-filter";
-import { getClasses } from "../../../utils/utils";
+import {getClasses} from "../../../utils/utils";
 import TranslateService from "../../../services/translate-service";
 import './feed-view.scss';
 import LazyLoadComponent from "../lazy-load-component/lazy-load-component";
 import DestinationSelector from "../destination-selector/destination-selector";
-import Button, { ButtonFlavor } from "../../../components/common/button/button";
-import { feedStoreContext } from "../../stores/feed-view-store";
-import {runInAction, toJS} from "mobx";
+import Button, {ButtonFlavor} from "../../../components/common/button/button";
+import {feedStoreContext} from "../../stores/feed-view-store";
+import {runInAction} from "mobx";
 import ReactModalService from "../../../services/react-modal-service";
 import {FeatureFlagsService} from "../../../utils/feature-flags";
 import {getParameterFromHash} from "../../utils/utils";
@@ -23,6 +23,7 @@ interface FeedViewProps {
     viewItemId?: number;
     filterByDestination?: boolean;
     suggestionsMode?: boolean;
+    withHideSuggestionsButton?: boolean;
 }
 
 const cacheThreshold = 300;
@@ -46,7 +47,7 @@ function SelectDestinationPlaceholder() {
     )
 }
 
-const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDestination, suggestionsMode }: FeedViewProps) => {
+const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDestination, suggestionsMode, withHideSuggestionsButton }: FeedViewProps) => {
     const currentPage = useRef(1);
     const emptyResultsCountPerCategory = useRef({});
     const prevPageTotalResults = useRef(0);
@@ -481,9 +482,17 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
 
         return (
             <div className={getClasses("flex-column width-100-percents", !suggestionsMode && 'align-items-center')}>
-                <h3 className="main-feed-header width-100-percents">
-                    <span>{TranslateService.translate(eventStore, key)}</span>
-                </h3>
+                <div className="flex-row justify-content-center width-100-percents padding-inline-end-10">
+                    <h3 className="main-feed-header justify-content-space-between width-100-percents">
+                        <span>{TranslateService.translate(eventStore, key)}</span>
+                    </h3>
+                    {withHideSuggestionsButton && <Button flavor={ButtonFlavor.link} text="x" onClick={() => {
+                        runInAction(() => {
+                            eventStore.clickedHideSuggestions = true;
+                        });
+                        localStorage.setItem(hideSuggestionsLsKey, "1");
+                    }} />}
+                </div>
                 {!suggestionsMode && <span className="main-feed-description text-align-start" dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'MAIN_PAGE_FEED_VIEW.DESCRIPTION')}} />}
             </div>
         )

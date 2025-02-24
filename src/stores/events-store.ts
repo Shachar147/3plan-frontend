@@ -74,6 +74,8 @@ const defaultModalSettings = {
 	customOverlayClass: 'z-index-99999999',
 };
 
+export const hideSuggestionsLsKey = 'hide-suggestions';
+
 const minLoadTimeInSeconds = 1.5;
 
 export class EventStore {
@@ -125,6 +127,8 @@ export class EventStore {
 	@observable isMenuOpen = false;
 	@observable isSearchOpen = true;
 	@observable didChangeSearchOpenState = false;
+
+	@observable clickedHideSuggestions = false;
 
 	@observable forceUpdate = 0;
 	@observable forceSetDraggable = 0;
@@ -692,7 +696,7 @@ export class EventStore {
 
 	@computed
 	get shouldRenderSuggestions(){
-		return !this.isMobile && this.viewMode != ViewMode.feed;
+		return !this.isMobile && this.viewMode != ViewMode.feed && !localStorage.getItem(hideSuggestionsLsKey) && !this.clickedHideSuggestions;
 	}
 
 	@computed

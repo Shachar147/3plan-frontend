@@ -42,6 +42,8 @@ interface MainPageProps {
 	createMode?: boolean;
 }
 
+
+
 function MainPage(props: MainPageProps) {
 	const { createMode } = props;
 	const [eventsToCategories, setEventsToCategories] = useState<Record<string, string>>(defaultEventsToCategories);
@@ -446,9 +448,10 @@ function MainPage(props: MainPageProps) {
 		if (!eventStore.destinations) {
 			return null;
 		}
+
 		return (
 			<div className="suggestions-sidebar bright-scrollbar">
-				<FeedView eventStore={eventStore} filterByDestination suggestionsMode />
+				<FeedView eventStore={eventStore} filterByDestination suggestionsMode withHideSuggestionsButton />
 			</div>
 		)
 	}
