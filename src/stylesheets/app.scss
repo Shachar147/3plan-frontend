@@ -1496,7 +1496,7 @@ input:read-only {
 
 .calender-container.pc,
 .list-container.pc {
-	max-height: calc(100vh - 180px) !important;
+	//max-height: calc(100vh - 180px) !important;
 }
 
 .combined-container {
@@ -1702,4 +1702,11 @@ body.rtl {
 			direction: rtl;
 		}
 	}
+}
+
+/* Ensure drag operations work with independent scrollable containers */
+.fc-event-dragging {
+	z-index: 9999 !important;
+	position: fixed !important;
+	pointer-events: auto !important;
 }

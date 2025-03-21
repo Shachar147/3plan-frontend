@@ -482,7 +482,7 @@ function MainPage(props: MainPageProps) {
 		const content = (
 			<div
 				className={getClasses(
-					['calender-container bright-scrollbar flex-1-1-0'],
+					['calender-container'],
 					!shouldDisplay && 'opacity-0 position-absolute',
 					!eventStore.isMobile && 'pc'
 				)}
@@ -519,21 +519,23 @@ function MainPage(props: MainPageProps) {
 	function renderSidebar() {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.sidebar) return null;
 		return (
-			<TriplanSidebar
-				addToEventsToCategories={addToEventsToCategories}
-				addEventToSidebar={addEventToSidebar}
-				removeEventFromSidebarById={removeEventFromSidebarById}
-				customDateRange={eventStore.customDateRange}
-				setCustomDateRange={() => {
-					eventStore.setCustomDateRange.bind(eventStore);
+			<div className="sidebar-wrapper">
+				<TriplanSidebar
+					addToEventsToCategories={addToEventsToCategories}
+					addEventToSidebar={addEventToSidebar}
+					removeEventFromSidebarById={removeEventFromSidebarById}
+					customDateRange={eventStore.customDateRange}
+					setCustomDateRange={() => {
+						eventStore.setCustomDateRange.bind(eventStore);
 
-					if (eventStore.isMobile) {
-						TriplanCalendarContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
-						TriplanCalendarRef.current?.setMobileDefaultView();
-					}
-				}}
-				TriplanCalendarRef={TriplanCalendarRef}
-			/>
+						if (eventStore.isMobile) {
+							TriplanCalendarContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
+							TriplanCalendarRef.current?.setMobileDefaultView();
+						}
+					}}
+					TriplanCalendarRef={TriplanCalendarRef}
+				/>
+			</div>
 		);
 	}
 
