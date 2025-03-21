@@ -221,6 +221,6 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 	overflow-y: auto;
 	overflow-x: hidden;
 	position: relative;
-	z-index: 2; /* Increased to ensure it's above other elements during drag */
+	//z-index: 2; /* Increased to ensure it's above other elements during drag */
 	width: 100%;
 }

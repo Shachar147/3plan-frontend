@@ -725,7 +725,7 @@ const FeedView = ({ eventStore, mainFeed, searchKeyword, viewItemId, filterByDes
     }
 
     return (
-        (feedStore.isLoading && !haveNoDestinations) ? renderLoadingPlaceholder() : <LazyLoadComponent className="width-100-percents flex-column align-items-center" disableLoader={(mainFeed && !eventStore.isMobile) || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
+        (feedStore.isLoading && !haveNoDestinations) ? renderLoadingPlaceholder() : <LazyLoadComponent className="feed-view bright-scrollbar" disableLoader={(mainFeed && !eventStore.isMobile) || viewItemId} fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={feedStore.isLoading} isReachedEnd={feedStore.allReachedEnd}>
             {!haveNoDestinations && (feedStore.items.length == 0 || debouncePlaceholder) && renderLoadingPlaceholder()}
             {renderFeedContent()}
         </LazyLoadComponent>

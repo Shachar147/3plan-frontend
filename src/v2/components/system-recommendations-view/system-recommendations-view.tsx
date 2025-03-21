@@ -250,7 +250,7 @@ function SystemRecommendationsView(){
     function renderContent() {
         if (eventStore.isMobile) {
             return (
-                <LazyLoadComponent className="width-100-percents flex-column align-items-center" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading} isReachedEnd={isReachedEnd}>
+                <LazyLoadComponent className="system-recommendations-container bright-scrollbar" fetchData={(page, setLoading) => fetchItems(page, setLoading)} isLoading={isLoading} isReachedEnd={isReachedEnd}>
                     {feedStore.systemRecommendations.map((item, idx) => (
                         <div key={item.id} className={classList}>
                             {renderPoi(item)}

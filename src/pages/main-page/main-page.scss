@@ -120,8 +120,8 @@ body.rtl {
 	margin: 0 !important;
 	border-radius: 30px;
 	height: calc(100vh - 180px);
-	overflow: hidden; /* Prevent parent container from scrolling */
 	display: flex; /* Ensure proper flex layout */
+	overflow: hidden;
 }
 
 /* Ensure calendar container has proper sizing */
