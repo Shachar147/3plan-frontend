@@ -749,7 +749,14 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                                                     key={`unscheduled-events-${x.event.category}-${idx}`}
                                                 >
                                                     <TriplanSidebarDraggableEvent
-                                                        event={x.event} categoryId={x.event.category} fullActions={false} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} addEventToSidebar={(e) => props.addEventToSidebar(e)} eventTitleSuffix={toDistanceString(eventStore, x, true, x.travelMode, true)} />
+                                                        event={x.event} 
+                                                        categoryId={x.event.category} 
+                                                        fullActions={false} 
+                                                        addToEventsToCategories={addToEventsToCategories} 
+                                                        removeEventFromSidebarById={removeEventFromSidebarById} 
+                                                        addEventToSidebar={(e) => { props.addEventToSidebar(e); }} 
+                                                        eventTitleSuffix={toDistanceString(eventStore, x, true, x.travelMode, true)} 
+                                                    />
                                                 </div>
                                             );
                                         })}
@@ -765,48 +772,56 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                                                 className="nearby-result cursor-pointer flex-col gap-3"
                                                 key={`scheduled-event-${x.event.category}-${idx}`}
                                             >
-                                                <TriplanSidebarDraggableEvent event={x.event} categoryId={x.event.category} fullActions={false} addEventToSidebar={(e) => props.addEventToSidebar(e)} eventTitleSuffix={<div className="flex-col gap-5">
-														<span>
-															{toDistanceString(eventStore, x, true, x.travelMode, true)}
-														</span>
-                                                    {x.alternative && (
+                                                <TriplanSidebarDraggableEvent 
+                                                    event={x.event} 
+                                                    categoryId={x.event.category} 
+                                                    fullActions={false} 
+                                                    addEventToSidebar={(e) => { props.addEventToSidebar(e); }} 
+                                                    eventTitleSuffix={<div className="flex-col gap-5">
                                                         <span>
-																{toDistanceString(
+                                                            {toDistanceString(eventStore, x, true, x.travelMode, true)}
+                                                        </span>
+                                                        {x.alternative && (
+                                                            <span>
+                                                                {toDistanceString(
                                                                     eventStore,
                                                                     x.alternative,
                                                                     true,
                                                                     x.alternative.travelMode,
                                                                     true
                                                                 )}
-															</span>
-                                                    )}
-                                                    <span>
-															{calendarOrSidebarEventDetails(eventStore, x.event)}
-														</span>
-                                                </div>} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} _onClick={() => {
-                                                    const calendarEvent = eventStore.calendarEvents.find(
-                                                        (y) => y.id == x.event.id
-                                                    )!;
-                                                    if (typeof calendarEvent.start === 'string') {
-                                                        calendarEvent.start = new Date(calendarEvent.start);
-                                                    }
-                                                    if (typeof calendarEvent.end === 'string') {
-                                                        calendarEvent.end = new Date(calendarEvent.end);
-                                                    }
-                                                    modalsStore.switchToViewMode();
-                                                    ReactModalService.openEditCalendarEventModal(
-                                                        eventStore,
-                                                        addEventToSidebar,
-                                                        {
-                                                            event: {
-                                                                ...calendarEvent,
-                                                                _def: calendarEvent,
+                                                            </span>
+                                                        )}
+                                                        <span>
+                                                            {calendarOrSidebarEventDetails(eventStore, x.event)}
+                                                        </span>
+                                                    </div>} 
+                                                    addToEventsToCategories={addToEventsToCategories} 
+                                                    removeEventFromSidebarById={removeEventFromSidebarById} 
+                                                    _onClick={() => {
+                                                        const calendarEvent = eventStore.calendarEvents.find(
+                                                            (y) => y.id == x.event.id
+                                                        )!;
+                                                        if (typeof calendarEvent.start === 'string') {
+                                                            calendarEvent.start = new Date(calendarEvent.start);
+                                                        }
+                                                        if (typeof calendarEvent.end === 'string') {
+                                                            calendarEvent.end = new Date(calendarEvent.end);
+                                                        }
+                                                        modalsStore.switchToViewMode();
+                                                        ReactModalService.openEditCalendarEventModal(
+                                                            eventStore,
+                                                            addEventToSidebar,
+                                                            {
+                                                                event: {
+                                                                    ...calendarEvent,
+                                                                    _def: calendarEvent,
+                                                                },
                                                             },
-                                                        },
-                                                        modalsStore
-                                                    );
-                                                }}
-                                               />
+                                                            modalsStore
+                                                        );
+                                                    }}
+                                                />
                                             </div>
                                         ))}
                                     </div>
@@ -876,7 +891,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                 {renderLockTrip()}
                 {(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
                 {renderImportButtons()}
-                <TriplanSidebarShareTripButton />
+                <TriplanSidebarShareTripButton isMoveAble={true} textKey="SHARE_TRIP" />
             </>,
             undefined,
             SidebarGroups.ACTIONS,
@@ -1175,7 +1190,6 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                     console.log(errors);
                 }
 
-
                 // build total booked prices, total calendar prices, total sidebar prices.
                 const orderedKeywords = ['הוזמן', 'הזמנתי', 'ordered', 'booked', 'reserved'];
                 const calendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
@@ -1187,16 +1201,20 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                     eventStore.calendarEvents.filter((c) => orderedKeywords.filter((k) => (c.description ?? '').includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
                 );
                 const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
-                const calendarTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, calendarEventsPerDay, desiredCurrency, false);
-                const bookedTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, bookedCalendarEventsPerDay, desiredCurrency, false);
-                let bookedTotal = Object.values(bookedTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
-                let calendarMinTotal = Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
-                let calendarMaxTotal = Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
-                const nonCalendarTotalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, {
+                const calendarTotalPricePerDay: Record<string, MinMax> = ListViewService._getEstimatedCosts(eventStore, calendarEventsPerDay, desiredCurrency, false);
+                const bookedTotalPricePerDay: Record<string, MinMax> = ListViewService._getEstimatedCosts(eventStore, bookedCalendarEventsPerDay, desiredCurrency, false);
+                
+                // Type assertion to handle unknown return type from reduce
+                let bookedTotal = (Object.values(bookedTotalPricePerDay).reduce((prev, iter) => prev + (iter as MinMax).max, 0) as number).toFixed(2);
+                let calendarMinTotal = (Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + (iter as MinMax).min, 0) as number).toFixed(2);
+                let calendarMaxTotal = (Object.values(calendarTotalPricePerDay).reduce((prev, iter) => prev + (iter as MinMax).max, 0) as number).toFixed(2);
+                
+                const nonCalendarTotalPricePerDay: Record<string, MinMax> = ListViewService._getEstimatedCosts(eventStore, {
                     "fakeDate": eventStore.allSidebarEvents
                 }, desiredCurrency, false);
-                let nonCalendarMaxTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.max, 0).toFixed(2);
-                let nonCalendarMinTotal = Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + iter.min, 0).toFixed(2);
+                
+                let nonCalendarMaxTotal = (Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + (iter as MinMax).max, 0) as number).toFixed(2);
+                let nonCalendarMinTotal = (Object.values(nonCalendarTotalPricePerDay).reduce((prev, iter) => prev + (iter as MinMax).min, 0) as number).toFixed(2);
 
                 bookedTotal = formatNumberWithCommas(bookedTotal);
                 nonCalendarMaxTotal = formatNumberWithCommas(nonCalendarMaxTotal);
@@ -1230,33 +1248,23 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                         [desiredCurrency]: bookedTotal
                     }
                 }
-                const shouldShowPriceInline = (isUnknown || !Object.values(priceList)[0].includes("-")) && !eventStore.isMobile;
+                
+                // Cast priceList values to string to avoid type errors with includes
+                const priceListWithStringValues: Record<TriplanCurrency, string> = Object.fromEntries(
+                    Object.entries(priceList).map(([key, value]) => [key, String(value)])
+                ) as Record<TriplanCurrency, string>;
+                
+                const shouldShowPriceInline = (isUnknown || !(priceListWithStringValues[Object.keys(priceListWithStringValues)[0] as TriplanCurrency] || '').includes("-")) && !eventStore.isMobile;
                 const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
 
                 const pricesSections = isUnknown
                     ? [<div className="font-weight-bold">{unknownText}</div>]
-                    : Object.keys(priceList).map((currency) => (
+                    : Object.keys(priceListWithStringValues).map((currency) => (
                         <div className="font-weight-bold" key={`price-list-${currency}`}>
-                            {priceList[currency as TriplanCurrency]}{' '}
+                            {priceListWithStringValues[currency as TriplanCurrency]}{' '}
                             {TranslateService.translate(eventStore, `${currency}_sign`)}
                         </div>
                     ));
-
-
-                // const isUnknown = Object.keys(priceList).length == 0;
-                // const isMultiCurrencies = Object.keys(priceList).length > 1;
-                //
-                // const shouldShowPriceInline = isUnknown; // || !isMultiCurrencies; <- here we'll still want the total price in the desired currency
-                // const unknownText = TranslateService.translate(eventStore, 'UNKNOWN_PRICE');
-                //
-                // const pricesSections = isUnknown
-                // 	? [<div className="font-weight-bold">{unknownText}</div>]
-                // 	: Object.keys(priceList).map((currency) => (
-                // 			<div className="font-weight-bold" key={`price-list-${currency}`}>
-                // 				{priceList[currency as TriplanCurrency]}{' '}
-                // 				{TranslateService.translate(eventStore, `${currency}_sign`)}
-                // 			</div>
-                // 	  ));
 
                 const currency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
                 return (
@@ -1501,6 +1509,66 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
         );
     }
 
+    function renderSidebarSettings() {
+
+        const settingsItems = [
+            {
+                id: 'hide-scheduled',
+                name: 'HIDE_SCHEDULED_EVENTS.FILTER_TAG',
+                icon: 'fa-calendar-times-o'
+            }
+        ]
+
+        const settingsContent = (
+            <div className="flex-column gap-8">
+                {settingsItems.map((item) => {
+                    return (
+                        <Observer key={`sidebar-settings-${item.id}`}>
+                            {() => (
+                                <div
+                                    className={getClasses(
+                                        "flex-row gap-5 align-items-center sidebar-settings",
+                                        (eventStore.sidebarSettings.get(item.id)) && "active"
+                                    )}
+                                    onClick={() => {
+                                        runInAction(() => {
+                                            eventStore.sidebarSettings.set(
+                                                item.id, 
+                                                !eventStore.sidebarSettings.get(item.id)
+                                            );
+                                            // Save to localStorage when changed
+                                            eventStore.saveSidebarSettings();
+                                        })
+                                    }}
+                                >
+                                    <i className={`fa ${item.icon}`} aria-hidden="true"></i>
+                                    <span>
+                                        {TranslateService.translate(eventStore, item.name)}
+                                    </span>
+                                </div>
+                            )}
+                        </Observer>
+                    );
+                })}
+            </div>
+        );
+
+        const settingsGroup = wrapWithSidebarGroup(
+            <>{settingsContent}</>,
+            "fa-gear",
+            SidebarGroups.SETTINGS,
+            TranslateService.translate(eventStore, "SETTINGS"),
+            settingsItems.length
+        );
+
+        return (
+            <>
+                <hr className={'margin-block-2'} />
+                {settingsGroup}
+            </>
+        );
+    }
+
     function renderTasksSearch() {
         const searchPlacholderKey = eventStore.isMobile ? 'TASKS_SEARCH_PLACEHOLDER.FULL' : 'TASKS_SEARCH_PLACEHOLDER';
         return (
@@ -1544,6 +1612,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
             {renderPriorityFilters()}
             {renderCategoryFilters()}
             {renderPreferredTimeFilters()}
+            {renderSidebarSettings()}
         </div>
     )
 }

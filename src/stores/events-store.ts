@@ -138,13 +138,16 @@ export class EventStore {
 	// map filters
 	@observable mapFiltersVisible: boolean = false;
 	@observable filterOutPriorities = observable.map({});
-	@observable filterSidebarPriorities = observable.map({});
-	@observable filterSidebarCategories = observable.map({});
-	@observable filterSidebarPreferredTimes = observable.map({});
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
 	@observable mapViewMode: MapViewMode = MapViewMode.CATEGORIES_AND_PRIORITIES;
 	@observable mapViewDayFilter: string | undefined;
+
+	// sidebar settings
+	@observable filterSidebarPriorities = observable.map({});
+	@observable filterSidebarCategories = observable.map({});
+	@observable filterSidebarPreferredTimes = observable.map({});
+	@observable sidebarSettings = observable.map({});
 
 	// add side bar modal
 	@observable isModalMinimized: boolean = true;
@@ -220,8 +223,29 @@ export class EventStore {
 		// todo: check if its not causing issues.
 		// for the admin view
 		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
-
+		
+		// Initialize sidebarSettings from localStorage
+		this.initSidebarSettings();
+		
 		this.init();
+	}
+
+	// Helper method to initialize sidebar settings
+	initSidebarSettings() {
+		// Set default value first
+		this.sidebarSettings.set('hide-scheduled', false);
+		
+		try {
+			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
+			if (savedSettings) {
+				const parsedSettings = JSON.parse(savedSettings);
+				Object.keys(parsedSettings).forEach(key => {
+					this.sidebarSettings.set(key, parsedSettings[key]);
+				});
+			}
+		} catch (e) {
+			console.error('Error loading sidebar settings from localStorage', e);
+		}
 	}
 
 	@action
@@ -269,17 +293,8 @@ export class EventStore {
 	}
 
 	checkIfEventHaveOpenTasks(event: SidebarEvent | CalendarEvent | AllEventsEvent | EventInput): boolean {
-		// let { title, description } = event;
-		// const { taskKeywords } = ListViewService._initSummaryConfiguration();
-		// const isTodoComplete = taskKeywords.find(
-		// 	(k: string) =>
-		// 		title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 ||
-		// 		(description && description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
-		// );
-		//
-		// return !!isTodoComplete;
 		const { id: eventId } = event;
-		return !!this.tasks.find((t) => t.eventId == eventId);
+		return !!this.tasks.find((t) => String(t.eventId) === String(eventId));
 	}
 
 	@action
@@ -1866,6 +1881,19 @@ export class EventStore {
 			this.filterSidebarPreferredTimes.delete(preferredTime);
 		} else {
 			this.filterSidebarPreferredTimes.set(preferredTime, true);
+		}
+	}
+
+	@action
+	saveSidebarSettings() {
+		try {
+			const settingsObject = {};
+			this.sidebarSettings.forEach((value, key) => {
+				settingsObject[key] = value;
+			});
+			localStorage.setItem('triplan-sidebar-settings', JSON.stringify(settingsObject));
+		} catch (e) {
+			console.error('Error saving sidebar settings to localStorage', e);
 		}
 	}
 }
