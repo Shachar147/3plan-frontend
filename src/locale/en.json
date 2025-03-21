@@ -963,5 +963,7 @@
 	"SAVING": "Saving...",
 	"KEEPING_TO_SAVED_COLLECTIONS": "Adding to your saved collections...",
 	"SUGGESTIONS_SIDEBAR_TITLE": "Suggestions:",
-	"FILTER_BY_PRIORITY": "Filter by priority:"
+	"FILTER_BY_PRIORITY": "Filter by priority",
+	"FILTER_BY_CATEGORY": "Filter by category",
+	"FILTER_BY_PREFERRED_TIME": "Filter by preferred time"
 }

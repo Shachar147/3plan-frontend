@@ -139,6 +139,8 @@ export class EventStore {
 	@observable mapFiltersVisible: boolean = false;
 	@observable filterOutPriorities = observable.map({});
 	@observable filterSidebarPriorities = observable.map({});
+	@observable filterSidebarCategories = observable.map({});
+	@observable filterSidebarPreferredTimes = observable.map({});
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
 	@observable mapViewMode: MapViewMode = MapViewMode.CATEGORIES_AND_PRIORITIES;
@@ -765,7 +767,9 @@ export class EventStore {
 						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
-						(this.filterSidebarPriorities.size === 0 || this.filterSidebarPriorities.get(getEnumKey(TriplanPriority, event.priority)))
+						(this.filterSidebarPriorities.size === 0 || this.filterSidebarPriorities.get(getEnumKey(TriplanPriority, event.priority))) &&
+						(this.filterSidebarCategories.size === 0 || this.filterSidebarCategories.get(event.category)) &&
+						(this.filterSidebarPreferredTimes.size === 0 || this.filterSidebarPreferredTimes.get(getEnumKey(TriplanEventPreferredTime, event.preferredTime)))
 				);
 		});
 		return toReturn;
@@ -831,11 +835,9 @@ export class EventStore {
 			this.showOnlyEventsWithNoLocation ||
 			this.showOnlyEventsWithNoOpeningHours ||
 			this.showOnlyEventsWithTodoComplete ||
-			!!Array.from(this.filterSidebarPriorities.values()).length
-			// for now it affects only map. todo complete - add it to sidebar filters as well both in UI and on logic
-			// || !!Array.from(this.filterOutPriorities.values()).length
-			// || this.hideScheduled
-			// || this.hideUnScheduled
+			!!Array.from(this.filterSidebarPriorities.values()).length ||
+			!!Array.from(this.filterSidebarCategories.values()).length ||
+			!!Array.from(this.filterSidebarPreferredTimes.values()).length
 		);
 	}
 
@@ -1825,6 +1827,8 @@ export class EventStore {
 		
 		// Reset sidebar priority filters
 		this.filterSidebarPriorities = observable.map({});
+		this.filterSidebarCategories = observable.map({});
+		this.filterSidebarPreferredTimes = observable.map({});
 
 		setTimeout(() => {
 			document.getElementsByName('fc-search').forEach((element) => {
@@ -1845,6 +1849,24 @@ export class EventStore {
 		}
 		return this.tripName.includes(" ") ? this.tripName : this.tripName.replaceAll('-',' ').replaceAll('   ',' - ');
 
+	}
+
+	@action
+	toggleSidebarFilterCategory(category: string) {
+		if (this.filterSidebarCategories.get(category)) {
+			this.filterSidebarCategories.delete(category);
+		} else {
+			this.filterSidebarCategories.set(category, true);
+		}
+	}
+
+	@action
+	toggleSidebarFilterPreferredTime(preferredTime: string) {
+		if (this.filterSidebarPreferredTimes.get(preferredTime)) {
+			this.filterSidebarPreferredTimes.delete(preferredTime);
+		} else {
+			this.filterSidebarPreferredTimes.set(preferredTime, true);
+		}
 	}
 }
 
