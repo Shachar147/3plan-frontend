@@ -1499,15 +1499,7 @@ export class EventStore {
 	@action
 	setDistance(key: string, value: DistanceResult) {
 		this.distanceResults.set(key, value);
-		
-		// Convert ObservableMap to a regular Map for type compatibility with the data services
-		// This is needed because the DataHandler interface expects a standard Map, not an ObservableMap
-		const regularMap = new Map<String, DistanceResult>();
-		this.distanceResults.forEach((value, key) => {
-			regularMap.set(key as String, value);
-		});
-		
-		this.dataService.setDistanceResults(regularMap, this.tripName);
+		this.dataService.setDistanceResults(this.distanceResults, this.tripName);
 	}
 
 	@action
