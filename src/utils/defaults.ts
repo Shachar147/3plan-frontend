@@ -142,7 +142,7 @@ export const defaultCategoriesKeys: string[] = [
 	'CATEGORY.GIMMICKS',
 	'CATEGORY.NATURE',
 	'CATEGORY.TOURISM',
-]
+];
 
 export const defaultCategoriesOldold: TriPlanCategory[] = [];
 export const defaultCategoriesHeb: TriPlanCategory[] = [

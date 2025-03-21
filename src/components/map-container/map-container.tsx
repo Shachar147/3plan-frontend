@@ -20,7 +20,9 @@ import { formatDate, formatTime, getDurationString, toDate } from '../../utils/t
 import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../../utils/enums';
 import {
 	BuildEventUrl,
-	getClasses, getEventDescription, getEventTitle,
+	getClasses,
+	getEventDescription,
+	getEventTitle,
 	isBasketball,
 	isDessert,
 	isFlight,
@@ -223,11 +225,19 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	const rowContainerStyle = 'display: flex; flex-direction: row; align-items: center; gap: 10px;';
 
 	const buildInfoWindowContent = (event: any) => {
-		const title = `<div style="font-size:20px; margin-inline-end: 5px;" class='map-info-window-title'><b><u>${getEventTitle(event, eventStore, props.isTemplate)}</u></b></div>`;
+		const title = `<div style="font-size:20px; margin-inline-end: 5px;" class='map-info-window-title'><b><u>${getEventTitle(
+			event,
+			eventStore,
+			props.isTemplate
+		)}</u></b></div>`;
 		const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${event.location.address}</span></span>`;
 
 		const description = event.description?.trim()?.length
-			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${getEventDescription(event, eventStore, props.isTemplate)}</span></span>`
+			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${getEventDescription(
+					event,
+					eventStore,
+					props.isTemplate
+			  )}</span></span>`
 			: '';
 
 		let scheduledTo = '';
@@ -266,7 +276,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		}
 
 		if (preferredTime == 'unset' && eventStore.isHebrew) {
-			preferredTime = "unset.male";
+			preferredTime = 'unset.male';
 		}
 
 		const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(
@@ -278,7 +288,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		// const lng = event.location.longitude.toFixed(7);
 		// const url = `https://maps.google.com/maps?q=${lat},${lng}`;
 		const url = BuildEventUrl(event.location);
-		const urlBlock = `<span><a href="${url}" target="_blank">${TranslateService.translate(eventStore, 'VIEW_ON_GOOGLE_MAPS')}</a></span>`;
+		const urlBlock = `<span><a href="${url}" target="_blank">${TranslateService.translate(
+			eventStore,
+			'VIEW_ON_GOOGLE_MAPS'
+		)}</a></span>`;
 
 		const moreInfoUrl = event.moreInfo;
 		const moreInfoBlock = moreInfoUrl
@@ -846,7 +859,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		for (let i = 0; i < allEvents.length; i++) {
 			const event = allEvents[i];
 			// const marker = markers.find((x: any) => event.id.toString() === x.eventId.toString());
-			const marker = markers.find((x: any) => event.location && event.location.longitude === x.longitude && event.location.latitude == x.latitude);
+			const marker = markers.find(
+				(x: any) =>
+					event.location && event.location.longitude === x.longitude && event.location.latitude == x.latitude
+			);
 			visibleItems.push({ event, marker });
 		}
 		return visibleItems.sort((a, b) => (a.event.title > b.event.title ? 1 : -1));
@@ -1256,7 +1272,14 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 												info.event
 											);
 										}}
-										title={props.isReadOnly ? undefined : TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
+										title={
+											props.isReadOnly
+												? undefined
+												: TranslateService.translate(
+														eventStore,
+														'CLICK_HERE_TO_ADD_TO_CALENDAR'
+												  )
+										}
 									/>
 								);
 
@@ -1265,7 +1288,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 										<i
 											className="fa fa-calendar-check-o visible-items-calendar-indicator"
 											aria-hidden="true"
-											title={props.isReadOnly ? undefined : TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
+											title={
+												props.isReadOnly
+													? undefined
+													: TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')
+											}
 										/>
 									);
 								}
@@ -1319,7 +1346,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		);
 	}
 
-	function renderMapHeader(){
+	function renderMapHeader() {
 		return (
 			<div className="map-header">
 				<div
@@ -1362,7 +1389,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					</div>
 				</div>
 			</div>
-		)
+		);
 	}
 
 	return (

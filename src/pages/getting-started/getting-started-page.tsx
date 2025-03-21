@@ -18,7 +18,7 @@ import { validateDateRange } from '../../utils/time-utils';
 import { DEFAULT_VIEW_MODE_FOR_NEW_TRIPS, TRIP_MAX_SIZE_DAYS } from '../../utils/consts';
 import LogHistoryService from '../../services/data-handlers/log-history-service';
 import { TripActions } from '../../utils/interfaces';
-import DestinationSelector from "../../v2/components/destination-selector/destination-selector";
+import DestinationSelector from '../../v2/components/destination-selector/destination-selector';
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -213,7 +213,7 @@ const GettingStartedPage = () => {
 				sidebarEvents: defaultEvents,
 				calendarEvents: defaultCalendarEvents,
 				categories: getDefaultCategories(eventStore),
-				destinations: selectedDestinations
+				destinations: selectedDestinations,
 			};
 
 			// backup

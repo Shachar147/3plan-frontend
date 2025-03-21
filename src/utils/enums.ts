@@ -5,10 +5,10 @@ export enum TriplanCurrency {
 	aed = 'aed',
 }
 export const exchangeRates = {
-	[TriplanCurrency.usd]: 1,    // base currency
+	[TriplanCurrency.usd]: 1, // base currency
 	[TriplanCurrency.eur]: 0.91, // 1 USD = 0.9 EUR
 	[TriplanCurrency.ils]: 3.82, // 1 USD = 3.72 ILS
-	[TriplanCurrency.aed]: 3.67  // 1 USD = 3.67 AED
+	[TriplanCurrency.aed]: 3.67, // 1 USD = 3.67 AED
 };
 
 export enum TriplanPriority {
@@ -24,8 +24,8 @@ export const prioritiesOrder = [
 	TriplanPriority.high,
 	TriplanPriority.maybe,
 	TriplanPriority.least,
-	TriplanPriority.unset
-]
+	TriplanPriority.unset,
+];
 
 export enum TriplanEventPreferredTime {
 	morning = 1,

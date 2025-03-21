@@ -35,14 +35,12 @@ import axios from 'axios';
 import { BiEventsService } from '../../services/bi-events.service';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatDate } from '../../utils/time-utils';
-import FeedView from "../../v2/components/feed-view/feed-view";
-import {FeatureFlagsService} from "../../utils/feature-flags";
+import FeedView from '../../v2/components/feed-view/feed-view';
+import { FeatureFlagsService } from '../../utils/feature-flags';
 
 interface MainPageProps {
 	createMode?: boolean;
 }
-
-
 
 function MainPage(props: MainPageProps) {
 	const { createMode } = props;
@@ -355,21 +353,23 @@ function MainPage(props: MainPageProps) {
 							text={''}
 						/>
 					)}
-					{eventStore.calendarEvents.length > 0 && <Button
-						icon="fa-paper-plane"
-						className={getClasses('min-width-38', !eventStore.listViewShowNavigateTo && 'black')}
-						flavor={ButtonFlavor.secondary}
-						tooltip={TranslateService.translate(
-							eventStore,
-							eventStore.listViewShowNavigateTo ? 'SHOW_NAVIGATE_TO' : 'HIDE_NAVIGATE_TO'
-						)}
-						onClick={() => {
-							runInAction(() => {
-								eventStore.listViewShowNavigateTo = !eventStore.listViewShowNavigateTo;
-							});
-						}}
-						text={''}
-					/>}
+					{eventStore.calendarEvents.length > 0 && (
+						<Button
+							icon="fa-paper-plane"
+							className={getClasses('min-width-38', !eventStore.listViewShowNavigateTo && 'black')}
+							flavor={ButtonFlavor.secondary}
+							tooltip={TranslateService.translate(
+								eventStore,
+								eventStore.listViewShowNavigateTo ? 'SHOW_NAVIGATE_TO' : 'HIDE_NAVIGATE_TO'
+							)}
+							onClick={() => {
+								runInAction(() => {
+									eventStore.listViewShowNavigateTo = !eventStore.listViewShowNavigateTo;
+								});
+							}}
+							text={''}
+						/>
+					)}
 				</div>
 				{content}
 			</div>
@@ -381,7 +381,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderFeedView() {
-		return <FeedView eventStore={eventStore} filterByDestination />
+		return <FeedView eventStore={eventStore} filterByDestination />;
 	}
 
 	function renderMapView(shouldShow: boolean = true) {
@@ -444,7 +444,7 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
-	function renderSuggestions(){
+	function renderSuggestions() {
 		if (!eventStore.destinations) {
 			return null;
 		}
@@ -453,7 +453,7 @@ function MainPage(props: MainPageProps) {
 			<div className="suggestions-sidebar bright-scrollbar">
 				<FeedView eventStore={eventStore} filterByDestination suggestionsMode withHideSuggestionsButton />
 			</div>
-		)
+		);
 	}
 
 	function addToEventsToCategories(newEvent: any) {
@@ -553,12 +553,22 @@ function MainPage(props: MainPageProps) {
 		const viewOptions = getViewSelectorOptions(eventStore, true);
 		const isModalOpened = eventStore.modalSettings.show || eventStore.secondModalSettings.show;
 		return (
-			<div className={getClasses('mobile-footer-navigator', isModalOpened && 'z-index-1000', FeatureFlagsService.isNewDesignEnabled() && 'white-background')}>
+			<div
+				className={getClasses(
+					'mobile-footer-navigator',
+					isModalOpened && 'z-index-1000',
+					FeatureFlagsService.isNewDesignEnabled() && 'white-background'
+				)}
+			>
 				{viewOptions.map((viewOption) => (
 					<a
 						title={viewOption.name}
 						onClick={() => eventStore.setMobileViewMode(viewOption.key as ViewMode)}
-						className={getClasses('mobile-footer-navigator-option', `mobile-footer-navigator-option-${viewOption.key}`, eventStore.mobileViewMode === viewOption.key && 'selected-mobile-option')}
+						className={getClasses(
+							'mobile-footer-navigator-option',
+							`mobile-footer-navigator-option-${viewOption.key}`,
+							eventStore.mobileViewMode === viewOption.key && 'selected-mobile-option'
+						)}
 						key={`mobile-footer-navigation-${viewOption.name}`}
 					>
 						{eventStore.mobileViewMode === viewOption.key ? viewOption.iconActive : viewOption.icon}

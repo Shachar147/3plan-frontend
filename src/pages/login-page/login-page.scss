@@ -37,11 +37,11 @@
 			min-width: 200px;
 			transition: all 0.3s ease-in-out;
 		}
-		
+
 		.register-link-container {
 			direction: inherit;
 		}
-		
+
 		.login-form {
 			width: 100%;
 			max-width: 400px;
@@ -144,13 +144,13 @@ body {
 					text-align: right !important;
 				}
 			}
-			
+
 			.register-link-container {
 				direction: rtl;
 			}
 		}
 	}
-	
+
 	&.ltr {
 		.register-link-container {
 			direction: ltr;

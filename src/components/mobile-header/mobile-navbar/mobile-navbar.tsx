@@ -16,9 +16,9 @@ import { TriplanHeaderProps } from '../../triplan-header/triplan-header';
 import ReactModalService from '../../../services/react-modal-service';
 import { runInAction } from 'mobx';
 import useIsAdmin from '../../../custom-hooks/use-is-admin';
-import {FeatureFlagsService} from "../../../utils/feature-flags";
-import {myTripsTabId, newDesignRootPath} from "../../../v2/utils/consts";
-import {rootStoreContext} from "../../../v2/stores/root-store";
+import { FeatureFlagsService } from '../../../utils/feature-flags';
+import { myTripsTabId, newDesignRootPath } from '../../../v2/utils/consts';
+import { rootStoreContext } from '../../../v2/stores/root-store';
 
 const MobileNavbar = (options: TriplanHeaderProps) => {
 	const eventStore = useContext(eventStoreContext);
@@ -101,15 +101,15 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 				// @ts-ignore
 				cName: getClasses('nav-text', (options.isSearchOpen || eventStore.isSearchOpen) && 'active'),
 			},
-			withMyTrips && eventStore.tripId && {
-				title: TranslateService.translate(eventStore, 'SWITCH_TRIPS'),
-				onClick: () => {
-
-					ReactModalService.openSwitchTripsModal(eventStore);
+			withMyTrips &&
+				eventStore.tripId && {
+					title: TranslateService.translate(eventStore, 'SWITCH_TRIPS'),
+					onClick: () => {
+						ReactModalService.openSwitchTripsModal(eventStore);
+					},
+					icon: 'fa-reply-all',
+					cName: 'nav-text',
 				},
-				icon: 'fa-reply-all',
-				cName: 'nav-text'
-			},
 			withMyTrips && {
 				title: TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS'),
 				onClick: () => {

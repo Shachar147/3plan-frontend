@@ -6,7 +6,7 @@ import {
 } from '../helpers/interfaces';
 import { apiGet, apiPost, apiPut } from '../helpers/api';
 import { getServerAddress } from '../../config/config';
-import {endpoints} from "../../v2/utils/endpoints";
+import { endpoints } from '../../v2/utils/endpoints';
 
 export const TriplanTinderApiService = {
 	async getPlacesByDestination(): Promise<GetPlacesByDestinationResult> {

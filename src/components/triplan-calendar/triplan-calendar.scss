@@ -40,7 +40,8 @@
 	/*border-top:1px solid #2C3E50 !important;*/
 }
 
-.fc .fc-scrollgrid-section-body table, .fc .fc-scrollgrid-section-footer table {
+.fc .fc-scrollgrid-section-body table,
+.fc .fc-scrollgrid-section-footer table {
 	border-bottom-style: solid !important;
 }
 .fc-v-event:not(.fc-event-end) {
@@ -103,7 +104,7 @@
 
 .fc-event-main.priority-10,
 .fc-event.priority-10 {
-	border-left: 3px solid #d2105b; /* #f57c01 */;
+	border-left: 3px solid #d2105b; /* #f57c01 */
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
 	/*border-color: #f57c01*/
@@ -178,8 +179,8 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 
 .mobile-add-calendar-event-button {
 	position: fixed;
-	z-index:999;
-	background-color: #0078D4; /* Outlook blue color */
+	z-index: 999;
+	background-color: #0078d4; /* Outlook blue color */
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -188,7 +189,7 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 	height: 56px;
 	bottom: 70px;
 	left: 30px;
-	box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 	color: white;
 	font-size: 50px;
 	font-weight: 200;
@@ -196,7 +197,7 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 	cursor: pointer;
 
 	&:hover {
-		background-color: #004B8A;
+		background-color: #004b8a;
 	}
 }
 

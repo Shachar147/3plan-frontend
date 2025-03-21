@@ -43,7 +43,9 @@ const ThemeExample = () => {
 			{renderTitle('Colors')}
 			<div className="flex-row gap-10 flex-flow-wrap color-container">
 				{colors.sort().map((colorName) => (
-					<div className="color-sample" style={{ color: `var(--${colorName})` }}>{colorName}</div>
+					<div className="color-sample" style={{ color: `var(--${colorName})` }}>
+						{colorName}
+					</div>
 				))}
 			</div>
 			{renderTitle('Buttons')}

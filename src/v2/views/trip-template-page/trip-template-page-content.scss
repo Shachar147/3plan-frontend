@@ -1,239 +1,239 @@
 .trip-template-page-content {
-  width: 100vw;
-  height: CALC(100vh - 80px);
-  display: flex;
-  flex-direction: row;
-  gap: 2px;
-  overflow: hidden;
+	width: 100vw;
+	height: CALC(100vh - 80px);
+	display: flex;
+	flex-direction: row;
+	gap: 2px;
+	overflow: hidden;
 
-  .trip-template-itinerary {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    overflow-y: auto;
-    position: relative;
+	.trip-template-itinerary {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		width: 100%;
+		overflow-y: auto;
+		position: relative;
 
-    &:not(.trip-template-itinerary-shimmering) {
-      .trip-template-itinerary-content-bottom-shadow {
-        background: linear-gradient(180deg, transparent, #000);
-      }
-    }
+		&:not(.trip-template-itinerary-shimmering) {
+			.trip-template-itinerary-content-bottom-shadow {
+				background: linear-gradient(180deg, transparent, #000);
+			}
+		}
 
-    &-content-bottom-shadow {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 200px;
-      padding-inline: 20px;
-      word-break: break-word;
+		&-content-bottom-shadow {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: 200px;
+			padding-inline: 20px;
+			word-break: break-word;
 
-      display: flex;
-      flex-direction: column;
-      justify-content: end;
-      align-items: center;
-      gap: 8px;
+			display: flex;
+			flex-direction: column;
+			justify-content: end;
+			align-items: center;
+			gap: 8px;
 
-      > span {
-        color: white;
-        font-size: 50px;
-        font-weight: bold;
-        text-align: center;
-      }
-      padding-bottom: 20px;
-    }
+			> span {
+				color: white;
+				font-size: 50px;
+				font-weight: bold;
+				text-align: center;
+			}
+			padding-bottom: 20px;
+		}
 
-    &-day-container {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: 20px;
-      border-bottom:1px solid #ccc;
-    }
+		&-day-container {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			padding: 20px;
+			border-bottom: 1px solid #ccc;
+		}
 
-    &-day-title {
-      font-weight: bold;
-      text-align: start;
-      padding-inline-start: 20px;
-    }
+		&-day-title {
+			font-weight: bold;
+			text-align: start;
+			padding-inline-start: 20px;
+		}
 
-    &-activity {
-      display: flex;
-      flex-direction: row;
-      gap: 16px;
-      padding: 20px;
-      width: 100%;
-      cursor: pointer;
-      border-radius: 30px;
-      transition: background-color 0.3s ease-in-out;
-      opacity: 0.9;
+		&-activity {
+			display: flex;
+			flex-direction: row;
+			gap: 16px;
+			padding: 20px;
+			width: 100%;
+			cursor: pointer;
+			border-radius: 30px;
+			transition: background-color 0.3s ease-in-out;
+			opacity: 0.9;
 
-      &:hover {
-        background-color: #f6f6f6;
-        opacity: 1;
-      }
+			&:hover {
+				background-color: #f6f6f6;
+				opacity: 1;
+			}
 
-      &.notes-background {
-        background-color: #f6f6f6;
-        border-radius: 30px;
-      }
+			&.notes-background {
+				background-color: #f6f6f6;
+				border-radius: 30px;
+			}
 
-      &-image {
-        width: 160px;
-        height: 120px;
-        max-width: 160px;
-        max-height: 120px;
-        border-radius: 18px;
-      }
+			&-image {
+				width: 160px;
+				height: 120px;
+				max-width: 160px;
+				max-height: 120px;
+				border-radius: 18px;
+			}
 
-      &-content {
-        flex: 1 1 0;
-        gap: 4px;
-        display: flex;
-        flex-direction: column;
-        //justify-content: center;
+			&-content {
+				flex: 1 1 0;
+				gap: 4px;
+				display: flex;
+				flex-direction: column;
+				//justify-content: center;
 
-        &-title {
-          font-weight: bold;
-        }
+				&-title {
+					font-weight: bold;
+				}
 
-        &-title.shimmer-animation {
-          width: 90px;
-          height: 33px;
-        }
+				&-title.shimmer-animation {
+					width: 90px;
+					height: 33px;
+				}
 
-        &-description {
-          word-break: break-all;
+				&-description {
+					word-break: break-all;
 
-          &.notes-description {
-            word-break: break-word;
-          }
+					&.notes-description {
+						word-break: break-word;
+					}
 
-          &-description.shimmer-animation {
-            width: 300px;
-            height: 21px;
+					&-description.shimmer-animation {
+						width: 300px;
+						height: 21px;
 
-            &.medium {
-              width: 300px;
-              height: 21px;
-            }
+						&.medium {
+							width: 300px;
+							height: 21px;
+						}
 
-            &.small {
-              width: 220px;
-              height: 21px;
-            }
-          }
-        }
-      }
+						&.small {
+							width: 220px;
+							height: 21px;
+						}
+					}
+				}
+			}
 
-      &-category-tag {
-        background-color: #e5e5e5;
-        border-radius: 18px;
-        padding-inline: 8px;
-        width: max-content;
-        color: #656e75;
-        font-weight: bold;
-        font-size: 12px;
-      }
+			&-category-tag {
+				background-color: #e5e5e5;
+				border-radius: 18px;
+				padding-inline: 8px;
+				width: max-content;
+				color: #656e75;
+				font-weight: bold;
+				font-size: 12px;
+			}
 
-      .activity-category-tag.shimmer-animation {
-        width: 50px;
-        height: 18px;
-      }
+			.activity-category-tag.shimmer-animation {
+				width: 50px;
+				height: 18px;
+			}
 
-      &-marker-icon {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        position: relative;
+			&-marker-icon {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				position: relative;
 
-        i {
-          font-size: 40px;
-        }
+				i {
+					font-size: 40px;
+				}
 
-        span {
-          //position: absolute;
-          //top: 30px;
-        }
-      }
-    }
-  }
+				span {
+					//position: absolute;
+					//top: 30px;
+				}
+			}
+		}
+	}
 
-  .map-container {
-    height: 100% !important;
+	.map-container {
+		height: 100% !important;
 
-    .visible-items-pane {
-      display: none;
-    }
-  }
+		.visible-items-pane {
+			display: none;
+		}
+	}
 
-  .trip-template-itinerary,
-  .map-container {
-    resize: horizontal;
-    min-width: 35vw;
-  }
+	.trip-template-itinerary,
+	.map-container {
+		resize: horizontal;
+		min-width: 35vw;
+	}
 
-  .trip-template-itinerary {
-    width: 40vw;
-    max-width: 65vw;
-  }
+	.trip-template-itinerary {
+		width: 40vw;
+		max-width: 65vw;
+	}
 
-  .trip-template-page-cover {
-    width: 100%;
-    background-size: cover;
-    background-position: center;
-    min-height: 400px;
-    height: 400px;
-    position: relative;
-  }
+	.trip-template-page-cover {
+		width: 100%;
+		background-size: cover;
+		background-position: center;
+		min-height: 400px;
+		height: 400px;
+		position: relative;
+	}
 }
 
 body.rtl {
-  .trip-template-page-content {
-    direction: rtl;
-    text-align: right;
+	.trip-template-page-content {
+		direction: rtl;
+		text-align: right;
 
-    .trip-template-itinerary {
-      &-days {
-        direction: rtl;
-        text-align: right;
-      }
-    }
-  }
+		.trip-template-itinerary {
+			&-days {
+				direction: rtl;
+				text-align: right;
+			}
+		}
+	}
 }
 
 @media only screen and (max-width: 750px) {
-  .trip-template-page-content {
-    .trip-template-itinerary {
-      resize: none !important;
-      width: 100vw !important;
-      max-width: unset !important;
+	.trip-template-page-content {
+		.trip-template-itinerary {
+			resize: none !important;
+			width: 100vw !important;
+			max-width: unset !important;
 
-      &-content-bottom-shadow {
-        > span {
-          font-size: 32px;
-        }
-      }
+			&-content-bottom-shadow {
+				> span {
+					font-size: 32px;
+				}
+			}
 
-      &-activity {
-        &-image {
-          width: 120px;
-          height: 90px;
-          max-width: 120px;
-          max-height: 90px;
-        }
+			&-activity {
+				&-image {
+					width: 120px;
+					height: 90px;
+					max-width: 120px;
+					max-height: 90px;
+				}
 
-        &-marker-icon {
-          i {
-            font-size: 22px;
-          }
-        }
+				&-marker-icon {
+					i {
+						font-size: 22px;
+					}
+				}
 
-        &-content-title {
-          font-size: 22px;
-        }
-      }
-    }
-  }
+				&-content-title {
+					font-size: 22px;
+				}
+			}
+		}
+	}
 }

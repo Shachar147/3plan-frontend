@@ -1,8 +1,9 @@
 .editable-label-textarea {
-  width: 203px;
-  border: 1px solid #ccc;
+	width: 203px;
+	border: 1px solid #ccc;
 
-  & + button, & + button + button {
-    font-size: 21px;
-  }
+	& + button,
+	& + button + button {
+		font-size: 21px;
+	}
 }

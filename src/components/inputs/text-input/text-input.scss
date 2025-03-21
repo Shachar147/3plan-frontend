@@ -1,20 +1,20 @@
 .triplan-text-input {
-  .fa-times {
-    position: absolute;
-    top:7px !important;
-    height: 30px !important;
-    padding-top: 4px;
-    cursor: pointer;
+	.fa-times {
+		position: absolute;
+		top: 7px !important;
+		height: 30px !important;
+		padding-top: 4px;
+		cursor: pointer;
 
-    color: rgba(0,0,0,0.2);
-    font-size: 18px;
-    font-weight: 100;
-    background-color: white;
-    padding-inline: 5px;
-    transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
+		color: rgba(0, 0, 0, 0.2);
+		font-size: 18px;
+		font-weight: 100;
+		background-color: white;
+		padding-inline: 5px;
+		transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
 
-    &:hover {
-      color: rgba(0,0,0,0.5);
-    }
-  }
+		&:hover {
+			color: rgba(0, 0, 0, 0.5);
+		}
+	}
 }

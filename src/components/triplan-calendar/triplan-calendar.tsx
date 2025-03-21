@@ -31,7 +31,7 @@ import DraggableList from '../draggable-list/draggable-list';
 import { getClasses, isEventAlreadyOrdered, jsonDiff, lockEvents } from '../../utils/utils';
 import { TripDataSource } from '../../utils/enums';
 import { DBService } from '../../services/data-handlers/db-service';
-import {FeatureFlagsService} from "../../utils/feature-flags";
+import { FeatureFlagsService } from '../../utils/feature-flags';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -415,15 +415,17 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridAllDays',
 		  };
 
-	const customButtons = FeatureFlagsService.isNewDesignEnabled() ? undefined : {
-		customTitle: {
-			text: `${eventStore.tripName.replaceAll('-', ' ')} (${getDateRangeString(
-				new Date(eventStore.customDateRange.start),
-				new Date(eventStore.customDateRange.end)
-			)})`,
-			click: function () {},
-		},
-	};
+	const customButtons = FeatureFlagsService.isNewDesignEnabled()
+		? undefined
+		: {
+				customTitle: {
+					text: `${eventStore.tripName.replaceAll('-', ' ')} (${getDateRangeString(
+						new Date(eventStore.customDateRange.start),
+						new Date(eventStore.customDateRange.end)
+					)})`,
+					click: function () {},
+				},
+		  };
 
 	// set view mode as time grid three day on mobile
 	useEffect(() => {
@@ -644,7 +646,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	return (
 		<div className="triplan-calendar-container">
-			<div className="flex-col width-100-percents position-relative calendar-wrapper" key={eventStore.forceCalendarReRender}>
+			<div
+				className="flex-col width-100-percents position-relative calendar-wrapper"
+				key={eventStore.forceCalendarReRender}
+			>
 				{eventStore.isSwitchDaysEnabled && !eventStore.isTripLocked && <DraggableList />}
 				<FullCalendar
 					initialView={'timeGridWeek'}

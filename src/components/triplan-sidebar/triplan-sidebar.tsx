@@ -1,14 +1,14 @@
-import React, {CSSProperties, useContext} from 'react';
-import {getClasses} from '../../utils/utils';
-import {eventStoreContext} from '../../stores/events-store';
-import {SidebarEvent} from '../../utils/interfaces';
-import {observer} from 'mobx-react';
+import React, { CSSProperties, useContext } from 'react';
+import { getClasses } from '../../utils/utils';
+import { eventStoreContext } from '../../stores/events-store';
+import { SidebarEvent } from '../../utils/interfaces';
+import { observer } from 'mobx-react';
 import './triplan-sidebar-inner.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
-import {DateRangeFormatted} from '../../services/data-handlers/data-handler-base';
+import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import './triplan-sidebar.scss';
-import MinimizeExpandSidebarButton from "./minimze-expand-sidebar-button/minimize-expand-sidebar-button";
-import TriplanSidebarInner from "./triplan-sidebar-inner";
+import MinimizeExpandSidebarButton from './minimze-expand-sidebar-button/minimize-expand-sidebar-button';
+import TriplanSidebarInner from './triplan-sidebar-inner';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -51,7 +51,7 @@ export const wrapWithSidebarGroup = (
 
 	// Calculate max height for open state
 	const num = maxHeight ?? 100 * itemsCount + 90;
-	
+
 	// Set custom max height via style attribute, but use classes for all other styling
 	const customMaxHeight = isOpen ? { maxHeight: num + 'px' } : {};
 
@@ -71,17 +71,14 @@ export const wrapWithSidebarGroup = (
 				</span>
 				{!!titleSuffix && <div>{titleSuffix}</div>}
 			</div>
-			<div 
-				className={getClasses('sidebar-group-content', isOpen ? 'open' : 'closed')}
-				style={customMaxHeight}
-			>
+			<div className={getClasses('sidebar-group-content', isOpen ? 'open' : 'closed')} style={customMaxHeight}>
 				{children}
 			</div>
 		</>
 	);
 };
 
-function TriplanSidebar (props: TriplanSidebarProps) {
+function TriplanSidebar(props: TriplanSidebarProps) {
 	const eventStore = useContext(eventStoreContext);
 	const { customDateRange, setCustomDateRange, TriplanCalendarRef } = props;
 
@@ -103,7 +100,7 @@ function TriplanSidebar (props: TriplanSidebarProps) {
 				/>
 				<TriplanSidebarInner {...props} />
 			</div>
-			{eventStore.isSidebarMinimized && <MinimizeExpandSidebarButton/>}
+			{eventStore.isSidebarMinimized && <MinimizeExpandSidebarButton />}
 		</>
 	);
 }

@@ -1,17 +1,17 @@
-import React, {useContext, useEffect} from 'react';
+import React, { useContext, useEffect } from 'react';
 import './landing-page.scss';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TranslateService from '../../services/translate-service';
-import {eventStoreContext} from '../../stores/events-store';
-import {observer} from 'mobx-react';
-import {renderFooterLine} from '../../utils/ui-utils';
-import Button, {ButtonFlavor} from '../../components/common/button/button';
+import { eventStoreContext } from '../../stores/events-store';
+import { observer } from 'mobx-react';
+import { renderFooterLine } from '../../utils/ui-utils';
+import Button, { ButtonFlavor } from '../../components/common/button/button';
 import DataServices from '../../services/data-handlers/data-handler-base';
 import TriplanHeaderWrapper from '../../components/triplan-header/triplan-header-wrapper';
-import {useHandleWindowResize} from '../../custom-hooks/use-window-size';
-import {getCurrentUsername} from "../../utils/utils";
-import {FeatureFlagsService} from "../../utils/feature-flags";
-import {newDesignRootPath} from "../../v2/utils/consts";
+import { useHandleWindowResize } from '../../custom-hooks/use-window-size';
+import { getCurrentUsername } from '../../utils/utils';
+import { FeatureFlagsService } from '../../utils/feature-flags';
+import { newDesignRootPath } from '../../v2/utils/consts';
 
 const dataService = DataServices.LocalStorageService;
 const LandingPage = () => {
@@ -65,14 +65,16 @@ const LandingPage = () => {
 					/>
 				</div>
 				<div>
-					{FeatureFlagsService.isNewDesignEnabled() && <Button
-						text="New site - Beta"
-						onClick={() => {
-							navigate(newDesignRootPath);
-						}}
-						flavor={ButtonFlavor.link}
-						className="black text-decoration-underline margin-top-20"
-					/>}
+					{FeatureFlagsService.isNewDesignEnabled() && (
+						<Button
+							text="New site - Beta"
+							onClick={() => {
+								navigate(newDesignRootPath);
+							}}
+							flavor={ButtonFlavor.link}
+							className="black text-decoration-underline margin-top-20"
+						/>
+					)}
 				</div>
 			</div>
 			{renderFooterLine(eventStore)}

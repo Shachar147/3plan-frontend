@@ -11,7 +11,6 @@ button {
 	// prevent double click on button from being interrupted as zoom in on mobile
 	touch-action: manipulation;
 
-
 	// for icons
 	display: flex;
 	justify-content: center;
@@ -216,7 +215,6 @@ button.secondary-button {
 	color: white !important;
 	border: 1px solid var(--dark-gray) !important;
 }
-
 
 .buttons-group {
 	button {

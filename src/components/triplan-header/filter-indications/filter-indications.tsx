@@ -25,10 +25,14 @@ function FilterIndications(props: FilterIndicationsProps) {
 
 	const showOnlyEventsWithSpecificPriorities =
 		props.showOnlyEventsWithSpecificPriorities ?? !!Array.from(eventStore.filterOutPriorities.values()).length;
-		
-	const showOnlyEventsWithSpecificSidebarPriorities = !!Array.from(eventStore.filterSidebarPriorities.values()).length;
-	const showOnlyEventsWithSpecificSidebarCategories = !!Array.from(eventStore.filterSidebarCategories.values()).length;
-	const showOnlyEventsWithSpecificSidebarPreferredTimes = !!Array.from(eventStore.filterSidebarPreferredTimes.values()).length;
+
+	const showOnlyEventsWithSpecificSidebarPriorities = !!Array.from(eventStore.filterSidebarPriorities.values())
+		.length;
+	const showOnlyEventsWithSpecificSidebarCategories = !!Array.from(eventStore.filterSidebarCategories.values())
+		.length;
+	const showOnlyEventsWithSpecificSidebarPreferredTimes = !!Array.from(
+		eventStore.filterSidebarPreferredTimes.values()
+	).length;
 
 	const showOnlyEventsWithDistanceProblems =
 		props.showOnlyEventsWithDistanceProblems ?? eventStore.showOnlyEventsWithDistanceProblems;

@@ -132,12 +132,11 @@ export function apiPut(url, data, onSuccess, onError, onFinish) {
 }
 
 export async function apiDeletePromise(url) {
-	return await axios
-		.delete(getServerAddress() + url, {
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-			},
-		});
+	return await axios.delete(getServerAddress() + url, {
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+		},
+	});
 }
 
 export function apiDelete(self, url, onSuccess, onError, onFinish) {

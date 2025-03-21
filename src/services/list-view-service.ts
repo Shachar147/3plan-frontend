@@ -1,24 +1,27 @@
-import {EventStore} from '../stores/events-store';
+import { EventStore } from '../stores/events-store';
 import moment from 'moment/moment';
 import TranslateService from './translate-service';
-import {EventInput} from '@fullcalendar/react';
-import {getEventDueDate, toDate} from '../utils/time-utils';
-import {CalendarEvent, LocationData} from '../utils/interfaces';
-import {runInAction} from 'mobx';
-import {GoogleTravelMode, ListViewSummaryMode, TriplanCurrency, TriplanPriority} from '../utils/enums';
-import {priorityToColor} from '../utils/consts';
+import { EventInput } from '@fullcalendar/react';
+import { getEventDueDate, toDate } from '../utils/time-utils';
+import { CalendarEvent, LocationData } from '../utils/interfaces';
+import { runInAction } from 'mobx';
+import { GoogleTravelMode, ListViewSummaryMode, TriplanCurrency, TriplanPriority } from '../utils/enums';
+import { priorityToColor } from '../utils/consts';
 import {
-	BuildEventUrl, formatNumberWithCommas,
-	getCoordinatesRangeKey, getEventDescription, getEventTitle,
+	BuildEventUrl,
+	formatNumberWithCommas,
+	getCoordinatesRangeKey,
+	getEventDescription,
+	getEventTitle,
 	isFlightCategory,
 	isMatching,
 	padTo2Digits,
-	toDistanceString
+	toDistanceString,
 } from '../utils/utils';
-import {getEventDivHtml} from '../utils/ui-utils';
+import { getEventDivHtml } from '../utils/ui-utils';
 // @ts-ignore
 import _ from 'lodash';
-import {getSingleInCurrency} from "../utils/currency-utils";
+import { getSingleInCurrency } from '../utils/currency-utils';
 
 const destinationRoutesAddFromAndTo = true;
 
@@ -384,10 +387,21 @@ const ListViewService = {
 	},
 	isFlightOrHotel(eventStore: EventStore, e: CalendarEvent) {
 		const categoryId = Number(e.category);
-		const categories = eventStore.categories.filter((x) => x.title == TranslateService.translate(eventStore, "CATEGORY.HOTELS") || x.title == TranslateService.translate(eventStore, "CATEGORY.FLIGHTS")).map((c) => Number(c.id));
+		const categories = eventStore.categories
+			.filter(
+				(x) =>
+					x.title == TranslateService.translate(eventStore, 'CATEGORY.HOTELS') ||
+					x.title == TranslateService.translate(eventStore, 'CATEGORY.FLIGHTS')
+			)
+			.map((c) => Number(c.id));
 		return categories.includes(categoryId);
 	},
-	_getEstimatedCosts: (eventStore: EventStore, calendarEventsPerDay: Record<string, EventInput>, desiredCurrency: TriplanCurrency, ignoreFlightsAndHotels: boolean = true) => {
+	_getEstimatedCosts: (
+		eventStore: EventStore,
+		calendarEventsPerDay: Record<string, EventInput>,
+		desiredCurrency: TriplanCurrency,
+		ignoreFlightsAndHotels: boolean = true
+	) => {
 		let totalPricePerDay: Record<string, MinMax> = {};
 
 		Object.keys(calendarEventsPerDay).forEach((d, j) => {
@@ -398,21 +412,22 @@ const ListViewService = {
 			let orGroup = [];
 
 			eventsToday.forEach((e, idx) => {
-				if (Object.keys(e).length == 0){
+				if (Object.keys(e).length == 0) {
 					return;
 				}
 
-				if (ignoreFlightsAndHotels){
+				if (ignoreFlightsAndHotels) {
 					if (ListViewService.isFlightOrHotel(eventStore, e)) {
 						return;
 					}
 				}
 
-				const price = e.price && e.currency ? Number(getSingleInCurrency(e.price, e.currency, desiredCurrency)) : 0;
-				const prevLineWasOr = idx -1 >= 0 && Object.keys(eventsToday[idx-1]).length == 0;
-				const nextLineIsOr = idx + 1 < totalEventsToday && Object.keys(eventsToday[idx+1]).length == 0;
+				const price =
+					e.price && e.currency ? Number(getSingleInCurrency(e.price, e.currency, desiredCurrency)) : 0;
+				const prevLineWasOr = idx - 1 >= 0 && Object.keys(eventsToday[idx - 1]).length == 0;
+				const nextLineIsOr = idx + 1 < totalEventsToday && Object.keys(eventsToday[idx + 1]).length == 0;
 
-				if (prevLineWasOr || nextLineIsOr){
+				if (prevLineWasOr || nextLineIsOr) {
 					orGroup.push(price);
 				} else {
 					if (orGroup.length > 0) {
@@ -429,17 +444,21 @@ const ListViewService = {
 					min += Math.min(...orGroup);
 					max += Math.max(...orGroup);
 				}
-
 			});
 
 			totalPricePerDay[d] = {
-				min, max
-			}
+				min,
+				max,
+			};
 		});
 
 		return totalPricePerDay;
 	},
-	_buildSummaryPerDay: (eventStore: EventStore, calendarEventsPerDay: Record<string, EventInput>, ignoreFlightsAndHotels: boolean = true) => {
+	_buildSummaryPerDay: (
+		eventStore: EventStore,
+		calendarEventsPerDay: Record<string, EventInput>,
+		ignoreFlightsAndHotels: boolean = true
+	) => {
 		const highlightsPerDay: Record<string, string> = {};
 
 		const { todoComplete, ordered, startPrefix, lastPrefix, middlePrefixes } =
@@ -459,7 +478,12 @@ const ListViewService = {
 		let summaryPerDay: Record<string, string[]> = {};
 
 		const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
-		const totalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(eventStore, calendarEventsPerDay, desiredCurrency, ignoreFlightsAndHotels);
+		const totalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(
+			eventStore,
+			calendarEventsPerDay,
+			desiredCurrency,
+			ignoreFlightsAndHotels
+		);
 
 		Object.keys(calendarEventsPerDay).forEach((dayTitle) => {
 			const events = calendarEventsPerDay[dayTitle];
@@ -473,8 +497,13 @@ const ListViewService = {
 					(x: EventInput) =>
 						x.priority && (x.priority == TriplanPriority.must || x.priority == TriplanPriority.high)
 				)
-				.map((x: EventInput) => getEventTitle(x as unknown as CalendarEvent, eventStore).split('-')[0].split('?')[0].trim());
-				// .map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
+				.map((x: EventInput) =>
+					getEventTitle(x as unknown as CalendarEvent, eventStore)
+						.split('-')[0]
+						.split('?')[0]
+						.trim()
+				);
+			// .map((x: EventInput) => x.title!.split('-')[0].split('?')[0].trim());
 			highlightEvents = [...Array.from(new Set(highlightEvents))];
 			highlightsPerDay[dayTitle] = highlightEvents.join(', ');
 
@@ -503,11 +532,16 @@ const ListViewService = {
 				// }
 
 				if (event.allDay) {
-					const arr = [getEventTitle(event as unknown as CalendarEvent, eventStore), ListViewService._formatDescription(getEventDescription(event as unknown as CalendarEvent, eventStore))].filter(
-						(x) => x && x.trim().length
-					);
+					const arr = [
+						getEventTitle(event as unknown as CalendarEvent, eventStore),
+						ListViewService._formatDescription(
+							getEventDescription(event as unknown as CalendarEvent, eventStore)
+						),
+					].filter((x) => x && x.trim().length);
 					summaryPerDay[dayTitle].push(
-						`<span class="notes" style="color:${notesColor}; font-size:10px; font-weight:bold;">${arr.join(' - ')}</span>`
+						`<span class="notes" style="color:${notesColor}; font-size:10px; font-weight:bold;">${arr.join(
+							' - '
+						)}</span>`
 					);
 					return;
 				}
@@ -516,16 +550,28 @@ const ListViewService = {
 				const endTime = ListViewService._formatTime(getEventDueDate(event).toLocaleTimeString());
 				const title = getEventTitle(event as unknown as CalendarEvent, eventStore);
 
-				let price = event.price != undefined ? `${TranslateService.translate(eventStore, 'PRICE', {
-					price: event.price > 0 ? formatNumberWithCommas(event.price) : TranslateService.translate(eventStore, 'FREE_OF_CHARGE'),
-					currency: event.price == 0 ? '' : TranslateService.translate(eventStore, `${event.currency}_sign`)
-				})}` : "";
+				let price =
+					event.price != undefined
+						? `${TranslateService.translate(eventStore, 'PRICE', {
+								price:
+									event.price > 0
+										? formatNumberWithCommas(event.price)
+										: TranslateService.translate(eventStore, 'FREE_OF_CHARGE'),
+								currency:
+									event.price == 0
+										? ''
+										: TranslateService.translate(eventStore, `${event.currency}_sign`),
+						  })}`
+						: '';
 				if (price) {
 					price = price.trim();
 
 					if (event.price != desiredCurrency && event.price != 0) {
 						const convertedPrice = getSingleInCurrency(event.price, event.currency, desiredCurrency);
-						price += ` = ${convertedPrice} ${TranslateService.translate(eventStore, desiredCurrency + '_sign')}`
+						price += ` = ${convertedPrice} ${TranslateService.translate(
+							eventStore,
+							desiredCurrency + '_sign'
+						)}`;
 					}
 
 					price = `<span style="font-weight: normal"> (${price})</span>`;
@@ -962,10 +1008,12 @@ const ListViewService = {
 
 				const thisLocation = x.event.location;
 				if (thisLocation) {
-					thisLocation.eventName = getEventTitle(x.event as unknown as CalendarEvent, eventStore)
+					thisLocation.eventName = getEventTitle(x.event as unknown as CalendarEvent, eventStore);
 				}
 				if (prevLocation && thisLocation && prevLocation.address != thisLocation.address) {
-					loggerArr.push('~ ' + prevTitle + ' -> ' + getEventTitle(x.event as unknown as CalendarEvent, eventStore));
+					loggerArr.push(
+						'~ ' + prevTitle + ' -> ' + getEventTitle(x.event as unknown as CalendarEvent, eventStore)
+					);
 
 					let distanceToNextEvent = calculateDistance(eventStore, prevLocation, thisLocation); // prevTitle + " -> " + getEventTitle(x.event as unknown as CalendarEvent, eventStore);
 
@@ -1075,8 +1123,15 @@ const ListViewService = {
 		}
 		return summaryPerDay;
 	},
-	getEstimatedPrice: (eventStore: EventStore, min: number, max: number, currency: TriplanCurrency, divClass?: string, what?: string) => {
-		let estimatedPriceBlock = "";
+	getEstimatedPrice: (
+		eventStore: EventStore,
+		min: number,
+		max: number,
+		currency: TriplanCurrency,
+		divClass?: string,
+		what?: string
+	) => {
+		let estimatedPriceBlock = '';
 		let textKey = 'ESTIMATED_EXPANSES';
 		if (min == max) {
 			estimatedPriceBlock = min.toFixed(2).toString();
@@ -1087,11 +1142,11 @@ const ListViewService = {
 			max = formatNumberWithCommas(max.toFixed(2));
 			estimatedPriceBlock = `${min} - ${max}`;
 		}
-		if (estimatedPriceBlock != ""){
+		if (estimatedPriceBlock != '') {
 			estimatedPriceBlock = TranslateService.translate(eventStore, textKey, {
 				what: what ? `${what} ` : '',
 				price: estimatedPriceBlock,
-				currency: TranslateService.translate(eventStore, `${currency}_sign`)
+				currency: TranslateService.translate(eventStore, `${currency}_sign`),
 			});
 
 			estimatedPriceBlock = `<div class="${divClass}">💸 ${estimatedPriceBlock}</div>`;
@@ -1111,22 +1166,36 @@ const ListViewService = {
 
 		// build summary per day and highlights
 		// todo complete: move highlights to the end? (since indent rules may change the order)
-		let { summaryPerDay, highlightsPerDay, totalPricePerDay, currency } = ListViewService._buildSummaryPerDay(eventStore, calendarEventsPerDay);
+		let { summaryPerDay, highlightsPerDay, totalPricePerDay, currency } = ListViewService._buildSummaryPerDay(
+			eventStore,
+			calendarEventsPerDay
+		);
 
 		const orderedKeywords = ['הוזמן', 'הזמנתי', 'ordered', 'booked', 'reserved'];
 		const bookedCalendarEventsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
 			eventStore,
-			calendarEvents.filter((c) => orderedKeywords.filter((k) => (c.description ?? "").includes(k)).length > 0 || isFlightCategory(eventStore, Number(c.category!)))
+			calendarEvents.filter(
+				(c) =>
+					orderedKeywords.filter((k) => (c.description ?? '').includes(k)).length > 0 ||
+					isFlightCategory(eventStore, Number(c.category!))
+			)
 		);
 
-		const { totalPricePerDay: totalBookedPricePerDay } = ListViewService._buildSummaryPerDay(eventStore, bookedCalendarEventsPerDay, true);
+		const { totalPricePerDay: totalBookedPricePerDay } = ListViewService._buildSummaryPerDay(
+			eventStore,
+			bookedCalendarEventsPerDay,
+			true
+		);
 
 		const flightsAndHotelsPerDay: Record<string, EventInput> = ListViewService._buildCalendarEventsPerDay(
 			eventStore,
 			calendarEvents.filter((e) => ListViewService.isFlightOrHotel(eventStore, e))
 		);
-		const { totalPricePerDay: totalFlightsAndHotelsPricePerDay } = ListViewService._buildSummaryPerDay(eventStore, flightsAndHotelsPerDay, false);
-
+		const { totalPricePerDay: totalFlightsAndHotelsPricePerDay } = ListViewService._buildSummaryPerDay(
+			eventStore,
+			flightsAndHotelsPerDay,
+			false
+		);
 
 		function sumMaxValues(data: Record<string, MinMax>) {
 			let sum = 0;
@@ -1138,10 +1207,16 @@ const ListViewService = {
 			return sum;
 		}
 
-		let orderedItemsPrice = TranslateService.translate(eventStore, 'ORDERED_ITEMS_PRICE', { price: sumMaxValues(totalBookedPricePerDay), currency: TranslateService.translate(eventStore, `${currency}_sign`) });
+		let orderedItemsPrice = TranslateService.translate(eventStore, 'ORDERED_ITEMS_PRICE', {
+			price: sumMaxValues(totalBookedPricePerDay),
+			currency: TranslateService.translate(eventStore, `${currency}_sign`),
+		});
 		orderedItemsPrice = `<div class="font-size-14 font-weight-bold"">💸 ${orderedItemsPrice}</div>`;
 
-		let flightsAndHotelsPrice = TranslateService.translate(eventStore, 'FLIGHTS_AND_HOTELS_PRICE', { price: sumMaxValues(totalFlightsAndHotelsPricePerDay), currency: TranslateService.translate(eventStore, `${currency}_sign`) });
+		let flightsAndHotelsPrice = TranslateService.translate(eventStore, 'FLIGHTS_AND_HOTELS_PRICE', {
+			price: sumMaxValues(totalFlightsAndHotelsPricePerDay),
+			currency: TranslateService.translate(eventStore, `${currency}_sign`),
+		});
 		flightsAndHotelsPrice = `<div class="font-size-14 font-weight-bold"">💸 ${flightsAndHotelsPrice}</div>`;
 
 		// handle or and indent rules
@@ -1189,13 +1264,20 @@ const ListViewService = {
 			return Object.keys(summaryPerDay).map((dayTitle) => {
 				const highlights = highlightsPerDay[dayTitle] ? ` (${highlightsPerDay[dayTitle]})` : '';
 
-				let estimatedPriceBlock = ListViewService.getEstimatedPrice(eventStore, totalPricePerDay[dayTitle]["min"], totalPricePerDay[dayTitle]["max"], currency, undefined, TranslateService.translate(eventStore, 'DAILY'));
+				let estimatedPriceBlock = ListViewService.getEstimatedPrice(
+					eventStore,
+					totalPricePerDay[dayTitle]['min'],
+					totalPricePerDay[dayTitle]['max'],
+					currency,
+					undefined,
+					TranslateService.translate(eventStore, 'DAILY')
+				);
 
 				// if there are notes, put it after them. otherwise, put them after the highlights.
 				const notesIndex = summaryPerDay[dayTitle].findIndex((e) => e.includes('"notes"'));
 				if (notesIndex != -1) {
-					summaryPerDay[dayTitle].splice(notesIndex+1, 0, estimatedPriceBlock.replaceAll("div", "span"));
-					estimatedPriceBlock = "";
+					summaryPerDay[dayTitle].splice(notesIndex + 1, 0, estimatedPriceBlock.replaceAll('div', 'span'));
+					estimatedPriceBlock = '';
 				}
 
 				return `
@@ -1211,7 +1293,6 @@ const ListViewService = {
 		}
 
 		const FullSummary = () => {
-
 			let min = 0;
 			let max = 0;
 			Object.values(totalPricePerDay).forEach((minMax: MinMax) => {
@@ -1223,7 +1304,13 @@ const ListViewService = {
 			min += sumMaxValues(totalFlightsAndHotelsPricePerDay);
 			max += sumMaxValues(totalFlightsAndHotelsPricePerDay);
 
-			let estimatedPriceBlock = ListViewService.getEstimatedPrice(eventStore, Number(min.toFixed(2)), Number(max.toFixed(2)), currency, "font-size-14 font-weight-bold");
+			let estimatedPriceBlock = ListViewService.getEstimatedPrice(
+				eventStore,
+				Number(min.toFixed(2)),
+				Number(max.toFixed(2)),
+				currency,
+				'font-size-14 font-weight-bold'
+			);
 
 			// const divider = eventStore.isMobile ? '<br/><hr/>' : '<br/><hr/><br/>';
 			const divider = '<br/><hr/>';
@@ -1234,7 +1321,7 @@ const ListViewService = {
             ${estimatedPriceBlock}
             ${flightsAndHotelsPrice}
             ${orderedItemsPrice}
-            ${estimatedPriceBlock != "" ? '<hr/>' : ""}
+            ${estimatedPriceBlock != '' ? '<hr/>' : ''}
             ${getSummaryPerDayHTMLArray().join(divider)}
         </div>
     `;

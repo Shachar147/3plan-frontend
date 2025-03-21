@@ -1,81 +1,81 @@
 body.rtl {
-  .mobile-header {
-    direction: rtl;
-  }
+	.mobile-header {
+		direction: rtl;
+	}
 }
 
 .mobile-header {
-  min-height: 60px;
-  height: max-content;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 99999;
-  //background-color: #eaeff5; // #eeeeee;
+	min-height: 60px;
+	height: max-content;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 99999;
+	//background-color: #eaeff5; // #eeeeee;
 
-  border-bottom: 1px solid white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+	border-bottom: 1px solid white;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
 
-  .mobile-header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding-inline-end: 20px;
-    padding-inline-start: 10px;
+	.mobile-header-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		padding-inline-end: 20px;
+		padding-inline-start: 10px;
 
-    gap: 30px;
+		gap: 30px;
 
-    i {
-      font-size: 20px;
-      font-weight: normal;
-    }
-  }
-  
-  .admin-mode-link {
-    border-radius: 10px;
-    opacity: 0.6;
-    padding: 10px;
-    background-color: white;
-    cursor: pointer;
-  }
+		i {
+			font-size: 20px;
+			font-weight: normal;
+		}
+	}
+
+	.admin-mode-link {
+		border-radius: 10px;
+		opacity: 0.6;
+		padding: 10px;
+		background-color: white;
+		cursor: pointer;
+	}
 }
 
 .mobile-header,
 .mobile-header .mobile-navbar,
-.mobile-header .mobile-trip-name{
-  background-color: #e1e7ed !important;
+.mobile-header .mobile-trip-name {
+	background-color: #e1e7ed !important;
 }
 
 .mobile-header-trip-name {
-  background-color: #eaeff4;
-  border-bottom:1px solid white;
-  text-align: center;
-  width: 100vw;
-  font-size: 10px;
-  position: fixed;
-  top: 61px;
-  //z-index: 99998;
-  z-index:5400;
-  padding-block: 2.5px;
+	background-color: #eaeff4;
+	border-bottom: 1px solid white;
+	text-align: center;
+	width: 100vw;
+	font-size: 10px;
+	position: fixed;
+	top: 61px;
+	//z-index: 99998;
+	z-index: 5400;
+	padding-block: 2.5px;
 
-  a {
-    cursor: pointer;
-    text-decoration: underline !important;
-    transition: all 0.2s ease-in-out;
-    display: none;
+	a {
+		cursor: pointer;
+		text-decoration: underline !important;
+		transition: all 0.2s ease-in-out;
+		display: none;
 
-    &:hover {
-      opacity: 0.5;
-    }
-  }
+		&:hover {
+			opacity: 0.5;
+		}
+	}
 }
 
 body.rtl {
-  .mobile-header-trip-name {
-    direction: rtl;
-  }
+	.mobile-header-trip-name {
+		direction: rtl;
+	}
 }

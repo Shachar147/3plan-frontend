@@ -1,210 +1,217 @@
-body:has(.login-page-v2){
-  background-color: white !important;
+body:has(.login-page-v2) {
+	background-color: white !important;
 }
 
 .login-page-v2 {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  background-color: white;
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	background-color: white;
 
-  .triplan-header-banner {
-    width: 100%;
-    height: 400px;
+	.triplan-header-banner {
+		width: 100%;
+		height: 400px;
 
-    .triplan-header-banner-bottom-shadow {
-      top: 300px;
-    }
+		.triplan-header-banner-bottom-shadow {
+			top: 300px;
+		}
 
-    .triplan-header-banner-slogan {
-      top: 160px;
-    }
-  }
+		.triplan-header-banner-slogan {
+			top: 160px;
+		}
+	}
 
-  .tabular.menu {
-    display: flex;
-    gap: 20px;
-    .item {
-      font-size: 20px !important;
-      width: max-content !important;
-      min-width: unset !important;
+	.tabular.menu {
+		display: flex;
+		gap: 20px;
+		.item {
+			font-size: 20px !important;
+			width: max-content !important;
+			min-width: unset !important;
 
-      &:not(.active){
-        color: white !important;
-      }
-    }
-  }
+			&:not(.active) {
+				color: white !important;
+			}
+		}
+	}
 
-  input[type=text], input[type=password] {
-    background-color: transparent !important;
-    outline: none;
-    border:1px solid var(--gray);
-    border-radius: 8px;
-    color: white !important;
-    padding-inline-start: 8px;
-    font-size: 12px;
-    width: 100% !important;
-    min-width: 200px !important;
+	input[type='text'],
+	input[type='password'] {
+		background-color: transparent !important;
+		outline: none;
+		border: 1px solid var(--gray);
+		border-radius: 8px;
+		color: white !important;
+		padding-inline-start: 8px;
+		font-size: 12px;
+		width: 100% !important;
+		min-width: 200px !important;
 
-    &::placeholder {
-      color: var(--gray) !important;
-    }
+		&::placeholder {
+			color: var(--gray) !important;
+		}
 
-    &:disabled {
-      border:1 px solid var(--gray) !important;
-    }
-  }
+		&:disabled {
+			border: 1 px solid var(--gray) !important;
+		}
+	}
 
-  .login-page-container,
-  .register-page-container {
-    height: CALC(100vh - 400px) !important;
-    width: 100% !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    //padding-top: 50px;
-  }
+	.login-page-container,
+	.register-page-container {
+		height: CALC(100vh - 400px) !important;
+		width: 100% !important;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		//padding-top: 50px;
+	}
 
-  .register-page-container,
-  .login-page-container {
-    //width: 100vw;
-    background-color: white;
-    height: max-content;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	.register-page-container,
+	.login-page-container {
+		//width: 100vw;
+		background-color: white;
+		height: max-content;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
-    .divider {
-      width: 1px;
-      height: 350px;
-      margin-inline-end: 50px;
-      background-color: #efefef;
-    }
+		.divider {
+			width: 1px;
+			height: 350px;
+			margin-inline-end: 50px;
+			background-color: #efefef;
+		}
 
-    img {
-      max-width: 50% !important;
-      max-height: unset !important;
-    }
+		img {
+			max-width: 50% !important;
+			max-height: unset !important;
+		}
 
-    h3 {
-      font-weight: bold;
-    }
+		h3 {
+			font-weight: bold;
+		}
 
-    .field.red {
-      color: var(--red);
-    }
+		.field.red {
+			color: var(--red);
+		}
 
-    .field.blue {
-      color: var(--blue);
-    }
+		.field.blue {
+			color: var(--blue);
+		}
 
-    .register-form,
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+		.register-form,
+		.login-form {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
 
-      input[type=text], input[type=password] {
-        background-color: transparent !important;
-        outline: none;
-        border: 1px solid var(--gray);
-        border-radius: 8px;
-        padding-inline-start: 8px;
-        font-size: 14px;
-        line-height: 40px;
-        height: 40px;
-        color: black !important;
-      }
+			input[type='text'],
+			input[type='password'] {
+				background-color: transparent !important;
+				outline: none;
+				border: 1px solid var(--gray);
+				border-radius: 8px;
+				padding-inline-start: 8px;
+				font-size: 14px;
+				line-height: 40px;
+				height: 40px;
+				color: black !important;
+			}
 
-      button {
-        max-width: unset !important;
-        border-radius: 8px !important;
-        margin-block: 8px;
-      }
+			button {
+				max-width: unset !important;
+				border-radius: 8px !important;
+				margin-block: 8px;
+			}
 
-      input[type=text], input[type=password], button {
-        width: 300px !important;
-        max-width: unset !important;
-        min-width: unset !important;
-      }
-    }
-  }
+			input[type='text'],
+			input[type='password'],
+			button {
+				width: 300px !important;
+				max-width: unset !important;
+				min-width: unset !important;
+			}
+		}
+	}
 }
 
 body.rtl {
-  .login-page-container,
-  .register-page-container {
-    direction: rtl;
-    text-align: right;
+	.login-page-container,
+	.register-page-container {
+		direction: rtl;
+		text-align: right;
 
-    .divider {
-      margin-inline-start: -25px !important;
-      margin-inline-end: 60px !important;
-    }
-  }
+		.divider {
+			margin-inline-start: -25px !important;
+			margin-inline-end: 60px !important;
+		}
+	}
 }
 
 @media only screen and (max-width: 750px) {
-  .login-page-v2 {
+	.login-page-v2 {
+		.login-page-container,
+		.register-page-container {
+			padding-top: 30px;
+			height: max-content !important;
+		}
 
-    .login-page-container,
-    .register-page-container {
-      padding-top: 30px;
-      height:max-content !important;
-    }
+		.register-page-container,
+		.login-page-container {
+			flex-direction: column;
 
-    .register-page-container,
-    .login-page-container {
-      flex-direction: column;
+			img {
+				max-width: unset !important;
+				width: 100vw;
+				height: auto;
+				padding-inline: 50px;
+			}
 
-      img {
-        max-width: unset !important;
-        width: 100vw;
-        height: auto;
-        padding-inline: 50px;
-      }
+			.divider {
+				width: 100vw !important;
+				height: 1px !important;
+				margin-inline: 0 !important;
+				margin-block: 20px !important;
+			}
 
-      .divider {
-        width: 100vw !important;
-        height: 1px !important;
-        margin-inline: 0 !important;
-        margin-block: 20px !important;
-      }
+			.register-form-buttons,
+			.login-form-buttons {
+				margin-bottom: 20px !important;
+			}
 
-      .register-form-buttons,
-      .login-form-buttons {
-        margin-bottom: 20px !important;
-      }
-
-      // hide stuff
-      img, .divider, .block-title span {
-        display: none !important;
-      }
-    }
-  }
+			// hide stuff
+			img,
+			.divider,
+			.block-title span {
+				display: none !important;
+			}
+		}
+	}
 }
 
 // login page when F12 is opened or height is too small.
 @media only screen and (max-height: 800px) and (min-width: 650px) {
-  body:has(.login-page-container), body:has(.register-page-container) {
-    .triplan-header-banner {
-      height: 40% !important;
-    }
+	body:has(.login-page-container),
+	body:has(.register-page-container) {
+		.triplan-header-banner {
+			height: 40% !important;
+		}
 
-    .triplan-header-banner-slogan {
-      display: none !important;
-    }
+		.triplan-header-banner-slogan {
+			display: none !important;
+		}
 
-    .triplan-header-banner-bottom-shadow {
-      top: unset !important;
-      bottom: 0 !important;
-    }
+		.triplan-header-banner-bottom-shadow {
+			top: unset !important;
+			bottom: 0 !important;
+		}
 
-    .login-page-v2 .login-page-container, .login-page-v2 .register-page-container,
-    .plan-trip-tab-menu > div + div {
-      position: relative;
-      top: 20px;
-      height: max-content !important;
-    }
-  }
+		.login-page-v2 .login-page-container,
+		.login-page-v2 .register-page-container,
+		.plan-trip-tab-menu > div + div {
+			position: relative;
+			top: 20px;
+			height: max-content !important;
+		}
+	}
 }

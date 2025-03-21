@@ -30,7 +30,7 @@ import { LocationData } from '../../../utils/interfaces';
 import SelectInput from '../../../components/inputs/select-input/select-input';
 import { TriplanPriority } from '../../../utils/enums';
 import { ucfirst } from '../../../utils/utils';
-import {endpoints} from "../../../v2/utils/endpoints";
+import { endpoints } from '../../../v2/utils/endpoints';
 
 interface ManageItemData {
 	items: TinderItem[];

@@ -125,7 +125,7 @@ function MyTrips() {
 		return (
 			<div
 				className={getClasses(
-					['my-trips bright-scrollbar min-height-300 flex-column gap-20 no-trips-placeholder'],
+					['my-trips bright-scrollbar min-height-300 flex-column gap-20 no-trips-placeholder']
 					// eventStore.isListView && 'hidden'
 				)}
 			>
@@ -155,7 +155,7 @@ function MyTrips() {
 		return (
 			<div
 				className={getClasses(
-					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder'],
+					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder']
 					// eventStore.isListView && 'hidden'
 				)}
 				style={{
@@ -164,8 +164,8 @@ function MyTrips() {
 					backgroundRepeat: 'no-repeat',
 					backgroundPositionX: 'center',
 					backgroundPositionY: '-20px',
-					paddingTop: "220px",
-					color: "var(--darkest-blue)"
+					paddingTop: '220px',
+					color: 'var(--darkest-blue)',
 				}}
 			>
 				{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}
@@ -177,7 +177,7 @@ function MyTrips() {
 		return (
 			<div
 				className={getClasses(
-					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder'],
+					['my-trips min-height-300 flex-column gap-20 no-trips-placeholder']
 					// eventStore.isListView && 'hidden'
 				)}
 			>

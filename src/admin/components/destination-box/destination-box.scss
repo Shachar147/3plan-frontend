@@ -1,40 +1,41 @@
 .destination-box {
-  width: 200px;
-  height: 200px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: white;
-  flex-direction: column;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  opacity: 0.5;
-  word-break: break-all;
+	width: 200px;
+	height: 200px;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+	flex-direction: column;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	opacity: 0.5;
+	word-break: break-all;
 
-  &:hover, &.active {
-    width: 210px;
-    height: 210px;
-    opacity: 1;
-  }
+	&:hover,
+	&.active {
+		width: 210px;
+		height: 210px;
+		opacity: 1;
+	}
 
-  .destination-box-name {
-    font-family: 'Arial';
-    font-weight: bold;
-  }
+	.destination-box-name {
+		font-family: 'Arial';
+		font-weight: bold;
+	}
 
-  .destination-box-errors {
-    display: flex;
-    flex-direction: column;
-    color: slategray;
-    font-size: 10px;
-    margin-top: 5px;
-    text-align: center;
-  }
+	.destination-box-errors {
+		display: flex;
+		flex-direction: column;
+		color: slategray;
+		font-size: 10px;
+		margin-top: 5px;
+		text-align: center;
+	}
 }
 
 body.rtl {
-  .destination-box {
-    direction: rtl;
-  }
+	.destination-box {
+		direction: rtl;
+	}
 }

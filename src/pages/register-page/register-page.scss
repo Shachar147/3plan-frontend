@@ -36,7 +36,7 @@
 			min-width: 200px;
 			transition: all 0.3s ease-in-out;
 		}
-		
+
 		.login-link-container {
 			direction: inherit;
 		}
@@ -149,13 +149,13 @@ body {
 					text-align: right !important;
 				}
 			}
-			
+
 			.login-link-container {
 				direction: rtl;
 			}
 		}
 	}
-	
+
 	&.ltr {
 		.login-link-container {
 			direction: ltr;

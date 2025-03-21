@@ -40,11 +40,7 @@ function InviteLink() {
 
 			// log history - used invite link to join
 			eventStore.tripId = trip.id;
-			LogHistoryService.logHistory(
-				eventStore,
-				TripActions.usedShareTripLink,
-				{}
-			);
+			LogHistoryService.logHistory(eventStore, TripActions.usedShareTripLink, {});
 
 			navigate('/plan/' + tripName, {});
 		});

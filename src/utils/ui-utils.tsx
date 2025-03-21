@@ -5,14 +5,14 @@ import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ToggleButton, { OptionToggleButton } from '../components/toggle-button/toggle-button';
 import { ViewMode } from './enums';
-import {getClasses, getEventTitle, isEventAlreadyOrdered} from './utils';
+import { getClasses, getEventTitle, isEventAlreadyOrdered } from './utils';
 import TriplanTag from '../components/common/triplan-tag/triplan-tag';
 import { getUser } from '../helpers/auth';
 import Select from 'react-select';
 import { Observer } from 'mobx-react';
 import { getTimeStringFromDate, toDate } from './time-utils';
 import { CalendarEvent } from './interfaces';
-import {FeatureFlagsService} from "./feature-flags";
+import { FeatureFlagsService } from './feature-flags';
 
 export const renderLanguageSelector = (eventStore: EventStore) => {
 	const options: any[] = [
@@ -265,7 +265,7 @@ export const getViewSelectorOptions = (
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW' + suffix),
 			icon: <i className="fa fa-map-o black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-map selected-color" aria-hidden="true" />,
-			iconClass: 'fa-map-o'
+			iconClass: 'fa-map-o',
 		},
 		{
 			key: ViewMode.calendar,
@@ -273,7 +273,7 @@ export const getViewSelectorOptions = (
 			icon: <i className="fa fa-calendar-o black-color" aria-hidden="true" />,
 			defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-calendar selected-color" aria-hidden="true" />,
-			iconClass: 'fa-calendar'
+			iconClass: 'fa-calendar',
 		},
 		{
 			key: ViewMode.combined,
@@ -282,21 +282,21 @@ export const getViewSelectorOptions = (
 			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true" />,
 			desktopOnly: true,
-			iconClass: 'fa-compress'
+			iconClass: 'fa-compress',
 		},
 		{
 			key: ViewMode.list,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW' + suffix),
 			icon: <i className="fa fa-list black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true" />,
-			iconClass: 'fa-list'
+			iconClass: 'fa-list',
 		},
 		{
 			key: ViewMode.feed,
 			name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${eventStore.isMobile ? '.SHORT' : ''}`),
 			icon: <i className="fa fa-search black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-search selected-color" aria-hidden="true" />,
-			iconClass: 'fa-search'
+			iconClass: 'fa-search',
 		},
 	];
 
@@ -307,7 +307,7 @@ export const getViewSelectorOptions = (
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.SIDEBAR_VIEW'),
 				icon: <i className="fa fa-star-o black-color" aria-hidden="true" />,
 				iconActive: <i className="fa fa-star selected-color" aria-hidden="true" />,
-				iconClass: 'fa-start-o'
+				iconClass: 'fa-start-o',
 			},
 			...baseArray.filter((x) => !x.desktopOnly),
 		];
@@ -450,7 +450,7 @@ export const renderFooterLine = (eventStore: EventStore, classList?: string) => 
 	</div>
 );
 
-export function renderLineWithText(text: string, className?: string){
+export function renderLineWithText(text: string, className?: string) {
 	return (
 		<div className={getClasses('preferred-time', className)}>
 			<div className="preferred-time-divider max-width-20" />
