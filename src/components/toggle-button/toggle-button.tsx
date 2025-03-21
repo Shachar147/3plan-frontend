@@ -127,7 +127,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 					{renderIcon(
 						isSelected && useActiveButtons ? iconActive || defaultIcon || icon : defaultIcon || icon
 					)}
-					<span className={'multiple-options-toggle-button-item-text'}>{name}</span>
+					<span className="multiple-options-toggle-button-item-text">{name}</span>
 				</>
 			</div>
 		);

@@ -34,6 +34,14 @@ body.rtl {
       font-weight: normal;
     }
   }
+  
+  .admin-mode-link {
+    border-radius: 10px;
+    opacity: 0.6;
+    padding: 10px;
+    background-color: white;
+    cursor: pointer;
+  }
 }
 
 .mobile-header,

@@ -185,14 +185,14 @@ const MobileNavbar = (options: TriplanHeaderProps) => {
 						{/*)}*/}
 
 						<Link to="#" className="menu-bars">
-							<HamburgerIcon className={'black-background'} />
+							<HamburgerIcon className="black-background" />
 						</Link>
 					</div>
 					<nav className={eventStore.isMenuOpen ? 'nav-menu active' : 'nav-menu'}>
 						<ul className="nav-menu-items">
 							<li className="navbar-toggle">
 								<Link to="#" className="menu-bars">
-									<HamburgerIcon className={'black-background'} isOpen={true} />
+									<HamburgerIcon className="black-background" isOpen={true} />
 								</Link>
 							</li>
 

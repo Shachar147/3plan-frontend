@@ -29,13 +29,18 @@
 		justify-content: center;
 		width: 100%;
 		padding-inline: 16px;
-		//gap: 16px;
+		gap: 16px;
 
 		.logo-container {
 			max-width: 200px;
 			min-width: 200px;
 			transition: all 0.3s ease-in-out;
 		}
+		
+		.login-link-container {
+			direction: inherit;
+		}
+
 		.login-form {
 			width: 100%;
 			max-width: 400px;
@@ -144,6 +149,16 @@ body {
 					text-align: right !important;
 				}
 			}
+			
+			.login-link-container {
+				direction: rtl;
+			}
+		}
+	}
+	
+	&.ltr {
+		.login-link-container {
+			direction: ltr;
 		}
 	}
 }

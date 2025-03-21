@@ -97,11 +97,31 @@
           font-weight: bold;
         }
 
+        &-title.shimmer-animation {
+          width: 90px;
+          height: 33px;
+        }
+
         &-description {
           word-break: break-all;
 
           &.notes-description {
             word-break: break-word;
+          }
+
+          &-description.shimmer-animation {
+            width: 300px;
+            height: 21px;
+
+            &.medium {
+              width: 300px;
+              height: 21px;
+            }
+
+            &.small {
+              width: 220px;
+              height: 21px;
+            }
           }
         }
       }
@@ -114,6 +134,11 @@
         color: #656e75;
         font-weight: bold;
         font-size: 12px;
+      }
+
+      .activity-category-tag.shimmer-animation {
+        width: 50px;
+        height: 18px;
       }
 
       &-marker-icon {

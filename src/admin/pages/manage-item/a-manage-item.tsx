@@ -569,7 +569,7 @@ function AManageItem() {
 		}
 
 		return (
-			<div className={'image-container'}>
+			<div className="image-container">
 				{imagesBlock}
 				{input}
 			</div>

@@ -57,8 +57,8 @@ function LoginPage() {
 	);
 
 	const FooterLinkBlock = () => (
-		<span className={'register-link-container'} key={'register-link-container'}>
-			<div style={{ direction: eventStore.getCurrentDirection() }}>
+		<span className="register-link-container" key={'register-link-container'}>
+			<div>
 				{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
 				<Link data-testid={'register'} to={'/register'}>
 					{TranslateService.translate(eventStore, 'REGISTER')}
@@ -171,7 +171,7 @@ function LoginPage() {
 		error === '' ? (
 			''
 		) : (
-			<div className={'field red'} data-testid={errorTestId}>
+			<div className="field red" data-testid={errorTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
 			</div>
 		);
@@ -179,7 +179,7 @@ function LoginPage() {
 		message === '' || error !== '' ? (
 			''
 		) : (
-			<div className={'field blue'} data-testid={messageTestId}>
+			<div className="field blue" data-testid={messageTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, message) }} />
 			</div>
 		);

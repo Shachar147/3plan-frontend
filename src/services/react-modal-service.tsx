@@ -247,7 +247,7 @@ export const ReactModalRenderHelper = {
 			<TextareaInput
 				rows={extra.rows || 3}
 				id={extra.id}
-				className={'textAreaInput'}
+				className="textAreaInput"
 				ref={ref}
 				modalValueName={modalValueName}
 				placeholder={extra.placeholder}
@@ -1564,7 +1564,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
 					</div>
 				)}
@@ -1642,7 +1642,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderInputWithLabel(
 							eventStore,
 							'MODALS.TITLE',
@@ -1741,7 +1741,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderInputWithLabel(
 							eventStore,
 							'MODALS.TITLE',
@@ -2654,7 +2654,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderSelectInput(
 							eventStore,
 							'sidebar-event-to-add-to-calendar',
@@ -2752,7 +2752,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderSelectInput(
 							eventStore,
 							'sidebar-hotel-to-add-to-calendar',
@@ -3286,7 +3286,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
 					</div>
 				)}
@@ -4055,7 +4055,7 @@ const ReactModalService = {
 									__html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS2'),
 								}}
 							/>
-							<div className={'file-upload-container'}>
+							<div className="file-upload-container">
 								<input
 									type={'file'}
 									name={'upload[]'}
@@ -4063,7 +4063,7 @@ const ReactModalService = {
 									accept={
 										'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv'
 									}
-									className={'display-none'}
+									className="display-none"
 									onChange={(event) => {
 										const target = event?.target;
 										const files = target?.files;
@@ -4078,14 +4078,14 @@ const ReactModalService = {
 											file?.name || TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
 									}}
 								/>
-								<div className={'file-upload-label-container'}>
+								<div className="file-upload-label-container">
 									<label
 										htmlFor={'fileToUpload'}
-										className={'btn secondary-button pointer black file-button-label'}
+										className="btn secondary-button pointer black file-button-label"
 									>
 										{TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
 									</label>
-									<label className={'file-name-label'}>
+									<label className="file-name-label">
 										{eventStore.modalValues['fileToUpload']?.name ||
 											TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}
 									</label>
@@ -4176,7 +4176,7 @@ const ReactModalService = {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE3'),
-			content: <div className={'react-modal bright-scrollbar'} dangerouslySetInnerHTML={{ __html: html }} />,
+			content: <div className="react-modal bright-scrollbar" dangerouslySetInnerHTML={{ __html: html }} />,
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(
 				eventStore,
@@ -4685,7 +4685,7 @@ const ReactModalService = {
 
 		const content = () => {
 			return (
-				<div className={'white-space-pre-line'}>
+				<div className="white-space-pre-line">
 					{TranslateService.translate(eventStore, 'SWITCH_DAYS.CONTENT', {
 						X: draggedItem.text,
 						Y: item.text,

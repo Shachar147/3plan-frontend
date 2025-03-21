@@ -42,7 +42,7 @@ function MobileHeader(options: MobileHeaderProps) {
 					)}
 
 					{options.adminMode && !showTripName && (
-						<div className={'border-radius-10 opacity-0-6 padding-10'} style={{ backgroundColor: 'white' }} onClick={() => navigate('/')}>
+						<div className="admin-mode-link" onClick={() => navigate('/')}>
 							<EllipsisWithTooltip placement="bottom">
 								{TranslateService.translate(eventStore, 'SWITCH_TO_USER_SIDE')}
 							</EllipsisWithTooltip>
@@ -50,7 +50,7 @@ function MobileHeader(options: MobileHeaderProps) {
 					)}
 
 					<div className="flex-row align-items-center gap-15">
-						<MobileNavbar {...options} isSearchOpen={eventStore.isSearchOpen} />
+						<MobileNavbar {...options} />
 					</div>
 				</div>
 			</div>

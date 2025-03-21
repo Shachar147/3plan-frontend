@@ -7,11 +7,10 @@ import {tripTemplatesContext} from "../../stores/templates-store";
 import {useParams} from "react-router-dom";
 import TranslateService from "../../../services/translate-service";
 import {runInAction} from "mobx";
-import {Image, PointOfInterestShimmering} from "../../components/point-of-interest/point-of-interest";
 import {EventInput} from "@fullcalendar/react";
 import ListViewService from "../../../services/list-view-service";
 import {getTripTemplatePhoto} from "./utils";
-import {getClasses, getEventDescription, getEventTitle} from "../../../utils/utils";
+import {getClasses} from "../../../utils/utils";
 import TripTemplateBanner from "./trip-template-banner";
 import TripTemplateDay from "./trip-template-day";
 import ScrollToTopButton from "../../components/scroll-top/scroll-top";
@@ -35,26 +34,11 @@ function TripTemplateDayShimmering({baseClass, idx = 0, counter = 0, notesCounte
                             </div>
                             <div className={`${baseClass}-activity-image shimmer-animation`} />
                             <div className={`${baseClass}-activity-content`}>
-                                <h2 className={`${baseClass}-activity-content-title shimmer-animation`} style={{
-                                    width: 90,
-                                    height: 33
-                                }} />
-                                <div className={`${baseClass}-activity-category-tag shimmer-animation`} style={{
-                                    width: 50,
-                                    height: 18
-                                }} />
-                                <div className={`${baseClass}-activity-content-description shimmer-animation`} style={{
-                                    width: 300,
-                                    height: 21
-                                }} />
-                                <div className={`${baseClass}-activity-content-description shimmer-animation`} style={{
-                                    width: 300,
-                                    height: 21
-                                }} />
-                                <div className={`${baseClass}-activity-content-description shimmer-animation`} style={{
-                                    width: 220,
-                                    height: 21
-                                }} />
+                                <h2 className={`${baseClass}-activity-content-title shimmer-animation`} />
+                                <div className={`${baseClass}-activity-category-tag shimmer-animation`} />
+                                <div className={`${baseClass}-activity-content-description shimmer-animation`} />
+                                <div className={`${baseClass}-activity-content-description shimmer-animation medium`} />
+                                <div className={`${baseClass}-activity-content-description shimmer-animation small`} />
                             </div>
                         </div>
                     )

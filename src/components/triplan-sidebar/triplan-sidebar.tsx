@@ -7,11 +7,6 @@ import './triplan-sidebar-inner.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
 import {DateRangeFormatted} from '../../services/data-handlers/data-handler-base';
 import './triplan-sidebar.scss';
-
-// @ts-ignore
-import * as _ from 'lodash';
-// @ts-ignore
-import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import MinimizeExpandSidebarButton from "./minimze-expand-sidebar-button/minimize-expand-sidebar-button";
 import TriplanSidebarInner from "./triplan-sidebar-inner";
 
@@ -54,21 +49,11 @@ export const wrapWithSidebarGroup = (
 	const isOpen = eventStore.openSidebarGroups.has(groupKey);
 	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
 
+	// Calculate max height for open state
 	const num = maxHeight ?? 100 * itemsCount + 90;
-
-	const openStyle = {
-		maxHeight: num + 'px',
-		padding: '10px',
-		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
-	};
-	const closedStyle = {
-		maxHeight: 0,
-		overflowY: 'hidden',
-		padding: 0,
-		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
-	};
-
-	const eventsStyle = isOpen ? openStyle : closedStyle;
+	
+	// Set custom max height via style attribute, but use classes for all other styling
+	const customMaxHeight = isOpen ? { maxHeight: num + 'px' } : {};
 
 	return (
 		<>
@@ -81,12 +66,17 @@ export const wrapWithSidebarGroup = (
 					className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
 					aria-hidden="true"
 				/>
-				<span className={'flex-gap-5 align-items-center'}>
+				<span className="flex-gap-5 align-items-center">
 					{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
 				</span>
 				{!!titleSuffix && <div>{titleSuffix}</div>}
 			</div>
-			<div style={eventsStyle as unknown as CSSProperties}>{children}</div>
+			<div 
+				className={getClasses('sidebar-group-content', isOpen ? 'open' : 'closed')}
+				style={customMaxHeight}
+			>
+				{children}
+			</div>
 		</>
 	);
 };

@@ -5,14 +5,13 @@ import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ToggleButton, { OptionToggleButton } from '../components/toggle-button/toggle-button';
 import { ViewMode } from './enums';
-import {getClasses, getEventTitle, isEventAlreadyOrdered, isTemplateUsername} from './utils';
+import {getClasses, getEventTitle, isEventAlreadyOrdered} from './utils';
 import TriplanTag from '../components/common/triplan-tag/triplan-tag';
 import { getUser } from '../helpers/auth';
 import Select from 'react-select';
 import { Observer } from 'mobx-react';
-import { EventApi, EventInput } from '@fullcalendar/react';
 import { getTimeStringFromDate, toDate } from './time-utils';
-import { buildCalendarEvent, CalendarEvent } from './interfaces';
+import { CalendarEvent } from './interfaces';
 import {FeatureFlagsService} from "./feature-flags";
 
 export const renderLanguageSelector = (eventStore: EventStore) => {
@@ -40,7 +39,7 @@ export const renderLanguageSelector = (eventStore: EventStore) => {
 				/>
 			)}
 		</Observer>
-		// <select id="locale-selector" className={"main-font"} onChange={(e) => {
+		// <select id="locale-selector" className="main-font" onChange={(e) => {
 		//     // @ts-ignore
 		//     eventStore.setCalendarLocalCode(e.target.value);
 		// }} value={eventStore.calendarLocalCode}>
@@ -104,7 +103,7 @@ const renderMyTrips = (
 	withLogo: boolean,
 	navigate: NavigateFunction
 ) => (
-	<div className={'recommended-destinations main-font'}>
+	<div className="recommended-destinations main-font">
 		{!withMyTrips ? undefined : (
 			<Link
 				to={'/my-trips'}
@@ -171,7 +170,7 @@ const renderLogin = (eventStore: EventStore) => (
 
 const renderSearch = (eventStore: EventStore) => {
 	return (
-		<div className={'search-container'}>
+		<div className="search-container">
 			<input
 				type={'text'}
 				name={'fc-search'}
@@ -207,7 +206,7 @@ const renderFilterTags = (eventStore: EventStore) => {
 	}
 
 	return (
-		<div className={'filter-tags-container'}>
+		<div className="filter-tags-container">
 			{showOnlyEventsWithOpeningHoursProblems && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG')}
@@ -341,7 +340,7 @@ export const getAdminViewSelectorOptions = (
 
 const renderViewSelector = (eventStore: EventStore) => {
 	return (
-		<div className={'view-selector'} key={`view-selector-${eventStore.calendarLocalCode}`}>
+		<div className="view-selector" key={`view-selector-${eventStore.calendarLocalCode}`}>
 			<ToggleButton
 				value={eventStore.viewMode}
 				onChange={(newVal) => eventStore.setViewMode(newVal as ViewMode)}

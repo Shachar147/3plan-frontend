@@ -132,7 +132,7 @@ const LoginPageOld = () => {
 		error === '' ? (
 			''
 		) : (
-			<style.Error className={'field'} data-testid={errorTestId}>
+			<style.Error className="field" data-testid={errorTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
 			</style.Error>
 		);
@@ -140,7 +140,7 @@ const LoginPageOld = () => {
 		message === '' || error !== '' ? (
 			''
 		) : (
-			<style.Message className={'field'} data-testid={messageTestId}>
+			<style.Message className="field" data-testid={messageTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, message) }} />
 			</style.Message>
 		);
@@ -164,7 +164,7 @@ const LoginPageOld = () => {
 	return (
 		<div className="login-page">
 			<TriplanHeaderWrapper {...headerProps} />
-			<style.Container className={'login-page-content ui header cards centered'}>
+			<style.Container className="login-page-content ui header cards centered">
 				<style.SubContainer>
 					<div
 						onClick={() => {
@@ -201,7 +201,7 @@ const LoginPageOld = () => {
 									</div>
 								);
 							})}
-							<div className={'flex-row gap-10'}>
+							<div className="flex-row gap-10">
 								<style.Button
 									validating={validating}
 									className="ui fluid large button primary-button"
@@ -235,7 +235,7 @@ const LoginPageOld = () => {
 								</style.Button>
 							</div>
 						</div>
-						<div className={'register-link-container'} key={'register-link-container'}>
+						<div className="register-link-container" key={'register-link-container'}>
 							<style.RegisterLink>
 								{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
 								<Link data-testid={'register'} to={'/register'}>

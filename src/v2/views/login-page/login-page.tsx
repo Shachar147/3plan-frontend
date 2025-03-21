@@ -53,7 +53,7 @@ function LoginPageV2() {
         error === '' ? (
             ''
         ) : (
-            <div className={'field red'} data-testid={errorTestId}>
+            <div className="field red" data-testid={errorTestId}>
                 <div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
             </div>
         );
@@ -61,7 +61,7 @@ function LoginPageV2() {
         message === '' || error !== '' ? (
             ''
         ) : (
-            <div className={'field blue'} data-testid={messageTestId}>
+            <div className="field blue" data-testid={messageTestId}>
                 <div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, message) }} />
             </div>
         );

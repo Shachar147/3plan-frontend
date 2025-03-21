@@ -45,7 +45,7 @@ function TriplanHeader(options: TriplanHeaderProps = {}) {
 	return (
 		<div className={getClasses('triplan-header', eventStore.isRtl ? 'rtl' : 'ltr')}>
 			{withLanguageSelector && <LanguageSelector />}
-			<div className={'triplan-header-actionbar'}>
+			<div className="triplan-header-actionbar">
 				{withFilterTags && <FilterIndications {...options} />}
 				<TriplanSearch
 					isHidden={!withSearch}

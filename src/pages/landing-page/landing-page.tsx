@@ -28,13 +28,13 @@ const LandingPage = () => {
 	}, [eventStore.calendarLocalCode]);
 
 	return (
-		<div className={'landing-page-layout landing-page'}>
+		<div className="landing-page-layout landing-page">
 			<TriplanHeaderWrapper />
-			<div className={'main-part'}>
-				<div className={'plan-your-trip-header main-font'}>
+			<div className="main-part">
+				<div className="plan-your-trip-header main-font">
 					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}
 					<br />
-					<div className={'trip main-font-heavy'}>
+					<div className="trip main-font-heavy">
 						{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}
 					</div>
 				</div>
@@ -43,11 +43,11 @@ const LandingPage = () => {
 					src={'/images/logo/new-logo.png'}
 					style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 				/>
-				<div className={'slogan main-font'}>
+				<div className="slogan main-font">
 					<span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE1')}</span>
 					<span>{TranslateService.translate(eventStore, 'LANDING_PAGE.SLOGAN.LINE2')}</span>
 				</div>
-				<div className={'main-buttons'}>
+				<div className="main-buttons">
 					<Button
 						text={TranslateService.translate(eventStore, 'LANDING_PAGE.START_NOW')}
 						flavor={ButtonFlavor.primary}
@@ -61,7 +61,7 @@ const LandingPage = () => {
 							navigate('/my-trips');
 						}}
 						flavor={ButtonFlavor.secondary}
-						className={'black'}
+						className="black"
 					/>
 				</div>
 				<div>

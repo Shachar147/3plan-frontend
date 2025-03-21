@@ -1120,7 +1120,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					{renderFilterButton()}
 					{renderCalculateDistancesButton()}
 					{!eventStore.isMobile && (
-						<div className={'pc-map-view-selection-container'}>{renderMapViewSelection()}</div>
+						<div className="pc-map-view-selection-container">{renderMapViewSelection()}</div>
 					)}
 				</div>
 				{eventStore.mapFiltersVisible ? (
@@ -1184,7 +1184,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					props.isCombined && 'combined'
 				)}
 			>
-				<div className={'search-container'}>
+				<div className="search-container">
 					<input
 						type={'text'}
 						name={'fc-search'}
@@ -1204,7 +1204,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 						:
 					</b>
 				</div>
-				<div className={'visible-items-fc-events bright-scrollbar'}>
+				<div className="visible-items-fc-events bright-scrollbar">
 					{!visibleItemsSearchValue &&
 						visibleItems.length === 0 &&
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}

@@ -76,6 +76,7 @@
 		"@storybook/react": "^8.2.6",
 		"@storybook/testing-library": "^0.0.13",
 		"@types/react": "^18.0.17",
+		"glob": "^11.0.1",
 		"husky": "^8.0.0",
 		"prop-types": "^15.8.1",
 		"react-router-dom": "^6.4.1",

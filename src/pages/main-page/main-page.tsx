@@ -281,7 +281,7 @@ function MainPage(props: MainPageProps) {
 						disabled={currentListViewPage <= 0}
 						text={TranslateService.translate(eventStore, 'NAVIGATION.BACK')}
 						icon={backIcon}
-						className={'black flex-row gap-5 align-items-center justify-content-center'}
+						className="black flex-row gap-5 align-items-center justify-content-center"
 					/>
 					<Button
 						flavor={ButtonFlavor.secondary}
@@ -293,7 +293,7 @@ function MainPage(props: MainPageProps) {
 						disabled={currentListViewPage >= arr.length - 1}
 						text={TranslateService.translate(eventStore, 'NAVIGATION.NEXT')}
 						icon={nextIcon}
-						className={'black flex-row gap-5 align-items-center justify-content-center'}
+						className="black flex-row gap-5 align-items-center justify-content-center"
 						iconPosition={'end'}
 					/>
 				</div>
@@ -610,7 +610,7 @@ function MainPage(props: MainPageProps) {
 					eventStore.calendarLocalCode == 'he' ? 'direction-rtl' : 'flex-row'
 				)}
 			>
-				<i className={'fa fa-lock'} />
+				<i className="fa fa-lock" />
 				<div
 					className={getClasses(
 						'align-items-center justify-content-center',
@@ -622,7 +622,7 @@ function MainPage(props: MainPageProps) {
 						<Button
 							flavor={ButtonFlavor.link}
 							isLoading={eventStore.togglingTripLock}
-							className={'text-decoration-underline min-height-20'}
+							className="text-decoration-underline min-height-20"
 							onClick={() => {
 								eventStore.toggleTripLocked();
 							}}

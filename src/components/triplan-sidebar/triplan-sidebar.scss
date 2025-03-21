@@ -5,3 +5,18 @@
   border-bottom: 1px solid #e5e9ef;
   height: 45px;
 }
+
+.sidebar-group-content {
+  &.open {
+    max-height: auto;
+    padding: 10px;
+    transition: padding 0.2s ease, max-height 0.3s ease-in-out;
+  }
+
+  &.closed {
+    max-height: 0;
+    overflow-y: hidden;
+    padding: 0;
+    transition: padding 0.2s ease, max-height 0.3s ease-in-out;
+  }
+}

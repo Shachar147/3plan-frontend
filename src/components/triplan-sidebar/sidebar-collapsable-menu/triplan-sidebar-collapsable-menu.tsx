@@ -630,7 +630,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
         return warningsBlock ? (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {warningsBlock}
             </>
         ) : null;
@@ -848,7 +848,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
             <Observer>
                 {() => (
                     <>
-                        <hr className={'margin-block-2'} />
+                        <hr className="margin-block-2" />
                         {wrapWithSidebarGroup(
                             <>
                                 <hr className="margin-block-2 width-100-percents" />
@@ -900,7 +900,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
         );
         return (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {actionsBlock}
             </>
         );
@@ -929,7 +929,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
         );
         return (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {tasksBlock}
             </>
         );
@@ -946,17 +946,17 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
         const calendarSidebarStatistics = (
             <>
-                <div className={'sidebar-statistics'}>
+                <div className="sidebar-statistics">
                     <i className="fa fa-calendar-o" aria-hidden="true" />
                     {eventStore.calendarEvents.length + eventStore.allSidebarEvents.length}{' '}
                     {TranslateService.translate(eventStore, 'TOTAL_EVENTS_ON_THE_SIDEBAR')}
                 </div>
-                <div className={'sidebar-statistics'}>
+                <div className="sidebar-statistics">
                     <i className="fa fa-calendar-check-o" aria-hidden="true" />
                     {eventStore.calendarEvents.length}{' '}
                     {TranslateService.translate(eventStore, 'EVENTS_ON_THE_CALENDAR')}
                 </div>
-                <div className={'sidebar-statistics'}>
+                <div className="sidebar-statistics">
                     <i className="fa fa-calendar-times-o" aria-hidden="true" />
                     {eventStore.allSidebarEvents.length}{' '}
                     {TranslateService.translate(eventStore, 'EVENTS_ON_THE_SIDEBAR')}
@@ -1146,7 +1146,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                         .replace(' priority', '');
 
                     return (
-                        <div className={'sidebar-statistics'} key={`sidebar-statistics-for-${priorityText}`}>
+                        <div className="sidebar-statistics" key={`sidebar-statistics-for-${priorityText}`}>
                             <i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }} />
                             <div className="white-space-pre">
                                 {`${total} ${prefix} `}
@@ -1162,7 +1162,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
             const translatedHotels = TranslateService.translate(eventStore, 'HOTELS');
             const custom = (
                 <>
-                    <div className={'sidebar-statistics'} key={`sidebar-statistics-for-hotels`}>
+                    <div className="sidebar-statistics" key={`sidebar-statistics-for-hotels`}>
                         <i className="fa fa-sticky-note" aria-hidden="true" style={{ color: `#${hotelColor}` }} />
                         <div>
                             {`${totalHotels} `}
@@ -1284,7 +1284,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
             }
 
             return (
-                <div className={'sidebar-statistics margin-block-10'} key={`sidebar-statistics-money-title`}>
+                <div className="sidebar-statistics margin-block-10" key={`sidebar-statistics-money-title`}>
                     <div className="flex-col gap-8">
                         {getContent(priceList, 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES')}
                         {getContent(unscheduledPriceList, 'ESTIMATED_PRICE_OF_BOOKED_ACTIVITIES')}
@@ -1297,9 +1297,9 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
         const statsBlock = wrapWithSidebarGroup(
             <>
                 {calendarSidebarStatistics}
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {renderPriceList()}
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {renderPrioritiesStatistics()}
             </>,
             undefined,
@@ -1311,7 +1311,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
         );
         return (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {statsBlock}
             </>
         );
@@ -1349,7 +1349,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
         );
         return (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {recommendationsBlock}
             </>
         );
@@ -1394,7 +1394,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
         return (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {priorityFiltersGroup}
             </>
         );
@@ -1436,7 +1436,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
         return (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {categoryFiltersGroup}
             </>
         );
@@ -1503,7 +1503,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
         return (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {preferredTimeFiltersGroup}
             </>
         );
@@ -1563,7 +1563,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
         return (
             <>
-                <hr className={'margin-block-2'} />
+                <hr className="margin-block-2" />
                 {settingsGroup}
             </>
         );

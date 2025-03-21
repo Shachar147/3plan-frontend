@@ -83,7 +83,7 @@ function ADashboardWrapper(props: AdminDashboardWrapperProps) {
 					adminMode={true}
 				/>
 			</div>
-			<div className={'main-layout-container a-dashboard-wrapper'}>
+			<div className="main-layout-container a-dashboard-wrapper">
 				<div className={getClasses('main-layout', `direction-${eventStore.getCurrentDirection()}`)}>
 					{eventStore.isLoading || !adminStore.hasInit ? (
 						renderLoading()
