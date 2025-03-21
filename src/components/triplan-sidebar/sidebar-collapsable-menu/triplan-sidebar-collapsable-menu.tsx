@@ -1360,7 +1360,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                                 <div 
                                     className={getClasses(
                                         "flex-row gap-5 align-items-center sidebar-priority-filter",
-                                        (eventStore.filterSidebarPriorities.size === 0 || eventStore.filterSidebarPriorities.get(priorityKey.toString())) && "active"
+                                        (eventStore.filterSidebarPriorities.get(priorityKey.toString())) && "active"
                                     )}
                                     onClick={() => eventStore.toggleSidebarFilterPriority(priorityKey.toString())}
                                 >
@@ -1402,7 +1402,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                                 <div 
                                     className={getClasses(
                                         "flex-row gap-5 align-items-center sidebar-category-filter",
-                                        (eventStore.filterSidebarCategories.size === 0 || eventStore.filterSidebarCategories.get(category.id.toString())) && "active"
+                                        (eventStore.filterSidebarCategories.get(category.id.toString())) && "active"
                                     )}
                                     onClick={() => eventStore.toggleSidebarFilterCategory(category.id.toString())}
                                 >
@@ -1469,7 +1469,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                                 <div 
                                     className={getClasses(
                                         "flex-row gap-5 align-items-center sidebar-preferred-time-filter",
-                                        (eventStore.filterSidebarPreferredTimes.size === 0 || eventStore.filterSidebarPreferredTimes.get(timeKey)) && "active"
+                                        (eventStore.filterSidebarPreferredTimes.get(timeKey)) && "active"
                                     )}
                                     onClick={() => eventStore.toggleSidebarFilterPreferredTime(timeKey)}
                                 >

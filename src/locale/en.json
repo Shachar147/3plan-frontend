@@ -965,5 +965,7 @@
 	"SUGGESTIONS_SIDEBAR_TITLE": "Suggestions:",
 	"FILTER_BY_PRIORITY": "Filter by priority",
 	"FILTER_BY_CATEGORY": "Filter by category",
-	"FILTER_BY_PREFERRED_TIME": "Filter by preferred time"
+	"FILTER_BY_PREFERRED_TIME": "Filter by preferred time",
+	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_PREFERRED_TIMES.FILTER_TAG": "Sidebar filtered by preferred time",
+	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_CATEGORIES.FILTER_TAG": "Sidebar filtered by category"
 }
