@@ -80,13 +80,9 @@ const RegisterPageOld = () => {
 						setError(res.error);
 					} else {
 						setMessage('REGISTERED_SUCCESSFULLY');
-						setTimeout(
-							function (self) {
-								navigate('/login');
-							},
-							LOGIN_DELAY,
-							self
-						);
+						setTimeout(function () {
+							navigate('/login');
+						}, LOGIN_DELAY);
 					}
 				},
 				function (err: any) {

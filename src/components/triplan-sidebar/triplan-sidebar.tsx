@@ -1,4 +1,4 @@
-import React, { CSSProperties, useContext } from 'react';
+import React, { useContext } from 'react';
 import { getClasses } from '../../utils/utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { SidebarEvent } from '../../utils/interfaces';
@@ -35,16 +35,28 @@ export enum SidebarGroups {
 	TASKS = 'TASKS',
 }
 
-export const wrapWithSidebarGroup = (
-	children: JSX.Element,
-	groupIcon: string | undefined = undefined,
-	groupKey: string,
-	groupTitle: string,
-	itemsCount: number,
-	textColor: string = 'inherit',
-	maxHeight?: number,
-	titleSuffix?: string
-) => {
+interface SidebarGroupProps {
+	children: JSX.Element;
+	groupIcon?: string;
+	groupKey: string;
+	groupTitle: string;
+	itemsCount: number;
+	textColor?: string;
+	maxHeight?: number;
+	titleSuffix?: string;
+}
+
+// The SidebarGroup component with observer
+const SidebarGroup: React.FC<SidebarGroupProps> = ({
+	children,
+	groupIcon,
+	groupKey,
+	groupTitle,
+	itemsCount,
+	textColor = 'inherit',
+	maxHeight,
+	titleSuffix,
+}) => {
 	const eventStore = useContext(eventStoreContext);
 	const isOpen = eventStore.openSidebarGroups.has(groupKey);
 	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
@@ -75,6 +87,36 @@ export const wrapWithSidebarGroup = (
 				{children}
 			</div>
 		</>
+	);
+};
+
+// Export the observer-wrapped component
+export const ObservedSidebarGroup = observer(SidebarGroup);
+
+// Keep the createSidebarGroup function for backward compatibility
+export const createSidebarGroup = (
+	children: JSX.Element,
+	groupIcon: string | undefined = undefined,
+	groupKey: string,
+	groupTitle: string,
+	itemsCount: number,
+	textColor: string = 'inherit',
+	maxHeight?: number,
+	titleSuffix?: string
+) => {
+	// Return the JSX directly now
+	return (
+		<ObservedSidebarGroup
+			groupIcon={groupIcon}
+			groupKey={groupKey}
+			groupTitle={groupTitle}
+			itemsCount={itemsCount}
+			textColor={textColor}
+			maxHeight={maxHeight}
+			titleSuffix={titleSuffix}
+		>
+			{children}
+		</ObservedSidebarGroup>
 	);
 };
 

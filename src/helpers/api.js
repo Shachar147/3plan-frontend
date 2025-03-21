@@ -103,8 +103,7 @@ export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
 			handleUnauthorizedError(error, url).then((isRedirected) => {
 				if (!isRedirected) {
 					onError(error, () => {
-						self.setState({ error: '' });
-						apiPost(self, url, data, onSuccess, onError, onFinish);
+						apiPost(null, url, data, onSuccess, onError, onFinish);
 					});
 				}
 			});

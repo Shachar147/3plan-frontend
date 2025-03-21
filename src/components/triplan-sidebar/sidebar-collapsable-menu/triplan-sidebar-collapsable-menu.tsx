@@ -15,7 +15,7 @@ import Button, { ButtonFlavor } from '../../common/button/button';
 import TranslateService from '../../../services/translate-service';
 import ListViewService, { MinMax } from '../../../services/list-view-service';
 import { AllEventsEvent } from '../../../services/data-handlers/data-handler-base';
-import { SidebarGroups, wrapWithSidebarGroup } from '../triplan-sidebar';
+import { SidebarGroups, createSidebarGroup } from '../triplan-sidebar';
 import ReactModalService, { ReactModalRenderHelper } from '../../../services/react-modal-service';
 import DistanceCalculator from '../distance-calculator/distance-calculator';
 import { observer, Observer } from 'mobx-react';
@@ -411,7 +411,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 				).length;
 				return (
 					<div key={`tasks-by-event-by-deadline-${eventId}`}>
-						{wrapWithSidebarGroup(
+						{createSidebarGroup(
 							<>
 								{Object.keys(tasksByEventByDeadline[Number(eventId)]).map((deadlineString) =>
 									renderTasksByDeadline(deadlineString, tasksByEventByDeadline[Number(eventId)])
@@ -633,7 +633,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			eventsWithTodoComplete ||
 			eventsWithDistanceProblems ||
 			eventsWithOpeningHoursProblems
-				? wrapWithSidebarGroup(
+				? createSidebarGroup(
 						<div className="flex-column gap-4">
 							{eventsWithOpeningHoursProblems}
 							{eventsWithDistanceProblems}
@@ -888,10 +888,10 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 				{() => (
 					<>
 						<hr className="margin-block-2" />
-						{wrapWithSidebarGroup(
+						{createSidebarGroup(
 							<>
 								<hr className="margin-block-2 width-100-percents" />
-								{wrapWithSidebarGroup(
+								{createSidebarGroup(
 									<>{renderNearBy()}</>,
 									undefined,
 									SidebarGroups.DISTANCES_NEARBY,
@@ -899,7 +899,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 									Math.max(100, eventStore.allEventsLocations.length) // ?
 								)}
 								<hr className="margin-block-2 width-100-percents" />
-								{wrapWithSidebarGroup(
+								{createSidebarGroup(
 									<>{renderDistanceCalculator()}</>,
 									undefined,
 									SidebarGroups.DISTANCES_FROMTO,
@@ -925,7 +925,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		if (eventStore.isMobile && eventStore.calendarEvents.length === 0) return;
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS');
-		const actionsBlock = wrapWithSidebarGroup(
+		const actionsBlock = createSidebarGroup(
 			<>
 				{renderLockTrip()}
 				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
@@ -952,7 +952,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		}
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS');
 
-		const tasksBlock = wrapWithSidebarGroup(
+		const tasksBlock = createSidebarGroup(
 			<div className="text-align-center white-space-pre-line flex-col gap-8">
 				<div className="opacity-0-5">
 					{TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.TASKS.DESCRIPTION')}
@@ -1388,7 +1388,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			);
 		};
 
-		const statsBlock = wrapWithSidebarGroup(
+		const statsBlock = createSidebarGroup(
 			<>
 				{calendarSidebarStatistics}
 				<hr className="margin-block-2" />
@@ -1417,7 +1417,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		}
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.RECOMMENDATIONS');
-		const recommendationsBlock = wrapWithSidebarGroup(
+		const recommendationsBlock = createSidebarGroup(
 			<>
 				<Button
 					icon="fa-heart"
@@ -1476,7 +1476,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			</div>
 		);
 
-		const priorityFiltersGroup = wrapWithSidebarGroup(
+		const priorityFiltersGroup = createSidebarGroup(
 			<>{priorityFiltersContent}</>,
 			'fa-filter',
 			SidebarGroups.PRIORITIES_FILTER,
@@ -1516,7 +1516,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			</div>
 		);
 
-		const categoryFiltersGroup = wrapWithSidebarGroup(
+		const categoryFiltersGroup = createSidebarGroup(
 			<>{categoryFiltersContent}</>,
 			'fa-object-group',
 			SidebarGroups.CATEGORIES_FILTER,
@@ -1581,7 +1581,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			</div>
 		);
 
-		const preferredTimeFiltersGroup = wrapWithSidebarGroup(
+		const preferredTimeFiltersGroup = createSidebarGroup(
 			<>{preferredTimeFiltersContent}</>,
 			'fa-clock-o',
 			SidebarGroups.PREFERRED_TIME_FILTER,
@@ -1638,7 +1638,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			</div>
 		);
 
-		const settingsGroup = wrapWithSidebarGroup(
+		const settingsGroup = createSidebarGroup(
 			<>{settingsContent}</>,
 			'fa-gear',
 			SidebarGroups.SETTINGS,
