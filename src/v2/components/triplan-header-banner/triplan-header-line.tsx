@@ -232,6 +232,8 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
     const condition2 = shouldHaveSearch && eventStore.isMobile && scrollY >= 142 && !hideSearch;
     const condition3 = eventStore.isMobile && shouldHaveSearch && !hideSearch;
 
+    const hideStickySearchOnMobile = eventStore.isMobile && true;
+
     return (
         <>
             <div className={`${baseClass}-top-shadow`} />
@@ -243,7 +245,7 @@ function TriplanHeaderLine({ isInLogin = false, isAlwaysSticky = false }: { isIn
                 <div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
                     <div className="flex-column gap-4">
                         {renderHeaderButtons()}
-                        {condition2 && <div className="sticky-search-line">{search}</div>}
+                        {condition2 && !hideStickySearchOnMobile && <div className="sticky-search-line">{search}</div>}
                     </div>
                 </div>
             </div>
