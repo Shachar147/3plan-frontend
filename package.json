@@ -68,7 +68,11 @@
 		}
 	},
 	"lint-staged": {
-		"*.{js,jsx,ts,tsx,html,less,scss,css}": "prettier --write"
+		"*.{js,jsx,ts,tsx}": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"*.{html,less,scss,css}": "prettier --write"
 	},
 	"devDependencies": {
 		"@babel/plugin-proposal-private-property-in-object": "^7.21.11",

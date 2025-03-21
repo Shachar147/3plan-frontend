@@ -58,7 +58,11 @@ export interface HeaderLineOptions {
 	withLoginLogout?: boolean;
 }
 
-export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOptions = {}) => {
+export const renderHeaderLine = (
+	eventStore: EventStore,
+	options: HeaderLineOptions = {},
+	navigate: NavigateFunction
+) => {
 	const {
 		withLogo = false,
 		withRecommended = true,
@@ -67,8 +71,6 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
 		withViewSelector = false,
 		withLoginLogout = true,
 	} = options;
-
-	const navigate = useNavigate();
 
 	return (
 		<div className="header" style={{ height: 'fit-content' }}>
