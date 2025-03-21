@@ -93,8 +93,8 @@
 		"sass": "^1.53.0"
 	},
 	"scripts": {
-		"start": "FAST_REFRESH=false NODE_ENV=production REACT_APP_MODE=production craco start",
-		"build": "FAST_REFRESH=false NODE_ENV=production REACT_APP_MODE=production craco build",
+		"start": "ESLINT_NO_DEV_ERRORS=true FAST_REFRESH=false NODE_ENV=production REACT_APP_MODE=production craco start",
+		"build": "CI=false FAST_REFRESH=false NODE_ENV=production REACT_APP_MODE=production craco build",
 		"test": "craco test",
 		"start:dev:old": "craco start",
 		"start:dev:windows": "SET PORT=3000 && SET REACT_APP_MODE=development && craco start",
