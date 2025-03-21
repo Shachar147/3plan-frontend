@@ -216,11 +216,12 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 }
 
 /* Add independent scrolling for calendar container */
-.triplan-calendar-container {
-	height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
-	position: relative;
-	//z-index: 2; /* Increased to ensure it's above other elements during drag */
-	width: 100%;
+@media only screen and (min-width: 750px) {
+	.triplan-calendar-container {
+		height: 100%;
+		overflow-y: auto;
+		overflow-x: hidden;
+		position: relative;
+		width: 100%;
+	}
 }
