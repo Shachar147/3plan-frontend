@@ -147,19 +147,7 @@ export class EventStore {
 	@observable filterSidebarPriorities = observable.map({});
 	@observable filterSidebarCategories = observable.map({});
 	@observable filterSidebarPreferredTimes = observable.map({});
-	@observable sidebarSettings = (() => {
-		try {
-			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
-			return savedSettings ? JSON.parse(savedSettings) : {
-				'hide-scheduled': false
-			};
-		} catch (e) {
-			console.error('Error loading sidebar settings from localStorage', e);
-			return {
-				'hide-scheduled': false
-			};
-		}
-	})();
+	@observable sidebarSettings = observable.map({});
 
 	// add side bar modal
 	@observable isModalMinimized: boolean = true;
@@ -235,8 +223,29 @@ export class EventStore {
 		// todo: check if its not causing issues.
 		// for the admin view
 		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
-
+		
+		// Initialize sidebarSettings from localStorage
+		this.initSidebarSettings();
+		
 		this.init();
+	}
+
+	// Helper method to initialize sidebar settings
+	initSidebarSettings() {
+		// Set default value first
+		this.sidebarSettings.set('hide-scheduled', false);
+		
+		try {
+			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
+			if (savedSettings) {
+				const parsedSettings = JSON.parse(savedSettings);
+				Object.keys(parsedSettings).forEach(key => {
+					this.sidebarSettings.set(key, parsedSettings[key]);
+				});
+			}
+		} catch (e) {
+			console.error('Error loading sidebar settings from localStorage', e);
+		}
 	}
 
 	@action
@@ -1491,10 +1500,11 @@ export class EventStore {
 	setDistance(key: string, value: DistanceResult) {
 		this.distanceResults.set(key, value);
 		
-		// Convert ObservableMap to a regular Map for the dataService
-		const regularMap = new Map<string, DistanceResult>();
+		// Convert ObservableMap to a regular Map for type compatibility with the data services
+		// This is needed because the DataHandler interface expects a standard Map, not an ObservableMap
+		const regularMap = new Map<String, DistanceResult>();
 		this.distanceResults.forEach((value, key) => {
-			regularMap.set(key, value);
+			regularMap.set(key as String, value);
 		});
 		
 		this.dataService.setDistanceResults(regularMap, this.tripName);
@@ -1885,7 +1895,11 @@ export class EventStore {
 	@action
 	saveSidebarSettings() {
 		try {
-			localStorage.setItem('triplan-sidebar-settings', JSON.stringify(this.sidebarSettings));
+			const settingsObject = {};
+			this.sidebarSettings.forEach((value, key) => {
+				settingsObject[key] = value;
+			});
+			localStorage.setItem('triplan-sidebar-settings', JSON.stringify(settingsObject));
 		} catch (e) {
 			console.error('Error saving sidebar settings to localStorage', e);
 		}

@@ -1528,14 +1528,14 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
                                 <div
                                     className={getClasses(
                                         "flex-row gap-5 align-items-center sidebar-settings",
-                                        (eventStore.sidebarSettings[item.id]) && "active"
+                                        (eventStore.sidebarSettings.get(item.id)) && "active"
                                     )}
                                     onClick={() => {
                                         runInAction(() => {
-                                            eventStore.sidebarSettings = {
-                                                ...eventStore.sidebarSettings,
-                                                [item.id]: !!!eventStore.sidebarSettings[item.id]
-                                            }
+                                            eventStore.sidebarSettings.set(
+                                                item.id, 
+                                                !eventStore.sidebarSettings.get(item.id)
+                                            );
                                             // Save to localStorage when changed
                                             eventStore.saveSidebarSettings();
                                         })

@@ -300,7 +300,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
         return (
             <>
                 {eventsByPreferredHour}
-                {scheduledEvents.length > 0 && !eventStore.sidebarSettings['hide-scheduled'] && (
+                {scheduledEvents.length > 0 && !eventStore.sidebarSettings.get('hide-scheduled') && (
                     <div key={`${categoryId}-scheduled-events`}>
                         {renderLineWithText(
                             `${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${scheduledEvents.length})`
