@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getTinderServerAddress } from '../../config/config';
 import { Exception } from 'sass';
-import {endpoints} from "../../v2/utils/endpoints";
+import { endpoints } from '../../v2/utils/endpoints';
 
 const unAuthorizedRoutes = ['signin'];
 

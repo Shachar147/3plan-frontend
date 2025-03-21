@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiPost } from '../helpers/api';
-import {endpoints} from "../v2/utils/endpoints";
+import { endpoints } from '../v2/utils/endpoints';
 
 const useIsAdmin = () => {
 	const [isAdmin, setIsAdmin] = useState(false);

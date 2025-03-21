@@ -18,7 +18,7 @@ const Logo = () => (
 	<img
 		className={getClasses(['logo-container pointer'])}
 		style={{ maxWidth: '200px' }}
-		src={'/images/logo/new-logo.png'}
+		src="/images/logo/new-logo.png"
 	/>
 );
 
@@ -149,7 +149,7 @@ const RegisterPageOld = () => {
 		error === '' ? (
 			''
 		) : (
-			<style.Error className={'field'} data-testid={errorTestId}>
+			<style.Error className="field" data-testid={errorTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
 			</style.Error>
 		);
@@ -157,7 +157,7 @@ const RegisterPageOld = () => {
 		message === '' || error !== '' ? (
 			''
 		) : (
-			<style.Message className={'field'} data-testid={messageTestId}>
+			<style.Message className="field" data-testid={messageTestId}>
 				<div dangerouslySetInnerHTML={{ __html: message }} />
 			</style.Message>
 		);
@@ -172,9 +172,9 @@ const RegisterPageOld = () => {
 	};
 
 	return (
-		<div className={'padding-inline-30'}>
+		<div className="padding-inline-30">
 			<TriplanHeaderWrapper {...headerProps} />
-			<style.Container className={'register-page ui header cards centered'}>
+			<style.Container className="register-page ui header cards centered">
 				<style.SubContainer>
 					<div
 						onClick={() => {
@@ -183,8 +183,8 @@ const RegisterPageOld = () => {
 					>
 						<Logo />
 					</div>
-					<div className={'sub cards header content'}>
-						<div className={'ui segment'}>
+					<div className="sub cards header content">
+						<div className="ui segment">
 							{message_block}
 							{error_block}
 							{inputs.map((input, idx) => {
@@ -206,7 +206,7 @@ const RegisterPageOld = () => {
 											}}
 											onKeyDown={(e) => onKeyDown(e.keyCode)}
 											data-testid={name}
-											autoComplete={'off'}
+											autoComplete="off"
 										/>
 									</div>
 								);
@@ -214,16 +214,16 @@ const RegisterPageOld = () => {
 							<style.Button
 								validating={validating}
 								className="ui fluid large button primary-button"
-								data-testid={'submit'}
+								data-testid="submit"
 								onClick={register}
 							>
 								{TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
 							</style.Button>
 						</div>
-						<div className={'login-link-container'} key={'login-link-container'}>
+						<div className="login-link-container" key="login-link-container">
 							<style.RegisterLink>
 								{TranslateService.translate(eventStore, 'LOGIN_PREFIX')}{' '}
-								<Link data-testid={'login'} to={'/login'}>
+								<Link data-testid="login" to="/login">
 									{TranslateService.translate(eventStore, 'LOGIN_LINK')}
 								</Link>
 							</style.RegisterLink>

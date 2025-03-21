@@ -15,7 +15,7 @@ function MyTrips({ onClick = () => {}, height = 25 }: MyTripsProps) {
 		<Button
 			className={eventStore.isRtl ? 'flex-row-reverse' : 'flex-row'}
 			flavor={ButtonFlavor.link}
-			image={'/images/landing-page/icons/map.png'}
+			image="/images/landing-page/icons/map.png"
 			imageHeight={height}
 			text={TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
 			onClick={onClick}

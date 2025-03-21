@@ -21,7 +21,7 @@ import {
 	TriplanPriority,
 	ViewMode,
 } from '../utils/enums';
-import {addDays, convertMsToHM, formatDate, getEndDate, serializeDuration, toDate} from '../utils/time-utils';
+import { addDays, convertMsToHM, formatDate, getEndDate, serializeDuration, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -29,8 +29,9 @@ import {
 	coordinateToString,
 	generate_uuidv4,
 	getCoordinatesRangeKey,
-	isEventAlreadyOrdered, isTemplateUsername,
-	lockEvents
+	isEventAlreadyOrdered,
+	isTemplateUsername,
+	lockEvents,
 } from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
 import {
@@ -49,10 +50,10 @@ import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
 import LogHistoryService from '../services/data-handlers/log-history-service';
-import {endpoints} from "../v2/utils/endpoints";
-import {string} from "prop-types";
-import {FeatureFlagsService} from "../utils/feature-flags";
-import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath} from "../v2/utils/consts";
+import { endpoints } from '../v2/utils/endpoints';
+import { string } from 'prop-types';
+import { FeatureFlagsService } from '../utils/feature-flags';
+import { mainPageContentTabLsKey, myTripsTabId, newDesignRootPath } from '../v2/utils/consts';
 
 const defaultModalSettings = {
 	show: false,
@@ -223,10 +224,10 @@ export class EventStore {
 		// todo: check if its not causing issues.
 		// for the admin view
 		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
-		
+
 		// Initialize sidebarSettings from localStorage
 		this.initSidebarSettings();
-		
+
 		this.init();
 	}
 
@@ -234,12 +235,12 @@ export class EventStore {
 	initSidebarSettings() {
 		// Set default value first
 		this.sidebarSettings.set('hide-scheduled', false);
-		
+
 		try {
 			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
 			if (savedSettings) {
 				const parsedSettings = JSON.parse(savedSettings);
-				Object.keys(parsedSettings).forEach(key => {
+				Object.keys(parsedSettings).forEach((key) => {
 					this.sidebarSettings.set(key, parsedSettings[key]);
 				});
 			}
@@ -312,37 +313,42 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
-	validateArrivalTime = (filteredEvents: CalendarEvent[], eventStore: EventStore, e:CalendarEvent, idx: number): string => {
-		return "";
+	validateArrivalTime = (
+		filteredEvents: CalendarEvent[],
+		eventStore: EventStore,
+		e: CalendarEvent,
+		idx: number
+	): string => {
+		return '';
 
-		const prev = idx > 0 ? filteredEvents[idx-1] : undefined;
+		const prev = idx > 0 ? filteredEvents[idx - 1] : undefined;
 		let distanceKey = undefined;
 		let loc1, loc2;
-		let distanceResult: DistanceResult | undefined
+		let distanceResult: DistanceResult | undefined;
 		let diffInSeconds = 0;
-		if (prev && e && prev.location && e.location){
+		if (prev && e && prev.location && e.location) {
 			loc1 = {
 				lat: prev.location.latitude,
 				lng: prev.location.longitude,
-				eventName: prev.title
+				eventName: prev.title,
 			};
 
 			loc2 = {
 				lat: e.location.latitude,
 				lng: e.location.longitude,
-				eventName: e.title
-			}
+				eventName: e.title,
+			};
 
 			distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
 			distanceResult = eventStore.distanceResults.has(distanceKey)
 				? eventStore.distanceResults.get(distanceKey)
 				: undefined;
-			diffInSeconds = (new Date(e.start).getTime()/1000) - (new Date(prev.end).getTime()/1000);
+			diffInSeconds = new Date(e.start).getTime() / 1000 - new Date(prev.end).getTime() / 1000;
 
 			if (diffInSeconds < (distanceResult?.duration_value ?? 0)) {
 				const missingTimeInSeconds = (distanceResult?.duration_value ?? 0) - diffInSeconds;
 				return TranslateService.translate(eventStore, 'YOU_WONT_MAKE_IT', {
-					missingTime: serializeDuration(this, missingTimeInSeconds)
+					missingTime: serializeDuration(this, missingTimeInSeconds),
 				});
 			}
 		}
@@ -357,7 +363,7 @@ export class EventStore {
 		// 	requiredDiff: distanceResult?.duration_value ?? 0,
 		// 	isOk: diffInSeconds >= (distanceResult?.duration_value ?? 0)
 		// })
-	}
+	};
 
 	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[], eventStore: EventStore): CalendarEvent[] => {
 		if (this.showOnlyEventsWithDistanceProblems) {
@@ -586,7 +592,7 @@ export class EventStore {
 						}
 					}
 
-					if (errorReason == ''){
+					if (errorReason == '') {
 						errorReason = this.validateArrivalTime(filteredEvents, eventStore, e, idx);
 					}
 
@@ -713,8 +719,13 @@ export class EventStore {
 	}
 
 	@computed
-	get shouldRenderSuggestions(){
-		return !this.isMobile && this.viewMode != ViewMode.feed && !localStorage.getItem(hideSuggestionsLsKey) && !this.clickedHideSuggestions;
+	get shouldRenderSuggestions() {
+		return (
+			!this.isMobile &&
+			this.viewMode != ViewMode.feed &&
+			!localStorage.getItem(hideSuggestionsLsKey) &&
+			!this.clickedHideSuggestions
+		);
 	}
 
 	@computed
@@ -782,9 +793,13 @@ export class EventStore {
 						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
-						(this.filterSidebarPriorities.size === 0 || this.filterSidebarPriorities.get(getEnumKey(TriplanPriority, event.priority))) &&
+						(this.filterSidebarPriorities.size === 0 ||
+							this.filterSidebarPriorities.get(getEnumKey(TriplanPriority, event.priority))) &&
 						(this.filterSidebarCategories.size === 0 || this.filterSidebarCategories.get(event.category)) &&
-						(this.filterSidebarPreferredTimes.size === 0 || this.filterSidebarPreferredTimes.get(getEnumKey(TriplanEventPreferredTime, event.preferredTime)))
+						(this.filterSidebarPreferredTimes.size === 0 ||
+							this.filterSidebarPreferredTimes.get(
+								getEnumKey(TriplanEventPreferredTime, event.preferredTime)
+							))
 				);
 		});
 		return toReturn;
@@ -1090,18 +1105,18 @@ export class EventStore {
 		return Promise.all([promise1, promise2]).then(() => {
 			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
 				count2: count,
-				type: 'all activities'
+				type: 'all activities',
 			});
 		});
 	}
 
 	@computed
-	get orderedCalendarEvents(): CalendarEvent[]{
+	get orderedCalendarEvents(): CalendarEvent[] {
 		return this.calendarEvents.filter((x) => isEventAlreadyOrdered(this, x));
 	}
 
 	@computed
-	get nonOrderedCalendarEvents(): CalendarEvent[]{
+	get nonOrderedCalendarEvents(): CalendarEvent[] {
 		return this.calendarEvents.filter((x) => !isEventAlreadyOrdered(this, x));
 	}
 
@@ -1139,7 +1154,7 @@ export class EventStore {
 		return Promise.all([promise1, promise2]).then(() => {
 			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
 				count2: count,
-				type: 'non ordered'
+				type: 'non ordered',
 			});
 		});
 	}
@@ -1220,7 +1235,7 @@ export class EventStore {
 		this.openSidebarGroup(SidebarGroups.DISTANCES);
 		this.openSidebarGroup(SidebarGroups.DISTANCES_NEARBY);
 		this.distanceSectionAutoOpened = true;
-		localStorage.setItem('distanceSectionAutoOpened', "1")
+		localStorage.setItem('distanceSectionAutoOpened', '1');
 	}
 
 	@action
@@ -1658,7 +1673,7 @@ export class EventStore {
 			setTimeout(() => {
 				this.togglingTripLock = false;
 			}, 300);
-		})
+		});
 	}
 
 	// --- private functions ----------------------------------------------------
@@ -1831,7 +1846,7 @@ export class EventStore {
 	}
 
 	@action
-	resetFilters(){
+	resetFilters() {
 		this.setSearchValue('');
 		this.setSidebarSearchValue('');
 		this.setShowOnlyEventsWithNoLocation(false);
@@ -1839,7 +1854,7 @@ export class EventStore {
 		this.setShowOnlyEventsWithNoOpeningHours(false);
 		this.setShowOnlyEventsWithDistanceProblems(false);
 		this.setShowOnlyEventsWithOpeningHoursProblems(false);
-		
+
 		// Reset sidebar priority filters
 		this.filterSidebarPriorities = observable.map({});
 		this.filterSidebarCategories = observable.map({});
@@ -1853,17 +1868,18 @@ export class EventStore {
 	}
 
 	@action
-	triggerCalendarReRender(){
+	triggerCalendarReRender() {
 		this.forceCalendarReRender += 1;
 	}
 
 	@computed
-	get formattedTripName(){
+	get formattedTripName() {
 		if (!this.tripName) {
 			return undefined;
 		}
-		return this.tripName.includes(" ") ? this.tripName : this.tripName.replaceAll('-',' ').replaceAll('   ',' - ');
-
+		return this.tripName.includes(' ')
+			? this.tripName
+			: this.tripName.replaceAll('-', ' ').replaceAll('   ', ' - ');
 	}
 
 	@action

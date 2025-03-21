@@ -31,7 +31,7 @@ import DraggableList from '../draggable-list/draggable-list';
 import { getClasses, isEventAlreadyOrdered, jsonDiff, lockEvents } from '../../utils/utils';
 import { TripDataSource } from '../../utils/enums';
 import { DBService } from '../../services/data-handlers/db-service';
-import {FeatureFlagsService} from "../../utils/feature-flags";
+import { FeatureFlagsService } from '../../utils/feature-flags';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -415,15 +415,17 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridAllDays',
 		  };
 
-	const customButtons = FeatureFlagsService.isNewDesignEnabled() ? undefined : {
-		customTitle: {
-			text: `${eventStore.tripName.replaceAll('-', ' ')} (${getDateRangeString(
-				new Date(eventStore.customDateRange.start),
-				new Date(eventStore.customDateRange.end)
-			)})`,
-			click: function () {},
-		},
-	};
+	const customButtons = FeatureFlagsService.isNewDesignEnabled()
+		? undefined
+		: {
+				customTitle: {
+					text: `${eventStore.tripName.replaceAll('-', ' ')} (${getDateRangeString(
+						new Date(eventStore.customDateRange.start),
+						new Date(eventStore.customDateRange.end)
+					)})`,
+					click: function () {},
+				},
+		  };
 
 	// set view mode as time grid three day on mobile
 	useEffect(() => {
@@ -644,10 +646,13 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	return (
 		<div className="triplan-calendar-container">
-			<div className="flex-col width-100-percents position-relative calendar-wrapper" key={eventStore.forceCalendarReRender}>
+			<div
+				className="flex-col width-100-percents position-relative calendar-wrapper"
+				key={eventStore.forceCalendarReRender}
+			>
 				{eventStore.isSwitchDaysEnabled && !eventStore.isTripLocked && <DraggableList />}
 				<FullCalendar
-					initialView={'timeGridWeek'}
+					initialView="timeGridWeek"
 					headerToolbar={headerToolbar}
 					titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
 					customButtons={customButtons}
@@ -667,7 +672,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 					buttonText={buttonTexts}
 					allDayText={TranslateService.translate(eventStore, 'ALL_DAY_TEXT')}
 					weekText={TranslateService.translate(eventStore, 'WEEK_TEXT')}
-					scrollTime={'07:00'}
+					scrollTime="07:00"
 					slotLabelFormat={{
 						hour: '2-digit',
 						minute: '2-digit',
@@ -702,7 +707,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 						// end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
 						end: addDays(toDate(eventStore.customDateRange.end), 0), // addDays(toDate(eventStore.customDateRange.end), 1),
 					}}
-					slotMinTime={'00:00'}
+					slotMinTime="00:00"
 					scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
 					dayHeaderFormat={{
 						/* show weekday and date in a format of Sunday 14.3 for example - always - on all views */

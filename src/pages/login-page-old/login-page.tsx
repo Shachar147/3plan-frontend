@@ -28,7 +28,7 @@ const Logo = () => (
 	<img
 		className={getClasses(['logo-container pointer'])}
 		style={{ maxWidth: '400px' }}
-		src={'/images/logo/new-logo.png'}
+		src="/images/logo/new-logo.png"
 	/>
 );
 
@@ -132,7 +132,7 @@ const LoginPageOld = () => {
 		error === '' ? (
 			''
 		) : (
-			<style.Error className={'field'} data-testid={errorTestId}>
+			<style.Error className="field" data-testid={errorTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
 			</style.Error>
 		);
@@ -140,7 +140,7 @@ const LoginPageOld = () => {
 		message === '' || error !== '' ? (
 			''
 		) : (
-			<style.Message className={'field'} data-testid={messageTestId}>
+			<style.Message className="field" data-testid={messageTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, message) }} />
 			</style.Message>
 		);
@@ -164,7 +164,7 @@ const LoginPageOld = () => {
 	return (
 		<div className="login-page">
 			<TriplanHeaderWrapper {...headerProps} />
-			<style.Container className={'login-page-content ui header cards centered'}>
+			<style.Container className="login-page-content ui header cards centered">
 				<style.SubContainer>
 					<div
 						onClick={() => {
@@ -196,16 +196,16 @@ const LoginPageOld = () => {
 											}}
 											onKeyDown={(e: any) => onKeyDown(e.keyCode)}
 											dataTestId={dataTestId}
-											autoComplete={'off'}
+											autoComplete="off"
 										/>
 									</div>
 								);
 							})}
-							<div className={'flex-row gap-10'}>
+							<div className="flex-row gap-10">
 								<style.Button
 									validating={validating}
 									className="ui fluid large button primary-button"
-									data-testid={'submit'}
+									data-testid="submit"
 									onClick={login}
 								>
 									{TranslateService.translate(eventStore, 'LOGIN')}
@@ -213,7 +213,7 @@ const LoginPageOld = () => {
 								<style.Button
 									validating={validating}
 									className="ui fluid large button secondary-button black"
-									data-testid={'guest'}
+									data-testid="guest"
 									onClick={() => {
 										if (!DataServices.LocalStorageService.shouldShowContinueAsGuest()) {
 											window.location.href = '/home';
@@ -235,10 +235,10 @@ const LoginPageOld = () => {
 								</style.Button>
 							</div>
 						</div>
-						<div className={'register-link-container'} key={'register-link-container'}>
+						<div className="register-link-container" key="register-link-container">
 							<style.RegisterLink>
 								{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
-								<Link data-testid={'register'} to={'/register'}>
+								<Link data-testid="register" to="/register">
 									{TranslateService.translate(eventStore, 'REGISTER')}
 								</Link>
 							</style.RegisterLink>

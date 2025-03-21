@@ -1,43 +1,43 @@
 .location-input-container {
-  display: flex;
-  flex: 1 1 0;
-  min-width: 0;
+	display: flex;
+	flex: 1 1 0;
+	min-width: 0;
 
-  .fa.fa-map-marker {
-    width: 20px;
-    text-align: left;
-    background-color: white;
-    top: 1px;
-    bottom: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    right: 5px;
-    left: unset;
-  }
+	.fa.fa-map-marker {
+		width: 20px;
+		text-align: left;
+		background-color: white;
+		top: 1px;
+		bottom: 1px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		right: 5px;
+		left: unset;
+	}
 
-  input.location-input {
-    padding-inline-end: 27px !important;
+	input.location-input {
+		padding-inline-end: 27px !important;
 
-    &:read-only {
-      color: black !important;
-      opacity: 1 !important;
-    }
-  }
+		&:read-only {
+			color: black !important;
+			opacity: 1 !important;
+		}
+	}
 }
 
 body.rtl {
-  .location-input-container {
-    .fa.fa-map-marker {
-      left: 5px;
-      right: unset;
-    }
-  }
+	.location-input-container {
+		.fa.fa-map-marker {
+			left: 5px;
+			right: unset;
+		}
+	}
 }
 
 .show-on-map-link {
-  font-size: 14px;
-  color: var(--blue) !important;
-  cursor: pointer;
-  padding-inline: 0;
+	font-size: 14px;
+	color: var(--blue) !important;
+	cursor: pointer;
+	padding-inline: 0;
 }

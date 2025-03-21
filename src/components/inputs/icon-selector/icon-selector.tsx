@@ -59,7 +59,7 @@ const IconSelector = (props: IconSelectorProps, ref: any) => {
 		/>
 	);
 
-	return <div className={'icon-selector'}>{content}</div>;
+	return <div className="icon-selector">{content}</div>;
 };
 
 export default React.forwardRef(IconSelector);

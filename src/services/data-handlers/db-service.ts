@@ -17,7 +17,7 @@ import { getToken } from '../../helpers/auth';
 import _ from 'lodash';
 import { addSeconds } from '../../utils/time-utils';
 import ReactModalService from '../react-modal-service';
-import {endpoints} from "../../v2/utils/endpoints";
+import { endpoints } from '../../v2/utils/endpoints';
 
 export interface upsertTripProps {
 	name?: string;
@@ -101,8 +101,8 @@ export class DBService implements BaseDataHandler {
 
 	async getTripData(tripName?: string): Promise<Trip> {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getTripByName(tripName!));
-		if (!res){
-			window.location.href = "/login";
+		if (!res) {
+			window.location.href = '/login';
 		}
 		return res.data as Trip;
 	}
@@ -129,8 +129,8 @@ export class DBService implements BaseDataHandler {
 	async getTripsShort(_: any): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getAllTripsShort);
 		const trips: Trip[] = [];
-		if (!res){
-			window.location.href = "/login";
+		if (!res) {
+			window.location.href = '/login';
 		}
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);
@@ -167,7 +167,7 @@ export class DBService implements BaseDataHandler {
 	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
 		const arr = _.cloneDeep(calendarEvents);
 		arr.map((x: CalendarEvent) => {
-			x.className = (x.className ?? "").replace(' locked', '');
+			x.className = (x.className ?? '').replace(' locked', '');
 
 			// @ts-ignore
 			x.classNames = x.classNames?.replace(' locked', '');
@@ -288,7 +288,8 @@ export class DBService implements BaseDataHandler {
 		errorCallback?: (error: any, error_retry: number) => void,
 		finallyCallback?: () => void
 	) {
-		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale, destinations } = data;
+		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale, destinations } =
+			data;
 
 		return await apiPost(endpoints.v1.trips.createTrip, {
 			name,
@@ -298,7 +299,7 @@ export class DBService implements BaseDataHandler {
 			sidebarEvents,
 			allEvents,
 			calendarLocale,
-			destinations
+			destinations,
 		})
 			.then((res: any) => {
 				if (successCallback) {
@@ -397,13 +398,16 @@ export class DBService implements BaseDataHandler {
 		return await apiPost(endpoints.v1.tasks.createTask, data);
 	}
 
-	async updateTask(taskId: number, data: {
-		description: string;
-		title: string;
-		status: TriplanTaskStatus;
-		eventId?: number;
-		mustBeDoneBefore?: number;
-	}) {
+	async updateTask(
+		taskId: number,
+		data: {
+			description: string;
+			title: string;
+			status: TriplanTaskStatus;
+			eventId?: number;
+			mustBeDoneBefore?: number;
+		}
+	) {
 		return await apiPut(endpoints.v1.tasks.updateTaskStatus(taskId), data);
 	}
 

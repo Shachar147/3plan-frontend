@@ -8,9 +8,9 @@ import TriplanSearch from './triplan-search/triplan-search';
 import { ViewMode } from '../../utils/enums';
 import TranslateService from '../../services/translate-service';
 import { getClasses } from '../../utils/utils';
-import {myTripsTabId} from "../../v2/utils/consts";
-import {FeatureFlagsService} from "../../utils/feature-flags";
-import {rootStoreContext} from "../../v2/stores/root-store";
+import { myTripsTabId } from '../../v2/utils/consts';
+import { FeatureFlagsService } from '../../utils/feature-flags';
+import { rootStoreContext } from '../../v2/stores/root-store';
 
 interface TriplanHeaderWrapperProps extends TriplanHeaderProps {
 	currentMobileView?: ViewMode;
@@ -76,7 +76,7 @@ function TriplanHeaderWrapper(props: TriplanHeaderWrapperProps) {
 					if (FeatureFlagsService.isNewDesignEnabled()) {
 						rootStore.navigateToTab(myTripsTabId);
 					} else {
-						navigate('/my-trips')
+						navigate('/my-trips');
 					}
 				}}
 				{...props}

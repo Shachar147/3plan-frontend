@@ -1,23 +1,22 @@
 import { getClasses } from '../../../utils/utils';
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import { eventStoreContext } from '../../../stores/events-store';
 import { DateRangeFormatted } from '../../../services/data-handlers/data-handler-base';
 import {
 	getOffsetInHours,
 	getUserDateFormat,
 	getUserDateFormatLowercase,
-	validateDateRange
+	validateDateRange,
 } from '../../../utils/time-utils';
 import LogHistoryService from '../../../services/data-handlers/log-history-service';
 import { TripActions } from '../../../utils/interfaces';
 // @ts-ignore
 import _ from 'lodash';
 // @ts-ignore
-import RangePicker from "react-range-picker";
-import {formatDateString} from "../../../utils/defaults";
+import RangePicker from 'react-range-picker';
+import { formatDateString } from '../../../utils/defaults';
 import './custom-dates-selector.scss';
-import moment from "moment";
-
+import moment from 'moment';
 
 export interface CustomDatesSelectorProps {
 	customDateRange: DateRangeFormatted;
@@ -35,7 +34,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 
 	const dateFormat = getUserDateFormat(eventStore);
 
-	function InnerContentOld(){
+	function InnerContentOld() {
 		const arrowIcon = eventStore.getCurrentDirection() === 'rtl' ? 'left' : 'right';
 		return (
 			<div className="custom-dates-line">
@@ -108,41 +107,51 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 					disabled={props.disabled}
 				/>
 			</div>
-		)
+		);
 	}
 
 	function InnerContentDisabled() {
 		return (
 			<div className="default-placeholder grayscale">
 				<div className="text">
-					<div className="dates-container"><span className="date"> {moment(props.customDateRange.start, 'YYYY-MM-DD').format(dateFormat)} </span><b> ~ </b><span
-						className="date"> {moment(props.customDateRange.end, 'YYYY-MM-DD').format(dateFormat)} </span></div>
+					<div className="dates-container">
+						<span className="date">
+							{' '}
+							{moment(props.customDateRange.start, 'YYYY-MM-DD').format(dateFormat)}{' '}
+						</span>
+						<b> ~ </b>
+						<span className="date">
+							{' '}
+							{moment(props.customDateRange.end, 'YYYY-MM-DD').format(dateFormat)}{' '}
+						</span>
+					</div>
 				</div>
 				<div className="icon">
 					<div className="calendar-hooks">
-						<div className="hook"/>
-						<div className="hook"/>
+						<div className="hook" />
+						<div className="hook" />
 					</div>
 					<div className="date-dots">
-						<div className="dot"/>
-						<div className="dot"/>
-						<div className="dot"/>
-						<div className="dot"/>
-						<div className="dot"/>
+						<div className="dot" />
+						<div className="dot" />
+						<div className="dot" />
+						<div className="dot" />
+						<div className="dot" />
 					</div>
 				</div>
 			</div>
-		)
+		);
 	}
 
 	function InnerContent() {
-		return (
-			isDisabled ? InnerContentDisabled() :
+		return isDisabled ? (
+			InnerContentDisabled()
+		) : (
 			<RangePicker
 				key={reRenderCounter}
 				defaultValue={{
 					startDate: new Date(props.customDateRange.start),
-					endDate: new Date(props.customDateRange.end)
+					endDate: new Date(props.customDateRange.end),
 				}}
 				dateFormat={getUserDateFormatLowercase(eventStore)}
 				onDateSelected={(from: Date, to: Date) => {
@@ -166,7 +175,7 @@ const CustomDatesSelector = (props: CustomDatesSelectorProps) => {
 				disabled={props.disabled}
 				rangeTillEndOfDay
 			/>
-		)
+		);
 	}
 
 	return (

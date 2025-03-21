@@ -8,7 +8,7 @@
 
 	padding-inline-end: 10px;
 	width: fit-content;
-	max-width: 420px; 
+	max-width: 420px;
 	min-width: 400px;
 
 	transition: max-width 0.3s ease-in-out;
@@ -199,7 +199,7 @@ body.rtl {
 	gap: 4px;
 	margin-bottom: 10px;
 
-	background-color: rgba(0,0,0,0.03);
+	background-color: rgba(0, 0, 0, 0.03);
 	padding: 2.5px;
 	border-radius: 20px;
 
@@ -379,7 +379,7 @@ body.rtl {
 			padding-inline-start: 5px;
 			max-width: CALC(100% - 20px);
 
-			.triplan-text-input input[type=text] {
+			.triplan-text-input input[type='text'] {
 				min-width: 95px;
 			}
 		}
@@ -389,7 +389,6 @@ body.rtl {
 		min-height: 30px !important;
 	}
 }
-
 
 @media only screen and (min-width: 750px) {
 	.external-events-container {

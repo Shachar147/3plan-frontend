@@ -1,359 +1,359 @@
 $biggestZIndex: 99999999999;
 
 .triplan-header-banner {
-  height: 700px;
-  padding-inline: 196px + 96px;
-  padding-top: 10px;
-  font-family: GT Eesti,fallback for GT Eesti,android fallback for GT Eesti,sans-serif;
-  position: relative;
-  transition: padding-inline 0.3s ease; /* Transition for padding-inline */
+	height: 700px;
+	padding-inline: 196px + 96px;
+	padding-top: 10px;
+	font-family: GT Eesti, fallback for GT Eesti, android fallback for GT Eesti, sans-serif;
+	position: relative;
+	transition: padding-inline 0.3s ease; /* Transition for padding-inline */
 
-  &.no-header {
-    height: 100vh !important;
+	&.no-header {
+		height: 100vh !important;
 
-    .triplan-header-banner-bottom-shadow {
-      top: CALC(100vh - 100px) !important;
-    }
+		.triplan-header-banner-bottom-shadow {
+			top: CALC(100vh - 100px) !important;
+		}
 
-    .triplan-header-banner-slogan {
-      position: absolute;
-      top: CALC(50vh - 60px);
+		.triplan-header-banner-slogan {
+			position: absolute;
+			top: CALC(50vh - 60px);
 
-      hr {
-        width: 100%;
-        position: relative;
-        margin-top: -1px;
-        border:3px solid white;
-      }
-    }
-  }
+			hr {
+				width: 100%;
+				position: relative;
+				margin-top: -1px;
+				border: 3px solid white;
+			}
+		}
+	}
 
-  &.trip-mode {
-    //height: 200px;
-    height: 400px;
+	&.trip-mode {
+		//height: 200px;
+		height: 400px;
 
-    .triplan-header-banner-bottom-shadow {
-      //top: 100px;
-      top: 300px;
-    }
+		.triplan-header-banner-bottom-shadow {
+			//top: 100px;
+			top: 300px;
+		}
 
-    .triplan-header-banner-slogan {
-      //display: none;
-      top: 150px;
-    }
-  }
+		.triplan-header-banner-slogan {
+			//display: none;
+			top: 150px;
+		}
+	}
 
-  // temporary:
-  //background-image: url("https://images.contentstack.io/v3/assets/blt06f605a34f1194ff/blt592c0e4e8a0b1271/641347cc0c29c7363bf394b2/Vatican_Desktop.jpg?auto=webp&quality=60");
-  //background-image: url("https://img.freepik.com/free-photo/copy-space-straw-hat-map_23-2148232404.jpg?t=st=1720070067~exp=1720073667~hmac=694b871b6c522eb2f1a366a306e8ae4c89eb2ddec416f46c325f34ac8676101b&w=2000");
-  //background-size: cover;
-  //background-position-x: center;
-  //background-position-y: center;
-  //background-repeat: no-repeat;
-  //background-image: url("https://img.freepik.com/free-vector/travel-pattern-with-elements-dash-lines_23-2148057144.jpg?t=st=1720070910~exp=1720074510~hmac=c09ac3569de3060380954ef0594d134184876b5683a8bdbe331aa980d0bf3c12&w=1380");
-  //background-image: url("http://localhost:3000/images/banner/4.png");
+	// temporary:
+	//background-image: url("https://images.contentstack.io/v3/assets/blt06f605a34f1194ff/blt592c0e4e8a0b1271/641347cc0c29c7363bf394b2/Vatican_Desktop.jpg?auto=webp&quality=60");
+	//background-image: url("https://img.freepik.com/free-photo/copy-space-straw-hat-map_23-2148232404.jpg?t=st=1720070067~exp=1720073667~hmac=694b871b6c522eb2f1a366a306e8ae4c89eb2ddec416f46c325f34ac8676101b&w=2000");
+	//background-size: cover;
+	//background-position-x: center;
+	//background-position-y: center;
+	//background-repeat: no-repeat;
+	//background-image: url("https://img.freepik.com/free-vector/travel-pattern-with-elements-dash-lines_23-2148057144.jpg?t=st=1720070910~exp=1720074510~hmac=c09ac3569de3060380954ef0594d134184876b5683a8bdbe331aa980d0bf3c12&w=1380");
+	//background-image: url("http://localhost:3000/images/banner/4.png");
 
-  // background-image: url("http://localhost:3000/images/banner/5.jpg");
-  //background-image: url("http://localhost:3000/images/banner/6.jpg");
+	// background-image: url("http://localhost:3000/images/banner/5.jpg");
+	//background-image: url("http://localhost:3000/images/banner/6.jpg");
 
-  background-position-x: center;
+	background-position-x: center;
 
-  background-size: 100% auto;
-  background-position-y: center;
-  //background-position-y: center;
-  //background-repeat: no-repeat;
-  //background-color: #8bdaee;
-  position: relative;
+	background-size: 100% auto;
+	background-position-y: center;
+	//background-position-y: center;
+	//background-repeat: no-repeat;
+	//background-color: #8bdaee;
+	position: relative;
 
-  &-shadow {
-    background: linear-gradient(268deg,rgba(12,24,47,0) 34.23%,rgba(12,24,47,.6) 97.86%);
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    position: absolute;
-    opacity: 0.5;
-  }
+	&-shadow {
+		background: linear-gradient(268deg, rgba(12, 24, 47, 0) 34.23%, rgba(12, 24, 47, 0.6) 97.86%);
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		position: absolute;
+		opacity: 0.5;
+	}
 
-  &-slogan {
-    font-size: 60px;
-    line-height: 60px;
-    display: flex;
-    flex-direction: column;
-    color: white;
-    top: 220px;
-    position: absolute;
-    font-family: GT Eesti,fallback for GT Eesti,android fallback for GT Eesti,sans-serif;
-    font-weight: bold;
-  }
+	&-slogan {
+		font-size: 60px;
+		line-height: 60px;
+		display: flex;
+		flex-direction: column;
+		color: white;
+		top: 220px;
+		position: absolute;
+		font-family: GT Eesti, fallback for GT Eesti, android fallback for GT Eesti, sans-serif;
+		font-weight: bold;
+	}
 
-  &-bottom-shadow {
-    background: linear-gradient(180deg, transparent, #000);
-    height: 100px;
-    position: absolute;
-    top: 600px;
-    left: 0;
-    width: 100%;
-    z-index: 1;
-    opacity: 0.5;
-  }
+	&-bottom-shadow {
+		background: linear-gradient(180deg, transparent, #000);
+		height: 100px;
+		position: absolute;
+		top: 600px;
+		left: 0;
+		width: 100%;
+		z-index: 1;
+		opacity: 0.5;
+	}
 
-  .triplan-header-banner-header-line {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    color: white;
-    font-size: 16px;
-    //transition: padding-bottom 0.2s ease-in-out;
-    z-index: 2;
-    //position: sticky;
-    //top: 0;
-    //width: 100%;
-    //left: 0;
+	.triplan-header-banner-header-line {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		color: white;
+		font-size: 16px;
+		//transition: padding-bottom 0.2s ease-in-out;
+		z-index: 2;
+		//position: sticky;
+		//top: 0;
+		//width: 100%;
+		//left: 0;
 
-    &.sticky {
-      width: 100%;
-      top: 0;
-      padding-top: 10px;
-      left: 0;
-      position: sticky;
+		&.sticky {
+			width: 100%;
+			top: 0;
+			padding-top: 10px;
+			left: 0;
+			position: sticky;
 
-      &.is-sticky {
-        background-color: white;
-        width: 100%;
-        position: fixed;
-        padding-bottom: 10px;
-        top: 0;
-        left: 0;
-        z-index: $biggestZIndex;
-        padding-inline: 196px + 96px;
-        //border-bottom: 1px solid var(--gray);
-        box-shadow: 0 4px 20px 4px #0000001a;
+			&.is-sticky {
+				background-color: white;
+				width: 100%;
+				position: fixed;
+				padding-bottom: 10px;
+				top: 0;
+				left: 0;
+				z-index: $biggestZIndex;
+				padding-inline: 196px + 96px;
+				//border-bottom: 1px solid var(--gray);
+				box-shadow: 0 4px 20px 4px #0000001a;
 
-        .link-button {
-          color: black;
+				.link-button {
+					color: black;
 
-          &.active,
-          &:hover {
-            border-radius: 0 !important;
-            background-color: rgba(0, 0, 0, 0.05) !important;
-            color: black !important;
-          }
+					&.active,
+					&:hover {
+						border-radius: 0 !important;
+						background-color: rgba(0, 0, 0, 0.05) !important;
+						color: black !important;
+					}
 
-          &.active {
-            background-color: white !important;
-            color: #0079ff !important;
-            border-bottom: 3px solid #0079ff !important;
-          }
-        }
-      }
-    }
+					&.active {
+						background-color: white !important;
+						color: #0079ff !important;
+						border-bottom: 3px solid #0079ff !important;
+					}
+				}
+			}
+		}
 
-    .link-button {
-      color: white;
-      padding: 10px;
-      padding-top: 40px;
-      margin-top: -30px;
+		.link-button {
+			color: white;
+			padding: 10px;
+			padding-top: 40px;
+			margin-top: -30px;
 
-      &.active,
-      &:hover {
-        &:not(:disabled) {
-          background-color: rgba(0, 0, 0, 0.4);
-          opacity: 1 !important;
-          color: white !important;
-        }
-      }
-    }
+			&.active,
+			&:hover {
+				&:not(:disabled) {
+					background-color: rgba(0, 0, 0, 0.4);
+					opacity: 1 !important;
+					color: white !important;
+				}
+			}
+		}
 
-    &-search {
-      width: 400px;
-      max-width: 400px;
+		&-search {
+			width: 400px;
+			max-width: 400px;
 
-      input {
-        //color: #2b9974;
-        padding-inline-start: 16px !important;
-        border: 2px solid #dcdfe4;
-        height: 56px !important;
-        border-radius: 44px !important;
+			input {
+				//color: #2b9974;
+				padding-inline-start: 16px !important;
+				border: 2px solid #dcdfe4;
+				height: 56px !important;
+				border-radius: 44px !important;
 
-        &::placeholder {
-          //color: black;
-          color: black;
-          opacity: 0.4;
-        }
-      }
-    }
+				&::placeholder {
+					//color: black;
+					color: black;
+					opacity: 0.4;
+				}
+			}
+		}
 
-    &-top-shadow {
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 150px;
-      background: linear-gradient(180deg, #000, transparent);
-      position: absolute;
-      opacity: 0.7;
-    }
+		&-top-shadow {
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 150px;
+			background: linear-gradient(180deg, #000, transparent);
+			position: absolute;
+			opacity: 0.7;
+		}
 
-    &-left-side, &-right-side {
-      display: flex;
-      align-items: center;
-      z-index: 1;
-    }
+		&-left-side,
+		&-right-side {
+			display: flex;
+			align-items: center;
+			z-index: 1;
+		}
 
-    &-right-side {
-      gap: 16px;
+		&-right-side {
+			gap: 16px;
 
-      button {
-        color: white;
-        display: flex;
-        flex-direction: column;
-      }
-    }
-  }
+			button {
+				color: white;
+				display: flex;
+				flex-direction: column;
+			}
+		}
+	}
 }
 
 // override so if modal appears, the header won't appear over it.
 body:has(.triplan-react-modal) {
-  .triplan-header-banner {
-    .triplan-header-banner-header-line {
-      &.sticky {
-        &.is-sticky {
-          z-index: 100 !important;
-        }
-      }
-    }
-  }
+	.triplan-header-banner {
+		.triplan-header-banner-header-line {
+			&.sticky {
+				&.is-sticky {
+					z-index: 100 !important;
+				}
+			}
+		}
+	}
 }
 
 body.rtl {
-  .triplan-header-banner-footer,
-  .triplan-header-banner {
-    direction: rtl;
-    //.triplan-header-banner-header-line,
-    //.triplan-header-banner-header-line-left-side,
-    //.triplan-header-banner-header-line-right-side {
-    //  flex-direction: row-reverse;
-    //}
-  }
+	.triplan-header-banner-footer,
+	.triplan-header-banner {
+		direction: rtl;
+		//.triplan-header-banner-header-line,
+		//.triplan-header-banner-header-line-left-side,
+		//.triplan-header-banner-header-line-right-side {
+		//  flex-direction: row-reverse;
+		//}
+	}
 
-  .triplan-header-banner-footer .tabular.menu {
-    > .item.active {
-      direction: rtl;
-    }
-  }
+	.triplan-header-banner-footer .tabular.menu {
+		> .item.active {
+			direction: rtl;
+		}
+	}
 
-  .triplan-header-banner-slogan {
-    text-align: right;
-  }
+	.triplan-header-banner-slogan {
+		text-align: right;
+	}
 }
 
 // mobile
 @media only screen and (max-width: 600px) {
-  .triplan-header-banner {
-    padding-inline: 20px;
-    height: 380px;
-    background-size: cover;
+	.triplan-header-banner {
+		padding-inline: 20px;
+		height: 380px;
+		background-size: cover;
 
-    &-bottom-shadow {
-      top: 280px;
-    }
+		&-bottom-shadow {
+			top: 280px;
+		}
 
-    &-shadow {
-      opacity: 1;
-    }
+		&-shadow {
+			opacity: 1;
+		}
 
-    &-slogan {
-      top: 120px;
-      font-size: 40px;
-      text-align: center !important;
-      width: 100%;
-      left: 0;
+		&-slogan {
+			top: 120px;
+			font-size: 40px;
+			text-align: center !important;
+			width: 100%;
+			left: 0;
 
-      > span {
-        line-height: 40px;
-      }
+			> span {
+				line-height: 40px;
+			}
 
-      > span:nth-child(2) {
-        font-size: 30px;
-      }
-    }
+			> span:nth-child(2) {
+				font-size: 30px;
+			}
+		}
 
-    .header-logo {
-      display: none;
-    }
+		.header-logo {
+			display: none;
+		}
 
-    .triplan-header-banner-header-line {
-      padding-top: 20px;
-      flex-direction: column-reverse;
-      align-items: center;
-      gap: 150px;
+		.triplan-header-banner-header-line {
+			padding-top: 20px;
+			flex-direction: column-reverse;
+			align-items: center;
+			gap: 150px;
 
-      .link-button {
-        padding-top: 50px;
-        margin-top: -50px;
-      }
+			.link-button {
+				padding-top: 50px;
+				margin-top: -50px;
+			}
 
-      &-search {
-        top: 130px;
-        width: 300px;
-        max-width: 100%;
-      }
+			&-search {
+				top: 130px;
+				width: 300px;
+				max-width: 100%;
+			}
 
-      &-right-side {
-        gap: 6px !important;
-      }
-    }
+			&-right-side {
+				gap: 6px !important;
+			}
+		}
 
-    //.triplan-header-banner-footer {
-    //  top: 116px;
-    //}
-  }
+		//.triplan-header-banner-footer {
+		//  top: 116px;
+		//}
+	}
 
+	.triplan-header-banner-footer .ui.tabular.menu .active.item {
+		border: 0;
+		border-top-left-radius: 20px !important;
+		border-top-right-radius: 20px !important;
+	}
 
-  .triplan-header-banner-footer .ui.tabular.menu .active.item {
-    border: 0;
-    border-top-left-radius: 20px !important;
-    border-top-right-radius: 20px !important;
-  }
+	.triplan-header-banner-footer {
+		.tabular.menu {
+			overflow-y: auto;
+			.item {
+				white-space: nowrap;
+			}
+		}
+	}
 
-  .triplan-header-banner-footer {
-    .tabular.menu {
-      overflow-y: auto;
-      .item {
-        white-space: nowrap;
-      }
-    }
-  }
-
-  .triplan-header-banner {
-    &.no-header {
-      .triplan-header-banner-slogan {
-        position: absolute;
-        top: 220px;
-      }
-    }
-  }
+	.triplan-header-banner {
+		&.no-header {
+			.triplan-header-banner-slogan {
+				position: absolute;
+				top: 220px;
+			}
+		}
+	}
 }
 
 .sticky-search-line {
-  background-color: rgba(236, 236, 236, 0.5);
-  border-block:1px solid rgba(236, 236, 236, 1);
-  width: 100vw;
-  height: max-content;
-  //margin-top: 4px;
-  padding-block: 4px;
-  padding-top: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 14px;
+	background-color: rgba(236, 236, 236, 0.5);
+	border-block: 1px solid rgba(236, 236, 236, 1);
+	width: 100vw;
+	height: max-content;
+	//margin-top: 4px;
+	padding-block: 4px;
+	padding-top: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 14px;
 
-  .search-container {
-    margin-bottom: 0 !important;
-  }
+	.search-container {
+		margin-bottom: 0 !important;
+	}
 }
 
 .trip-name-in-banner {
-  max-width: 80%;
-  word-break: break-word;
+	max-width: 80%;
+	word-break: break-word;
 }

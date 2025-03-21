@@ -44,11 +44,15 @@ const Button = (props: ButtonProps) => {
 			style={props.style}
 			title={props.disabled && props.disabledReason ? props.disabledReason : props.tooltip}
 		>
-			{props.isLoading && <img alt={''} src="/images/loading.gif" height={24} />}
-			{!props.isLoading && props.image && <img alt={''} src={props.image} height={props.imageHeight} />}
-			{!props.isLoading && props.icon && iconPosition == 'start' && <i className={`fa ${props.icon}`} aria-hidden="true" />}
+			{props.isLoading && <img alt="" src="/images/loading.gif" height={24} />}
+			{!props.isLoading && props.image && <img alt="" src={props.image} height={props.imageHeight} />}
+			{!props.isLoading && props.icon && iconPosition == 'start' && (
+				<i className={`fa ${props.icon}`} aria-hidden="true" />
+			)}
 			{props.text && props.text.length && <span className="white-space-pre">{props.text}</span>}
-			{!props.isLoading && props.icon && iconPosition == 'end' && <i className={`fa ${props.icon}`} aria-hidden="true" />}
+			{!props.isLoading && props.icon && iconPosition == 'end' && (
+				<i className={`fa ${props.icon}`} aria-hidden="true" />
+			)}
 		</button>
 	);
 };

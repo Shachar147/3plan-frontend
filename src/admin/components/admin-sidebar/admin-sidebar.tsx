@@ -17,7 +17,7 @@ import { TriplanTinderApiService } from '../../services/triplan-tinder-api-servi
 import { CreateInstagramItemsResult, DownloadMediaResult, FixItemsResult } from '../../helpers/interfaces';
 import { runInAction } from 'mobx';
 import { modalsStoreContext } from '../../../stores/modals-store';
-import {TriplanSidebarDivider} from "../../../components/triplan-sidebar/triplan-sidebar-divider";
+import { TriplanSidebarDivider } from '../../../components/triplan-sidebar/triplan-sidebar-divider';
 
 export interface TriplanAdminSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -221,7 +221,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		return (
 			<>
 				<div
-					className={'sidebar-statistics'}
+					className="sidebar-statistics"
 					style={{
 						color: textColor,
 						paddingInlineStart: '10px',
@@ -238,7 +238,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
 						aria-hidden="true"
 					/>
-					<span className={'flex-gap-5 align-items-center'}>
+					<span className="flex-gap-5 align-items-center">
 						{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
 					</span>
 				</div>
@@ -271,7 +271,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${eventsWithNoLocation.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_NO_LOCATION'
@@ -309,7 +309,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${eventsWithNoHours.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_NO_OPENING_HOURS'
@@ -351,7 +351,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${todoCompleteEvents.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_TODO_COMPLETE'
@@ -389,7 +389,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 		return warningsBlock ? (
 			<>
-				<hr className={'margin-block-2'} />
+				<hr className="margin-block-2" />
 				{warningsBlock}
 			</>
 		) : undefined;
@@ -409,7 +409,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		);
 		return (
 			<>
-				<hr className={'margin-block-2'} />
+				<hr className="margin-block-2" />
 				{actionsBlock}
 			</>
 		);
@@ -423,12 +423,12 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 		const calendarSidebarStatistics = (
 			<>
-				<div className={'sidebar-statistics'}>
+				<div className="sidebar-statistics">
 					<i className="fa fa-calendar-check-o" aria-hidden="true" />
 					{adminStore.verifiedActivities.length}{' '}
 					{TranslateService.translate(eventStore, 'ADMIN_VERIFIED_ACTIVITIES')}
 				</div>
-				<div className={'sidebar-statistics'}>
+				<div className="sidebar-statistics">
 					<i className="fa fa-calendar-times-o" aria-hidden="true" />
 					{adminStore.unverifiedActivities.length}{' '}
 					{TranslateService.translate(eventStore, 'ADMIN_UNVERIFIED_ACTIVITIES')}
@@ -445,7 +445,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		);
 		return (
 			<>
-				<hr className={'margin-block-2'} />
+				<hr className="margin-block-2" />
 				{statsBlock}
 			</>
 		);
@@ -492,7 +492,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					const color = priorityToColor[priority];
 
 					return (
-						<div className={'sidebar-statistics'} key={`sidebar-statistics-for-${priorityText}`}>
+						<div className="sidebar-statistics" key={`sidebar-statistics-for-${priorityText}`}>
 							<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }}></i>
 							<div>
 								{`${total} ${prefix} `}
@@ -515,7 +515,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 		return (
 			<>
-				<hr className={'margin-block-2'} />
+				<hr className="margin-block-2" />
 				{prioritiesBlock}
 			</>
 		);
@@ -545,24 +545,24 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						<Button
 							disabled={!expandMinimizedEnabled}
 							flavor={ButtonFlavor.link}
-							// className={"padding-inline-start-10"}
+							// className="padding-inline-start-10"
 							onClick={eventStore.openAllCategories.bind(eventStore)}
-							icon={'fa-plus-square-o'}
+							icon="fa-plus-square-o"
 							text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
 						/>
-						<div className={'sidebar-statistics'} style={{ padding: 0 }}>
+						<div className="sidebar-statistics padding-0">
 							{' '}
 							|{' '}
 						</div>
 						<Button
 							disabled={!expandMinimizedEnabled}
 							flavor={ButtonFlavor.link}
-							className={'padding-inline-start-10'}
+							className="padding-inline-start-10"
 							onClick={eventStore.closeAllCategories.bind(eventStore)}
-							icon={'fa-minus-square-o'}
+							icon="fa-minus-square-o"
 							text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
 						/>
-						<div className={'sidebar-statistics'} style={{ padding: 0 }}>
+						<div className="sidebar-statistics padding-0">
 							{' '}
 							|{' '}
 						</div>
@@ -588,7 +588,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 
 		const renderNoDisplayedCategoriesPlaceholder = () => {
 			return (
-				<div className={'sidebar-statistics'}>
+				<div className="sidebar-statistics">
 					{TranslateService.translate(eventStore, 'NO_DISPLAYED_CATEGORIES')}
 				</div>
 			);
@@ -631,9 +631,9 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 			const eventsStyle = isOpen ? openStyle : closedStyle;
 
 			return (
-				<div className={'external-events'} key={category.id}>
+				<div className="external-events" key={category.id}>
 					<div
-						className={'sidebar-statistics'}
+						className="sidebar-statistics"
 						style={{
 							paddingInlineStart: '10px',
 							cursor: 'pointer',
@@ -705,7 +705,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		>
 			<Button
 				flavor={ButtonFlavor.secondary}
-				className={'black'}
+				className="black"
 				onClick={() => {
 					ReactModalService.openAddCategoryModal(eventStore);
 				}}
@@ -797,14 +797,14 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 				const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
 				return (
 					<div key={`${categoryId}-${preferredHour}`}>
-						<div className={'preferred-time'}>
-							<div className={'preferred-time-divider'} style={{ maxWidth: '20px' }}></div>
-							<div className={'preferred-time-title'}>
+						<div className="preferred-time">
+							<div className="preferred-time-divider" style={{ maxWidth: '20px' }}></div>
+							<div className="preferred-time-title">
 								{TranslateService.translate(eventStore, 'TIME')}:{' '}
 								{ucfirst(TranslateService.translate(eventStore, preferredHourString))} (
 								{preferredHoursHash[preferredHour].length})
 							</div>
-							<div className={'preferred-time-divider'}></div>
+							<div className="preferred-time-divider"></div>
 						</div>
 						<div>{renderPreferredHourEvents(categoryId, preferredHoursHash[preferredHour])}</div>
 					</div>
@@ -848,7 +848,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					>
 						<span
 							className="sidebar-event-title-container"
-							title={'Edit'}
+							title="Edit"
 							onClick={() => {
 								// modalsStore.switchToViewMode();
 								ReactModalService.openEditSidebarEventModal(
@@ -860,13 +860,13 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 								);
 							}}
 						>
-							<span className={'sidebar-event-title-text'}>
-								<span className={'sidebar-event-icon'}>
+							<span className="sidebar-event-title-text">
+								<span className="sidebar-event-icon">
 									{event.icon || eventStore.categoriesIcons[categoryId]}
 								</span>
 								{event.title}
 							</span>
-							<span className={'sidebar-event-duration'}>
+							<span className="sidebar-event-duration">
 								({getDurationString(eventStore, event.duration)})
 							</span>
 						</span>
@@ -884,7 +884,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						</div>
 						<a
 							title={TranslateService.translate(eventStore, 'DELETE')}
-							className={'fc-remove-event'}
+							className="fc-remove-event"
 							onClick={() => {
 								ReactModalService.openDeleteSidebarEventModal(
 									eventStore,
@@ -911,7 +911,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 		>
 			<div>
 				<div
-					className={'flex-row gap-10 sticky-0'}
+					className="flex-row gap-10 sticky-0"
 					style={{ backgroundColor: '#f2f5f8', zIndex: 1, minHeight: 50 }}
 				>
 					{renderAddEventButton()}
@@ -922,7 +922,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					{renderActions()}
 					{renderCalendarSidebarStatistics()}
 					{renderPrioritiesLegend()}
-					<hr className={'margin-block-2'} />
+					<hr className="margin-block-2" />
 					<TriplanSidebarDivider />
 					{renderCategories()}
 				</div>

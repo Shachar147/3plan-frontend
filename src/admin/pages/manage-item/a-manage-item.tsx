@@ -30,7 +30,7 @@ import { LocationData } from '../../../utils/interfaces';
 import SelectInput from '../../../components/inputs/select-input/select-input';
 import { TriplanPriority } from '../../../utils/enums';
 import { ucfirst } from '../../../utils/utils';
-import {endpoints} from "../../../v2/utils/endpoints";
+import { endpoints } from '../../../v2/utils/endpoints';
 
 interface ManageItemData {
 	items: TinderItem[];
@@ -439,14 +439,14 @@ function AManageItem() {
 							[field]: e.target.value,
 						});
 					}}
-					placeholder={''}
+					placeholder=""
 					modalValueName={field}
 					readOnly={isReadOnly}
 					className={isUnsaved ? 'unsaved' : undefined}
 					// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
 				/>
 				{field === 'more_info' ? (
-					<a href={value} target={'_blank'}>
+					<a href={value} target="_blank" rel="noreferrer">
 						<i className="fa fa-external-link" style={{ height: '20px' }} aria-hidden="true" />
 					</a>
 				) : undefined}
@@ -466,7 +466,7 @@ function AManageItem() {
 						[field]: e.target.value,
 					});
 				}}
-				placeholder={''}
+				placeholder=""
 				modalValueName={field}
 				readOnly={isReadOnly}
 				className={isUnsaved ? 'unsaved' : undefined}
@@ -508,7 +508,7 @@ function AManageItem() {
 							onClick={() => {
 								window.open(image, '_blank');
 							}}
-							alt={''}
+							alt=""
 							src={image}
 						/>
 					))}
@@ -525,7 +525,7 @@ function AManageItem() {
 							[field]: e.target.value.split('\n'),
 						});
 					}}
-					placeholder={''}
+					placeholder=""
 					modalValueName={field}
 					className={isUnsaved ? 'unsaved' : undefined}
 					readOnly={isReadOnly || readOnly}
@@ -558,7 +558,7 @@ function AManageItem() {
 							[field]: e.target.value.split('\n'),
 						});
 					}}
-					placeholder={''}
+					placeholder=""
 					modalValueName={field}
 					className={isUnsaved ? 'unsaved' : undefined}
 					readOnly={isReadOnly || readOnly}
@@ -569,7 +569,7 @@ function AManageItem() {
 		}
 
 		return (
-			<div className={'image-container'}>
+			<div className="image-container">
 				{imagesBlock}
 				{input}
 			</div>
@@ -580,7 +580,7 @@ function AManageItem() {
 		const { item, type, isReadOnly, field, value, isUnsaved } = props;
 		return (
 			<input
-				type={'checkbox'}
+				type="checkbox"
 				name={field}
 				checked={value}
 				onChange={(e) => {
@@ -629,14 +629,14 @@ function AManageItem() {
 							[field]: e.target.value,
 						});
 					}}
-					placeholder={''}
+					placeholder=""
 					modalValueName={field}
 					readOnly={isReadOnly}
 					className={isUnsaved ? 'unsaved' : undefined}
 					// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
 				/>
 				{value && value.latitude && value.longitude ? (
-					<a href={`https://maps.google.com/?q=${value.latitude},${value.longitude}`} target={'_blank'}>
+					<a href={`https://maps.google.com/?q=${value.latitude},${value.longitude}`} target="_blank" rel="noreferrer">
 						<i className="fa fa-external-link" style={{ height: '20px' }} aria-hidden="true" />
 					</a>
 				) : undefined}
@@ -665,7 +665,7 @@ function AManageItem() {
 				name={field}
 				options={options}
 				value={item[field] ? options.find((i) => i.value === item[field]) : undefined}
-				placeholderKey={'TYPE_TO_SEARCH_PLACEHOLDER'}
+				placeholderKey="TYPE_TO_SEARCH_PLACEHOLDER"
 				modalValueName={field}
 				// maxMenuHeight={extra.maxMenuHeight}
 				// removeDefaultClass={extra.removeDefaultClass}

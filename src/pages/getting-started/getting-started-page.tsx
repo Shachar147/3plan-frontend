@@ -18,7 +18,7 @@ import { validateDateRange } from '../../utils/time-utils';
 import { DEFAULT_VIEW_MODE_FOR_NEW_TRIPS, TRIP_MAX_SIZE_DAYS } from '../../utils/consts';
 import LogHistoryService from '../../services/data-handlers/log-history-service';
 import { TripActions } from '../../utils/interfaces';
-import DestinationSelector from "../../v2/components/destination-selector/destination-selector";
+import DestinationSelector from '../../v2/components/destination-selector/destination-selector';
 
 const GettingStartedPage = () => {
 	const [applyPageIntro, setApplyPageIntro] = useState(false);
@@ -77,12 +77,12 @@ const GettingStartedPage = () => {
 					border: 0,
 				}}
 			>
-				<div className={'main-font font-size-20'}>
+				<div className="main-font font-size-20">
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
 				</div>
-				<div className={'trip-name-line'}>
+				<div className="trip-name-line">
 					<input
-						type={'text'}
+						type="text"
 						style={{
 							paddingInline: '15px',
 							height: '40px',
@@ -105,17 +105,17 @@ const GettingStartedPage = () => {
 					/>
 				</div>
 
-				<div className={'main-font font-size-20'}>
+				<div className="main-font font-size-20">
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO')}
 				</div>
-				<div className={'custom-dates-line flex-row align-items-center'}>
+				<div className="custom-dates-line flex-row align-items-center">
 					<DestinationSelector onChange={setSelectedDestinations} />
 				</div>
 
-				<div className={'main-font font-size-20'}>
+				<div className="main-font font-size-20">
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
 				</div>
-				<div className={'custom-dates-line flex-row align-items-center'}>
+				<div className="custom-dates-line flex-row align-items-center">
 					<input
 						type="date"
 						onKeyDown={(e) => {
@@ -213,7 +213,7 @@ const GettingStartedPage = () => {
 				sidebarEvents: defaultEvents,
 				calendarEvents: defaultCalendarEvents,
 				categories: getDefaultCategories(eventStore),
-				destinations: selectedDestinations
+				destinations: selectedDestinations,
 			};
 
 			// backup
@@ -280,13 +280,13 @@ const GettingStartedPage = () => {
 				>
 					{TranslateService.translate(eventStore, 'LANDING_PAGE.PLANNING_A_NEW')}
 					<br />
-					<div className={'trip main-font-heavy'}>
+					<div className="trip main-font-heavy">
 						{TranslateService.translate(eventStore, 'LANDING_PAGE.TRIP')}
 					</div>
 				</div>
 				<img
 					className={getClasses(['logo-container pointer'], applyPageIntro && 'up')}
-					src={'/images/logo/new-logo.png'}
+					src="/images/logo/new-logo.png"
 					style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 					onClick={() => {
 						navigate('/home');
@@ -336,7 +336,7 @@ const GettingStartedPage = () => {
 						onClick={() => {
 							navigate('/my-trips');
 						}}
-						className={'black'}
+						className="black"
 					/>
 				</div>
 			</div>

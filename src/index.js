@@ -44,13 +44,13 @@ import {
 import { BiEventsService } from './services/bi-events.service';
 import useIsAdmin from './custom-hooks/use-is-admin';
 import InviteLink from './pages/invite-link/invite-link';
-import MainPageV2 from "./v2/views/main-page/main-page";
-import {newDesignRootPath} from "./v2/utils/consts";
-import {FeatureFlagsService} from "./utils/feature-flags";
-import LoginPageV2 from "./v2/views/login-page/login-page";
-import PlanPageV2 from "./v2/views/plan-page/plan-page";
-import TripTemplatePageV2 from "./v2/views/trip-template-page/trip-template-page";
-import AdminPageV2 from "./v2/admin/views/admin-page/admin-page";
+import MainPageV2 from './v2/views/main-page/main-page';
+import { newDesignRootPath } from './v2/utils/consts';
+import { FeatureFlagsService } from './utils/feature-flags';
+import LoginPageV2 from './v2/views/login-page/login-page';
+import PlanPageV2 from './v2/views/plan-page/plan-page';
+import TripTemplatePageV2 from './v2/views/trip-template-page/trip-template-page';
+import AdminPageV2 from './v2/admin/views/admin-page/admin-page';
 
 // Dubai
 // Namos / Twiggy?
@@ -450,7 +450,6 @@ const RootRouter = () => {
 				eventStore.modalValues['name'] = eventStore.modalValues['name'] ?? place.name;
 			}
 
-
 			// update images
 			if (eventStore.modalValues['images'] && eventStore.modalValues['images'].indexOf('maps.google') !== -1) {
 				eventStore.modalValues['images'] = undefined;
@@ -486,7 +485,7 @@ const RootRouter = () => {
 					label: x.icon ? `${x.icon} ${x.title}` : x.title,
 				}));
 
-			if (overrideName){
+			if (overrideName) {
 				eventStore.modalValues['category'] = undefined;
 			}
 
@@ -858,7 +857,23 @@ const RootRouter = () => {
 			<BrowserRouter>
 				<Routes>
 					<Route exact path={newDesignRootPath} element={<MainPageV2 />} />
-					<Route exact path="/" element={getUser() == undefined ? isNewDesign ? <LoginPageV2 /> : <LoginPage /> : isNewDesign ? <MainPageV2 /> : <LandingPage />} />
+					<Route
+						exact
+						path="/"
+						element={
+							getUser() == undefined ? (
+								isNewDesign ? (
+									<LoginPageV2 />
+								) : (
+									<LoginPage />
+								)
+							) : isNewDesign ? (
+								<MainPageV2 />
+							) : (
+								<LandingPage />
+							)
+						}
+					/>
 					<Route exact path="/home" element={<LandingPage />} />
 					<Route path={`${newDesignRootPath}/login`} element={<LoginPageV2 />} />
 					<Route path="/login" element={isNewDesign ? <LoginPageV2 /> : <LoginPage />} />
@@ -867,7 +882,7 @@ const RootRouter = () => {
 					<Route path="/logout" element={<LogoutPage />} />
 					<Route exact path="/getting-started" element={<GettingStartedPage />} />
 					<Route exact path="/my-trips" element={<MyTrips />} />
-					<Route path={'/plan/create/:tripName/:locale'} element={<MainPage createMode={true} />} />
+					<Route path="/plan/create/:tripName/:locale" element={<MainPage createMode={true} />} />
 					<Route path="/plan/:tripName/:locale" element={<MainPage />} />
 					<Route path="/plan/:tripName/" element={<MainPage />} />
 					<Route path={`${newDesignRootPath}/plan/:tripName/`} element={<PlanPageV2 />} />
@@ -880,7 +895,7 @@ const RootRouter = () => {
 					{/* Admin-only routes */}
 					{isAdmin ? (
 						<>
-							<Route path={`${newDesignRootPath}/admin`} element={<AdminPageV2/>} />
+							<Route path={`${newDesignRootPath}/admin`} element={<AdminPageV2 />} />
 							<Route path="/admin" element={<AdminDashboard />} />
 							<Route path="/admin/places-tinder" element={<AdminDashboard />} />
 							<Route path="/admin/destination/:destination" element={<AdminManageDestinationItems />} />
@@ -888,7 +903,10 @@ const RootRouter = () => {
 						</>
 					) : (
 						<>
-							<Route path={`${newDesignRootPath}/admin`} element={getUser() == undefined ? <LoginPage /> : <MainPageV2 />} />
+							<Route
+								path={`${newDesignRootPath}/admin`}
+								element={getUser() == undefined ? <LoginPage /> : <MainPageV2 />}
+							/>
 							<Route path="/admin" element={getUser() == undefined ? <LoginPage /> : <MainPageV2 />} />
 						</>
 					)}

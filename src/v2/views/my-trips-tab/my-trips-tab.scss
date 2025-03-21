@@ -1,127 +1,129 @@
 .my-trips-actionbar {
-  width: 100%;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-block: 10px;
+	width: 100%;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-block: 10px;
 
-  .selected-chips {
-    display: none;
-  }
+	.selected-chips {
+		display: none;
+	}
 
-  .form-content {
-    border-inline: 1px solid #efefef;
-    padding-inline: 30px;
-  }
+	.form-content {
+		border-inline: 1px solid #efefef;
+		padding-inline: 30px;
+	}
 
-  .destination-selector-container {
-    max-width: 450px;
-  }
+	.destination-selector-container {
+		max-width: 450px;
+	}
 
-  h3 {
-    font-weight: bold;
-    color: #1a2b49;
-  }
+	h3 {
+		font-weight: bold;
+		color: #1a2b49;
+	}
 
-  .secondary-button {
-    padding: 10px 20px;
-    outline: 1px solid var(--blue) !important;
-    background-color: white !important;
-    font-weight: bold;
-    //border: none;
-    color: var(--blue) !important;
-    border-radius: 44px;
-    cursor: pointer !important;
-    border: none;
-    //outline: none;
+	.secondary-button {
+		padding: 10px 20px;
+		outline: 1px solid var(--blue) !important;
+		background-color: white !important;
+		font-weight: bold;
+		//border: none;
+		color: var(--blue) !important;
+		border-radius: 44px;
+		cursor: pointer !important;
+		border: none;
+		//outline: none;
 
-    &:hover {
-      outline: 2px solid var(--blue) !important;
-      border: none !important;
-      //background-color: rgba(0,0,0,0.1) !important;
-    }
-  }
+		&:hover {
+			outline: 2px solid var(--blue) !important;
+			border: none !important;
+			//background-color: rgba(0,0,0,0.1) !important;
+		}
+	}
 }
 
 .my-trips-poi {
-  border-top-left-radius: 40px !important;
+	border-top-left-radius: 40px !important;
 
-  min-height: 350px !important;
+	min-height: 350px !important;
 
-  .poi-right {
-    min-height: 330px !important;
-  }
+	.poi-right {
+		min-height: 330px !important;
+	}
 
-  .activities-info {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    border-top: 1px solid #f1f1f1;
-    border-bottom: 1px solid #f1f1f1;
-    padding-block: 8px;
-    margin-block: 8px;
-  }
+	.activities-info {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+		border-top: 1px solid #f1f1f1;
+		border-bottom: 1px solid #f1f1f1;
+		padding-block: 8px;
+		margin-block: 8px;
+	}
 
-  .description {
-    margin-bottom: 0;
-    margin-top: 8px;
-  }
+	.description {
+		margin-bottom: 0;
+		margin-top: 8px;
+	}
 
-  .poi-details {
-    justify-content: flex-start;
-  }
+	.poi-details {
+		justify-content: flex-start;
+	}
 
-  .carousel {
-    //border-top-right-radius: 40px;
-    border-top-left-radius: 40px;
-  }
+	.carousel {
+		//border-top-right-radius: 40px;
+		border-top-left-radius: 40px;
+	}
 }
 
 .trips-list-trip-actions-v2 {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-  background-color: black;
-  //position: absolute;
-  padding: 3px;
-  //bottom: -30px;
-  justify-content: center;
-  border-bottom-right-radius: 40px;
-  //border-bottom-left-radius: 40px;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	background-color: black;
+	//position: absolute;
+	padding: 3px;
+	//bottom: -30px;
+	justify-content: center;
+	border-bottom-right-radius: 40px;
+	//border-bottom-left-radius: 40px;
 
-  i {
-    border-radius: 50%;
-    padding: 4px;
-    width: max-content;
-    padding-inline: 6px;
-    color: var(--gray);
-    opacity: 0.6;
-    transition: color 0.1s ease-in-out, opacity 0.1s ease-in-out;
-    cursor: pointer;
+	i {
+		border-radius: 50%;
+		padding: 4px;
+		width: max-content;
+		padding-inline: 6px;
+		color: var(--gray);
+		opacity: 0.6;
+		transition: color 0.1s ease-in-out, opacity 0.1s ease-in-out;
+		cursor: pointer;
 
-    &.active,
-    &:hover {
-      color: white;
-      opacity: 1;
-    }
-  }
+		&.active,
+		&:hover {
+			color: white;
+			opacity: 1;
+		}
+	}
 }
 
 .triplan-main-page-container {
-  .triplan-sidebar-main-buttons, .add-activity-button, .add-category-button {
-    background-color: white;
-  }
-  .triplan-header-spacer {
-    padding-bottom: 0 !important;
-  }
-  .language-selector,
-  .triplan-header-starter {
-    display: none;
-  }
-  .triplan-header-actionbar {
-    justify-content: center !important;
-  }
+	.triplan-sidebar-main-buttons,
+	.add-activity-button,
+	.add-category-button {
+		background-color: white;
+	}
+	.triplan-header-spacer {
+		padding-bottom: 0 !important;
+	}
+	.language-selector,
+	.triplan-header-starter {
+		display: none;
+	}
+	.triplan-header-actionbar {
+		justify-content: center !important;
+	}
 }

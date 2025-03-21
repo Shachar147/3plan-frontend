@@ -1,4 +1,4 @@
-import React, {forwardRef, Ref, useContext, useEffect, useImperativeHandle, useState} from 'react';
+import React, { forwardRef, Ref, useContext, useEffect, useImperativeHandle, useState } from 'react';
 import { getClasses } from '../../../utils/utils';
 import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
@@ -61,7 +61,7 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		autoComplete = 'true',
 		dataTestId,
 		updateValueWhenPropsChanged,
-		resetCallback
+		resetCallback,
 	} = props;
 	const initialValue = props.value
 		? props.value
@@ -74,7 +74,7 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 		if (updateValueWhenPropsChanged) {
 			setValue(props.value);
 		}
-	}, [props.value])
+	}, [props.value]);
 
 	// make our ref know our functions, so we can use them outside.
 	useImperativeHandle(ref, () => ({
@@ -132,7 +132,11 @@ function TextInput(props: TextInputProps, ref: Ref<TextInputRef> | any) {
 			{icon_block}
 			{inputComponent}
 			{resetCallback && (
-				<i className={getClasses("fa fa-times", value === "" && 'opacity-0')} aria-hidden="true" onClick={() => resetCallback()} />
+				<i
+					className={getClasses('fa fa-times', value === '' && 'opacity-0')}
+					aria-hidden="true"
+					onClick={() => resetCallback()}
+				/>
 			)}
 		</div>
 	);

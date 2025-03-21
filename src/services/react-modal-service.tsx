@@ -3,7 +3,15 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React, { useEffect, useMemo, useState } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import {getClasses, getCurrentUsername, isHotel, isHotelsCategory, isTemplateUsername, ucfirst, ucword} from '../utils/utils';
+import {
+	getClasses,
+	getCurrentUsername,
+	isHotel,
+	isHotelsCategory,
+	isTemplateUsername,
+	ucfirst,
+	ucword,
+} from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -64,11 +72,11 @@ import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
 import LogHistoryService from './data-handlers/log-history-service';
-import {navigate} from "@storybook/addon-links";
-import {useNavigate} from "react-router-dom";
-import {endpoints} from "../v2/utils/endpoints";
-import {FeatureFlagsService} from "../utils/feature-flags";
-import {newDesignRootPath} from "../v2/utils/consts";
+import { navigate } from '@storybook/addon-links';
+import { useNavigate } from 'react-router-dom';
+import { endpoints } from '../v2/utils/endpoints';
+import { FeatureFlagsService } from '../utils/feature-flags';
+import { newDesignRootPath } from '../v2/utils/consts';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -247,7 +255,7 @@ export const ReactModalRenderHelper = {
 			<TextareaInput
 				rows={extra.rows || 3}
 				id={extra.id}
-				className={'textAreaInput'}
+				className="textAreaInput"
 				ref={ref}
 				modalValueName={modalValueName}
 				placeholder={extra.placeholder}
@@ -309,12 +317,14 @@ export const ReactModalRenderHelper = {
 		ref?: any,
 		categories?: TriPlanCategory[]
 	) => {
-		const options = categories ?? eventStore.categories
-			.sort((a, b) => a.id - b.id)
-			.map((x, index) => ({
-				value: x.id,
-				label: x.icon ? `${x.icon} ${x.title}` : x.title,
-			}));
+		const options =
+			categories ??
+			eventStore.categories
+				.sort((a, b) => a.id - b.id)
+				.map((x, index) => ({
+					value: x.id,
+					label: x.icon ? `${x.icon} ${x.title}` : x.title,
+				}));
 
 		if (!eventStore.modalValues[modalValueName]) {
 			eventStore.modalValues[modalValueName] = extra.value
@@ -412,7 +422,7 @@ export const ReactModalRenderHelper = {
 	renderCurrencySelector: (
 		eventStore: EventStore,
 		modalValueName: string,
-		extra: { id?: string; name?: string; value: any, readOnly?: boolean },
+		extra: { id?: string; name?: string; value: any; readOnly?: boolean },
 		ref?: any
 	) => {
 		const values = Object.keys(TriplanCurrency);
@@ -446,7 +456,9 @@ export const ReactModalRenderHelper = {
 			});
 
 		if (!eventStore.modalValues[modalValueName]) {
-			const selectedOption = options.find((option) => option.value.toLowerCase() == extra.value?.toString()?.toLowerCase());
+			const selectedOption = options.find(
+				(option) => option.value.toLowerCase() == extra.value?.toString()?.toLowerCase()
+			);
 			eventStore.modalValues[modalValueName] = selectedOption;
 		}
 
@@ -645,7 +657,7 @@ export const ReactModalRenderHelper = {
 											width: 300,
 											height: 150,
 										}}
-										alt={''}
+										alt=""
 										src={image}
 									/>
 								))}
@@ -1564,7 +1576,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
 					</div>
 				)}
@@ -1619,12 +1631,19 @@ const ReactModalService = {
 
 				ReactModalService.internal.closeModal(eventStore);
 
-				LogHistoryService.logHistory(eventStore, TripActions.updatedTrip, {
-					tripName: {
-						was: oldName,
-						now: newName,
+				LogHistoryService.logHistory(
+					eventStore,
+					TripActions.updatedTrip,
+					{
+						tripName: {
+							was: oldName,
+							now: newName,
+						},
 					},
-				}, undefined, undefined, tripId);
+					undefined,
+					undefined,
+					tripId
+				);
 
 				ReactModalService.internal.alertMessage(
 					eventStore,
@@ -1642,7 +1661,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderInputWithLabel(
 							eventStore,
 							'MODALS.TITLE',
@@ -1741,7 +1760,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderInputWithLabel(
 							eventStore,
 							'MODALS.TITLE',
@@ -1813,7 +1832,7 @@ const ReactModalService = {
 	) => {
 		const tripName = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
 
-		async function hideTrip(){
+		async function hideTrip() {
 			if (tripDataSource === TripDataSource.DB) {
 				await DataServices.DBService.hideTripByName(tripName)
 					.then(() => {
@@ -1842,7 +1861,7 @@ const ReactModalService = {
 			}
 		}
 
-		if (isTemplateUsername()){
+		if (isTemplateUsername()) {
 			hideTrip();
 			return;
 		}
@@ -2041,7 +2060,7 @@ const ReactModalService = {
 			if (initialData.extra?.feedId) {
 				// @ts-ignore
 				currentEvent.extra = {
-					feedId: initialData.extra?.feedId
+					feedId: initialData.extra?.feedId,
 				};
 			}
 
@@ -2654,7 +2673,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderSelectInput(
 							eventStore,
 							'sidebar-event-to-add-to-calendar',
@@ -2752,7 +2771,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderSelectInput(
 							eventStore,
 							'sidebar-hotel-to-add-to-calendar',
@@ -3286,7 +3305,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
 					</div>
 				)}
@@ -3381,7 +3400,9 @@ const ReactModalService = {
 					}
 				},
 				'MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE',
-				isDeleteComplete ? 'MODALS.REMOVE_EVENT_FROM_CALENDAR_COMPLETELY.CONTENT' : 'MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT',
+				isDeleteComplete
+					? 'MODALS.REMOVE_EVENT_FROM_CALENDAR_COMPLETELY.CONTENT'
+					: 'MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT',
 				undefined,
 				{
 					X: categoryName,
@@ -3973,7 +3994,7 @@ const ReactModalService = {
 		titleKey = 'MODALS.ARE_YOU_SURE',
 		content: () => React.ReactNode,
 		continueKey = 'MODALS.CONTINUE',
-		confirmBtnCssClass?: string,
+		confirmBtnCssClass?: string
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
@@ -3996,7 +4017,7 @@ const ReactModalService = {
 		contentKey = 'MODALS.ARE_YOU_SURE.CONTENT',
 		continueKey = 'MODALS.CONTINUE',
 		contentParams?: TranslationParams,
-		confirmBtnCssClass?: string,
+		confirmBtnCssClass?: string
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
@@ -4055,15 +4076,13 @@ const ReactModalService = {
 									__html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS2'),
 								}}
 							/>
-							<div className={'file-upload-container'}>
+							<div className="file-upload-container">
 								<input
-									type={'file'}
-									name={'upload[]'}
-									id={'fileToUpload'}
-									accept={
-										'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv'
-									}
-									className={'display-none'}
+									type="file"
+									name="upload[]"
+									id="fileToUpload"
+									accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv"
+									className="display-none"
 									onChange={(event) => {
 										const target = event?.target;
 										const files = target?.files;
@@ -4078,14 +4097,14 @@ const ReactModalService = {
 											file?.name || TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
 									}}
 								/>
-								<div className={'file-upload-label-container'}>
+								<div className="file-upload-label-container">
 									<label
-										htmlFor={'fileToUpload'}
-										className={'btn secondary-button pointer black file-button-label'}
+										htmlFor="fileToUpload"
+										className="btn secondary-button pointer black file-button-label"
 									>
 										{TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
 									</label>
-									<label className={'file-name-label'}>
+									<label className="file-name-label">
 										{eventStore.modalValues['fileToUpload']?.name ||
 											TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}
 									</label>
@@ -4176,7 +4195,7 @@ const ReactModalService = {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE3'),
-			content: <div className={'react-modal bright-scrollbar'} dangerouslySetInnerHTML={{ __html: html }} />,
+			content: <div className="react-modal bright-scrollbar" dangerouslySetInnerHTML={{ __html: html }} />,
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(
 				eventStore,
@@ -4369,15 +4388,10 @@ const ReactModalService = {
 		};
 
 		const onConfirm = async () => {
-
 			// log
-			LogHistoryService.logHistory(
-				eventStore,
-				TripActions.ranDistanceCalculation,
-				{
-					count2: allLocations.length
-				}
-			);
+			LogHistoryService.logHistory(eventStore, TripActions.ranDistanceCalculation, {
+				count2: allLocations.length,
+			});
 
 			const result = await apiPost(endpoints.v1.distance.calculateDistances, {
 				from: allLocations,
@@ -4549,41 +4563,42 @@ const ReactModalService = {
 		const tripsData = await eventStore.dataService.getTripsShort(eventStore);
 		const { trips, sharedTrips } = tripsData;
 
-		const options = trips
-			.map((trip) => ({
-				value: trip.name,
-				label: trip.name,
-			}));
+		const options = trips.map((trip) => ({
+			value: trip.name,
+			label: trip.name,
+		}));
 
 		sharedTrips.forEach((trip) => {
 			options.push({
 				value: trip.name,
-				label: `${trip.name} (${TranslateService.translate(eventStore, 'SHARED_TRIP')})`
+				label: `${trip.name} (${TranslateService.translate(eventStore, 'SHARED_TRIP')})`,
 			});
-		})
+		});
 
 		const content = () => {
 			return (
 				<Observer>
-					{ () => <div className="width-100-percents flex-row justify-content-center margin-top-10">
-						<SelectInput
-							readOnly={false}
-							id={"select-other-trip"}
-							name={"select-other-trip"}
-							options={options}
-							value={undefined}
-							placeholderKey={'TYPE_TO_SEARCH_PLACEHOLDER'}
-							modalValueName={"select-other-trip"}
-							menuPortalTarget={document.body}
-							onChange={(data) => {
-								if (FeatureFlagsService.isNewDesignEnabled()) {
-									window.location.href = `${newDesignRootPath}/plan/${data.value}`;
-								} else {
-									window.location.href = `/plan/${data.value}`;
-								}
-							}}
-						/>
-					</div>}
+					{() => (
+						<div className="width-100-percents flex-row justify-content-center margin-top-10">
+							<SelectInput
+								readOnly={false}
+								id="select-other-trip"
+								name="select-other-trip"
+								options={options}
+								value={undefined}
+								placeholderKey="TYPE_TO_SEARCH_PLACEHOLDER"
+								modalValueName="select-other-trip"
+								menuPortalTarget={document.body}
+								onChange={(data) => {
+									if (FeatureFlagsService.isNewDesignEnabled()) {
+										window.location.href = `${newDesignRootPath}/plan/${data.value}`;
+									} else {
+										window.location.href = `/plan/${data.value}`;
+									}
+								}}
+							/>
+						</div>
+					)}
 				</Observer>
 			);
 		};
@@ -4685,7 +4700,7 @@ const ReactModalService = {
 
 		const content = () => {
 			return (
-				<div className={'white-space-pre-line'}>
+				<div className="white-space-pre-line">
 					{TranslateService.translate(eventStore, 'SWITCH_DAYS.CONTENT', {
 						X: draggedItem.text,
 						Y: item.text,
@@ -4719,13 +4734,9 @@ const ReactModalService = {
 								eventStore.reloadCollaboratorsCounter += 1;
 							});
 
-							LogHistoryService.logHistory(
-								eventStore,
-								TripActions.deleteCollaborator,
-								{
-									name: response["data"]["collaboratorUserName"],
-								}
-							);
+							LogHistoryService.logHistory(eventStore, TripActions.deleteCollaborator, {
+								name: response['data']['collaboratorUserName'],
+							});
 						},
 						() => {
 							ReactModalService.internal.openOopsErrorModal(eventStore);
@@ -4813,18 +4824,13 @@ const ReactModalService = {
 							}
 
 							// log history - changed collaborator permissions
-							if (collaborator.canWrite != response["data"]["canWrite"]) {
-								LogHistoryService.logHistory(
-									eventStore,
-									TripActions.changeCollaboratorPermissions,
-									{
-										name: response["data"]["collaboratorUserName"],
-										was: collaborator.canWrite ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
-										now: response["data"]["canWrite"] ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ'
-									}
-								);
-							}
-							else {
+							if (collaborator.canWrite != response['data']['canWrite']) {
+								LogHistoryService.logHistory(eventStore, TripActions.changeCollaboratorPermissions, {
+									name: response['data']['collaboratorUserName'],
+									was: collaborator.canWrite ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
+									now: response['data']['canWrite'] ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
+								});
+							} else {
 								// alert nothing changed?
 							}
 
@@ -5393,7 +5399,9 @@ const ReactModalService = {
 					'add-task-must-be-done-before',
 					{
 						placeholderKey: 'MUST_BE_DONE_BEFORE.PLACEHOLDER',
-						value: task.mustBeDoneBefore ? new Date(task.mustBeDoneBefore * 1000).toISOString().split('.')[0] : undefined,
+						value: task.mustBeDoneBefore
+							? new Date(task.mustBeDoneBefore * 1000).toISOString().split('.')[0]
+							: undefined,
 					},
 					eventStore.modalValuesRefs['add-task-must-be-done-before']
 				),
@@ -5403,7 +5411,7 @@ const ReactModalService = {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: `${TranslateService.translate(eventStore, 'EDIT_TASK.MODAL_TITLE', {
-				taskName: task.title
+				taskName: task.title,
 			})}: ${tripName}`,
 			content: (
 				<div className="flex-col gap-20">

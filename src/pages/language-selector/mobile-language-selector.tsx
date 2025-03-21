@@ -12,7 +12,7 @@ const MobileLanguageSelectorPage = () => {
 				<LanguageSelector />
 			</div>
 		</div>
-	)
-}
+	);
+};
 
-export default observer(MobileLanguageSelectorPage)
+export default observer(MobileLanguageSelectorPage);
