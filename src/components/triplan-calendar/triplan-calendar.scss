@@ -223,42 +223,4 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 	position: relative;
 	z-index: 2; /* Increased to ensure it's above other elements during drag */
 	width: 100%;
-	
-	/* Ensure the calendar takes all available space */
-	.fc-view-harness {
-		height: auto !important;
-		min-height: 500px;
-	}
-	
-	/* Ensure proper drag and drop functionality */
-	.fc-event-dragging {
-		z-index: 9999;
-		position: relative;
-		pointer-events: auto !important;
-	}
-	
-	/* Make sure event dragging works properly */
-	&:has(.fc-event-dragging) {
-		pointer-events: auto;
-		
-		.fc-event:not(.fc-event-dragging) {
-			pointer-events: none;
-		}
-		
-		.fc-event-dragging {
-			pointer-events: auto;
-		}
-	}
-}
-
-/* Make sure dragged elements are visible over both containers */
-.fc-event.fc-event-dragging {
-	z-index: 10000 !important;
-	pointer-events: auto !important;
-}
-
-/* Add styles to improve drag over the calendar */
-.fc-highlight {
-	background-color: rgba(0, 120, 212, 0.2) !important;
-	z-index: 5;
 }

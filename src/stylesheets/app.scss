@@ -1703,10 +1703,3 @@ body.rtl {
 		}
 	}
 }
-
-/* Ensure drag operations work with independent scrollable containers */
-.fc-event-dragging {
-	z-index: 9999 !important;
-	position: fixed !important;
-	pointer-events: auto !important;
-}

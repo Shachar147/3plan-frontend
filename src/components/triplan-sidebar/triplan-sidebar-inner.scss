@@ -15,11 +15,6 @@
 
 	transition: max-width 0.3s ease-in-out;
 
-	/* Ensure drag events pass through properly */
-	&:has(+ .triplan-calendar-container .fc-event-dragging) {
-		pointer-events: none;
-	}
-
 	.minimize-sidebar-container {
 		button {
 			transition: all 0.3s ease-in-out;
