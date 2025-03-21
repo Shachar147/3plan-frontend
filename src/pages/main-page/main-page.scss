@@ -26,21 +26,6 @@
 	gap: 10px;
 }
 
-/* Adding independent scrolling for sidebar and calendar */
-.external-events-container {
-	height: calc(100vh - 200px);
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-
-.triplan-calendar-container {
-	height: calc(100vh - 200px);
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-
-/* End of independent scrolling addition */
-
 .main-page .calendar-container,
 .main-page .list-container {
 	opacity: 1;
@@ -119,38 +104,6 @@ body.rtl {
 	padding: 30px 10px;
 	margin: 0 !important;
 	border-radius: 30px;
-	height: calc(100vh - 180px);
-	display: flex; /* Ensure proper flex layout */
-	overflow: hidden;
-}
-
-/* Ensure calendar container has proper sizing */
-.calender-container {
-	flex: 1;
-	width: auto !important;
-	min-width: 0;
-	height: 100%;
-}
-
-/* Ensure calendar fills available space */
-.triplan-calendar-container {
-	height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
-	position: relative;
-	z-index: 2;
-	width: 100%;
-}
-
-/* Adjust calendar for proper sizing */
-.calendar-wrapper {
-	height: 100%;
-	width: 100%;
-}
-
-/* Ensure FullCalendar renders correctly */
-.fc {
-	height: 100% !important;
 }
 
 .fc-title {
@@ -627,8 +580,69 @@ body.rtl {
 	}
 }
 
-/* Add styles for sidebar wrapper */
-.sidebar-wrapper {
-	height: 100%;
-	flex-shrink: 0;
+
+@media only screen and (min-width: 750px) {
+
+	/* Adding independent scrolling for sidebar and calendar */
+	.external-events-container {
+		height: calc(100vh - 200px);
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	.triplan-calendar-container {
+		height: calc(100vh - 200px);
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	/* End of independent scrolling addition */
+
+	.main-layout {
+		height: calc(100vh - 180px);
+		display: flex; /* Ensure proper flex layout */
+		overflow: hidden;
+	}
+
+	/* Ensure calendar container has proper sizing */
+	.calender-container {
+		flex: 1;
+		width: auto !important;
+		min-width: 0;
+		height: 100%;
+	}
+
+	/* Ensure calendar fills available space */
+	.triplan-calendar-container {
+		height: 100%;
+		overflow-y: auto;
+		overflow-x: hidden;
+		position: relative;
+		z-index: 2;
+		width: 100%;
+	}
+
+	/* Adjust calendar for proper sizing */
+	.calendar-wrapper {
+		height: 100%;
+		width: 100%;
+	}
+
+	/* Ensure FullCalendar renders correctly */
+	.fc {
+		height: 100% !important;
+	}
+
+	/* Add styles for sidebar wrapper */
+	.sidebar-wrapper {
+		height: 100%;
+		flex-shrink: 0;
+	}
+}
+
+@media only screen and (max-width: 750px){
+	.calender-container.pc,
+	.list-container.pc {
+		max-height: calc(100vh - 180px) !important;
+	}
 }

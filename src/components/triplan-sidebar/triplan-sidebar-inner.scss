@@ -3,10 +3,8 @@
 	flex-direction: column;
 	gap: 20px;
 
-	height: calc(100vh - 200px); /* Set fixed height to match parent container */
 	overflow-y: auto;
-	position: relative;
-	z-index: 3; /* Set higher than calendar to ensure proper stacking */
+	position: sticky;
 
 	padding-inline-end: 10px;
 	width: fit-content;
@@ -389,5 +387,14 @@ body.rtl {
 
 	button {
 		min-height: 30px !important;
+	}
+}
+
+
+@media only screen and (min-width: 750px) {
+	.external-events-container {
+		height: calc(100vh - 200px); /* Set fixed height to match parent container */
+		position: relative;
+		z-index: 3; /* Set higher than calendar to ensure proper stacking */
 	}
 }
