@@ -292,7 +292,7 @@ function MainPage(props: MainPageProps) {
 						text={TranslateService.translate(eventStore, 'NAVIGATION.NEXT')}
 						icon={nextIcon}
 						className="black flex-row gap-5 align-items-center justify-content-center"
-						iconPosition={'end'}
+						iconPosition="end"
 					/>
 				</div>
 			);
@@ -350,7 +350,7 @@ function MainPage(props: MainPageProps) {
 									eventStore.listViewShowDaysNavigator = !eventStore.listViewShowDaysNavigator;
 								});
 							}}
-							text={''}
+							text=""
 						/>
 					)}
 					{eventStore.calendarEvents.length > 0 && (
@@ -367,7 +367,7 @@ function MainPage(props: MainPageProps) {
 									eventStore.listViewShowNavigateTo = !eventStore.listViewShowNavigateTo;
 								});
 							}}
-							text={''}
+							text=""
 						/>
 					)}
 				</div>

@@ -92,8 +92,7 @@ function SavedCollectionsTab() {
 			className="flex-row justify-content-center flex-wrap-wrap align-items-start"
 			key={feedStore.savedCollections.length}
 		>
-			{
-				<div className="flex-column margin-top-10 width-100-percents">
+			<div className="flex-column margin-top-10 width-100-percents">
 					<h2 className="main-feed-header width-100-percents">
 						{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.TITLE')}
 					</h2>
@@ -112,7 +111,6 @@ function SavedCollectionsTab() {
 						</>
 					)}
 				</div>
-			}
 		</div>
 	);
 }

@@ -105,7 +105,7 @@ function TripTemplateDay({
 								className={`${baseClass}-activity-image`}
 								image={e.images?.split('\n')?.[0] ?? '/images/no-image-fallback.png'}
 								isSmall
-								alt={''}
+								alt=""
 								key={e.id + idx2}
 								idx={`item-${e.id}-idx-${idx2}`}
 								backgroundImage

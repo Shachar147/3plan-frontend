@@ -657,7 +657,7 @@ export const ReactModalRenderHelper = {
 											width: 300,
 											height: 150,
 										}}
-										alt={''}
+										alt=""
 										src={image}
 									/>
 								))}
@@ -4078,12 +4078,10 @@ const ReactModalService = {
 							/>
 							<div className="file-upload-container">
 								<input
-									type={'file'}
-									name={'upload[]'}
-									id={'fileToUpload'}
-									accept={
-										'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv'
-									}
+									type="file"
+									name="upload[]"
+									id="fileToUpload"
+									accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv"
 									className="display-none"
 									onChange={(event) => {
 										const target = event?.target;
@@ -4101,7 +4099,7 @@ const ReactModalService = {
 								/>
 								<div className="file-upload-label-container">
 									<label
-										htmlFor={'fileToUpload'}
+										htmlFor="fileToUpload"
 										className="btn secondary-button pointer black file-button-label"
 									>
 										{TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
@@ -4584,12 +4582,12 @@ const ReactModalService = {
 						<div className="width-100-percents flex-row justify-content-center margin-top-10">
 							<SelectInput
 								readOnly={false}
-								id={'select-other-trip'}
-								name={'select-other-trip'}
+								id="select-other-trip"
+								name="select-other-trip"
 								options={options}
 								value={undefined}
-								placeholderKey={'TYPE_TO_SEARCH_PLACEHOLDER'}
-								modalValueName={'select-other-trip'}
+								placeholderKey="TYPE_TO_SEARCH_PLACEHOLDER"
+								modalValueName="select-other-trip"
 								menuPortalTarget={document.body}
 								onChange={(data) => {
 									if (FeatureFlagsService.isNewDesignEnabled()) {

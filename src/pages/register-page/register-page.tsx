@@ -45,16 +45,16 @@ function RegisterPage() {
 	const TriplanLogo = ({ onClick }: { onClick?: () => void }) => (
 		<img
 			className={getClasses('logo-container', !eventStore.isMobile && 'pointer')}
-			src={'/images/logo/new-logo.png'}
+			src="/images/logo/new-logo.png"
 			onClick={onClick}
 		/>
 	);
 
 	const FooterLinkBlock = () => (
-		<span className="login-link-container" key={'login-link-container'}>
+		<span className="login-link-container" key="login-link-container">
 			<div>
 				{TranslateService.translate(eventStore, 'LOGIN_PREFIX')}{' '}
-				<Link data-testid={'login'} to={'/login'}>
+				<Link data-testid="login" to="/login">
 					{TranslateService.translate(eventStore, 'LOGIN')}
 				</Link>
 			</div>

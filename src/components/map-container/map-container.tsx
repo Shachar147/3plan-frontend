@@ -324,7 +324,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 								width: 300,
 								height: 150,
 							}}
-							alt={''}
+							alt=""
 							src={image}
 						/>
 					))}
@@ -975,8 +975,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					{eventStore.isMobile && (
 						<SelectInput
 							ref={undefined}
-							id={'map-filter-priorities'}
-							name={'map-filter-priorities'}
+							id="map-filter-priorities"
+							name="map-filter-priorities"
 							options={[allOption, ...otherOptions]}
 							value={
 								Array.from(eventStore.filterOutPriorities.values()).length == 0
@@ -999,7 +999,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 									}
 								});
 							}}
-							modalValueName={'filterByPriority'}
+							modalValueName="filterByPriority"
 							maxMenuHeight={120}
 							removeDefaultClass={true}
 							isClearable={false}
@@ -1056,8 +1056,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					<span>{TranslateService.translate(eventStore, 'SHOW_MAP_ACTIVITIES_BY')}</span>
 					<SelectInput
 						ref={undefined}
-						id={'map-view-mode'}
-						name={'map-view-mode'}
+						id="map-view-mode"
+						name="map-view-mode"
 						options={options}
 						value={
 							options.find((o) => o.value === eventStore.mapViewMode) ??
@@ -1076,7 +1076,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 								}
 							});
 						}}
-						modalValueName={'mapViewModeSelector'}
+						modalValueName="mapViewModeSelector"
 						maxMenuHeight={eventStore.viewMode === ViewMode.combined ? 210 : 45 * 6}
 						removeDefaultClass={true}
 						isClearable={false}
@@ -1116,11 +1116,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		function renderFilterButton() {
 			return (
 				<Button
-					text={''}
+					text=""
 					onClick={() => eventStore.toggleMapFilters()}
 					className={getClasses('min-width-38', !eventStore.mapFiltersVisible && 'brown')}
 					flavor={ButtonFlavor.secondary}
-					icon={'fa-filter'}
+					icon="fa-filter"
 				/>
 			);
 		}
@@ -1202,8 +1202,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			>
 				<div className="search-container">
 					<input
-						type={'text'}
-						name={'fc-search'}
+						type="text"
+						name="fc-search"
 						value={visibleItemsSearchValue}
 						onChange={(e) => {
 							setVisibleItemsSearchValue(e.target.value);
@@ -1332,7 +1332,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	function renderNoItemsOnMapPlaceholder() {
 		return (
 			<div className="no-items-on-map-placeholder">
-				<img className="no-items-on-map-placeholder-image" src={'/images/arrow-up-placeholder.png'} />
+				<img className="no-items-on-map-placeholder-image" src="/images/arrow-up-placeholder.png" />
 				<div className="no-items-on-map-placeholder-title main-font-heavy">
 					{TranslateService.translate(eventStore, 'NO_ITEMS_ON_MAP_PLACEHOLDER.TITLE')}
 				</div>

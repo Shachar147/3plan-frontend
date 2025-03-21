@@ -28,7 +28,7 @@ const Logo = () => (
 	<img
 		className={getClasses(['logo-container pointer'])}
 		style={{ maxWidth: '400px' }}
-		src={'/images/logo/new-logo.png'}
+		src="/images/logo/new-logo.png"
 	/>
 );
 
@@ -196,7 +196,7 @@ const LoginPageOld = () => {
 											}}
 											onKeyDown={(e: any) => onKeyDown(e.keyCode)}
 											dataTestId={dataTestId}
-											autoComplete={'off'}
+											autoComplete="off"
 										/>
 									</div>
 								);
@@ -205,7 +205,7 @@ const LoginPageOld = () => {
 								<style.Button
 									validating={validating}
 									className="ui fluid large button primary-button"
-									data-testid={'submit'}
+									data-testid="submit"
 									onClick={login}
 								>
 									{TranslateService.translate(eventStore, 'LOGIN')}
@@ -213,7 +213,7 @@ const LoginPageOld = () => {
 								<style.Button
 									validating={validating}
 									className="ui fluid large button secondary-button black"
-									data-testid={'guest'}
+									data-testid="guest"
 									onClick={() => {
 										if (!DataServices.LocalStorageService.shouldShowContinueAsGuest()) {
 											window.location.href = '/home';
@@ -235,10 +235,10 @@ const LoginPageOld = () => {
 								</style.Button>
 							</div>
 						</div>
-						<div className="register-link-container" key={'register-link-container'}>
+						<div className="register-link-container" key="register-link-container">
 							<style.RegisterLink>
 								{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
-								<Link data-testid={'register'} to={'/register'}>
+								<Link data-testid="register" to="/register">
 									{TranslateService.translate(eventStore, 'REGISTER')}
 								</Link>
 							</style.RegisterLink>

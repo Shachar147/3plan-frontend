@@ -33,8 +33,8 @@ function TriplanViewSelector(props?: TriplanViewSelectorProps) {
 					key={`view-selector-${eventStore.calendarLocalCode}`}
 					isClearable={false}
 					isSearchable={false}
-					id={'view-selector'}
-					name={'view-selector'}
+					id="view-selector"
+					name="view-selector"
 					options={props?.options ?? options}
 					value={props?.value ?? selectedViewModeOption}
 					onChange={(e: any) => {

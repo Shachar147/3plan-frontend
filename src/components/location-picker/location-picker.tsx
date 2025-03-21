@@ -102,7 +102,7 @@ const LocationPicker = (props: LocationPickerProps) => {
 		const haveLocationCoordinates = locationData && locationData.longitude && locationData.latitude;
 
 		if (haveLocationCoordinates) {
-			return <img src={props.locationIcon || validIcon} alt={''} className="location-indicator"></img>;
+			return <img src={props.locationIcon || validIcon} alt="" className="location-indicator"></img>;
 		}
 
 		// if (props.supportLinkAsLocation && locationData?.address) {

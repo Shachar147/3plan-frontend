@@ -271,7 +271,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${eventsWithNoLocation.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_NO_LOCATION'
@@ -309,7 +309,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${eventsWithNoHours.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_NO_OPENING_HOURS'
@@ -351,7 +351,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${todoCompleteEvents.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_TODO_COMPLETE'
@@ -547,7 +547,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							flavor={ButtonFlavor.link}
 							// className="padding-inline-start-10"
 							onClick={eventStore.openAllCategories.bind(eventStore)}
-							icon={'fa-plus-square-o'}
+							icon="fa-plus-square-o"
 							text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
 						/>
 						<div className="sidebar-statistics" style={{ padding: 0 }}>
@@ -559,7 +559,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							flavor={ButtonFlavor.link}
 							className="padding-inline-start-10"
 							onClick={eventStore.closeAllCategories.bind(eventStore)}
-							icon={'fa-minus-square-o'}
+							icon="fa-minus-square-o"
 							text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
 						/>
 						<div className="sidebar-statistics" style={{ padding: 0 }}>
@@ -848,7 +848,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 					>
 						<span
 							className="sidebar-event-title-container"
-							title={'Edit'}
+							title="Edit"
 							onClick={() => {
 								// modalsStore.switchToViewMode();
 								ReactModalService.openEditSidebarEventModal(

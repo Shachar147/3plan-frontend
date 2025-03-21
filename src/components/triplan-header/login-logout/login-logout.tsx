@@ -17,7 +17,7 @@ function LoginLogout(props: LoginLogoutProps) {
 
 	function renderLogin() {
 		return (
-			<a href={'/login'} className="text-decoration-none">
+			<a href="/login" className="text-decoration-none">
 				<Button
 					flavor={ButtonFlavor.link}
 					icon={getClasses('fa-sign-in darkest-blue-color', eventStore.isRtl && 'flip-x')}
@@ -30,7 +30,7 @@ function LoginLogout(props: LoginLogoutProps) {
 
 	function renderLogout() {
 		return (
-			<a href={'/logout'} className="text-decoration-none">
+			<a href="/logout" className="text-decoration-none">
 				<Button
 					flavor={ButtonFlavor.link}
 					icon={getClasses('fa-sign-in darkest-blue-color', !eventStore.isRtl && 'flip-x')}

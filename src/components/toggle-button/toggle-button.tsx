@@ -106,7 +106,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 		if (typeof icon === 'string') {
 			return (
 				<div className="multiple-options-toggle-button-item-icon-container">
-					<img className="icon-image" src={icon} alt={''} />
+					<img className="icon-image" src={icon} alt="" />
 				</div>
 			);
 		}

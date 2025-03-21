@@ -44,12 +44,12 @@ function CategorySelector(props: {
 		<SelectInput
 			ref={eventStore.modalValuesRefs['category']}
 			readOnly={props.isDisabled}
-			name={'category'}
+			name="category"
 			options={selectOptions}
 			// value={extra.value != undefined ? extra.options.find((o) => o.value == extra.value) : undefined}
 			value={props.value}
 			placeholderKey={props.placeholderKey}
-			modalValueName={'category'}
+			modalValueName="category"
 			// maxMenuHeight={extra.maxMenuHeight}
 			// removeDefaultClass={extra.removeDefaultClass}
 			onChange={(data) =>

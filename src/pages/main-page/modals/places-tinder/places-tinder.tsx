@@ -279,8 +279,8 @@ function PlacesTinder(props: PlacesTinderProps) {
 				options={Object.keys(placesDataMap).map(
 					(x: string) => ({ value: x, label: TranslateService.translate(eventStore, x) } as SelectInputOption)
 				)}
-				placeholderKey={'PLACES_TINDER_PLACEHOLDER'}
-				modalValueName={'FLYING_TO'}
+				placeholderKey="PLACES_TINDER_PLACEHOLDER"
+				modalValueName="FLYING_TO"
 				onChange={(data: any) => {
 					setDestination(data.value);
 				}}
@@ -303,7 +303,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 										width: 300,
 										height: 150,
 									}}
-									alt={''}
+									alt=""
 									src={buildMediaUrl(image)}
 								/>
 							))}
@@ -321,10 +321,10 @@ function PlacesTinder(props: PlacesTinderProps) {
 					{(currentPlace.tinder || currentPlace)?.more_info && (
 						<div>
 							<a
-								target={'_blank'}
+								target="_blank"
 								className="cursor-pointer"
 								style={{ opacity: 0.6 }}
-								href={(currentPlace.tinder || currentPlace).more_info}
+								href={(currentPlace.tinder || currentPlace).more_info} rel="noreferrer"
 							>
 								{/*todo complete - lokalise*/}
 								למידע נוסף

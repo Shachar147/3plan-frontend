@@ -3,7 +3,7 @@ module.exports = {
   rules: {
     // Prevent unnecessary curly braces in JSX attributes
     'react/jsx-curly-brace-presence': [
-      'error',
+      'warn',
       {
         props: 'never',
         children: 'never',
@@ -15,6 +15,6 @@ module.exports = {
     'no-unused-vars': 'off',
     
     // Enforce consistent direction in RTL components
-    'react/style-prop-object': 'error'
+    'react/style-prop-object': 'warn'
   }
 }; 

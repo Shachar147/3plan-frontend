@@ -68,7 +68,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		return (
 			<Button
 				disabled={isDisabled}
-				icon={'fa-trash'}
+				icon="fa-trash"
 				text={TranslateService.translate(eventStore, 'CLEAR_CALENDAR_EVENTS.BUTTON_TEXT')}
 				disabledReason={disabledReason}
 				onClick={() => {
@@ -145,7 +145,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		return (
 			<>
 				<Button
-					icon={'fa-download'}
+					icon="fa-download"
 					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT')}
 					onClick={() => {
 						ReactModalService.openImportEventsModal(eventStore);
@@ -155,7 +155,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					disabledReason={disabledReason}
 				/>
 				<Button
-					icon={'fa-upload'}
+					icon="fa-upload"
 					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.BUTTON_TEXT')}
 					onClick={() => {
 						ReactModalService.openImportEventsStepTwoModal(eventStore);
@@ -457,7 +457,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${eventsWithNoLocation.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_NO_LOCATION'
@@ -497,7 +497,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${eventsWithNoHours.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_NO_OPENING_HOURS'
@@ -540,7 +540,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${todoCompleteEvents.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_TODO_COMPLETE'
@@ -570,7 +570,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${eventsWithDistanceProblems.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_DISTANCE_PROBLEMS'
@@ -601,7 +601,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					)}
 				>
 					<Button
-						icon={'fa-exclamation-triangle'}
+						icon="fa-exclamation-triangle"
 						text={`${eventsWithOpeningHoursProblems.length} ${TranslateService.translate(
 							eventStore,
 							'EVENTS_WITH_OPENING_HOURS_PROBLEMS'
@@ -1201,7 +1201,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			const translatedHotels = TranslateService.translate(eventStore, 'HOTELS');
 			const custom = (
 				<>
-					<div className="sidebar-statistics" key={`sidebar-statistics-for-hotels`}>
+					<div className="sidebar-statistics" key="sidebar-statistics-for-hotels">
 						<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: `#${hotelColor}` }} />
 						<div>
 							{`${totalHotels} `}
@@ -1378,7 +1378,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			}
 
 			return (
-				<div className="sidebar-statistics margin-block-10" key={`sidebar-statistics-money-title`}>
+				<div className="sidebar-statistics margin-block-10" key="sidebar-statistics-money-title">
 					<div className="flex-col gap-8">
 						{getContent(priceList, 'ESTIMATED_PRICE_OF_SCHEDULED_ACTIVITIES')}
 						{getContent(unscheduledPriceList, 'ESTIMATED_PRICE_OF_BOOKED_ACTIVITIES')}

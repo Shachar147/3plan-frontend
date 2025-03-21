@@ -40,7 +40,7 @@ const LandingPage = () => {
 				</div>
 				<img
 					className="logo-container"
-					src={'/images/logo/new-logo.png'}
+					src="/images/logo/new-logo.png"
 					style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 				/>
 				<div className="slogan main-font">

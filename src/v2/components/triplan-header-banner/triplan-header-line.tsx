@@ -173,7 +173,7 @@ function TriplanHeaderLine({
 
 	const registerBtn = (
 		<Button
-			icon={'fa-user-plus'}
+			icon="fa-user-plus"
 			text={TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
 			className={window.location.href.includes('/login') && window.location.hash.includes('register') && 'active'}
 			onClick={() => {
@@ -261,8 +261,7 @@ function TriplanHeaderLine({
 		<>
 			<div className={`${baseClass}-top-shadow`} />
 			<div className={getClasses(baseClass, !isMobile && 'sticky', isSticky && 'is-sticky')}>
-				{
-					<div className={`${baseClass}-left-side`}>
+				<div className={`${baseClass}-left-side`}>
 						{!eventStore.isMobile && (
 							<TriplanLogo
 								onClick={() => (window.location.href = newDesignRootPath)}
@@ -272,7 +271,6 @@ function TriplanHeaderLine({
 						)}
 						{condition1 && !condition2 && <div>{search}</div>}
 					</div>
-				}
 				<div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
 					<div className="flex-column gap-4">
 						{renderHeaderButtons()}

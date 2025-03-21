@@ -120,7 +120,7 @@ function LoginPageV2() {
 					<div className="width-300 text-align-center">
 						{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
 						<a
-							href={'#register'}
+							href="#register"
 							data-testid="register"
 							onClick={() => rootStore.navigateToTabOnLoginPage('register')}
 						>
@@ -168,7 +168,7 @@ function LoginPageV2() {
 					<div className="width-300 text-align-center">
 						{TranslateService.translate(eventStore, 'LOGIN_PREFIX')}{' '}
 						<a
-							href={'#login'}
+							href="#login"
 							data-testid="login"
 							onClick={() => rootStore.navigateToTabOnLoginPage('login')}
 						>

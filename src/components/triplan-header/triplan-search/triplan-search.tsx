@@ -21,9 +21,9 @@ function TriplanSearch(props: TriplanSearchProps) {
 	return (
 		<div className={getClasses('search-container', isHidden && 'hidden', props.className)}>
 			<TextInput
-				modalValueName={'fc-search'}
-				type={'text'}
-				name={'fc-search'}
+				modalValueName="fc-search"
+				type="text"
+				name="fc-search"
 				value={value ?? eventStore.searchValue}
 				onChange={(e) => {
 					if (onChange) {

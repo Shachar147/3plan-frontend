@@ -82,7 +82,7 @@ const GettingStartedPage = () => {
 				</div>
 				<div className="trip-name-line">
 					<input
-						type={'text'}
+						type="text"
 						style={{
 							paddingInline: '15px',
 							height: '40px',
@@ -286,7 +286,7 @@ const GettingStartedPage = () => {
 				</div>
 				<img
 					className={getClasses(['logo-container pointer'], applyPageIntro && 'up')}
-					src={'/images/logo/new-logo.png'}
+					src="/images/logo/new-logo.png"
 					style={{ width: '50%', minWidth: '150px', maxWidth: '200px' }}
 					onClick={() => {
 						navigate('/home');

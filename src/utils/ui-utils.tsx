@@ -27,8 +27,8 @@ export const renderLanguageSelector = (eventStore: EventStore) => {
 					key={`locale-selector-${eventStore.calendarLocalCode}`}
 					isClearable={false}
 					isSearchable={false}
-					id={'locale-selector'}
-					name={'locale-selector'}
+					id="locale-selector"
+					name="locale-selector"
 					options={options}
 					value={options.find((x) => x.value == eventStore.calendarLocalCode)}
 					onChange={(e: any) => {
@@ -78,7 +78,7 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
 						<img
 							className="choose-language-image"
 							alt=""
-							src={'/images/landing-page/icons/choose-lang.png'}
+							src="/images/landing-page/icons/choose-lang.png"
 						/>
 						{TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
 					</a>
@@ -106,14 +106,14 @@ const renderMyTrips = (
 	<div className="recommended-destinations main-font">
 		{!withMyTrips ? undefined : (
 			<Link
-				to={'/my-trips'}
+				to="/my-trips"
 				style={{
 					textDecoration: 'none',
 				}}
 			>
 				<Button
 					flavor={ButtonFlavor.link}
-					image={'/images/landing-page/icons/map.png'}
+					image="/images/landing-page/icons/map.png"
 					text={TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
 					onClick={() => {}}
 				/>
@@ -130,7 +130,7 @@ const renderMyTrips = (
 				}}
 				style={{ cursor: 'pointer', display: 'flex', maxHeight: '40px', height: '40px' }}
 			>
-				<img alt={''} src={'/images/logo/new-logo.png'} />
+				<img alt="" src="/images/logo/new-logo.png" />
 			</div>
 		)}
 	</div>
@@ -138,14 +138,14 @@ const renderMyTrips = (
 
 const renderLogout = (eventStore: EventStore) => (
 	<Link
-		to={'/logout'}
+		to="/logout"
 		style={{
 			textDecoration: 'none',
 		}}
 	>
 		<Button
 			flavor={ButtonFlavor.link}
-			icon={'fa-sign-out darkest-blue-color'}
+			icon="fa-sign-out darkest-blue-color"
 			text={`${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`}
 			onClick={() => {}}
 		/>
@@ -154,14 +154,14 @@ const renderLogout = (eventStore: EventStore) => (
 
 const renderLogin = (eventStore: EventStore) => (
 	<Link
-		to={'/login'}
+		to="/login"
 		style={{
 			textDecoration: 'none',
 		}}
 	>
 		<Button
 			flavor={ButtonFlavor.link}
-			icon={'fa-sign-in darkest-blue-color'}
+			icon="fa-sign-in darkest-blue-color"
 			text={`${TranslateService.translate(eventStore, 'LOGIN')}`}
 			onClick={() => {}}
 		/>
@@ -172,8 +172,8 @@ const renderSearch = (eventStore: EventStore) => {
 	return (
 		<div className="search-container">
 			<input
-				type={'text'}
-				name={'fc-search'}
+				type="text"
+				name="fc-search"
 				value={eventStore.searchValue}
 				onChange={(e) => {
 					eventStore.setSearchValue(e.target.value);
@@ -436,15 +436,15 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 export const renderFooterLine = (eventStore: EventStore, classList?: string) => (
 	<div className={getClasses(['footer main-font'], classList)}>
 		<a>
-			<img alt="" src={'/images/landing-page/icons/checklist.png'} />{' '}
+			<img alt="" src="/images/landing-page/icons/checklist.png" />{' '}
 			{TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.LIST')}
 		</a>
 		<a>
-			<img alt="" src={'/images/landing-page/icons/calendar.png'} />{' '}
+			<img alt="" src="/images/landing-page/icons/calendar.png" />{' '}
 			{TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.ORGANIZE')}
 		</a>
 		<a>
-			<img alt="" src={'/images/landing-page/icons/organized-list.png'} />{' '}
+			<img alt="" src="/images/landing-page/icons/organized-list.png" />{' '}
 			{TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.SUMMARY')}
 		</a>
 	</div>

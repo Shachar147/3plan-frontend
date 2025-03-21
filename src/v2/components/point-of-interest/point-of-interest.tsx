@@ -836,7 +836,7 @@ const PointOfInterest = ({
 						isDisabled={isSaving}
 						name="category"
 						value={item.category}
-						placeholderKey={'CATEGORY'}
+						placeholderKey="CATEGORY"
 						onChange={(e) => onEditCategorySave?.(e.target.value)}
 					/>
 					<i className="fa fa-close cursor-pointer" onClick={onLabelClick} />

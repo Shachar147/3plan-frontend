@@ -44,8 +44,8 @@ const Button = (props: ButtonProps) => {
 			style={props.style}
 			title={props.disabled && props.disabledReason ? props.disabledReason : props.tooltip}
 		>
-			{props.isLoading && <img alt={''} src="/images/loading.gif" height={24} />}
-			{!props.isLoading && props.image && <img alt={''} src={props.image} height={props.imageHeight} />}
+			{props.isLoading && <img alt="" src="/images/loading.gif" height={24} />}
+			{!props.isLoading && props.image && <img alt="" src={props.image} height={props.imageHeight} />}
 			{!props.isLoading && props.icon && iconPosition == 'start' && (
 				<i className={`fa ${props.icon}`} aria-hidden="true" />
 			)}

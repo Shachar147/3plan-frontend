@@ -24,7 +24,7 @@ const TriplanSidebarShareTripButton = (props: TriplanSidebarShareTripButtonProps
 				ReactModalService.openShareTripModal(eventStore);
 			}}
 			text={TranslateService.translate(eventStore, textKey)}
-			icon={'fa-users'}
+			icon="fa-users"
 			disabled={eventStore.isSharedTrip}
 			disabledReason={TranslateService.translate(eventStore, 'ONLY_TRIP_OWNER_CAN_SHARE_TRIP')}
 		/>

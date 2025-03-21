@@ -848,7 +848,7 @@ function MyTripsTab() {
 				</div>
 				<div className="trip-name-line margin-bottom-5">
 					<input
-						type={'text'}
+						type="text"
 						style={{
 							paddingInline: '15px',
 							height: '40px',

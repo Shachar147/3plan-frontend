@@ -51,16 +51,16 @@ function LoginPage() {
 	const TriplanLogo = ({ onClick }: { onClick?: () => void }) => (
 		<img
 			className={getClasses('logo-container', !eventStore.isMobile && 'pointer')}
-			src={'/images/logo/new-logo.png'}
+			src="/images/logo/new-logo.png"
 			onClick={onClick}
 		/>
 	);
 
 	const FooterLinkBlock = () => (
-		<span className="register-link-container" key={'register-link-container'}>
+		<span className="register-link-container" key="register-link-container">
 			<div>
 				{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
-				<Link data-testid={'register'} to={'/register'}>
+				<Link data-testid="register" to="/register">
 					{TranslateService.translate(eventStore, 'REGISTER')}
 				</Link>
 			</div>

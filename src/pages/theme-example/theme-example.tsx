@@ -52,21 +52,21 @@ const ThemeExample = () => {
 			<div className="flex-row gap-10">
 				<Button
 					flavor={ButtonFlavor.primary}
-					text={'Primary Button'}
+					text="Primary Button"
 					onClick={() => {
 						alert('here!');
 					}}
 				/>
 				<Button
 					flavor={ButtonFlavor.secondary}
-					text={'Secondary Button'}
+					text="Secondary Button"
 					onClick={() => {
 						alert('here!');
 					}}
 				/>
 				<Button
 					flavor={ButtonFlavor.secondary}
-					text={'Secondary Button Black'}
+					text="Secondary Button Black"
 					className="black"
 					onClick={() => {
 						alert('here!');
@@ -74,7 +74,7 @@ const ThemeExample = () => {
 				/>
 				<Button
 					flavor={ButtonFlavor.link}
-					text={'Link Button'}
+					text="Link Button"
 					onClick={() => {
 						alert('here!');
 					}}
@@ -82,9 +82,9 @@ const ThemeExample = () => {
 			</div>
 			<div className="flex-col gap-10">
 				<Button
-					icon={'fa-trash'}
+					icon="fa-trash"
 					flavor={ButtonFlavor['movable-link']}
-					text={'Movable Link Button'}
+					text="Movable Link Button"
 					onClick={() => {
 						alert('here!');
 					}}
@@ -95,7 +95,7 @@ const ThemeExample = () => {
 				<Button
 					flavor={ButtonFlavor.primary}
 					disabled
-					text={'Primary Button'}
+					text="Primary Button"
 					onClick={() => {
 						alert('here!');
 					}}
@@ -103,7 +103,7 @@ const ThemeExample = () => {
 				<Button
 					flavor={ButtonFlavor.secondary}
 					disabled
-					text={'Secondary Button'}
+					text="Secondary Button"
 					onClick={() => {
 						alert('here!');
 					}}
@@ -111,7 +111,7 @@ const ThemeExample = () => {
 				<Button
 					flavor={ButtonFlavor.secondary}
 					disabled
-					text={'Secondary Button Black'}
+					text="Secondary Button Black"
 					className="black"
 					onClick={() => {
 						alert('here!');
@@ -120,7 +120,7 @@ const ThemeExample = () => {
 				<Button
 					flavor={ButtonFlavor.link}
 					disabled
-					text={'Link Button'}
+					text="Link Button"
 					onClick={() => {
 						alert('here!');
 					}}
@@ -129,9 +129,9 @@ const ThemeExample = () => {
 			<div className="flex-col gap-10">
 				<Button
 					disabled
-					icon={'fa-trash'}
+					icon="fa-trash"
 					flavor={ButtonFlavor['movable-link']}
-					text={'Movable Link Button'}
+					text="Movable Link Button"
 					onClick={() => {
 						alert('here!');
 					}}

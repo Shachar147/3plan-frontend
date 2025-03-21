@@ -882,7 +882,7 @@ const RootRouter = () => {
 					<Route path="/logout" element={<LogoutPage />} />
 					<Route exact path="/getting-started" element={<GettingStartedPage />} />
 					<Route exact path="/my-trips" element={<MyTrips />} />
-					<Route path={'/plan/create/:tripName/:locale'} element={<MainPage createMode={true} />} />
+					<Route path="/plan/create/:tripName/:locale" element={<MainPage createMode={true} />} />
 					<Route path="/plan/:tripName/:locale" element={<MainPage />} />
 					<Route path="/plan/:tripName/" element={<MainPage />} />
 					<Route path={`${newDesignRootPath}/plan/:tripName/`} element={<PlanPageV2 />} />

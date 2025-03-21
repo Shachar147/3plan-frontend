@@ -31,7 +31,7 @@ function MinimizeExpandSidebarButton() {
 				)}
 				className={getClasses('black', 'min-width-38')}
 				icon={`fa-angle-double-${direction}`}
-				text={''} /* :after     content: '\26F6'; */
+				text="" /* :after     content: '\26F6'; */
 			/>
 		</div>
 	);
