@@ -14,7 +14,7 @@ import {SidebarGroups, wrapWithSidebarGroup} from "../triplan-sidebar";
 import ReactModalService, {ReactModalRenderHelper} from "../../../services/react-modal-service";
 import DistanceCalculator from "../distance-calculator/distance-calculator";
 import {observer, Observer} from "mobx-react";
-import {TripDataSource, TriplanCurrency, TriplanPriority} from "../../../utils/enums";
+import {TripDataSource, TriplanCurrency, TriplanPriority, TriplanEventPreferredTime, prioritiesOrder} from "../../../utils/enums";
 import {CalendarEvent, SidebarEvent, TriplanTask, TriplanTaskStatus} from "../../../utils/interfaces";
 import {hotelColor, priorityToColor} from "../../../utils/consts";
 import {EventInput} from "@fullcalendar/react";
@@ -32,6 +32,8 @@ import {renderLineWithText} from "../../../utils/ui-utils";
 import TriplanSidebarDraggableEvent from "../sidebar-draggable-event/triplan-sidebar-draggable-event";
 import {modalsStoreContext} from "../../../stores/modals-store";
 import {rootStoreContext} from "../../../v2/stores/root-store";
+import "./sidebar-priority-filters.scss";
+import {TriplanSidebarDivider, TriplanSidebarEqualDivider} from "../triplan-sidebar-divider";
 
 interface TriplanSidebarCollapsableMenuProps {
     removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -1164,10 +1166,6 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
             );
         };
 
-        // todo complete - add event with price and currency - not saving them.
-        // todo complete - edit sidebar event setting price and currency - not working
-        // todo complete - update all events - do not update ALL events with the price/currency. especially currency.
-
         const renderPriceList = () => {
             const { priceList, unscheduledPriceList, errors } = getEstimatedPrice();
 
@@ -1349,6 +1347,160 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
         );
     }
 
+    function renderPriorityFilters() {
+        const priorityFiltersContent = (
+            <div className="flex-column gap-8">
+                {prioritiesOrder.map((priority, idx) => {
+                    const priorityKey = TriplanPriority[priority];
+                    const priorityColor = priorityToColor[priority];
+                    
+                    return (
+                        <Observer key={`sidebar-filter-by-priority-${priorityKey}`}>
+                            {() => (
+                                <div 
+                                    className={getClasses(
+                                        "flex-row gap-5 align-items-center sidebar-priority-filter",
+                                        (eventStore.filterSidebarPriorities.get(priorityKey.toString())) && "active"
+                                    )}
+                                    onClick={() => eventStore.toggleSidebarFilterPriority(priorityKey.toString())}
+                                >
+                                    <i className="fa fa-sticky-note" style={{ color: priorityColor }} />
+                                    <span>
+                                        {TranslateService.translate(eventStore, priorityKey.toString())}
+                                    </span>
+                                </div>
+                            )}
+                        </Observer>
+                    );
+                })}
+            </div>
+        );
+
+        const priorityFiltersGroup = wrapWithSidebarGroup(
+            <>{priorityFiltersContent}</>,
+            "fa-filter",
+            SidebarGroups.PRIORITIES_FILTER,
+            TranslateService.translate(eventStore, "FILTER_BY_PRIORITY"),
+            Object.keys(TriplanPriority).filter((x) => !Number.isNaN(Number(x))).length
+        );
+
+        return (
+            <>
+                <hr className={'margin-block-2'} />
+                {priorityFiltersGroup}
+            </>
+        );
+    }
+
+    function renderCategoryFilters() {
+        const categoryFiltersContent = (
+            <div className="flex-column gap-8">
+                {eventStore.categories.map((category) => {
+                    return (
+                        <Observer key={`sidebar-filter-by-category-${category.id}`}>
+                            {() => (
+                                <div 
+                                    className={getClasses(
+                                        "flex-row gap-5 align-items-center sidebar-category-filter",
+                                        (eventStore.filterSidebarCategories.get(category.id.toString())) && "active"
+                                    )}
+                                    onClick={() => eventStore.toggleSidebarFilterCategory(category.id.toString())}
+                                >
+                                    <span className="category-icon">{category.icon}</span>
+                                    <span>
+                                        {category.title}
+                                    </span>
+                                </div>
+                            )}
+                        </Observer>
+                    );
+                })}
+            </div>
+        );
+
+        const categoryFiltersGroup = wrapWithSidebarGroup(
+            <>{categoryFiltersContent}</>,
+            "fa-object-group",
+            SidebarGroups.CATEGORIES_FILTER,
+            TranslateService.translate(eventStore, "FILTER_BY_CATEGORY"),
+            eventStore.categories.length
+        );
+
+        return (
+            <>
+                <hr className={'margin-block-2'} />
+                {categoryFiltersGroup}
+            </>
+        );
+    }
+
+    function renderPreferredTimeFilters() {
+        const preferredTimes = [
+            TriplanEventPreferredTime.morning,
+            TriplanEventPreferredTime.noon,
+            TriplanEventPreferredTime.afternoon,
+            TriplanEventPreferredTime.sunset,
+            TriplanEventPreferredTime.evening,
+            TriplanEventPreferredTime.night,
+            TriplanEventPreferredTime.nevermind,
+            TriplanEventPreferredTime.unset
+        ];
+        
+        const timeIcons = {
+            [TriplanEventPreferredTime.morning]: "🌅",
+            [TriplanEventPreferredTime.noon]: "☀️",
+            [TriplanEventPreferredTime.afternoon]: "🌞",
+            [TriplanEventPreferredTime.sunset]: "🌇",
+            [TriplanEventPreferredTime.evening]: "🌠",
+            [TriplanEventPreferredTime.night]: "🌃",
+            [TriplanEventPreferredTime.nevermind]: "❔",
+            [TriplanEventPreferredTime.unset]: "❓"
+        };
+
+        const preferredTimeFiltersContent = (
+            <div className="flex-column gap-8">
+                {preferredTimes.map((time) => {
+                    const timeKey = TriplanEventPreferredTime[time];
+                    const icon = timeIcons[time];
+                    
+                    return (
+                        <Observer key={`sidebar-filter-by-preferred-time-${timeKey}`}>
+                            {() => (
+                                <div 
+                                    className={getClasses(
+                                        "flex-row gap-5 align-items-center sidebar-preferred-time-filter",
+                                        (eventStore.filterSidebarPreferredTimes.get(timeKey)) && "active"
+                                    )}
+                                    onClick={() => eventStore.toggleSidebarFilterPreferredTime(timeKey)}
+                                >
+                                    {icon}
+                                    <span>
+                                        {TranslateService.translate(eventStore, timeKey.toLowerCase())}
+                                    </span>
+                                </div>
+                            )}
+                        </Observer>
+                    );
+                })}
+            </div>
+        );
+
+        const preferredTimeFiltersGroup = wrapWithSidebarGroup(
+            <>{preferredTimeFiltersContent}</>,
+            "fa-clock-o",
+            SidebarGroups.PREFERRED_TIME_FILTER,
+            TranslateService.translate(eventStore, "FILTER_BY_PREFERRED_TIME"),
+            preferredTimes.length
+        );
+
+        return (
+            <>
+                <hr className={'margin-block-2'} />
+                {preferredTimeFiltersGroup}
+            </>
+        );
+    }
+
     function renderTasksSearch() {
         const searchPlacholderKey = eventStore.isMobile ? 'TASKS_SEARCH_PLACEHOLDER.FULL' : 'TASKS_SEARCH_PLACEHOLDER';
         return (
@@ -1388,6 +1540,10 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
             {renderTasks()}
             {renderRecommendations()}
             {renderCalendarSidebarStatistics()}
+            <TriplanSidebarEqualDivider/>
+            {renderPriorityFilters()}
+            {renderCategoryFilters()}
+            {renderPreferredTimeFilters()}
         </div>
     )
 }

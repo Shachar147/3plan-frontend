@@ -212,6 +212,7 @@
 	"SHOW_ALL_EVENTS": "בטל סינון",
 	"SHOW_ONLY_EVENTS_WITH_NO_LOCATION.FILTER_TAG": "הצג רק פעילויות ללא מיקום",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_PRIORITIES.FILTER_TAG": "סינון פעילויות לפי עדיפויות",
+	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_SIDEBAR_PRIORITIES.FILTER_TAG": "סינון תפריט צד לפי עדיפויות",
 	"SHOW_ONLY_EVENTS_WITH_NO_OPENING_HOURS.FILTER_TAG": "הצג רק פעילויות ללא שעות פתיחה",
 	"SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE.FILTER_TAG": "הצג רק פעילויות עם משימות פתוחות",
 	"SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG": "הצג רק פעילויות עם בעיות בזמני הגעה",
@@ -1199,5 +1200,10 @@
 	"UPLOADING_PHOTOS_X_OF_Y": "מעלה תמונה {X} מתוך {Y}...",
 	"SAVING": "שומר...",
 	"KEEPING_TO_SAVED_COLLECTIONS": "מוסיף לרשימת השמורים שלך...",
-	"SUGGESTIONS_SIDEBAR_TITLE": "אולי יעניין אותך:"
+	"SUGGESTIONS_SIDEBAR_TITLE": "אולי יעניין אותך:",
+	"FILTER_BY_PRIORITY": "סנן לפי עדיפות",
+	"FILTER_BY_CATEGORY": "סנן לפי קטגוריה",
+	"FILTER_BY_PREFERRED_TIME": "סנן לפי זמן מועדף",
+	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_PREFERRED_TIMES.FILTER_TAG": "סינון תפריט צד לפי זמן מועדף",
+	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_CATEGORIES.FILTER_TAG": "סינון תפריט צד לפי קטגוריה"
 }

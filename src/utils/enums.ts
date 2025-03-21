@@ -19,6 +19,14 @@ export enum TriplanPriority {
 	unset = 0, // gray
 }
 
+export const prioritiesOrder = [
+	TriplanPriority.must,
+	TriplanPriority.high,
+	TriplanPriority.maybe,
+	TriplanPriority.least,
+	TriplanPriority.unset
+]
+
 export enum TriplanEventPreferredTime {
 	morning = 1,
 	noon = 2,
