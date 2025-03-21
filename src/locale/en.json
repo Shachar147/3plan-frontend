@@ -201,6 +201,7 @@
 	"SHOW_ONLY_EVENTS_WITH_OPENING_HOURS_PROBLEMS.FILTER_TAG": "Filtered by opening hours problems",
 	"SHOW_ONLY_EVENTS_WITH_NO_OPENING_HOURS.FILTER_TAG": "Filtered by no opening hours",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_PRIORITIES.FILTER_TAG": "Filtered by priorities",
+	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_SIDEBAR_PRIORITIES.FILTER_TAG": "Sidebar Filtered by priorities",
 	"FILTER_INDICATIONS.MULTIPLE_FILTERS": "There are {{num}} filters",
 	"SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE.FILTER_TAG": "Filtered by open tasks",
 	"HIDE_SCHEDULED_EVENTS.FILTER_TAG": "Hide scheduled activities",
@@ -961,5 +962,6 @@
 	"UPLOADING_PHOTOS_X_OF_Y": "Uploading photo {X}/{Y}...",
 	"SAVING": "Saving...",
 	"KEEPING_TO_SAVED_COLLECTIONS": "Adding to your saved collections...",
-	"SUGGESTIONS_SIDEBAR_TITLE": "Suggestions:"
+	"SUGGESTIONS_SIDEBAR_TITLE": "Suggestions:",
+	"FILTER_BY_PRIORITY": "Filter by priority:"
 }

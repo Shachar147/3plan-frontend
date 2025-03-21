@@ -138,6 +138,7 @@ export class EventStore {
 	// map filters
 	@observable mapFiltersVisible: boolean = false;
 	@observable filterOutPriorities = observable.map({});
+	@observable filterSidebarPriorities = observable.map({});
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
 	@observable mapViewMode: MapViewMode = MapViewMode.CATEGORIES_AND_PRIORITIES;
@@ -763,7 +764,8 @@ export class EventStore {
 						this._isEventMatchingSearch(event, this.sidebarSearchValue) &&
 						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
-						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
+						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
+						(this.filterSidebarPriorities.size === 0 || this.filterSidebarPriorities.get(getEnumKey(TriplanPriority, event.priority)))
 				);
 		});
 		return toReturn;
@@ -828,7 +830,8 @@ export class EventStore {
 			!!this.sidebarSearchValue?.length ||
 			this.showOnlyEventsWithNoLocation ||
 			this.showOnlyEventsWithNoOpeningHours ||
-			this.showOnlyEventsWithTodoComplete
+			this.showOnlyEventsWithTodoComplete ||
+			!!Array.from(this.filterSidebarPriorities.values()).length
 			// for now it affects only map. todo complete - add it to sidebar filters as well both in UI and on logic
 			// || !!Array.from(this.filterOutPriorities.values()).length
 			// || this.hideScheduled
@@ -1527,6 +1530,15 @@ export class EventStore {
 	}
 
 	@action
+	toggleSidebarFilterPriority(priority: string) {
+		if (this.filterSidebarPriorities.get(priority)) {
+			this.filterSidebarPriorities.delete(priority);
+		} else {
+			this.filterSidebarPriorities.set(priority, true);
+		}
+	}
+
+	@action
 	toggleMapFilters() {
 		this.mapFiltersVisible = !this.mapFiltersVisible;
 	}
@@ -1810,6 +1822,9 @@ export class EventStore {
 		this.setShowOnlyEventsWithNoOpeningHours(false);
 		this.setShowOnlyEventsWithDistanceProblems(false);
 		this.setShowOnlyEventsWithOpeningHoursProblems(false);
+		
+		// Reset sidebar priority filters
+		this.filterSidebarPriorities = observable.map({});
 
 		setTimeout(() => {
 			document.getElementsByName('fc-search').forEach((element) => {

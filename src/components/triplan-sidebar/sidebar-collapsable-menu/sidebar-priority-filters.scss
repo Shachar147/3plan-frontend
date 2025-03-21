@@ -1,0 +1,29 @@
+.sidebar-priority-filter {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    opacity: 0.7;
+    
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        opacity: 1;
+    }
+    
+    &.active {
+        font-weight: bold;
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    i {
+        margin-right: 8px;
+    }
+
+    [dir="rtl"] & {
+        i {
+            margin-right: 0;
+            margin-left: 8px;
+        }
+    }
+} 
