@@ -550,7 +550,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							icon="fa-plus-square-o"
 							text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
 						/>
-						<div className="sidebar-statistics" style={{ padding: 0 }}>
+						<div className="sidebar-statistics padding-0">
 							{' '}
 							|{' '}
 						</div>
@@ -562,7 +562,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							icon="fa-minus-square-o"
 							text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
 						/>
-						<div className="sidebar-statistics" style={{ padding: 0 }}>
+						<div className="sidebar-statistics padding-0">
 							{' '}
 							|{' '}
 						</div>
