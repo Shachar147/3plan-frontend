@@ -17,7 +17,7 @@ interface TriplanSidebarDraggableEventProps {
     fullActions?: boolean;
     eventTitleSuffix?: React.ReactNode | string | undefined;
     _onClick?: () => void;
-    addEventToSidebar: () => void;
+    addEventToSidebar: (event: SidebarEvent) => void;
 }
 
 function TriplanSidebarDraggableEvent(props: TriplanSidebarDraggableEventProps) {

@@ -300,7 +300,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
         return (
             <>
                 {eventsByPreferredHour}
-                {scheduledEvents.length > 0 && (
+                {scheduledEvents.length > 0 && !eventStore.sidebarSettings['hide-scheduled'] && (
                     <div key={`${categoryId}-scheduled-events`}>
                         {renderLineWithText(
                             `${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${scheduledEvents.length})`
@@ -353,7 +353,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
 
         return (
             <div className="flex-column gap-5">
-                {events.map((event) => <TriplanSidebarDraggableEvent event={event} categoryId={categoryId} removeEventFromSidebarById={removeEventFromSidebarById} addToEventsToCategories={addToEventsToCategories} addEventToSidebar={(e) => props.addEventToSidebar(e)} />)}
+                {events.map((event) => <TriplanSidebarDraggableEvent event={event} categoryId={categoryId} removeEventFromSidebarById={removeEventFromSidebarById} addToEventsToCategories={addToEventsToCategories} addEventToSidebar={(e) => { props.addEventToSidebar(e); }} />)}
             </div>
         );
     };
@@ -392,7 +392,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps){
             });
         return (
             <div className="flex-column gap-5">
-                {events.map((event, idx) => <TriplanSidebarDraggableEvent event={event} categoryId={categoryId} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} fullActions={false} eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)} addEventToSidebar={(e) => props.addEventToSidebar(e)} onClick={
+                {events.map((event, idx) => <TriplanSidebarDraggableEvent event={event} categoryId={categoryId} addToEventsToCategories={addToEventsToCategories} removeEventFromSidebarById={removeEventFromSidebarById} fullActions={false} eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)} addEventToSidebar={(e) => { props.addEventToSidebar(e); }} _onClick={
                     () => {
                         const calendarEvent = eventStore.calendarEvents.find(
                             (y) => y.id == event.id

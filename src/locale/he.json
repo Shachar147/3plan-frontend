@@ -1205,5 +1205,6 @@
 	"FILTER_BY_CATEGORY": "סנן לפי קטגוריה",
 	"FILTER_BY_PREFERRED_TIME": "סנן לפי זמן מועדף",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_PREFERRED_TIMES.FILTER_TAG": "סינון תפריט צד לפי זמן מועדף",
-	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_CATEGORIES.FILTER_TAG": "סינון תפריט צד לפי קטגוריה"
+	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_CATEGORIES.FILTER_TAG": "סינון תפריט צד לפי קטגוריה",
+	"SETTINGS": "הגדרות"
 }

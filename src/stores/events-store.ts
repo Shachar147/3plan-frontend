@@ -138,13 +138,28 @@ export class EventStore {
 	// map filters
 	@observable mapFiltersVisible: boolean = false;
 	@observable filterOutPriorities = observable.map({});
-	@observable filterSidebarPriorities = observable.map({});
-	@observable filterSidebarCategories = observable.map({});
-	@observable filterSidebarPreferredTimes = observable.map({});
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
 	@observable mapViewMode: MapViewMode = MapViewMode.CATEGORIES_AND_PRIORITIES;
 	@observable mapViewDayFilter: string | undefined;
+
+	// sidebar settings
+	@observable filterSidebarPriorities = observable.map({});
+	@observable filterSidebarCategories = observable.map({});
+	@observable filterSidebarPreferredTimes = observable.map({});
+	@observable sidebarSettings = (() => {
+		try {
+			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
+			return savedSettings ? JSON.parse(savedSettings) : {
+				'hide-scheduled': false
+			};
+		} catch (e) {
+			console.error('Error loading sidebar settings from localStorage', e);
+			return {
+				'hide-scheduled': false
+			};
+		}
+	})();
 
 	// add side bar modal
 	@observable isModalMinimized: boolean = true;
@@ -269,17 +284,8 @@ export class EventStore {
 	}
 
 	checkIfEventHaveOpenTasks(event: SidebarEvent | CalendarEvent | AllEventsEvent | EventInput): boolean {
-		// let { title, description } = event;
-		// const { taskKeywords } = ListViewService._initSummaryConfiguration();
-		// const isTodoComplete = taskKeywords.find(
-		// 	(k: string) =>
-		// 		title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 ||
-		// 		(description && description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
-		// );
-		//
-		// return !!isTodoComplete;
 		const { id: eventId } = event;
-		return !!this.tasks.find((t) => t.eventId == eventId);
+		return !!this.tasks.find((t) => String(t.eventId) === String(eventId));
 	}
 
 	@action
@@ -1484,7 +1490,14 @@ export class EventStore {
 	@action
 	setDistance(key: string, value: DistanceResult) {
 		this.distanceResults.set(key, value);
-		this.dataService.setDistanceResults(this.distanceResults, this.tripName);
+		
+		// Convert ObservableMap to a regular Map for the dataService
+		const regularMap = new Map<string, DistanceResult>();
+		this.distanceResults.forEach((value, key) => {
+			regularMap.set(key, value);
+		});
+		
+		this.dataService.setDistanceResults(regularMap, this.tripName);
 	}
 
 	@action
@@ -1866,6 +1879,15 @@ export class EventStore {
 			this.filterSidebarPreferredTimes.delete(preferredTime);
 		} else {
 			this.filterSidebarPreferredTimes.set(preferredTime, true);
+		}
+	}
+
+	@action
+	saveSidebarSettings() {
+		try {
+			localStorage.setItem('triplan-sidebar-settings', JSON.stringify(this.sidebarSettings));
+		} catch (e) {
+			console.error('Error saving sidebar settings to localStorage', e);
 		}
 	}
 }

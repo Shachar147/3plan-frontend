@@ -1,4 +1,4 @@
-.sidebar-priority-filter, .sidebar-category-filter, .sidebar-preferred-time-filter {
+.sidebar-priority-filter, .sidebar-category-filter, .sidebar-preferred-time-filter, .sidebar-settings {
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
@@ -11,6 +11,7 @@
 
     &.active {
         opacity: 1;
+        //color: var(--blue);
         background-color: #f0f0f0;
     }
 
@@ -20,8 +21,15 @@
     }
 }
 
+.sidebar-settings {
+    &.active {
+        background-color: transparent;
+        color: var(--blue);
+    }
+}
+
 .direction-rtl {
-    .sidebar-priority-filter, .sidebar-category-filter, .sidebar-preferred-time-filter {
+    .sidebar-priority-filter, .sidebar-category-filter, .sidebar-preferred-time-filter, .sidebar-settings {
         flex-direction: row-reverse;
     }
 } 
