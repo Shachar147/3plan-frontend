@@ -1484,21 +1484,6 @@ input:read-only {
 	}
 }
 
-// limit the views to 100vh minus the header and the gaps around it, to make the whole view appear without window scroll.
-// this way sidebar and the main content will have their own scrolls.
-// added only to pc.
-.external-events-container.pc{
-	&:not(.combined) {
-		// uncomment this line if having problems with sidebar height:
-		//max-height: calc(100vh - 180px) !important;
-	}
-}
-
-.calender-container.pc,
-.list-container.pc {
-	max-height: calc(100vh - 180px) !important;
-}
-
 .combined-container {
 	.calender-container.pc {
 		max-height: unset !important;

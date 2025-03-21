@@ -3,13 +3,14 @@
 	flex-direction: column;
 	gap: 20px;
 
-	/*max-height: 945px;*/ /* causing weird double scroll behavior */
+	height: calc(100vh - 200px); /* Set fixed height to match parent container */
 	overflow-y: auto;
-	position: sticky;
+	position: relative;
+	z-index: 3; /* Set higher than calendar to ensure proper stacking */
 
 	padding-inline-end: 10px;
 	width: fit-content;
-	max-width: 420px; // max-width: 490px;
+	max-width: 420px; 
 	min-width: 400px;
 
 	transition: max-width 0.3s ease-in-out;

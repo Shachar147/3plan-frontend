@@ -643,74 +643,77 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	}, [eventStore.customDateRange]);
 
 	return (
-		<div className="flex-col width-100-percents position-relative" key={eventStore.forceCalendarReRender}>
-			{eventStore.isSwitchDaysEnabled && !eventStore.isTripLocked && <DraggableList />}
-			<FullCalendar
-				initialView={'timeGridWeek'}
-				headerToolbar={headerToolbar}
-				titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
-				customButtons={customButtons}
-				views={{
-					timeGridThreeDay: {
-						type: 'timeGrid',
-						duration: { days: 3 },
-						buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.3_DAYS'),
-					},
-					timeGridAllDays: {
-						type: 'timeGrid',
-						duration: { days: eventStore.tripTotalDaysNum },
-						buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.ALL_DAYS'),
-						visibleRange: eventStore.customDateRange,
-					},
-				}}
-				buttonText={buttonTexts}
-				allDayText={TranslateService.translate(eventStore, 'ALL_DAY_TEXT')}
-				weekText={TranslateService.translate(eventStore, 'WEEK_TEXT')}
-				scrollTime={'07:00'}
-				slotLabelFormat={{
-					hour: '2-digit',
-					minute: '2-digit',
-					omitZeroMinute: true,
-					meridiem: 'short',
-					hour12: false,
-				}}
-				rerenderDelay={10}
-				defaultTimedEventDuration={defaultTimedEventDuration}
-				eventDurationEditable={!eventStore.isTripLocked}
-				editable={!eventStore.isMobile && !eventStore.isTripLocked} // to prevent events from moving when scrolling
-				droppable={!eventStore.isTripLocked}
-				plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-				ref={calendarComponentRef}
-				events={_events}
-				eventReceive={onEventReceive}
-				eventClick={onEventClick}
-				eventChange={(changeInfo) => handleEventChange(changeInfo)}
-				eventResizableFromStart={!eventStore.isMobile && !eventStore.isTripLocked}
-				locale={eventStore.calendarLocalCode}
-				direction={eventStore.getCurrentDirection()}
-				buttonIcons={false} // show the prev/next text
-				// weekNumbers={true}
-				navLinks={true} // can click day/week names to navigate views
-				dayMaxEvents={true} // allow "more" link when too many events
-				selectable={!eventStore.isMobile && !eventStore.isTripLocked}
-				select={onCalendarSelect}
-				eventContent={renderEventContent}
-				longPressDelay={5}
-				validRange={{
-					start: eventStore.customDateRange.start,
-					// end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
-					end: addDays(toDate(eventStore.customDateRange.end), 0), // addDays(toDate(eventStore.customDateRange.end), 1),
-				}}
-				slotMinTime={'00:00'}
-				scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
-				dayHeaderFormat={{
-					/* show weekday and date in a format of Sunday 14.3 for example - always - on all views */
-					weekday: 'short',
-					day: 'numeric',
-					month: 'numeric',
-				}}
-			/>
-			{eventStore.isMobile && !eventStore.isTripLocked && renderAddEventMobileButton()}
+		<div className="triplan-calendar-container">
+			<div className="flex-col width-100-percents position-relative calendar-wrapper" key={eventStore.forceCalendarReRender}>
+				{eventStore.isSwitchDaysEnabled && !eventStore.isTripLocked && <DraggableList />}
+				<FullCalendar
+					initialView={'timeGridWeek'}
+					headerToolbar={headerToolbar}
+					titleFormat={{ year: 'numeric', month: 'short', day: 'numeric' }}
+					customButtons={customButtons}
+					views={{
+						timeGridThreeDay: {
+							type: 'timeGrid',
+							duration: { days: 3 },
+							buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.3_DAYS'),
+						},
+						timeGridAllDays: {
+							type: 'timeGrid',
+							duration: { days: eventStore.tripTotalDaysNum },
+							buttonText: TranslateService.translate(eventStore, 'BUTTON_TEXT.ALL_DAYS'),
+							visibleRange: eventStore.customDateRange,
+						},
+					}}
+					buttonText={buttonTexts}
+					allDayText={TranslateService.translate(eventStore, 'ALL_DAY_TEXT')}
+					weekText={TranslateService.translate(eventStore, 'WEEK_TEXT')}
+					scrollTime={'07:00'}
+					slotLabelFormat={{
+						hour: '2-digit',
+						minute: '2-digit',
+						omitZeroMinute: true,
+						meridiem: 'short',
+						hour12: false,
+					}}
+					rerenderDelay={10}
+					defaultTimedEventDuration={defaultTimedEventDuration}
+					eventDurationEditable={!eventStore.isTripLocked}
+					editable={!eventStore.isMobile && !eventStore.isTripLocked} // to prevent events from moving when scrolling
+					droppable={!eventStore.isTripLocked}
+					plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+					ref={calendarComponentRef}
+					events={_events}
+					eventReceive={onEventReceive}
+					eventClick={onEventClick}
+					eventChange={(changeInfo) => handleEventChange(changeInfo)}
+					eventResizableFromStart={!eventStore.isMobile && !eventStore.isTripLocked}
+					locale={eventStore.calendarLocalCode}
+					direction={eventStore.getCurrentDirection()}
+					buttonIcons={false} // show the prev/next text
+					// weekNumbers={true}
+					navLinks={true} // can click day/week names to navigate views
+					dayMaxEvents={true} // allow "more" link when too many events
+					selectable={!eventStore.isMobile && !eventStore.isTripLocked}
+					select={onCalendarSelect}
+					eventContent={renderEventContent}
+					longPressDelay={5}
+					validRange={{
+						start: eventStore.customDateRange.start,
+						// end: fullCalendarFormatDate(addDays(toDate(eventStore.customDateRange.end), 1)),
+						end: addDays(toDate(eventStore.customDateRange.end), 0), // addDays(toDate(eventStore.customDateRange.end), 1),
+					}}
+					slotMinTime={'00:00'}
+					scrollTimeReset={false} /* fix bug of calendar being scrolled up after each event change */
+					dayHeaderFormat={{
+						/* show weekday and date in a format of Sunday 14.3 for example - always - on all views */
+						weekday: 'short',
+						day: 'numeric',
+						month: 'numeric',
+					}}
+					height="100%"
+				/>
+				{eventStore.isMobile && !eventStore.isTripLocked && renderAddEventMobileButton()}
+			</div>
 		</div>
 	);
 }
