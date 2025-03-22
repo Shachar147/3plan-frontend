@@ -1,0 +1,412 @@
+:root {
+	/* Base Colors */
+
+	/* Blues */
+	--tp-blue-1: #d5eaff; /* lightest blue */
+	--tp-blue-2: #90d2ff;
+	--tp-blue-3: #52a4ff;
+	--tp-blue-4: #37b5ff;
+	--tp-blue-5: #0079ff; /* selected color */
+	--tp-blue-6: #0066d5; /* dark blue */
+	--tp-blue-7: #081348; /* darkest blue */
+
+	/* Whites */
+	--tp-white-1: #ffffff; /* pure white */
+	--tp-white-2: #fafafa;
+	--tp-white-3: #f3f3f3;
+	--tp-white-4: #f1f1f1;
+	--tp-white-5: #efefef;
+	--tp-white-6: #ebebeb;
+	--tp-white-7: #e5e9ef; /* white blue */
+	--tp-white-8: #e4e7eb; /* white blue darker */
+
+	/* Grays */
+	--tp-gray-1: #eeeeee;
+	--tp-gray-2: #e2e2e2;
+	--tp-gray-3: #dee2e6;
+	--tp-gray-4: #d6d6d6;
+	--tp-gray-5: #cccccc;
+	--tp-gray-6: #aaaaaa;
+	--tp-gray-7: #9f9f9f;
+	--tp-gray-8: #808080;
+	--tp-gray-9: #748597; /* blue gray */
+	--tp-gray-10: #6a6868; /* brown gray */
+	--tp-gray-11: #595959;
+	--tp-gray-12: #3a4654;
+	--tp-gray-13: #333d4f; /* dark gray */
+	--tp-gray-14: #343a40; /* darker gray */
+	--tp-gray-15: #2d2d2d;
+	--tp-gray-16: #2c2c2c; /* almost black */
+
+	/* Reds */
+	--tp-red-1: #fcf2f2; /* invalid red background */
+	--tp-red-2: #ff5252; /* main red */
+	--tp-red-3: #ff0074; /* red pink color */
+
+	/* Oranges */
+	--tp-orange-1: #ffb752; /* triplan orange */
+	--tp-orange-2: #f85e26;
+
+	/* Other Colors */
+	--tp-black: #2c2c2c;
+	--tp-black-bg: rgba(0, 0, 0, 0.03);
+	--tp-gold: #ffd700;
+
+	/* Transparent Colors */
+	--tp-transparent-white-1: rgba(255, 255, 255, 0.2);
+	--tp-transparent-white-2: rgba(255, 255, 255, 0.4);
+	--tp-transparent-white-3: rgba(255, 255, 255, 0.6);
+	--tp-transparent-white-4: rgba(255, 255, 255, 0.8);
+
+	--tp-transparent-black-1: rgba(0, 0, 0, 0.03);
+	--tp-transparent-black-2: rgba(0, 0, 0, 0.05);
+	--tp-transparent-black-3: rgba(0, 0, 0, 0.1);
+	--tp-transparent-black-4: rgba(0, 0, 0, 0.2);
+	--tp-transparent-black-5: rgba(0, 0, 0, 0.3);
+	--tp-transparent-black-6: rgba(0, 0, 0, 0.4);
+	--tp-transparent-black-7: rgba(0, 0, 0, 0.6);
+	--tp-transparent-black-8: rgba(0, 0, 0, 0.7);
+
+	--tp-transparent-blue-1: rgba(55, 181, 255, 0.6);
+	--tp-transparent-blue-2: rgba(41, 152, 255, 0.21);
+
+	/* Legacy Color Variables (kept for backward compatibility) */
+	--white: var(--tp-white-1);
+	--white-blue: var(--tp-white-7);
+	--white-blue-darker: var(--tp-white-8);
+	--gray: var(--tp-gray-5);
+	--dark-gray: var(--tp-gray-13);
+	--black: var(--tp-black);
+	--blue: var(--tp-blue-4);
+	--blue-gray: var(--tp-gray-9);
+	--brown-gray: var(--tp-gray-10);
+	--light-blue: var(--tp-blue-1);
+	--dark-blue: var(--tp-blue-6);
+	--darkest-blue: var(--tp-blue-7);
+	--red: var(--tp-red-2);
+	--invalid-red-background: var(--tp-red-1);
+	--triplan-orange: var(--tp-orange-1);
+	--red-pink-color: var(--tp-red-3);
+	--selected-color: var(--tp-blue-5);
+}
+
+/* Color Utility Classes */
+
+/* Blues */
+.color-blue-1 {
+	color: var(--tp-blue-1);
+}
+.color-blue-2 {
+	color: var(--tp-blue-2);
+}
+.color-blue-3 {
+	color: var(--tp-blue-3);
+}
+.color-blue-4 {
+	color: var(--tp-blue-4);
+}
+.color-blue-5 {
+	color: var(--tp-blue-5);
+}
+.color-blue-6 {
+	color: var(--tp-blue-6);
+}
+.color-blue-7 {
+	color: var(--tp-blue-7);
+}
+
+/* Whites */
+.color-white-1 {
+	color: var(--tp-white-1);
+}
+.color-white-2 {
+	color: var(--tp-white-2);
+}
+.color-white-3 {
+	color: var(--tp-white-3);
+}
+.color-white-4 {
+	color: var(--tp-white-4);
+}
+.color-white-5 {
+	color: var(--tp-white-5);
+}
+.color-white-6 {
+	color: var(--tp-white-6);
+}
+.color-white-7 {
+	color: var(--tp-white-7);
+}
+.color-white-8 {
+	color: var(--tp-white-8);
+}
+
+/* Grays */
+.color-gray-1 {
+	color: var(--tp-gray-1);
+}
+.color-gray-2 {
+	color: var(--tp-gray-2);
+}
+.color-gray-3 {
+	color: var(--tp-gray-3);
+}
+.color-gray-4 {
+	color: var(--tp-gray-4);
+}
+.color-gray-5 {
+	color: var(--tp-gray-5);
+}
+.color-gray-6 {
+	color: var(--tp-gray-6);
+}
+.color-gray-7 {
+	color: var(--tp-gray-7);
+}
+.color-gray-8 {
+	color: var(--tp-gray-8);
+}
+.color-gray-9 {
+	color: var(--tp-gray-9);
+}
+.color-gray-10 {
+	color: var(--tp-gray-10);
+}
+.color-gray-11 {
+	color: var(--tp-gray-11);
+}
+.color-gray-12 {
+	color: var(--tp-gray-12);
+}
+.color-gray-13 {
+	color: var(--tp-gray-13);
+}
+.color-gray-14 {
+	color: var(--tp-gray-14);
+}
+.color-gray-15 {
+	color: var(--tp-gray-15);
+}
+.color-gray-16 {
+	color: var(--tp-gray-16);
+}
+
+/* Reds */
+.color-red-1 {
+	color: var(--tp-red-1);
+}
+.color-red-2 {
+	color: var(--tp-red-2);
+}
+.color-red-3 {
+	color: var(--tp-red-3);
+}
+
+/* Oranges */
+.color-orange-1 {
+	color: var(--tp-orange-1);
+}
+.color-orange-2 {
+	color: var(--tp-orange-2);
+}
+
+/* Other Colors */
+.color-black {
+	color: var(--tp-black);
+}
+.color-gold {
+	color: var(--tp-gold);
+}
+
+/* Background Color Classes */
+
+/* Blues */
+.bg-blue-1 {
+	background-color: var(--tp-blue-1);
+}
+.bg-blue-2 {
+	background-color: var(--tp-blue-2);
+}
+.bg-blue-3 {
+	background-color: var(--tp-blue-3);
+}
+.bg-blue-4 {
+	background-color: var(--tp-blue-4);
+}
+.bg-blue-5 {
+	background-color: var(--tp-blue-5);
+}
+.bg-blue-6 {
+	background-color: var(--tp-blue-6);
+}
+.bg-blue-7 {
+	background-color: var(--tp-blue-7);
+}
+
+/* Whites */
+.bg-white-1 {
+	background-color: var(--tp-white-1);
+}
+.bg-white-2 {
+	background-color: var(--tp-white-2);
+}
+.bg-white-3 {
+	background-color: var(--tp-white-3);
+}
+.bg-white-4 {
+	background-color: var(--tp-white-4);
+}
+.bg-white-5 {
+	background-color: var(--tp-white-5);
+}
+.bg-white-6 {
+	background-color: var(--tp-white-6);
+}
+.bg-white-7 {
+	background-color: var(--tp-white-7);
+}
+.bg-white-8 {
+	background-color: var(--tp-white-8);
+}
+
+/* Grays */
+.bg-gray-1 {
+	background-color: var(--tp-gray-1);
+}
+.bg-gray-2 {
+	background-color: var(--tp-gray-2);
+}
+.bg-gray-3 {
+	background-color: var(--tp-gray-3);
+}
+.bg-gray-4 {
+	background-color: var(--tp-gray-4);
+}
+.bg-gray-5 {
+	background-color: var(--tp-gray-5);
+}
+.bg-gray-6 {
+	background-color: var(--tp-gray-6);
+}
+.bg-gray-7 {
+	background-color: var(--tp-gray-7);
+}
+.bg-gray-8 {
+	background-color: var(--tp-gray-8);
+}
+.bg-gray-9 {
+	background-color: var(--tp-gray-9);
+}
+.bg-gray-10 {
+	background-color: var(--tp-gray-10);
+}
+.bg-gray-11 {
+	background-color: var(--tp-gray-11);
+}
+.bg-gray-12 {
+	background-color: var(--tp-gray-12);
+}
+.bg-gray-13 {
+	background-color: var(--tp-gray-13);
+}
+.bg-gray-14 {
+	background-color: var(--tp-gray-14);
+}
+.bg-gray-15 {
+	background-color: var(--tp-gray-15);
+}
+.bg-gray-16 {
+	background-color: var(--tp-gray-16);
+}
+
+/* Reds */
+.bg-red-1 {
+	background-color: var(--tp-red-1);
+}
+.bg-red-2 {
+	background-color: var(--tp-red-2);
+}
+.bg-red-3 {
+	background-color: var(--tp-red-3);
+}
+
+/* Oranges */
+.bg-orange-1 {
+	background-color: var(--tp-orange-1);
+}
+.bg-orange-2 {
+	background-color: var(--tp-orange-2);
+}
+
+/* Other Colors */
+.bg-black {
+	background-color: var(--tp-black);
+}
+.bg-gold {
+	background-color: var(--tp-gold);
+}
+
+/* Legacy Color Classes (kept for backward compatibility) */
+.dark-gray-background {
+	background-color: var(--tp-gray-13);
+}
+
+.green-background {
+	background-color: var(--success);
+}
+
+.red-pink-color {
+	background-color: var(--tp-red-3);
+}
+
+.triplan-orange-color {
+	color: var(--tp-orange-1);
+}
+
+.black-color {
+	color: var(--tp-black);
+}
+
+.blue-gray-color {
+	color: var(--tp-gray-9);
+}
+
+.pink-color {
+	color: var(--pink);
+}
+
+.white-color {
+	color: var(--tp-white-1);
+}
+
+.black-background {
+	background: var(--tp-black) !important;
+}
+
+.dark-color {
+	color: var(--dark);
+}
+
+.blue-color {
+	color: var(--tp-blue-4);
+}
+
+.red-color {
+	color: var(--tp-red-2);
+}
+
+.orange-color {
+	color: var(--tp-orange-1);
+}
+
+.gold-color {
+	color: var(--tp-gold);
+}
+
+.darkest-blue-color {
+	color: var(--tp-blue-7);
+}
+
+.selected-color {
+	color: var(--tp-blue-5);
+}

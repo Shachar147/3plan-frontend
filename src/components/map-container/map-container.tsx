@@ -484,10 +484,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		const icon = {
 			url: 'https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1577-food-fork-knife_4x.png&highlight=ff000000,FF5252,ff000000&scale=2.0',
 			scaledSize: new googleRef.Size(30, 30),
-			fillColor: '#F00',
+			fillColor: 'var(--tp-red-2)',
 			fillOpacity: 0.7,
 			strokeWeight: 0.4,
-			strokeColor: '#ffffff',
+			strokeColor: 'var(--tp-white-1)',
 		};
 
 		const initMarkerFromCoordinate = (coordinate: Coordinate) => {
@@ -506,7 +506,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority!] };
 			const markerIconWithBorder = {
 				...markerIcon,
-				strokeColor: '#ffffff',
+				strokeColor: 'var(--tp-white-1)',
 				strokeOpacity: 0.6,
 				strokeWeight: 8,
 			};
@@ -522,7 +522,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				// labelInBackground: false,
 				label: {
 					text: texts[key],
-					color: '#c0bbbb',
+					color: 'var(--tp-gray-7)',
 					fontSize: '10px',
 					fontWeight: 'bold',
 					className: 'marker-label',
@@ -655,6 +655,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	}, [googleMapRef, infoWindow, markers]);
 
 	const getOptions = () => {
+		// TODO: Move Google Maps styling to separate file
+		// Google Maps API requires hex colors, so we can't use CSS variables directly
+		// Consider creating a map styles constants file
 		const noDefaultMarkers = {
 			featureType: 'poi',
 			elementType: 'labels',
