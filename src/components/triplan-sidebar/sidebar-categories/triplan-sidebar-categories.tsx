@@ -259,11 +259,25 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 							const distanceA = eventStore.distanceResults.get(distanceKey);
 							const distanceB = eventStore.distanceResults.get(distanceKey2);
 
+							// Get threshold values from settings (with fallbacks to default values)
+							const drivingThresholdMinutes = Number(
+								eventStore.sidebarSettings.get('area-driving-threshold') || 10
+							);
+							const walkingThresholdMinutes = Number(
+								eventStore.sidebarSettings.get('area-walking-threshold') || 20
+							);
+
+							// Convert minutes to seconds
+							const drivingThresholdSeconds = drivingThresholdMinutes * 60;
+							const walkingThresholdSeconds = walkingThresholdMinutes * 60;
+
 							if (
 								(distanceA &&
 									distanceA.duration_value &&
-									Number(distanceA.duration_value) <= 10 * 60) || // Max 10 min
-								(distanceB && distanceB.duration_value && Number(distanceB.duration_value) <= 20 * 60) // Max 20 min
+									Number(distanceA.duration_value) <= drivingThresholdSeconds) || // Configurable driving threshold
+								(distanceB &&
+									distanceB.duration_value &&
+									Number(distanceB.duration_value) <= walkingThresholdSeconds) // Configurable walking threshold
 							) {
 								// Add to this cluster
 								areaEvents.push(event);
@@ -335,12 +349,22 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
 		const borderStyle = '1px solid rgba(0, 0, 0, 0.05)';
 
+		// Sort areas by number of events (most to least)
+		const sortedAreas = Array.from(areasMap.entries()).sort((a, b) => {
+			// [0] is area name, [1] is array of events
+			return b[1].length - a[1].length;
+		});
+
 		return (
 			<>
-				{Array.from(areasMap.entries()).map(([areaName, areaEvents], index) => {
+				{sortedAreas.map(([areaName, areaEvents], index) => {
 					const sidebarItemsCount = eventStore.allSidebarEvents.filter((s) =>
 						areaEvents.map((e) => e.id).includes(s.id)
 					).length;
+
+					if (eventStore.hideEmptyCategories && sidebarItemsCount == 0) {
+						return;
+					}
 
 					const itemsCount = areaEvents.length;
 
@@ -601,7 +625,12 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const eventsByPreferredHour = Object.keys(preferredHoursHash)
 			.filter((x) => preferredHoursHash[x].length > 0)
 			.map((preferredHour: string) => {
-				const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+				let preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+
+				if (preferredHourString == 'unset' && eventStore.isHebrew) {
+					preferredHourString = 'unset.male';
+				}
+
 				return (
 					<div key={`${priority}-${preferredHour}`}>
 						{renderLineWithText(
@@ -665,7 +694,10 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const eventsByPreferredHour = Object.keys(preferredHoursHash)
 			.filter((x) => preferredHoursHash[x].length > 0)
 			.map((preferredHour: string) => {
-				const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+				let preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+				if (preferredHourString == 'unset' && eventStore.isHebrew) {
+					preferredHourString = 'unset.male';
+				}
 				return (
 					<div key={`${categoryId}-${preferredHour}`}>
 						{renderLineWithText(
@@ -973,7 +1005,10 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			const eventsByPreferredHour = Object.keys(preferredHoursHash)
 				.filter((x) => preferredHoursHash[x].length > 0)
 				.map((preferredHour: string) => {
-					const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+					let preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+					if (preferredHourString == 'unset' && eventStore.isHebrew) {
+						preferredHourString = 'unset.male';
+					}
 					return (
 						<div key={`${areaName}-${preferredHour}`}>
 							{renderLineWithText(

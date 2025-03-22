@@ -240,6 +240,9 @@ export class EventStore {
 	initSidebarSettings() {
 		// Set default value first
 		this.sidebarSettings.set('hide-scheduled', false);
+		// Set default area grouping thresholds (in minutes)
+		this.sidebarSettings.set('area-driving-threshold', 10); // 10 min driving
+		this.sidebarSettings.set('area-walking-threshold', 20); // 20 min walking
 
 		try {
 			const savedSettings = localStorage.getItem('triplan-sidebar-settings');

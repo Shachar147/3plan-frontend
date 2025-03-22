@@ -1713,6 +1713,17 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			},
 		];
 
+		// Function to handle threshold input changes
+		const handleThresholdChange = (settingId: string, value: string) => {
+			const numValue = parseInt(value);
+			if (!isNaN(numValue) && numValue > 0) {
+				runInAction(() => {
+					eventStore.sidebarSettings.set(settingId, numValue);
+					eventStore.saveSidebarSettings();
+				});
+			}
+		};
+
 		const settingsContent = (
 			<div className="flex-column gap-8">
 				{settingsItems.map((item) => {
@@ -1742,6 +1753,74 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 						</Observer>
 					);
 				})}
+
+				{/* Area grouping threshold settings - only visible when area grouping is selected */}
+				{eventStore.sidebarGroupBy === 'area' && (
+					<>
+						{/* Divider for area settings */}
+						<div className="margin-block-5">
+							{renderLineWithText(TranslateService.translate(eventStore, 'AREA_GROUPING_SETTINGS'))}
+						</div>
+
+						{/* Driving threshold */}
+						<Observer>
+							{() => (
+								<div className="flex-row gap-5 align-items-center sidebar-settings">
+									<i className="fa fa-car" aria-hidden="true"></i>
+									<span>{TranslateService.translate(eventStore, 'DRIVING_THRESHOLD')}</span>
+									<input
+										type="number"
+										className="sidebar-settings-input"
+										min="1"
+										max="60"
+										value={eventStore.sidebarSettings.get('area-driving-threshold') || 10}
+										onChange={(e) =>
+											handleThresholdChange('area-driving-threshold', e.target.value)
+										}
+										onClick={(e) => e.stopPropagation()}
+										style={{
+											width: '50px',
+											marginLeft: 'auto',
+											padding: '2px 5px',
+											textAlign: 'center',
+											border: '1px solid var(--gray-light)',
+										}}
+									/>
+									<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
+								</div>
+							)}
+						</Observer>
+
+						{/* Walking threshold */}
+						<Observer>
+							{() => (
+								<div className="flex-row gap-5 align-items-center sidebar-settings">
+									<i className="fa fa-male" aria-hidden="true"></i>
+									<span>{TranslateService.translate(eventStore, 'WALKING_THRESHOLD')}</span>
+									<input
+										type="number"
+										className="sidebar-settings-input"
+										min="1"
+										max="60"
+										value={eventStore.sidebarSettings.get('area-walking-threshold') || 20}
+										onChange={(e) =>
+											handleThresholdChange('area-walking-threshold', e.target.value)
+										}
+										onClick={(e) => e.stopPropagation()}
+										style={{
+											width: '50px',
+											marginLeft: 'auto',
+											padding: '2px 5px',
+											textAlign: 'center',
+											border: '1px solid var(--gray-light)',
+										}}
+									/>
+									<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
+								</div>
+							)}
+						</Observer>
+					</>
+				)}
 			</div>
 		);
 
@@ -1750,7 +1829,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			'fa-gear',
 			SidebarGroups.SETTINGS,
 			TranslateService.translate(eventStore, 'SETTINGS'),
-			settingsItems.length
+			settingsItems.length + (eventStore.sidebarGroupBy === 'area' ? 2 : 0)
 		);
 
 		return (
