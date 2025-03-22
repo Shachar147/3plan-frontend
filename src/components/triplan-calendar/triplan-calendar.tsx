@@ -32,6 +32,7 @@ import { getClasses, isEventAlreadyOrdered, jsonDiff, lockEvents } from '../../u
 import { TripDataSource } from '../../utils/enums';
 import { DBService } from '../../services/data-handlers/db-service';
 import { FeatureFlagsService } from '../../utils/feature-flags';
+import SmartSchedulerButton from './smart-scheduler-button';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -644,6 +645,33 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		handleViewChange();
 	}, [eventStore.customDateRange]);
 
+	// Add CSS for the smart scheduler container
+	useEffect(() => {
+		const styleElement = document.createElement('style');
+		styleElement.textContent = `
+			.smart-scheduler-wrapper {
+				position: absolute;
+				inset-inline-end: 10px;
+				z-index: 10;
+			}
+			
+			@media (max-width: 768px) {
+				.smart-scheduler-wrapper {
+					inset-inline-end: 10px;
+				}
+			}
+			
+			.fc .fc-toolbar.fc-header-toolbar {
+				margin-right: 140px;
+			}
+		`;
+		document.head.appendChild(styleElement);
+
+		return () => {
+			document.head.removeChild(styleElement);
+		};
+	}, []);
+
 	return (
 		<div className="triplan-calendar-container">
 			<div
@@ -651,6 +679,11 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				key={eventStore.forceCalendarReRender}
 			>
 				{eventStore.isSwitchDaysEnabled && !eventStore.isTripLocked && <DraggableList />}
+
+				<div className="smart-scheduler-wrapper">
+					<SmartSchedulerButton />
+				</div>
+
 				<FullCalendar
 					initialView="timeGridWeek"
 					headerToolbar={headerToolbar}

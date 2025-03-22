@@ -968,5 +968,18 @@
 	"FILTER_BY_PREFERRED_TIME": "Filter by preferred time",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_PREFERRED_TIMES.FILTER_TAG": "Sidebar filtered by preferred time",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_CATEGORIES.FILTER_TAG": "Sidebar filtered by category",
-	"SETTINGS": "Settings"
+	"SETTINGS": "Settings",
+	"SMART_SCHEDULER.BUTTON_TEXT": "Smart Schedule",
+	"SMART_SCHEDULER.MODAL_TITLE": "Smart Scheduler",
+	"SMART_SCHEDULER.NO_EVENTS_SCHEDULED": "No events could be scheduled. Make sure you have activities in the sidebar.",
+	"SMART_SCHEDULER.NO_DATE_RANGE": "Please set date range for your trip before using the Smart Scheduler.",
+	"SMART_SCHEDULER.SUCCESS": "Successfully scheduled {{count}} activities!",
+	"SMART_SCHEDULER.ERROR": "An error occurred while scheduling your activities. Please try again.",
+	"SMART_SCHEDULER.NO_EVENTS": "There are no activities to schedule. Add some activities first.",
+	"SMART_SCHEDULER.CONFIRMATION_TEXT": "Are you sure you want to schedule these activities automatically?",
+	"SMART_SCHEDULER.CONFIRM": "Schedule",
+	"SMART_SCHEDULER.PROCESSING": "Scheduling your activities...",
+	"SMART_SCHEDULER.EXISTING_EVENTS_MESSAGE": "You already have events in your calendar. Would you like to keep them and add new events, or reset and reschedule everything?",
+	"SMART_SCHEDULER.KEEP_EXISTING": "Keep existing and add new",
+	"SMART_SCHEDULER.RESET_AND_RESCHEDULE": "Reset and reschedule all"
 }
