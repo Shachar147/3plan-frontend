@@ -56,10 +56,7 @@ body.rtl {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	//padding: 10px;
 	padding-top: 10px;
-	//background: #eaeff5;
-	//border: 1px solid #dde3eb;
 	border-radius: 20px;
 	transition: all 0.3s ease-in-out;
 	opacity: 1;
@@ -116,11 +113,9 @@ body.rtl {
 }
 
 .preferred-time {
-	/*background-color: #d4dfec;*/
 	font-size: 12px;
 	font-weight: bold;
 	padding-block: 4px;
-	/*border-radius: 10px;*/
 	display: flex;
 	flex-direction: row;
 	gap: 5px;

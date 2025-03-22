@@ -1,5 +1,5 @@
 .register-page {
-	background-color: #eaeff5 !important;
+	background-color: var(--tp-blue-1) !important;
 
 	> div {
 		margin-top: -30px !important;
@@ -7,8 +7,8 @@
 
 	.sub.cards.header.content {
 		.ui.segment {
-			background-color: rgba(255, 255, 255, 0.4);
-			border-color: aliceblue;
+			background-color: var(--tp-transparent-white-4);
+			border-color: var(--tp-white-2);
 		}
 
 		.field {

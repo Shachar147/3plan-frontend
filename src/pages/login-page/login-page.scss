@@ -5,7 +5,7 @@
 	flex-direction: column;
 
 	.change-language-bar {
-		background-color: rgba(255, 255, 255, 0.4);
+		background-color: var(--tp-transparent-white-4);
 		border-bottom-left-radius: 30px;
 		border-bottom-right-radius: 30px;
 		position: fixed;
@@ -45,8 +45,8 @@
 		.login-form {
 			width: 100%;
 			max-width: 400px;
-			background-color: rgba(255, 255, 255, 0.4);
-			border-color: aliceblue;
+			background-color: var(--tp-transparent-white-4);
+			border-color: var(--tp-white-2);
 			padding: 16px;
 			display: flex;
 			flex-direction: column;
@@ -55,18 +55,18 @@
 
 			.field {
 				position: relative;
-				color: rgba(0, 0, 0, 0.4) !important;
+				color: var(--tp-transparent-black-4) !important;
 				display: flex;
 				flex-direction: row;
 				align-items: center;
 				justify-content: center;
 
 				&.blue {
-					color: #0068bb !important;
+					color: var(--tp-blue-5) !important;
 				}
 
 				&.red {
-					color: #f10b45 !important;
+					color: var(--tp-red-5) !important;
 				}
 
 				.icon {
@@ -81,13 +81,13 @@
 					-ms-flex: 1 0 auto;
 					flex: 1 0 auto;
 					outline: 0;
-					-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+					-webkit-tap-highlight-color: var(--tp-transparent-white-1);
 					text-align: left;
 					line-height: 1.21em;
 					font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
 					padding: 0.6em 1em;
-					background: #fff;
-					border: 1px solid rgba(34, 36, 38, 0.15);
+					background: var(--tp-white-1);
+					border: 1px solid var(--tp-transparent-black-15);
 					border-radius: 0.28rem;
 					-webkit-transition: border-color 0.1s ease, -webkit-box-shadow 0.1s ease;
 					-webkit-box-shadow: none;
@@ -99,13 +99,13 @@
 					&::-webkit-input-placeholder, /* Edge */
           			&:-ms-input-placeholder, /* Internet Explorer 10-11 */
           			&::placeholder {
-						color: rgba(0, 0, 0, 0.2) !important;
+						color: var(--tp-transparent-black-2) !important;
 					}
 
 					&:focus {
 						//border-color: #85b7d9;
-						background: #fff;
-						color: rgba(0, 0, 0, 0.8);
+						background: var(--tp-white-1);
+						color: var(--tp-transparent-black-8);
 						-webkit-box-shadow: none;
 						box-shadow: none;
 					}
@@ -159,5 +159,5 @@ body {
 }
 
 input {
-	background-color: white !important;
+	background-color: var(--tp-white-1) !important;
 }

@@ -36,13 +36,9 @@ body {
 .landing-page-layout {
 	padding: 30px;
 	padding-block-start: 0;
-	//background-color: #eaeff5;
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;
-	//height: 100vh;
-	//width: 100vw;
-	//background-image: url('~/images/landing-page/background-2.png');
 	text-align: center;
 
 	display: flex;
@@ -214,21 +210,6 @@ body {
 .my-trips .sidebar-statistics {
 	background-color: white !important;
 }
-
-//.my-trips .sidebar-statistics:nth-child(2),
-//.my-trips .sidebar-statistics:nth-child(4),
-//.my-trips .sidebar-statistics:nth-child(6),
-//.my-trips .sidebar-statistics:nth-child(8),
-//.my-trips .sidebar-statistics:nth-child(10),
-//.my-trips .sidebar-statistics:nth-child(12),
-//.my-trips .sidebar-statistics:nth-child(14),
-//.my-trips .sidebar-statistics:nth-child(16),
-//.my-trips .sidebar-statistics:nth-child(18),
-//.my-trips .sidebar-statistics:nth-child(20),
-//.my-trips .sidebar-statistics:nth-child(22)
-//{
-//    background-color: #f3f2f2 !important;
-//}
 
 .my-trips .sidebar-statistics.local.logged-in {
 	background-color: rgb(239, 239, 239) !important;

@@ -22,7 +22,7 @@
 	align-items: center;
 
 	.manage-item-navigation {
-		background-color: rgba(0, 0, 0, 0.05);
+		background-color: var(--tp-transparent-black-2);
 		padding: 3px;
 		border-radius: 20px;
 		width: CALC(100% - 45px);
