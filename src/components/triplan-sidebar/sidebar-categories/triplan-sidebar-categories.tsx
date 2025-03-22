@@ -12,7 +12,7 @@ import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../../utils/int
 import ReactModalService from '../../../services/react-modal-service';
 import React, { CSSProperties, useContext } from 'react';
 import { eventStoreContext } from '../../../stores/events-store';
-import { TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
+import { prioritiesOrder, TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
 import { modalsStoreContext } from '../../../stores/modals-store';
 import './triplan-sidebar-categories.scss';
 import { renderLineWithText } from '../../../utils/ui-utils';
@@ -20,6 +20,7 @@ import TriplanSidebarDraggableEvent from '../sidebar-draggable-event/triplan-sid
 import { observer } from 'mobx-react';
 import { rootStoreContext } from '../../../v2/stores/root-store';
 import SidebarSearch from '../sidebar-search/sidebar-search';
+import { priorityToColor } from '../../../utils/consts';
 
 interface TriplanSidebarCategoriesProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -103,6 +104,88 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	}
 
 	let totalDisplayedCategories = 0;
+
+	function renderPriorities() {
+		// todo complete: remove inline style
+		const closedStyle = {
+			maxHeight: 0,
+			overflowY: 'hidden',
+			padding: 0,
+			transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+		};
+		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+		const borderStyle = '1px solid rgba(0, 0, 0, 0.05)';
+
+		return (
+			<>
+				{prioritiesOrder.map((priorityVal, index) => {
+					const priority = priorityVal as unknown as TriplanPriority;
+					const priorityText = TranslateService.translate(eventStore, TriplanPriority[priority]);
+					const color = priorityToColor[priority];
+
+					const sidebarItemsCount = eventStore.allSidebarEvents.filter((s) => s.priority == priority)?.length;
+					const calendarItemsCount = eventStore.filteredCalendarEvents.filter((e) => {
+						return e.priority == priority;
+					}).length;
+
+					const itemsCount = sidebarItemsCount + calendarItemsCount;
+					const totalItemsCountTooltip =
+						calendarItemsCount > 0
+							? TranslateService.translate(eventStore, 'TOTAL_ITEMS_COUNT.TOOLTIP')
+									.replace('{X}', calendarItemsCount.toString())
+									.replace('{Y}', sidebarItemsCount.toString())
+							: undefined;
+
+					if ((eventStore.hideEmptyCategories || eventStore.isFiltered) && sidebarItemsCount === 0) {
+						// itemsCount <- to prevent hiding non-empty category that all of it's items inside are scheduled.
+						return <></>;
+					}
+					totalDisplayedCategories++;
+
+					const openStyle = {
+						// maxHeight: 100 * sidebarItemsCount + 90 + 'px',
+						padding: '10px',
+						transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+					};
+
+					const isOpen = eventStore.openCategories.has(priority);
+					const eventsStyle = isOpen ? openStyle : closedStyle;
+
+					return (
+						<div className="external-events" key={priority}>
+							<div
+								className="sidebar-statistics sidebar-group"
+								style={{
+									borderBottom: borderStyle,
+									borderTop: index === 0 ? borderStyle : '0',
+								}}
+								onClick={() => eventStore.toggleCategory(priority)}
+							>
+								<i
+									className={
+										isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`
+									}
+									aria-hidden="true"
+								/>
+								<span>
+									<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }} />
+									&nbsp;
+									{priorityText}
+								</span>
+								<div title={totalItemsCountTooltip}>
+									({sidebarItemsCount}/{itemsCount})
+								</div>
+							</div>
+							<div style={eventsStyle as unknown as CSSProperties}>
+								{renderPriorityEvents(priority)}
+								{renderAddSidebarPriorityEventButton(priority)}
+							</div>
+						</div>
+					);
+				})}
+			</>
+		);
+	}
 
 	function renderCategories() {
 		// todo complete: remove inline style
@@ -247,6 +330,22 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		return ReactModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
 	}
 
+	const renderAddSidebarPriorityEventButton = (priority: TriplanPriority) => {
+		return (
+			<Button
+				flavor={ButtonFlavor.secondary}
+				className="width-100-percents margin-block-10"
+				onClick={() =>
+					ReactModalService.openAddSidebarEventModal(eventStore, undefined, { priority: priority })
+				}
+				text={TranslateService.translate(eventStore, 'ADD_EVENT.BUTTON_TEXT')}
+				icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
+				disabled={eventStore.isTripLocked}
+				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
+			/>
+		);
+	};
+
 	const renderAddSidebarEventButton = (category: TriPlanCategory) => {
 		const isHotel = isHotelsCategory(category);
 		return (
@@ -262,6 +361,66 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				disabled={eventStore.isTripLocked}
 				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
 			/>
+		);
+	};
+
+	const renderPriorityEvents = (priority: TriplanPriority) => {
+		const priorityEvents = eventStore.allSidebarEvents.filter((s) => s.priority == priority);
+
+		const preferredHoursHash: Record<string, SidebarEvent[]> = {};
+
+		Object.keys(TriplanEventPreferredTime)
+			.filter((x) => !Number.isNaN(Number(x)))
+			.forEach((preferredHour) => {
+				preferredHoursHash[preferredHour] = priorityEvents
+					.map((x) => {
+						x.preferredTime ||= TriplanEventPreferredTime.unset;
+						x.title = addLineBreaks(x.title, ', ');
+						if (x.description != undefined) {
+							x.description = addLineBreaks(x.description, '&#10;');
+						}
+						return x;
+					})
+					.filter((x: SidebarEvent) => x.preferredTime?.toString() === preferredHour.toString())
+					.sort(sortByPriority);
+			});
+
+		if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
+			return null;
+		}
+
+		const eventsByPreferredHour = Object.keys(preferredHoursHash)
+			.filter((x) => preferredHoursHash[x].length > 0)
+			.map((preferredHour: string) => {
+				const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+				return (
+					<div key={`${priority}-${preferredHour}`}>
+						{renderLineWithText(
+							`${TranslateService.translate(eventStore, 'TIME')}: ${ucfirst(
+								TranslateService.translate(eventStore, preferredHourString)
+							)} (${preferredHoursHash[preferredHour].length})`
+						)}
+						<div>{renderPreferredHourEventsByPriority(priority, preferredHoursHash[preferredHour])}</div>
+					</div>
+				);
+			});
+
+		const scheduledEvents = eventStore.calendarEvents.filter((e) => e.priority.toString() === priority.toString());
+
+		return (
+			<>
+				{eventsByPreferredHour}
+				{scheduledEvents.length > 0 && !eventStore.sidebarSettings.get('hide-scheduled') && (
+					<div key={`${priority}-scheduled-events`}>
+						{renderLineWithText(
+							`${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${
+								scheduledEvents.length
+							})`
+						)}
+						<div>{renderScheduledEventsByPriority(priority, scheduledEvents)}</div>
+					</div>
+				)}
+			</>
 		);
 	};
 
@@ -385,6 +544,54 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		);
 	};
 
+	const renderPreferredHourEventsByPriority = (priority: TriplanPriority, events: SidebarEvent[]) => {
+		const order = [
+			TriplanPriority.unset,
+			TriplanPriority.must,
+			TriplanPriority.high,
+			TriplanPriority.maybe,
+			TriplanPriority.least,
+		];
+
+		console.log('heree', events[0]);
+		// return;
+
+		events = events.sort((a, b) => {
+			let A = order.indexOf(Number(a.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+			let B = order.indexOf(Number(b.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+
+			if (A === -1) {
+				A = 999;
+			}
+			if (B === -1) {
+				B = 999;
+			}
+
+			if (A > B) {
+				return 1;
+			} else if (A < B) {
+				return -1;
+			}
+			return 0;
+		});
+
+		return (
+			<div className="flex-column gap-5">
+				{events.map((event) => (
+					<TriplanSidebarDraggableEvent
+						event={event}
+						categoryId={Number(event.category)}
+						removeEventFromSidebarById={removeEventFromSidebarById}
+						addToEventsToCategories={addToEventsToCategories}
+						addEventToSidebar={(e) => {
+							props.addEventToSidebar(e);
+						}}
+					/>
+				))}
+			</div>
+		);
+	};
+
 	const renderScheduledEvents = (categoryId: number, events: CalendarEvent[]) => {
 		const order = [
 			TriplanPriority.unset,
@@ -457,11 +664,79 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		);
 	};
 
+	const renderScheduledEventsByPriority = (priority: TriplanPriority, events: CalendarEvent[]) => {
+		const order = [
+			TriplanPriority.unset,
+			TriplanPriority.must,
+			TriplanPriority.high,
+			TriplanPriority.maybe,
+			TriplanPriority.least,
+		];
+
+		events = events.sort((a, b) => {
+			let A = order.indexOf(Number(a.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+			let B = order.indexOf(Number(b.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+
+			if (A === -1) {
+				A = 999;
+			}
+			if (B === -1) {
+				B = 999;
+			}
+
+			if (A > B) {
+				return 1;
+			} else if (A < B) {
+				return -1;
+			}
+			return 0;
+		});
+		return (
+			<div className="flex-column gap-5">
+				{events.map((event, idx) => (
+					<TriplanSidebarDraggableEvent
+						event={event}
+						categoryId={Number(event.category)}
+						addToEventsToCategories={addToEventsToCategories}
+						removeEventFromSidebarById={removeEventFromSidebarById}
+						fullActions={false}
+						eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)}
+						addEventToSidebar={(e) => {
+							props.addEventToSidebar(e);
+						}}
+						_onClick={() => {
+							const calendarEvent = eventStore.calendarEvents.find((y) => y.id == event.id)!;
+							if (typeof calendarEvent.start === 'string') {
+								calendarEvent.start = new Date(calendarEvent.start);
+							}
+							if (typeof calendarEvent.end === 'string') {
+								calendarEvent.end = new Date(calendarEvent.end);
+							}
+							modalsStore.switchToViewMode();
+							ReactModalService.openEditCalendarEventModal(
+								eventStore,
+								props.addEventToSidebar,
+								{
+									event: {
+										...calendarEvent,
+										_def: calendarEvent,
+									},
+								},
+								modalsStore
+							);
+						}}
+					/>
+				))}
+			</div>
+		);
+	};
+
 	return (
 		<>
 			{renderExpandCollapse()}
 			<SidebarSearch />
 			{totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
+			{renderPriorities()}
 			{renderCategories()}
 			{totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
 		</>
