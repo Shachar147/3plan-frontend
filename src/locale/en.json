@@ -973,5 +973,7 @@
 	"CATEGORIES": "Categories",
 	"PRIORITIES": "Priorities",
 	"AREAS": "Areas",
-	"ERROR_RENDERING_AREA": "Error displaying area"
+	"ERROR_RENDERING_AREA": "Error displaying area",
+	"NO_LOCATION": "No location",
+	"AREA_X": "Area {X}"
 }

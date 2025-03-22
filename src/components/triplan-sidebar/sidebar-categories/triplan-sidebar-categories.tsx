@@ -197,9 +197,11 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const areasMap = new Map<string, SidebarEvent[]>();
 		const sidebarEvents = eventStore.allEventsFilteredComputed;
 
+		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
+
 		// Default area for events without location
 		areasMap.set(
-			'No Location',
+			noLocationText,
 			sidebarEvents.filter(
 				(event) => !event.location || (typeof event.location === 'string' && event.location === '')
 			)
@@ -222,7 +224,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 				// Try to add to existing clusters
 				for (const [areaName, areaEvents] of Array.from(areasMap.entries())) {
-					if (areaName === 'No Location') continue;
+					if (areaName === noLocationText) continue;
 
 					// Check if this event is close to any event in this cluster
 					for (const areaEvent of areaEvents) {
@@ -279,7 +281,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 				// If event doesn't fit any cluster, create a new one
 				if (!foundCluster) {
-					const areaName = `Area ${areasMap.size}`;
+					const areaName = TranslateService.translate(eventStore, 'AREA_X', {
+						X: areasMap.size,
+					});
 					areasMap.set(areaName, [event]);
 				}
 			}
@@ -947,7 +951,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				.forEach((preferredHour) => {
 					preferredHoursHash[preferredHour] = areaEvents
 						.map((x) => {
-							x.preferredTime ||= TriplanEventPreferredTime.unset;
+							x.preferredTime = x.preferredTime || TriplanEventPreferredTime.unset;
 							x.title = addLineBreaks(x.title, ', ');
 							if (x.description != undefined) {
 								x.description = addLineBreaks(x.description, '&#10;');

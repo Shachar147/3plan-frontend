@@ -1211,5 +1211,7 @@
 	"FILTER_BY_PREFERRED_TIME": "סנן לפי זמן מועדף",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_PREFERRED_TIMES.FILTER_TAG": "סינון תפריט צד לפי זמן מועדף",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_CATEGORIES.FILTER_TAG": "סינון תפריט צד לפי קטגוריה",
-	"SETTINGS": "הגדרות"
+	"SETTINGS": "הגדרות",
+	"NO_LOCATION": "ללא מיקום",
+	"AREA_X": "אזור {X}"
 }
