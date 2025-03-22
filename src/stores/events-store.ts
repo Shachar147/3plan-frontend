@@ -205,7 +205,7 @@ export class EventStore {
 	@observable hideDoneTasks: boolean = false;
 	@observable groupTasksByEvent: boolean = false;
 
-	@observable sidebarGroupBy: 'priority' | 'category' = 'category';
+	@observable sidebarGroupBy: 'priority' | 'category' | 'area' = 'category';
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -230,7 +230,8 @@ export class EventStore {
 		// Initialize sidebarSettings from localStorage
 		this.initSidebarSettings();
 
-		this.sidebarGroupBy = (localStorage.getItem('sidebarGroupBy') as 'priority' | 'category') || 'category';
+		this.sidebarGroupBy =
+			(localStorage.getItem('sidebarGroupBy') as 'priority' | 'category' | 'area') || 'category';
 
 		this.init();
 	}
@@ -1918,7 +1919,7 @@ export class EventStore {
 	}
 
 	@action
-	setSidebarGroupBy(groupBy: 'priority' | 'category') {
+	setSidebarGroupBy(groupBy: 'priority' | 'category' | 'area') {
 		this.sidebarGroupBy = groupBy;
 		localStorage.setItem('sidebarGroupBy', groupBy);
 	}

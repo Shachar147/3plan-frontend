@@ -1675,6 +1675,28 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 									{TranslateService.translate(eventStore, 'PRIORITIES')}
 								</label>
 							</div>
+							<div
+								className={getClasses(
+									'sidebar-filter-item flex-row gap-4',
+									eventStore.sidebarGroupBy === 'area' && 'active'
+								)}
+							>
+								<input
+									type="radio"
+									id="group-by-area"
+									name="sidebar-group-by"
+									checked={eventStore.sidebarGroupBy === 'area'}
+									onChange={() => eventStore.setSidebarGroupBy('area')}
+									style={radioStyle}
+								/>
+								<label
+									htmlFor="group-by-area"
+									onClick={() => eventStore.setSidebarGroupBy('area')}
+									className="cursor-pointer margin-bottom-0"
+								>
+									{TranslateService.translate(eventStore, 'AREAS')}
+								</label>
+							</div>
 						</div>
 					</div>
 				</div>
