@@ -105,7 +105,7 @@ function TripTemplatePageContent() {
 			<div
 				className="width-100-percents flex-col align-items-center justify-content-center text-align-center"
 				style={{
-					backgroundColor: '#fafafa',
+					backgroundColor: 'var(--tp-white-2)',
 					backgroundImage: `url('/loaders/map-loader.gif')`,
 					backgroundPosition: 'center',
 					backgroundRepeat: 'no-repeat',

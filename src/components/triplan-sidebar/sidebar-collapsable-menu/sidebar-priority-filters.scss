@@ -9,12 +9,12 @@
 	opacity: 0.5;
 
 	&:hover {
-		background-color: #f0f0f0;
+		background-color: var(--tp-white-7);
 	}
 
 	&.active {
 		opacity: 1;
-		background-color: #f0f0f0;
+		background-color: var(--tp-white-7);
 	}
 
 	i {

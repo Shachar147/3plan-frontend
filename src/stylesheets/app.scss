@@ -813,10 +813,10 @@ body.ltr {
 	}
 
 	&.ordered {
-		background-color: #f2f8fc !important;
+		background-color: var(--tp-blue-1) !important;
 
 		.fc-event-main {
-			background-color: #f2f8fc !important;
+			background-color: var(--tp-blue-1) !important;
 		}
 	}
 
@@ -842,7 +842,7 @@ body.ltr {
 }
 
 .file-button-label {
-	background-color: #efefef !important;
+	background-color: var(--tp-white-5) !important;
 	border-top-right-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
 	display: flex;
@@ -852,13 +852,13 @@ body.ltr {
 .file-name-label {
 	height: 38px;
 	min-width: 200px;
-	border: 1px solid var(--gray);
+	border: 1px solid var(--tp-gray-5);
 	border-radius: 20px;
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 
 	line-height: 38px;
-	color: var(--gray);
+	color: var(--tp-gray-5);
 	font-size: 14px;
 }
 

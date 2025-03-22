@@ -48,7 +48,7 @@ const DraggableList = () => {
 	const handleDragOver = (event: React.DragEvent<HTMLElement>, index: number) => {
 		event.preventDefault();
 		// @ts-ignore
-		event.target.style.backgroundColor = '#eee'; // Change background color of second element
+		event.target.style.backgroundColor = 'var(--tp-gray-1)'; // Change background color of second element
 	};
 
 	const handleDragLeave = (event: React.DragEvent<HTMLElement>, index: number) => {

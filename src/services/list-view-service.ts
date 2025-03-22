@@ -270,11 +270,11 @@ const ListViewService = {
 
 		const orderedKeywords = ['הוזמן', 'הזמנתי', 'ordered', 'booked', 'reserved'];
 
-		const notesColor = '#52a4ff'; // "#ff5252";
-		const todoCompleteColor = '#ff5252';
-		const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
+		const notesColor = 'var(--tp-blue-3)'; // Previously '#52a4ff'
+		const todoCompleteColor = 'var(--tp-red-2)'; // Previously '#ff5252'
+		const orBackgroundStyle = '; background-color: var(--tp-white-4); padding-block: 2.5px;'; // Previously '#f2f2f2'
 
-		const orderedColor = '#90d2ff';
+		const orderedColor = 'var(--tp-blue-2)'; // Previously '#90d2ff'
 
 		const showIcons = true;
 
@@ -390,8 +390,8 @@ const ListViewService = {
 		const categories = eventStore.categories
 			.filter(
 				(x) =>
-					x.title == TranslateService.translate(eventStore, 'CATEGORY.HOTELS') ||
-					x.title == TranslateService.translate(eventStore, 'CATEGORY.FLIGHTS')
+					x.title === TranslateService.translate(eventStore, 'CATEGORY.HOTELS') ||
+					x.title === TranslateService.translate(eventStore, 'CATEGORY.FLIGHTS')
 			)
 			.map((c) => Number(c.id));
 		return categories.includes(categoryId);
@@ -412,7 +412,7 @@ const ListViewService = {
 			let orGroup = [];
 
 			eventsToday.forEach((e, idx) => {
-				if (Object.keys(e).length == 0) {
+				if (Object.keys(e).length === 0) {
 					return;
 				}
 
@@ -424,8 +424,8 @@ const ListViewService = {
 
 				const price =
 					e.price && e.currency ? Number(getSingleInCurrency(e.price, e.currency, desiredCurrency)) : 0;
-				const prevLineWasOr = idx - 1 >= 0 && Object.keys(eventsToday[idx - 1]).length == 0;
-				const nextLineIsOr = idx + 1 < totalEventsToday && Object.keys(eventsToday[idx + 1]).length == 0;
+				const prevLineWasOr = idx - 1 >= 0 && Object.keys(eventsToday[idx - 1]).length === 0;
+				const nextLineIsOr = idx + 1 < totalEventsToday && Object.keys(eventsToday[idx + 1]).length === 0;
 
 				if (prevLineWasOr || nextLineIsOr) {
 					orGroup.push(price);
@@ -440,7 +440,7 @@ const ListViewService = {
 					max += price;
 				}
 
-				if (idx + 1 == totalEventsToday && orGroup.length > 0) {
+				if (idx + 1 === totalEventsToday && orGroup.length > 0) {
 					min += Math.min(...orGroup);
 					max += Math.max(...orGroup);
 				}
@@ -478,7 +478,7 @@ const ListViewService = {
 		let summaryPerDay: Record<string, string[]> = {};
 
 		const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
-		const totalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(
+		const totalPricePerDay: Record<string, MinMax> = ListViewService._getEstimatedCosts(
 			eventStore,
 			calendarEventsPerDay,
 			desiredCurrency,
@@ -495,7 +495,7 @@ const ListViewService = {
 			let highlightEvents = events
 				.filter(
 					(x: EventInput) =>
-						x.priority && (x.priority == TriplanPriority.must || x.priority == TriplanPriority.high)
+						x.priority && (x.priority === TriplanPriority.must || x.priority === TriplanPriority.high)
 				)
 				.map((x: EventInput) =>
 					getEventTitle(x as unknown as CalendarEvent, eventStore)
@@ -551,14 +551,14 @@ const ListViewService = {
 				const title = getEventTitle(event as unknown as CalendarEvent, eventStore);
 
 				let price =
-					event.price != undefined
+					event.price !== 0
 						? `${TranslateService.translate(eventStore, 'PRICE', {
 								price:
 									event.price > 0
 										? formatNumberWithCommas(event.price)
 										: TranslateService.translate(eventStore, 'FREE_OF_CHARGE'),
 								currency:
-									event.price == 0
+									event.price === 0
 										? ''
 										: TranslateService.translate(eventStore, `${event.currency}_sign`),
 						  })}`
@@ -566,7 +566,7 @@ const ListViewService = {
 				if (price) {
 					price = price.trim();
 
-					if (event.price != desiredCurrency && event.price != 0) {
+					if (event.price !== desiredCurrency && event.price !== 0) {
 						const convertedPrice = getSingleInCurrency(event.price, event.currency, desiredCurrency);
 						price += ` = ${convertedPrice} ${TranslateService.translate(
 							eventStore,
@@ -601,7 +601,7 @@ const ListViewService = {
 						? subItemIcon + ' '
 						: '';
 
-				if (indent !== '' && summaryPerDay[dayTitle][summaryPerDay[dayTitle].length - 1] == '') {
+				if (indent !== '' && summaryPerDay[dayTitle][summaryPerDay[dayTitle].length - 1] === '') {
 					previousLineWasOr = true;
 					summaryPerDay[dayTitle].pop();
 					lastGroupNum--;
@@ -625,12 +625,12 @@ const ListViewService = {
 
 				const description =
 					event.description?.trim()?.length > 0 && eventStore.shouldRenderDescriptionOnListView
-						? `<br><span style="opacity:0;">${indent}</span><span style="color:#999999">${ListViewService._formatDescription(
+						? `<br><span style="opacity:0;">${indent}</span><span style="color:var(--tp-gray-7)">${ListViewService._formatDescription(
 								getEventDescription(event as unknown as CalendarEvent, eventStore)
 						  )}</span>`
 						: '';
 
-				let rowStyle = indent ? 'color: #999999' : 'color:black';
+				let rowStyle = indent ? 'color: var(--tp-gray-7)' : 'color: var(--tp-black)';
 				let rowClass = '';
 
 				let firstRowInGroup = false;
@@ -665,8 +665,8 @@ const ListViewService = {
 				//  hasTasks = hasDescriptionTasks || hasTodolistTasks;
 				let taskIndication = '';
 				if (hasTodolistTasks) {
-					const amount = eventStore.tasks.filter((t) => t.eventId == event.id)?.length;
-					if (amount == 1) {
+					const amount = eventStore.tasks.filter((t) => String(t.eventId) === event.id)?.length;
+					if (amount === 1) {
 						const openTasks = TranslateService.translate(eventStore, 'TRIP_SUMMARY.OPEN_TASK', { amount });
 						taskIndication = `<span class='task-indication' style='font-size: 22px; padding-inline: 5px; line-height: 18px; color:${todoCompleteColor}; font-weight:bold;'>&nbsp;<u>${openTasks}</u></span>`;
 					} else if (amount > 1) {
@@ -674,7 +674,7 @@ const ListViewService = {
 						taskIndication = `<span class='task-indication' style='font-size: 22px; padding-inline: 5px; line-height: 18px; color:${todoCompleteColor}; font-weight:bold;'>&nbsp;<u>${openTasks}</u></span>`;
 					}
 				}
-				if (taskIndication == '' && hasDescriptionTasks) {
+				if (taskIndication === '' && hasDescriptionTasks) {
 					taskIndication = `<span class='task-indication' style="font-size: 22px; padding-inline: 5px; line-height: 18px; color:${todoCompleteColor}; font-weight:bold;">&nbsp;<u>${todoComplete}</u></span>`;
 				}
 
@@ -743,8 +743,8 @@ const ListViewService = {
 						distanceToNextEvent.indexOf(
 							TranslateService.translate(eventStore, 'DISTANCE.ERROR.NO_POSSIBLE_WAY')
 						) !== -1
-							? '#ff5252'
-							: 'rgba(55,181,255,0.6)';
+							? 'var(--tp-red-2)'
+							: 'var(--tp-transparent-blue-1)';
 					const firstRowClass = firstRowInGroup
 						? ` class="first-row-in-group ${rowClass}"`
 						: ` class="${rowClass}"`;
@@ -843,7 +843,7 @@ const ListViewService = {
 		eventStore: EventStore,
 		summaryPerDay: Record<string, string[]>
 	): Record<string, string[]> => {
-		const orBackgroundStyle = '; background-color: #f2f2f2; padding-block: 2.5px;';
+		const orBackgroundStyle = '; background-color: var(--tp-white-4); padding-block: 2.5px;';
 
 		// @ts-ignore
 		window.routes = [];
@@ -1010,7 +1010,7 @@ const ListViewService = {
 				if (thisLocation) {
 					thisLocation.eventName = getEventTitle(x.event as unknown as CalendarEvent, eventStore);
 				}
-				if (prevLocation && thisLocation && prevLocation.address != thisLocation.address) {
+				if (prevLocation && thisLocation && prevLocation.address !== thisLocation.address) {
 					loggerArr.push(
 						'~ ' + prevTitle + ' -> ' + getEventTitle(x.event as unknown as CalendarEvent, eventStore)
 					);
@@ -1023,8 +1023,8 @@ const ListViewService = {
 							distanceToNextEvent.indexOf(
 								TranslateService.translate(eventStore, 'DISTANCE.ERROR.NO_POSSIBLE_WAY')
 							) !== -1
-								? '#ff5252'
-								: 'rgba(55,181,255,0.6)';
+								? 'var(--tp-red-2)'
+								: 'var(--tp-transparent-blue-1)';
 
 						let rowClass = '';
 						if (x.orGroupNum) {
@@ -1114,7 +1114,7 @@ const ListViewService = {
 				if (matchFilter !== -1) {
 					const regex = new RegExp(searchValue, 'gi');
 					const newVal = `
-                        <span style="background-color:#ffff00; color: black; font-weight: bold;">${searchValue}</span>
+                        <span style="background-color:var(--tp-gold); color: var(--tp-black); font-weight: bold;">${searchValue}</span>
                     `;
 					filteredSummaryPerDay[dayTitle] = summaryPerDay[dayTitle].map((x) => x?.replaceAll(regex, newVal));
 				}
@@ -1133,7 +1133,7 @@ const ListViewService = {
 	) => {
 		let estimatedPriceBlock = '';
 		let textKey = 'ESTIMATED_EXPANSES';
-		if (min == max) {
+		if (min === max) {
 			estimatedPriceBlock = min.toFixed(2).toString();
 			estimatedPriceBlock = formatNumberWithCommas(estimatedPriceBlock);
 			textKey = 'ESTIMATED_EXPANSE';
@@ -1229,7 +1229,7 @@ const ListViewService = {
 		summaryPerDay = ListViewService._addReachingNextDestinationInstructions(eventStore, summaryPerDay);
 
 		const noItemsPlaceholder =
-			Object.keys(summaryPerDay).length == 0
+			Object.keys(summaryPerDay).length === 0
 				? TranslateService.translate(eventStore, 'LIST_VIEW_DESCRIPTION_WITHOUT_CALENDER_ACTIVITY')
 				: '';
 
@@ -1275,7 +1275,7 @@ const ListViewService = {
 
 				// if there are notes, put it after them. otherwise, put them after the highlights.
 				const notesIndex = summaryPerDay[dayTitle].findIndex((e) => e.includes('"notes"'));
-				if (notesIndex != -1) {
+				if (notesIndex !== -1) {
 					summaryPerDay[dayTitle].splice(notesIndex + 1, 0, estimatedPriceBlock.replaceAll('div', 'span'));
 					estimatedPriceBlock = '';
 				}
@@ -1321,7 +1321,7 @@ const ListViewService = {
             ${estimatedPriceBlock}
             ${flightsAndHotelsPrice}
             ${orderedItemsPrice}
-            ${estimatedPriceBlock != '' ? '<hr/>' : ''}
+            ${estimatedPriceBlock !== '' ? '<hr/>' : ''}
             ${getSummaryPerDayHTMLArray().join(divider)}
         </div>
     `;

@@ -226,8 +226,8 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						color: textColor,
 						paddingInlineStart: '10px',
 						cursor: 'pointer',
-						backgroundColor: '#e5e9ef80',
-						borderBottom: '1px solid #e5e9ef',
+						backgroundColor: 'var(--tp-white-7-transparent)',
+						borderBottom: '1px solid var(--tp-white-7)',
 						height: '45px',
 					}}
 					onClick={() => {
@@ -550,10 +550,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							icon="fa-plus-square-o"
 							text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
 						/>
-						<div className="sidebar-statistics padding-0">
-							{' '}
-							|{' '}
-						</div>
+						<div className="sidebar-statistics padding-0"> | </div>
 						<Button
 							disabled={!expandMinimizedEnabled}
 							flavor={ButtonFlavor.link}
@@ -562,10 +559,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							icon="fa-minus-square-o"
 							text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
 						/>
-						<div className="sidebar-statistics padding-0">
-							{' '}
-							|{' '}
-						</div>
+						<div className="sidebar-statistics padding-0"> | </div>
 						<Button
 							className={getClasses(
 								['padding-inline-start-10 pointer padding-inline-end-10'],
@@ -637,7 +631,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 						style={{
 							paddingInlineStart: '10px',
 							cursor: 'pointer',
-							backgroundColor: '#e5e9ef80',
+							backgroundColor: 'var(--tp-white-7-transparent)',
 							borderBottom: borderStyle,
 							height: '45px',
 							borderTop: index === 0 ? borderStyle : '0',

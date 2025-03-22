@@ -1,11 +1,11 @@
 .point-of-interest {
 	display: flex;
-	border: 1px solid #ddd;
+	border: 1px solid var(--tp-gray-3);
 	padding: 16px;
 	margin: 16px;
 	border-radius: 8px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	background-color: white;
+	box-shadow: 0 2px 4px var(--tp-transparent-black-1);
+	background-color: var(--tp-white-1);
 	min-height: 300px;
 	height: auto;
 	max-height: max-content;
@@ -37,16 +37,16 @@
 	top: 16px;
 	right: 16px;
 	font-size: 24px;
-	color: gray;
+	color: var(--tp-gray-7);
 	cursor: pointer;
-	border: 1px solid white;
+	border: 1px solid var(--tp-white-1);
 	border-radius: 50%;
-	background-color: white;
+	background-color: var(--tp-white-1);
 	padding: 4px;
 }
 
 .heart-icon.filled {
-	color: red;
+	color: var(--tp-red-3);
 }
 
 .poi-right {
@@ -58,7 +58,7 @@
 
 .top-pick-label {
 	background-color: var(--red-pink-color); // gold;
-	color: white;
+	color: var(--tp-white-1);
 	padding: 4px 8px;
 	border-radius: 4px;
 	margin-bottom: 8px;
@@ -90,7 +90,7 @@
 //}
 
 .category-label {
-	color: #666;
+	color: var(--tp-gray-8);
 	margin-bottom: 8px;
 	display: flex;
 	gap: 6px;
@@ -137,11 +137,11 @@ h2 {
 }
 
 .rate.shimmering .star {
-	color: #ccc;
+	color: var(--tp-gray-5);
 }
 
 .star {
-	color: gold;
+	color: var(--tp-gold);
 	margin-right: 4px;
 }
 
@@ -159,7 +159,7 @@ h2 {
 
 .more-info,
 .google-maps-link {
-	color: #007bff;
+	color: var(--tp-blue-5);
 	text-decoration: none;
 }
 
@@ -207,13 +207,13 @@ h2 {
 				margin-top: -100px;
 			}
 
-			background: linear-gradient(180deg, transparent, #000);
+			background: linear-gradient(180deg, transparent, var(--tp-black));
 			height: 100px;
 			width: 100%;
 			inset-inline-start: 0;
 			padding-inline: 15px;
 			padding-block: 5px;
-			color: white;
+			color: var(--tp-white-1);
 			align-items: flex-end;
 			line-height: 25px;
 
@@ -241,10 +241,10 @@ h2 {
 					inset-inline-end: 8px;
 
 					&:hover {
-						background-color: rgba(255, 255, 255, 0.3);
+						background-color: var(--tp-transparent-white-3);
 					}
 					padding: 5px;
-					color: white;
+					color: var(--tp-white-1);
 				}
 
 				&.fa-heart {
@@ -367,7 +367,7 @@ h2 {
 	font-size: 11px;
 	margin-inline: 10px;
 	//position: absolute;
-	color: gray;
+	color: var(--tp-gray-7);
 	text-align: center;
 	//top: 215px;
 	width: 100%;
@@ -377,13 +377,13 @@ h2 {
 
 .shimmer-animation {
 	animation: shimmer 3s infinite;
-	background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+	background: linear-gradient(to right, var(--tp-gray-1) 4%, var(--tp-gray-2) 25%, var(--tp-gray-1) 36%);
 	background-size: 1000px 100%;
 }
 
 .point-of-interest-shimmering.main-feed {
 	.category-label {
-		background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2)) !important;
+		background: linear-gradient(180deg, transparent, var(--tp-transparent-black-2)) !important;
 
 		&.is-mobile {
 			margin-top: -125px;

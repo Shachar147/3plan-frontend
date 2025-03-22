@@ -1,7 +1,7 @@
 button {
 	outline: none;
-	border: 1px solid var(--gray);
-	background-color: white;
+	border: 1px solid var(--tp-gray-5);
+	background-color: var(--tp-white-1);
 	border-radius: 20px;
 	min-height: 38px;
 	transition: background-color 0.3s ease-in-out;
@@ -18,7 +18,7 @@ button {
 	gap: 8px;
 }
 button:not(:disabled):hover {
-	border-color: #aaa;
+	border-color: var(--tp-gray-6);
 }
 button:disabled {
 	/*opacity: 0.6;*/
@@ -29,24 +29,24 @@ button:disabled {
 
 .primary-success-button,
 .primary-button {
-	background-color: var(--blue) !important;
-	color: white !important;
-	box-shadow: 0 5px 8px 0 rgb(41 152 255 / 21%);
+	background-color: var(--tp-blue-4) !important;
+	color: var(--tp-white-1) !important;
+	box-shadow: 0 5px 8px 0 var(--tp-transparent-blue-2);
 	border: 0;
 	cursor: pointer;
 
 	&.red {
-		background-color: var(--red) !important;
+		background-color: var(--tp-red-2) !important;
 		box-shadow: none !important;
 	}
 
 	&.orange {
-		background-color: #f85e26 !important;
+		background-color: var(--tp-orange-2) !important;
 		box-shadow: none !important;
 	}
 
 	&.black {
-		background-color: var(--black) !important;
+		background-color: var(--tp-black) !important;
 		box-shadow: none !important;
 	}
 
@@ -56,76 +56,76 @@ button:disabled {
 }
 
 .primary-success-button {
-	background-color: var(--red-pink-color) !important;
+	background-color: var(--tp-red-3) !important;
 }
 
 .swal2-confirm:not(:disabled):hover,
 .primary-success-button:not(:disabled):hover,
 .primary-button:not(:disabled):hover {
-	background-color: var(--dark-gray) !important;
+	background-color: var(--tp-gray-13) !important;
 }
 
 .secondary-button {
-	background-color: white !important;
-	color: var(--blue) !important;
+	background-color: var(--tp-white-1) !important;
+	color: var(--tp-blue-4) !important;
 	cursor: pointer;
 
 	&.brown {
-		background-color: #eaeff4 !important;
-		border: 1px solid white !important;
-		color: #6a6868 !important;
+		background-color: var(--tp-white-3) !important;
+		border: 1px solid var(--tp-white-1) !important;
+		color: var(--tp-gray-10) !important;
 
 		&:disabled {
-			color: #9f9f9f !important;
+			color: var(--tp-gray-7) !important;
 			opacity: 0.8 !important;
 		}
 
 		&:not(:disabled):hover {
-			border: 1px solid #9f9f9f !important;
+			border: 1px solid var(--tp-gray-7) !important;
 		}
 	}
 }
 
 button.secondary-button:not(:disabled):hover {
-	border: 1px solid var(--blue);
+	border: 1px solid var(--tp-blue-4);
 }
 
 button.secondary-button.black:not(:disabled):hover {
-	border: 1px solid var(--gray);
+	border: 1px solid var(--tp-gray-5);
 }
 
 button.secondary-button {
 	&.black {
-		color: var(--black) !important;
-		border: 1px solid var(--gray);
+		color: var(--tp-black) !important;
+		border: 1px solid var(--tp-gray-5);
 		transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out, color 0.3s ease-in-out;
 
 		&:not(:disabled):hover {
-			/*border: 1px solid var(--black) !important;*/
+			/*border: 1px solid var(--tp-black) !important;*/
 			//border-color: #aaa !important;
-			//border: 1px solid var(--white) !important;
+			//border: 1px solid var(--tp-white-1) !important;
 			//background-color: #f3f3f3 !important; // #eaeff4
 			color: gray !important;
 		}
 	}
 
 	&.orange {
-		color: #f85e26 !important;
-		border: 1 px solid var(--gray);
+		color: var(--tp-orange-2) !important;
+		border: 1 px solid var(--tp-gray-5);
 
 		&:not(:disabled):hover {
 			background-color: #f3f3f3 !important;
-			border: 1px solid #f85e26 !important;
+			border: 1px solid var(--tp-orange-2) !important;
 		}
 	}
 }
 
 .dangerous-button {
 	background-color: white;
-	color: var(--red);
+	color: var(--tp-red);
 }
 .dangerous-button:not(:disabled):hover {
-	border: 1px solid var(--red);
+	border: 1px solid var(--tp-red);
 }
 
 .link-button,
@@ -145,14 +145,14 @@ button.secondary-button {
 	text-align: start;
 
 	&.red-color {
-		color: var(--red);
+		color: var(--tp-red);
 	}
 	&.blue-color {
-		color: var(--blue);
+		color: var(--tp-blue-4);
 	}
 
 	&.orange-color {
-		color: #f85e26; // var(--orange);
+		color: var(--tp-orange-2); // var(--tp-orange);
 	}
 
 	&:focus {
@@ -171,11 +171,11 @@ button.secondary-button {
 /*fullcalendar buttons*/
 .fc-button-primary {
 	background-color: white !important;
-	color: var(--black) !important;
-	border: 1px solid var(--gray) !important;
+	color: var(--tp-black) !important;
+	border: 1px solid var(--tp-gray-5) !important;
 }
 .fc-button-primary:not(:disabled):hover {
-	border: 1px solid var(--dark-gray) !important;
+	border: 1px solid var(--tp-gray-13) !important;
 }
 .swal2-confirm {
 	outline: none;
@@ -183,13 +183,13 @@ button.secondary-button {
 	min-height: 38px;
 	max-height: 38px;
 	line-height: 16px;
-	background-color: var(--blue) !important;
-	color: white !important;
-	box-shadow: 0 5px 8px 0 rgb(41 152 255 / 21%);
+	background-color: var(--tp-blue-4) !important;
+	color: var(--tp-white-1) !important;
+	box-shadow: 0 5px 8px 0 var(--tp-transparent-blue-2);
 	border: 0;
 }
 .swal2-confirm:not(:disabled):hover {
-	border: 1px solid var(--blue) !important;
+	border: 1px solid var(--tp-blue-4) !important;
 }
 .swal2-cancel {
 	border-radius: 20px !important;
@@ -197,23 +197,23 @@ button.secondary-button {
 	max-height: 38px;
 	line-height: 16px;
 	/*background-color: white !important;*/
-	/*color: var(--red) !important;*/
-	/*border:1px solid var(--gray) !important;*/
-	color: var(--dark-gray) !important;
+	/*color: var(--tp-red) !important;*/
+	/*border:1px solid var(--tp-gray-5) !important;*/
+	color: var(--tp-gray-13) !important;
 	background-color: transparent !important;
 	border: 0 !important;
 }
 .swal2-cancel:not(:disabled):hover {
 	background-image: none !important;
-	background-color: white !important;
-	/*border: 1px solid var(--red) !important;*/
-	border: 1px solid var(--gray) !important;
+	background-color: var(--tp-white-1) !important;
+	/*border: 1px solid var(--tp-red) !important;*/
+	border: 1px solid var(--tp-gray-5) !important;
 }
 
 .fc-button-active {
-	background-color: var(--dark-gray) !important;
-	color: white !important;
-	border: 1px solid var(--dark-gray) !important;
+	background-color: var(--tp-gray-13) !important;
+	color: var(--tp-white-1) !important;
+	border: 1px solid var(--tp-gray-13) !important;
 }
 
 .buttons-group {

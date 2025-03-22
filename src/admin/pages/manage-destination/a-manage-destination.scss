@@ -9,12 +9,12 @@
 
 	.manage-destination-items-map-container {
 		padding-inline: 90px;
-		background-color: #ebebeb;
+		background-color: var(--tp-white-6);
 		padding-block: 20px;
 	}
 
 	.manage-destination-navigation {
-		background-color: rgba(0, 0, 0, 0.05);
+		background-color: var(--tp-transparent-black-2);
 		padding: 3px;
 		border-radius: 20px;
 		width: CALC(100% - 45px);
@@ -54,7 +54,7 @@
 
 	.activity-box-status {
 		.activity-box-error {
-			color: var(--red);
+			color: var(--tp-red-2);
 		}
 		.activity-box-all-good {
 			color: var(--green);

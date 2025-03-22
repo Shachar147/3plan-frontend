@@ -1,6 +1,6 @@
 .shimmer-animation {
 	animation: shimmer 3s infinite;
-	background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+	background: linear-gradient(to right, var(--tp-white-7) 4%, var(--tp-gray-2) 25%, var(--tp-white-7) 36%);
 	background-size: 1000px 100%;
 }
 
@@ -9,7 +9,7 @@ $borderRadius: 18px;
 .templates-view-gray-bg {
 	width: CALC(100vw + 400px);
 	height: 270px;
-	background-color: #f8f8f8;
+	background-color: var(--tp-white-2);
 	position: absolute;
 	inset-inline-start: -200px;
 	z-index: 0;
@@ -26,7 +26,7 @@ $borderRadius: 18px;
 	width: 100%;
 
 	&.with-divider {
-		border-bottom: 1px solid #efefef;
+		border-bottom: 1px solid var(--tp-white-5);
 	}
 
 	&-title {
@@ -64,7 +64,7 @@ $borderRadius: 18px;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
-		color: white;
+		color: var(--tp-white-1);
 		font-size: 20px;
 		font-weight: bold;
 		text-align: start;
@@ -75,7 +75,7 @@ $borderRadius: 18px;
 
 		&-bottom-shadow {
 			padding: 15px;
-			background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.6));
+			background: linear-gradient(180deg, transparent, var(--tp-transparent-black-7));
 			border-bottom-right-radius: 18px;
 			border-bottom-left-radius: 18px;
 			width: 100%;

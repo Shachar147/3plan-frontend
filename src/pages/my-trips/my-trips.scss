@@ -1,5 +1,5 @@
 body {
-	background-color: #eaeff5;
+	background-color: var(--tp-white-3);
 }
 
 .my-trips {
@@ -19,7 +19,7 @@ body {
 	.sidebar-statistics.trips-list-trip {
 		padding-inline-start: 10px;
 		cursor: pointer;
-		border-bottom: 1px solid rgb(229, 233, 239);
+		border-bottom: 1px solid var(--tp-white-8);
 		min-height: 45px;
 
 		.trips-list-trip-actions {
@@ -36,20 +36,16 @@ body {
 .landing-page-layout {
 	padding: 30px;
 	padding-block-start: 0;
-	//background-color: #eaeff5;
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;
-	//height: 100vh;
-	//width: 100vw;
-	//background-image: url('~/images/landing-page/background-2.png');
 	text-align: center;
 
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 
-	color: #282b3c;
+	color: var(--tp-black-3);
 }
 
 .header {
@@ -120,7 +116,7 @@ body {
 .main-part .plan-your-trip-header {
 	font-size: 30px;
 	text-transform: uppercase;
-	color: #282b3c;
+	color: var(--tp-black-3);
 }
 
 .main-part .plan-your-trip-header .trip {
@@ -167,7 +163,7 @@ body {
 }
 
 .footer a {
-	color: #a6a6a6 !important;
+	color: var(--tp-gray-6) !important;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -212,30 +208,15 @@ body {
 }
 
 .my-trips .sidebar-statistics {
-	background-color: white !important;
+	background-color: var(--tp-white-1) !important;
 }
 
-//.my-trips .sidebar-statistics:nth-child(2),
-//.my-trips .sidebar-statistics:nth-child(4),
-//.my-trips .sidebar-statistics:nth-child(6),
-//.my-trips .sidebar-statistics:nth-child(8),
-//.my-trips .sidebar-statistics:nth-child(10),
-//.my-trips .sidebar-statistics:nth-child(12),
-//.my-trips .sidebar-statistics:nth-child(14),
-//.my-trips .sidebar-statistics:nth-child(16),
-//.my-trips .sidebar-statistics:nth-child(18),
-//.my-trips .sidebar-statistics:nth-child(20),
-//.my-trips .sidebar-statistics:nth-child(22)
-//{
-//    background-color: #f3f2f2 !important;
-//}
-
 .my-trips .sidebar-statistics.local.logged-in {
-	background-color: rgb(239, 239, 239) !important;
+	background-color: var(--tp-white-6) !important;
 }
 
 .no-trips-placeholder {
-	background-color: white;
+	background-color: var(--tp-white-1);
 	display: flex;
 	align-items: center;
 	align-content: center;

@@ -1,25 +1,25 @@
 body {
-	background-color: #eaeff5;
+	background-color: var(--tp-white-3);
 }
 
 .landing-page-layout {
 	padding: 30px;
 	padding-block-start: 0;
-	//background-color: #eaeff5;
+	//background-color: var(--tp-white-3);
 	background-position: center;
 	background-size: contain;
 	background-repeat: no-repeat;
 	//height: 100vh;
 	//width: 100vw;
 	//background-image: url('~/images/landing-page/background-2.png');
-	background-color: white;
+	background-color: var(--tp-white-1);
 	text-align: center;
 
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 
-	color: #282b3c;
+	color: var(--tp-blue-7);
 
 	.main-part {
 		width: 40%;
@@ -31,11 +31,11 @@ body {
 		.plan-your-trip-header {
 			font-size: 30px;
 			text-transform: uppercase;
-			color: #282b3c;
+			color: var(--tp-blue-7);
 
 			.trip {
 				font-size: 50px;
-				color: var(--blue);
+				color: var(--tp-blue-4);
 			}
 		}
 
@@ -67,7 +67,7 @@ body {
 			border: 1px solid transparent;
 
 			&:not(:disabled):hover {
-				background-color: var(--dark-gray);
+				background-color: var(--tp-gray-13);
 			}
 		}
 	}
@@ -82,7 +82,7 @@ body {
 		justify-content: center;
 
 		a {
-			color: #a6a6a6 !important;
+			color: var(--tp-gray-7) !important;
 			display: flex;
 			flex-direction: row;
 			align-items: center;

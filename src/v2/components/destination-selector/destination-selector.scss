@@ -5,7 +5,7 @@
 	text-align: start;
 
 	.select__control {
-		border: 1px solid #dde3eb;
+		border: 1px solid var(--tp-white-8);
 		border-radius: 20px;
 	}
 
@@ -27,7 +27,7 @@
 		align-items: center;
 		padding: 5px 10px;
 		border-radius: 15px;
-		background-color: #e0e0e0;
+		background-color: var(--tp-gray-2);
 		font-size: 14px;
 
 		span {

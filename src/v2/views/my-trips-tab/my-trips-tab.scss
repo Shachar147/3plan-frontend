@@ -12,7 +12,7 @@
 	}
 
 	.form-content {
-		border-inline: 1px solid #efefef;
+		border-inline: 1px solid var(--tp-white-5);
 		padding-inline: 30px;
 	}
 
@@ -22,13 +22,13 @@
 
 	h3 {
 		font-weight: bold;
-		color: #1a2b49;
+		color: var(--tp-blue-8);
 	}
 
 	.secondary-button {
 		padding: 10px 20px;
 		outline: 1px solid var(--blue) !important;
-		background-color: white !important;
+		background-color: var(--tp-white-1) !important;
 		font-weight: bold;
 		//border: none;
 		color: var(--blue) !important;
@@ -58,8 +58,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 3px;
-		border-top: 1px solid #f1f1f1;
-		border-bottom: 1px solid #f1f1f1;
+		border-top: 1px solid var(--tp-white-7);
+		border-bottom: 1px solid var(--tp-white-7);
 		padding-block: 8px;
 		margin-block: 8px;
 	}
@@ -84,7 +84,7 @@
 	display: flex;
 	flex-direction: row;
 	gap: 8px;
-	background-color: black;
+	background-color: var(--tp-black);
 	//position: absolute;
 	padding: 3px;
 	//bottom: -30px;
@@ -104,7 +104,7 @@
 
 		&.active,
 		&:hover {
-			color: white;
+			color: var(--tp-white-1);
 			opacity: 1;
 		}
 	}
@@ -114,7 +114,7 @@
 	.triplan-sidebar-main-buttons,
 	.add-activity-button,
 	.add-category-button {
-		background-color: white;
+		background-color: var(--tp-white-1);
 	}
 	.triplan-header-spacer {
 		padding-bottom: 0 !important;

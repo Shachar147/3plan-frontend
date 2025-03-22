@@ -1,0 +1,418 @@
+:root {
+	/* Base Colors */
+
+	/* Blues */
+	--tp-blue-1: #d5eaff; /* lightest blue - used in ~10 places (backgrounds, registration pages, landing pages) */
+	--tp-blue-2: #90d2ff; /* used in ~3 places (orderedColor in list view service) */
+	--tp-blue-3: #52a4ff; /* used in ~2 places (notesColor in list view service) */
+	--tp-blue-4: #37b5ff; /* used in ~15 places (buttons, calendar events, driving events) */
+	--tp-blue-5: #0079ff; /* selected color - used in ~6 places (register/login pages, header elements) */
+	--tp-blue-6: #0066d5; /* dark blue - used in ~4 places (buttons hover, header elements) */
+	--tp-blue-7: #081348; /* darkest blue - used in ~5 places (landing page text) */
+
+	/* Storybook Blues */
+	--tp-storybook-blue-1: #555ab9; /* dark purple blue for storybook - rarely used (only in storybook) */
+	--tp-storybook-blue-2: #91baf8; /* light purple blue for storybook - rarely used (only in storybook) */
+
+	/* Whites */
+	--tp-white-1: #ffffff; /* pure white - used in ~25 places (backgrounds, text colors) */
+	--tp-white-2: #fafafa; /* used in ~8 places (backgrounds, border colors) */
+	--tp-white-3: #f3f3f3; /* used in ~5 places (backgrounds, landing pages) */
+	--tp-white-4: #f1f1f1; /* used in ~3 places (background styles) */
+	--tp-white-5: #efefef; /* used in ~5 places (backgrounds, toggle button borders) */
+	--tp-white-6: #ebebeb; /* used in ~5 places (backgrounds) */
+	--tp-white-7: #e5e9ef; /* white blue - used in ~10 places (backgrounds, timegrid slots, sidebar) */
+	--tp-white-8: #e4e7eb; /* white blue darker - used in ~6 places (borders, form elements) */
+
+	/* Grays */
+	--tp-gray-1: #eeeeee; /* used in ~5 places (backgrounds) */
+	--tp-gray-2: #e2e2e2; /* used in ~5 places (backgrounds, category tags) */
+	--tp-gray-3: #dee2e6; /* used in ~5 places (borders, sidebar borders) */
+	--tp-gray-4: #d6d6d6; /* used in ~3 places (borders) */
+	--tp-gray-5: #cccccc; /* used in ~15 places (borders, form elements, calendar events) */
+	--tp-gray-6: #aaaaaa; /* used in ~5 places (text colors, footer links) */
+	--tp-gray-7: #9f9f9f; /* used in ~8 places (text colors, borders) */
+	--tp-gray-8: #808080; /* used in ~5 places (text colors, category tags) */
+	--tp-gray-9: #748597; /* blue gray - used in ~3 places (utility classes) */
+	--tp-gray-10: #6a6868; /* brown gray - rarely used */
+	--tp-gray-11: #595959; /* rarely used */
+	--tp-gray-12: #3a4654; /* rarely used */
+	--tp-gray-13: #333d4f; /* dark gray - used in ~8 places (buttons, backgrounds) */
+	--tp-gray-14: #343a40; /* darker gray - rarely used */
+	--tp-gray-15: #2d2d2d; /* rarely used */
+	--tp-gray-16: #2c2c2c; /* almost black - used in ~2 places (borders) */
+
+	/* Reds */
+	--tp-red-1: #fcf2f2; /* invalid red background - rarely used */
+	--tp-red-2: #ff5252; /* main red - used in ~10 places (calendar events, text colors, error states) */
+	--tp-red-3: #ff0074; /* red pink color - used in ~6 places (borders, error states) */
+
+	/* Oranges */
+	--tp-orange-1: #ffb752; /* triplan orange - used in ~5 places (calendar events, text colors) */
+	--tp-orange-2: #f85e26; /* used in ~5 places (buttons, text colors) */
+
+	/* Other Colors */
+	--tp-black: #2c2c2c; /* used in ~15 places (text colors, borders, gradients) */
+	--tp-black-bg: rgba(0, 0, 0, 0.03); /* rarely used */
+	--tp-gold: #ffd700; /* used in ~4 places (search highlights, text colors) */
+	--tp-soft-yellow: #fafad2; /* light golden rod yellow - rarely used */
+
+	/* Transparent Colors */
+	--tp-transparent-white-1: rgba(255, 255, 255, 0.2); /* used in ~3 places (form highlights) */
+	--tp-transparent-white-2: rgba(255, 255, 255, 0.4); /* rarely used */
+	--tp-transparent-white-3: rgba(255, 255, 255, 0.6); /* used in ~2 places */
+	--tp-transparent-white-4: rgba(255, 255, 255, 0.8); /* used in ~6 places (login/register backgrounds) */
+	--tp-white-7-transparent: rgba(229, 233, 239, 0.5); /* Semi-transparent white-blue - used in ~3 places (sidebar) */
+
+	--tp-transparent-black-1: rgba(0, 0, 0, 0.03); /* used in ~2 places (shadows) */
+	--tp-transparent-black-2: rgba(0, 0, 0, 0.05); /* used in ~6 places (backgrounds) */
+	--tp-transparent-black-3: rgba(0, 0, 0, 0.1); /* used in ~4 places (shadows) */
+	--tp-transparent-black-4: rgba(0, 0, 0, 0.2); /* used in ~6 places (shadows, text colors) */
+	--tp-transparent-black-5: rgba(0, 0, 0, 0.3); /* rarely used */
+	--tp-transparent-black-6: rgba(0, 0, 0, 0.4); /* used in ~2 places */
+	--tp-transparent-black-7: rgba(0, 0, 0, 0.6); /* used in ~3 places (backgrounds, gradients) */
+	--tp-transparent-black-8: rgba(0, 0, 0, 0.7); /* used in ~2 places (text colors) */
+
+	--tp-transparent-blue-1: rgba(55, 181, 255, 0.6); /* used in ~2 places (list view service) */
+	--tp-transparent-blue-2: rgba(41, 152, 255, 0.21); /* used in ~2 places (button shadows) */
+
+	/* Legacy Color Variables (kept for backward compatibility) */
+	--white: var(--tp-white-1); /* frequently used via legacy variable */
+	--white-blue: var(--tp-white-7); /* moderately used via legacy variable */
+	--white-blue-darker: var(--tp-white-8); /* rarely used via legacy variable */
+	--gray: var(--tp-gray-5); /* frequently used via legacy variable */
+	--dark-gray: var(--tp-gray-13); /* frequently used via legacy variable */
+	--black: var(--tp-black); /* frequently used via legacy variable */
+	--blue: var(--tp-blue-4); /* frequently used via legacy variable */
+	--blue-gray: var(--tp-gray-9); /* rarely used via legacy variable */
+	--brown-gray: var(--tp-gray-10); /* rarely used via legacy variable */
+	--light-blue: var(--tp-blue-1); /* rarely used via legacy variable */
+	--dark-blue: var(--tp-blue-6); /* rarely used via legacy variable */
+	--darkest-blue: var(--tp-blue-7); /* rarely used via legacy variable */
+	--red: var(--tp-red-2); /* frequently used via legacy variable */
+	--invalid-red-background: var(--tp-red-1); /* rarely used via legacy variable */
+	--triplan-orange: var(--tp-orange-1); /* rarely used via legacy variable */
+	--red-pink-color: var(--tp-red-3); /* rarely used via legacy variable */
+	--selected-color: var(--tp-blue-5); /* rarely used via legacy variable */
+}
+
+/* Color Utility Classes */
+
+/* Blues */
+.color-blue-1 {
+	color: var(--tp-blue-1);
+}
+.color-blue-2 {
+	color: var(--tp-blue-2);
+}
+.color-blue-3 {
+	color: var(--tp-blue-3);
+}
+.color-blue-4 {
+	color: var(--tp-blue-4);
+}
+.color-blue-5 {
+	color: var(--tp-blue-5);
+}
+.color-blue-6 {
+	color: var(--tp-blue-6);
+}
+.color-blue-7 {
+	color: var(--tp-blue-7);
+}
+
+/* Whites */
+.color-white-1 {
+	color: var(--tp-white-1);
+}
+.color-white-2 {
+	color: var(--tp-white-2);
+}
+.color-white-3 {
+	color: var(--tp-white-3);
+}
+.color-white-4 {
+	color: var(--tp-white-4);
+}
+.color-white-5 {
+	color: var(--tp-white-5);
+}
+.color-white-6 {
+	color: var(--tp-white-6);
+}
+.color-white-7 {
+	color: var(--tp-white-7);
+}
+.color-white-8 {
+	color: var(--tp-white-8);
+}
+
+/* Grays */
+.color-gray-1 {
+	color: var(--tp-gray-1);
+}
+.color-gray-2 {
+	color: var(--tp-gray-2);
+}
+.color-gray-3 {
+	color: var(--tp-gray-3);
+}
+.color-gray-4 {
+	color: var(--tp-gray-4);
+}
+.color-gray-5 {
+	color: var(--tp-gray-5);
+}
+.color-gray-6 {
+	color: var(--tp-gray-6);
+}
+.color-gray-7 {
+	color: var(--tp-gray-7);
+}
+.color-gray-8 {
+	color: var(--tp-gray-8);
+}
+.color-gray-9 {
+	color: var(--tp-gray-9);
+}
+.color-gray-10 {
+	color: var(--tp-gray-10);
+}
+.color-gray-11 {
+	color: var(--tp-gray-11);
+}
+.color-gray-12 {
+	color: var(--tp-gray-12);
+}
+.color-gray-13 {
+	color: var(--tp-gray-13);
+}
+.color-gray-14 {
+	color: var(--tp-gray-14);
+}
+.color-gray-15 {
+	color: var(--tp-gray-15);
+}
+.color-gray-16 {
+	color: var(--tp-gray-16);
+}
+
+/* Reds */
+.color-red-1 {
+	color: var(--tp-red-1);
+}
+.color-red-2 {
+	color: var(--tp-red-2);
+}
+.color-red-3 {
+	color: var(--tp-red-3);
+}
+
+/* Oranges */
+.color-orange-1 {
+	color: var(--tp-orange-1);
+}
+.color-orange-2 {
+	color: var(--tp-orange-2);
+}
+
+/* Other Colors */
+.color-black {
+	color: var(--tp-black);
+}
+.color-gold {
+	color: var(--tp-gold);
+}
+
+/* Background Color Classes */
+
+/* Blues */
+.bg-blue-1 {
+	background-color: var(--tp-blue-1);
+}
+.bg-blue-2 {
+	background-color: var(--tp-blue-2);
+}
+.bg-blue-3 {
+	background-color: var(--tp-blue-3);
+}
+.bg-blue-4 {
+	background-color: var(--tp-blue-4);
+}
+.bg-blue-5 {
+	background-color: var(--tp-blue-5);
+}
+.bg-blue-6 {
+	background-color: var(--tp-blue-6);
+}
+.bg-blue-7 {
+	background-color: var(--tp-blue-7);
+}
+
+/* Whites */
+.bg-white-1 {
+	background-color: var(--tp-white-1);
+}
+.bg-white-2 {
+	background-color: var(--tp-white-2);
+}
+.bg-white-3 {
+	background-color: var(--tp-white-3);
+}
+.bg-white-4 {
+	background-color: var(--tp-white-4);
+}
+.bg-white-5 {
+	background-color: var(--tp-white-5);
+}
+.bg-white-6 {
+	background-color: var(--tp-white-6);
+}
+.bg-white-7 {
+	background-color: var(--tp-white-7);
+}
+.bg-white-8 {
+	background-color: var(--tp-white-8);
+}
+
+/* Grays */
+.bg-gray-1 {
+	background-color: var(--tp-gray-1);
+}
+.bg-gray-2 {
+	background-color: var(--tp-gray-2);
+}
+.bg-gray-3 {
+	background-color: var(--tp-gray-3);
+}
+.bg-gray-4 {
+	background-color: var(--tp-gray-4);
+}
+.bg-gray-5 {
+	background-color: var(--tp-gray-5);
+}
+.bg-gray-6 {
+	background-color: var(--tp-gray-6);
+}
+.bg-gray-7 {
+	background-color: var(--tp-gray-7);
+}
+.bg-gray-8 {
+	background-color: var(--tp-gray-8);
+}
+.bg-gray-9 {
+	background-color: var(--tp-gray-9);
+}
+.bg-gray-10 {
+	background-color: var(--tp-gray-10);
+}
+.bg-gray-11 {
+	background-color: var(--tp-gray-11);
+}
+.bg-gray-12 {
+	background-color: var(--tp-gray-12);
+}
+.bg-gray-13 {
+	background-color: var(--tp-gray-13);
+}
+.bg-gray-14 {
+	background-color: var(--tp-gray-14);
+}
+.bg-gray-15 {
+	background-color: var(--tp-gray-15);
+}
+.bg-gray-16 {
+	background-color: var(--tp-gray-16);
+}
+
+/* Reds */
+.bg-red-1 {
+	background-color: var(--tp-red-1);
+}
+.bg-red-2 {
+	background-color: var(--tp-red-2);
+}
+.bg-red-3 {
+	background-color: var(--tp-red-3);
+}
+
+/* Oranges */
+.bg-orange-1 {
+	background-color: var(--tp-orange-1);
+}
+.bg-orange-2 {
+	background-color: var(--tp-orange-2);
+}
+
+/* Other Colors */
+.bg-black {
+	background-color: var(--tp-black);
+}
+.bg-gold {
+	background-color: var(--tp-gold);
+}
+
+/* Legacy Color Classes (kept for backward compatibility) */
+.dark-gray-background {
+	background-color: var(--tp-gray-13);
+}
+
+.green-background {
+	background-color: var(--success);
+}
+
+.red-pink-color {
+	background-color: var(--tp-red-3);
+}
+
+.triplan-orange-color {
+	color: var(--tp-orange-1);
+}
+
+.black-color {
+	color: var(--tp-black);
+}
+
+.blue-gray-color {
+	color: var(--tp-gray-9);
+}
+
+.pink-color {
+	color: var(--pink);
+}
+
+.white-color {
+	color: var(--tp-white-1);
+}
+
+.black-background {
+	background: var(--tp-black) !important;
+}
+
+.dark-color {
+	color: var(--dark);
+}
+
+.blue-color {
+	color: var(--tp-blue-4);
+}
+
+.red-color {
+	color: var(--tp-red-2);
+}
+
+.orange-color {
+	color: var(--tp-orange-1);
+}
+
+.gold-color {
+	color: var(--tp-gold);
+}
+
+.darkest-blue-color {
+	color: var(--tp-blue-7);
+}
+
+.selected-color {
+	color: var(--tp-blue-5);
+}

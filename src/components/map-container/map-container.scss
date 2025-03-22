@@ -14,7 +14,7 @@
 	/* make the map container background to have color even when there aren't any places yet */
 	.map-header + div {
 		&:not(.visible-items-pane) {
-			background-color: #f0eded;
+			background-color: var(--tp-gray-1);
 		}
 	}
 
@@ -22,7 +22,7 @@
 		position: relative;
 
 		.map-header-location-input-search {
-			border: 1px solid #dde3eb;
+			border: 1px solid var(--tp-white-8);
 			padding: 5px;
 			flex-grow: 1;
 			flex-shrink: 0;
@@ -59,12 +59,12 @@
 		}
 		top: 5px;
 		z-index: 999;
-		background-color: white;
+		background-color: var(--tp-white-1);
 		padding-block: 10px;
 		padding-inline: 5px;
 		/* border-radius: 20px; */
-		color: #666666;
-		border: #e6e6e6;
+		color: var(--tp-gray-8);
+		border: var(--tp-white-9);
 
 		//max-height: 270px;
 		//height: 270px;
@@ -97,7 +97,7 @@
 		max-width: 250px;
 		width: 250px;
 
-		box-shadow: rgb(0 0 0 / 30%) 0px 1px 4px -1px;
+		box-shadow: var(--tp-transparent-black-3) 0px 1px 4px -1px;
 		border-radius: 2px;
 
 		.visible-items-header {
@@ -134,11 +134,11 @@
 .fa-marker-text {
 	display: flex;
 	white-space: nowrap;
-	background-color: white;
+	background-color: var(--tp-white-1);
 	padding: 5px;
 	//border-radius: 30px;
-	color: #666666;
-	box-shadow: rgb(0 0 0 / 30%) 0 1px 4px -1px;
+	color: var(--tp-gray-8);
+	box-shadow: var(--tp-transparent-black-3) 0 1px 4px -1px;
 	border-radius: 2px;
 }
 
@@ -177,7 +177,7 @@
 				background-size: auto 100%;
 				background-position: center;
 				background-repeat: no-repeat;
-				background-color: #eeeeee;
+				background-color: var(--tp-gray-2);
 			}
 		}
 	}
@@ -186,7 +186,7 @@
 .marker-label {
 	position: relative;
 	top: 20px;
-	text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+	text-shadow: -1px 0 var(--tp-white-1), 0 1px var(--tp-white-1), 1px 0 var(--tp-white-1), 0 -1px var(--tp-white-1);
 }
 
 .visible-items-calendar-indicator {
@@ -225,9 +225,9 @@
 	&.actual-filters {
 		padding-top: 4px;
 		padding-bottom: 4px;
-		background-color: rgba(229, 233, 239, 0.5);
-		border-bottom: 1px solid rgb(229, 233, 239);
-		border-top: 1px solid rgb(229, 233, 239);
+		background-color: var(--tp-transparent-black-02);
+		border-bottom: 1px solid var(--tp-gray-4);
+		border-top: 1px solid var(--tp-gray-4);
 	}
 
 	.map-filter-priorities {
@@ -337,13 +337,13 @@ body.rtl {
 
 @keyframes notice-border {
 	0% {
-		border-color: #ccc;
+		border-color: var(--tp-gray-5);
 	}
 	50% {
 		border-color: var(--blue);
 	}
 	100% {
-		border-color: #ccc;
+		border-color: var(--tp-gray-5);
 	}
 }
 

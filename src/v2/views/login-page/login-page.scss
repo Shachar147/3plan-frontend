@@ -1,12 +1,12 @@
 body:has(.login-page-v2) {
-	background-color: white !important;
+	background-color: var(--tp-white-1) !important;
 }
 
 .login-page-v2 {
 	width: 100%;
 	height: 100vh;
 	display: flex;
-	background-color: white;
+	background-color: var(--tp-white-1);
 
 	.triplan-header-banner {
 		width: 100%;
@@ -30,7 +30,7 @@ body:has(.login-page-v2) {
 			min-width: unset !important;
 
 			&:not(.active) {
-				color: white !important;
+				color: var(--tp-white-1) !important;
 			}
 		}
 	}
@@ -41,7 +41,7 @@ body:has(.login-page-v2) {
 		outline: none;
 		border: 1px solid var(--gray);
 		border-radius: 8px;
-		color: white !important;
+		color: var(--tp-white-1) !important;
 		padding-inline-start: 8px;
 		font-size: 12px;
 		width: 100% !important;
@@ -69,7 +69,7 @@ body:has(.login-page-v2) {
 	.register-page-container,
 	.login-page-container {
 		//width: 100vw;
-		background-color: white;
+		background-color: var(--tp-white-1);
 		height: max-content;
 		display: flex;
 		align-items: center;
@@ -79,7 +79,7 @@ body:has(.login-page-v2) {
 			width: 1px;
 			height: 350px;
 			margin-inline-end: 50px;
-			background-color: #efefef;
+			background-color: var(--tp-white-6);
 		}
 
 		img {
@@ -115,7 +115,7 @@ body:has(.login-page-v2) {
 				font-size: 14px;
 				line-height: 40px;
 				height: 40px;
-				color: black !important;
+				color: var(--tp-black) !important;
 			}
 
 			button {

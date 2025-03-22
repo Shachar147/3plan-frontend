@@ -22,7 +22,7 @@
 	align-items: center;
 
 	.manage-item-navigation {
-		background-color: rgba(0, 0, 0, 0.05);
+		background-color: var(--tp-transparent-black-2);
 		padding: 3px;
 		border-radius: 20px;
 		width: CALC(100% - 45px);
@@ -91,7 +91,7 @@
 
 				input {
 					padding-inline: 15px;
-					border: 1px solid #dde3eb !important;
+					border: 1px solid var(--tp-white-8) !important;
 					border-radius: 20px;
 					height: 40px;
 					min-width: 450px !important;
@@ -103,7 +103,7 @@
 
 				textarea {
 					padding-inline: 15px;
-					border: 1px solid #dde3eb;
+					border: 1px solid var(--tp-white-8);
 					border-radius: 20px;
 					min-width: 800px;
 
@@ -115,7 +115,7 @@
 				input,
 				textarea {
 					&.unsaved {
-						background-color: lightgoldenrodyellow;
+						background-color: var(--tp-soft-yellow);
 					}
 				}
 
@@ -124,7 +124,7 @@
 					max-width: 450px;
 
 					div[class$='-control'] {
-						border: 1px solid #dde3eb !important;
+						border: 1px solid var(--tp-white-8) !important;
 						border-radius: 20px !important;
 						max-width: 450px;
 						height: 40px !important;

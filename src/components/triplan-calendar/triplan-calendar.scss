@@ -4,11 +4,11 @@
 }
 
 .fc-timegrid-slots tbody tr {
-	background-color: white;
+	background-color: var(--tp-white-1);
 }
 
 .fc-timegrid-slots tbody tr:first-child {
-	background-color: white;
+	background-color: var(--tp-white-1);
 }
 
 // mark all the hours until 07:00 included in darker light to indicate its still early.
@@ -33,11 +33,7 @@
 	/*background-color: rgba(0,0,0,0.05);*/
 	/*background-image: url('/images/dead-hours.png');*/
 	/*background-size: 10%;*/
-	background-color: #e5e9ef80;
-}
-
-.fc-timegrid-slots tbody tr:nth-child(17) td {
-	/*border-top:1px solid #2C3E50 !important;*/
+	background-color: var(--tp-white-7);
 }
 
 .fc .fc-scrollgrid-section-body table,
@@ -51,15 +47,8 @@
 
 .fc-event-main,
 .fc-event {
-	/*border-color: #cccccc;*/
-	/*margin: 3px;*/
-	border-color: var(--gray);
+	border-color: var(--tp-gray-5);
 	margin: 3px;
-
-	//transition: all 0.2s ease;
-	//&:hover {
-	//    margin: 5px;
-	//}
 
 	// to avoid item background from being gray when focusing on it
 	&:focus {
@@ -71,59 +60,55 @@
 
 .fc-event-main.priority-1,
 .fc-event.priority-1 {
-	border-left: 3px solid var(--red);
+	border-left: 3px solid var(--tp-red-2);
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
-	/*border-color: var(--red)*/
+	/*border-color: var(--tp-red-2)*/
 }
 
 .fc-event-main.priority-2,
 .fc-event.priority-2 {
-	border-left: 3px solid var(--triplan-orange); /* #ffb752; */
-	/* #9c27b0 */
+	border-left: 3px solid var(--tp-orange-1);
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
-	/*border-color: #9c27b0;*/
 }
 
 .fc-event-main.priority-3,
 .fc-event.priority-3 {
-	border-left: 3px solid var(--black);
+	border-left: 3px solid var(--tp-black);
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
-	/*border-color: var(--black);*/
+	/*border-color: var(--tp-black);*/
 }
 
 .fc-event-main.priority-0,
 .fc-event.priority-0 {
-	border-left: 3px solid var(--gray); /* #0088d1 */
+	border-left: 3px solid var(--tp-gray-5);
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
-	/*border-color: #0088d1;*/
 }
 
 .fc-event-main.priority-10,
 .fc-event.priority-10 {
-	border-left: 3px solid #d2105b; /* #f57c01 */
+	border-left: 3px solid var(--tp-red-3);
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
-	/*border-color: #f57c01*/
 }
 
 .fc-event.driving-event {
-	background-color: var(--blue) !important;
+	background-color: var(--tp-blue-4) !important;
 	border: 0 !important;
 
 	.triplan-calendar-event,
 	.fc-event-main,
 	.fc-event-time {
-		background-color: var(--blue) !important;
-		color: white;
+		background-color: var(--tp-blue-4) !important;
+		color: var(--tp-white-1);
 	}
 }
 
 .fc-daygrid-day-events .fc-event {
-	border-left: 3px solid var(--blue) !important;
+	border-left: 3px solid var(--tp-blue-4) !important;
 }
 
 .fc-content {
@@ -165,8 +150,8 @@
 }
 
 .selected-view {
-	background-color: var(--fc-button-hover-bg-color, #1e2b37) !important;
-	border-color: #1a252f !important;
+	background-color: var(--fc-button-hover-bg-color, var(--tp-black-4)) !important;
+	border-color: var(--tp-gray-16) !important;
 }
 
 button.fc-customTitle-button.fc-button.fc-button-primary {
@@ -180,7 +165,7 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 .mobile-add-calendar-event-button {
 	position: fixed;
 	z-index: 999;
-	background-color: #0078d4; /* Outlook blue color */
+	background-color: var(--tp-blue-4); /* Outlook blue color */
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -189,15 +174,15 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 	height: 56px;
 	bottom: 70px;
 	left: 30px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-	color: white;
+	box-shadow: 0 2px 4px var(--tp-transparent-black-4);
+	color: var(--tp-white-1);
 	font-size: 50px;
 	font-weight: 200;
 	user-select: none;
 	cursor: pointer;
 
 	&:hover {
-		background-color: #004b8a;
+		background-color: var(--tp-blue-6);
 	}
 }
 
