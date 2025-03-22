@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
 	calendarOrSidebarEventDetails,
 	formatNumberWithCommas,
@@ -1685,18 +1685,82 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	};
 
+	function renderGroupBySelector() {
+		const [isOpen, setIsOpen] = useState(false);
+		const eventStore = useContext(eventStoreContext);
+		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
+		return (
+			<div className="external-collapse">
+				<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
+					<i
+						className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
+						aria-hidden="true"
+					/>
+					<span>
+						<i className="fa fa-object-group" aria-hidden="true" />
+						&nbsp;
+						{TranslateService.translate(eventStore, 'GROUP_BY')}
+					</span>
+				</div>
+				<div
+					className="external-collapse-inner"
+					style={{
+						display: isOpen ? 'block' : 'none',
+					}}
+				>
+					<div className="sidebar-statistics">
+						<div
+							className={getClasses(
+								'sidebar-filter-item',
+								eventStore.sidebarGroupBy === 'category' && 'active'
+							)}
+							onClick={() => eventStore.setSidebarGroupBy('category')}
+						>
+							<i
+								className={getClasses(
+									'fa',
+									eventStore.sidebarGroupBy === 'category' ? 'fa-check-square-o' : 'fa-square-o'
+								)}
+								aria-hidden="true"
+							/>
+							{TranslateService.translate(eventStore, 'CATEGORIES')}
+						</div>
+						<div
+							className={getClasses(
+								'sidebar-filter-item',
+								eventStore.sidebarGroupBy === 'priority' && 'active'
+							)}
+							onClick={() => eventStore.setSidebarGroupBy('priority')}
+						>
+							<i
+								className={getClasses(
+									'fa',
+									eventStore.sidebarGroupBy === 'priority' ? 'fa-check-square-o' : 'fa-square-o'
+								)}
+								aria-hidden="true"
+							/>
+							{TranslateService.translate(eventStore, 'PRIORITIES')}
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="triplan-sidebar-collapsable-menu">
 			{renderWarnings()}
 			{renderDistances()}
 			{renderActions()}
+			{renderGroupBySelector()}
 			{renderTasks()}
-			{renderRecommendations()}
 			{renderCalendarSidebarStatistics()}
 			<TriplanSidebarEqualDivider />
 			{renderPriorityFilters()}
 			{renderCategoryFilters()}
 			{renderPreferredTimeFilters()}
+			{renderRecommendations()}
 			{renderSidebarSettings()}
 		</div>
 	);

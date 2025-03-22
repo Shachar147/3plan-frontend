@@ -736,8 +736,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			{renderExpandCollapse()}
 			<SidebarSearch />
 			{totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
-			{renderPriorities()}
-			{renderCategories()}
+			{eventStore.sidebarGroupBy === 'priority' ? renderPriorities() : renderCategories()}
 			{totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
 		</>
 	);
