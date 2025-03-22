@@ -2,98 +2,98 @@
 	/* Base Colors */
 
 	/* Blues */
-	--tp-blue-1: #d5eaff; /* lightest blue */
-	--tp-blue-2: #90d2ff;
-	--tp-blue-3: #52a4ff;
-	--tp-blue-4: #37b5ff;
-	--tp-blue-5: #0079ff; /* selected color */
-	--tp-blue-6: #0066d5; /* dark blue */
-	--tp-blue-7: #081348; /* darkest blue */
+	--tp-blue-1: #d5eaff; /* lightest blue - used in ~10 places (backgrounds, registration pages, landing pages) */
+	--tp-blue-2: #90d2ff; /* used in ~3 places (orderedColor in list view service) */
+	--tp-blue-3: #52a4ff; /* used in ~2 places (notesColor in list view service) */
+	--tp-blue-4: #37b5ff; /* used in ~15 places (buttons, calendar events, driving events) */
+	--tp-blue-5: #0079ff; /* selected color - used in ~6 places (register/login pages, header elements) */
+	--tp-blue-6: #0066d5; /* dark blue - used in ~4 places (buttons hover, header elements) */
+	--tp-blue-7: #081348; /* darkest blue - used in ~5 places (landing page text) */
 
 	/* Storybook Blues */
-	--tp-storybook-blue-1: #555ab9; /* dark purple blue for storybook */
-	--tp-storybook-blue-2: #91baf8; /* light purple blue for storybook */
+	--tp-storybook-blue-1: #555ab9; /* dark purple blue for storybook - rarely used (only in storybook) */
+	--tp-storybook-blue-2: #91baf8; /* light purple blue for storybook - rarely used (only in storybook) */
 
 	/* Whites */
-	--tp-white-1: #ffffff; /* pure white */
-	--tp-white-2: #fafafa;
-	--tp-white-3: #f3f3f3;
-	--tp-white-4: #f1f1f1;
-	--tp-white-5: #efefef;
-	--tp-white-6: #ebebeb;
-	--tp-white-7: #e5e9ef; /* white blue */
-	--tp-white-8: #e4e7eb; /* white blue darker */
+	--tp-white-1: #ffffff; /* pure white - used in ~25 places (backgrounds, text colors) */
+	--tp-white-2: #fafafa; /* used in ~8 places (backgrounds, border colors) */
+	--tp-white-3: #f3f3f3; /* used in ~5 places (backgrounds, landing pages) */
+	--tp-white-4: #f1f1f1; /* used in ~3 places (background styles) */
+	--tp-white-5: #efefef; /* used in ~5 places (backgrounds, toggle button borders) */
+	--tp-white-6: #ebebeb; /* used in ~5 places (backgrounds) */
+	--tp-white-7: #e5e9ef; /* white blue - used in ~10 places (backgrounds, timegrid slots, sidebar) */
+	--tp-white-8: #e4e7eb; /* white blue darker - used in ~6 places (borders, form elements) */
 
 	/* Grays */
-	--tp-gray-1: #eeeeee;
-	--tp-gray-2: #e2e2e2;
-	--tp-gray-3: #dee2e6;
-	--tp-gray-4: #d6d6d6;
-	--tp-gray-5: #cccccc;
-	--tp-gray-6: #aaaaaa;
-	--tp-gray-7: #9f9f9f;
-	--tp-gray-8: #808080;
-	--tp-gray-9: #748597; /* blue gray */
-	--tp-gray-10: #6a6868; /* brown gray */
-	--tp-gray-11: #595959;
-	--tp-gray-12: #3a4654;
-	--tp-gray-13: #333d4f; /* dark gray */
-	--tp-gray-14: #343a40; /* darker gray */
-	--tp-gray-15: #2d2d2d;
-	--tp-gray-16: #2c2c2c; /* almost black */
+	--tp-gray-1: #eeeeee; /* used in ~5 places (backgrounds) */
+	--tp-gray-2: #e2e2e2; /* used in ~5 places (backgrounds, category tags) */
+	--tp-gray-3: #dee2e6; /* used in ~5 places (borders, sidebar borders) */
+	--tp-gray-4: #d6d6d6; /* used in ~3 places (borders) */
+	--tp-gray-5: #cccccc; /* used in ~15 places (borders, form elements, calendar events) */
+	--tp-gray-6: #aaaaaa; /* used in ~5 places (text colors, footer links) */
+	--tp-gray-7: #9f9f9f; /* used in ~8 places (text colors, borders) */
+	--tp-gray-8: #808080; /* used in ~5 places (text colors, category tags) */
+	--tp-gray-9: #748597; /* blue gray - used in ~3 places (utility classes) */
+	--tp-gray-10: #6a6868; /* brown gray - rarely used */
+	--tp-gray-11: #595959; /* rarely used */
+	--tp-gray-12: #3a4654; /* rarely used */
+	--tp-gray-13: #333d4f; /* dark gray - used in ~8 places (buttons, backgrounds) */
+	--tp-gray-14: #343a40; /* darker gray - rarely used */
+	--tp-gray-15: #2d2d2d; /* rarely used */
+	--tp-gray-16: #2c2c2c; /* almost black - used in ~2 places (borders) */
 
 	/* Reds */
-	--tp-red-1: #fcf2f2; /* invalid red background */
-	--tp-red-2: #ff5252; /* main red */
-	--tp-red-3: #ff0074; /* red pink color */
+	--tp-red-1: #fcf2f2; /* invalid red background - rarely used */
+	--tp-red-2: #ff5252; /* main red - used in ~10 places (calendar events, text colors, error states) */
+	--tp-red-3: #ff0074; /* red pink color - used in ~6 places (borders, error states) */
 
 	/* Oranges */
-	--tp-orange-1: #ffb752; /* triplan orange */
-	--tp-orange-2: #f85e26;
+	--tp-orange-1: #ffb752; /* triplan orange - used in ~5 places (calendar events, text colors) */
+	--tp-orange-2: #f85e26; /* used in ~5 places (buttons, text colors) */
 
 	/* Other Colors */
-	--tp-black: #2c2c2c;
-	--tp-black-bg: rgba(0, 0, 0, 0.03);
-	--tp-gold: #ffd700;
-	--tp-soft-yellow: #fafad2; /* light golden rod yellow */
+	--tp-black: #2c2c2c; /* used in ~15 places (text colors, borders, gradients) */
+	--tp-black-bg: rgba(0, 0, 0, 0.03); /* rarely used */
+	--tp-gold: #ffd700; /* used in ~4 places (search highlights, text colors) */
+	--tp-soft-yellow: #fafad2; /* light golden rod yellow - rarely used */
 
 	/* Transparent Colors */
-	--tp-transparent-white-1: rgba(255, 255, 255, 0.2);
-	--tp-transparent-white-2: rgba(255, 255, 255, 0.4);
-	--tp-transparent-white-3: rgba(255, 255, 255, 0.6);
-	--tp-transparent-white-4: rgba(255, 255, 255, 0.8);
-	--tp-white-7-transparent: rgba(229, 233, 239, 0.5); /* Semi-transparent white-blue */
+	--tp-transparent-white-1: rgba(255, 255, 255, 0.2); /* used in ~3 places (form highlights) */
+	--tp-transparent-white-2: rgba(255, 255, 255, 0.4); /* rarely used */
+	--tp-transparent-white-3: rgba(255, 255, 255, 0.6); /* used in ~2 places */
+	--tp-transparent-white-4: rgba(255, 255, 255, 0.8); /* used in ~6 places (login/register backgrounds) */
+	--tp-white-7-transparent: rgba(229, 233, 239, 0.5); /* Semi-transparent white-blue - used in ~3 places (sidebar) */
 
-	--tp-transparent-black-1: rgba(0, 0, 0, 0.03);
-	--tp-transparent-black-2: rgba(0, 0, 0, 0.05);
-	--tp-transparent-black-3: rgba(0, 0, 0, 0.1);
-	--tp-transparent-black-4: rgba(0, 0, 0, 0.2);
-	--tp-transparent-black-5: rgba(0, 0, 0, 0.3);
-	--tp-transparent-black-6: rgba(0, 0, 0, 0.4);
-	--tp-transparent-black-7: rgba(0, 0, 0, 0.6);
-	--tp-transparent-black-8: rgba(0, 0, 0, 0.7);
+	--tp-transparent-black-1: rgba(0, 0, 0, 0.03); /* used in ~2 places (shadows) */
+	--tp-transparent-black-2: rgba(0, 0, 0, 0.05); /* used in ~6 places (backgrounds) */
+	--tp-transparent-black-3: rgba(0, 0, 0, 0.1); /* used in ~4 places (shadows) */
+	--tp-transparent-black-4: rgba(0, 0, 0, 0.2); /* used in ~6 places (shadows, text colors) */
+	--tp-transparent-black-5: rgba(0, 0, 0, 0.3); /* rarely used */
+	--tp-transparent-black-6: rgba(0, 0, 0, 0.4); /* used in ~2 places */
+	--tp-transparent-black-7: rgba(0, 0, 0, 0.6); /* used in ~3 places (backgrounds, gradients) */
+	--tp-transparent-black-8: rgba(0, 0, 0, 0.7); /* used in ~2 places (text colors) */
 
-	--tp-transparent-blue-1: rgba(55, 181, 255, 0.6);
-	--tp-transparent-blue-2: rgba(41, 152, 255, 0.21);
+	--tp-transparent-blue-1: rgba(55, 181, 255, 0.6); /* used in ~2 places (list view service) */
+	--tp-transparent-blue-2: rgba(41, 152, 255, 0.21); /* used in ~2 places (button shadows) */
 
 	/* Legacy Color Variables (kept for backward compatibility) */
-	--white: var(--tp-white-1);
-	--white-blue: var(--tp-white-7);
-	--white-blue-darker: var(--tp-white-8);
-	--gray: var(--tp-gray-5);
-	--dark-gray: var(--tp-gray-13);
-	--black: var(--tp-black);
-	--blue: var(--tp-blue-4);
-	--blue-gray: var(--tp-gray-9);
-	--brown-gray: var(--tp-gray-10);
-	--light-blue: var(--tp-blue-1);
-	--dark-blue: var(--tp-blue-6);
-	--darkest-blue: var(--tp-blue-7);
-	--red: var(--tp-red-2);
-	--invalid-red-background: var(--tp-red-1);
-	--triplan-orange: var(--tp-orange-1);
-	--red-pink-color: var(--tp-red-3);
-	--selected-color: var(--tp-blue-5);
+	--white: var(--tp-white-1); /* frequently used via legacy variable */
+	--white-blue: var(--tp-white-7); /* moderately used via legacy variable */
+	--white-blue-darker: var(--tp-white-8); /* rarely used via legacy variable */
+	--gray: var(--tp-gray-5); /* frequently used via legacy variable */
+	--dark-gray: var(--tp-gray-13); /* frequently used via legacy variable */
+	--black: var(--tp-black); /* frequently used via legacy variable */
+	--blue: var(--tp-blue-4); /* frequently used via legacy variable */
+	--blue-gray: var(--tp-gray-9); /* rarely used via legacy variable */
+	--brown-gray: var(--tp-gray-10); /* rarely used via legacy variable */
+	--light-blue: var(--tp-blue-1); /* rarely used via legacy variable */
+	--dark-blue: var(--tp-blue-6); /* rarely used via legacy variable */
+	--darkest-blue: var(--tp-blue-7); /* rarely used via legacy variable */
+	--red: var(--tp-red-2); /* frequently used via legacy variable */
+	--invalid-red-background: var(--tp-red-1); /* rarely used via legacy variable */
+	--triplan-orange: var(--tp-orange-1); /* rarely used via legacy variable */
+	--red-pink-color: var(--tp-red-3); /* rarely used via legacy variable */
+	--selected-color: var(--tp-blue-5); /* rarely used via legacy variable */
 }
 
 /* Color Utility Classes */
