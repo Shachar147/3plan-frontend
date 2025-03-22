@@ -334,6 +334,12 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		return (
 			<>
 				{Array.from(areasMap.entries()).map(([areaName, areaEvents], index) => {
+					const sidebarItemsCount = eventStore.allSidebarEvents.filter((s) =>
+						areaEvents.map((e) => e.id).includes(s.id)
+					).length;
+
+					const itemsCount = areaEvents.length;
+
 					if ((eventStore.hideEmptyCategories || eventStore.isFiltered) && areaEvents.length === 0) {
 						return <></>;
 					}
@@ -372,7 +378,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 									&nbsp;
 									{areaName}
 								</span>
-								<div>({areaEvents.length})</div>
+								<div>
+									({sidebarItemsCount}/{itemsCount})
+								</div>
 							</div>
 							<div style={eventsStyle as unknown as CSSProperties}>
 								{renderAreaEvents(areaName, areaEvents)}
@@ -602,7 +610,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				);
 			});
 
-		const scheduledEvents = eventStore.calendarEvents.filter((e) => e.priority.toString() === priority.toString());
+		const scheduledEvents = eventStore.filteredCalendarEvents.filter(
+			(e) => e.priority.toString() === priority.toString()
+		);
 
 		return (
 			<>
@@ -664,7 +674,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				);
 			});
 
-		const scheduledEvents = eventStore.calendarEvents.filter(
+		const scheduledEvents = eventStore.filteredCalendarEvents.filter(
 			(e) => e.category.toString() === categoryId.toString()
 		);
 
@@ -930,6 +940,8 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		try {
 			const preferredHoursHash: Record<string, SidebarEvent[]> = {};
 
+			const sidebarEventIds = eventStore.allFilteredSidebarEvents.map((s) => s.id);
+
 			Object.keys(TriplanEventPreferredTime)
 				.filter((x) => !Number.isNaN(Number(x)))
 				.forEach((preferredHour) => {
@@ -942,7 +954,11 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 							}
 							return x;
 						})
-						.filter((x: SidebarEvent) => x.preferredTime?.toString() === preferredHour.toString())
+						.filter(
+							(x: SidebarEvent) =>
+								x.preferredTime?.toString() === preferredHour.toString() &&
+								sidebarEventIds.includes(x.id)
+						)
 						.sort(sortByPriority);
 				});
 
@@ -978,18 +994,20 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				});
 
 			// Get scheduled events for this area (those that match any event location in this area)
-			const areaLocations = areaEvents
-				.map((event) => event.location)
-				.filter((location) => location !== undefined);
+			const areaLocations = areaEvents.map((event) => event.location);
+			// .filter((location) => location !== undefined);
 
-			const scheduledEvents = eventStore.calendarEvents.filter((calEvent) => {
-				if (!calEvent.location) return false;
+			const scheduledEvents = eventStore.filteredCalendarEvents.filter((calEvent) => {
+				// if (!calEvent.location) return false;
 
 				// Check if this scheduled event's location matches any event in this area
 				return areaLocations.some((areaLoc) => {
-					if (!areaLoc) return false;
+					// if (!areaLoc) return false;
 
 					try {
+						if (!areaLoc && !calEvent.location) {
+							return true;
+						}
 						if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
 							return areaLoc === calEvent.location;
 						} else if (
