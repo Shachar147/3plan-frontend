@@ -33,7 +33,7 @@
 			margin-top: 6px;
 
 			button {
-				background-color: #fafafa !important;
+				background-color: var(--tp-white-2) !important;
 				min-width: 25px !important;
 				min-height: 25px !important;
 			}
@@ -83,7 +83,7 @@ body.rtl {
 .trip-name-line,
 .custom-dates-line {
 	input {
-		border: 1px solid #dde3eb;
+		border: 1px solid var(--tp-white-8);
 		border-radius: 20px;
 		padding: 5px;
 		flex-grow: 1;
@@ -129,7 +129,7 @@ body.rtl {
 .preferred-time .preferred-time-divider {
 	display: flex;
 	flex: 1 1 0;
-	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid var(--tp-gray-5);
 	height: 1px;
 }
 
@@ -199,7 +199,7 @@ body.rtl {
 	gap: 4px;
 	margin-bottom: 10px;
 
-	background-color: rgba(0, 0, 0, 0.03);
+	background-color: var(--tp-transparent-black-03);
 	padding: 2.5px;
 	border-radius: 20px;
 
@@ -338,10 +338,10 @@ body.rtl {
 	flex-direction: row;
 	width: 100%;
 	justify-content: center;
-	background-color: white;
+	background-color: var(--tp-white-1);
 	padding-block: 5px;
-	border-top: 1px solid #e0e3e6;
-	border-bottom: 1px solid #e0e3e6;
+	border-top: 1px solid var(--tp-gray-3);
+	border-bottom: 1px solid var(--tp-gray-3);
 
 	.collaborator-permissions {
 		.link-button {
@@ -355,10 +355,10 @@ body.rtl {
 	flex-direction: row;
 	width: 100%;
 	justify-content: center;
-	background-color: white;
+	background-color: var(--tp-white-1);
 	padding-block: 5px;
-	border-top: 1px solid #e0e3e6;
-	border-bottom: 1px solid #e0e3e6;
+	border-top: 1px solid var(--tp-gray-3);
+	border-bottom: 1px solid var(--tp-gray-3);
 	transition: all 0.2s ease-in-out;
 
 	&:hover {
@@ -367,8 +367,8 @@ body.rtl {
 }
 
 .triplan-tasks-navbar {
-	background-color: #f1f1f1;
-	border-block: 1px solid #dee2e6;
+	background-color: var(--tp-white-7);
+	border-block: 1px solid var(--tp-gray-4);
 	align-items: center;
 	justify-content: center;
 

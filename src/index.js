@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import MainPage from './pages/main-page/main-page';
 import 'bootstrap/dist/css/bootstrap.css';
 import './stylesheets/fonts.css';
-import './stylesheets/colors.css';
+import './stylesheets/colors.scss';
 import './stylesheets/buttons.scss';
 import './stylesheets/app.scss';
 import './stylesheets/rtl.scss';

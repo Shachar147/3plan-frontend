@@ -10,6 +10,10 @@
 	--tp-blue-6: #0066d5; /* dark blue */
 	--tp-blue-7: #081348; /* darkest blue */
 
+	/* Storybook Blues */
+	--tp-storybook-blue-1: #555ab9; /* dark purple blue for storybook */
+	--tp-storybook-blue-2: #91baf8; /* light purple blue for storybook */
+
 	/* Whites */
 	--tp-white-1: #ffffff; /* pure white */
 	--tp-white-2: #fafafa;
@@ -51,12 +55,14 @@
 	--tp-black: #2c2c2c;
 	--tp-black-bg: rgba(0, 0, 0, 0.03);
 	--tp-gold: #ffd700;
+	--tp-soft-yellow: #fafad2; /* light golden rod yellow */
 
 	/* Transparent Colors */
 	--tp-transparent-white-1: rgba(255, 255, 255, 0.2);
 	--tp-transparent-white-2: rgba(255, 255, 255, 0.4);
 	--tp-transparent-white-3: rgba(255, 255, 255, 0.6);
 	--tp-transparent-white-4: rgba(255, 255, 255, 0.8);
+	--tp-white-7-transparent: rgba(229, 233, 239, 0.5); /* Semi-transparent white-blue */
 
 	--tp-transparent-black-1: rgba(0, 0, 0, 0.03);
 	--tp-transparent-black-2: rgba(0, 0, 0, 0.05);

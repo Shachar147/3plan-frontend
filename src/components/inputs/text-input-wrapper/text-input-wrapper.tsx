@@ -31,7 +31,7 @@ const TextInputWrapper = (props: any) => {
 	const labelTestId = inputTestId ? `${inputTestId}-label` : undefined;
 
 	// styles
-	const style = { width: '100%', border: error ? '1px solid #F10B45' : undefined, ...inputStyle };
+	const style = { width: '100%', border: error ? '1px solid var(--tp-red-3)' : undefined, ...inputStyle };
 	const defaultLabelStyle = { marginRight: '5px', lineHeight: '38px' };
 	const subContainerStyle = { width: '100%', marginBottom: '10px' };
 	labelStyle = { ...labelStyle, ...defaultLabelStyle };

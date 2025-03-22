@@ -4,7 +4,7 @@
 
 	.textInput {
 		min-width: 0;
-		border: 1px solid #ccc;
+		border: 1px solid var(--tp-gray-5);
 	}
 }
 
@@ -44,7 +44,7 @@
 .plan-page-content {
 	.filter-tags-container {
 		width: 100vw;
-		background-color: rgba(0, 0, 0, 0.03);
+		background-color: var(--tp-transparent-black-03);
 		display: flex;
 		justify-content: center;
 		padding-block: 5px;
@@ -62,10 +62,10 @@
 			}
 
 			&:not(.active) {
-				color: white !important;
+				color: var(--tp-white-1) !important;
 
 				i {
-					color: white !important;
+					color: var(--tp-white-1) !important;
 				}
 			}
 		}

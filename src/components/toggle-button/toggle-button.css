@@ -21,7 +21,7 @@
 .multiple-options-toggle-button
 	.multiple-options-toggle-button-items-container
 	.multiple-options-toggle-button-item.selected {
-	color: white;
+	color: var(--tp-white-1);
 }
 .multiple-options-toggle-button
 	.multiple-options-toggle-button-items-container
@@ -69,15 +69,15 @@
 }
 .multiple-options-toggle-button.white .background-circle {
 	border-radius: 20px;
-	background-color: white;
-	border: 2px solid #f0f0f0;
+	background-color: var(--tp-white-1);
+	border: 2px solid var(--tp-white-5);
 }
 .multiple-options-toggle-button.tabs_underline {
 	width: 100%;
 	border: 0;
-	border-bottom: 1px solid #dcdcdc;
+	border-bottom: 1px solid var(--tp-gray-4);
 	overflow: unset;
-	background-color: #fff;
+	background-color: var(--tp-white-1);
 	border-radius: 10px 10px 0 0;
 }
 .multiple-options-toggle-button.tabs_underline .multiple-options-toggle-button-item-icon-container {
@@ -85,7 +85,7 @@
 	align-items: center;
 }
 .multiple-options-toggle-button.tabs_underline .multiple-options-toggle-button-item {
-	background-color: #fff;
+	background-color: var(--tp-white-1);
 	font-size: 17px;
 	position: relative;
 	padding-inline: 20px;

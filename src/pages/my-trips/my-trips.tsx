@@ -184,7 +184,7 @@ function MyTrips() {
 				<img src="images/oops.png" className="oops-placeholder" />
 				<span
 					style={{
-						color: '#d2105b',
+						color: 'var(--tp-red-3)',
 					}}
 				>
 					{TranslateService.translate(eventStore, 'OOPS_SOMETHING_WENT_WRONG')}

@@ -17,19 +17,20 @@ body.rtl {
 	width: max-content;
 	min-width: 130px;
 	font-size: 14px;
-	border: 1px solid #ccc;
+	border: 1px solid var(--tp-gray-5);
 	border-radius: 4px;
-	background-color: white;
+	background-color: var(--tp-white-1);
 	cursor: pointer;
 	box-sizing: border-box;
 	appearance: none;
 	-webkit-appearance: none;
 	-moz-appearance: none;
+	/* Note: SVG uses color #757280 which is not in our color variables */
 	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%23757280"><path d="M15.293 7.293a1 1 0 0 0-1.414 0L10 11.586 5.707 7.293a1 1 0 1 0-1.414 1.414l5 5a1 1 0 0 0 1.414 0l5-5a1 1 0 0 0 0-1.414z"/></svg>');
 	background-repeat: no-repeat;
 	background-position: left 10px top 50%; /* Position on the left for LTR languages */
 	background-size: 18px auto; /* Increase size of the icon */
-	color: #555;
+	color: var(--tp-gray-12);
 }
 
 .feed-view-filter-bar {

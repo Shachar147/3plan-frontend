@@ -11,9 +11,9 @@
 	align-items: center;
 	max-width: 600px;
 	margin: 0 auto;
-	background-color: white;
+	background-color: var(--tp-white-1);
 	height: 56px;
-	border: 1px solid #ccc;
+	border: 1px solid var(--tp-gray-5);
 	border-radius: 44px;
 	width: max-content;
 	padding-inline: 6px;
@@ -27,7 +27,7 @@
 	}
 
 	.fa-times {
-		color: black;
+		color: var(--tp-black);
 		margin-inline: 8px;
 		font-size: 18px;
 		font-weight: 100;
@@ -41,8 +41,8 @@
 
 	.search-button {
 		padding: 10px 20px;
-		background-color: #007bff;
-		color: white;
+		background-color: var(--tp-blue-5);
+		color: var(--tp-white-1);
 		border: none;
 		border-radius: 44px;
 		cursor: pointer;
@@ -52,7 +52,7 @@
 
 .search-button:hover {
 	&:not(:disabled) {
-		background-color: #0056b3;
+		background-color: var(--tp-blue-6);
 	}
 }
 
@@ -70,15 +70,15 @@
 	width: calc(100% + 80px);
 	max-height: 300px;
 	overflow-y: auto;
-	background-color: white;
-	box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+	background-color: var(--tp-white-1);
+	box-shadow: 0px 8px 16px var(--tp-transparent-black-3);
 	border-radius: 4px;
 	z-index: 999999999999;
 
 	.suggestion-item {
 		padding: 10px;
 		cursor: pointer;
-		border-bottom: 1px solid #ddd;
+		border-bottom: 1px solid var(--tp-gray-3);
 
 		display: flex;
 		// align-items: center;
@@ -95,18 +95,18 @@
 }
 
 .suggestion-item:hover {
-	background-color: #f9f9f9;
+	background-color: var(--tp-white-2);
 }
 
 .suggestion-name {
 	font-weight: bold;
 	//margin-bottom: 5px;
-	color: black;
+	color: var(--tp-black);
 	margin: 0 !important;
 }
 
 .suggestion-descriptor {
-	color: #666;
+	color: var(--tp-gray-9);
 	font-size: 14px;
 }
 
@@ -135,12 +135,12 @@
 	}
 
 	.triplan-main-page-container:has(.search-container.has-values) {
-		background-color: rgba(0, 0, 0, 0.7) !important;
+		background-color: var(--tp-transparent-black-7) !important;
 	}
 
 	.search-container {
 		&.has-values {
-			background-color: rgba(0, 0, 0, 0.7);
+			background-color: var(--tp-transparent-black-7);
 			position: fixed;
 			top: 0;
 			inset-inline-start: 0;
@@ -162,10 +162,10 @@
 
 				.suggestion-item {
 					background-color: unset !important;
-					color: white;
+					color: var(--tp-white-1);
 
 					.suggestion-name {
-						color: white;
+						color: var(--tp-white-1);
 					}
 				}
 			}
