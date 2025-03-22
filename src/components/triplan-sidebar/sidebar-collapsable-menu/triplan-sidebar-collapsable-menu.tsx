@@ -1478,7 +1478,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
 		const priorityFiltersGroup = createSidebarGroup(
 			<>{priorityFiltersContent}</>,
-			'fa-filter',
+			'fa-level-up',
 			SidebarGroups.PRIORITIES_FILTER,
 			TranslateService.translate(eventStore, 'FILTER_BY_PRIORITY'),
 			Object.keys(TriplanPriority).filter((x) => !Number.isNaN(Number(x))).length
