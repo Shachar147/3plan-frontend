@@ -1610,72 +1610,75 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		};
 
 		return (
-			<div className="external-collapse">
-				<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
-					<i
-						className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
-						aria-hidden="true"
-					/>
-					<span>
-						<i className="fa fa-object-group" aria-hidden="true" />
-						&nbsp;
-						{TranslateService.translate(eventStore, 'GROUP_BY')}
-					</span>
-				</div>
-				<div
-					className="external-collapse-inner"
-					style={{
-						display: isOpen ? 'block' : 'none',
-					}}
-				>
-					<div className="sidebar-statistics">
-						<div
-							className={getClasses(
-								'sidebar-filter-item flex-row gap-4',
-								eventStore.sidebarGroupBy === 'category' && 'active'
-							)}
-						>
-							<input
-								type="radio"
-								id="group-by-category"
-								name="sidebar-group-by"
-								checked={eventStore.sidebarGroupBy === 'category'}
-								onChange={() => eventStore.setSidebarGroupBy('category')}
-								style={radioStyle}
-							/>
-							<label
-								htmlFor="group-by-category"
-								onClick={() => eventStore.setSidebarGroupBy('category')}
-								className="cursor-pointer margin-bottom-0"
+			<>
+				<hr className="margin-block-2" />
+				<div className="external-collapse">
+					<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
+						<i
+							className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
+							aria-hidden="true"
+						/>
+						<span>
+							<i className="fa fa-object-group" aria-hidden="true" />
+							&nbsp;
+							{TranslateService.translate(eventStore, 'GROUP_BY')}
+						</span>
+					</div>
+					<div
+						className="external-collapse-inner"
+						style={{
+							display: isOpen ? 'block' : 'none',
+						}}
+					>
+						<div className="sidebar-statistics">
+							<div
+								className={getClasses(
+									'sidebar-filter-item flex-row gap-4',
+									eventStore.sidebarGroupBy === 'category' && 'active'
+								)}
 							>
-								{TranslateService.translate(eventStore, 'CATEGORIES')}
-							</label>
-						</div>
-						<div
-							className={getClasses(
-								'sidebar-filter-item flex-row gap-4',
-								eventStore.sidebarGroupBy === 'priority' && 'active'
-							)}
-						>
-							<input
-								type="radio"
-								id="group-by-priority"
-								name="sidebar-group-by"
-								checked={eventStore.sidebarGroupBy === 'priority'}
-								onChange={() => eventStore.setSidebarGroupBy('priority')}
-								style={radioStyle}
-							/>
-							<label
-								htmlFor="group-by-priority"
-								onClick={() => eventStore.setSidebarGroupBy('priority')}
-								className="cursor-pointer margin-bottom-0"
+								<input
+									type="radio"
+									id="group-by-category"
+									name="sidebar-group-by"
+									checked={eventStore.sidebarGroupBy === 'category'}
+									onChange={() => eventStore.setSidebarGroupBy('category')}
+									style={radioStyle}
+								/>
+								<label
+									htmlFor="group-by-category"
+									onClick={() => eventStore.setSidebarGroupBy('category')}
+									className="cursor-pointer margin-bottom-0"
+								>
+									{TranslateService.translate(eventStore, 'CATEGORIES')}
+								</label>
+							</div>
+							<div
+								className={getClasses(
+									'sidebar-filter-item flex-row gap-4',
+									eventStore.sidebarGroupBy === 'priority' && 'active'
+								)}
 							>
-								{TranslateService.translate(eventStore, 'PRIORITIES')}
-							</label>
+								<input
+									type="radio"
+									id="group-by-priority"
+									name="sidebar-group-by"
+									checked={eventStore.sidebarGroupBy === 'priority'}
+									onChange={() => eventStore.setSidebarGroupBy('priority')}
+									style={radioStyle}
+								/>
+								<label
+									htmlFor="group-by-priority"
+									onClick={() => eventStore.setSidebarGroupBy('priority')}
+									className="cursor-pointer margin-bottom-0"
+								>
+									{TranslateService.translate(eventStore, 'PRIORITIES')}
+								</label>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			</>
 		);
 	}
 
@@ -1767,6 +1770,40 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	};
 
+	function renderFilters() {
+		const [isOpen, setIsOpen] = useState(false);
+		const eventStore = useContext(eventStoreContext);
+		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
+		return (
+			<div className="external-collapse">
+				<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
+					<i
+						className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
+						aria-hidden="true"
+					/>
+					<span>
+						<i className="fa fa-filter" aria-hidden="true" />
+						&nbsp;
+						{TranslateService.translate(eventStore, 'FILTER_BY')}
+					</span>
+				</div>
+				<div
+					className="external-collapse-inner"
+					style={{
+						display: isOpen ? 'block' : 'none',
+					}}
+				>
+					<div className="padding-10">
+						{renderPriorityFilters()}
+						{renderCategoryFilters()}
+						{renderPreferredTimeFilters()}
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="triplan-sidebar-collapsable-menu">
 			{renderWarnings()}
@@ -1775,10 +1812,8 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			{renderTasks()}
 			{renderCalendarSidebarStatistics()}
 			<TriplanSidebarEqualDivider />
-			{renderPriorityFilters()}
-			{renderCategoryFilters()}
-			{renderPreferredTimeFilters()}
 			{renderRecommendations()}
+			{renderFilters()}
 			{renderGroupBySelector()}
 			{renderSidebarSettings()}
 		</div>
