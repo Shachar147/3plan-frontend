@@ -195,7 +195,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	function renderAreas() {
 		// Calculate areas based on distance results
 		const areasMap = new Map<string, SidebarEvent[]>();
-		const sidebarEvents = eventStore.allFilteredSidebarEvents;
+		const sidebarEvents = eventStore.allEventsFilteredComputed;
 
 		// Default area for events without location
 		areasMap.set(
@@ -207,9 +207,13 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 		// Group events by proximity (if we have distance results)
 		if (eventStore.distanceResults && eventStore.distanceResults.size > 0) {
-			// Create proximity clusters
+			// Create proximity clusters - filter out events without proper location data
 			const eventsWithLocation = sidebarEvents.filter(
-				(event) => event.location && typeof event.location.latitude && event.location.longitude
+				(event) =>
+					event.location &&
+					typeof event.location !== 'string' &&
+					event.location.latitude != null &&
+					event.location.longitude != null
 			);
 
 			// Process each event with location
@@ -222,31 +226,51 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 					// Check if this event is close to any event in this cluster
 					for (const areaEvent of areaEvents) {
-						const loc1 = {
-							lat: areaEvent.location.latitude,
-							lng: areaEvent.location.longitude,
-							eventName: areaEvent.title,
-						};
-
-						const loc2 = {
-							lat: event.location.latitude,
-							lng: event.location.longitude,
-							eventName: event.title,
-						};
-
-						const distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
-						const distanceKey2 = getCoordinatesRangeKey(GoogleTravelMode.WALKING, loc1, loc2);
-						const distanceA = eventStore.distanceResults.get(distanceKey);
-						const distanceB = eventStore.distanceResults.get(distanceKey2);
-
 						if (
-							(distanceA && distanceA.duration_value && Number(distanceA.duration_value) <= 10 * 60) || // Max 10 min
-							(distanceB && distanceB.duration_value && Number(distanceB.duration_value) <= 20 * 60) // Max 20 min
+							!areaEvent.location ||
+							typeof areaEvent.location === 'string' ||
+							!areaEvent.location.latitude ||
+							!areaEvent.location.longitude ||
+							!event.location ||
+							!event.location.latitude ||
+							!event.location.longitude
 						) {
-							// Add to this cluster
-							areaEvents.push(event);
-							foundCluster = true;
-							break;
+							continue;
+						}
+
+						// Safety check in case of corrupted data
+						try {
+							const loc1 = {
+								lat: areaEvent.location.latitude,
+								lng: areaEvent.location.longitude,
+								eventName: areaEvent.title,
+							};
+
+							const loc2 = {
+								lat: event.location.latitude,
+								lng: event.location.longitude,
+								eventName: event.title,
+							};
+
+							const distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
+							const distanceKey2 = getCoordinatesRangeKey(GoogleTravelMode.WALKING, loc1, loc2);
+							const distanceA = eventStore.distanceResults.get(distanceKey);
+							const distanceB = eventStore.distanceResults.get(distanceKey2);
+
+							if (
+								(distanceA &&
+									distanceA.duration_value &&
+									Number(distanceA.duration_value) <= 10 * 60) || // Max 10 min
+								(distanceB && distanceB.duration_value && Number(distanceB.duration_value) <= 20 * 60) // Max 20 min
+							) {
+								// Add to this cluster
+								areaEvents.push(event);
+								foundCluster = true;
+								break;
+							}
+						} catch (error) {
+							console.warn('Error calculating distance between events:', error);
+							continue;
 						}
 					}
 
@@ -265,20 +289,24 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 			sidebarEvents.forEach((event) => {
 				if (event.location) {
-					// Handle different location types
-					let loc = '';
-					if (typeof event.location === 'string') {
-						loc = event.location;
-					} else {
-						// Location is a LocationData object
-						loc = locationToString(event.location);
-					}
+					try {
+						// Handle different location types
+						let loc = '';
+						if (typeof event.location === 'string') {
+							loc = event.location;
+						} else if (event.location && typeof event.location === 'object') {
+							// Location is a LocationData object
+							loc = locationToString(event.location);
+						}
 
-					if (loc && !locationGroups.has(loc)) {
-						locationGroups.set(loc, []);
-					}
-					if (loc) {
-						locationGroups.get(loc)?.push(event);
+						if (loc && !locationGroups.has(loc)) {
+							locationGroups.set(loc, []);
+						}
+						if (loc) {
+							locationGroups.get(loc)?.push(event);
+						}
+					} catch (error) {
+						console.warn('Error processing event location:', error);
 					}
 				}
 			});
@@ -899,131 +927,158 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 	// Add a new helper function to render area events by preferred time
 	const renderAreaEvents = (areaName: string, areaEvents: SidebarEvent[]) => {
-		const preferredHoursHash: Record<string, SidebarEvent[]> = {};
+		try {
+			const preferredHoursHash: Record<string, SidebarEvent[]> = {};
 
-		Object.keys(TriplanEventPreferredTime)
-			.filter((x) => !Number.isNaN(Number(x)))
-			.forEach((preferredHour) => {
-				preferredHoursHash[preferredHour] = areaEvents
-					.map((x) => {
-						x.preferredTime ||= TriplanEventPreferredTime.unset;
-						x.title = addLineBreaks(x.title, ', ');
-						if (x.description != undefined) {
-							x.description = addLineBreaks(x.description, '&#10;');
-						}
-						return x;
-					})
-					.filter((x: SidebarEvent) => x.preferredTime?.toString() === preferredHour.toString())
-					.sort(sortByPriority);
-			});
+			Object.keys(TriplanEventPreferredTime)
+				.filter((x) => !Number.isNaN(Number(x)))
+				.forEach((preferredHour) => {
+					preferredHoursHash[preferredHour] = areaEvents
+						.map((x) => {
+							x.preferredTime ||= TriplanEventPreferredTime.unset;
+							x.title = addLineBreaks(x.title, ', ');
+							if (x.description != undefined) {
+								x.description = addLineBreaks(x.description, '&#10;');
+							}
+							return x;
+						})
+						.filter((x: SidebarEvent) => x.preferredTime?.toString() === preferredHour.toString())
+						.sort(sortByPriority);
+				});
 
-		if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
-			return null;
-		}
+			if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
+				return null;
+			}
 
-		const eventsByPreferredHour = Object.keys(preferredHoursHash)
-			.filter((x) => preferredHoursHash[x].length > 0)
-			.map((preferredHour: string) => {
-				const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
-				return (
-					<div key={`${areaName}-${preferredHour}`}>
-						{renderLineWithText(
-							`${TranslateService.translate(eventStore, 'TIME')}: ${ucfirst(
-								TranslateService.translate(eventStore, preferredHourString)
-							)} (${preferredHoursHash[preferredHour].length})`
-						)}
-						<div className="flex-column gap-5">
-							{preferredHoursHash[preferredHour].map((event) => (
-								<TriplanSidebarDraggableEvent
-									key={event.id}
-									event={event}
-									categoryId={Number(event.category)}
-									removeEventFromSidebarById={removeEventFromSidebarById}
-									addToEventsToCategories={addToEventsToCategories}
-									addEventToSidebar={(e) => props.addEventToSidebar(e)}
-								/>
-							))}
-						</div>
-					</div>
-				);
-			});
-
-		// Get scheduled events for this area (those that match any event location in this area)
-		const areaLocations = areaEvents.map((event) => event.location);
-		const scheduledEvents = eventStore.calendarEvents.filter((calEvent) => {
-			if (!calEvent.location) return false;
-
-			// Check if this scheduled event's location matches any event in this area
-			return areaLocations.some((areaLoc) => {
-				if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
-					return areaLoc === calEvent.location;
-				} else if (typeof areaLoc !== 'string' && typeof calEvent.location !== 'string') {
-					// Compare lat/long for LocationData objects
+			const eventsByPreferredHour = Object.keys(preferredHoursHash)
+				.filter((x) => preferredHoursHash[x].length > 0)
+				.map((preferredHour: string) => {
+					const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
 					return (
-						areaLoc.latitude === calEvent.location.latitude &&
-						areaLoc.longitude === calEvent.location.longitude
-					);
-				}
-				return false;
-			});
-		});
-
-		return (
-			<>
-				{areaEvents.length === 0 && (
-					<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
-						{TranslateService.translate(eventStore, 'NO_ITEMS')}
-					</div>
-				)}
-				{eventsByPreferredHour}
-				{scheduledEvents.length > 0 && !eventStore.sidebarSettings.get('hide-scheduled') && (
-					<div key={`${areaName}-scheduled-events`}>
-						{renderLineWithText(
-							`${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${
-								scheduledEvents.length
-							})`
-						)}
-						<div className="flex-column gap-5">
-							{scheduledEvents.map((event) => (
-								<TriplanSidebarDraggableEvent
-									key={event.id}
-									event={event}
-									categoryId={Number(event.category)}
-									addToEventsToCategories={addToEventsToCategories}
-									removeEventFromSidebarById={removeEventFromSidebarById}
-									fullActions={false}
-									eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)}
-									addEventToSidebar={(e) => {
-										props.addEventToSidebar(e);
-									}}
-									_onClick={() => {
-										const calendarEvent = eventStore.calendarEvents.find((y) => y.id == event.id)!;
-										if (typeof calendarEvent.start === 'string') {
-											calendarEvent.start = new Date(calendarEvent.start);
-										}
-										if (typeof calendarEvent.end === 'string') {
-											calendarEvent.end = new Date(calendarEvent.end);
-										}
-										modalsStore.switchToViewMode();
-										ReactModalService.openEditCalendarEventModal(
-											eventStore,
-											props.addEventToSidebar,
-											{
-												event: {
-													...calendarEvent,
-													_def: calendarEvent,
-												},
-											},
-											modalsStore
-										);
-									}}
-								/>
-							))}
+						<div key={`${areaName}-${preferredHour}`}>
+							{renderLineWithText(
+								`${TranslateService.translate(eventStore, 'TIME')}: ${ucfirst(
+									TranslateService.translate(eventStore, preferredHourString)
+								)} (${preferredHoursHash[preferredHour].length})`
+							)}
+							<div className="flex-column gap-5">
+								{preferredHoursHash[preferredHour].map((event) => (
+									<TriplanSidebarDraggableEvent
+										key={event.id}
+										event={event}
+										categoryId={Number(event.category)}
+										removeEventFromSidebarById={removeEventFromSidebarById}
+										addToEventsToCategories={addToEventsToCategories}
+										addEventToSidebar={(e) => props.addEventToSidebar(e)}
+									/>
+								))}
+							</div>
 						</div>
-					</div>
-				)}
-			</>
-		);
+					);
+				});
+
+			// Get scheduled events for this area (those that match any event location in this area)
+			const areaLocations = areaEvents
+				.map((event) => event.location)
+				.filter((location) => location !== undefined);
+
+			const scheduledEvents = eventStore.calendarEvents.filter((calEvent) => {
+				if (!calEvent.location) return false;
+
+				// Check if this scheduled event's location matches any event in this area
+				return areaLocations.some((areaLoc) => {
+					if (!areaLoc) return false;
+
+					try {
+						if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
+							return areaLoc === calEvent.location;
+						} else if (
+							typeof areaLoc !== 'string' &&
+							typeof calEvent.location !== 'string' &&
+							areaLoc.latitude &&
+							areaLoc.longitude &&
+							calEvent.location.latitude &&
+							calEvent.location.longitude
+						) {
+							// Compare lat/long for LocationData objects
+							return (
+								areaLoc.latitude == calEvent.location.latitude &&
+								areaLoc.longitude == calEvent.location.longitude
+							);
+						}
+					} catch (error) {
+						console.warn('Error comparing locations:', error);
+					}
+					return false;
+				});
+			});
+
+			return (
+				<>
+					{areaEvents.length === 0 && (
+						<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
+							{TranslateService.translate(eventStore, 'NO_ITEMS')}
+						</div>
+					)}
+					{eventsByPreferredHour}
+					{scheduledEvents.length > 0 && !eventStore.sidebarSettings.get('hide-scheduled') && (
+						<div key={`${areaName}-scheduled-events`}>
+							{renderLineWithText(
+								`${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${
+									scheduledEvents.length
+								})`
+							)}
+							<div className="flex-column gap-5">
+								{scheduledEvents.map((event) => (
+									<TriplanSidebarDraggableEvent
+										key={event.id}
+										event={event}
+										categoryId={Number(event.category)}
+										addToEventsToCategories={addToEventsToCategories}
+										removeEventFromSidebarById={removeEventFromSidebarById}
+										fullActions={false}
+										eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)}
+										addEventToSidebar={(e) => {
+											props.addEventToSidebar(e);
+										}}
+										_onClick={() => {
+											const calendarEvent = eventStore.calendarEvents.find(
+												(y) => y.id == event.id
+											)!;
+											if (typeof calendarEvent.start === 'string') {
+												calendarEvent.start = new Date(calendarEvent.start);
+											}
+											if (typeof calendarEvent.end === 'string') {
+												calendarEvent.end = new Date(calendarEvent.end);
+											}
+											modalsStore.switchToViewMode();
+											ReactModalService.openEditCalendarEventModal(
+												eventStore,
+												props.addEventToSidebar,
+												{
+													event: {
+														...calendarEvent,
+														_def: calendarEvent,
+													},
+												},
+												modalsStore
+											);
+										}}
+									/>
+								))}
+							</div>
+						</div>
+					)}
+				</>
+			);
+		} catch (error) {
+			console.error('Error in renderAreaEvents:', error);
+			return (
+				<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
+					{TranslateService.translate(eventStore, 'ERROR_RENDERING_AREA')}
+				</div>
+			);
+		}
 	};
 
 	return (

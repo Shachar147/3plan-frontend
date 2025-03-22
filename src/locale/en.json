@@ -972,5 +972,6 @@
 	"GROUP_BY": "Group By",
 	"CATEGORIES": "Categories",
 	"PRIORITIES": "Priorities",
-	"AREAS": "Areas"
+	"AREAS": "Areas",
+	"ERROR_RENDERING_AREA": "Error displaying area"
 }
