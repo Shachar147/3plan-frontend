@@ -978,5 +978,6 @@
 	"AREAS": "Areas",
 	"ERROR_RENDERING_AREA": "Error displaying area",
 	"NO_LOCATION": "No location",
-	"AREA_X": "Area {X}"
+	"AREA_X": "Area {X}",
+	"RECALCULATING_AREAS": "Recalculating areas..."
 }

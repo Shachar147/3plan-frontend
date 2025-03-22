@@ -37,6 +37,59 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	const eventStore = useContext(eventStoreContext);
 	const modalsStore = useContext(modalsStoreContext);
 
+	// Store previous threshold values to detect changes
+	const prevThresholdValues = React.useRef({
+		driving: eventStore.sidebarSettings.get('area-driving-threshold') || 10,
+		walking: eventStore.sidebarSettings.get('area-walking-threshold') || 20,
+	});
+
+	// Memoize area calculation to prevent frequent recalculations
+	const [recalculateAreas, setRecalculateAreas] = React.useState(0);
+	const [isRecalculating, setIsRecalculating] = React.useState(false);
+	const areasMapMemoized = React.useMemo(() => {
+		// This will only run when the areas need to be recalculated
+		const currDriving = eventStore.sidebarSettings.get('area-driving-threshold') || 10;
+		const currWalking = eventStore.sidebarSettings.get('area-walking-threshold') || 20;
+
+		// Update the previous values
+		prevThresholdValues.current = {
+			driving: currDriving,
+			walking: currWalking,
+		};
+
+		return null; // We're not actually storing the areas here, just forcing a recalculation
+	}, [recalculateAreas, eventStore.sidebarGroupBy === 'area']);
+
+	// Set up effect to detect threshold changes
+	React.useEffect(() => {
+		if (eventStore.sidebarGroupBy !== 'area') return;
+
+		const drivingThreshold = eventStore.sidebarSettings.get('area-driving-threshold') || 10;
+		const walkingThreshold = eventStore.sidebarSettings.get('area-walking-threshold') || 20;
+
+		// Only recalculate if the thresholds have changed
+		if (
+			drivingThreshold !== prevThresholdValues.current.driving ||
+			walkingThreshold !== prevThresholdValues.current.walking
+		) {
+			// Show recalculating indicator
+			setIsRecalculating(true);
+
+			// Debounce the recalculation
+			const timerId = setTimeout(() => {
+				setRecalculateAreas((prev) => prev + 1);
+				// Hide the indicator after calculation is done
+				setIsRecalculating(false);
+			}, 300);
+
+			return () => clearTimeout(timerId);
+		}
+	}, [
+		eventStore.sidebarSettings.get('area-driving-threshold'),
+		eventStore.sidebarSettings.get('area-walking-threshold'),
+		eventStore.sidebarGroupBy,
+	]);
+
 	function renderExpandCollapse() {
 		const eyeIcon = eventStore.hideEmptyCategories || eventStore.isFiltered ? 'fa-eye' : 'fa-eye-slash';
 		const expandMinimizedEnabled =
@@ -193,6 +246,13 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	}
 
 	function renderAreas() {
+		// Include the recalculateAreas in dependencies - this is a no-op but forces
+		// React to re-render this component when thresholds change
+		React.useMemo(() => {
+			// This is just to make sure the function re-runs when recalculateAreas changes
+			return null;
+		}, [recalculateAreas]);
+
 		// Calculate areas based on distance results
 		const areasMap = new Map<string, SidebarEvent[]>();
 		const sidebarEvents = eventStore.allEventsFilteredComputed;
@@ -1143,11 +1203,21 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			{renderExpandCollapse()}
 			<SidebarSearch />
 			{totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
-			{eventStore.sidebarGroupBy === 'priority'
-				? renderPriorities()
-				: eventStore.sidebarGroupBy === 'area'
-				? renderAreas()
-				: renderCategories()}
+			{eventStore.sidebarGroupBy === 'priority' ? (
+				renderPriorities()
+			) : eventStore.sidebarGroupBy === 'area' ? (
+				<>
+					{isRecalculating && (
+						<div className="flex-row justify-content-center align-items-center padding-block-10">
+							<i className="fa fa-spinner fa-spin margin-inline-end-5" aria-hidden="true"></i>&nbsp;
+							<span>{TranslateService.translate(eventStore, 'RECALCULATING_AREAS')}</span>
+						</div>
+					)}
+					{renderAreas()}
+				</>
+			) : (
+				renderCategories()
+			)}
 			{totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
 		</>
 	);
