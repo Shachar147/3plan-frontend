@@ -2018,22 +2018,13 @@ export class EventStore {
 	@action
 	cleanupOrphanedAreaNames() {
 		try {
-			console.log('Starting cleanup of orphaned area names');
-
 			// Skip if we don't have events loaded yet
 			if (Object.keys(this.sidebarEvents).length === 0) {
-				console.log('No events loaded, skipping cleanup');
 				return;
 			}
 
 			// Get all current valid area keys
 			const validKeys = new Set<string>();
-
-			// Log current custom area names for debugging
-			console.log(
-				'Current custom area names before cleanup:',
-				Object.fromEntries(this.customAreaNames.entries())
-			);
 
 			// Process events with no location - this key should always be kept
 			const noLocationKey = 'NO_LOCATION';
@@ -2042,7 +2033,6 @@ export class EventStore {
 			// Get all event IDs in the system for existence checks
 			const allEvents = this.allEventsFilteredComputed;
 			const allEventIds = new Set(allEvents.map((event) => event.id));
-			console.log(`Processing ${allEvents.length} events for cleanup`);
 
 			// IMPORTANT: Instead of removing custom area names that don't match current groups,
 			// we'll only remove names if the events in those groups don't exist anymore
@@ -2070,8 +2060,6 @@ export class EventStore {
 				}
 			});
 
-			console.log('Valid area keys to keep:', Array.from(validKeys));
-
 			// Remove orphaned area names (keys where some events no longer exist)
 			const keysToRemove: string[] = [];
 			this.customAreaNames.forEach((value, key) => {
@@ -2082,19 +2070,12 @@ export class EventStore {
 
 			// Remove orphaned keys
 			keysToRemove.forEach((key) => {
-				console.log(`Removing orphaned area name: ${key} -> ${this.customAreaNames.get(key)}`);
 				this.customAreaNames.delete(key);
 			});
 
 			if (keysToRemove.length > 0) {
-				console.log(`Cleaned up ${keysToRemove.length} orphaned area names`);
 				this.saveCustomAreaNames();
-			} else {
-				console.log('No orphaned area names found');
 			}
-
-			// Log final state
-			console.log('Area names after cleanup:', Object.fromEntries(this.customAreaNames.entries()));
 		} catch (error) {
 			console.error('Error cleaning up area names:', error);
 		}
@@ -2104,7 +2085,6 @@ export class EventStore {
 	generateAreaKey(events: any[]): string {
 		// Skip if no events provided
 		if (!events || events.length === 0) {
-			console.log('No events provided to generateAreaKey');
 			return '';
 		}
 
@@ -2115,7 +2095,6 @@ export class EventStore {
 			// Create the key in format events_id1|id2|id3...
 			const areaKey = 'events_' + eventIds.join('|');
 
-			console.log(`Generated area key: ${areaKey} for ${events.length} events`);
 			return areaKey;
 		} catch (error) {
 			console.error('Error generating area key:', error);
@@ -2129,7 +2108,6 @@ export class EventStore {
 		try {
 			const namesToSave = Object.fromEntries(this.customAreaNames.entries());
 			localStorage.setItem('customAreaNames', JSON.stringify(namesToSave));
-			console.log('Saved custom area names to localStorage');
 		} catch (error) {
 			console.error('Error saving custom area names to localStorage:', error);
 		}

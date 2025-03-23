@@ -60,10 +60,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			drivingThreshold !== prevThresholdValues.current.driving ||
 			walkingThreshold !== prevThresholdValues.current.walking
 		) {
-			console.log('Threshold values changed, recalculating areas');
-			console.log('Previous values:', prevThresholdValues.current);
-			console.log('New values:', { driving: drivingThreshold, walking: walkingThreshold });
-
 			// Show recalculating indicator
 			setIsRecalculating(true);
 
@@ -75,7 +71,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 			// Use a setTimeout with a safety mechanism to ensure loading indicator is removed
 			const timerId = setTimeout(() => {
-				console.log('Recalculating areas after threshold change');
 				// Trigger the recalculation
 				setRecalculateAreas((prev) => prev + 1);
 
@@ -93,7 +88,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			// Add safety timeout to clear loading state if something goes wrong
 			const safetyTimerId = setTimeout(() => {
 				if (isRecalculating) {
-					console.log('Safety timeout triggered to clear loading state');
 					setIsRecalculating(false);
 				}
 			}, 2000);
@@ -113,8 +107,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	useEffect(() => {
 		if (eventStore.sidebarGroupBy !== 'area' || !eventStore.distanceResults.size) return;
 
-		console.log('Recalculating areas triggered, count:', recalculateAreas);
-
 		setIsRecalculating(true);
 
 		// Using setTimeout to allow the UI to update before recalculating
@@ -122,7 +114,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			try {
 				// Force re-render of the component
 				setRecalculateAreas((prev) => prev);
-				console.log('Areas recalculation completed');
 			} catch (error) {
 				console.error('Error calculating areas:', error);
 			} finally {
@@ -481,12 +472,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			try {
 				// Generate a consistent area key from the area events
 				const eventIds = areaEvents.map((event) => event.id).sort();
-				console.log('Saving area name for events:', eventIds, 'with name:', editingValue);
 
 				// Use the EventStore's generateAreaKey method if available
 				const areaKey = generateAreaKey(areaEvents);
-
-				console.log('Using area key:', areaKey);
 
 				// Save the custom name
 				eventStore.customAreaNames.set(areaKey, editingValue);
@@ -538,7 +526,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 					// Look up the custom area name for this group of events
 					const areaKey = generateAreaKey(areaEvents);
-					console.log(`Looking up area name for ${areaEvents.length} events with key: ${areaKey}`);
 
 					// Get the custom name directly from the observable map
 					const customAreaName = eventStore.customAreaNames.get(areaKey);
