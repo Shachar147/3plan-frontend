@@ -307,11 +307,8 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const areasMap = new Map<string, SidebarEvent[]>();
 		const sidebarEvents = [
 			...eventStore.allFilteredSidebarEvents,
-			...eventStore.filteredCalendarEvents.filter(
-				(s) =>
-					eventStore._isEventMatchingSearch(s, eventStore.searchValue) &&
-					eventStore._isEventMatchingSearch(s, eventStore.sidebarSearchValue)
-			),
+			// Do not include calendar events here since they'll be handled separately in renderAreaEvents
+			// The calendar events were being included twice - once here and once in the scheduled events section
 		];
 
 		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
@@ -464,7 +461,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 		// Check if each area will show any matching events after considering scheduled events
 		// This prevents showing empty areas when searching
-		if (eventStore.searchValue) {
+		if (eventStore.sidebarSearchValue) {
 			for (const [areaName, areaEvents] of Array.from(areasMap.entries())) {
 				// Get the locations for this area
 				const areaLocations = areaEvents.map((event) => event.location);
@@ -473,12 +470,15 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				const hasMatchingScheduledEvents = eventStore.filteredCalendarEvents.some((calEvent) => {
 					// Check if the event matches search term
 					const matchesSearch =
-						calEvent.title?.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) > -1 ||
+						calEvent.title?.toLowerCase().indexOf(eventStore.sidebarSearchValue.toLowerCase()) > -1 ||
 						(calEvent.description &&
-							calEvent.description.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) > -1) ||
+							calEvent.description.toLowerCase().indexOf(eventStore.sidebarSearchValue.toLowerCase()) >
+								-1) ||
 						(calEvent.location &&
 							calEvent.location.address &&
-							calEvent.location.address.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) > -1);
+							calEvent.location.address
+								.toLowerCase()
+								.indexOf(eventStore.sidebarSearchValue.toLowerCase()) > -1);
 
 					if (!matchesSearch) return false;
 
@@ -511,7 +511,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 					});
 				});
 
-				// If no area events and no matching scheduled events, remove this area
+				// Keep area if it has either matching sidebar events or matching scheduled events
 				if (areaEvents.length === 0 && !hasMatchingScheduledEvents) {
 					areasMap.delete(areaName);
 				}
@@ -1268,60 +1268,62 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 					);
 				});
 
-			// Get scheduled events for this area (those that match any event location in this area)
-			const areaLocations = areaEvents.map((event) => event.location);
+			// For all areas, get matching scheduled events
+			let scheduledEvents: CalendarEvent[] = [];
 
 			// Don't show scheduled events if hide-scheduled setting is on
 			const shouldShowScheduledEvents = !eventStore.sidebarSettings.get('hide-scheduled');
 
-			// Get filtered calendar events - make sure to respect the search term
-			const scheduledEvents = shouldShowScheduledEvents
-				? eventStore.filteredCalendarEvents.filter((calEvent) => {
-						// First check if event matches search term if one is active
-						if (eventStore.searchValue) {
-							const matchesSearch =
-								calEvent.title?.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) > -1 ||
-								(calEvent.description &&
-									calEvent.description.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) >
-										-1) ||
-								(calEvent.location &&
-									calEvent.location.address &&
-									calEvent.location.address
-										.toLowerCase()
-										.indexOf(eventStore.searchValue.toLowerCase()) > -1);
+			if (shouldShowScheduledEvents) {
+				// Check if this is a special "Found Activities" area created just for search results
+				// We know it's a special area if it has no events but was still included in the rendering
+				const isSpecialSearchArea = areaEvents.length === 0 && eventStore.searchValue;
 
-							if (!matchesSearch) return false;
-						}
+				// For regular areas with events, get locations for this area
+				const areaLocations = areaEvents.map((event) => event.location);
 
-						// Then check if it's in this area
-						return areaLocations.some((areaLoc) => {
-							try {
-								if (!areaLoc && !calEvent.location) {
-									return true;
-								}
-								if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
-									return areaLoc === calEvent.location;
-								} else if (
-									typeof areaLoc !== 'string' &&
-									typeof calEvent.location !== 'string' &&
-									areaLoc.latitude &&
-									areaLoc.longitude &&
-									calEvent.location.latitude &&
-									calEvent.location.longitude
-								) {
-									// Compare lat/long for LocationData objects
-									return (
-										areaLoc.latitude == calEvent.location.latitude &&
-										areaLoc.longitude == calEvent.location.longitude
-									);
-								}
-							} catch (error) {
-								console.warn('Error comparing locations:', error);
+				// Filter calendar events based on search and area
+				scheduledEvents = eventStore.filteredCalendarEvents.filter((calEvent) => {
+					// First check if event matches search term
+					if (eventStore.searchValue && !checkIfEventMatchesSearch(calEvent, eventStore.searchValue)) {
+						return false;
+					}
+
+					// For special search areas with no events
+					if (isSpecialSearchArea) {
+						// Match all search results for the generic "Found Activities" area
+						return true;
+					}
+
+					// For regular areas, check if location matches
+					return areaLocations.some((areaLoc) => {
+						try {
+							if (!areaLoc && !calEvent.location) {
+								return true;
 							}
-							return false;
-						});
-				  })
-				: [];
+							if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
+								return areaLoc === calEvent.location;
+							} else if (
+								typeof areaLoc !== 'string' &&
+								typeof calEvent.location !== 'string' &&
+								areaLoc?.latitude &&
+								areaLoc?.longitude &&
+								calEvent.location?.latitude &&
+								calEvent.location?.longitude
+							) {
+								// Compare lat/long for LocationData objects
+								return (
+									areaLoc.latitude == calEvent.location.latitude &&
+									areaLoc.longitude == calEvent.location.longitude
+								);
+							}
+						} catch (error) {
+							console.warn('Error comparing locations:', error);
+						}
+						return false;
+					});
+				});
+			}
 
 			// Don't render this area if we're searching and nothing matches
 			if (eventStore.searchValue && eventsByPreferredHour.length === 0 && scheduledEvents.length === 0) {
@@ -1330,7 +1332,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 			return (
 				<>
-					{areaEvents.length === 0 && (
+					{areaEvents.length === 0 && scheduledEvents.length === 0 && (
 						<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
 							{TranslateService.translate(eventStore, 'NO_ITEMS')}
 						</div>
