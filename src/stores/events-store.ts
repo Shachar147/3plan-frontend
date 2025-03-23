@@ -249,9 +249,9 @@ export class EventStore {
 	initSidebarSettings() {
 		// Set default value first
 		this.sidebarSettings.set('hide-scheduled', false);
-		// Set default area grouping thresholds (in minutes)
-		this.sidebarSettings.set('area-driving-threshold', 10); // 10 min driving
-		this.sidebarSettings.set('area-walking-threshold', 20); // 20 min walking
+		// Set default area grouping thresholds (in kilometers)
+		this.sidebarSettings.set('area-driving-threshold', 5); // 5 km driving
+		this.sidebarSettings.set('area-walking-threshold', 2); // 2 km walking
 
 		// Load custom area names from localStorage
 		try {
@@ -909,6 +909,7 @@ export class EventStore {
 	get allEventsFilteredComputed() {
 		return this.allEventsComputed.filter((event) => {
 			const calendarEvent = this.calendarEvents.find((c) => c.id == event.id);
+			const isScheduled = !!this.calendarEvents.find((x) => x.id == event.id);
 
 			return (
 				(event.title!.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1 ||
@@ -921,8 +922,9 @@ export class EventStore {
 				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
 				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
 				!this.filterOutPriorities.get(getEnumKey(TriplanPriority, event.priority)) &&
-				(this.hideScheduled ? !this.calendarEvents.find((x) => x.id == event.id) : true) &&
-				(this.hideUnScheduled ? !!this.calendarEvents.find((x) => x.id == event.id) : true) &&
+				(this.hideScheduled ? !isScheduled : true) &&
+				(this.hideUnScheduled ? isScheduled : true) &&
+				(this.sidebarSettings.get('hide-scheduled') ? !isScheduled : true) &&
 				(this.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && this.mapViewDayFilter
 					? !calendarEvent || calendarEvent.allDay || !calendarEvent.start
 						? false

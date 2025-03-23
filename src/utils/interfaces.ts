@@ -128,6 +128,7 @@ export interface DistanceResult {
 	duration: string;
 	distance: string;
 	duration_value: number;
+	distance_value: number;
 }
 
 export enum TripActions {

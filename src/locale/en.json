@@ -181,6 +181,7 @@
 	"GETTING_STARTED_PAGE.FILL_IN_TRIP_NAME": "Please fill in trip name before clicking on this button",
 	"DAYS": "days",
 	"MINUTES": "minutes",
+	"KILOMETERS": "kilometers",
 	"AREA_GROUPING_SETTINGS": "Area Grouping Settings",
 	"DRIVING_THRESHOLD": "Driving threshold",
 	"WALKING_THRESHOLD": "Walking threshold",

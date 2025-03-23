@@ -36,8 +36,8 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 	// Store previous threshold values to detect changes
 	const prevThresholdValues = useRef({
-		driving: eventStore.sidebarSettings.get('area-driving-threshold') || 10,
-		walking: eventStore.sidebarSettings.get('area-walking-threshold') || 20,
+		driving: eventStore.sidebarSettings.get('area-driving-threshold') || 5,
+		walking: eventStore.sidebarSettings.get('area-walking-threshold') || 2,
 	});
 
 	// Memoize area calculation to prevent frequent recalculations
@@ -52,8 +52,8 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	useEffect(() => {
 		if (eventStore.sidebarGroupBy !== 'area') return;
 
-		const drivingThreshold = eventStore.sidebarSettings.get('area-driving-threshold') || 10;
-		const walkingThreshold = eventStore.sidebarSettings.get('area-walking-threshold') || 20;
+		const drivingThreshold = eventStore.sidebarSettings.get('area-driving-threshold') || 5;
+		const walkingThreshold = eventStore.sidebarSettings.get('area-walking-threshold') || 2;
 
 		// Only recalculate if the thresholds have changed
 		if (
@@ -305,7 +305,14 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	function renderAreas() {
 		// Calculate areas based on distance results
 		const areasMap = new Map<string, SidebarEvent[]>();
-		const sidebarEvents = eventStore.allEventsFilteredComputed;
+		const sidebarEvents = [
+			...eventStore.allFilteredSidebarEvents,
+			...eventStore.filteredCalendarEvents.filter(
+				(s) =>
+					eventStore._isEventMatchingSearch(s, eventStore.searchValue) &&
+					eventStore._isEventMatchingSearch(s, eventStore.sidebarSearchValue)
+			),
+		];
 
 		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
 
@@ -370,24 +377,20 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 							const distanceB = eventStore.distanceResults.get(distanceKey2);
 
 							// Get threshold values from settings (with fallbacks to default values)
-							const drivingThresholdMinutes = Number(
-								eventStore.sidebarSettings.get('area-driving-threshold') || 10
+							const drivingThresholdKilometers = Number(
+								eventStore.sidebarSettings.get('area-driving-threshold') || 5
 							);
-							const walkingThresholdMinutes = Number(
-								eventStore.sidebarSettings.get('area-walking-threshold') || 20
+							const walkingThresholdKilometers = Number(
+								eventStore.sidebarSettings.get('area-walking-threshold') || 2
 							);
-
-							// Convert minutes to seconds
-							const drivingThresholdSeconds = drivingThresholdMinutes * 60;
-							const walkingThresholdSeconds = walkingThresholdMinutes * 60;
 
 							if (
 								(distanceA &&
-									distanceA.duration_value &&
-									Number(distanceA.duration_value) <= drivingThresholdSeconds) || // Configurable driving threshold
+									distanceA.distance_value &&
+									Number(distanceA.distance_value) <= drivingThresholdKilometers * 1000) || // Convert km to meters
 								(distanceB &&
-									distanceB.duration_value &&
-									Number(distanceB.duration_value) <= walkingThresholdSeconds) // Configurable walking threshold
+									distanceB.distance_value &&
+									Number(distanceB.distance_value) <= walkingThresholdKilometers * 1000) // Convert km to meters
 							) {
 								// Add to this cluster
 								areaEvents.push(event);
@@ -449,7 +452,79 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			});
 		}
 
-		// todo complete: remove inline style
+		// Remove empty areas when filtering is active
+		// Always remove empty areas when searching
+		if (eventStore.searchValue || eventStore.isFiltered) {
+			for (const [areaName, areaEvents] of Array.from(areasMap.entries())) {
+				if (areaEvents.length === 0) {
+					areasMap.delete(areaName);
+				}
+			}
+		}
+
+		// Check if each area will show any matching events after considering scheduled events
+		// This prevents showing empty areas when searching
+		if (eventStore.searchValue) {
+			for (const [areaName, areaEvents] of Array.from(areasMap.entries())) {
+				// Get the locations for this area
+				const areaLocations = areaEvents.map((event) => event.location);
+
+				// Check if any scheduled events match by location and search term
+				const hasMatchingScheduledEvents = eventStore.filteredCalendarEvents.some((calEvent) => {
+					// Check if the event matches search term
+					const matchesSearch =
+						calEvent.title?.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) > -1 ||
+						(calEvent.description &&
+							calEvent.description.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) > -1) ||
+						(calEvent.location &&
+							calEvent.location.address &&
+							calEvent.location.address.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) > -1);
+
+					if (!matchesSearch) return false;
+
+					// Then check if it matches any location in this area
+					return areaLocations.some((areaLoc) => {
+						try {
+							if (!areaLoc && !calEvent.location) {
+								return true;
+							}
+							if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
+								return areaLoc === calEvent.location;
+							} else if (
+								typeof areaLoc !== 'string' &&
+								typeof calEvent.location !== 'string' &&
+								areaLoc.latitude &&
+								areaLoc.longitude &&
+								calEvent.location.latitude &&
+								calEvent.location.longitude
+							) {
+								// Compare lat/long for LocationData objects
+								return (
+									areaLoc.latitude == calEvent.location.latitude &&
+									areaLoc.longitude == calEvent.location.longitude
+								);
+							}
+						} catch (error) {
+							console.warn('Error comparing locations:', error);
+						}
+						return false;
+					});
+				});
+
+				// If no area events and no matching scheduled events, remove this area
+				if (areaEvents.length === 0 && !hasMatchingScheduledEvents) {
+					areasMap.delete(areaName);
+				}
+			}
+		}
+
+		// Sort areas
+		let sortedAreas = Array.from(areasMap.entries()).sort((a, b) => {
+			// [0] is area name, [1] is array of events
+			return b[1].length - a[1].length;
+		});
+
+		// Style definitions for collapsible areas
 		const closedStyle = {
 			maxHeight: 0,
 			overflowY: 'hidden',
@@ -458,12 +533,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		};
 		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
 		const borderStyle = '1px solid rgba(0, 0, 0, 0.05)';
-
-		// Sort areas by number of events (most to least)
-		const sortedAreas = Array.from(areasMap.entries()).sort((a, b) => {
-			// [0] is area name, [1] is array of events
-			return b[1].length - a[1].length;
-		});
 
 		// Handler for saving edited area name
 		const handleSaveAreaName = (areaEvents: any[]) => {
@@ -1165,32 +1234,32 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 						.sort(sortByPriority);
 				});
 
-			if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
-				return null;
-			}
-
+			// Only render preferred hours if there are matching events
 			const eventsByPreferredHour = Object.keys(preferredHoursHash)
-				.filter((x) => preferredHoursHash[x].length > 0)
-				.map((preferredHour: string) => {
-					let preferredHourString: string = TriplanEventPreferredTime[preferredHour];
-					if (preferredHourString == 'unset' && eventStore.isHebrew) {
-						preferredHourString = 'unset.male';
-					}
+				.filter((preferredHourString) => preferredHoursHash[preferredHourString].length > 0)
+				.map((preferredHourString) => {
+					const translatedPreferredHour = TranslateService.translate(
+						eventStore,
+						getPreferredHourTranslationKey(Number(preferredHourString))
+					);
 					return (
-						<div key={`${areaName}-${preferredHour}`}>
+						<div
+							key={`${areaName}-${preferredHourString}`}
+							className="text-transform-capitalize margin-block-4"
+						>
 							{renderLineWithText(
-								`${TranslateService.translate(eventStore, 'TIME')}: ${ucfirst(
-									TranslateService.translate(eventStore, preferredHourString)
-								)} (${preferredHoursHash[preferredHour].length})`
+								`${translatedPreferredHour} (${preferredHoursHash[preferredHourString].length})`
 							)}
+
 							<div className="flex-column gap-5">
-								{preferredHoursHash[preferredHour].map((event) => (
+								{preferredHoursHash[preferredHourString].map((event) => (
 									<TriplanSidebarDraggableEvent
 										key={event.id}
 										event={event}
 										categoryId={Number(event.category)}
-										removeEventFromSidebarById={removeEventFromSidebarById}
 										addToEventsToCategories={addToEventsToCategories}
+										removeEventFromSidebarById={removeEventFromSidebarById}
+										eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)}
 										addEventToSidebar={(e) => props.addEventToSidebar(e)}
 									/>
 								))}
@@ -1201,41 +1270,63 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 			// Get scheduled events for this area (those that match any event location in this area)
 			const areaLocations = areaEvents.map((event) => event.location);
-			// .filter((location) => location !== undefined);
 
-			const scheduledEvents = eventStore.filteredCalendarEvents.filter((calEvent) => {
-				// if (!calEvent.location) return false;
+			// Don't show scheduled events if hide-scheduled setting is on
+			const shouldShowScheduledEvents = !eventStore.sidebarSettings.get('hide-scheduled');
 
-				// Check if this scheduled event's location matches any event in this area
-				return areaLocations.some((areaLoc) => {
-					// if (!areaLoc) return false;
+			// Get filtered calendar events - make sure to respect the search term
+			const scheduledEvents = shouldShowScheduledEvents
+				? eventStore.filteredCalendarEvents.filter((calEvent) => {
+						// First check if event matches search term if one is active
+						if (eventStore.searchValue) {
+							const matchesSearch =
+								calEvent.title?.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) > -1 ||
+								(calEvent.description &&
+									calEvent.description.toLowerCase().indexOf(eventStore.searchValue.toLowerCase()) >
+										-1) ||
+								(calEvent.location &&
+									calEvent.location.address &&
+									calEvent.location.address
+										.toLowerCase()
+										.indexOf(eventStore.searchValue.toLowerCase()) > -1);
 
-					try {
-						if (!areaLoc && !calEvent.location) {
-							return true;
+							if (!matchesSearch) return false;
 						}
-						if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
-							return areaLoc === calEvent.location;
-						} else if (
-							typeof areaLoc !== 'string' &&
-							typeof calEvent.location !== 'string' &&
-							areaLoc.latitude &&
-							areaLoc.longitude &&
-							calEvent.location.latitude &&
-							calEvent.location.longitude
-						) {
-							// Compare lat/long for LocationData objects
-							return (
-								areaLoc.latitude == calEvent.location.latitude &&
-								areaLoc.longitude == calEvent.location.longitude
-							);
-						}
-					} catch (error) {
-						console.warn('Error comparing locations:', error);
-					}
-					return false;
-				});
-			});
+
+						// Then check if it's in this area
+						return areaLocations.some((areaLoc) => {
+							try {
+								if (!areaLoc && !calEvent.location) {
+									return true;
+								}
+								if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
+									return areaLoc === calEvent.location;
+								} else if (
+									typeof areaLoc !== 'string' &&
+									typeof calEvent.location !== 'string' &&
+									areaLoc.latitude &&
+									areaLoc.longitude &&
+									calEvent.location.latitude &&
+									calEvent.location.longitude
+								) {
+									// Compare lat/long for LocationData objects
+									return (
+										areaLoc.latitude == calEvent.location.latitude &&
+										areaLoc.longitude == calEvent.location.longitude
+									);
+								}
+							} catch (error) {
+								console.warn('Error comparing locations:', error);
+							}
+							return false;
+						});
+				  })
+				: [];
+
+			// Don't render this area if we're searching and nothing matches
+			if (eventStore.searchValue && eventsByPreferredHour.length === 0 && scheduledEvents.length === 0) {
+				return null;
+			}
 
 			return (
 				<>
@@ -1245,7 +1336,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 						</div>
 					)}
 					{eventsByPreferredHour}
-					{scheduledEvents.length > 0 && !eventStore.sidebarSettings.get('hide-scheduled') && (
+					{scheduledEvents.length > 0 && (
 						<div key={`${areaName}-scheduled-events`}>
 							{renderLineWithText(
 								`${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${
@@ -1303,6 +1394,15 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				</div>
 			);
 		}
+	};
+
+	// Helper to get the preferred hour translation key based on enum value
+	const getPreferredHourTranslationKey = (preferredHourValue: number): string => {
+		let preferredHourString = TriplanEventPreferredTime[preferredHourValue];
+		if (preferredHourString === 'unset' && eventStore.isHebrew) {
+			preferredHourString = 'unset.male';
+		}
+		return preferredHourString;
 	};
 
 	return (
