@@ -979,5 +979,7 @@
 	"ERROR_RENDERING_AREA": "Error displaying area",
 	"NO_LOCATION": "No location",
 	"AREA_X": "Area {X}",
-	"RECALCULATING_AREAS": "Recalculating areas..."
+	"RECALCULATING_AREAS": "Recalculating areas...",
+	"EDIT_AREA_NAME": "Edit Area Name",
+	"AREA_CUSTOM_NAME_PLACEHOLDER": "Enter custom area name"
 }
