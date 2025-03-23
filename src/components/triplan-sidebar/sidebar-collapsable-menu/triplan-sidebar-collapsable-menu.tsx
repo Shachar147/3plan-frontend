@@ -1449,261 +1449,6 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	}
 
-	function renderPriorityFilters() {
-		const priorityFiltersContent = (
-			<div className="flex-column gap-8">
-				{prioritiesOrder.map((priority, idx) => {
-					const priorityKey = TriplanPriority[priority];
-					const priorityColor = priorityToColor[priority];
-
-					return (
-						<Observer key={`sidebar-filter-by-priority-${priorityKey}`}>
-							{() => (
-								<div
-									className={getClasses(
-										'flex-row gap-5 align-items-center sidebar-priority-filter',
-										eventStore.filterSidebarPriorities.get(priorityKey.toString()) && 'active'
-									)}
-									onClick={() => eventStore.toggleSidebarFilterPriority(priorityKey.toString())}
-								>
-									<i className="fa fa-sticky-note" style={{ color: priorityColor }} />
-									<span>{TranslateService.translate(eventStore, priorityKey.toString())}</span>
-								</div>
-							)}
-						</Observer>
-					);
-				})}
-			</div>
-		);
-
-		const priorityFiltersGroup = createSidebarGroup(
-			<>{priorityFiltersContent}</>,
-			'fa-level-up',
-			SidebarGroups.PRIORITIES_FILTER,
-			TranslateService.translate(eventStore, 'FILTER_BY_PRIORITY'),
-			Object.keys(TriplanPriority).filter((x) => !Number.isNaN(Number(x))).length
-		);
-
-		return (
-			<>
-				<hr className="margin-block-2" />
-				{priorityFiltersGroup}
-			</>
-		);
-	}
-
-	function renderCategoryFilters() {
-		const categoryFiltersContent = (
-			<div className="flex-column gap-8">
-				{eventStore.categories.map((category) => {
-					return (
-						<Observer key={`sidebar-filter-by-category-${category.id}`}>
-							{() => (
-								<div
-									className={getClasses(
-										'flex-row gap-5 align-items-center sidebar-category-filter',
-										eventStore.filterSidebarCategories.get(category.id.toString()) && 'active'
-									)}
-									onClick={() => eventStore.toggleSidebarFilterCategory(category.id.toString())}
-								>
-									<span className="category-icon">{category.icon}</span>
-									<span>{category.title}</span>
-								</div>
-							)}
-						</Observer>
-					);
-				})}
-			</div>
-		);
-
-		const categoryFiltersGroup = createSidebarGroup(
-			<>{categoryFiltersContent}</>,
-			'fa-align-justify',
-			SidebarGroups.CATEGORIES_FILTER,
-			TranslateService.translate(eventStore, 'FILTER_BY_CATEGORY'),
-			eventStore.categories.length
-		);
-
-		return (
-			<>
-				<hr className="margin-block-2" />
-				{categoryFiltersGroup}
-			</>
-		);
-	}
-
-	function renderPreferredTimeFilters() {
-		const preferredTimes = [
-			TriplanEventPreferredTime.morning,
-			TriplanEventPreferredTime.noon,
-			TriplanEventPreferredTime.afternoon,
-			TriplanEventPreferredTime.sunset,
-			TriplanEventPreferredTime.evening,
-			TriplanEventPreferredTime.night,
-			TriplanEventPreferredTime.nevermind,
-			TriplanEventPreferredTime.unset,
-		];
-
-		const timeIcons = {
-			[TriplanEventPreferredTime.morning]: '🌅',
-			[TriplanEventPreferredTime.noon]: '☀️',
-			[TriplanEventPreferredTime.afternoon]: '🌞',
-			[TriplanEventPreferredTime.sunset]: '🌇',
-			[TriplanEventPreferredTime.evening]: '🌠',
-			[TriplanEventPreferredTime.night]: '🌃',
-			[TriplanEventPreferredTime.nevermind]: '❔',
-			[TriplanEventPreferredTime.unset]: '❓',
-		};
-
-		const preferredTimeFiltersContent = (
-			<div className="flex-column gap-8">
-				{preferredTimes.map((time) => {
-					const timeKey = TriplanEventPreferredTime[time];
-					const icon = timeIcons[time];
-
-					return (
-						<Observer key={`sidebar-filter-by-preferred-time-${timeKey}`}>
-							{() => (
-								<div
-									className={getClasses(
-										'flex-row gap-5 align-items-center sidebar-preferred-time-filter',
-										eventStore.filterSidebarPreferredTimes.get(timeKey) && 'active'
-									)}
-									onClick={() => eventStore.toggleSidebarFilterPreferredTime(timeKey)}
-								>
-									{icon}
-									<span>{TranslateService.translate(eventStore, timeKey.toLowerCase())}</span>
-								</div>
-							)}
-						</Observer>
-					);
-				})}
-			</div>
-		);
-
-		const preferredTimeFiltersGroup = createSidebarGroup(
-			<>{preferredTimeFiltersContent}</>,
-			'fa-clock-o',
-			SidebarGroups.PREFERRED_TIME_FILTER,
-			TranslateService.translate(eventStore, 'FILTER_BY_PREFERRED_TIME'),
-			preferredTimes.length
-		);
-
-		return (
-			<>
-				<hr className="margin-block-2" />
-				{preferredTimeFiltersGroup}
-			</>
-		);
-	}
-
-	function renderGroupBySelector() {
-		const [isOpen, setIsOpen] = useState(false);
-		const eventStore = useContext(eventStoreContext);
-		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
-
-		const radioStyle = {
-			accentColor: 'var(--selected-color)',
-			marginRight: '12px',
-			transform: 'scale(1.2)',
-			cursor: 'pointer',
-		};
-
-		return (
-			<>
-				<hr className="margin-block-2" />
-				<div className="external-collapse">
-					<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
-						<i
-							className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
-							aria-hidden="true"
-						/>
-						<span>
-							<i className="fa fa-object-group" aria-hidden="true" />
-							&nbsp;
-							{TranslateService.translate(eventStore, 'GROUP_BY')}
-						</span>
-					</div>
-					<div
-						className="external-collapse-inner"
-						style={{
-							display: isOpen ? 'block' : 'none',
-						}}
-					>
-						<div className="sidebar-statistics">
-							<div
-								className={getClasses(
-									'sidebar-filter-item flex-row gap-4',
-									eventStore.sidebarGroupBy === 'category' && 'active'
-								)}
-							>
-								<input
-									type="radio"
-									id="group-by-category"
-									name="sidebar-group-by"
-									checked={eventStore.sidebarGroupBy === 'category'}
-									onChange={() => eventStore.setSidebarGroupBy('category')}
-									style={radioStyle}
-								/>
-								<label
-									htmlFor="group-by-category"
-									onClick={() => eventStore.setSidebarGroupBy('category')}
-									className="cursor-pointer margin-bottom-0"
-								>
-									{TranslateService.translate(eventStore, 'CATEGORIES')}
-								</label>
-							</div>
-							<div
-								className={getClasses(
-									'sidebar-filter-item flex-row gap-4',
-									eventStore.sidebarGroupBy === 'priority' && 'active'
-								)}
-							>
-								<input
-									type="radio"
-									id="group-by-priority"
-									name="sidebar-group-by"
-									checked={eventStore.sidebarGroupBy === 'priority'}
-									onChange={() => eventStore.setSidebarGroupBy('priority')}
-									style={radioStyle}
-								/>
-								<label
-									htmlFor="group-by-priority"
-									onClick={() => eventStore.setSidebarGroupBy('priority')}
-									className="cursor-pointer margin-bottom-0"
-								>
-									{TranslateService.translate(eventStore, 'PRIORITIES')}
-								</label>
-							</div>
-							<div
-								className={getClasses(
-									'sidebar-filter-item flex-row gap-4',
-									eventStore.sidebarGroupBy === 'area' && 'active'
-								)}
-							>
-								<input
-									type="radio"
-									id="group-by-area"
-									name="sidebar-group-by"
-									checked={eventStore.sidebarGroupBy === 'area'}
-									onChange={() => eventStore.setSidebarGroupBy('area')}
-									style={radioStyle}
-								/>
-								<label
-									htmlFor="group-by-area"
-									onClick={() => eventStore.setSidebarGroupBy('area')}
-									className="cursor-pointer margin-bottom-0"
-								>
-									{TranslateService.translate(eventStore, 'AREAS')}
-								</label>
-							</div>
-						</div>
-					</div>
-				</div>
-			</>
-		);
-	}
-
 	function renderSidebarSettings() {
 		const settingsItems = [
 			{
@@ -1871,40 +1616,6 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	};
 
-	function renderFilters() {
-		const [isOpen, setIsOpen] = useState(false);
-		const eventStore = useContext(eventStoreContext);
-		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
-
-		return (
-			<div className="external-collapse">
-				<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
-					<i
-						className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
-						aria-hidden="true"
-					/>
-					<span>
-						<i className="fa fa-filter" aria-hidden="true" />
-						&nbsp;
-						{TranslateService.translate(eventStore, 'FILTER_BY')}
-					</span>
-				</div>
-				<div
-					className="external-collapse-inner"
-					style={{
-						display: isOpen ? 'block' : 'none',
-					}}
-				>
-					<div className="padding-10">
-						{renderPriorityFilters()}
-						{renderCategoryFilters()}
-						{renderPreferredTimeFilters()}
-					</div>
-				</div>
-			</div>
-		);
-	}
-
 	return (
 		<div className="triplan-sidebar-collapsable-menu">
 			{renderWarnings()}
@@ -1914,11 +1625,300 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			{renderCalendarSidebarStatistics()}
 			<TriplanSidebarEqualDivider />
 			{renderRecommendations()}
-			{renderFilters()}
-			{renderGroupBySelector()}
+			<FilterBy />
+			<GroupBySelector />
 			{renderSidebarSettings()}
 		</div>
 	);
 }
+
+function GroupBySelector() {
+	const [isOpen, setIsOpen] = useState(false);
+	const eventStore = useContext(eventStoreContext);
+	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
+	const radioStyle = {
+		accentColor: 'var(--selected-color)',
+		marginRight: '12px',
+		transform: 'scale(1.2)',
+		cursor: 'pointer',
+	};
+
+	return (
+		<>
+			<hr className="margin-block-2" />
+			<div className="external-collapse">
+				<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
+					<i
+						className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
+						aria-hidden="true"
+					/>
+					<span>
+						<i className="fa fa-object-group" aria-hidden="true" />
+						&nbsp;
+						{TranslateService.translate(eventStore, 'GROUP_BY')}
+					</span>
+				</div>
+				<div
+					className="external-collapse-inner"
+					style={{
+						display: isOpen ? 'block' : 'none',
+					}}
+				>
+					<div className="sidebar-statistics">
+						<div
+							className={getClasses(
+								'sidebar-filter-item flex-row gap-4',
+								eventStore.sidebarGroupBy === 'category' && 'active'
+							)}
+						>
+							<input
+								type="radio"
+								id="group-by-category"
+								name="sidebar-group-by"
+								checked={eventStore.sidebarGroupBy === 'category'}
+								onChange={() => eventStore.setSidebarGroupBy('category')}
+								style={radioStyle}
+							/>
+							<label
+								htmlFor="group-by-category"
+								onClick={() => eventStore.setSidebarGroupBy('category')}
+								className="cursor-pointer margin-bottom-0"
+							>
+								{TranslateService.translate(eventStore, 'CATEGORIES')}
+							</label>
+						</div>
+						<div
+							className={getClasses(
+								'sidebar-filter-item flex-row gap-4',
+								eventStore.sidebarGroupBy === 'priority' && 'active'
+							)}
+						>
+							<input
+								type="radio"
+								id="group-by-priority"
+								name="sidebar-group-by"
+								checked={eventStore.sidebarGroupBy === 'priority'}
+								onChange={() => eventStore.setSidebarGroupBy('priority')}
+								style={radioStyle}
+							/>
+							<label
+								htmlFor="group-by-priority"
+								onClick={() => eventStore.setSidebarGroupBy('priority')}
+								className="cursor-pointer margin-bottom-0"
+							>
+								{TranslateService.translate(eventStore, 'PRIORITIES')}
+							</label>
+						</div>
+						<div
+							className={getClasses(
+								'sidebar-filter-item flex-row gap-4',
+								eventStore.sidebarGroupBy === 'area' && 'active'
+							)}
+						>
+							<input
+								type="radio"
+								id="group-by-area"
+								name="sidebar-group-by"
+								checked={eventStore.sidebarGroupBy === 'area'}
+								onChange={() => eventStore.setSidebarGroupBy('area')}
+								style={radioStyle}
+							/>
+							<label
+								htmlFor="group-by-area"
+								onClick={() => eventStore.setSidebarGroupBy('area')}
+								className="cursor-pointer margin-bottom-0"
+							>
+								{TranslateService.translate(eventStore, 'AREAS')}
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+}
+
+const FilterBy = observer(() => {
+	const [isOpen, setIsOpen] = useState(false);
+	const eventStore = useContext(eventStoreContext);
+	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
+	function renderPriorityFilters() {
+		const priorityFiltersContent = (
+			<div className="flex-column gap-8">
+				{prioritiesOrder.map((priority, idx) => {
+					const priorityKey = TriplanPriority[priority];
+					const priorityColor = priorityToColor[priority];
+
+					return (
+						<Observer key={`sidebar-filter-by-priority-${priorityKey}`}>
+							{() => (
+								<div
+									className={getClasses(
+										'flex-row gap-5 align-items-center sidebar-priority-filter',
+										eventStore.filterSidebarPriorities.get(priorityKey.toString()) && 'active'
+									)}
+									onClick={() => eventStore.toggleSidebarFilterPriority(priorityKey.toString())}
+								>
+									<i className="fa fa-sticky-note" style={{ color: priorityColor }} />
+									<span>{TranslateService.translate(eventStore, priorityKey.toString())}</span>
+								</div>
+							)}
+						</Observer>
+					);
+				})}
+			</div>
+		);
+
+		const priorityFiltersGroup = createSidebarGroup(
+			<>{priorityFiltersContent}</>,
+			'fa-level-up',
+			SidebarGroups.PRIORITIES_FILTER,
+			TranslateService.translate(eventStore, 'FILTER_BY_PRIORITY'),
+			Object.keys(TriplanPriority).filter((x) => !Number.isNaN(Number(x))).length
+		);
+
+		return (
+			<>
+				<hr className="margin-block-2" />
+				{priorityFiltersGroup}
+			</>
+		);
+	}
+
+	function renderCategoryFilters() {
+		const categoryFiltersContent = (
+			<div className="flex-column gap-8">
+				{eventStore.categories.map((category) => {
+					return (
+						<Observer key={`sidebar-filter-by-category-${category.id}`}>
+							{() => (
+								<div
+									className={getClasses(
+										'flex-row gap-5 align-items-center sidebar-category-filter',
+										eventStore.filterSidebarCategories.get(category.id.toString()) && 'active'
+									)}
+									onClick={() => eventStore.toggleSidebarFilterCategory(category.id.toString())}
+								>
+									<span className="category-icon">{category.icon}</span>
+									<span>{category.title}</span>
+								</div>
+							)}
+						</Observer>
+					);
+				})}
+			</div>
+		);
+
+		const categoryFiltersGroup = createSidebarGroup(
+			<>{categoryFiltersContent}</>,
+			'fa-align-justify',
+			SidebarGroups.CATEGORIES_FILTER,
+			TranslateService.translate(eventStore, 'FILTER_BY_CATEGORY'),
+			eventStore.categories.length
+		);
+
+		return (
+			<>
+				<hr className="margin-block-2" />
+				{categoryFiltersGroup}
+			</>
+		);
+	}
+
+	function renderPreferredTimeFilters() {
+		const preferredTimes = [
+			TriplanEventPreferredTime.morning,
+			TriplanEventPreferredTime.noon,
+			TriplanEventPreferredTime.afternoon,
+			TriplanEventPreferredTime.sunset,
+			TriplanEventPreferredTime.evening,
+			TriplanEventPreferredTime.night,
+			TriplanEventPreferredTime.nevermind,
+			TriplanEventPreferredTime.unset,
+		];
+
+		const timeIcons = {
+			[TriplanEventPreferredTime.morning]: '🌅',
+			[TriplanEventPreferredTime.noon]: '☀️',
+			[TriplanEventPreferredTime.afternoon]: '🌞',
+			[TriplanEventPreferredTime.sunset]: '🌇',
+			[TriplanEventPreferredTime.evening]: '🌠',
+			[TriplanEventPreferredTime.night]: '🌃',
+			[TriplanEventPreferredTime.nevermind]: '❔',
+			[TriplanEventPreferredTime.unset]: '❓',
+		};
+
+		const preferredTimeFiltersContent = (
+			<div className="flex-column gap-8">
+				{preferredTimes.map((time) => {
+					const timeKey = TriplanEventPreferredTime[time];
+					const icon = timeIcons[time];
+
+					return (
+						<Observer key={`sidebar-filter-by-preferred-time-${timeKey}`}>
+							{() => (
+								<div
+									className={getClasses(
+										'flex-row gap-5 align-items-center sidebar-preferred-time-filter',
+										eventStore.filterSidebarPreferredTimes.get(timeKey) && 'active'
+									)}
+									onClick={() => eventStore.toggleSidebarFilterPreferredTime(timeKey)}
+								>
+									{icon}
+									<span>{TranslateService.translate(eventStore, timeKey.toLowerCase())}</span>
+								</div>
+							)}
+						</Observer>
+					);
+				})}
+			</div>
+		);
+
+		const preferredTimeFiltersGroup = createSidebarGroup(
+			<>{preferredTimeFiltersContent}</>,
+			'fa-clock-o',
+			SidebarGroups.PREFERRED_TIME_FILTER,
+			TranslateService.translate(eventStore, 'FILTER_BY_PREFERRED_TIME'),
+			preferredTimes.length
+		);
+
+		return (
+			<>
+				<hr className="margin-block-2" />
+				{preferredTimeFiltersGroup}
+			</>
+		);
+	}
+
+	return (
+		<div className="external-collapse">
+			<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
+				<i
+					className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
+					aria-hidden="true"
+				/>
+				<span>
+					<i className="fa fa-filter" aria-hidden="true" />
+					&nbsp;
+					{TranslateService.translate(eventStore, 'FILTER_BY')}
+				</span>
+			</div>
+			<div
+				className="external-collapse-inner"
+				style={{
+					display: isOpen ? 'block' : 'none',
+				}}
+			>
+				<div className="padding-10">
+					{renderPriorityFilters()}
+					{renderCategoryFilters()}
+					{renderPreferredTimeFilters()}
+				</div>
+			</div>
+		</div>
+	);
+});
 
 export default observer(TriplanSidebarCollapsableMenu);

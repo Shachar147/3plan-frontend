@@ -1,4 +1,3 @@
-import TriplanSearch from '../../triplan-header/triplan-search/triplan-search';
 import TranslateService from '../../../services/translate-service';
 import Button, { ButtonFlavor } from '../../common/button/button';
 import {
@@ -12,7 +11,7 @@ import {
 } from '../../../utils/utils';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../../utils/interfaces';
 import ReactModalService from '../../../services/react-modal-service';
-import React, { CSSProperties, useContext } from 'react';
+import React, { CSSProperties, useContext, useEffect, useMemo, useRef } from 'react';
 import { eventStoreContext } from '../../../stores/events-store';
 import { GoogleTravelMode, prioritiesOrder, TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
 import { modalsStoreContext } from '../../../stores/modals-store';
@@ -20,10 +19,8 @@ import './triplan-sidebar-categories.scss';
 import { renderLineWithText } from '../../../utils/ui-utils';
 import TriplanSidebarDraggableEvent from '../sidebar-draggable-event/triplan-sidebar-draggable-event';
 import { observer } from 'mobx-react';
-import { rootStoreContext } from '../../../v2/stores/root-store';
 import SidebarSearch from '../sidebar-search/sidebar-search';
 import { priorityToColor } from '../../../utils/consts';
-import { toJS } from 'mobx';
 
 interface TriplanSidebarCategoriesProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -38,7 +35,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	const modalsStore = useContext(modalsStoreContext);
 
 	// Store previous threshold values to detect changes
-	const prevThresholdValues = React.useRef({
+	const prevThresholdValues = useRef({
 		driving: eventStore.sidebarSettings.get('area-driving-threshold') || 10,
 		walking: eventStore.sidebarSettings.get('area-walking-threshold') || 20,
 	});
@@ -46,22 +43,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	// Memoize area calculation to prevent frequent recalculations
 	const [recalculateAreas, setRecalculateAreas] = React.useState(0);
 	const [isRecalculating, setIsRecalculating] = React.useState(false);
-	const areasMapMemoized = React.useMemo(() => {
-		// This will only run when the areas need to be recalculated
-		const currDriving = eventStore.sidebarSettings.get('area-driving-threshold') || 10;
-		const currWalking = eventStore.sidebarSettings.get('area-walking-threshold') || 20;
-
-		// Update the previous values
-		prevThresholdValues.current = {
-			driving: currDriving,
-			walking: currWalking,
-		};
-
-		return null; // We're not actually storing the areas here, just forcing a recalculation
-	}, [recalculateAreas, eventStore.sidebarGroupBy === 'area']);
 
 	// Set up effect to detect threshold changes
-	React.useEffect(() => {
+	useEffect(() => {
 		if (eventStore.sidebarGroupBy !== 'area') return;
 
 		const drivingThreshold = eventStore.sidebarSettings.get('area-driving-threshold') || 10;
@@ -246,12 +230,8 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	}
 
 	function renderAreas() {
-		// Include the recalculateAreas in dependencies - this is a no-op but forces
-		// React to re-render this component when thresholds change
-		React.useMemo(() => {
-			// This is just to make sure the function re-runs when recalculateAreas changes
-			return null;
-		}, [recalculateAreas]);
+		// to assure it's recalculating when this counter changes
+		console.log(recalculateAreas);
 
 		// Calculate areas based on distance results
 		const areasMap = new Map<string, SidebarEvent[]>();
@@ -798,13 +778,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	};
 
 	const renderPreferredHourEvents = (categoryId: number, events: SidebarEvent[]) => {
-		const order = [
-			TriplanPriority.unset,
-			TriplanPriority.must,
-			TriplanPriority.high,
-			TriplanPriority.maybe,
-			TriplanPriority.least,
-		];
+		const order = prioritiesOrder;
 
 		events = events
 			.map((event) => {
@@ -848,13 +822,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	};
 
 	const renderPreferredHourEventsByPriority = (priority: TriplanPriority, events: SidebarEvent[]) => {
-		const order = [
-			TriplanPriority.unset,
-			TriplanPriority.must,
-			TriplanPriority.high,
-			TriplanPriority.maybe,
-			TriplanPriority.least,
-		];
+		const order = prioritiesOrder;
 
 		events = events.sort((a, b) => {
 			let A = order.indexOf(Number(a.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
@@ -893,13 +861,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	};
 
 	const renderScheduledEvents = (categoryId: number, events: CalendarEvent[]) => {
-		const order = [
-			TriplanPriority.unset,
-			TriplanPriority.must,
-			TriplanPriority.high,
-			TriplanPriority.maybe,
-			TriplanPriority.least,
-		];
+		const order = prioritiesOrder;
 
 		events = events
 			.map((event) => {
@@ -965,13 +927,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	};
 
 	const renderScheduledEventsByPriority = (priority: TriplanPriority, events: CalendarEvent[]) => {
-		const order = [
-			TriplanPriority.unset,
-			TriplanPriority.must,
-			TriplanPriority.high,
-			TriplanPriority.maybe,
-			TriplanPriority.least,
-		];
+		const order = prioritiesOrder;
 
 		events = events.sort((a, b) => {
 			let A = order.indexOf(Number(a.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
