@@ -29,6 +29,27 @@ interface TriplanSidebarCategoriesProps {
 	addEventToSidebar: (event: SidebarEvent) => boolean;
 }
 
+// Area colors array to match the map component coloring
+const areaColors = [
+	'#4285F4', // Blue
+	'#EA4335', // Red
+	'#FBBC05', // Yellow
+	'#34A853', // Green
+	'#8E24AA', // Purple
+	'#F06292', // Pink
+	'#FF5722', // Deep Orange
+	'#03A9F4', // Light Blue
+	'#009688', // Teal
+	'#9E9E9E', // Grey
+	'#3F51B5', // Indigo
+	'#795548', // Brown
+	'#607D8B', // Blue Grey
+	'#673AB7', // Deep Purple
+	'#FFC107', // Amber
+	'#00BCD4', // Cyan
+	'#FF9800', // Orange
+];
+
 function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	const { removeEventFromSidebarById, addToEventsToCategories, TriplanCalendarRef } = props;
 	const eventStore = useContext(eventStoreContext);
@@ -47,6 +68,98 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	// Add these new states at the top of the component, with other states
 	const [editingAreaName, setEditingAreaName] = React.useState<string | null>(null);
 	const [editingValue, setEditingValue] = React.useState('');
+
+	// Function to get area color for consistent sidebar and map display
+	const getAreaIconColor = (areaEvents: SidebarEvent[]) => {
+		// For empty areas, use a default color
+		if (!areaEvents || areaEvents.length === 0) {
+			return '#9E9E9E'; // Grey
+		}
+
+		// Get all filtered sidebar events
+		const allEvents = eventStore.allEventsFilteredComputed;
+
+		// Create area groups just like in the map component
+		const areaGroups: SidebarEvent[][] = [];
+
+		// Add current area to the groups
+		areaGroups.push(areaEvents);
+
+		// Get all other area groups from the areas map
+		const areasMap = new Map<string, SidebarEvent[]>();
+
+		// Group events without location
+		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
+		areasMap.set(
+			noLocationText,
+			allEvents.filter((e) => !e.location || (typeof e.location === 'string' && e.location === ''))
+		);
+
+		// Group events by proximity based on distance results
+		if (eventStore.distanceResults && eventStore.distanceResults.size > 0) {
+			// Get events with location that aren't in the current area
+			const eventsWithLocation = allEvents.filter(
+				(e) =>
+					e.location &&
+					typeof e.location !== 'string' &&
+					e.location.latitude != null &&
+					e.location.longitude != null &&
+					!areaEvents.some((ae) => ae.id === e.id)
+			);
+
+			// Process each area in the DOM and add its events to areaGroups
+			const areaElements = document.querySelectorAll('.sidebar-statistics.sidebar-group');
+			areaElements.forEach((areaElement) => {
+				// Get the events container for this area
+				const eventsContainer = areaElement.nextElementSibling;
+				if (!eventsContainer) return;
+
+				// Extract event IDs from the DOM
+				const eventElements = eventsContainer.querySelectorAll('.fc-event[data-id]');
+				const areaEventIds = Array.from(eventElements)
+					.map((el) => (el as HTMLElement).getAttribute('data-id'))
+					.filter(Boolean);
+
+				// Find the corresponding events
+				const areaGroupEvents = allEvents.filter((e) => areaEventIds.includes(e.id.toString()));
+
+				// If this isn't the current area and has events, add to areaGroups
+				const areaKey = areaGroupEvents
+					.map((e) => e.id)
+					.sort()
+					.join(',');
+				const currentAreaKey = areaEvents
+					.map((e) => e.id)
+					.sort()
+					.join(',');
+				if (areaKey !== currentAreaKey && areaGroupEvents.length > 0) {
+					areaGroups.push(areaGroupEvents);
+				}
+			});
+		}
+
+		// Sort areas by number of events
+		const sortedAreaGroups = [...areaGroups].sort((a, b) => b.length - a.length);
+
+		// Find index of current area in the sorted groups
+		const currentAreaKey = areaEvents
+			.map((e) => e.id)
+			.sort()
+			.join(',');
+		const areaIndex = sortedAreaGroups.findIndex(
+			(area) =>
+				area
+					.map((e) => e.id)
+					.sort()
+					.join(',') === currentAreaKey
+		);
+
+		// Use the same fixed color order as the map
+		console.log(
+			`Area with ${areaEvents.length} events has index ${areaIndex} out of ${sortedAreaGroups.length} areas`
+		);
+		return areaColors[areaIndex % areaColors.length];
+	};
 
 	// Set up effect to detect threshold changes
 	useEffect(() => {
@@ -304,13 +417,13 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 	function renderAreas() {
 		// Calculate areas based on distance results
-		const areasMap = new Map<string, SidebarEvent[]>();
+		const areas = new Map<string, SidebarEvent[]>();
 		const sidebarEvents = eventStore.allEventsFilteredComputed;
 
 		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
 
 		// Default area for events without location
-		areasMap.set(
+		areas.set(
 			noLocationText,
 			sidebarEvents.filter(
 				(event) => !event.location || (typeof event.location === 'string' && event.location === '')
@@ -333,7 +446,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				let foundCluster = false;
 
 				// Try to add to existing clusters
-				for (const [areaName, areaEvents] of Array.from(areasMap.entries())) {
+				for (const [areaName, areaEvents] of Array.from(areas.entries())) {
 					if (areaName === noLocationText) continue;
 
 					// Check if this event is close to any event in this cluster
@@ -406,9 +519,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				// If event doesn't fit any cluster, create a new one
 				if (!foundCluster) {
 					const areaName = TranslateService.translate(eventStore, 'AREA_X', {
-						X: areasMap.size,
+						X: areas.size,
 					});
-					areasMap.set(areaName, [event]);
+					areas.set(areaName, [event]);
 				}
 			}
 		} else {
@@ -444,7 +557,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				if (location) {
 					// Only use first 15 chars of location as area name
 					const shortLocation = location.length > 15 ? location.substring(0, 15) + '...' : location;
-					areasMap.set(shortLocation, events);
+					areas.set(shortLocation, events);
 				}
 			});
 		}
@@ -460,7 +573,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const borderStyle = '1px solid rgba(0, 0, 0, 0.05)';
 
 		// Sort areas by number of events (most to least)
-		const sortedAreas = Array.from(areasMap.entries()).sort((a, b) => {
+		const sortedAreas = Array.from(areas.entries()).sort((a, b) => {
 			// [0] is area name, [1] is array of events
 			return b[1].length - a[1].length;
 		});
@@ -557,7 +670,13 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 									aria-hidden="true"
 								/>
 								<span className="flex-row align-items-center gap-5">
-									<i className="fa fa-map-marker" aria-hidden="true" />
+									<i
+										className="fa fa-map-marker"
+										aria-hidden="true"
+										style={{
+											color: getAreaIconColor(areaEvents),
+										}}
+									/>
 									&nbsp;
 									{editingAreaName === defaultAreaName ? (
 										<input

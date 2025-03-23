@@ -17,7 +17,14 @@ import { eventStoreContext } from '../../stores/events-store';
 import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
 import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
-import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../../utils/enums';
+import {
+	MapViewMode,
+	TripDataSource,
+	TriplanEventPreferredTime,
+	TriplanPriority,
+	ViewMode,
+	GoogleTravelMode,
+} from '../../utils/enums';
 import {
 	BuildEventUrl,
 	getClasses,
@@ -42,6 +49,7 @@ import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
 import Button, { ButtonFlavor } from '../common/button/button';
 import { LimitationsService } from '../../utils/limitations';
+import { getCoordinatesRangeKey } from '../../utils/utils';
 
 interface MarkerProps {
 	text?: string;
@@ -215,6 +223,34 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		}
 	}, [searchValue]);
 
+	// Refresh markers when view mode, sidebar grouping, or distance thresholds change
+	useEffect(() => {
+		if (googleMapRef && googleRef) {
+			console.log(
+				`Map view mode changed to ${eventStore.mapViewMode} or sidebar grouping changed to ${eventStore.sidebarGroupBy} or thresholds changed, refreshing markers`
+			);
+
+			// Remove existing markers from the map
+			if (markers && markers.length > 0) {
+				markers.forEach((marker) => marker.setMap(null));
+				markers = [];
+			}
+
+			// Reinitialize markers with new colors/grouping after a short delay
+			setTimeout(() => {
+				initMarkers(googleMapRef);
+				// Also update the marker cluster
+				updateMarkerCluster(googleMapRef);
+				console.log(`Markers refreshed, total markers: ${markers.length}`);
+			}, 100);
+		}
+	}, [
+		eventStore.mapViewMode,
+		eventStore.sidebarGroupBy,
+		eventStore.sidebarSettings.get('area-driving-threshold'),
+		eventStore.sidebarSettings.get('area-walking-threshold'),
+	]);
+
 	// --- functions --------------------------------------------------------------------
 	const addressPrefix = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.ADDRESS');
 	const descriptionPrefix = TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.DESCRIPTION');
@@ -380,9 +416,217 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	};
 
 	const initMarkers = (map = googleMapRef) => {
+		// Declare necessary functions to avoid linter errors
+		const clearSearch = () => {};
+
+		// Define a set of distinct colors for areas in specific order - EXACTLY match sidebar colors
+		const areaColors = [
+			'4285F4', // Blue - largest area
+			'EA4335', // Red - second largest
+			'FBBC05', // Gold/Yellow - third largest
+			'34A853', // Green - fourth largest
+			'8E24AA', // Purple
+			'F06292', // Pink
+			'FF5722', // Deep Orange
+			'03A9F4', // Light Blue
+			'009688', // Teal
+			'9E9E9E', // Grey
+			'3F51B5', // Indigo
+			'795548', // Brown
+			'607D8B', // Blue Grey
+			'673AB7', // Deep Purple
+			'FFC107', // Amber
+			'00BCD4', // Cyan
+			'FF9800', // Orange
+		];
+
+		// Modify the getAreaColor function to match sidebar color selection exactly
+		const getAreaColor = (event: any) => {
+			// For events without location, use gray
+			if (!event.location || (typeof event.location === 'string' && event.location === '')) {
+				return '9E9E9E'; // Grey for no location
+			}
+
+			// Get all events for grouping
+			const allEvents = props.allEvents || eventStore.allEventsFilteredComputed;
+
+			// Find the area this event belongs to based on either sidebarGroupBy or mapViewMode
+			if (eventStore.sidebarGroupBy === 'area' || eventStore.mapViewMode === MapViewMode.AREAS) {
+				// Step 1: Get all events with location data
+				const eventsWithLocation = allEvents.filter(
+					(e) =>
+						e.location &&
+						typeof e.location !== 'string' &&
+						e.location.latitude != null &&
+						e.location.longitude != null
+				);
+
+				// Step 2: Create area groups based on proximity
+				const areaGroups: { id: number; eventIds: string[]; events: any[] }[] = [];
+				let nextAreaId = 0;
+
+				// Helper function to check if two events are in proximity
+				const areEventsInProximity = (eventA: any, eventB: any): boolean => {
+					try {
+						const loc1 = {
+							lat: eventA.location.latitude,
+							lng: eventA.location.longitude,
+							eventName: eventA.title,
+						};
+
+						const loc2 = {
+							lat: eventB.location.latitude,
+							lng: eventB.location.longitude,
+							eventName: eventB.title,
+						};
+
+						// If it's the same event, it's in the same area
+						if (eventA.id === eventB.id) {
+							return true;
+						}
+
+						const distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
+						const distanceKey2 = getCoordinatesRangeKey(GoogleTravelMode.WALKING, loc1, loc2);
+						const distanceA = eventStore.distanceResults.get(distanceKey);
+						const distanceB = eventStore.distanceResults.get(distanceKey2);
+
+						// Get threshold values with fallbacks
+						const drivingThresholdMinutes = Number(
+							eventStore.sidebarSettings.get('area-driving-threshold') || 10
+						);
+						const walkingThresholdMinutes = Number(
+							eventStore.sidebarSettings.get('area-walking-threshold') || 20
+						);
+
+						// Convert minutes to seconds
+						const drivingThresholdSeconds = drivingThresholdMinutes * 60;
+						const walkingThresholdSeconds = walkingThresholdMinutes * 60;
+
+						// Check if events are within thresholds
+						const drivingProximity =
+							distanceA &&
+							distanceA.duration_value &&
+							Number(distanceA.duration_value) <= drivingThresholdSeconds;
+						const walkingProximity =
+							distanceB &&
+							distanceB.duration_value &&
+							Number(distanceB.duration_value) <= walkingThresholdSeconds;
+
+						return drivingProximity || walkingProximity;
+					} catch (error) {
+						console.warn(`Error checking proximity between ${eventA.title} and ${eventB.title}:`, error);
+						return false;
+					}
+				};
+
+				// Process each event to create area groups
+				for (const currentEvent of eventsWithLocation) {
+					// Skip events without proper location
+					if (
+						!currentEvent.location ||
+						typeof currentEvent.location === 'string' ||
+						!currentEvent.location.latitude ||
+						!currentEvent.location.longitude
+					) {
+						continue;
+					}
+
+					// Check if this event belongs to any existing area
+					let matchingAreas: number[] = [];
+
+					for (let i = 0; i < areaGroups.length; i++) {
+						const area = areaGroups[i];
+						// Check if the current event is in proximity to any event in this area
+						const isInProximity = area.events.some((areaEvent) =>
+							areEventsInProximity(currentEvent, areaEvent)
+						);
+
+						if (isInProximity) {
+							matchingAreas.push(i);
+						}
+					}
+
+					if (matchingAreas.length === 0) {
+						// Create new area if no matching areas
+						areaGroups.push({
+							id: nextAreaId++,
+							eventIds: [currentEvent.id.toString()],
+							events: [currentEvent],
+						});
+					} else if (matchingAreas.length === 1) {
+						// Add to existing area if only one match
+						const areaIdx = matchingAreas[0];
+						areaGroups[areaIdx].eventIds.push(currentEvent.id.toString());
+						areaGroups[areaIdx].events.push(currentEvent);
+					} else {
+						// Merge all matching areas
+						const primaryAreaIdx = matchingAreas[0];
+						const mergedEventIds = [...areaGroups[primaryAreaIdx].eventIds];
+						const mergedEvents = [...areaGroups[primaryAreaIdx].events];
+
+						// Add current event
+						mergedEventIds.push(currentEvent.id.toString());
+						mergedEvents.push(currentEvent);
+
+						// Add all events from other areas
+						for (let i = 1; i < matchingAreas.length; i++) {
+							const otherAreaIdx = matchingAreas[i];
+							mergedEventIds.push(...areaGroups[otherAreaIdx].eventIds);
+							mergedEvents.push(...areaGroups[otherAreaIdx].events);
+						}
+
+						// Update primary area
+						areaGroups[primaryAreaIdx] = {
+							id: areaGroups[primaryAreaIdx].id,
+							eventIds: Array.from(new Set(mergedEventIds)), // Remove duplicates
+							events: mergedEvents,
+						};
+
+						// Remove other areas (in reverse order to avoid index issues)
+						for (let i = matchingAreas.length - 1; i > 0; i--) {
+							areaGroups.splice(matchingAreas[i], 1);
+						}
+					}
+				}
+
+				// Step 3: Sort areas strictly by the number of events (largest first)
+				const sortedAreaGroups = [...areaGroups].sort((a, b) => b.eventIds.length - a.eventIds.length);
+
+				// Log the areas for debugging
+				console.log(
+					`Found ${sortedAreaGroups.length} areas sorted by size:`,
+					sortedAreaGroups.map((area) => ({
+						id: area.id,
+						eventCount: area.eventIds.length,
+						events: area.eventIds.join(','),
+					}))
+				);
+
+				// Step 4: Find which area this event belongs to and assign color by index
+				for (let i = 0; i < sortedAreaGroups.length; i++) {
+					const area = sortedAreaGroups[i];
+					if (area.eventIds.includes(event.id.toString())) {
+						// EXACTLY match the sidebar's color assignment
+						const colorIndex = i % areaColors.length;
+						const color = areaColors[colorIndex];
+						console.log(
+							`Event ${event.id} (${event.title}) is in area #${area.id} with ${area.eventIds.length} events - assigning color ${color} (index ${colorIndex})`
+						);
+						return color;
+					}
+				}
+			}
+
+			// Default to priority color if no area is found
+			return priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+		};
+
 		const getIconUrl = (event: any) => {
 			let icon = '';
-			let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+			let bgColor =
+				eventStore.mapViewMode === MapViewMode.AREAS
+					? getAreaColor(event)
+					: priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
 			let category: string = props.allEvents
 				? event.category
 				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
@@ -477,7 +721,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		};
 
 		const getIconUrlByIdx = (event: any, idx: number) => {
-			const bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+			const bgColor =
+				eventStore.mapViewMode === MapViewMode.AREAS
+					? getAreaColor(event)
+					: priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1738-blank-sequence_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0&color=ffffffff&psize=15&text=${idx}`;
 		};
 
@@ -587,6 +834,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				showEventOnMap(eventId);
 			}, 1500);
 		}
+
+		// Update the marker clusters with the new markers
+		if (googleMapRef && googleRef) {
+			updateMarkerCluster(map);
+		}
 	};
 
 	const initMap = (map: any, maps: any) => {
@@ -604,10 +856,26 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			infoWindow.close();
 		});
 
-		markerCluster = new MarkerClusterer(map, [...markers, ...searchMarkers], {
-			imagePath: '/images/marker_images/m',
-			minimumClusterSize: 10,
-		});
+		// Create the marker cluster with the current markers
+		updateMarkerCluster(map);
+	};
+
+	// Create or update the marker cluster
+	const updateMarkerCluster = (map = googleMapRef) => {
+		// Clear existing marker cluster if it exists
+		if (markerCluster) {
+			markerCluster.clearMarkers();
+			markerCluster = null;
+		}
+
+		// Create a new marker cluster with current markers
+		if (map && markers && markers.length > 0) {
+			markerCluster = new MarkerClusterer(map, [...markers], {
+				imagePath: '/images/marker_images/m',
+				minimumClusterSize: 10,
+			});
+			console.log(`Updated marker cluster with ${markers.length} markers`);
+		}
 	};
 
 	const initSearchResultMarker = useMemo(() => {
@@ -1042,6 +1310,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					label: TranslateService.translate(eventStore, 'BY_CATEGORIES_AND_PRIORITIES'),
 					value: MapViewMode.CATEGORIES_AND_PRIORITIES,
 				},
+				{
+					label: TranslateService.translate(eventStore, 'BY_AREAS'),
+					value: MapViewMode.AREAS,
+				},
 				...eventStore.scheduledDaysNames
 					.map((dayName) => ({
 						label: TranslateService.translate(eventStore, 'CHRONOLOGICAL_ORDER', {
@@ -1067,12 +1339,30 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 						}
 						onChange={(data: any) => {
 							runInAction(() => {
+								const previousMode = eventStore.mapViewMode;
+
 								if (data.value == MapViewMode.CATEGORIES_AND_PRIORITIES) {
-									eventStore.mapViewMode = data.value;
+									eventStore.setMapViewMode(data.value);
 								} else {
 									const parts = data.value.split(SEPARATOR);
-									eventStore.mapViewMode = parts[0];
-									eventStore.mapViewDayFilter = parts[1];
+									eventStore.setMapViewMode(parts[0], parts[1]);
+								}
+
+								// Force markers to refresh immediately when view mode changes
+								if (previousMode !== eventStore.mapViewMode && googleMapRef) {
+									console.log(
+										`Map view mode changed from ${previousMode} to ${eventStore.mapViewMode}, refreshing markers`
+									);
+
+									// Clear current markers
+									markers.forEach((marker) => marker.setMap(null));
+									markers = [];
+
+									// Reinitialize markers with new colors/grouping
+									initMarkers(googleMapRef);
+									// Also update the marker cluster
+									updateMarkerCluster(googleMapRef);
+									console.log(`Markers refreshed for ${eventStore.mapViewMode} mode`);
 								}
 							});
 						}}

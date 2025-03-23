@@ -34,6 +34,8 @@ export class LocalStorageService implements BaseDataHandler {
 	CONTINUE_AS_GUEST_MODAL_LS_KEY = 'triplan-hide-continue-as-guest-modal';
 	LAST_MOBILE_VIEW_MODE = 'triplan-last-mobile-view-mode';
 	LAST_VIEW_MODE = 'triplan-last-view-mode';
+	LAST_MAP_VIEW_MODE = 'triplan-last-map-view-mode';
+	LAST_MAP_VIEW_DAY_FILTER = 'triplan-last-map-view-day-filter';
 
 	getDataSourceName() {
 		return TripDataSource.LOCAL;
@@ -340,5 +342,25 @@ export class LocalStorageService implements BaseDataHandler {
 			this.setLastMobileViewMode(defaultView);
 		}
 		return localStorage.getItem(this.LAST_MOBILE_VIEW_MODE) as ViewMode;
+	}
+
+	setLastMapViewMode(mapViewMode: string) {
+		localStorage.setItem(this.LAST_MAP_VIEW_MODE, mapViewMode);
+	}
+
+	getLastMapViewMode(defaultMode: string): string {
+		const lsValue = localStorage.getItem(this.LAST_MAP_VIEW_MODE);
+		if (!lsValue) return defaultMode;
+		return lsValue;
+	}
+
+	setLastMapViewDayFilter(dayFilter: string | undefined) {
+		localStorage.setItem(this.LAST_MAP_VIEW_DAY_FILTER, dayFilter || '');
+	}
+
+	getLastMapViewDayFilter(): string | undefined {
+		const lsValue = localStorage.getItem(this.LAST_MAP_VIEW_DAY_FILTER);
+		if (!lsValue) return undefined;
+		return lsValue === '' ? undefined : lsValue;
 	}
 }

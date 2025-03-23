@@ -141,8 +141,10 @@ export class EventStore {
 	@observable filterOutPriorities = observable.map({});
 	@observable hideScheduled: boolean = false;
 	@observable hideUnScheduled: boolean = false;
-	@observable mapViewMode: MapViewMode = MapViewMode.CATEGORIES_AND_PRIORITIES;
-	@observable mapViewDayFilter: string | undefined;
+	@observable mapViewMode: MapViewMode = DataServices.LocalStorageService.getLastMapViewMode(
+		MapViewMode.CATEGORIES_AND_PRIORITIES
+	);
+	@observable mapViewDayFilter: string | undefined = DataServices.LocalStorageService.getLastMapViewDayFilter();
 
 	// sidebar settings
 	@observable filterSidebarPriorities = observable.map({});
@@ -2111,6 +2113,16 @@ export class EventStore {
 		} catch (error) {
 			console.error('Error saving custom area names to localStorage:', error);
 		}
+	}
+
+	@action
+	setMapViewMode(newMode: MapViewMode, dayFilter?: string) {
+		this.mapViewMode = newMode;
+		this.mapViewDayFilter = dayFilter;
+
+		// Save to localStorage
+		DataServices.LocalStorageService.setLastMapViewMode(newMode);
+		DataServices.LocalStorageService.setLastMapViewDayFilter(dayFilter);
 	}
 }
 
