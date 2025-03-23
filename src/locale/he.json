@@ -1217,5 +1217,7 @@
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_CATEGORIES.FILTER_TAG": "סינון תפריט צד לפי קטגוריה",
 	"SETTINGS": "הגדרות",
 	"NO_LOCATION": "ללא מיקום",
-	"AREA_X": "אזור {X}"
+	"AREA_X": "אזור {X}",
+	"EDIT_AREA_NAME": "ערוך שם אזור",
+	"AREA_CUSTOM_NAME_PLACEHOLDER": "הכנס שם מותאם אישית לאזור"
 }

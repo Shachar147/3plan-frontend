@@ -44,6 +44,10 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	const [recalculateAreas, setRecalculateAreas] = React.useState(0);
 	const [isRecalculating, setIsRecalculating] = React.useState(false);
 
+	// Add these new states at the top of the component, with other states
+	const [editingAreaName, setEditingAreaName] = React.useState<string | null>(null);
+	const [editingValue, setEditingValue] = React.useState('');
+
 	// Set up effect to detect threshold changes
 	useEffect(() => {
 		if (eventStore.sidebarGroupBy !== 'area') return;
@@ -59,19 +63,69 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			// Show recalculating indicator
 			setIsRecalculating(true);
 
-			// Debounce the recalculation
+			// Update the previous values immediately
+			prevThresholdValues.current = {
+				driving: drivingThreshold,
+				walking: walkingThreshold,
+			};
+
+			// Use a setTimeout with a safety mechanism to ensure loading indicator is removed
 			const timerId = setTimeout(() => {
+				// Trigger the recalculation
 				setRecalculateAreas((prev) => prev + 1);
-				// Hide the indicator after calculation is done
+
+				// Ensure loading indicator is removed
 				setIsRecalculating(false);
+
+				// Clean up orphaned area names when thresholds change
+				try {
+					eventStore.cleanupOrphanedAreaNames();
+				} catch (error) {
+					console.error('Error cleaning up area names:', error);
+				}
 			}, 300);
 
-			return () => clearTimeout(timerId);
+			// Add safety timeout to clear loading state if something goes wrong
+			const safetyTimerId = setTimeout(() => {
+				if (isRecalculating) {
+					setIsRecalculating(false);
+				}
+			}, 2000);
+
+			return () => {
+				clearTimeout(timerId);
+				clearTimeout(safetyTimerId);
+			};
 		}
 	}, [
 		eventStore.sidebarSettings.get('area-driving-threshold'),
 		eventStore.sidebarSettings.get('area-walking-threshold'),
 		eventStore.sidebarGroupBy,
+	]);
+
+	// Check if we need to recalculate areas
+	useEffect(() => {
+		if (eventStore.sidebarGroupBy !== 'area' || !eventStore.distanceResults.size) return;
+
+		setIsRecalculating(true);
+
+		// Using setTimeout to allow the UI to update before recalculating
+		setTimeout(() => {
+			try {
+				// Force re-render of the component
+				setRecalculateAreas((prev) => prev);
+			} catch (error) {
+				console.error('Error calculating areas:', error);
+			} finally {
+				setIsRecalculating(false);
+			}
+		}, 0);
+	}, [
+		eventStore.distanceResults.size,
+		recalculateAreas,
+		eventStore.sidebarGroupBy,
+		eventStore.calendarEvents.length,
+		eventStore.isFiltered,
 	]);
 
 	function renderExpandCollapse() {
@@ -82,40 +136,42 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				: eventStore.categories.length > 0;
 
 		return (
-			<div className="category-actions">
-				<Button
-					disabled={!expandMinimizedEnabled}
-					flavor={ButtonFlavor.link}
-					onClick={eventStore.openAllCategories.bind(eventStore)}
-					icon="fa-plus-square-o"
-					text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
-				/>
-				<div className="sidebar-statistics padding-0">{` | `}</div>
-				<Button
-					disabled={!expandMinimizedEnabled}
-					flavor={ButtonFlavor.link}
-					className="padding-inline-start-10"
-					onClick={eventStore.closeAllCategories.bind(eventStore)}
-					icon="fa-minus-square-o"
-					text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
-				/>
-				<div className="sidebar-statistics padding-0">{` | `}</div>
-				<Button
-					className={getClasses(
-						'padding-inline-10',
-						(eventStore.hideEmptyCategories || eventStore.isFiltered) && 'blue-color'
-					)}
-					onClick={() => eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories)}
-					disabled={eventStore.isFiltered}
-					disabledReason={TranslateService.translate(eventStore, 'ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN')}
-					flavor={ButtonFlavor.link}
-					icon={eyeIcon}
-					text={TranslateService.translate(
-						eventStore,
-						!eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES'
-					)}
-				/>
-			</div>
+			<>
+				<div className="category-actions">
+					<Button
+						disabled={!expandMinimizedEnabled}
+						flavor={ButtonFlavor.link}
+						onClick={eventStore.openAllCategories.bind(eventStore)}
+						icon="fa-plus-square-o"
+						text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
+					/>
+					<div className="sidebar-statistics padding-0">{` | `}</div>
+					<Button
+						disabled={!expandMinimizedEnabled}
+						flavor={ButtonFlavor.link}
+						className="padding-inline-start-10"
+						onClick={eventStore.closeAllCategories.bind(eventStore)}
+						icon="fa-minus-square-o"
+						text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
+					/>
+					<div className="sidebar-statistics padding-0">{` | `}</div>
+					<Button
+						className={getClasses(
+							'padding-inline-10',
+							(eventStore.hideEmptyCategories || eventStore.isFiltered) && 'blue-color'
+						)}
+						onClick={() => eventStore.setHideEmptyCategories(!eventStore.hideEmptyCategories)}
+						disabled={eventStore.isFiltered}
+						disabledReason={TranslateService.translate(eventStore, 'ON_FILTER_EMPTY_CATEGORIES_ARE_HIDDEN')}
+						flavor={ButtonFlavor.link}
+						icon={eyeIcon}
+						text={TranslateService.translate(
+							eventStore,
+							!eventStore.hideEmptyCategories ? 'SHOW_EMPTY_CATEGORIES' : 'HIDE_EMPTY_CATEGORIES'
+						)}
+					/>
+				</div>
+			</>
 		);
 	}
 
@@ -229,10 +285,24 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		);
 	}
 
-	function renderAreas() {
-		// to assure it's recalculating when this counter changes
-		console.log(recalculateAreas);
+	// Generate the area key consistently
+	const generateAreaKey = (areaEvents: any[]) => {
+		try {
+			// Use the EventStore's generateAreaKey method if available
+			if (eventStore.generateAreaKey) {
+				return eventStore.generateAreaKey(areaEvents);
+			}
 
+			// Fallback: generate key directly
+			const eventIds = areaEvents.map((event) => event.id).sort();
+			return 'events_' + eventIds.join('|');
+		} catch (error) {
+			console.error('Error generating area key in sidebar:', error);
+			return '';
+		}
+	};
+
+	function renderAreas() {
 		// Calculate areas based on distance results
 		const areasMap = new Map<string, SidebarEvent[]>();
 		const sidebarEvents = eventStore.allEventsFilteredComputed;
@@ -395,9 +465,45 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			return b[1].length - a[1].length;
 		});
 
+		// Handler for saving edited area name
+		const handleSaveAreaName = (areaEvents: any[]) => {
+			if (!editingValue) return;
+
+			try {
+				// Generate a consistent area key from the area events
+				const eventIds = areaEvents.map((event) => event.id).sort();
+
+				// Use the EventStore's generateAreaKey method if available
+				const areaKey = generateAreaKey(areaEvents);
+
+				// Save the custom name
+				eventStore.customAreaNames.set(areaKey, editingValue);
+				eventStore.saveCustomAreaNames();
+
+				// Reset editing state
+				setEditingAreaName(null);
+				setEditingValue('');
+			} catch (error) {
+				console.error('Error saving area name:', error);
+			}
+		};
+
+		// Handler for handling key press in the input field
+		const handleKeyPress = (event: React.KeyboardEvent, areaEvents: SidebarEvent[]) => {
+			if (event.key === 'Enter') {
+				handleSaveAreaName(areaEvents);
+			}
+		};
+
+		// Handler for starting name edit
+		const handleStartEditing = (areaName: string, customName: string) => {
+			setEditingAreaName(areaName);
+			setEditingValue(customName);
+		};
+
 		return (
 			<>
-				{sortedAreas.map(([areaName, areaEvents], index) => {
+				{sortedAreas.map(([defaultAreaName, areaEvents], index) => {
 					const sidebarItemsCount = eventStore.allSidebarEvents.filter((s) =>
 						areaEvents.map((e) => e.id).includes(s.id)
 					).length;
@@ -418,12 +524,21 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 						transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
 					};
 
+					// Look up the custom area name for this group of events
+					const areaKey = generateAreaKey(areaEvents);
+
+					// Get the custom name directly from the observable map
+					const customAreaName = eventStore.customAreaNames.get(areaKey);
+
+					// Determine the area name to display
+					const areaNameToDisplay = customAreaName || defaultAreaName;
+
 					// Cast areaName to string type for openCategories.has()
-					const isOpen = eventStore.openCategories.has(areaName as any);
+					const isOpen = eventStore.openCategories.has(defaultAreaName as any);
 					const eventsStyle = isOpen ? openStyle : closedStyle;
 
 					return (
-						<div className="external-events" key={areaName}>
+						<div className="external-events" key={defaultAreaName}>
 							<div
 								className="sidebar-statistics sidebar-group"
 								style={{
@@ -432,7 +547,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 								}}
 								onClick={() => {
 									// Cast areaName to any for toggleCategory()
-									eventStore.toggleCategory(areaName as any);
+									eventStore.toggleCategory(defaultAreaName as any);
 								}}
 							>
 								<i
@@ -441,17 +556,53 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 									}
 									aria-hidden="true"
 								/>
-								<span>
+								<span className="flex-row align-items-center gap-5">
 									<i className="fa fa-map-marker" aria-hidden="true" />
 									&nbsp;
-									{areaName}
+									{editingAreaName === defaultAreaName ? (
+										<input
+											type="text"
+											value={editingValue}
+											onChange={(e) => setEditingValue(e.target.value)}
+											onBlur={(e) => handleSaveAreaName(areaEvents)}
+											onKeyPress={(e) => handleKeyPress(e, areaEvents)}
+											onClick={(e) => e.stopPropagation()}
+											placeholder={TranslateService.translate(
+												eventStore,
+												'AREA_CUSTOM_NAME_PLACEHOLDER'
+											)}
+											title={TranslateService.translate(eventStore, 'EDIT_AREA_NAME')}
+											autoFocus
+											style={{
+												width: '150px',
+												padding: '2px 5px',
+												border: '1px solid var(--gray-light)',
+											}}
+										/>
+									) : (
+										<>
+											{areaNameToDisplay}
+											{defaultAreaName !== noLocationText && (
+												<i
+													className="fa fa-pencil cursor-pointer opacity-0-5 opacity-1-hover"
+													aria-hidden="true"
+													onClick={(e) => {
+														e.stopPropagation();
+														handleStartEditing(defaultAreaName, areaNameToDisplay);
+													}}
+													title={TranslateService.translate(eventStore, 'EDIT_AREA_NAME')}
+													style={{ marginLeft: '5px', fontSize: '0.8em' }}
+												/>
+											)}
+										</>
+									)}
 								</span>
 								<div>
 									({sidebarItemsCount}/{itemsCount})
 								</div>
 							</div>
 							<div style={eventsStyle as unknown as CSSProperties}>
-								{renderAreaEvents(areaName, areaEvents)}
+								{renderAreaEvents(defaultAreaName, areaEvents)}
 							</div>
 						</div>
 					);

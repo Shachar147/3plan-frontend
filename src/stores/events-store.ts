@@ -207,6 +207,15 @@ export class EventStore {
 
 	@observable sidebarGroupBy: 'priority' | 'category' | 'area' = 'category';
 
+	// Store custom area names - maps area key (contains sorted event IDs) to custom name
+	@observable customAreaNames = observable.map<string, string>({});
+
+	// Store debounce timer as a class property
+	private sidebarGroupByDebounceTimer: any = null;
+
+	// Add debounceDistanceTimerId property to the class
+	debounceDistanceTimerId: NodeJS.Timeout | null = null;
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {
@@ -243,6 +252,64 @@ export class EventStore {
 		// Set default area grouping thresholds (in minutes)
 		this.sidebarSettings.set('area-driving-threshold', 10); // 10 min driving
 		this.sidebarSettings.set('area-walking-threshold', 20); // 20 min walking
+
+		// Load custom area names from localStorage
+		try {
+			const savedCustomAreaNames = localStorage.getItem('customAreaNames');
+			console.log('Loading custom area names from localStorage', savedCustomAreaNames);
+
+			if (savedCustomAreaNames) {
+				const parsedNames = JSON.parse(savedCustomAreaNames);
+
+				// Check if we need to migrate from old format to new format
+				let needsMigration = false;
+				Object.keys(parsedNames).forEach((key) => {
+					// If the key doesn't start with 'events_' and contains area name information, convert it
+					if (!key.startsWith('events_') && !key.startsWith('area_name_')) {
+						needsMigration = true;
+					}
+				});
+
+				if (needsMigration) {
+					console.log('Migrating custom area names to new format');
+					// Create new format and save it back
+					const newNames: Record<string, string> = {};
+					Object.entries(parsedNames).forEach(([key, value]) => {
+						// If it's not in our expected format, try to convert it
+						if (!key.startsWith('events_') && !key.startsWith('area_name_')) {
+							// Extract event IDs if they exist in the key
+							const match = key.match(/events_([^:]+)/);
+							if (match && match[1]) {
+								const eventIds = match[1].split(/[-|]/).filter(Boolean);
+								if (eventIds.length > 0) {
+									const newKey = 'events_' + eventIds.sort().join('|');
+									newNames[newKey] = value as string;
+								} else {
+									// If we can't extract IDs, keep the original key
+									newNames[key] = value as string;
+								}
+							} else {
+								// If there's no pattern to extract from, keep as is
+								newNames[key] = value as string;
+							}
+						} else {
+							// Already in the right format, keep it
+							newNames[key] = value as string;
+						}
+					});
+
+					// Save the migrated names
+					localStorage.setItem('customAreaNames', JSON.stringify(newNames));
+					this.customAreaNames.replace(newNames);
+					console.log('Migrated custom area names', newNames);
+				} else {
+					// Just load as normal
+					this.customAreaNames.replace(parsedNames);
+				}
+			}
+		} catch (e) {
+			console.error('Failed to load custom area names from localStorage', e);
+		}
 
 		try {
 			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
@@ -1410,6 +1477,9 @@ export class EventStore {
 			this.allEventsTripName = name;
 			runInAction(() => {
 				this.distanceResults = observable.map(newDistanceResults);
+
+				// Clean up orphaned custom area names after loading trip data
+				setTimeout(() => this.cleanupOrphanedAreaNames(), 1000);
 			});
 		}
 
@@ -1522,7 +1592,14 @@ export class EventStore {
 	@action
 	setDistance(key: string, value: DistanceResult) {
 		this.distanceResults.set(key, value);
-		this.dataService.setDistanceResults(this.distanceResults, this.tripName);
+
+		// Convert ObservableMap to a regular object
+		const distanceResultsObj: Record<string, DistanceResult> = {};
+		this.distanceResults.forEach((val, k) => {
+			distanceResultsObj[k] = val;
+		});
+
+		this.dataService.setDistanceResults(distanceResultsObj as any, this.tripName);
 	}
 
 	@action
@@ -1925,6 +2002,115 @@ export class EventStore {
 	setSidebarGroupBy(groupBy: 'priority' | 'category' | 'area') {
 		this.sidebarGroupBy = groupBy;
 		localStorage.setItem('sidebarGroupBy', groupBy);
+	}
+
+	// Check if two areas contain exactly the same events
+	areasContainSameEvents(area1Events: any[], area2Events: any[]): boolean {
+		if (area1Events.length !== area2Events.length) return false;
+
+		const area1Ids = area1Events.map((event) => event.id).sort();
+		const area2Ids = area2Events.map((event) => event.id).sort();
+
+		return area1Ids.join('|') === area2Ids.join('|');
+	}
+
+	// Clear orphaned custom area names that are no longer used
+	@action
+	cleanupOrphanedAreaNames() {
+		try {
+			// Skip if we don't have events loaded yet
+			if (Object.keys(this.sidebarEvents).length === 0) {
+				return;
+			}
+
+			// Get all current valid area keys
+			const validKeys = new Set<string>();
+
+			// Process events with no location - this key should always be kept
+			const noLocationKey = 'NO_LOCATION';
+			validKeys.add(noLocationKey);
+
+			// Get all event IDs in the system for existence checks
+			const allEvents = this.allEventsFilteredComputed;
+			const allEventIds = new Set(allEvents.map((event) => event.id));
+
+			// IMPORTANT: Instead of removing custom area names that don't match current groups,
+			// we'll only remove names if the events in those groups don't exist anymore
+
+			// For each custom area name, check if all events in the key still exist
+			this.customAreaNames.forEach((customName, key) => {
+				// Skip area_name_ keys (they're not tied to specific events)
+				if (key.startsWith('area_name_')) {
+					validKeys.add(key);
+					return;
+				}
+
+				// Extract event IDs from the key
+				if (key.startsWith('events_')) {
+					// Parse the event IDs from the key
+					const eventIdsInKey = key.replace('events_', '').split(/[|,-]/).filter(Boolean);
+
+					// Check if all events in this key still exist in the system
+					const allEventsStillExist = eventIdsInKey.every((id) => allEventIds.has(id));
+
+					// If all events still exist, this is a valid key to keep
+					if (allEventsStillExist) {
+						validKeys.add(key);
+					}
+				}
+			});
+
+			// Remove orphaned area names (keys where some events no longer exist)
+			const keysToRemove: string[] = [];
+			this.customAreaNames.forEach((value, key) => {
+				if (!validKeys.has(key)) {
+					keysToRemove.push(key);
+				}
+			});
+
+			// Remove orphaned keys
+			keysToRemove.forEach((key) => {
+				this.customAreaNames.delete(key);
+			});
+
+			if (keysToRemove.length > 0) {
+				this.saveCustomAreaNames();
+			}
+		} catch (error) {
+			console.error('Error cleaning up area names:', error);
+		}
+	}
+
+	// Generate a consistent area key from an array of events
+	generateAreaKey(events: any[]): string {
+		// Skip if no events provided
+		if (!events || events.length === 0) {
+			return '';
+		}
+
+		try {
+			// Extract event IDs and sort them for consistency
+			const eventIds = events.map((event) => event.id || event).sort();
+
+			// Create the key in format events_id1|id2|id3...
+			const areaKey = 'events_' + eventIds.join('|');
+
+			return areaKey;
+		} catch (error) {
+			console.error('Error generating area key:', error);
+			return '';
+		}
+	}
+
+	// Save custom area names to localStorage
+	@action
+	saveCustomAreaNames() {
+		try {
+			const namesToSave = Object.fromEntries(this.customAreaNames.entries());
+			localStorage.setItem('customAreaNames', JSON.stringify(namesToSave));
+		} catch (error) {
+			console.error('Error saving custom area names to localStorage:', error);
+		}
 	}
 }
 
