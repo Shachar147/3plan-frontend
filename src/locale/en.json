@@ -981,5 +981,6 @@
 	"AREA_X": "Area {X}",
 	"RECALCULATING_AREAS": "Recalculating areas...",
 	"EDIT_AREA_NAME": "Edit Area Name",
-	"AREA_CUSTOM_NAME_PLACEHOLDER": "Enter custom area name"
+	"AREA_CUSTOM_NAME_PLACEHOLDER": "Enter custom area name",
+	"BY_AREAS": "By Areas"
 }

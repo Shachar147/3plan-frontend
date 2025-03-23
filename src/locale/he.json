@@ -1219,5 +1219,6 @@
 	"NO_LOCATION": "ללא מיקום",
 	"AREA_X": "אזור {X}",
 	"EDIT_AREA_NAME": "ערוך שם אזור",
-	"AREA_CUSTOM_NAME_PLACEHOLDER": "הכנס שם מותאם אישית לאזור"
+	"AREA_CUSTOM_NAME_PLACEHOLDER": "הכנס שם מותאם אישית לאזור",
+	"BY_AREAS": "לפי אזורים"
 }
