@@ -2036,7 +2036,7 @@ export class EventStore {
 			);
 
 			// Process events with no location - this key should always be kept
-			const noLocationKey = this.generateAreaKey('NO_LOCATION');
+			const noLocationKey = 'NO_LOCATION';
 			validKeys.add(noLocationKey);
 
 			// Get all event IDs in the system for existence checks
@@ -2097,6 +2097,29 @@ export class EventStore {
 			console.log('Area names after cleanup:', Object.fromEntries(this.customAreaNames.entries()));
 		} catch (error) {
 			console.error('Error cleaning up area names:', error);
+		}
+	}
+
+	// Generate a consistent area key from an array of events
+	generateAreaKey(events: any[]): string {
+		// Skip if no events provided
+		if (!events || events.length === 0) {
+			console.log('No events provided to generateAreaKey');
+			return '';
+		}
+
+		try {
+			// Extract event IDs and sort them for consistency
+			const eventIds = events.map((event) => event.id || event).sort();
+
+			// Create the key in format events_id1|id2|id3...
+			const areaKey = 'events_' + eventIds.join('|');
+
+			console.log(`Generated area key: ${areaKey} for ${events.length} events`);
+			return areaKey;
+		} catch (error) {
+			console.error('Error generating area key:', error);
+			return '';
 		}
 	}
 
