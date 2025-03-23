@@ -205,6 +205,8 @@ export class EventStore {
 	@observable hideDoneTasks: boolean = false;
 	@observable groupTasksByEvent: boolean = false;
 
+	@observable sidebarGroupBy: 'priority' | 'category' | 'area' = 'category';
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {
@@ -228,6 +230,9 @@ export class EventStore {
 		// Initialize sidebarSettings from localStorage
 		this.initSidebarSettings();
 
+		this.sidebarGroupBy =
+			(localStorage.getItem('sidebarGroupBy') as 'priority' | 'category' | 'area') || 'category';
+
 		this.init();
 	}
 
@@ -235,6 +240,9 @@ export class EventStore {
 	initSidebarSettings() {
 		// Set default value first
 		this.sidebarSettings.set('hide-scheduled', false);
+		// Set default area grouping thresholds (in minutes)
+		this.sidebarSettings.set('area-driving-threshold', 10); // 10 min driving
+		this.sidebarSettings.set('area-walking-threshold', 20); // 20 min walking
 
 		try {
 			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
@@ -1911,6 +1919,12 @@ export class EventStore {
 		} catch (e) {
 			console.error('Error saving sidebar settings to localStorage', e);
 		}
+	}
+
+	@action
+	setSidebarGroupBy(groupBy: 'priority' | 'category' | 'area') {
+		this.sidebarGroupBy = groupBy;
+		localStorage.setItem('sidebarGroupBy', groupBy);
 	}
 }
 

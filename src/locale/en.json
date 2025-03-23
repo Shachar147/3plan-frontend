@@ -181,6 +181,9 @@
 	"GETTING_STARTED_PAGE.FILL_IN_TRIP_NAME": "Please fill in trip name before clicking on this button",
 	"DAYS": "days",
 	"MINUTES": "minutes",
+	"AREA_GROUPING_SETTINGS": "Area Grouping Settings",
+	"DRIVING_THRESHOLD": "Driving threshold",
+	"WALKING_THRESHOLD": "Walking threshold",
 	"CHECK_OUT_EXISTING_TRIPS": "Open my existing trips",
 	"MODALS.DELETE_TRIP.CONTENT": "Are you sure you want to delete this trip?<br/>this action is irreversible",
 	"EDIT_TRIP_MODAL.TITLE": "Edit Trip",
@@ -936,7 +939,7 @@
 	"LOGIN_PAGE_V2.REGISTER.TITLE": "Create your account in 5 minutes!",
 	"LOGIN_PAGE_V2.REGISTER.DESCRIPTION": "Create your account and unlock tones of features that will help you plan your next trip!",
 	"TYPE_YOUR_X": "Type your {X}...",
-	"FILTER_BY": "Filter by:",
+	"FILTER_BY": "Filter By",
 	"NO_RESULTS_TRY_DIFFERENT_CATEGORY": "No results found, try filter by a different category",
 	"ALL_CATEGORIES": "All categories",
 	"RATED_X_OF_Y": "rated {X}/{Y}",
@@ -968,5 +971,13 @@
 	"FILTER_BY_PREFERRED_TIME": "Filter by preferred time",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_PREFERRED_TIMES.FILTER_TAG": "Sidebar filtered by preferred time",
 	"SHOW_ONLY_EVENTS_WITH_SPECIFIC_CATEGORIES.FILTER_TAG": "Sidebar filtered by category",
-	"SETTINGS": "Settings"
+	"SETTINGS": "Settings",
+	"GROUP_BY": "Group By",
+	"CATEGORIES": "Categories",
+	"PRIORITIES": "Priorities",
+	"AREAS": "Areas",
+	"ERROR_RENDERING_AREA": "Error displaying area",
+	"NO_LOCATION": "No location",
+	"AREA_X": "Area {X}",
+	"RECALCULATING_AREAS": "Recalculating areas..."
 }

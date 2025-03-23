@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
 	calendarOrSidebarEventDetails,
 	formatNumberWithCommas,
@@ -1449,6 +1449,301 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	}
 
+	function renderSidebarSettings() {
+		const settingsItems = [
+			{
+				id: 'hide-scheduled',
+				name: 'HIDE_SCHEDULED_EVENTS.FILTER_TAG',
+				icon: 'fa-calendar-times-o',
+			},
+		];
+
+		// Function to handle threshold input changes
+		const handleThresholdChange = (settingId: string, value: string) => {
+			const numValue = parseInt(value);
+			if (!isNaN(numValue) && numValue > 0) {
+				runInAction(() => {
+					eventStore.sidebarSettings.set(settingId, numValue);
+					eventStore.saveSidebarSettings();
+				});
+			}
+		};
+
+		const settingsContent = (
+			<div className="flex-column gap-8">
+				{settingsItems.map((item) => {
+					return (
+						<Observer key={`sidebar-settings-${item.id}`}>
+							{() => (
+								<div
+									className={getClasses(
+										'flex-row gap-5 align-items-center sidebar-settings',
+										eventStore.sidebarSettings.get(item.id) && 'active'
+									)}
+									onClick={() => {
+										runInAction(() => {
+											eventStore.sidebarSettings.set(
+												item.id,
+												!eventStore.sidebarSettings.get(item.id)
+											);
+											// Save to localStorage when changed
+											eventStore.saveSidebarSettings();
+										});
+									}}
+								>
+									<i className={`fa ${item.icon}`} aria-hidden="true"></i>
+									<span>{TranslateService.translate(eventStore, item.name)}</span>
+								</div>
+							)}
+						</Observer>
+					);
+				})}
+
+				{/* Area grouping threshold settings - only visible when area grouping is selected */}
+				{eventStore.sidebarGroupBy === 'area' && (
+					<>
+						{/* Divider for area settings */}
+						<div className="margin-block-5">
+							{renderLineWithText(TranslateService.translate(eventStore, 'AREA_GROUPING_SETTINGS'))}
+						</div>
+
+						{/* Driving threshold */}
+						<Observer>
+							{() => (
+								<div className="flex-row gap-5 align-items-center sidebar-settings">
+									<i className="fa fa-car" aria-hidden="true"></i>
+									<span>{TranslateService.translate(eventStore, 'DRIVING_THRESHOLD')}</span>
+									<input
+										type="number"
+										className="sidebar-settings-input"
+										min="1"
+										max="60"
+										value={eventStore.sidebarSettings.get('area-driving-threshold') || 10}
+										onChange={(e) =>
+											handleThresholdChange('area-driving-threshold', e.target.value)
+										}
+										onClick={(e) => e.stopPropagation()}
+										style={{
+											width: '50px',
+											marginLeft: 'auto',
+											padding: '2px 5px',
+											textAlign: 'center',
+											border: '1px solid var(--gray-light)',
+										}}
+									/>
+									<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
+								</div>
+							)}
+						</Observer>
+
+						{/* Walking threshold */}
+						<Observer>
+							{() => (
+								<div className="flex-row gap-5 align-items-center sidebar-settings">
+									<i className="fa fa-male" aria-hidden="true"></i>
+									<span>{TranslateService.translate(eventStore, 'WALKING_THRESHOLD')}</span>
+									<input
+										type="number"
+										className="sidebar-settings-input"
+										min="1"
+										max="60"
+										value={eventStore.sidebarSettings.get('area-walking-threshold') || 20}
+										onChange={(e) =>
+											handleThresholdChange('area-walking-threshold', e.target.value)
+										}
+										onClick={(e) => e.stopPropagation()}
+										style={{
+											width: '50px',
+											marginLeft: 'auto',
+											padding: '2px 5px',
+											textAlign: 'center',
+											border: '1px solid var(--gray-light)',
+										}}
+									/>
+									<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
+								</div>
+							)}
+						</Observer>
+					</>
+				)}
+			</div>
+		);
+
+		const settingsGroup = createSidebarGroup(
+			<>{settingsContent}</>,
+			'fa-gear',
+			SidebarGroups.SETTINGS,
+			TranslateService.translate(eventStore, 'SETTINGS'),
+			settingsItems.length + (eventStore.sidebarGroupBy === 'area' ? 2 : 0)
+		);
+
+		return (
+			<>
+				<hr className="margin-block-2" />
+				{settingsGroup}
+			</>
+		);
+	}
+
+	function renderTasksSearch() {
+		const searchPlacholderKey = eventStore.isMobile ? 'TASKS_SEARCH_PLACEHOLDER.FULL' : 'TASKS_SEARCH_PLACEHOLDER';
+		return (
+			<div className="tasks-search-container flex-row width-100-percents justify-content-center">
+				<TriplanSearch
+					value={eventStore.tasksSearchValue}
+					onChange={(val: any) => {
+						runInAction(() => (eventStore.tasksSearchValue = val));
+					}}
+					placeholder={TranslateService.translate(eventStore, searchPlacholderKey)}
+				/>
+			</div>
+		);
+	}
+
+	const renderAddTaskButton = () => {
+		return (
+			<Button
+				flavor={ButtonFlavor.secondary}
+				className="width-100-percents margin-block-10"
+				onClick={() => {
+					ReactModalService.openAddTaskModal(eventStore, eventStore.tripId);
+				}}
+				text={TranslateService.translate(eventStore, 'ADD_TASK.BUTTON_TEXT')}
+				icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
+				disabled={eventStore.isTripLocked}
+				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
+			/>
+		);
+	};
+
+	return (
+		<div className="triplan-sidebar-collapsable-menu">
+			{renderWarnings()}
+			{renderDistances()}
+			{renderActions()}
+			{renderTasks()}
+			{renderCalendarSidebarStatistics()}
+			<TriplanSidebarEqualDivider />
+			{renderRecommendations()}
+			<FilterBy />
+			<GroupBySelector />
+			{renderSidebarSettings()}
+		</div>
+	);
+}
+
+function GroupBySelector() {
+	const [isOpen, setIsOpen] = useState(false);
+	const eventStore = useContext(eventStoreContext);
+	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
+	const radioStyle = {
+		accentColor: 'var(--selected-color)',
+		marginRight: '12px',
+		transform: 'scale(1.2)',
+		cursor: 'pointer',
+	};
+
+	return (
+		<>
+			<hr className="margin-block-2" />
+			<div className="external-collapse">
+				<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
+					<i
+						className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
+						aria-hidden="true"
+					/>
+					<span>
+						<i className="fa fa-object-group" aria-hidden="true" />
+						&nbsp;
+						{TranslateService.translate(eventStore, 'GROUP_BY')}
+					</span>
+				</div>
+				<div
+					className="external-collapse-inner"
+					style={{
+						display: isOpen ? 'block' : 'none',
+					}}
+				>
+					<div className="sidebar-statistics">
+						<div
+							className={getClasses(
+								'sidebar-filter-item flex-row gap-4',
+								eventStore.sidebarGroupBy === 'category' && 'active'
+							)}
+						>
+							<input
+								type="radio"
+								id="group-by-category"
+								name="sidebar-group-by"
+								checked={eventStore.sidebarGroupBy === 'category'}
+								onChange={() => eventStore.setSidebarGroupBy('category')}
+								style={radioStyle}
+							/>
+							<label
+								htmlFor="group-by-category"
+								onClick={() => eventStore.setSidebarGroupBy('category')}
+								className="cursor-pointer margin-bottom-0"
+							>
+								{TranslateService.translate(eventStore, 'CATEGORIES')}
+							</label>
+						</div>
+						<div
+							className={getClasses(
+								'sidebar-filter-item flex-row gap-4',
+								eventStore.sidebarGroupBy === 'priority' && 'active'
+							)}
+						>
+							<input
+								type="radio"
+								id="group-by-priority"
+								name="sidebar-group-by"
+								checked={eventStore.sidebarGroupBy === 'priority'}
+								onChange={() => eventStore.setSidebarGroupBy('priority')}
+								style={radioStyle}
+							/>
+							<label
+								htmlFor="group-by-priority"
+								onClick={() => eventStore.setSidebarGroupBy('priority')}
+								className="cursor-pointer margin-bottom-0"
+							>
+								{TranslateService.translate(eventStore, 'PRIORITIES')}
+							</label>
+						</div>
+						<div
+							className={getClasses(
+								'sidebar-filter-item flex-row gap-4',
+								eventStore.sidebarGroupBy === 'area' && 'active'
+							)}
+						>
+							<input
+								type="radio"
+								id="group-by-area"
+								name="sidebar-group-by"
+								checked={eventStore.sidebarGroupBy === 'area'}
+								onChange={() => eventStore.setSidebarGroupBy('area')}
+								style={radioStyle}
+							/>
+							<label
+								htmlFor="group-by-area"
+								onClick={() => eventStore.setSidebarGroupBy('area')}
+								className="cursor-pointer margin-bottom-0"
+							>
+								{TranslateService.translate(eventStore, 'AREAS')}
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+}
+
+const FilterBy = observer(() => {
+	const [isOpen, setIsOpen] = useState(false);
+	const eventStore = useContext(eventStoreContext);
+	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+
 	function renderPriorityFilters() {
 		const priorityFiltersContent = (
 			<div className="flex-column gap-8">
@@ -1478,7 +1773,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
 		const priorityFiltersGroup = createSidebarGroup(
 			<>{priorityFiltersContent}</>,
-			'fa-filter',
+			'fa-level-up',
 			SidebarGroups.PRIORITIES_FILTER,
 			TranslateService.translate(eventStore, 'FILTER_BY_PRIORITY'),
 			Object.keys(TriplanPriority).filter((x) => !Number.isNaN(Number(x))).length
@@ -1518,7 +1813,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
 		const categoryFiltersGroup = createSidebarGroup(
 			<>{categoryFiltersContent}</>,
-			'fa-object-group',
+			'fa-align-justify',
 			SidebarGroups.CATEGORIES_FILTER,
 			TranslateService.translate(eventStore, 'FILTER_BY_CATEGORY'),
 			eventStore.categories.length
@@ -1597,109 +1892,33 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	}
 
-	function renderSidebarSettings() {
-		const settingsItems = [
-			{
-				id: 'hide-scheduled',
-				name: 'HIDE_SCHEDULED_EVENTS.FILTER_TAG',
-				icon: 'fa-calendar-times-o',
-			},
-		];
-
-		const settingsContent = (
-			<div className="flex-column gap-8">
-				{settingsItems.map((item) => {
-					return (
-						<Observer key={`sidebar-settings-${item.id}`}>
-							{() => (
-								<div
-									className={getClasses(
-										'flex-row gap-5 align-items-center sidebar-settings',
-										eventStore.sidebarSettings.get(item.id) && 'active'
-									)}
-									onClick={() => {
-										runInAction(() => {
-											eventStore.sidebarSettings.set(
-												item.id,
-												!eventStore.sidebarSettings.get(item.id)
-											);
-											// Save to localStorage when changed
-											eventStore.saveSidebarSettings();
-										});
-									}}
-								>
-									<i className={`fa ${item.icon}`} aria-hidden="true"></i>
-									<span>{TranslateService.translate(eventStore, item.name)}</span>
-								</div>
-							)}
-						</Observer>
-					);
-				})}
-			</div>
-		);
-
-		const settingsGroup = createSidebarGroup(
-			<>{settingsContent}</>,
-			'fa-gear',
-			SidebarGroups.SETTINGS,
-			TranslateService.translate(eventStore, 'SETTINGS'),
-			settingsItems.length
-		);
-
-		return (
-			<>
-				<hr className="margin-block-2" />
-				{settingsGroup}
-			</>
-		);
-	}
-
-	function renderTasksSearch() {
-		const searchPlacholderKey = eventStore.isMobile ? 'TASKS_SEARCH_PLACEHOLDER.FULL' : 'TASKS_SEARCH_PLACEHOLDER';
-		return (
-			<div className="tasks-search-container flex-row width-100-percents justify-content-center">
-				<TriplanSearch
-					value={eventStore.tasksSearchValue}
-					onChange={(val: any) => {
-						runInAction(() => (eventStore.tasksSearchValue = val));
-					}}
-					placeholder={TranslateService.translate(eventStore, searchPlacholderKey)}
-				/>
-			</div>
-		);
-	}
-
-	const renderAddTaskButton = () => {
-		return (
-			<Button
-				flavor={ButtonFlavor.secondary}
-				className="width-100-percents margin-block-10"
-				onClick={() => {
-					ReactModalService.openAddTaskModal(eventStore, eventStore.tripId);
-				}}
-				text={TranslateService.translate(eventStore, 'ADD_TASK.BUTTON_TEXT')}
-				icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
-				disabled={eventStore.isTripLocked}
-				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
-			/>
-		);
-	};
-
 	return (
-		<div className="triplan-sidebar-collapsable-menu">
-			{renderWarnings()}
-			{renderDistances()}
-			{renderActions()}
-			{renderTasks()}
-			{renderRecommendations()}
-			{renderCalendarSidebarStatistics()}
-			<TriplanSidebarEqualDivider />
-			{renderPriorityFilters()}
-			{renderCategoryFilters()}
-			{renderPreferredTimeFilters()}
-			{renderSidebarSettings()}
+		<div className="external-collapse">
+			<div className="sidebar-statistics sidebar-group" onClick={() => setIsOpen(!isOpen)}>
+				<i
+					className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
+					aria-hidden="true"
+				/>
+				<span>
+					<i className="fa fa-filter" aria-hidden="true" />
+					&nbsp;
+					{TranslateService.translate(eventStore, 'FILTER_BY')}
+				</span>
+			</div>
+			<div
+				className="external-collapse-inner"
+				style={{
+					display: isOpen ? 'block' : 'none',
+				}}
+			>
+				<div className="padding-10">
+					{renderPriorityFilters()}
+					{renderCategoryFilters()}
+					{renderPreferredTimeFilters()}
+				</div>
+			</div>
 		</div>
 	);
-}
+});
 
 export default observer(TriplanSidebarCollapsableMenu);

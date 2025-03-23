@@ -1,4 +1,3 @@
-import TriplanSearch from '../../triplan-header/triplan-search/triplan-search';
 import TranslateService from '../../../services/translate-service';
 import Button, { ButtonFlavor } from '../../common/button/button';
 import {
@@ -7,19 +6,21 @@ import {
 	getClasses,
 	isHotelsCategory,
 	ucfirst,
+	locationToString,
+	getCoordinatesRangeKey,
 } from '../../../utils/utils';
 import { CalendarEvent, SidebarEvent, TriPlanCategory } from '../../../utils/interfaces';
 import ReactModalService from '../../../services/react-modal-service';
-import React, { CSSProperties, useContext } from 'react';
+import React, { CSSProperties, useContext, useEffect, useMemo, useRef } from 'react';
 import { eventStoreContext } from '../../../stores/events-store';
-import { TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
+import { GoogleTravelMode, prioritiesOrder, TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
 import { modalsStoreContext } from '../../../stores/modals-store';
 import './triplan-sidebar-categories.scss';
 import { renderLineWithText } from '../../../utils/ui-utils';
 import TriplanSidebarDraggableEvent from '../sidebar-draggable-event/triplan-sidebar-draggable-event';
 import { observer } from 'mobx-react';
-import { rootStoreContext } from '../../../v2/stores/root-store';
 import SidebarSearch from '../sidebar-search/sidebar-search';
+import { priorityToColor } from '../../../utils/consts';
 
 interface TriplanSidebarCategoriesProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -32,6 +33,46 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	const { removeEventFromSidebarById, addToEventsToCategories, TriplanCalendarRef } = props;
 	const eventStore = useContext(eventStoreContext);
 	const modalsStore = useContext(modalsStoreContext);
+
+	// Store previous threshold values to detect changes
+	const prevThresholdValues = useRef({
+		driving: eventStore.sidebarSettings.get('area-driving-threshold') || 10,
+		walking: eventStore.sidebarSettings.get('area-walking-threshold') || 20,
+	});
+
+	// Memoize area calculation to prevent frequent recalculations
+	const [recalculateAreas, setRecalculateAreas] = React.useState(0);
+	const [isRecalculating, setIsRecalculating] = React.useState(false);
+
+	// Set up effect to detect threshold changes
+	useEffect(() => {
+		if (eventStore.sidebarGroupBy !== 'area') return;
+
+		const drivingThreshold = eventStore.sidebarSettings.get('area-driving-threshold') || 10;
+		const walkingThreshold = eventStore.sidebarSettings.get('area-walking-threshold') || 20;
+
+		// Only recalculate if the thresholds have changed
+		if (
+			drivingThreshold !== prevThresholdValues.current.driving ||
+			walkingThreshold !== prevThresholdValues.current.walking
+		) {
+			// Show recalculating indicator
+			setIsRecalculating(true);
+
+			// Debounce the recalculation
+			const timerId = setTimeout(() => {
+				setRecalculateAreas((prev) => prev + 1);
+				// Hide the indicator after calculation is done
+				setIsRecalculating(false);
+			}, 300);
+
+			return () => clearTimeout(timerId);
+		}
+	}, [
+		eventStore.sidebarSettings.get('area-driving-threshold'),
+		eventStore.sidebarSettings.get('area-walking-threshold'),
+		eventStore.sidebarGroupBy,
+	]);
 
 	function renderExpandCollapse() {
 		const eyeIcon = eventStore.hideEmptyCategories || eventStore.isFiltered ? 'fa-eye' : 'fa-eye-slash';
@@ -103,6 +144,321 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	}
 
 	let totalDisplayedCategories = 0;
+
+	function renderPriorities() {
+		// todo complete: remove inline style
+		const closedStyle = {
+			maxHeight: 0,
+			overflowY: 'hidden',
+			padding: 0,
+			transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+		};
+		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+		const borderStyle = '1px solid rgba(0, 0, 0, 0.05)';
+
+		return (
+			<>
+				{prioritiesOrder.map((priorityVal, index) => {
+					const priority = priorityVal as unknown as TriplanPriority;
+					const priorityText = TranslateService.translate(eventStore, TriplanPriority[priority]);
+					const color = priorityToColor[priority];
+
+					const sidebarItemsCount = eventStore.allFilteredSidebarEvents.filter(
+						(s) => s.priority == priority
+					)?.length;
+					const calendarItemsCount = eventStore.filteredCalendarEvents.filter((e) => {
+						return e.priority == priority;
+					}).length;
+
+					const itemsCount = sidebarItemsCount + calendarItemsCount;
+					const totalItemsCountTooltip =
+						calendarItemsCount > 0
+							? TranslateService.translate(eventStore, 'TOTAL_ITEMS_COUNT.TOOLTIP')
+									.replace('{X}', calendarItemsCount.toString())
+									.replace('{Y}', sidebarItemsCount.toString())
+							: undefined;
+
+					if ((eventStore.hideEmptyCategories || eventStore.isFiltered) && sidebarItemsCount === 0) {
+						// itemsCount <- to prevent hiding non-empty category that all of it's items inside are scheduled.
+						return <></>;
+					}
+					totalDisplayedCategories++;
+
+					const openStyle = {
+						// maxHeight: 100 * sidebarItemsCount + 90 + 'px',
+						padding: '10px',
+						transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+					};
+
+					const isOpen = eventStore.openCategories.has(priority);
+					const eventsStyle = isOpen ? openStyle : closedStyle;
+
+					return (
+						<div className="external-events" key={priority}>
+							<div
+								className="sidebar-statistics sidebar-group"
+								style={{
+									borderBottom: borderStyle,
+									borderTop: index === 0 ? borderStyle : '0',
+								}}
+								onClick={() => eventStore.toggleCategory(priority)}
+							>
+								<i
+									className={
+										isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`
+									}
+									aria-hidden="true"
+								/>
+								<span>
+									<i className="fa fa-sticky-note" aria-hidden="true" style={{ color: color }} />
+									&nbsp;
+									{priorityText}
+								</span>
+								<div title={totalItemsCountTooltip}>
+									({sidebarItemsCount}/{itemsCount})
+								</div>
+							</div>
+							<div style={eventsStyle as unknown as CSSProperties}>
+								{renderPriorityEvents(priority)}
+								{renderAddSidebarPriorityEventButton(priority)}
+							</div>
+						</div>
+					);
+				})}
+			</>
+		);
+	}
+
+	function renderAreas() {
+		// to assure it's recalculating when this counter changes
+		console.log(recalculateAreas);
+
+		// Calculate areas based on distance results
+		const areasMap = new Map<string, SidebarEvent[]>();
+		const sidebarEvents = eventStore.allEventsFilteredComputed;
+
+		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
+
+		// Default area for events without location
+		areasMap.set(
+			noLocationText,
+			sidebarEvents.filter(
+				(event) => !event.location || (typeof event.location === 'string' && event.location === '')
+			)
+		);
+
+		// Group events by proximity (if we have distance results)
+		if (eventStore.distanceResults && eventStore.distanceResults.size > 0) {
+			// Create proximity clusters - filter out events without proper location data
+			const eventsWithLocation = sidebarEvents.filter(
+				(event) =>
+					event.location &&
+					typeof event.location !== 'string' &&
+					event.location.latitude != null &&
+					event.location.longitude != null
+			);
+
+			// Process each event with location
+			for (const event of eventsWithLocation) {
+				let foundCluster = false;
+
+				// Try to add to existing clusters
+				for (const [areaName, areaEvents] of Array.from(areasMap.entries())) {
+					if (areaName === noLocationText) continue;
+
+					// Check if this event is close to any event in this cluster
+					for (const areaEvent of areaEvents) {
+						if (
+							!areaEvent.location ||
+							typeof areaEvent.location === 'string' ||
+							!areaEvent.location.latitude ||
+							!areaEvent.location.longitude ||
+							!event.location ||
+							!event.location.latitude ||
+							!event.location.longitude
+						) {
+							continue;
+						}
+
+						// Safety check in case of corrupted data
+						try {
+							const loc1 = {
+								lat: areaEvent.location.latitude,
+								lng: areaEvent.location.longitude,
+								eventName: areaEvent.title,
+							};
+
+							const loc2 = {
+								lat: event.location.latitude,
+								lng: event.location.longitude,
+								eventName: event.title,
+							};
+
+							const distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
+							const distanceKey2 = getCoordinatesRangeKey(GoogleTravelMode.WALKING, loc1, loc2);
+							const distanceA = eventStore.distanceResults.get(distanceKey);
+							const distanceB = eventStore.distanceResults.get(distanceKey2);
+
+							// Get threshold values from settings (with fallbacks to default values)
+							const drivingThresholdMinutes = Number(
+								eventStore.sidebarSettings.get('area-driving-threshold') || 10
+							);
+							const walkingThresholdMinutes = Number(
+								eventStore.sidebarSettings.get('area-walking-threshold') || 20
+							);
+
+							// Convert minutes to seconds
+							const drivingThresholdSeconds = drivingThresholdMinutes * 60;
+							const walkingThresholdSeconds = walkingThresholdMinutes * 60;
+
+							if (
+								(distanceA &&
+									distanceA.duration_value &&
+									Number(distanceA.duration_value) <= drivingThresholdSeconds) || // Configurable driving threshold
+								(distanceB &&
+									distanceB.duration_value &&
+									Number(distanceB.duration_value) <= walkingThresholdSeconds) // Configurable walking threshold
+							) {
+								// Add to this cluster
+								areaEvents.push(event);
+								foundCluster = true;
+								break;
+							}
+						} catch (error) {
+							console.warn('Error calculating distance between events:', error);
+							continue;
+						}
+					}
+
+					if (foundCluster) break;
+				}
+
+				// If event doesn't fit any cluster, create a new one
+				if (!foundCluster) {
+					const areaName = TranslateService.translate(eventStore, 'AREA_X', {
+						X: areasMap.size,
+					});
+					areasMap.set(areaName, [event]);
+				}
+			}
+		} else {
+			// If distance calculation hasn't been run, group by location string
+			const locationGroups = new Map<string, SidebarEvent[]>();
+
+			sidebarEvents.forEach((event) => {
+				if (event.location) {
+					try {
+						// Handle different location types
+						let loc = '';
+						if (typeof event.location === 'string') {
+							loc = event.location;
+						} else if (event.location && typeof event.location === 'object') {
+							// Location is a LocationData object
+							loc = locationToString(event.location);
+						}
+
+						if (loc && !locationGroups.has(loc)) {
+							locationGroups.set(loc, []);
+						}
+						if (loc) {
+							locationGroups.get(loc)?.push(event);
+						}
+					} catch (error) {
+						console.warn('Error processing event location:', error);
+					}
+				}
+			});
+
+			// Add location groups to areas map
+			locationGroups.forEach((events, location) => {
+				if (location) {
+					// Only use first 15 chars of location as area name
+					const shortLocation = location.length > 15 ? location.substring(0, 15) + '...' : location;
+					areasMap.set(shortLocation, events);
+				}
+			});
+		}
+
+		// todo complete: remove inline style
+		const closedStyle = {
+			maxHeight: 0,
+			overflowY: 'hidden',
+			padding: 0,
+			transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+		};
+		const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+		const borderStyle = '1px solid rgba(0, 0, 0, 0.05)';
+
+		// Sort areas by number of events (most to least)
+		const sortedAreas = Array.from(areasMap.entries()).sort((a, b) => {
+			// [0] is area name, [1] is array of events
+			return b[1].length - a[1].length;
+		});
+
+		return (
+			<>
+				{sortedAreas.map(([areaName, areaEvents], index) => {
+					const sidebarItemsCount = eventStore.allSidebarEvents.filter((s) =>
+						areaEvents.map((e) => e.id).includes(s.id)
+					).length;
+
+					if (eventStore.hideEmptyCategories && sidebarItemsCount == 0) {
+						return;
+					}
+
+					const itemsCount = areaEvents.length;
+
+					if ((eventStore.hideEmptyCategories || eventStore.isFiltered) && areaEvents.length === 0) {
+						return <></>;
+					}
+					totalDisplayedCategories++;
+
+					const openStyle = {
+						padding: '10px',
+						transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+					};
+
+					// Cast areaName to string type for openCategories.has()
+					const isOpen = eventStore.openCategories.has(areaName as any);
+					const eventsStyle = isOpen ? openStyle : closedStyle;
+
+					return (
+						<div className="external-events" key={areaName}>
+							<div
+								className="sidebar-statistics sidebar-group"
+								style={{
+									borderBottom: borderStyle,
+									borderTop: index === 0 ? borderStyle : '0',
+								}}
+								onClick={() => {
+									// Cast areaName to any for toggleCategory()
+									eventStore.toggleCategory(areaName as any);
+								}}
+							>
+								<i
+									className={
+										isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`
+									}
+									aria-hidden="true"
+								/>
+								<span>
+									<i className="fa fa-map-marker" aria-hidden="true" />
+									&nbsp;
+									{areaName}
+								</span>
+								<div>
+									({sidebarItemsCount}/{itemsCount})
+								</div>
+							</div>
+							<div style={eventsStyle as unknown as CSSProperties}>
+								{renderAreaEvents(areaName, areaEvents)}
+							</div>
+						</div>
+					);
+				})}
+			</>
+		);
+	}
 
 	function renderCategories() {
 		// todo complete: remove inline style
@@ -247,6 +603,22 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		return ReactModalService.openEditCategoryModal(TriplanCalendarRef, eventStore, categoryId);
 	}
 
+	const renderAddSidebarPriorityEventButton = (priority: TriplanPriority) => {
+		return (
+			<Button
+				flavor={ButtonFlavor.secondary}
+				className="width-100-percents margin-block-10"
+				onClick={() =>
+					ReactModalService.openAddSidebarEventModal(eventStore, undefined, { priority: priority })
+				}
+				text={TranslateService.translate(eventStore, 'ADD_EVENT.BUTTON_TEXT')}
+				icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
+				disabled={eventStore.isTripLocked}
+				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
+			/>
+		);
+	};
+
 	const renderAddSidebarEventButton = (category: TriPlanCategory) => {
 		const isHotel = isHotelsCategory(category);
 		return (
@@ -262,6 +634,73 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				disabled={eventStore.isTripLocked}
 				disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
 			/>
+		);
+	};
+
+	const renderPriorityEvents = (priority: TriplanPriority) => {
+		const priorityEvents = eventStore.allFilteredSidebarEvents.filter((s) => s.priority == priority);
+
+		const preferredHoursHash: Record<string, SidebarEvent[]> = {};
+
+		Object.keys(TriplanEventPreferredTime)
+			.filter((x) => !Number.isNaN(Number(x)))
+			.forEach((preferredHour) => {
+				preferredHoursHash[preferredHour] = priorityEvents
+					.map((x) => {
+						x.preferredTime ||= TriplanEventPreferredTime.unset;
+						x.title = addLineBreaks(x.title, ', ');
+						if (x.description != undefined) {
+							x.description = addLineBreaks(x.description, '&#10;');
+						}
+						return x;
+					})
+					.filter((x: SidebarEvent) => x.preferredTime?.toString() === preferredHour.toString())
+					.sort(sortByPriority);
+			});
+
+		if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
+			return null;
+		}
+
+		const eventsByPreferredHour = Object.keys(preferredHoursHash)
+			.filter((x) => preferredHoursHash[x].length > 0)
+			.map((preferredHour: string) => {
+				let preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+
+				if (preferredHourString == 'unset' && eventStore.isHebrew) {
+					preferredHourString = 'unset.male';
+				}
+
+				return (
+					<div key={`${priority}-${preferredHour}`}>
+						{renderLineWithText(
+							`${TranslateService.translate(eventStore, 'TIME')}: ${ucfirst(
+								TranslateService.translate(eventStore, preferredHourString)
+							)} (${preferredHoursHash[preferredHour].length})`
+						)}
+						<div>{renderPreferredHourEventsByPriority(priority, preferredHoursHash[preferredHour])}</div>
+					</div>
+				);
+			});
+
+		const scheduledEvents = eventStore.filteredCalendarEvents.filter(
+			(e) => e.priority.toString() === priority.toString()
+		);
+
+		return (
+			<>
+				{eventsByPreferredHour}
+				{scheduledEvents.length > 0 && !eventStore.sidebarSettings.get('hide-scheduled') && (
+					<div key={`${priority}-scheduled-events`}>
+						{renderLineWithText(
+							`${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${
+								scheduledEvents.length
+							})`
+						)}
+						<div>{renderScheduledEventsByPriority(priority, scheduledEvents)}</div>
+					</div>
+				)}
+			</>
 		);
 	};
 
@@ -295,7 +734,10 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const eventsByPreferredHour = Object.keys(preferredHoursHash)
 			.filter((x) => preferredHoursHash[x].length > 0)
 			.map((preferredHour: string) => {
-				const preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+				let preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+				if (preferredHourString == 'unset' && eventStore.isHebrew) {
+					preferredHourString = 'unset.male';
+				}
 				return (
 					<div key={`${categoryId}-${preferredHour}`}>
 						{renderLineWithText(
@@ -308,7 +750,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				);
 			});
 
-		const scheduledEvents = eventStore.calendarEvents.filter(
+		const scheduledEvents = eventStore.filteredCalendarEvents.filter(
 			(e) => e.category.toString() === categoryId.toString()
 		);
 
@@ -336,13 +778,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	};
 
 	const renderPreferredHourEvents = (categoryId: number, events: SidebarEvent[]) => {
-		const order = [
-			TriplanPriority.unset,
-			TriplanPriority.must,
-			TriplanPriority.high,
-			TriplanPriority.maybe,
-			TriplanPriority.least,
-		];
+		const order = prioritiesOrder;
 
 		events = events
 			.map((event) => {
@@ -385,14 +821,47 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		);
 	};
 
+	const renderPreferredHourEventsByPriority = (priority: TriplanPriority, events: SidebarEvent[]) => {
+		const order = prioritiesOrder;
+
+		events = events.sort((a, b) => {
+			let A = order.indexOf(Number(a.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+			let B = order.indexOf(Number(b.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+
+			if (A === -1) {
+				A = 999;
+			}
+			if (B === -1) {
+				B = 999;
+			}
+
+			if (A > B) {
+				return 1;
+			} else if (A < B) {
+				return -1;
+			}
+			return 0;
+		});
+
+		return (
+			<div className="flex-column gap-5">
+				{events.map((event) => (
+					<TriplanSidebarDraggableEvent
+						event={event}
+						categoryId={Number(event.category)}
+						removeEventFromSidebarById={removeEventFromSidebarById}
+						addToEventsToCategories={addToEventsToCategories}
+						addEventToSidebar={(e) => {
+							props.addEventToSidebar(e);
+						}}
+					/>
+				))}
+			</div>
+		);
+	};
+
 	const renderScheduledEvents = (categoryId: number, events: CalendarEvent[]) => {
-		const order = [
-			TriplanPriority.unset,
-			TriplanPriority.must,
-			TriplanPriority.high,
-			TriplanPriority.maybe,
-			TriplanPriority.least,
-		];
+		const order = prioritiesOrder;
 
 		events = events
 			.map((event) => {
@@ -457,12 +926,254 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		);
 	};
 
+	const renderScheduledEventsByPriority = (priority: TriplanPriority, events: CalendarEvent[]) => {
+		const order = prioritiesOrder;
+
+		events = events.sort((a, b) => {
+			let A = order.indexOf(Number(a.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+			let B = order.indexOf(Number(b.priority ?? TriplanPriority.unset) as unknown as TriplanPriority);
+
+			if (A === -1) {
+				A = 999;
+			}
+			if (B === -1) {
+				B = 999;
+			}
+
+			if (A > B) {
+				return 1;
+			} else if (A < B) {
+				return -1;
+			}
+			return 0;
+		});
+		return (
+			<div className="flex-column gap-5">
+				{events.map((event, idx) => (
+					<TriplanSidebarDraggableEvent
+						event={event}
+						categoryId={Number(event.category)}
+						addToEventsToCategories={addToEventsToCategories}
+						removeEventFromSidebarById={removeEventFromSidebarById}
+						fullActions={false}
+						eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)}
+						addEventToSidebar={(e) => {
+							props.addEventToSidebar(e);
+						}}
+						_onClick={() => {
+							const calendarEvent = eventStore.calendarEvents.find((y) => y.id == event.id)!;
+							if (typeof calendarEvent.start === 'string') {
+								calendarEvent.start = new Date(calendarEvent.start);
+							}
+							if (typeof calendarEvent.end === 'string') {
+								calendarEvent.end = new Date(calendarEvent.end);
+							}
+							modalsStore.switchToViewMode();
+							ReactModalService.openEditCalendarEventModal(
+								eventStore,
+								props.addEventToSidebar,
+								{
+									event: {
+										...calendarEvent,
+										_def: calendarEvent,
+									},
+								},
+								modalsStore
+							);
+						}}
+					/>
+				))}
+			</div>
+		);
+	};
+
+	// Add a new helper function to render area events by preferred time
+	const renderAreaEvents = (areaName: string, areaEvents: SidebarEvent[]) => {
+		try {
+			const preferredHoursHash: Record<string, SidebarEvent[]> = {};
+
+			const sidebarEventIds = eventStore.allFilteredSidebarEvents.map((s) => s.id);
+
+			Object.keys(TriplanEventPreferredTime)
+				.filter((x) => !Number.isNaN(Number(x)))
+				.forEach((preferredHour) => {
+					preferredHoursHash[preferredHour] = areaEvents
+						.map((x) => {
+							x.preferredTime = x.preferredTime || TriplanEventPreferredTime.unset;
+							x.title = addLineBreaks(x.title, ', ');
+							if (x.description != undefined) {
+								x.description = addLineBreaks(x.description, '&#10;');
+							}
+							return x;
+						})
+						.filter(
+							(x: SidebarEvent) =>
+								x.preferredTime?.toString() === preferredHour.toString() &&
+								sidebarEventIds.includes(x.id)
+						)
+						.sort(sortByPriority);
+				});
+
+			if (eventStore.searchValue && Object.values(preferredHoursHash).flat().length === 0) {
+				return null;
+			}
+
+			const eventsByPreferredHour = Object.keys(preferredHoursHash)
+				.filter((x) => preferredHoursHash[x].length > 0)
+				.map((preferredHour: string) => {
+					let preferredHourString: string = TriplanEventPreferredTime[preferredHour];
+					if (preferredHourString == 'unset' && eventStore.isHebrew) {
+						preferredHourString = 'unset.male';
+					}
+					return (
+						<div key={`${areaName}-${preferredHour}`}>
+							{renderLineWithText(
+								`${TranslateService.translate(eventStore, 'TIME')}: ${ucfirst(
+									TranslateService.translate(eventStore, preferredHourString)
+								)} (${preferredHoursHash[preferredHour].length})`
+							)}
+							<div className="flex-column gap-5">
+								{preferredHoursHash[preferredHour].map((event) => (
+									<TriplanSidebarDraggableEvent
+										key={event.id}
+										event={event}
+										categoryId={Number(event.category)}
+										removeEventFromSidebarById={removeEventFromSidebarById}
+										addToEventsToCategories={addToEventsToCategories}
+										addEventToSidebar={(e) => props.addEventToSidebar(e)}
+									/>
+								))}
+							</div>
+						</div>
+					);
+				});
+
+			// Get scheduled events for this area (those that match any event location in this area)
+			const areaLocations = areaEvents.map((event) => event.location);
+			// .filter((location) => location !== undefined);
+
+			const scheduledEvents = eventStore.filteredCalendarEvents.filter((calEvent) => {
+				// if (!calEvent.location) return false;
+
+				// Check if this scheduled event's location matches any event in this area
+				return areaLocations.some((areaLoc) => {
+					// if (!areaLoc) return false;
+
+					try {
+						if (!areaLoc && !calEvent.location) {
+							return true;
+						}
+						if (typeof areaLoc === 'string' && typeof calEvent.location === 'string') {
+							return areaLoc === calEvent.location;
+						} else if (
+							typeof areaLoc !== 'string' &&
+							typeof calEvent.location !== 'string' &&
+							areaLoc.latitude &&
+							areaLoc.longitude &&
+							calEvent.location.latitude &&
+							calEvent.location.longitude
+						) {
+							// Compare lat/long for LocationData objects
+							return (
+								areaLoc.latitude == calEvent.location.latitude &&
+								areaLoc.longitude == calEvent.location.longitude
+							);
+						}
+					} catch (error) {
+						console.warn('Error comparing locations:', error);
+					}
+					return false;
+				});
+			});
+
+			return (
+				<>
+					{areaEvents.length === 0 && (
+						<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
+							{TranslateService.translate(eventStore, 'NO_ITEMS')}
+						</div>
+					)}
+					{eventsByPreferredHour}
+					{scheduledEvents.length > 0 && !eventStore.sidebarSettings.get('hide-scheduled') && (
+						<div key={`${areaName}-scheduled-events`}>
+							{renderLineWithText(
+								`${TranslateService.translate(eventStore, 'SCHEDULED_EVENTS.SHORT')} (${
+									scheduledEvents.length
+								})`
+							)}
+							<div className="flex-column gap-5">
+								{scheduledEvents.map((event) => (
+									<TriplanSidebarDraggableEvent
+										key={event.id}
+										event={event}
+										categoryId={Number(event.category)}
+										addToEventsToCategories={addToEventsToCategories}
+										removeEventFromSidebarById={removeEventFromSidebarById}
+										fullActions={false}
+										eventTitleSuffix={calendarOrSidebarEventDetails(eventStore, event)}
+										addEventToSidebar={(e) => {
+											props.addEventToSidebar(e);
+										}}
+										_onClick={() => {
+											const calendarEvent = eventStore.calendarEvents.find(
+												(y) => y.id == event.id
+											)!;
+											if (typeof calendarEvent.start === 'string') {
+												calendarEvent.start = new Date(calendarEvent.start);
+											}
+											if (typeof calendarEvent.end === 'string') {
+												calendarEvent.end = new Date(calendarEvent.end);
+											}
+											modalsStore.switchToViewMode();
+											ReactModalService.openEditCalendarEventModal(
+												eventStore,
+												props.addEventToSidebar,
+												{
+													event: {
+														...calendarEvent,
+														_def: calendarEvent,
+													},
+												},
+												modalsStore
+											);
+										}}
+									/>
+								))}
+							</div>
+						</div>
+					)}
+				</>
+			);
+		} catch (error) {
+			console.error('Error in renderAreaEvents:', error);
+			return (
+				<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15">
+					{TranslateService.translate(eventStore, 'ERROR_RENDERING_AREA')}
+				</div>
+			);
+		}
+	};
+
 	return (
 		<>
 			{renderExpandCollapse()}
 			<SidebarSearch />
 			{totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
-			{renderCategories()}
+			{eventStore.sidebarGroupBy === 'priority' ? (
+				renderPriorities()
+			) : eventStore.sidebarGroupBy === 'area' ? (
+				<>
+					{isRecalculating && (
+						<div className="flex-row justify-content-center align-items-center padding-block-10">
+							<i className="fa fa-spinner fa-spin margin-inline-end-5" aria-hidden="true"></i>&nbsp;
+							<span>{TranslateService.translate(eventStore, 'RECALCULATING_AREAS')}</span>
+						</div>
+					)}
+					{renderAreas()}
+				</>
+			) : (
+				renderCategories()
+			)}
 			{totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
 		</>
 	);
