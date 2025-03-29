@@ -1011,8 +1011,8 @@
 	"HOTEL.NO_HOTELS": "No hotels added yet",
 	"HOTEL.HOTEL_DETAILS": "Hotel details",
 	"ACTIVITIES.TITLE": "What activities would you like to include?",
-	"ACTIVITIES.PLACEHOLDER": "Enter one activity per line (e.g. Eiffel Tower, Louvre Museum, Notre-Dame Cathedral)",
+	"ACTIVITIES.PLACEHOLDER": "Enter one activity per line\n(e.g. Eiffel Tower, Louvre Museum, Notre-Dame Cathedral)\nTip: choosing destination may help in activities details lookup",
 	"ACTIVITIES.PROCESSING": "Processing activities...",
 	"ACTIVITIES.ERROR": "Error processing activities. Please try again.",
-	"ACTIVITIES.SUCCESS": "Successfully added {count} activities to your trip"
+	"ACTIVITIES.SUCCESS": "{count} activities successfully added to your trip"
 }
