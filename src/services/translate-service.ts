@@ -4,7 +4,9 @@ import he from '../locale/he.json';
 import en from '../locale/en.json';
 import { LocaleCode } from './data-handlers/data-handler-base';
 
-const translates = {
+type TranslationValue = string | { [key: string]: TranslationValue };
+
+const translates: Record<LocaleCode, Record<string, TranslationValue>> = {
 	he,
 	en,
 };
@@ -14,15 +16,14 @@ export type TranslationParams = Record<string, string | number | undefined>;
 const TranslateService = {
 	translate: (eventStore: EventStore, key: string, params: TranslationParams = {}) => {
 		const language = eventStore.calendarLocalCode;
-		// @ts-ignore
-		const translations: Record<string, string> = translates[language];
+		const translations = translates[language];
 
-		// @ts-ignore
-		let result = Object.keys(translations).includes(key)
-			? translations[key]
-			: Object.keys(translates['en']).includes(key)
-			? (translates['en'] as Record<string, string>)[key]
-			: key; // fallback
+		let result = key;
+		if (key in translations) {
+			result = translations[key] as string;
+		} else if (key in translates['en']) {
+			result = translates['en'][key] as string;
+		}
 
 		Object.keys(params).forEach((key) => {
 			result = result.replaceAll(`{${key}}`, params[key]?.toString());
@@ -38,35 +39,45 @@ const TranslateService = {
 		from: LocaleCode,
 		to: LocaleCode
 	) => {
-		if (from == to) {
+		if (from === to) {
 			return value;
 		}
 
-		// @ts-ignore
-		const sourceTranslations: Record<string, string> = translates[from];
+		const sourceTranslations = translates[from];
+		const targetTranslations = translates[to];
 
-		let key = Object.keys(sourceTranslations).find(
-			(k) => sourceTranslations[k].toLowerCase() === value.toLowerCase()
-		);
+		// Helper function to find a key by value in nested translations
+		const findKeyByValue = (
+			translations: Record<string, TranslationValue>,
+			searchValue: string
+		): string | undefined => {
+			for (const [key, val] of Object.entries(translations)) {
+				if (typeof val === 'string' && val.toLowerCase() === searchValue.toLowerCase()) {
+					return key;
+				} else if (typeof val === 'object') {
+					const nestedKey = findKeyByValue(val as Record<string, TranslationValue>, searchValue);
+					if (nestedKey) {
+						return nestedKey;
+					}
+				}
+			}
+			return undefined;
+		};
+
+		let key = findKeyByValue(sourceTranslations, value);
 		if (!key) {
-			// @ts-ignore
-			const sourceTranslations2 = translates[to];
-			key = Object.keys(sourceTranslations2).find((k) => k.toLowerCase() === value.toLowerCase());
-
+			key = findKeyByValue(targetTranslations, value);
 			if (!key) {
 				return undefined;
 			}
 		}
 
-		// @ts-ignore
-		const translations: Record<string, string> = translates[to];
-
-		// @ts-ignore
-		let result = Object.keys(translations).includes(key)
-			? translations[key]
-			: Object.keys(translates['en']).includes(key)
-			? (translates['en'] as Record<string, string>)[key]
-			: key; // fallback
+		let result = key;
+		if (key in targetTranslations) {
+			result = targetTranslations[key] as string;
+		} else if (key in translates['en']) {
+			result = translates['en'][key] as string;
+		}
 
 		Object.keys(params).forEach((key) => {
 			result = result.replaceAll(`{${key}}`, params[key]?.toString());
