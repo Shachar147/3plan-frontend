@@ -643,6 +643,98 @@ function MyTripsTab() {
 							};
 
 							defaultCalendarEvents.push(flightEvent);
+
+							// Add airport transfer activities
+							if (index < flights.length - 1) {
+								const nextFlight = flights[index + 1];
+								if (nextFlight.startDate && nextFlight.startTime) {
+									const nextFlightStart = new Date(`${nextFlight.startDate}T${nextFlight.startTime}`);
+
+									// Add transfer from airport to hotel (1 hour after landing)
+									const transferFromAirportStart = new Date(endDateTime.getTime() + 60 * 60 * 1000); // 1 hour after landing
+									const transferFromAirportEnd = new Date(
+										transferFromAirportStart.getTime() + 60 * 60 * 1000
+									); // 1 hour duration
+
+									if (transferFromAirportEnd <= tripEndDate) {
+										defaultCalendarEvents.push({
+											id: defaultCalendarEvents.length + 1,
+											title: TranslateService.translate(
+												eventStore,
+												'TRANSFER.FROM_AIRPORT_TO_HOTEL'
+											),
+											start: transferFromAirportStart.toISOString(),
+											end: transferFromAirportEnd.toISOString(),
+											category:
+												getDefaultCategories(eventStore).find(
+													(c) => c.titleKey === 'CATEGORY.TRANSFERS'
+												)?.id ?? 1,
+											description: '',
+											isLocked: true,
+											allDay: false,
+											priority: TriplanPriority.unset,
+											preferredTime: TriplanEventPreferredTime.unset,
+											duration: '01:00',
+											location: undefined,
+											extendedProps: {},
+										});
+									}
+
+									// Add transfer to airport (4 hours before next flight)
+									const transferToAirportEnd = new Date(
+										nextFlightStart.getTime() - 3 * 60 * 60 * 1000
+									); // 3 hours before next flight
+									const transferToAirportStart = new Date(
+										transferToAirportEnd.getTime() - 60 * 60 * 1000
+									); // 1 hour duration
+
+									if (transferToAirportStart >= tripStartDate) {
+										defaultCalendarEvents.push({
+											id: defaultCalendarEvents.length + 1,
+											title: TranslateService.translate(eventStore, 'TRANSFER.TO_AIRPORT'),
+											start: transferToAirportStart.toISOString(),
+											end: transferToAirportEnd.toISOString(),
+											category:
+												getDefaultCategories(eventStore).find(
+													(c) => c.titleKey === 'CATEGORY.TRANSFERS'
+												)?.id ?? 1,
+											description: '',
+											isLocked: true,
+											allDay: false,
+											priority: TriplanPriority.unset,
+											preferredTime: TriplanEventPreferredTime.unset,
+											duration: '01:00',
+											location: undefined,
+											extendedProps: {},
+										});
+
+										// Add "Be at Airport" activity (3 hours before next flight)
+										const beAtAirportEnd = nextFlightStart;
+										const beAtAirportStart = new Date(transferToAirportEnd.getTime()); // Start right after transfer to airport
+
+										if (beAtAirportStart >= tripStartDate) {
+											defaultCalendarEvents.push({
+												id: defaultCalendarEvents.length + 1,
+												title: TranslateService.translate(eventStore, 'TRANSFER.BE_AT_AIRPORT'),
+												start: beAtAirportStart.toISOString(),
+												end: beAtAirportEnd.toISOString(),
+												category:
+													getDefaultCategories(eventStore).find(
+														(c) => c.titleKey === 'CATEGORY.TRANSFERS'
+													)?.id ?? 1,
+												description: '',
+												isLocked: true,
+												allDay: false,
+												priority: TriplanPriority.unset,
+												preferredTime: TriplanEventPreferredTime.unset,
+												duration: '03:00',
+												location: undefined,
+												extendedProps: {},
+											});
+										}
+									}
+								}
+							}
 						}
 					}
 				});
@@ -951,12 +1043,12 @@ function MyTripsTab() {
 						className="add-flight-button"
 						onClick={() => {
 							const newFlight = {
-								startDate: customDateRange.start,
+								startDate: flights.length === 0 ? customDateRange.start : customDateRange.end,
 								startTime: '',
-								endDate: customDateRange.start,
+								endDate: flights.length === 0 ? customDateRange.start : customDateRange.end,
 								endTime: '',
-								sourceAirport: '',
-								targetAirport: '',
+								sourceAirport: flights.length > 0 ? flights[flights.length - 1].targetAirport : '',
+								targetAirport: flights.length > 0 ? flights[flights.length - 1].sourceAirport : '',
 								flightNumber: '',
 							};
 							setFlights([...flights, newFlight]);
@@ -1020,7 +1112,7 @@ function MyTripsTab() {
 													type="text"
 													value={flight.sourceAirport}
 													placeholder={TranslateService.translate(eventStore, 'FOR_EXAMPLE', {
-														X: 'TLV',
+														X: index === 0 ? 'TLV' : flights[0].targetAirport || 'ATH',
 													})}
 													maxLength={3}
 													onChange={(e) => {
@@ -1042,7 +1134,7 @@ function MyTripsTab() {
 													type="text"
 													value={flight.targetAirport}
 													placeholder={TranslateService.translate(eventStore, 'FOR_EXAMPLE', {
-														X: 'ATH',
+														X: index === 0 ? 'ATH' : flights[0].sourceAirport || 'TLV',
 													})}
 													maxLength={3}
 													onChange={(e) => {
@@ -1292,7 +1384,6 @@ function MyTripsTab() {
 					/>
 				)}
 			</div>
-
 			<div
 				className="flex-row justify-content-center flex-wrap-wrap align-items-start width-100-percents"
 				key={myTripsStore.myTrips?.length}
