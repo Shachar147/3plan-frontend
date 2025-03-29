@@ -601,7 +601,11 @@ function MyTripsTab() {
 		return results;
 	}
 
-	async function processActivities(activities: string, eventStore: EventStore): Promise<SidebarEvent[]> {
+	async function processActivities(
+		activities: string,
+		eventStore: EventStore,
+		categories: TriPlanCategory[]
+	): Promise<SidebarEvent[]> {
 		const activityLines = activities.split('\n').filter((line) => line.trim());
 
 		const processActivity = async (activity: string, id: number): Promise<SidebarEvent | null> => {
@@ -628,9 +632,13 @@ function MyTripsTab() {
 
 								// @ts-ignore
 								window.updatePlaceDetails(place, false);
-								if (eventStore.modalValues['category']) {
-									category = eventStore.modalValues['category'];
+
+								// @ts-ignore
+								const category2 = window.getPlaceCategory(place, categories);
+								if (category2) {
+									category = category2.value;
 								}
+
 								if (eventStore.modalValues['description']) {
 									description = eventStore.modalValues['description'];
 								}
@@ -744,6 +752,7 @@ function MyTripsTab() {
 		setErrors({});
 
 		const TripName = tripName.replace(/\s/gi, '-');
+		const categories = getDefaultCategories(eventStore);
 
 		try {
 			// Process activities if any
@@ -751,7 +760,7 @@ function MyTripsTab() {
 			if (activities.trim()) {
 				setIsProcessingActivities(true);
 				try {
-					processedActivities = await processActivities(activities, eventStore);
+					processedActivities = await processActivities(activities, eventStore, categories);
 					if (processedActivities.length > 0) {
 						ReactModalService.internal.alertMessage(
 							eventStore,
@@ -802,7 +811,7 @@ function MyTripsTab() {
 					allEvents,
 					sidebarEvents,
 					calendarEvents: defaultCalendarEvents,
-					categories: getDefaultCategories(eventStore),
+					categories,
 					destinations: selectedDestinations,
 				};
 
