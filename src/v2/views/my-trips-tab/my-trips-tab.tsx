@@ -539,60 +539,103 @@ function MyTripsTab() {
 		return flights.every(validateFlightTimes);
 	}
 
-	async function processActivitiesOld(activities: string): Promise<SidebarEvent[]> {
+	async function processActivity(
+		eventStore: EventStore,
+		categories: TriPlanCategory[],
+		activity: string,
+		id: number
+	): Promise<SidebarEvent | null> {
+		try {
+			return new Promise<SidebarEvent | null>((resolve, reject) => {
+				if (!window.google || !window.google.maps) {
+					reject('Google Maps API is not loaded.');
+					return;
+				}
+
+				const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+
+				service.textSearch(
+					{
+						query: activity,
+					},
+					(results, status) => {
+						if (status === window.google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+							const place = results[0];
+
+							let category = '1'; // Default to 1 (GENERAL)
+							let description = '';
+							let moreInfo = place.website ?? '';
+
+							// @ts-ignore
+							window.updatePlaceDetails(place, false);
+
+							// @ts-ignore
+							const category2 = window.getPlaceCategory(place, categories);
+							if (category2) {
+								category = category2.value;
+							}
+
+							if (eventStore.modalValues['description']) {
+								description = eventStore.modalValues['description'];
+							}
+							if (eventStore.modalValues['more-info']) {
+								moreInfo = eventStore.modalValues['more-info'];
+							}
+
+							// Extract opening hours
+							const openingHours = place.opening_hours?.periods
+								? // @ts-ignore
+								  window.transformOpeningHours(place.opening_hours)
+								: undefined;
+
+							resolve({
+								id: id.toString(),
+								title: place.name,
+								description: description,
+								location: {
+									address: place.formatted_address,
+									latitude: place.geometry?.location?.lat(),
+									longitude: place.geometry?.location?.lng(),
+								},
+								images: place.photos?.map((photo) => photo.getUrl()).join('\n'),
+								icon: '',
+								category,
+								openingHours,
+								moreInfo,
+								duration: '01:00',
+								preferredTime: TriplanEventPreferredTime.unset,
+								priority: TriplanPriority.high,
+								extendedProps: {
+									rating: place.rating,
+									user_ratings_total: place.user_ratings_total,
+									website: place.website,
+									phone: place.formatted_phone_number,
+								},
+							});
+						} else {
+							resolve(null);
+						}
+					}
+				);
+			});
+		} catch (error) {
+			console.error('Error processing activity:', error);
+			return null;
+		}
+	}
+
+	async function processActivitiesOld(
+		activities: string,
+		eventStore: EventStore,
+		categories: TriPlanCategory[]
+	): Promise<SidebarEvent[]> {
 		const activityLines = activities.split('\n').filter((line) => line.trim());
 
-		const processActivity = async (activity: string) => {
-			try {
-				return new Promise<any>((resolve, reject) => {
-					if (!window.google || !window.google.maps) {
-						reject('Google Maps API is not loaded.');
-						return;
-					}
-
-					const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-
-					service.textSearch(
-						{
-							query: activity,
-						},
-						(results, status) => {
-							if (status === window.google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
-								const place = results[0];
-
-								resolve({
-									id: Date.now().toString(),
-									title: place.name,
-									description: place.formatted_address,
-									location: {
-										address: place.formatted_address,
-										latitude: place.geometry?.location?.lat(),
-										longitude: place.geometry?.location?.lng(),
-									},
-									images: place.photos?.map((photo) => photo.getUrl()).join('\n'),
-									category: place.types?.[0] || 'CATEGORY.GENERAL',
-									extendedProps: {
-										rating: place.rating,
-										user_ratings_total: place.user_ratings_total,
-										website: place.website,
-										phone: place.formatted_phone_number,
-									},
-								});
-							} else {
-								resolve(null);
-							}
-						}
-					);
-				});
-			} catch (error) {
-				console.error('Error processing activity:', error);
-				return null;
-			}
-		};
-
-		const results = [];
+		const results: SidebarEvent[] = [];
+		let idx = 1;
 		for (const activity of activityLines) {
-			const result = await processActivity(activity);
+			const result = await processActivity(eventStore, categories, activity, idx);
+			idx += 1;
 			if (result) {
 				results.push(result);
 			}
@@ -608,93 +651,22 @@ function MyTripsTab() {
 	): Promise<SidebarEvent[]> {
 		const activityLines = activities.split('\n').filter((line) => line.trim());
 
-		const processActivity = async (activity: string, id: number): Promise<SidebarEvent | null> => {
-			try {
-				return new Promise<SidebarEvent | null>((resolve, reject) => {
-					if (!window.google || !window.google.maps) {
-						reject('Google Maps API is not loaded.');
-						return;
-					}
-
-					const service = new window.google.maps.places.PlacesService(document.createElement('div'));
-
-					service.textSearch(
-						{
-							query: activity,
-						},
-						(results, status) => {
-							if (status === window.google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
-								const place = results[0];
-
-								let category = '1'; // Default to 1 (GENERAL)
-								let description = '';
-								let moreInfo = place.website ?? '';
-
-								// @ts-ignore
-								window.updatePlaceDetails(place, false);
-
-								// @ts-ignore
-								const category2 = window.getPlaceCategory(place, categories);
-								if (category2) {
-									category = category2.value;
-								}
-
-								if (eventStore.modalValues['description']) {
-									description = eventStore.modalValues['description'];
-								}
-								if (eventStore.modalValues['more-info']) {
-									moreInfo = eventStore.modalValues['more-info'];
-								}
-
-								// Extract opening hours
-								const openingHours = place.opening_hours?.periods
-									? // @ts-ignore
-									  window.transformOpeningHours(place.opening_hours)
-									: undefined;
-
-								resolve({
-									id: id.toString(),
-									title: place.name,
-									description: description,
-									location: {
-										address: place.formatted_address,
-										latitude: place.geometry?.location?.lat(),
-										longitude: place.geometry?.location?.lng(),
-									},
-									images: place.photos?.map((photo) => photo.getUrl()).join('\n'),
-									icon: '',
-									category,
-									openingHours,
-									moreInfo,
-									duration: '01:00',
-									preferredTime: TriplanEventPreferredTime.unset,
-									priority: TriplanPriority.high,
-									extendedProps: {
-										rating: place.rating,
-										user_ratings_total: place.user_ratings_total,
-										website: place.website,
-										phone: place.formatted_phone_number,
-									},
-								});
-							} else {
-								resolve(null);
-							}
-						}
-					);
-				});
-			} catch (error) {
-				console.error('Error processing activity:', error);
-				return null;
-			}
-		};
-
 		const results: SidebarEvent[] = [];
+		const chunkSize = 5;
 		let idx = 1;
-		for (const activity of activityLines) {
-			const result = await processActivity(activity, idx);
-			idx += 1;
-			if (result) {
-				results.push(result);
+
+		for (let i = 0; i < activityLines.length; i += chunkSize) {
+			const chunk = activityLines.slice(i, i + chunkSize);
+			const chunkResults = await Promise.all(
+				chunk.map((activity, index) => processActivity(eventStore, categories, activity, idx + index))
+			);
+			idx += chunkSize;
+
+			results.push(...chunkResults.filter(Boolean));
+
+			// Introduce a delay between batches to prevent rate limiting
+			if (i + chunkSize < activityLines.length) {
+				await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay
 			}
 		}
 
@@ -764,7 +736,7 @@ function MyTripsTab() {
 					if (processedActivities.length > 0) {
 						ReactModalService.internal.alertMessage(
 							eventStore,
-							'MODALS.SUCCESS.TITLE',
+							'MODALS.CREATE.TITLE',
 							'ACTIVITIES.SUCCESS',
 							'success',
 							{ count: processedActivities.length }
