@@ -649,7 +649,17 @@ function MyTripsTab() {
 		eventStore: EventStore,
 		categories: TriPlanCategory[]
 	): Promise<SidebarEvent[]> {
-		const activityLines = activities.split('\n').filter((line) => line.trim());
+		let activityLines = activities.split('\n').filter((line) => line.trim());
+
+		// add the name of the destination for more percise details lookup
+		if (selectedDestinations.length == 1) {
+			activityLines = activityLines.map((a) => {
+				if (!a.toLowerCase().includes(selectedDestinations[0].toLowerCase())) {
+					a += ' ' + selectedDestinations[0];
+				}
+				return a;
+			});
+		}
 
 		const results: SidebarEvent[] = [];
 		const chunkSize = 5;
