@@ -1285,9 +1285,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				// Filter calendar events based on search and area
 				scheduledEvents = eventStore.filteredCalendarEvents.filter((calEvent) => {
 					// First check if event matches search term
-					if (eventStore.searchValue && !checkIfEventMatchesSearch(calEvent, eventStore.searchValue)) {
-						return false;
-					}
+					// if (eventStore.searchValue && !checkIfEventMatchesSearch(calEvent, eventStore.searchValue)) {
+					// 	return false;
+					// }
 
 					// For special search areas with no events
 					if (isSpecialSearchArea) {
