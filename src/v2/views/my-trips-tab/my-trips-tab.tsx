@@ -1,6 +1,6 @@
 import TranslateService from '../../../services/translate-service';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { eventStoreContext } from '../../../stores/events-store';
+import { EventStore, eventStoreContext } from '../../../stores/events-store';
 import DataServices, { Trip, tripNameToLSTripName } from '../../../services/data-handlers/data-handler-base';
 import {
 	addDays,
@@ -22,14 +22,7 @@ import { myTripsContext } from '../../stores/my-trips-store';
 import LoadingComponent from '../../../components/loading/loading-component';
 import ReactModalService from '../../../services/react-modal-service';
 import LogHistoryService from '../../../services/data-handlers/log-history-service';
-import {
-	CalendarEvent,
-	LocationData,
-	SidebarEvent,
-	TripActions,
-	TriPlanCategory,
-	WeeklyOpeningHoursData,
-} from '../../../utils/interfaces';
+import { CalendarEvent, SidebarEvent, TripActions, TriPlanCategory } from '../../../utils/interfaces';
 import './my-trips-tab.scss';
 import moment from 'moment';
 import Button, { ButtonFlavor } from '../../../components/common/button/button';
@@ -41,14 +34,13 @@ import {
 	formatDateString,
 	getDefaultCategories,
 } from '../../../utils/defaults';
-import { TripDataSource, TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
+import { TripDataSource, TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
 import { DEFAULT_VIEW_MODE_FOR_NEW_TRIPS } from '../../../utils/consts';
 import { upsertTripProps } from '../../../services/data-handlers/db-service';
 import { observer } from 'mobx-react';
 import DestinationSelector from '../../components/destination-selector/destination-selector';
 import { getParameterFromHash } from '../../utils/utils';
 import { feedStoreContext } from '../../stores/feed-view-store';
-import { IPointOfInterestToTripEvent } from '../../utils/interfaces';
 import { myTripsTabId, newDesignRootPath } from '../../utils/consts';
 import MainPage from '../../../pages/main-page/main-page';
 import { tripTemplatesContext } from '../../stores/templates-store';
@@ -547,7 +539,7 @@ function MyTripsTab() {
 		return flights.every(validateFlightTimes);
 	}
 
-	async function processActivities(activities: string): Promise<SidebarEvent[]> {
+	async function processActivitiesOld(activities: string): Promise<SidebarEvent[]> {
 		const activityLines = activities.split('\n').filter((line) => line.trim());
 
 		const processActivity = async (activity: string) => {
@@ -601,6 +593,98 @@ function MyTripsTab() {
 		const results = [];
 		for (const activity of activityLines) {
 			const result = await processActivity(activity);
+			if (result) {
+				results.push(result);
+			}
+		}
+
+		return results;
+	}
+
+	async function processActivities(activities: string, eventStore: EventStore): Promise<SidebarEvent[]> {
+		const activityLines = activities.split('\n').filter((line) => line.trim());
+
+		const processActivity = async (activity: string, id: number): Promise<SidebarEvent | null> => {
+			try {
+				return new Promise<SidebarEvent | null>((resolve, reject) => {
+					if (!window.google || !window.google.maps) {
+						reject('Google Maps API is not loaded.');
+						return;
+					}
+
+					const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+
+					service.textSearch(
+						{
+							query: activity,
+						},
+						(results, status) => {
+							if (status === window.google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+								const place = results[0];
+
+								let category = '1'; // Default to 1 (GENERAL)
+								let description = '';
+								let moreInfo = place.website ?? '';
+
+								// @ts-ignore
+								window.updatePlaceDetails(place, false);
+								if (eventStore.modalValues['category']) {
+									category = eventStore.modalValues['category'];
+								}
+								if (eventStore.modalValues['description']) {
+									description = eventStore.modalValues['description'];
+								}
+								if (eventStore.modalValues['more-info']) {
+									moreInfo = eventStore.modalValues['more-info'];
+								}
+
+								// Extract opening hours
+								const openingHours = place.opening_hours?.periods
+									? // @ts-ignore
+									  window.transformOpeningHours(place.opening_hours)
+									: undefined;
+
+								resolve({
+									id: id.toString(),
+									title: place.name,
+									description: description,
+									location: {
+										address: place.formatted_address,
+										latitude: place.geometry?.location?.lat(),
+										longitude: place.geometry?.location?.lng(),
+									},
+									images: place.photos?.map((photo) => photo.getUrl()).join('\n'),
+									icon: '',
+									category,
+									openingHours,
+									moreInfo,
+									duration: '01:00',
+									preferredTime: TriplanEventPreferredTime.unset,
+									priority: TriplanPriority.high,
+									extendedProps: {
+										rating: place.rating,
+										user_ratings_total: place.user_ratings_total,
+										website: place.website,
+										phone: place.formatted_phone_number,
+									},
+								});
+							} else {
+								resolve(null);
+							}
+						}
+					);
+				});
+			} catch (error) {
+				console.error('Error processing activity:', error);
+				return null;
+			}
+		};
+
+		const results: SidebarEvent[] = [];
+		let idx = 1;
+		for (const activity of activityLines) {
+			const result = await processActivity(activity, idx);
+			idx += 1;
 			if (result) {
 				results.push(result);
 			}
@@ -667,7 +751,7 @@ function MyTripsTab() {
 			if (activities.trim()) {
 				setIsProcessingActivities(true);
 				try {
-					processedActivities = await processActivities(activities);
+					processedActivities = await processActivities(activities, eventStore);
 					if (processedActivities.length > 0) {
 						ReactModalService.internal.alertMessage(
 							eventStore,
@@ -698,20 +782,25 @@ function MyTripsTab() {
 				eventStore.dataService.setDateRange(customDateRange, TripName);
 				navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 			} else {
+				const allEvents = [...defaultCalendarEvents, ...Object.values(defaultEvents).flat()];
+				const sidebarEvents = {
+					...defaultEvents,
+				};
+				processedActivities.forEach((a) => {
+					const categoryId = Number(a['category']);
+					if (!sidebarEvents[categoryId]) {
+						sidebarEvents[categoryId] = [];
+					}
+					sidebarEvents[categoryId].push(a);
+					allEvents.push(a);
+				});
+
 				const tripData: upsertTripProps = {
 					name: TripName,
 					dateRange: customDateRange,
 					calendarLocale: eventStore.calendarLocalCode,
-					allEvents: [],
-					sidebarEvents: {
-						...defaultEvents,
-						[eventStore.categories.find((c) => c.titleKey === 'CATEGORY.GENERAL')?.id || 1]: [
-							...(defaultEvents[
-								eventStore.categories.find((c) => c.titleKey === 'CATEGORY.GENERAL')?.id || 1
-							] || []),
-							...processedActivities,
-						],
-					},
+					allEvents,
+					sidebarEvents,
 					calendarEvents: defaultCalendarEvents,
 					categories: getDefaultCategories(eventStore),
 					destinations: selectedDestinations,

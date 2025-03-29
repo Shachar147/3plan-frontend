@@ -628,6 +628,8 @@ const RootRouter = () => {
 		});
 	}
 
+	window.updatePlaceDetails = updatePlaceDetails;
+
 	function transformOpeningHours(openingHours) {
 		const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 		const result = {};
@@ -662,6 +664,8 @@ const RootRouter = () => {
 
 		return result;
 	}
+
+	window.transformOpeningHours = transformOpeningHours;
 
 	window.initLocationPicker = (
 		className = 'location-input',
