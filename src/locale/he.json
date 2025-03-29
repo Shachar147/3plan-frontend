@@ -1162,7 +1162,7 @@
 	"CREATE_NEW_TEMPLATE": "צור טמפלייט!",
 	"GO_BACK": "חזור אחורה",
 	"CREATE_TRIP_FROM_SAVED_COLLECTION": "צרו טיול מאוסף זה!",
-	"BACK_TO_MY_TRIPS": "חזור לטיולים שלי",
+	"BACK_TO_MY_TRIPS": "חזרו לטיולים שלי",
 	"MY_TRIP_TO_X": "טיול ל{X}",
 	"EVENT_NAME_WITH_DURATION": "{name} ({duration})",
 	"OPEN_TRIP": "פתח טיול זה",
@@ -1247,5 +1247,10 @@
 	"HOTEL.NAME": "שם המלון",
 	"HOTEL.DELETE": "מחק מלון",
 	"HOTEL.NO_HOTELS": "טרם נוספו מלונות",
-	"HOTEL.HOTEL_DETAILS": "פרטי בתי מלון"
+	"HOTEL.HOTEL_DETAILS": "פרטי בתי מלון",
+	"ACTIVITIES.TITLE": "אילו פעילויות תרצה לכלול?",
+	"ACTIVITIES.PLACEHOLDER": "הזן פעילות אחת בכל שורה (למשל מגדל אייפל, מוזיאון הלובר, קתדרלת נוטרדאם)",
+	"ACTIVITIES.PROCESSING": "מעבד פעילויות...",
+	"ACTIVITIES.ERROR": "שגיאה בעיבוד הפעילויות. אנא נסה שוב.",
+	"ACTIVITIES.SUCCESS": "נוספו בהצלחה {count} פעילויות לטיול שלך"
 }

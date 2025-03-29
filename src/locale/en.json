@@ -1009,5 +1009,10 @@
 	"HOTEL.NAME": "Hotel Name",
 	"HOTEL.DELETE": "Delete Hotel",
 	"HOTEL.NO_HOTELS": "No hotels added yet",
-	"HOTEL.HOTEL_DETAILS": "Hotel details"
+	"HOTEL.HOTEL_DETAILS": "Hotel details",
+	"ACTIVITIES.TITLE": "What activities would you like to include?",
+	"ACTIVITIES.PLACEHOLDER": "Enter one activity per line (e.g. Eiffel Tower, Louvre Museum, Notre-Dame Cathedral)",
+	"ACTIVITIES.PROCESSING": "Processing activities...",
+	"ACTIVITIES.ERROR": "Error processing activities. Please try again.",
+	"ACTIVITIES.SUCCESS": "Successfully added {count} activities to your trip"
 }

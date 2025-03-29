@@ -361,3 +361,33 @@
 		justify-content: center !important;
 	}
 }
+
+.activities-section {
+	width: 100%;
+	max-width: 600px;
+	margin: 0 auto;
+
+	.activities-textarea {
+		width: 100%;
+		padding: 10px;
+		border: 1px solid #dde3eb;
+		border-radius: 4px;
+		resize: vertical;
+		min-height: 100px;
+		font-family: inherit;
+		font-size: 14px;
+		line-height: 1.5;
+
+		&:focus {
+			outline: none;
+			border-color: #4a90e2;
+		}
+	}
+
+	.processing-activities {
+		margin-top: 10px;
+		color: #666;
+		font-size: 14px;
+		text-align: center;
+	}
+}

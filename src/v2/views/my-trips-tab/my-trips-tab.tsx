@@ -25,6 +25,7 @@ import LogHistoryService from '../../../services/data-handlers/log-history-servi
 import {
 	CalendarEvent,
 	LocationData,
+	SidebarEvent,
 	TripActions,
 	TriPlanCategory,
 	WeeklyOpeningHoursData,
@@ -97,6 +98,8 @@ function MyTripsTab() {
 	const [selectedDestinations, setSelectedDestinations] = useState([]);
 	const [flights, setFlights] = useState<FlightDetails[]>([]);
 	const [hotels, setHotels] = useState<HotelDetails[]>([]);
+	const [activities, setActivities] = useState<string>('');
+	const [isProcessingActivities, setIsProcessingActivities] = useState(false);
 
 	useEffect(() => {
 		if (savedCollection?.destination) {
@@ -544,6 +547,68 @@ function MyTripsTab() {
 		return flights.every(validateFlightTimes);
 	}
 
+	async function processActivities(activities: string): Promise<SidebarEvent[]> {
+		const activityLines = activities.split('\n').filter((line) => line.trim());
+
+		const processActivity = async (activity: string) => {
+			try {
+				return new Promise<any>((resolve, reject) => {
+					if (!window.google || !window.google.maps) {
+						reject('Google Maps API is not loaded.');
+						return;
+					}
+
+					const service = new window.google.maps.places.PlacesService(document.createElement('div'));
+
+					service.textSearch(
+						{
+							query: activity,
+						},
+						(results, status) => {
+							if (status === window.google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+								const place = results[0];
+
+								resolve({
+									id: Date.now().toString(),
+									title: place.name,
+									description: place.formatted_address,
+									location: {
+										address: place.formatted_address,
+										latitude: place.geometry?.location?.lat(),
+										longitude: place.geometry?.location?.lng(),
+									},
+									images: place.photos?.map((photo) => photo.getUrl()).join('\n'),
+									category: place.types?.[0] || 'CATEGORY.GENERAL',
+									extendedProps: {
+										rating: place.rating,
+										user_ratings_total: place.user_ratings_total,
+										website: place.website,
+										phone: place.formatted_phone_number,
+									},
+								});
+							} else {
+								resolve(null);
+							}
+						}
+					);
+				});
+			} catch (error) {
+				console.error('Error processing activity:', error);
+				return null;
+			}
+		};
+
+		const results = [];
+		for (const activity of activityLines) {
+			const result = await processActivity(activity);
+			if (result) {
+				results.push(result);
+			}
+		}
+
+		return results;
+	}
+
 	async function createNewTrip(tripName: string) {
 		const areDatesValid = validateDateRange(eventStore, customDateRange.start, customDateRange.end);
 		const areFlightsValid = validateFlights();
@@ -597,6 +662,34 @@ function MyTripsTab() {
 		const TripName = tripName.replace(/\s/gi, '-');
 
 		try {
+			// Process activities if any
+			let processedActivities = [];
+			if (activities.trim()) {
+				setIsProcessingActivities(true);
+				try {
+					processedActivities = await processActivities(activities);
+					if (processedActivities.length > 0) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.SUCCESS.TITLE',
+							'ACTIVITIES.SUCCESS',
+							'success',
+							{ count: processedActivities.length }
+						);
+					}
+				} catch (error) {
+					console.error('Error processing activities:', error);
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTIVITIES.ERROR',
+						'error'
+					);
+				} finally {
+					setIsProcessingActivities(false);
+				}
+			}
+
 			// local mode
 			if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
 				eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
@@ -610,7 +703,15 @@ function MyTripsTab() {
 					dateRange: customDateRange,
 					calendarLocale: eventStore.calendarLocalCode,
 					allEvents: [],
-					sidebarEvents: defaultEvents,
+					sidebarEvents: {
+						...defaultEvents,
+						[eventStore.categories.find((c) => c.titleKey === 'CATEGORY.GENERAL')?.id || 1]: [
+							...(defaultEvents[
+								eventStore.categories.find((c) => c.titleKey === 'CATEGORY.GENERAL')?.id || 1
+							] || []),
+							...processedActivities,
+						],
+					},
 					calendarEvents: defaultCalendarEvents,
 					categories: getDefaultCategories(eventStore),
 					destinations: selectedDestinations,
@@ -1390,6 +1491,25 @@ function MyTripsTab() {
 						className={getClasses('flex-row flex-1-1-0', errors['end'] && 'red-border')}
 					/>
 				</div>
+
+				<div className="main-font font-size-20">
+					{TranslateService.translate(eventStore, 'ACTIVITIES.TITLE')}
+				</div>
+				<div className="activities-section margin-bottom-5">
+					<textarea
+						value={activities}
+						onChange={(e) => setActivities(e.target.value)}
+						placeholder={TranslateService.translate(eventStore, 'ACTIVITIES.PLACEHOLDER')}
+						className="activities-textarea"
+						rows={5}
+					/>
+					{isProcessingActivities && (
+						<div className="processing-activities">
+							{TranslateService.translate(eventStore, 'ACTIVITIES.PROCESSING')}
+						</div>
+					)}
+				</div>
+
 				{renderFlightDetailsSection()}
 				{renderHotelDetailsSection()}
 			</div>
