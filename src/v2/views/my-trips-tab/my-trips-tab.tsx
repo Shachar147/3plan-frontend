@@ -62,6 +62,12 @@ interface FlightDetails {
 	flightNumber: string;
 }
 
+interface HotelDetails {
+	name: string;
+	startDate: string;
+	endDate: string;
+}
+
 function MyTripsTab() {
 	const eventStore = useContext(eventStoreContext);
 	const myTripsStore = useContext(myTripsContext);
@@ -90,6 +96,7 @@ function MyTripsTab() {
 	const [tripName, setTripName] = useState<string>('');
 	const [selectedDestinations, setSelectedDestinations] = useState([]);
 	const [flights, setFlights] = useState<FlightDetails[]>([]);
+	const [hotels, setHotels] = useState<HotelDetails[]>([]);
 
 	useEffect(() => {
 		if (savedCollection?.destination) {
@@ -590,156 +597,6 @@ function MyTripsTab() {
 		const TripName = tripName.replace(/\s/gi, '-');
 
 		try {
-			const defaultEvents = {};
-			const defaultCalendarEvents = [];
-
-			// Add valid flights to calendar events
-			if (flights.length > 0) {
-				flights.forEach((flight, index) => {
-					if (flight.startDate && flight.endDate && flight.startTime && flight.endTime) {
-						const startDateTime = new Date(`${flight.startDate}T${flight.startTime}`);
-						const endDateTime = new Date(`${flight.endDate}T${flight.endTime}`);
-						const tripStartDate = new Date(customDateRange.start);
-						const tripEndDate = new Date(customDateRange.end);
-
-						// Validate flight times and dates
-						if (
-							startDateTime < endDateTime &&
-							new Date(flight.startDate) >= tripStartDate &&
-							new Date(flight.endDate) <= tripEndDate
-						) {
-							const flightEvent = {
-								id: index + 1,
-								title:
-									flight.flightNumber && flight.sourceAirport && flight.targetAirport
-										? TranslateService.translate(eventStore, 'FLIGHT_DETAILS.FLIGHT_INFO', {
-												flightNumber: flight.flightNumber,
-												from: flight.sourceAirport,
-												to: flight.targetAirport,
-										  })
-										: TranslateService.translate(eventStore, 'FLIGHT_DETAILS.DEFAULT_NAME', {
-												number: index + 1,
-										  }),
-								start: startDateTime.toISOString(),
-								end: endDateTime.toISOString(),
-								category:
-									getDefaultCategories(eventStore).find((c) => c.titleKey === 'CATEGORY.FLIGHTS')
-										?.id ?? 1,
-								description: '',
-								isLocked: true,
-								allDay: false,
-								priority: TriplanPriority.high,
-								preferredTime: TriplanEventPreferredTime.unset,
-								duration: (() => {
-									const diffMs = endDateTime.getTime() - startDateTime.getTime();
-									const hours = Math.floor(diffMs / (1000 * 60 * 60));
-									const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-									return `${hours.toString().padStart(2, '0')}:${minutes
-										.toString()
-										.padStart(2, '0')}`;
-								})(),
-								location: undefined,
-								extendedProps: {},
-							};
-
-							defaultCalendarEvents.push(flightEvent);
-
-							// Add airport transfer activities
-							if (index < flights.length - 1) {
-								const nextFlight = flights[index + 1];
-								if (nextFlight.startDate && nextFlight.startTime) {
-									const nextFlightStart = new Date(`${nextFlight.startDate}T${nextFlight.startTime}`);
-
-									// Add transfer from airport to hotel (1 hour after landing)
-									const transferFromAirportStart = new Date(endDateTime.getTime() + 60 * 60 * 1000); // 1 hour after landing
-									const transferFromAirportEnd = new Date(
-										transferFromAirportStart.getTime() + 60 * 60 * 1000
-									); // 1 hour duration
-
-									if (transferFromAirportEnd <= tripEndDate) {
-										defaultCalendarEvents.push({
-											id: defaultCalendarEvents.length + 1,
-											title: TranslateService.translate(
-												eventStore,
-												'TRANSFER.FROM_AIRPORT_TO_HOTEL'
-											),
-											start: transferFromAirportStart.toISOString(),
-											end: transferFromAirportEnd.toISOString(),
-											category:
-												getDefaultCategories(eventStore).find(
-													(c) => c.titleKey === 'CATEGORY.TRANSFERS'
-												)?.id ?? 1,
-											description: '',
-											isLocked: true,
-											allDay: false,
-											priority: TriplanPriority.unset,
-											preferredTime: TriplanEventPreferredTime.unset,
-											duration: '01:00',
-											location: undefined,
-											extendedProps: {},
-										});
-									}
-
-									// Add transfer to airport (4 hours before next flight)
-									const transferToAirportEnd = new Date(
-										nextFlightStart.getTime() - 3 * 60 * 60 * 1000
-									); // 3 hours before next flight
-									const transferToAirportStart = new Date(
-										transferToAirportEnd.getTime() - 60 * 60 * 1000
-									); // 1 hour duration
-
-									if (transferToAirportStart >= tripStartDate) {
-										defaultCalendarEvents.push({
-											id: defaultCalendarEvents.length + 1,
-											title: TranslateService.translate(eventStore, 'TRANSFER.TO_AIRPORT'),
-											start: transferToAirportStart.toISOString(),
-											end: transferToAirportEnd.toISOString(),
-											category:
-												getDefaultCategories(eventStore).find(
-													(c) => c.titleKey === 'CATEGORY.TRANSFERS'
-												)?.id ?? 1,
-											description: '',
-											isLocked: true,
-											allDay: false,
-											priority: TriplanPriority.unset,
-											preferredTime: TriplanEventPreferredTime.unset,
-											duration: '01:00',
-											location: undefined,
-											extendedProps: {},
-										});
-
-										// Add "Be at Airport" activity (3 hours before next flight)
-										const beAtAirportEnd = nextFlightStart;
-										const beAtAirportStart = new Date(transferToAirportEnd.getTime()); // Start right after transfer to airport
-
-										if (beAtAirportStart >= tripStartDate) {
-											defaultCalendarEvents.push({
-												id: defaultCalendarEvents.length + 1,
-												title: TranslateService.translate(eventStore, 'TRANSFER.BE_AT_AIRPORT'),
-												start: beAtAirportStart.toISOString(),
-												end: beAtAirportEnd.toISOString(),
-												category:
-													getDefaultCategories(eventStore).find(
-														(c) => c.titleKey === 'CATEGORY.TRANSFERS'
-													)?.id ?? 1,
-												description: '',
-												isLocked: true,
-												allDay: false,
-												priority: TriplanPriority.unset,
-												preferredTime: TriplanEventPreferredTime.unset,
-												duration: '03:00',
-												location: undefined,
-												extendedProps: {},
-											});
-										}
-									}
-								}
-							}
-						}
-					}
-				});
-			}
-
 			// local mode
 			if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
 				eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
@@ -752,83 +609,171 @@ function MyTripsTab() {
 					name: TripName,
 					dateRange: customDateRange,
 					calendarLocale: eventStore.calendarLocalCode,
-					allEvents: [...defaultCalendarEvents],
+					allEvents: [],
 					sidebarEvents: defaultEvents,
 					calendarEvents: defaultCalendarEvents,
 					categories: getDefaultCategories(eventStore),
 					destinations: selectedDestinations,
 				};
 
-				const categoryNameToId = tripData.categories.reduce((hash, category) => {
-					hash[category.title] = category.id;
-					return hash;
-				}, {});
+				// Add flight events
+				let transferFromAirportEnd;
+				flights.forEach((flight, index) => {
+					const flightEvent: CalendarEvent = {
+						id: tripData.calendarEvents.length + 1,
+						title: TranslateService.translate(eventStore, 'FLIGHT_DETAILS.FLIGHT_INFO', {
+							flightNumber: flight.flightNumber,
+							from: flight.sourceAirport,
+							to: flight.targetAirport,
+						}),
+						start: `${flight.startDate}T${flight.startTime}`,
+						end: `${flight.endDate}T${flight.endTime}`,
+						category: tripData.categories.find((c) => c.titleKey === 'CATEGORY.FLIGHTS')?.id ?? 1,
+						description: '',
+						isLocked: true,
+						allDay: false,
+						priority: TriplanPriority.unset,
+						preferredTime: TriplanEventPreferredTime.unset,
+						duration: '02:00',
+						location: undefined,
+						extendedProps: {},
+					};
 
-				if (savedCollection) {
-					const items = savedCollection.items.map((i) => i.fullDetails);
+					tripData.calendarEvents.push(flightEvent);
 
-					const sidebarEvents = {};
+					// Add airport transfer activities
+					if (index < flights.length - 1) {
+						const nextFlightStart = new Date(
+							`${flights[index + 1].startDate}T${flights[index + 1].startTime}`
+						);
+						const flightEnd = new Date(`${flight.endDate}T${flight.endTime}`);
 
-					const allEvents = items.map((i, idx) => {
-						const parsedItem = IPointOfInterestToTripEvent(i, idx);
+						// Add transfer from airport to hotel (1 hour after flight arrival)
+						const transferFromAirportStart = new Date(flightEnd.getTime());
+						transferFromAirportEnd = new Date(transferFromAirportStart.getTime() + 2 * 60 * 60 * 1000);
 
-						i.category = i.category || 'CATEGORY.GENERAL';
-
-						// @ts-ignore
-						parsedItem.images = i.images?.join('\n');
-
-						const { title, icon } = splitTitleAndIcons(i.category);
-
-						let categoryId =
-							categoryNameToId[title] ??
-							categoryNameToId[TranslateService.translate(eventStore, title)] ??
-							categoryNameToId[
-								Translate.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
-							] ??
-							categoryNameToId[
-								Translate.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
-							];
-
-						if (!categoryId) {
-							const maxCategoryId = Math.max(...Object.values(categoryNameToId));
-							categoryId = maxCategoryId + 1;
-
-							tripData.categories.push({
-								id: maxCategoryId + 1,
-								title,
-								icon,
-								// title: i.category,
-								// icon: ''
+						if (transferFromAirportEnd <= new Date(customDateRange.end)) {
+							tripData.calendarEvents.push({
+								id: tripData.calendarEvents.length + 1,
+								title: TranslateService.translate(eventStore, 'TRANSFER.FROM_AIRPORT_TO_HOTEL'),
+								start: transferFromAirportStart.toISOString(),
+								end: transferFromAirportEnd.toISOString(),
+								category: tripData.categories.find((c) => c.titleKey === 'CATEGORY.TRANSFERS')?.id ?? 1,
+								description: '',
+								isLocked: true,
+								allDay: false,
+								priority: TriplanPriority.unset,
+								preferredTime: TriplanEventPreferredTime.unset,
+								duration: '02:00',
+								location: undefined,
+								extendedProps: {},
 							});
-							categoryNameToId[i.category] = categoryId;
+
+							// Add transfer to airport (4 hours before next flight)
+							const transferToAirportStart = new Date(nextFlightStart.getTime() - 4 * 60 * 60 * 1000);
+							const transferToAirportEnd = new Date(nextFlightStart.getTime() - 3 * 60 * 60 * 1000);
+
+							if (transferToAirportStart >= new Date(customDateRange.start)) {
+								tripData.calendarEvents.push({
+									id: tripData.calendarEvents.length + 1,
+									title: TranslateService.translate(eventStore, 'TRANSFER.TO_AIRPORT'),
+									start: transferToAirportStart.toISOString(),
+									end: transferToAirportEnd.toISOString(),
+									category:
+										tripData.categories.find((c) => c.titleKey === 'CATEGORY.TRANSFERS')?.id ?? 1,
+									description: '',
+									isLocked: true,
+									allDay: false,
+									priority: TriplanPriority.unset,
+									preferredTime: TriplanEventPreferredTime.unset,
+									duration: '01:00',
+									location: undefined,
+									extendedProps: {},
+								});
+
+								// Add "Be at Airport" activity (3 hours before next flight)
+								const beAtAirportStart = new Date(transferToAirportEnd.getTime());
+								const beAtAirportEnd = new Date(nextFlightStart.getTime());
+
+								if (beAtAirportStart >= new Date(customDateRange.start)) {
+									tripData.calendarEvents.push({
+										id: tripData.calendarEvents.length + 1,
+										title: TranslateService.translate(eventStore, 'TRANSFER.BE_AT_AIRPORT'),
+										start: beAtAirportStart.toISOString(),
+										end: beAtAirportEnd.toISOString(),
+										category:
+											tripData.categories.find((c) => c.titleKey === 'CATEGORY.TRANSFERS')?.id ??
+											1,
+										description: '',
+										isLocked: true,
+										allDay: false,
+										priority: TriplanPriority.unset,
+										preferredTime: TriplanEventPreferredTime.unset,
+										duration: '03:00',
+										location: undefined,
+										extendedProps: {},
+									});
+								}
+							}
 						}
-						parsedItem.category = categoryId;
+					}
+				});
 
-						sidebarEvents[categoryId] ||= [];
-						sidebarEvents[categoryId].push(parsedItem);
+				// Add hotel events for each day
+				hotels.forEach((hotel) => {
+					const hotelStartDate = new Date(hotel.startDate);
+					const hotelEndDate = new Date(hotel.endDate);
+					const currentDate = new Date(hotelStartDate);
 
-						return parsedItem;
-					});
+					while (currentDate <= hotelEndDate) {
+						const isFirstDay = currentDate.getTime() === hotelStartDate.getTime();
+						const isLastDay = currentDate.getTime() === hotelEndDate.getTime();
+						const eventStart = new Date(currentDate);
+						const eventEnd = new Date(currentDate);
 
-					tripData.allEvents = allEvents;
-					tripData.sidebarEvents = sidebarEvents;
-				}
+						if (isFirstDay) {
+							// On first day, start 1 hour after transfer from airport
+							if (transferFromAirportEnd) {
+								eventStart.setTime(transferFromAirportEnd.getTime());
+								eventEnd.setTime(eventStart.getTime() + 60 * 60 * 1000);
+							} else {
+								eventStart.setHours(15, 0, 0, 0);
+								eventEnd.setHours(16, 0, 0, 0);
+							}
+						} else if (isLastDay) {
+							eventStart.setHours(10, 0, 0, 0);
+							eventEnd.setHours(11, 0, 0, 0);
+						} else {
+							// On other days, set to 8:00-9:00
+							eventStart.setHours(8, 0, 0, 0);
+							eventEnd.setHours(9, 0, 0, 0);
+						}
 
-				if (template) {
-					const dayOne = new Date(customDateRange.start);
-					const templateDayOne = new Date(template.dateRange.start);
-					const diff = daysBetween(templateDayOne, dayOne, false);
+						tripData.calendarEvents.push({
+							id: (tripData.calendarEvents.length + 1).toString(),
+							title: `${hotel.name}${
+								isFirstDay
+									? ` - ${TranslateService.translate(eventStore, 'HOTEL.CHECK_IN')}`
+									: isLastDay
+									? ` - ${TranslateService.translate(eventStore, 'HOTEL.CHECK_OUT')}`
+									: ''
+							}`,
+							start: eventStart.toISOString(),
+							end: eventEnd.toISOString(),
+							category: tripData.categories.find((c) => c.titleKey === 'CATEGORY.HOTELS')?.id ?? 1,
+							description: '',
+							isLocked: true,
+							allDay: false,
+							priority: TriplanPriority.unset,
+							preferredTime: TriplanEventPreferredTime.unset,
+							duration: '01:00',
+							location: undefined,
+							extendedProps: {},
+						});
 
-					tripData.allEvents = template.allEvents.map(formatTemplateEvent);
-					const sidebarEvents = {};
-					Object.keys(template.sidebarEvents).forEach((c) => {
-						sidebarEvents[c] = template.sidebarEvents[c].map(formatTemplateEvent);
-					});
-
-					tripData.sidebarEvents = sidebarEvents;
-					tripData.calendarEvents = template.calendarEvents.map((c) => formatTemplateEvent(c, diff));
-					tripData.categories = template.categories.map(formatTemplateCategory);
-				}
+						currentDate.setDate(currentDate.getDate() + 1);
+					}
+				});
 
 				// backup
 				let { viewMode, mobileViewMode } = eventStore;
@@ -850,7 +795,6 @@ function MyTripsTab() {
 						});
 
 						navigate(`${newDesignRootPath}/plan/${res.data.name}`);
-						// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 					},
 					(e) => {
 						// restore to backup
@@ -1250,10 +1194,118 @@ function MyTripsTab() {
 		);
 	}
 
+	function renderHotelDetailsSection() {
+		return (
+			<div className="flight-details-section border-bottom-light-gray margin-top-0">
+				<div className="flight-header">
+					<h3 className="flex-row flex-1-1-0">
+						{TranslateService.translate(eventStore, 'HOTEL.HOTEL_DETAILS')}
+					</h3>
+					<button
+						className="add-hotel-button"
+						onClick={() => {
+							setHotels([
+								...hotels,
+								{
+									name: '',
+									startDate: customDateRange.start,
+									endDate: customDateRange.end,
+								},
+							]);
+						}}
+					>
+						{TranslateService.translate(eventStore, 'HOTEL.ADD_HOTEL')}
+					</button>
+				</div>
+
+				<div className="flight-list">
+					{hotels.length === 0 ? (
+						<p>{TranslateService.translate(eventStore, 'HOTEL.NO_HOTELS')}</p>
+					) : (
+						hotels.map((hotel, index) => (
+							<div key={index} className="hotel-item">
+								<div className="hotel-info">
+									<div className="hotel-name">
+										<input
+											type="text"
+											value={hotel.name}
+											placeholder={TranslateService.translate(eventStore, 'HOTEL.NAME')}
+											onChange={(e) => {
+												const newHotels = [...hotels];
+												newHotels[index] = {
+													...hotel,
+													name: e.target.value,
+												};
+												setHotels(newHotels);
+											}}
+										/>
+									</div>
+									<div className="hotel-dates">
+										<div className="date-input">
+											<label>{TranslateService.translate(eventStore, 'HOTEL.START_DATE')}</label>
+											<input
+												type="date"
+												value={hotel.startDate}
+												min={customDateRange.start}
+												max={customDateRange.end}
+												onChange={(e) => {
+													const newStartDate = e.target.value;
+													const newHotels = [...hotels];
+													newHotels[index] = {
+														...hotel,
+														startDate: newStartDate,
+														endDate:
+															new Date(newStartDate) > new Date(hotel.endDate)
+																? newStartDate
+																: hotel.endDate,
+													};
+													setHotels(newHotels);
+												}}
+											/>
+										</div>
+										<div className="date-input">
+											<label>{TranslateService.translate(eventStore, 'HOTEL.END_DATE')}</label>
+											<input
+												type="date"
+												value={hotel.endDate}
+												min={hotel.startDate}
+												max={customDateRange.end}
+												onChange={(e) => {
+													const newEndDate = e.target.value;
+													const newHotels = [...hotels];
+													newHotels[index] = {
+														...hotel,
+														endDate: newEndDate,
+													};
+													setHotels(newHotels);
+												}}
+											/>
+										</div>
+									</div>
+								</div>
+								<div className="hotel-actions">
+									<button
+										className="delete-hotel"
+										onClick={() => {
+											const newHotels = hotels.filter((_, i) => i !== index);
+											setHotels(newHotels);
+										}}
+									>
+										{TranslateService.translate(eventStore, 'HOTEL.DELETE')}
+									</button>
+								</div>
+							</div>
+						))
+					)}
+				</div>
+			</div>
+		);
+	}
+
 	function renderCreateTripForm() {
 		return (
 			<div
-				className="custom-dates-container align-items-center margin-bottom-15"
+				className="custom-dates-container align-items-center"
 				style={{
 					backgroundColor: 'transparent',
 					border: 0,
@@ -1339,6 +1391,7 @@ function MyTripsTab() {
 					/>
 				</div>
 				{renderFlightDetailsSection()}
+				{renderHotelDetailsSection()}
 			</div>
 		);
 	}

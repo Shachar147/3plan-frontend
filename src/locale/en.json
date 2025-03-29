@@ -1000,5 +1000,14 @@
 	"FLIGHT_DETAILS.INVALID_TIMES": "Flight arrival time cannot be earlier than departure time",
 	"FOR_EXAMPLE": "For example: {X}",
 	"FLIGHT_DETAILS.FLIGHT_INFO": "Flight {flightNumber} from {from} to {to}",
-	"FLIGHT_DETAILS.DEFAULT_NAME": "Flight {number}"
+	"FLIGHT_DETAILS.DEFAULT_NAME": "Flight {number}",
+	"HOTEL.CHECK_IN": "Check In",
+	"HOTEL.CHECK_OUT": "Check Out",
+	"HOTEL.ADD_HOTEL": "Add Hotel",
+	"HOTEL.START_DATE": "Check-in Date",
+	"HOTEL.END_DATE": "Check-out Date",
+	"HOTEL.NAME": "Hotel Name",
+	"HOTEL.DELETE": "Delete Hotel",
+	"HOTEL.NO_HOTELS": "No hotels added yet",
+	"HOTEL.HOTEL_DETAILS": "Hotel details"
 }

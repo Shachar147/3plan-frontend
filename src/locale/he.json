@@ -1238,5 +1238,14 @@
 	"FLIGHT_DETAILS.INVALID_TIMES": "זמן הנחיתה לא יכול להיות מוקדם מזמן ההמראה",
 	"FOR_EXAMPLE": "לדוגמא: {X}",
 	"FLIGHT_DETAILS.FLIGHT_INFO": "טיסה {flightNumber} מ{from} ל{to}",
-	"FLIGHT_DETAILS.DEFAULT_NAME": "טיסה {number}"
+	"FLIGHT_DETAILS.DEFAULT_NAME": "טיסה {number}",
+	"HOTEL.CHECK_IN": "צ'ק אין",
+	"HOTEL.CHECK_OUT": "צ'ק אאוט",
+	"HOTEL.ADD_HOTEL": "הוסף מלון",
+	"HOTEL.START_DATE": "תאריך צ'ק אין",
+	"HOTEL.END_DATE": "תאריך צ'ק אאוט",
+	"HOTEL.NAME": "שם המלון",
+	"HOTEL.DELETE": "מחק מלון",
+	"HOTEL.NO_HOTELS": "טרם נוספו מלונות",
+	"HOTEL.HOTEL_DETAILS": "פרטי בתי מלון"
 }
