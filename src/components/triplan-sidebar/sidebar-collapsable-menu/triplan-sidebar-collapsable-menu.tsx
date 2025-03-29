@@ -1517,8 +1517,8 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 										type="number"
 										className="sidebar-settings-input"
 										min="1"
-										max="60"
-										value={eventStore.sidebarSettings.get('area-driving-threshold') || 10}
+										max="50"
+										value={eventStore.sidebarSettings.get('area-driving-threshold') || 5}
 										onChange={(e) =>
 											handleThresholdChange('area-driving-threshold', e.target.value)
 										}
@@ -1531,7 +1531,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 											border: '1px solid var(--gray-light)',
 										}}
 									/>
-									<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
+									<span>{TranslateService.translate(eventStore, 'KILOMETERS')}</span>
 								</div>
 							)}
 						</Observer>
@@ -1545,9 +1545,10 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 									<input
 										type="number"
 										className="sidebar-settings-input"
-										min="1"
-										max="60"
-										value={eventStore.sidebarSettings.get('area-walking-threshold') || 20}
+										min="0.5"
+										max="10"
+										step="0.5"
+										value={eventStore.sidebarSettings.get('area-walking-threshold') || 2}
 										onChange={(e) =>
 											handleThresholdChange('area-walking-threshold', e.target.value)
 										}
@@ -1560,7 +1561,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 											border: '1px solid var(--gray-light)',
 										}}
 									/>
-									<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
+									<span>{TranslateService.translate(eventStore, 'KILOMETERS')}</span>
 								</div>
 							)}
 						</Observer>
