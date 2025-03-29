@@ -1219,5 +1219,14 @@
 	"NO_LOCATION": "ללא מיקום",
 	"AREA_X": "אזור {X}",
 	"EDIT_AREA_NAME": "ערוך שם אזור",
-	"AREA_CUSTOM_NAME_PLACEHOLDER": "הכנס שם מותאם אישית לאזור"
+	"AREA_CUSTOM_NAME_PLACEHOLDER": "הכנס שם מותאם אישית לאזור",
+	"FLIGHT_DETAILS.TITLE": "פרטי טיסה",
+	"FLIGHT_DETAILS.ADD_FLIGHT": "הוסף טיסה",
+	"FLIGHT_DETAILS.START_DATE": "תאריך יציאה",
+	"FLIGHT_DETAILS.START_TIME": "שעת יציאה",
+	"FLIGHT_DETAILS.END_DATE": "תאריך הגעה",
+	"FLIGHT_DETAILS.END_TIME": "שעת הגעה",
+	"FLIGHT_DETAILS.DELETE": "מחק טיסה",
+	"FLIGHT_DETAILS.SAVE": "שמור טיסה",
+	"FLIGHT_DETAILS.NO_FLIGHTS": "טרם נוספו טיסות"
 }

@@ -981,5 +981,14 @@
 	"AREA_X": "Area {X}",
 	"RECALCULATING_AREAS": "Recalculating areas...",
 	"EDIT_AREA_NAME": "Edit Area Name",
-	"AREA_CUSTOM_NAME_PLACEHOLDER": "Enter custom area name"
+	"AREA_CUSTOM_NAME_PLACEHOLDER": "Enter custom area name",
+	"FLIGHT_DETAILS.TITLE": "Flight Details",
+	"FLIGHT_DETAILS.ADD_FLIGHT": "Add Flight",
+	"FLIGHT_DETAILS.START_DATE": "Start Date",
+	"FLIGHT_DETAILS.START_TIME": "Start Time",
+	"FLIGHT_DETAILS.END_DATE": "End Date",
+	"FLIGHT_DETAILS.END_TIME": "End Time",
+	"FLIGHT_DETAILS.DELETE": "Delete Flight",
+	"FLIGHT_DETAILS.SAVE": "Save Flight",
+	"FLIGHT_DETAILS.NO_FLIGHTS": "No flights added yet"
 }

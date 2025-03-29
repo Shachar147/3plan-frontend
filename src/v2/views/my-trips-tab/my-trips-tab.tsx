@@ -46,6 +46,13 @@ import { myTripsTabId, newDesignRootPath } from '../../utils/consts';
 import MainPage from '../../../pages/main-page/main-page';
 import { tripTemplatesContext } from '../../stores/templates-store';
 
+interface FlightDetails {
+	startDate: string;
+	startTime: string;
+	endDate: string;
+	endTime: string;
+}
+
 function MyTripsTab() {
 	const eventStore = useContext(eventStoreContext);
 	const myTripsStore = useContext(myTripsContext);
@@ -73,6 +80,7 @@ function MyTripsTab() {
 
 	const [tripName, setTripName] = useState<string>('');
 	const [selectedDestinations, setSelectedDestinations] = useState([]);
+	const [flights, setFlights] = useState<FlightDetails[]>([]);
 
 	useEffect(() => {
 		if (savedCollection?.destination) {
@@ -510,10 +518,23 @@ function MyTripsTab() {
 		return { title, icon };
 	}
 
+	function validateFlightTimes(flight: FlightDetails): boolean {
+		const startDateTime = new Date(`${flight.startDate}T${flight.startTime || '00:00'}`);
+		const endDateTime = new Date(`${flight.endDate}T${flight.endTime || '00:00'}`);
+		return startDateTime <= endDateTime;
+	}
+
+	function validateFlights(): boolean {
+		return flights.every(validateFlightTimes);
+	}
+
 	async function createNewTrip(tripName: string) {
 		const areDatesValid = validateDateRange(eventStore, customDateRange.start, customDateRange.end);
+		const areFlightsValid = validateFlights();
+
 		errors.start = !areDatesValid;
 		errors.end = !areDatesValid;
+		errors.flights = !areFlightsValid;
 
 		if (tripName.length == 0) {
 			ReactModalService.internal.alertMessage(eventStore, 'MODALS.ERROR.TITLE', 'TRIP_NAME_EMPTY', 'error');
@@ -530,6 +551,21 @@ function MyTripsTab() {
 				start: true,
 				end: true,
 			});
+			return;
+		}
+
+		if (!areFlightsValid) {
+			setErrors({
+				...errors,
+				flights: true,
+			});
+			// todo complete: uncomment?
+			// ReactModalService.internal.alertMessage(
+			// 	eventStore,
+			// 	'MODALS.ERROR.TITLE',
+			// 	'FLIGHT_DETAILS.INVALID_TIMES',
+			// 	'error'
+			// );
 			return;
 		}
 
@@ -559,6 +595,9 @@ function MyTripsTab() {
 			eventStore.dataService.setDateRange(customDateRange, TripName);
 			navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
 		} else {
+			// todo complete - if there are flights, put them on allEvents and calendarEvents
+			// todo complete
+
 			const tripData: upsertTripProps = {
 				name: TripName,
 				dateRange: customDateRange,
@@ -834,6 +873,135 @@ function MyTripsTab() {
 		);
 	}
 
+	function renderFlightDetailsSection() {
+		return (
+			<div className="flight-details-section">
+				<div className="flight-header">
+					<h3 className="flex-row flex-1-1-0">
+						{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.TITLE')}
+					</h3>
+					<button
+						className="add-flight-button"
+						onClick={() => {
+							const newFlight = {
+								startDate: customDateRange.start,
+								startTime: '',
+								endDate: customDateRange.start,
+								endTime: '',
+							};
+							setFlights([...flights, newFlight]);
+						}}
+					>
+						{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.ADD_FLIGHT')}
+					</button>
+				</div>
+				<div className="flight-list">
+					{flights.length === 0 ? (
+						<p>{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.NO_FLIGHTS')}</p>
+					) : (
+						flights.map((flight, index) => (
+							<div key={index} className="flight-item">
+								<div className="flight-info">
+									<div className="flight-time">
+										<label>
+											{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.START_DATE')}
+										</label>
+										<div className="datetime-input">
+											<input
+												type="date"
+												value={flight.startDate}
+												min={customDateRange.start}
+												max={customDateRange.end}
+												onChange={(e) => {
+													const newStartDate = e.target.value;
+													const newFlights = [...flights];
+													newFlights[index] = {
+														...flight,
+														startDate: newStartDate,
+														endDate:
+															new Date(newStartDate) > new Date(flight.endDate)
+																? newStartDate
+																: flight.endDate,
+													};
+													setFlights(newFlights);
+												}}
+											/>
+											<input
+												type="time"
+												value={flight.startTime}
+												onChange={(e) => {
+													const newStartTime = e.target.value;
+													const newFlights = [...flights];
+													newFlights[index] = {
+														...flight,
+														startTime: newStartTime,
+														endTime:
+															flight.startDate === flight.endDate &&
+															new Date(`${flight.startDate}T${newStartTime}`) >
+																new Date(`${flight.endDate}T${flight.endTime}`)
+																? newStartTime
+																: flight.endTime,
+													};
+													setFlights(newFlights);
+												}}
+											/>
+										</div>
+									</div>
+									<div className="flight-time">
+										<label>
+											{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.END_DATE')}
+										</label>
+										<div className="datetime-input">
+											<input
+												type="date"
+												value={flight.endDate}
+												min={flight.startDate}
+												max={customDateRange.end}
+												onChange={(e) => {
+													const newEndDate = e.target.value;
+													const newFlights = [...flights];
+													newFlights[index] = {
+														...flight,
+														endDate: newEndDate,
+													};
+													setFlights(newFlights);
+												}}
+											/>
+											<input
+												type="time"
+												value={flight.endTime}
+												onChange={(e) => {
+													const newEndTime = e.target.value;
+													const newFlights = [...flights];
+													newFlights[index] = {
+														...flight,
+														endTime: newEndTime,
+													};
+													setFlights(newFlights);
+												}}
+											/>
+										</div>
+									</div>
+								</div>
+								<div className="flight-actions">
+									<button
+										className="delete-flight"
+										onClick={() => {
+											const newFlights = flights.filter((_, i) => i !== index);
+											setFlights(newFlights);
+										}}
+									>
+										{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.DELETE')}
+									</button>
+								</div>
+							</div>
+						))
+					)}
+				</div>
+			</div>
+		);
+	}
+
 	function renderCreateTripForm() {
 		return (
 			<div
@@ -900,7 +1068,7 @@ function MyTripsTab() {
 							});
 							updateErrorsOnDateChange(value, customDateRange.end);
 						}}
-						className={getClasses(errors['start'] && 'red-border')}
+						className={getClasses('flex-row flex-1-1-0', errors['start'] && 'red-border')}
 					/>
 					{TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.UNTIL')}
 					<input
@@ -909,6 +1077,7 @@ function MyTripsTab() {
 							e.preventDefault();
 							return false;
 						}}
+						min={customDateRange.start}
 						value={customDateRange.end}
 						onChange={(e) => {
 							const value = e.target.value;
@@ -918,9 +1087,10 @@ function MyTripsTab() {
 							});
 							updateErrorsOnDateChange(customDateRange.start, value);
 						}}
-						className={getClasses(errors['end'] && 'red-border')}
+						className={getClasses('flex-row flex-1-1-0', errors['end'] && 'red-border')}
 					/>
 				</div>
+				{renderFlightDetailsSection()}
 			</div>
 		);
 	}
