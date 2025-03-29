@@ -984,11 +984,18 @@
 	"AREA_CUSTOM_NAME_PLACEHOLDER": "Enter custom area name",
 	"FLIGHT_DETAILS.TITLE": "Flight Details",
 	"FLIGHT_DETAILS.ADD_FLIGHT": "Add Flight",
-	"FLIGHT_DETAILS.START_DATE": "Start Date",
+	"FLIGHT_DETAILS.START_DATE": "Departure",
 	"FLIGHT_DETAILS.START_TIME": "Start Time",
-	"FLIGHT_DETAILS.END_DATE": "End Date",
+	"FLIGHT_DETAILS.END_DATE": "Arrival",
 	"FLIGHT_DETAILS.END_TIME": "End Time",
 	"FLIGHT_DETAILS.DELETE": "Delete Flight",
 	"FLIGHT_DETAILS.SAVE": "Save Flight",
-	"FLIGHT_DETAILS.NO_FLIGHTS": "No flights added yet"
+	"FLIGHT_DETAILS.NO_FLIGHTS": "No flights added yet",
+	"FLIGHT_DETAILS.FLIGHT_NUMBER": "Flight Number",
+	"FLIGHT_DETAILS.FROM": "From",
+	"FLIGHT_DETAILS.TO": "To",
+	"FLIGHT_DETAILS.INVALID_TIMES": "Flight arrival time cannot be earlier than departure time",
+	"FOR_EXAMPLE": "For example: {X}",
+	"FLIGHT_DETAILS.FLIGHT_INFO": "Flight {flightNumber} from {from} to {to}",
+	"FLIGHT_DETAILS.DEFAULT_NAME": "Flight {number}"
 }

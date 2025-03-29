@@ -1228,5 +1228,12 @@
 	"FLIGHT_DETAILS.END_TIME": "שעת הגעה",
 	"FLIGHT_DETAILS.DELETE": "מחק טיסה",
 	"FLIGHT_DETAILS.SAVE": "שמור טיסה",
-	"FLIGHT_DETAILS.NO_FLIGHTS": "טרם נוספו טיסות"
+	"FLIGHT_DETAILS.NO_FLIGHTS": "טרם נוספו טיסות",
+	"FLIGHT_DETAILS.FLIGHT_NUMBER": "מספר טיסה",
+	"FLIGHT_DETAILS.FROM": "מוצא",
+	"FLIGHT_DETAILS.TO": "יעד",
+	"FLIGHT_DETAILS.INVALID_TIMES": "זמן הנחיתה לא יכול להיות מוקדם מזמן ההמראה",
+	"FOR_EXAMPLE": "לדוגמא: {X}",
+	"FLIGHT_DETAILS.FLIGHT_INFO": "טיסה {flightNumber} מ{from} ל{to}",
+	"FLIGHT_DETAILS.DEFAULT_NAME": "טיסה {number}"
 }

@@ -22,7 +22,13 @@ import { myTripsContext } from '../../stores/my-trips-store';
 import LoadingComponent from '../../../components/loading/loading-component';
 import ReactModalService from '../../../services/react-modal-service';
 import LogHistoryService from '../../../services/data-handlers/log-history-service';
-import { CalendarEvent, TripActions, TriPlanCategory } from '../../../utils/interfaces';
+import {
+	CalendarEvent,
+	LocationData,
+	TripActions,
+	TriPlanCategory,
+	WeeklyOpeningHoursData,
+} from '../../../utils/interfaces';
 import './my-trips-tab.scss';
 import moment from 'moment';
 import Button, { ButtonFlavor } from '../../../components/common/button/button';
@@ -34,7 +40,7 @@ import {
 	formatDateString,
 	getDefaultCategories,
 } from '../../../utils/defaults';
-import { TripDataSource } from '../../../utils/enums';
+import { TripDataSource, TriplanCurrency, TriplanEventPreferredTime, TriplanPriority } from '../../../utils/enums';
 import { DEFAULT_VIEW_MODE_FOR_NEW_TRIPS } from '../../../utils/consts';
 import { upsertTripProps } from '../../../services/data-handlers/db-service';
 import { observer } from 'mobx-react';
@@ -51,6 +57,9 @@ interface FlightDetails {
 	startTime: string;
 	endDate: string;
 	endTime: string;
+	sourceAirport: string;
+	targetAirport: string;
+	flightNumber: string;
 }
 
 function MyTripsTab() {
@@ -559,13 +568,6 @@ function MyTripsTab() {
 				...errors,
 				flights: true,
 			});
-			// todo complete: uncomment?
-			// ReactModalService.internal.alertMessage(
-			// 	eventStore,
-			// 	'MODALS.ERROR.TITLE',
-			// 	'FLIGHT_DETAILS.INVALID_TIMES',
-			// 	'error'
-			// );
 			return;
 		}
 
@@ -587,146 +589,211 @@ function MyTripsTab() {
 
 		const TripName = tripName.replace(/\s/gi, '-');
 
-		// local mode
-		if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
-			eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
-			eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
-			eventStore.setCustomDateRange(customDateRange);
-			eventStore.dataService.setDateRange(customDateRange, TripName);
-			navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
-		} else {
-			// todo complete - if there are flights, put them on allEvents and calendarEvents
-			// todo complete
+		try {
+			const defaultEvents = {};
+			const defaultCalendarEvents = [];
 
-			const tripData: upsertTripProps = {
-				name: TripName,
-				dateRange: customDateRange,
-				calendarLocale: eventStore.calendarLocalCode,
-				allEvents: [],
-				sidebarEvents: defaultEvents,
-				calendarEvents: defaultCalendarEvents,
-				categories: getDefaultCategories(eventStore),
-				destinations: selectedDestinations,
-			};
+			// Add valid flights to calendar events
+			if (flights.length > 0) {
+				flights.forEach((flight, index) => {
+					if (flight.startDate && flight.endDate && flight.startTime && flight.endTime) {
+						const startDateTime = new Date(`${flight.startDate}T${flight.startTime}`);
+						const endDateTime = new Date(`${flight.endDate}T${flight.endTime}`);
+						const tripStartDate = new Date(customDateRange.start);
+						const tripEndDate = new Date(customDateRange.end);
 
-			const categoryNameToId = tripData.categories.reduce((hash, category) => {
-				hash[category.title] = category.id;
-				return hash;
-			}, {});
+						// Validate flight times and dates
+						if (
+							startDateTime < endDateTime &&
+							new Date(flight.startDate) >= tripStartDate &&
+							new Date(flight.endDate) <= tripEndDate
+						) {
+							const flightEvent = {
+								id: index + 1,
+								title:
+									flight.flightNumber && flight.sourceAirport && flight.targetAirport
+										? TranslateService.translate(eventStore, 'FLIGHT_DETAILS.FLIGHT_INFO', {
+												flightNumber: flight.flightNumber,
+												from: flight.sourceAirport,
+												to: flight.targetAirport,
+										  })
+										: TranslateService.translate(eventStore, 'FLIGHT_DETAILS.DEFAULT_NAME', {
+												number: index + 1,
+										  }),
+								start: startDateTime.toISOString(),
+								end: endDateTime.toISOString(),
+								category:
+									getDefaultCategories(eventStore).find((c) => c.titleKey === 'CATEGORY.FLIGHTS')
+										?.id ?? 1,
+								description: '',
+								isLocked: true,
+								allDay: false,
+								priority: TriplanPriority.high,
+								preferredTime: TriplanEventPreferredTime.unset,
+								duration: (() => {
+									const diffMs = endDateTime.getTime() - startDateTime.getTime();
+									const hours = Math.floor(diffMs / (1000 * 60 * 60));
+									const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+									return `${hours.toString().padStart(2, '0')}:${minutes
+										.toString()
+										.padStart(2, '0')}`;
+								})(),
+								location: undefined,
+								extendedProps: {},
+							};
 
-			if (savedCollection) {
-				const items = savedCollection.items.map((i) => i.fullDetails);
-
-				const sidebarEvents = {};
-
-				const allEvents = items.map((i, idx) => {
-					const parsedItem = IPointOfInterestToTripEvent(i, idx);
-
-					i.category = i.category || 'CATEGORY.GENERAL';
-
-					// @ts-ignore
-					parsedItem.images = i.images?.join('\n');
-
-					const { title, icon } = splitTitleAndIcons(i.category);
-
-					let categoryId =
-						categoryNameToId[title] ??
-						categoryNameToId[TranslateService.translate(eventStore, title)] ??
-						categoryNameToId[
-							TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
-						] ??
-						categoryNameToId[
-							TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
-						];
-
-					if (!categoryId) {
-						const maxCategoryId = Math.max(...Object.values(categoryNameToId));
-						categoryId = maxCategoryId + 1;
-
-						tripData.categories.push({
-							id: maxCategoryId + 1,
-							title,
-							icon,
-							// title: i.category,
-							// icon: ''
-						});
-						categoryNameToId[i.category] = categoryId;
+							defaultCalendarEvents.push(flightEvent);
+						}
 					}
-					parsedItem.category = categoryId;
-
-					sidebarEvents[categoryId] ||= [];
-					sidebarEvents[categoryId].push(parsedItem);
-
-					return parsedItem;
 				});
-
-				tripData.allEvents = allEvents;
-				tripData.sidebarEvents = sidebarEvents;
 			}
 
-			if (template) {
-				const dayOne = new Date(customDateRange.start);
-				const templateDayOne = new Date(template.dateRange.start);
-				const diff = daysBetween(templateDayOne, dayOne, false);
+			// local mode
+			if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
+				eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+				eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+				eventStore.setCustomDateRange(customDateRange);
+				eventStore.dataService.setDateRange(customDateRange, TripName);
+				navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+			} else {
+				const tripData: upsertTripProps = {
+					name: TripName,
+					dateRange: customDateRange,
+					calendarLocale: eventStore.calendarLocalCode,
+					allEvents: [...defaultCalendarEvents],
+					sidebarEvents: defaultEvents,
+					calendarEvents: defaultCalendarEvents,
+					categories: getDefaultCategories(eventStore),
+					destinations: selectedDestinations,
+				};
 
-				tripData.allEvents = template.allEvents.map(formatTemplateEvent);
-				const sidebarEvents = {};
-				Object.keys(template.sidebarEvents).forEach((c) => {
-					sidebarEvents[c] = template.sidebarEvents[c].map(formatTemplateEvent);
-				});
+				const categoryNameToId = tripData.categories.reduce((hash, category) => {
+					hash[category.title] = category.id;
+					return hash;
+				}, {});
 
-				tripData.sidebarEvents = sidebarEvents;
-				tripData.calendarEvents = template.calendarEvents.map((c) => formatTemplateEvent(c, diff));
-				tripData.categories = template.categories.map(formatTemplateCategory);
-			}
+				if (savedCollection) {
+					const items = savedCollection.items.map((i) => i.fullDetails);
 
-			// backup
-			let { viewMode, mobileViewMode } = eventStore;
+					const sidebarEvents = {};
 
-			// @ts-ignore
-			await DataServices.DBService.createTrip(
-				tripData,
-				(res: any) => {
-					// switch to map view as  the default view.
-					eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
-					eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+					const allEvents = items.map((i, idx) => {
+						const parsedItem = IPointOfInterestToTripEvent(i, idx);
 
-					eventStore.setCustomDateRange(customDateRange);
-					eventStore.dataService.setDateRange(customDateRange, TripName);
+						i.category = i.category || 'CATEGORY.GENERAL';
 
-					// keep to history:
-					LogHistoryService.logHistory(eventStore, TripActions.createdTrip, {
-						tripName: TripName,
+						// @ts-ignore
+						parsedItem.images = i.images?.join('\n');
+
+						const { title, icon } = splitTitleAndIcons(i.category);
+
+						let categoryId =
+							categoryNameToId[title] ??
+							categoryNameToId[TranslateService.translate(eventStore, title)] ??
+							categoryNameToId[
+								Translate.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
+							] ??
+							categoryNameToId[
+								Translate.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
+							];
+
+						if (!categoryId) {
+							const maxCategoryId = Math.max(...Object.values(categoryNameToId));
+							categoryId = maxCategoryId + 1;
+
+							tripData.categories.push({
+								id: maxCategoryId + 1,
+								title,
+								icon,
+								// title: i.category,
+								// icon: ''
+							});
+							categoryNameToId[i.category] = categoryId;
+						}
+						parsedItem.category = categoryId;
+
+						sidebarEvents[categoryId] ||= [];
+						sidebarEvents[categoryId].push(parsedItem);
+
+						return parsedItem;
 					});
 
-					navigate(`${newDesignRootPath}/plan/${res.data.name}`);
-					// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
-				},
-				(e) => {
-					// restore to backup
-					eventStore.setViewMode(viewMode);
-					eventStore.setMobileViewMode(mobileViewMode);
+					tripData.allEvents = allEvents;
+					tripData.sidebarEvents = sidebarEvents;
+				}
 
-					if (e.response.data.statusCode === 409) {
-						setErrors({
-							title: true,
+				if (template) {
+					const dayOne = new Date(customDateRange.start);
+					const templateDayOne = new Date(template.dateRange.start);
+					const diff = daysBetween(templateDayOne, dayOne, false);
+
+					tripData.allEvents = template.allEvents.map(formatTemplateEvent);
+					const sidebarEvents = {};
+					Object.keys(template.sidebarEvents).forEach((c) => {
+						sidebarEvents[c] = template.sidebarEvents[c].map(formatTemplateEvent);
+					});
+
+					tripData.sidebarEvents = sidebarEvents;
+					tripData.calendarEvents = template.calendarEvents.map((c) => formatTemplateEvent(c, diff));
+					tripData.categories = template.categories.map(formatTemplateCategory);
+				}
+
+				// backup
+				let { viewMode, mobileViewMode } = eventStore;
+
+				// @ts-ignore
+				await DataServices.DBService.createTrip(
+					tripData,
+					(res: any) => {
+						// switch to map view as  the default view.
+						eventStore.setViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+						eventStore.setMobileViewMode(DEFAULT_VIEW_MODE_FOR_NEW_TRIPS);
+
+						eventStore.setCustomDateRange(customDateRange);
+						eventStore.dataService.setDateRange(customDateRange, TripName);
+
+						// keep to history:
+						LogHistoryService.logHistory(eventStore, TripActions.createdTrip, {
+							tripName: TripName,
 						});
-						ReactModalService.internal.alertMessage(
-							eventStore,
-							'MODALS.ERROR.TITLE',
-							'TRIP_ALREADY_EXISTS',
-							'error'
-						);
-					} else {
-						ReactModalService.internal.alertMessage(
-							eventStore,
-							'MODALS.ERROR.TITLE',
-							'OOPS_SOMETHING_WENT_WRONG',
-							'error'
-						);
-					}
-				},
-				() => {}
+
+						navigate(`${newDesignRootPath}/plan/${res.data.name}`);
+						// navigate('/plan/create/' + TripName + '/' + eventStore.calendarLocalCode);
+					},
+					(e) => {
+						// restore to backup
+						eventStore.setViewMode(viewMode);
+						eventStore.setMobileViewMode(mobileViewMode);
+
+						if (e.response.data.statusCode === 409) {
+							setErrors({
+								title: true,
+							});
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.ERROR.TITLE',
+								'TRIP_ALREADY_EXISTS',
+								'error'
+							);
+						} else {
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.ERROR.TITLE',
+								'OOPS_SOMETHING_WENT_WRONG',
+								'error'
+							);
+						}
+					},
+					() => {}
+				);
+			}
+		} catch (error) {
+			console.error('Error creating new trip:', error);
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'OOPS_SOMETHING_WENT_WRONG',
+				'error'
 			);
 		}
 	}
@@ -888,6 +955,9 @@ function MyTripsTab() {
 								startTime: '',
 								endDate: customDateRange.start,
 								endTime: '',
+								sourceAirport: '',
+								targetAirport: '',
+								flightNumber: '',
 							};
 							setFlights([...flights, newFlight]);
 						}}
@@ -902,6 +972,92 @@ function MyTripsTab() {
 						flights.map((flight, index) => (
 							<div key={index} className="flight-item">
 								<div className="flight-info">
+									<div className="flight-name">
+										<p>
+											{flight.flightNumber && flight.sourceAirport && flight.targetAirport
+												? TranslateService.translate(eventStore, 'FLIGHT_DETAILS.FLIGHT_INFO', {
+														flightNumber: flight.flightNumber,
+														from: flight.sourceAirport,
+														to: flight.targetAirport,
+												  })
+												: TranslateService.translate(
+														eventStore,
+														'FLIGHT_DETAILS.DEFAULT_NAME',
+														{
+															number: index + 1,
+														}
+												  )}
+										</p>
+									</div>
+									<div className="flight-header-info">
+										<div className="flight-number">
+											<label>
+												{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.FLIGHT_NUMBER')}
+											</label>
+											<input
+												type="text"
+												value={flight.flightNumber}
+												placeholder={TranslateService.translate(eventStore, 'FOR_EXAMPLE', {
+													X: 'IL235',
+												})}
+												onChange={(e) => {
+													const newFlightNumber = e.target.value.toUpperCase();
+													const newFlights = [...flights];
+													newFlights[index] = {
+														...flight,
+														flightNumber: newFlightNumber,
+													};
+													setFlights(newFlights);
+												}}
+											/>
+										</div>
+										<div className="flight-airports">
+											<div className="airport-input">
+												<label>
+													{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.FROM')}
+												</label>
+												<input
+													type="text"
+													value={flight.sourceAirport}
+													placeholder={TranslateService.translate(eventStore, 'FOR_EXAMPLE', {
+														X: 'TLV',
+													})}
+													maxLength={3}
+													onChange={(e) => {
+														const newSourceAirport = e.target.value.toUpperCase();
+														const newFlights = [...flights];
+														newFlights[index] = {
+															...flight,
+															sourceAirport: newSourceAirport,
+														};
+														setFlights(newFlights);
+													}}
+												/>
+											</div>
+											<div className="airport-input">
+												<label>
+													{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.TO')}
+												</label>
+												<input
+													type="text"
+													value={flight.targetAirport}
+													placeholder={TranslateService.translate(eventStore, 'FOR_EXAMPLE', {
+														X: 'ATH',
+													})}
+													maxLength={3}
+													onChange={(e) => {
+														const newTargetAirport = e.target.value.toUpperCase();
+														const newFlights = [...flights];
+														newFlights[index] = {
+															...flight,
+															targetAirport: newTargetAirport,
+														};
+														setFlights(newFlights);
+													}}
+												/>
+											</div>
+										</div>
+									</div>
 									<div className="flight-time">
 										<label>
 											{TranslateService.translate(eventStore, 'FLIGHT_DETAILS.START_DATE')}
