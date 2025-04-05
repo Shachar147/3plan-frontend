@@ -569,13 +569,13 @@ const RootRouter = () => {
 
 	function updatePlaceDetails(place, overrideName) {
 		runInAction(() => {
-			const descriptionArr = [];
-			if (place.international_phone_number) {
-				descriptionArr.push(`phone: ${place.international_phone_number}`);
-			}
-			if (place.rating) {
-				descriptionArr.push(`Google Rating: ${place.rating}/5 (${place.user_ratings_total} total)`);
-			}
+			// const descriptionArr = [];
+			// if (place.international_phone_number) {
+			// 	descriptionArr.push(`phone: ${place.international_phone_number}`);
+			// }
+			// if (place.rating) {
+			// 	descriptionArr.push(`Google Rating: ${place.rating}/5 (${place.user_ratings_total} total)`);
+			// }
 			// console.log('before', eventStore.modalValues);
 
 			// update name
@@ -607,10 +607,10 @@ const RootRouter = () => {
 				eventStore.modalValues['more-info'] ?? eventStore.modalValues['moreInfo'] ?? place.website ?? place.url;
 
 			// update description
-			eventStore.modalValues['description'] =
-				eventStore.modalValues['description'] ?? descriptionArr.length > 0
-					? descriptionArr.join('\n')
-					: undefined;
+			// eventStore.modalValues['description'] =
+			// 	eventStore.modalValues['description'] ?? descriptionArr.length > 0
+			// 		? descriptionArr.join('\n')
+			// 		: undefined;
 
 			// update category
 			const options = eventStore.categories
