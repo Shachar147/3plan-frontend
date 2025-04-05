@@ -43,6 +43,32 @@ $biggestZIndex: 99999999999;
 		}
 	}
 
+	&.focus-mode {
+		height: 100px;
+
+		.triplan-header-banner-header-line-top-shadow {
+			height: 100px;
+			top: -25px;
+		}
+
+		.triplan-header-banner-bottom-shadow {
+			//top: 0px;
+			display: none;
+		}
+
+		.triplan-header-banner-slogan {
+			display: none;
+		}
+
+		+ div .combined-container {
+			height: 100% !important;
+		}
+
+		.triplan-header-banner-header-line {
+			display: none;
+		}
+	}
+
 	// temporary:
 	//background-image: url("https://images.contentstack.io/v3/assets/blt06f605a34f1194ff/blt592c0e4e8a0b1271/641347cc0c29c7363bf394b2/Vatican_Desktop.jpg?auto=webp&quality=60");
 	//background-image: url("https://img.freepik.com/free-photo/copy-space-straw-hat-map_23-2148232404.jpg?t=st=1720070067~exp=1720073667~hmac=694b871b6c522eb2f1a366a306e8ae4c89eb2ddec416f46c325f34ac8676101b&w=2000");

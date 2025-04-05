@@ -42,6 +42,7 @@ import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
 import Button, { ButtonFlavor } from '../common/button/button';
 import { LimitationsService } from '../../utils/limitations';
+import FocusModeButton from '../focus-mode-button/focus-mode-button';
 
 interface MarkerProps {
 	text?: string;
@@ -1135,6 +1136,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				>
 					{renderFilterButton()}
 					{renderCalculateDistancesButton()}
+					<FocusModeButton />
 					{!eventStore.isMobile && (
 						<div className="pc-map-view-selection-container">{renderMapViewSelection()}</div>
 					)}

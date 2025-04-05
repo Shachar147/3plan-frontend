@@ -72,7 +72,12 @@ function TriplanHeaderBanner({
 
 	return (
 		<div
-			className={getClasses(baseClass, tripName && 'trip-mode', noHeader && 'no-header')}
+			className={getClasses(
+				baseClass,
+				tripName && 'trip-mode',
+				noHeader && 'no-header',
+				eventStore.focusMode && 'focus-mode'
+			)}
 			style={{
 				backgroundImage: `url('${backgroundImage}')`,
 			}}
