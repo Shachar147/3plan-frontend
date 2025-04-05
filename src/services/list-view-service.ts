@@ -478,7 +478,7 @@ const ListViewService = {
 		let summaryPerDay: Record<string, string[]> = {};
 
 		const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
-		const totalPricePerDay: Record<String, MinMax> = ListViewService._getEstimatedCosts(
+		const totalPricePerDay: Record<string, MinMax> = ListViewService._getEstimatedCosts(
 			eventStore,
 			calendarEventsPerDay,
 			desiredCurrency,
@@ -1208,13 +1208,13 @@ const ListViewService = {
 		}
 
 		let orderedItemsPrice = TranslateService.translate(eventStore, 'ORDERED_ITEMS_PRICE', {
-			price: sumMaxValues(totalBookedPricePerDay),
+			price: sumMaxValues(totalBookedPricePerDay)?.toFixed(2),
 			currency: TranslateService.translate(eventStore, `${currency}_sign`),
 		});
 		orderedItemsPrice = `<div class="font-size-14 font-weight-bold"">💸 ${orderedItemsPrice}</div>`;
 
 		let flightsAndHotelsPrice = TranslateService.translate(eventStore, 'FLIGHTS_AND_HOTELS_PRICE', {
-			price: sumMaxValues(totalFlightsAndHotelsPricePerDay),
+			price: formatNumberWithCommas(sumMaxValues(totalFlightsAndHotelsPricePerDay)?.toFixed(2)),
 			currency: TranslateService.translate(eventStore, `${currency}_sign`),
 		});
 		flightsAndHotelsPrice = `<div class="font-size-14 font-weight-bold"">💸 ${flightsAndHotelsPrice}</div>`;
