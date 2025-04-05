@@ -1136,7 +1136,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				>
 					{renderFilterButton()}
 					{renderCalculateDistancesButton()}
-					<FocusModeButton />
+					{!eventStore.isMobile && <FocusModeButton />}
 					{!eventStore.isMobile && (
 						<div className="pc-map-view-selection-container">{renderMapViewSelection()}</div>
 					)}
