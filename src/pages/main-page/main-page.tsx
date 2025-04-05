@@ -481,6 +481,7 @@ function MainPage(props: MainPageProps) {
 
 		const content = (
 			<div
+				key={eventStore.isSidebarMinimized}
 				className={getClasses(
 					['calender-container'],
 					!shouldDisplay && 'opacity-0 position-absolute',
