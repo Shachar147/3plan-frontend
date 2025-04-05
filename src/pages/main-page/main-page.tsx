@@ -645,19 +645,25 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function renderHeader() {
+		return (
+			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
+				<TriplanHeaderWrapper
+					{...headerProps}
+					currentMobileView={eventStore.mobileViewMode}
+					showTripName={true}
+				/>
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<div
 				className={getClasses('main-page', eventStore.mobileViewMode)}
 				key={JSON.stringify(eventStore.customDateRange)}
 			>
-				<div className="padding-inline-8 flex-column align-items-center justify-content-center">
-					<TriplanHeaderWrapper
-						{...headerProps}
-						currentMobileView={eventStore.mobileViewMode}
-						showTripName={true}
-					/>
-				</div>
+				{renderHeader()}
 				{eventStore.isTripLocked && renderTripIsLockedHeaderLine()}
 				<div
 					className={getClasses(
@@ -674,12 +680,21 @@ function MainPage(props: MainPageProps) {
 						) : (
 							<>
 								{renderSidebar()}
-								{eventStore.isFeedView && renderFeedView()}
-								{eventStore.isMapView && renderMapView(eventStore.isMapView)}
-								{eventStore.isListView && renderListView()}
-								{eventStore.isCalendarView && renderCalendarView()}
-								{eventStore.isCombinedView && renderCombinedView()}
-								{eventStore.shouldRenderSuggestions && renderSuggestions()}
+								<div className="flex-column width-100-percents gap-4 position-relative">
+									<div
+										className={getClasses(
+											'gap-16 height-100-percents',
+											eventStore.isHebrew ? 'flex-row-reverse' : 'flex-row'
+										)}
+									>
+										{eventStore.isFeedView && renderFeedView()}
+										{eventStore.isMapView && renderMapView(eventStore.isMapView)}
+										{eventStore.isListView && renderListView()}
+										{eventStore.isCalendarView && renderCalendarView()}
+										{eventStore.isCombinedView && renderCombinedView()}
+										{eventStore.shouldRenderSuggestions && renderSuggestions()}
+									</div>
+								</div>
 							</>
 						)}
 					</div>

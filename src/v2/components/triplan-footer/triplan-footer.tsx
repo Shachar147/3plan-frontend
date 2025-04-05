@@ -102,6 +102,10 @@ function TriplanFooter() {
 
 	const isInAdmin = window.location.href.includes(`${newDesignRootPath}/admin`);
 
+	if (eventStore.focusMode) {
+		return;
+	}
+
 	return (
 		<>
 			<div className={getClasses('triplan-footer', eventStore.isMobile && isInPlan && 'padding-bottom-80')}>

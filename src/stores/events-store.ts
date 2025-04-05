@@ -216,6 +216,9 @@ export class EventStore {
 	// Add debounceDistanceTimerId property to the class
 	debounceDistanceTimerId: NodeJS.Timeout | null = null;
 
+	// focus mode
+	@observable focusMode: boolean = false;
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {
@@ -799,7 +802,8 @@ export class EventStore {
 			!this.isMobile &&
 			this.viewMode != ViewMode.feed &&
 			!localStorage.getItem(hideSuggestionsLsKey) &&
-			!this.clickedHideSuggestions
+			!this.clickedHideSuggestions &&
+			!this.focusMode
 		);
 	}
 
@@ -2110,6 +2114,17 @@ export class EventStore {
 			localStorage.setItem('customAreaNames', JSON.stringify(namesToSave));
 		} catch (error) {
 			console.error('Error saving custom area names to localStorage:', error);
+		}
+	}
+
+	@action
+	toggleFocusMode() {
+		const prevValue = this.focusMode;
+		this.focusMode = !prevValue;
+		if (prevValue) {
+			this.isSidebarMinimized = false;
+		} else {
+			this.isSidebarMinimized = true;
 		}
 	}
 }

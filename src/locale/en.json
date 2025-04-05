@@ -1014,5 +1014,7 @@
 	"ACTIVITIES.PLACEHOLDER": "Enter one activity per line\n(e.g. Eiffel Tower, Louvre Museum, Notre-Dame Cathedral)\nTip: choosing destination may help in activities details lookup",
 	"ACTIVITIES.PROCESSING": "Processing activities...",
 	"ACTIVITIES.ERROR": "Error processing activities. Please try again.",
-	"ACTIVITIES.SUCCESS": "{count} activities successfully added to your trip"
+	"ACTIVITIES.SUCCESS": "{count} activities successfully added to your trip",
+	"FOCUS_MODE": "Fullscreen Mode",
+	"OUT_OF_FOCUS_MODE": "Out of Fullscreen Mode"
 }
