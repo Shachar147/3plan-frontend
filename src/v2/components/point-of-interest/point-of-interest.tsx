@@ -5,7 +5,7 @@ import { FaRegStar, FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import Button, { ButtonFlavor } from '../../../components/common/button/button'; // Import your Button component
 import './point-of-interest.scss';
 import ReactModalService from '../../../services/react-modal-service';
-import { TripActions } from '../../../utils/interfaces';
+import { CalendarEvent, TripActions } from '../../../utils/interfaces';
 import { TriplanPriority } from '../../../utils/enums';
 import {
 	extractCategory,
@@ -595,6 +595,14 @@ const PointOfInterest = ({
 		}
 		eventStore.modalValues['duration'] = item.duration;
 		eventStore.modalValues['currency'] = item.currency;
+
+		let title = item.name;
+		let description = item.description;
+		if (!isTemplateUsername()) {
+			title = getEventTitle({ title } as unknown as CalendarEvent, eventStore, true);
+			description = getEventDescription({ description } as unknown as CalendarEvent, eventStore, true);
+		}
+
 		ReactModalService.openAddSidebarEventModal(
 			eventStore,
 			categoryId,
@@ -608,11 +616,13 @@ const PointOfInterest = ({
 						? TriplanPriority.high
 						: TriplanPriority.unset
 					: TriplanPriority[item.priority],
-				title: item.name,
+				// title: item.name,
+				title,
+				description,
 				location: item.location
 					? {
 							...item.location,
-							address: item.name,
+							address: title,
 					  }
 					: undefined,
 				category: categoryId,

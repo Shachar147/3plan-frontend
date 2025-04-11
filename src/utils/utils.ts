@@ -477,7 +477,7 @@ export function isTemplateUsername() {
 }
 
 export function isAdmin() {
-	return getCurrentUsername() == 'Shachar';
+	return ['Shachar', TEMPLATES_USER_NAME].includes(getCurrentUsername());
 }
 
 export function getCurrentUsername(): string | null {
