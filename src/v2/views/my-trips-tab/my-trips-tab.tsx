@@ -44,6 +44,7 @@ import { feedStoreContext } from '../../stores/feed-view-store';
 import { myTripsTabId, newDesignRootPath } from '../../utils/consts';
 import MainPage from '../../../pages/main-page/main-page';
 import { tripTemplatesContext } from '../../stores/templates-store';
+import { IPointOfInterestToTripEvent } from '../../utils/interfaces';
 
 interface FlightDetails {
 	startDate: string;
@@ -683,6 +684,76 @@ function MyTripsTab() {
 		return results;
 	}
 
+	function buildTripDataForSavedCollection(tripData, categoryNameToId) {
+		const items = savedCollection.items.map((i) => i.fullDetails);
+
+		const sidebarEvents = {};
+
+		const allEvents = items.map((i, idx) => {
+			const parsedItem = IPointOfInterestToTripEvent(i, idx);
+
+			i.category = i.category || 'CATEGORY.GENERAL';
+
+			// @ts-ignore
+			parsedItem.images = i.images?.join('\n');
+
+			const { title, icon } = splitTitleAndIcons(i.category);
+
+			let categoryId =
+				categoryNameToId[title] ??
+				categoryNameToId[TranslateService.translate(eventStore, title)] ??
+				categoryNameToId[
+					TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
+				] ??
+				categoryNameToId[
+					TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
+				];
+
+			if (!categoryId) {
+				const maxCategoryId = Math.max(...Object.values(categoryNameToId));
+				categoryId = maxCategoryId + 1;
+
+				tripData.categories.push({
+					id: maxCategoryId + 1,
+					title,
+					icon,
+					// title: i.category,
+					// icon: ''
+				});
+				categoryNameToId[i.category] = categoryId;
+			}
+			parsedItem.category = categoryId;
+
+			sidebarEvents[categoryId] ||= [];
+			sidebarEvents[categoryId].push(parsedItem);
+
+			return parsedItem;
+		});
+
+		tripData.allEvents = allEvents;
+		tripData.sidebarEvents = sidebarEvents;
+
+		return tripData;
+	}
+
+	function buildTripDataForTemplate(tripData, template) {
+		const dayOne = new Date(customDateRange.start);
+		const templateDayOne = new Date(template.dateRange.start);
+		const diff = daysBetween(templateDayOne, dayOne, false);
+
+		tripData.allEvents = template.allEvents.map(formatTemplateEvent);
+		const sidebarEvents = {};
+		Object.keys(template.sidebarEvents).forEach((c) => {
+			sidebarEvents[c] = template.sidebarEvents[c].map(formatTemplateEvent);
+		});
+
+		tripData.sidebarEvents = sidebarEvents;
+		tripData.calendarEvents = template.calendarEvents.map((c) => formatTemplateEvent(c, diff));
+		tripData.categories = template.categories.map(formatTemplateCategory);
+
+		return tripData;
+	}
+
 	async function createNewTrip(tripName: string) {
 		const areDatesValid = validateDateRange(eventStore, customDateRange.start, customDateRange.end);
 		const areFlightsValid = validateFlights();
@@ -786,7 +857,7 @@ function MyTripsTab() {
 					allEvents.push(a);
 				});
 
-				const tripData: upsertTripProps = {
+				let tripData: upsertTripProps = {
 					name: TripName,
 					dateRange: customDateRange,
 					calendarLocale: eventStore.calendarLocalCode,
@@ -955,6 +1026,18 @@ function MyTripsTab() {
 						currentDate.setDate(currentDate.getDate() + 1);
 					}
 				});
+
+				if (savedCollection) {
+					const categoryNameToId = tripData.categories.reduce((hash, category) => {
+						hash[category.title] = category.id;
+						return hash;
+					}, {});
+					tripData = buildTripDataForSavedCollection(tripData, categoryNameToId);
+				}
+
+				if (template) {
+					tripData = buildTripDataForTemplate(tripData, template);
+				}
 
 				// backup
 				let { viewMode, mobileViewMode } = eventStore;
@@ -1572,26 +1655,30 @@ function MyTripsTab() {
 					/>
 				</div>
 
-				<div className="main-font font-size-20">
-					{TranslateService.translate(eventStore, 'ACTIVITIES.TITLE')}
-				</div>
-				<div className="activities-section margin-bottom-5">
-					<textarea
-						value={activities}
-						onChange={(e) => setActivities(e.target.value)}
-						placeholder={TranslateService.translate(eventStore, 'ACTIVITIES.PLACEHOLDER')}
-						className="activities-textarea"
-						rows={5}
-					/>
-					{isProcessingActivities && (
-						<div className="processing-activities">
-							{TranslateService.translate(eventStore, 'ACTIVITIES.PROCESSING')}
+				{!templateId && !savedCollectionId && (
+					<>
+						<div className="main-font font-size-20">
+							{TranslateService.translate(eventStore, 'ACTIVITIES.TITLE')}
 						</div>
-					)}
-				</div>
+						<div className="activities-section margin-bottom-5">
+							<textarea
+								value={activities}
+								onChange={(e) => setActivities(e.target.value)}
+								placeholder={TranslateService.translate(eventStore, 'ACTIVITIES.PLACEHOLDER')}
+								className="activities-textarea"
+								rows={5}
+							/>
+							{isProcessingActivities && (
+								<div className="processing-activities">
+									{TranslateService.translate(eventStore, 'ACTIVITIES.PROCESSING')}
+								</div>
+							)}
+						</div>
 
-				{renderFlightDetailsSection()}
-				{renderHotelDetailsSection()}
+						{renderFlightDetailsSection()}
+						{renderHotelDetailsSection()}
+					</>
+				)}
 			</div>
 		);
 	}

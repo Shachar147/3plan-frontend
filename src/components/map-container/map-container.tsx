@@ -180,7 +180,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
 			event: x,
-			label: x.title,
+			// label: x.title,
+			label: getEventTitle(x, eventStore, true),
 			lat: x.location?.latitude,
 			lng: x.location?.longitude,
 		}));
@@ -231,7 +232,12 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			eventStore,
 			props.isTemplate
 		)}</u></b></div>`;
-		const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${event.location.address}</span></span>`;
+		const addressText = getEventTitle(
+			{ title: event.location.address } as unknown as CalendarEvent,
+			eventStore,
+			true
+		);
+		const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${addressText}</span></span>`;
 
 		const description = event.description?.trim()?.length
 			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${getEventDescription(
@@ -1322,7 +1328,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 											{' - '}
 										</>
 									) : undefined}
-									{info.event.title}
+									{getEventTitle(
+										{ title: info.event.title } as unknown as CalendarEvent,
+										eventStore,
+										true
+									)}
 								</div>
 							);
 						})}
