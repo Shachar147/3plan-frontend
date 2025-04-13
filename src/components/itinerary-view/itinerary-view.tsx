@@ -7,6 +7,7 @@ import { CalendarEvent } from '../../utils/interfaces';
 import { formatDate } from '../../utils/time-utils';
 import './itinerary-view.scss';
 import TranslateService from '../../services/translate-service';
+import { runInAction } from 'mobx';
 
 interface ItineraryViewProps {
 	events: CalendarEvent[];
@@ -111,7 +112,7 @@ function ItineraryView({ events }: ItineraryViewProps) {
 				{/* Map section */}
 				<div className="map-section">
 					<MapContainer
-						key={selectedDay}
+						key={`${selectedDay}-${eventStore.showEventOnMap}`}
 						events={currentDayEvents}
 						showNumbers={true}
 						isItineraryView={true}

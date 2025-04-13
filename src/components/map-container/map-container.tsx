@@ -589,6 +589,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		};
 		markers = coordinates && coordinates.map((coordinate: Coordinate) => initMarkerFromCoordinate(coordinate));
 
+		console.log('hereee');
 		if (eventStore.showEventOnMap) {
 			const eventId: number = eventStore.showEventOnMap!;
 			eventStore.showEventOnMap = null;
