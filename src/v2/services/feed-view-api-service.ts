@@ -21,7 +21,7 @@ export default class FeedViewApiService {
 		let url = `${endpoints.v2.poi.count}/${destination}`;
 
 		if (onlySystemRecommendations) {
-			url += '&isSystemRecommendation=1';
+			url += '?isSystemRecommendation=1';
 		}
 
 		const result = await apiGetPromise(this, url);
@@ -126,7 +126,9 @@ export default class FeedViewApiService {
 			: `${endpoints.v2.poi.feed}?withoutSystemRecommendations=1`;
 
 		if (onlySystemRecommendations) {
-			url += '&isSystemRecommendation=1';
+			url = page
+				? `${endpoints.v2.poi.feed}?isSystemRecommendation=1&p=${page}`
+				: `${endpoints.v2.poi.feed}?isSystemRecommendation=1`;
 		}
 
 		const result = await apiGetPromise(this, url);
