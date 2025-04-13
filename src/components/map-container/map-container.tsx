@@ -429,7 +429,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				bgColor = flightColor;
 			} else if (isHotel(category, title)) {
 				icon = iconsMap['hotel'];
-				bgColor = hotelColor;
+				bgColor = '4CAF50'; // Green color for hotels
 			} else if (isMatching(category, FOOD_KEYWORDS) || isMatching(title, FOOD_KEYWORDS)) {
 				icon = iconsMap['food'];
 			} else if (isMatching(category, ['photo', 'תמונות'])) {
@@ -503,10 +503,36 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			const key = getKey(coordinate);
 			const event = coordinatesToEvents[key];
 
+			// Adjust coordinates for hotels at the same location
+			let adjustedCoordinate = { ...coordinate };
+			if (isHotel(event.category?.toString() || '', event.title)) {
+				// Find other hotels at this location
+				const hotelsAtLocation = markers.filter(
+					(m) =>
+						m.position.lat() === coordinate.lat &&
+						m.position.lng() === coordinate.lng &&
+						isHotel(
+							coordinatesToEvents[`${m.position.lat()},${m.position.lng()}`].category?.toString() || '',
+							coordinatesToEvents[`${m.position.lat()},${m.position.lng()}`].title
+						)
+				);
+
+				if (hotelsAtLocation.length > 0) {
+					// Offset by a small amount (about 20 meters) for each existing hotel
+					const offset = 0.0002 * hotelsAtLocation.length;
+					adjustedCoordinate.lat += offset;
+					adjustedCoordinate.lng += offset;
+				}
+			}
+
 			// marker + marker when hovering
 			if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
 				// by day and index in day
 				const idx = eventStore.getEventIndexInCalendarByDay(event as CalendarEvent);
+				icon.url = getIconUrlByIdx(event, idx + 1);
+			} else if (props.isItineraryView) {
+				// by day and index in day
+				const idx = props.events.findIndex((e) => e.id == event.id);
 				icon.url = getIconUrlByIdx(event, idx + 1);
 			} else {
 				icon.url = getIconUrl(event);
@@ -522,13 +548,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 			// set marker
 			const refMarker = new googleRef.Marker({
-				position: { lat: coordinate.lat, lng: coordinate.lng },
-
-				// label: texts[key],
-				// labelContent: 'A',
-				// labelAnchor: new google.maps.Point(3, 30),
-				// labelClass: 'labels', // the CSS class for the label
-				// labelInBackground: false,
+				position: { lat: adjustedCoordinate.lat, lng: adjustedCoordinate.lng },
 				label: {
 					text: texts[key],
 					color: '#c0bbbb',
@@ -536,10 +556,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					fontWeight: 'bold',
 					className: 'marker-label',
 				},
-
 				title: texts[key],
 				icon: markerIcon,
-				// label: event.icon
 			});
 
 			// for visible items to be able to get more info about this marker
@@ -1194,14 +1212,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	}, []);
 
 	function renderVisibleItemsPane() {
-		// todo remove: try to fix the fact that if the same day have the same location twice, we see '1', '2', '4'.
-		// if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
-		// 	console.log({
-		// 		day: eventStore.mapViewDayFilter,
-		// 		calendarEvents: eventStore.calendarEvents,
-		// 	});
-		// }
-
 		return (
 			<div
 				className={getClasses(
@@ -1241,27 +1251,40 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					{filteredVisibleItems
 						.map((info) => {
 							const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
-
-							// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
+							const isNote = info.event.category?.toString().toLowerCase().includes('note');
 
 							let idxInDay = -1;
 							if (
-								eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
-								eventStore.mapViewDayFilter
+								(eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+									eventStore.mapViewDayFilter) ||
+								props.isItineraryView
 							) {
-								idxInDay = calendarEvent
-									? eventStore.getEventIndexInCalendarByDay(calendarEvent)
-									: 99999999;
+								if (calendarEvent) {
+									idxInDay = eventStore.getEventIndexInCalendarByDay(calendarEvent);
+								}
 							}
 
 							return {
 								info,
 								calendarEvent,
 								idxInDay,
+								isNote,
 							};
 						})
-						.sort((a, b) => a.idxInDay - b.idxInDay)
-						.map(({ info, idxInDay, calendarEvent }, idx) => {
+						.sort((a, b) => {
+							// Put notes at the end
+							if (a.isNote && !b.isNote) return 1;
+							if (!a.isNote && b.isNote) return -1;
+							// Only compare indices if both events have valid indices
+							if (a.idxInDay >= 0 && b.idxInDay >= 0) {
+								return a.idxInDay - b.idxInDay;
+							}
+							// Put events without indices at the end (before notes)
+							if (a.idxInDay >= 0) return -1;
+							if (b.idxInDay >= 0) return 1;
+							return 0;
+						})
+						.map(({ info, idxInDay, calendarEvent, isNote }, idx) => {
 							let addToCalendar = undefined;
 							if (props.addToEventsToCategories) {
 								addToCalendar = (
@@ -1312,7 +1335,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 							return (
 								<div
 									key={`filtered-visible-item-${idx}`}
-									className={`fc-event priority-${info.event.priority}`}
+									className={getClasses(
+										'fc-event',
+										isNote ? 'note-event' : `priority-${info.event.priority}`
+									)}
 									onClick={() => {
 										if (props.isReadOnly) {
 											return;
@@ -1321,16 +1347,18 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 									}}
 								>
 									{addToCalendar}
-									{eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
-									eventStore.mapViewDayFilter &&
-									idxInDay != undefined &&
-									idxInDay >= 0 &&
-									visibleItemsSearchValue === '' ? (
+									{((eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+										eventStore.mapViewDayFilter) ||
+										props.isItineraryView) &&
+									idxInDay >= 0 && // Only show numbers for events with valid indices
+									visibleItemsSearchValue === '' &&
+									!isNote ? (
 										<>
 											{idxInDay + 1}
 											{' - '}
 										</>
 									) : undefined}
+									{isNote ? `${TranslateService.translate(eventStore, 'NOTE')}: ` : ''}
 									{getEventTitle(
 										{ title: info.event.title } as unknown as CalendarEvent,
 										eventStore,

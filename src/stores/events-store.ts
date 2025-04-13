@@ -1274,6 +1274,8 @@ export class EventStore {
 		// show hide custom dates based on view
 		this.initCustomDatesVisibilityBasedOnViewMode();
 
+		this.isSidebarMinimized = newViewMode === ViewMode.itinerary;
+
 		DataServices.LocalStorageService.setLastViewMode(newViewMode);
 	}
 

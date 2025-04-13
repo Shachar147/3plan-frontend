@@ -89,6 +89,8 @@ function ItineraryView({ events }: ItineraryViewProps) {
 
 	const viewClasses = getClasses('itinerary-view', eventStore.isMobile && 'mobile', eventStore.isHebrew && 'hebrew');
 
+	let idxCounter = 0;
+
 	return (
 		<div className={viewClasses}>
 			{/* Day tabs */}
@@ -128,7 +130,11 @@ function ItineraryView({ events }: ItineraryViewProps) {
 							key={event.id}
 							className={getClasses('event-card', eventStore.isHebrew && 'direction-rtl')}
 						>
-							<div className="event-number">{index + 1}</div>
+							{event.allDay ? (
+								<div className="event-number">!</div>
+							) : (
+								<div className="event-number">{++idxCounter}</div>
+							)}
 							<div className="event-content">
 								<div className="event-text">
 									<h3 className="event-title">{event.title}</h3>
