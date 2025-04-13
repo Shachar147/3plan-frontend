@@ -966,6 +966,102 @@ const PointOfInterest = ({
 		return undefined;
 	};
 
+	const createTripFromSavedCollectionBtn = (
+		<Button
+			icon="fa-rocket"
+			className="cursor-pointer width-max-content"
+			type={ButtonFlavor.secondary}
+			text={TranslateService.translate(eventStore, 'CREATE_TRIP_FROM_SAVED_COLLECTION')}
+			onClick={() => {
+				// window.location.href = `${newDesignRootPath}/#createTrip`;
+				localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
+				window.location.hash = `createTrip?id=${item.collectionId}`;
+				rootStore.triggerTabsReRender();
+				rootStore.triggerHeaderReRender();
+				// window.location.reload();
+
+				window.scrollTo({
+					top: eventStore.isMobile ? MOBILE_SCROLL_TOP : 500,
+					behavior: 'smooth',
+				});
+			}}
+		/>
+	);
+
+	const openItemBtn = (
+		<Button
+			flavor={ButtonFlavor.secondary}
+			onClick={() => {
+				localStorage.setItem(`item-${item.id}-name`, item.name);
+				window.location.hash = `${specificItemTabId}?id=${item.id}`;
+				window.location.href = `${newDesignRootPath}${window.location.hash}`;
+				// window.location.assign(`${newDesignRootPath}${window.location.hash}`)
+				rootStore.triggerTabsReRender();
+				rootStore.triggerHeaderReRender();
+			}}
+			key={`open-button-${item.id}-${feedStore.reRenderCounter}`}
+			icon={`fa-chevron-${eventStore.getCurrentDirectionEnd()}`}
+			text={TranslateService.translate(eventStore, 'OPEN_ITEM')}
+			className="width-max-content padding-inline-15 black"
+		/>
+	);
+
+	const likeBtn = (
+		<Button
+			flavor={alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.secondary}
+			onClick={() => {
+				setIsAddingToSaved(true);
+				if (alreadyInSaved) {
+					return handleRemoveFromSaved().then(() => setIsAddingToSaved(false));
+				}
+				return handleAddToSaved().then(() => setIsAddingToSaved(false));
+			}}
+			disabled={!item.id}
+			isLoading={isAddingToSaved}
+			key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
+			icon={alreadyInSaved ? 'fa fa-heart' : 'fa fa-heart-o'}
+			text={
+				alreadyInSaved
+					? TranslateService.translate(eventStore, 'UNLIKE_BUTTON')
+					: TranslateService.translate(eventStore, 'LIKED_BUTTON')
+			}
+			className={getClasses('padding-inline-15', !alreadyInSaved, 'black', 'width-max-content')}
+		/>
+	);
+
+	const openTripBtn = (
+		<Button
+			icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
+			className={getClasses(
+				'cursor-pointer',
+				eventStore.isMobile && 'black',
+				eventStore.isMobile && 'padding-inline-15',
+				'width-max-content'
+			)}
+			type={ButtonFlavor.secondary}
+			text={
+				onClickText ??
+				TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')
+			}
+			onClick={() => onClick()}
+		/>
+	);
+
+	const buttons = [];
+
+	if (savedCollection) {
+		buttons.push(createTripFromSavedCollectionBtn);
+	}
+	if (mainFeed && !myTrips && !savedCollection) {
+		buttons.push(likeBtn);
+	}
+	if ((mainFeed || (isSearchResult && isSmall)) && !myTrips && !savedCollection && !isInPlan) {
+		buttons.push(openItemBtn);
+	}
+	if (onClick) {
+		buttons.push(openTripBtn);
+	}
+
 	return (
 		<div
 			className={getClasses(
@@ -1137,103 +1233,14 @@ const PointOfInterest = ({
 					)}
 					{renderTripInfo?.()}
 				</div>
-				{savedCollection && (
-					<div className="margin-bottom-20 margin-top-20 flex-column width-100-percents">
-						<Button
-							icon="fa-rocket"
-							className="cursor-pointer"
-							type={ButtonFlavor.secondary}
-							text={TranslateService.translate(eventStore, 'CREATE_TRIP_FROM_SAVED_COLLECTION')}
-							onClick={() => {
-								// window.location.href = `${newDesignRootPath}/#createTrip`;
-								localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
-								window.location.hash = `createTrip?id=${item.collectionId}`;
-								rootStore.triggerTabsReRender();
-								rootStore.triggerHeaderReRender();
-								// window.location.reload();
-
-								window.scrollTo({
-									top: eventStore.isMobile ? MOBILE_SCROLL_TOP : 500,
-									behavior: 'smooth',
-								});
-							}}
-						/>
-					</div>
-				)}
-				{mainFeed && !myTrips && !savedCollection && (
-					<div className="margin-bottom-20 flex-column width-100-percents">
-						<Button
-							flavor={alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.secondary}
-							onClick={() => {
-								setIsAddingToSaved(true);
-								if (alreadyInSaved) {
-									return handleRemoveFromSaved().then(() => setIsAddingToSaved(false));
-								}
-								return handleAddToSaved().then(() => setIsAddingToSaved(false));
-							}}
-							disabled={!item.id}
-							isLoading={isAddingToSaved}
-							key={`save-button-${item.id}-${feedStore.reRenderCounter}`}
-							icon={alreadyInSaved ? 'fa fa-heart' : 'fa fa-heart-o'}
-							text={
-								alreadyInSaved
-									? TranslateService.translate(eventStore, 'UNLIKE_BUTTON')
-									: TranslateService.translate(eventStore, 'LIKED_BUTTON')
-							}
-							className={getClasses('padding-inline-15', !alreadyInSaved, 'black')}
-						/>
-					</div>
-				)}
-				{(mainFeed || (isSearchResult && isSmall)) && !myTrips && !savedCollection && !isInPlan && (
-					<div
-						className={getClasses(
-							isSmall && 'flex-column align-items-center',
-							isSmall && !eventStore.isMobile && 'margin-bottom-10'
-						)}
-					>
-						<Button
-							flavor={ButtonFlavor.secondary}
-							onClick={() => {
-								localStorage.setItem(`item-${item.id}-name`, item.name);
-								window.location.hash = `${specificItemTabId}?id=${item.id}`;
-								window.location.href = `${newDesignRootPath}${window.location.hash}`;
-								// window.location.assign(`${newDesignRootPath}${window.location.hash}`)
-								rootStore.triggerTabsReRender();
-								rootStore.triggerHeaderReRender();
-							}}
-							key={`open-button-${item.id}-${feedStore.reRenderCounter}`}
-							icon={`fa-chevron-${eventStore.getCurrentDirectionEnd()}`}
-							text={TranslateService.translate(eventStore, 'OPEN_ITEM')}
-							className="min-width-150 width-max-content padding-inline-15 black"
-						/>
-					</div>
-				)}
-				{onClick && (
-					<div
-						className={getClasses(
-							'margin-bottom-20 flex-column',
-							!isSmall || eventStore.isMobile ? 'margin-top-20 align-items-center' : 'width-100-percents'
-						)}
-					>
-						<Button
-							icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
-							className={getClasses(
-								'cursor-pointer',
-								eventStore.isMobile && 'black',
-								eventStore.isMobile && 'min-width-150 padding-inline-15'
-							)}
-							type={ButtonFlavor.secondary}
-							text={
-								onClickText ??
-								TranslateService.translate(
-									eventStore,
-									isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP'
-								)
-							}
-							onClick={() => onClick()}
-						/>
-					</div>
-				)}
+				<div
+					className={getClasses(
+						'flex-row gap-4 align-items-center padding-top-10 padding-bottom-20',
+						buttons.length == 1 ? 'justify-content-center' : 'justify-content-space-between'
+					)}
+				>
+					{buttons}
+				</div>
 			</div>
 		</div>
 	);
