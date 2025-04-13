@@ -523,8 +523,12 @@ body.rtl {
 }
 
 .suggestions-sidebar {
+	//width: max-content;
+	//min-width: 340px;
+
 	width: max-content;
-	min-width: 340px;
+	max-width: 340px;
+
 	max-height: 120vh;
 	overflow-y: auto;
 

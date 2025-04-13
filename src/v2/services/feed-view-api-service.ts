@@ -52,8 +52,13 @@ export default class FeedViewApiService {
 		};
 	};
 
-	getItems = async (source: string, destination: string, page: number) => {
-		const url = SourceToUrl(destination, page)[source];
+	getItems = async (source: string, destination: string, page: number, isSystemRecommendation?: boolean) => {
+		let url = SourceToUrl(destination, page)[source];
+
+		if (isSystemRecommendation) {
+			url += '&isSystemRecommendation=1';
+		}
+
 		if (!url) {
 			return Promise.resolve({
 				results: [],

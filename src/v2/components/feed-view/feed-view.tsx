@@ -245,7 +245,7 @@ const FeedView = ({
 			}
 		} else {
 			for (const destination of eventStore.destinations) {
-				const sources = allSources.filter(
+				const sources = (onlySystemRecommendations ? ['Local'] : allSources).filter(
 					(source) =>
 						(source === 'Local' || (feedStore.sourceCounts[destination]?.[source] ?? 0) < cacheThreshold) &&
 						!feedStore.finishedSources.includes(source)
@@ -262,7 +262,9 @@ const FeedView = ({
 				let allFinished = false;
 				if (destination != '[]') {
 					const responses = await Promise.all(
-						sources.map((source) => apiService.getItems(source, destination, page))
+						sources.map((source) =>
+							apiService.getItems(source, destination, page, onlySystemRecommendations)
+						)
 					);
 
 					responses.forEach((response) => {
@@ -655,6 +657,7 @@ const FeedView = ({
 					// if (foundByLocation){
 					//     console.log("thereeee", i.name, toJS(foundByLocation.location), toJS(i.location));
 					// }
+
 					const shouldRender = !foundByLocation && !foundByName;
 					// console.log("should render - ", i.name, shouldRender)
 					return shouldRender;
