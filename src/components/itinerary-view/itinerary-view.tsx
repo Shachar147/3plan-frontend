@@ -1,7 +1,7 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { eventStoreContext } from '../../stores/events-store';
-import { getClasses } from '../../utils/utils';
+import { getClasses, getCoordinatesRangeKey } from '../../utils/utils';
 import MapContainer, { MapContainerRef } from '../map-container/map-container';
 import { CalendarEvent } from '../../utils/interfaces';
 import { formatDate } from '../../utils/time-utils';
@@ -11,6 +11,8 @@ import { modalsStoreContext } from '../../stores/modals-store';
 import Button, { ButtonFlavor } from '../common/button/button';
 import { runInAction } from 'mobx';
 import { MOBILE_SCROLL_TOP } from '../../v2/components/scroll-top/scroll-top';
+import { GoogleTravelMode } from '../../utils/enums';
+import moment from 'moment/moment';
 
 interface ItineraryViewProps {
 	events: CalendarEvent[];
@@ -22,6 +24,13 @@ function ItineraryView({ events }: ItineraryViewProps) {
 	const [selectedDay, setSelectedDay] = useState(0);
 	const [mapKey, setMapKey] = useState(0);
 	const mapContainerRef = useRef<MapContainerRef>(null);
+	const [currentStoryIndex, setCurrentStoryIndex] = useState<number | null>(null);
+
+	// useEffect(() => {
+	// 	if (currentStoryIndex != null && currentDayEvents[currentStoryIndex].allDay) {
+	// 		nextInStory();
+	// 	}
+	// }, [currentStoryIndex])
 
 	// Group events by day
 	const eventsByDay = events.reduce((acc, event) => {
@@ -34,13 +43,14 @@ function ItineraryView({ events }: ItineraryViewProps) {
 	}, {} as Record<string, CalendarEvent[]>);
 
 	// Sort days by actual date, not string representation
-	const days = Object.keys(eventsByDay).sort((a, b) => {
-		const [dayA, monthA, yearA] = a.split('/').map(Number);
-		const [dayB, monthB, yearB] = b.split('/').map(Number);
-		const dateA = new Date(yearA, monthA - 1, dayA);
-		const dateB = new Date(yearB, monthB - 1, dayB);
-		return dateA.getTime() - dateB.getTime();
-	});
+	// const days = Object.keys(eventsByDay).sort((a, b) => {
+	// 	const [dayA, monthA, yearA] = a.split('/').map(Number);
+	// 	const [dayB, monthB, yearB] = b.split('/').map(Number);
+	// 	const dateA = new Date(yearA, monthA - 1, dayA);
+	// 	const dateB = new Date(yearB, monthB - 1, dayB);
+	// 	return dateA.getTime() - dateB.getTime();
+	// });
+	const days = Object.keys(eventsByDay).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
 	if (days.length === 0) {
 		return null;
@@ -113,6 +123,80 @@ function ItineraryView({ events }: ItineraryViewProps) {
 		}
 	};
 
+	const startStory = () => {
+		if (currentDayEvents.length > 0) {
+			setCurrentStoryIndex(0);
+			handleViewOnMap(currentDayEvents[0]);
+		}
+	};
+
+	const stopStory = () => {
+		setCurrentStoryIndex(null);
+	};
+
+	const nextInStory = () => {
+		if (currentStoryIndex !== null && currentStoryIndex < currentDayEvents.length - 1) {
+			const nextIndex = currentStoryIndex + 1;
+			setCurrentStoryIndex(nextIndex);
+			handleViewOnMap(currentDayEvents[nextIndex]);
+		}
+	};
+
+	const previousInStory = () => {
+		if (currentStoryIndex !== null && currentStoryIndex > 0) {
+			const prevIndex = currentStoryIndex - 1;
+			setCurrentStoryIndex(prevIndex);
+			handleViewOnMap(currentDayEvents[prevIndex]);
+		}
+	};
+
+	const getDistanceInfo = () => {
+		if (currentStoryIndex === null || currentStoryIndex === 0) return null;
+
+		const currentEvent = currentDayEvents[currentStoryIndex];
+		const previousEvent = currentDayEvents[currentStoryIndex - 1];
+
+		if (!currentEvent?.id || !previousEvent?.id || !currentEvent.location || !previousEvent.location) return null;
+
+		const loc1 = {
+			lat: previousEvent.location.latitude,
+			lng: previousEvent.location.longitude,
+			eventName: previousEvent.title,
+		};
+
+		const loc2 = {
+			lat: currentEvent.location.latitude,
+			lng: currentEvent.location.longitude,
+			eventName: currentEvent.title,
+		};
+
+		const distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
+		const distanceKey2 = getCoordinatesRangeKey(GoogleTravelMode.WALKING, loc1, loc2);
+		const distanceA = eventStore.distanceResults.get(distanceKey);
+		const distanceB = eventStore.distanceResults.get(distanceKey2);
+
+		if (!distanceA && !distanceB) return null;
+
+		if (distanceB) {
+			let distance = distanceB.distance;
+			distance = distance.replaceAll('km', TranslateService.translate(eventStore, 'DISTANCE.KM'));
+			distance = distance.replaceAll('m', TranslateService.translate(eventStore, 'DISTANCE.M'));
+
+			return TranslateService.translate(eventStore, 'NEXT_DESTINATION.WALK', {
+				DISTANCE: distance,
+				TIME: Math.round(distanceB.duration_value / 60), // Convert to minutes
+			});
+		}
+
+		let distance = distanceA.distance;
+		distance = distance.replaceAll('km', TranslateService.translate(eventStore, 'DISTANCE.KM'));
+		distance = distance.replaceAll('m', TranslateService.translate(eventStore, 'DISTANCE.M'));
+		return TranslateService.translate(eventStore, 'NEXT_DESTINATION.DRIVE', {
+			DISTANCE: distance,
+			TIME: Math.round(distanceA.duration_value / 60), // Convert to minutes
+		});
+	};
+
 	return (
 		<div className={viewClasses}>
 			{/* Day tabs */}
@@ -122,15 +206,71 @@ function ItineraryView({ events }: ItineraryViewProps) {
 						<button
 							key={day}
 							className={getClasses('day-tab', selectedDay === index && 'active')}
-							onClick={() => setSelectedDay(index)}
+							onClick={() => {
+								setSelectedDay(index);
+								setCurrentStoryIndex(null);
+							}}
 						>
 							<span className="day-number">
 								{TranslateService.translate(eventStore, 'DAY_X', { X: index + 1 })}
 							</span>
-							<span className="day-date">{day}</span>
+							<span className="day-date">{moment(day).format('DD/MM/YYYY')}</span>
 						</button>
 					))}
 				</div>
+			</div>
+
+			{/* Story controls */}
+			<div className="story-controls">
+				<div className="story-buttons">
+					{currentStoryIndex === null ? (
+						<Button
+							icon={eventStore.isHebrew ? 'fa-caret-left' : 'fa-caret-right'}
+							onClick={startStory}
+							iconPosition={eventStore.isHebrew ? 'end' : 'start'}
+							text={TranslateService.translate(eventStore, 'START_STORY')}
+							flavor={ButtonFlavor.primary}
+						/>
+					) : (
+						<>
+							<Button
+								icon={eventStore.isHebrew ? 'fa-step-forward' : 'fa-step-backward'}
+								iconPosition={eventStore.isHebrew ? 'start' : 'end'}
+								onClick={previousInStory}
+								disabled={currentStoryIndex === 0}
+								flavor={ButtonFlavor.secondary}
+								text={TranslateService.translate(eventStore, 'PREVIOUS')}
+							/>
+							<Button
+								// icon="fa-stop"
+								onClick={stopStory}
+								iconPosition={eventStore.isHebrew ? 'end' : 'start'}
+								text={TranslateService.translate(eventStore, 'STOP_STORY')}
+								flavor={ButtonFlavor.secondary}
+							/>
+							<Button
+								icon={eventStore.isHebrew ? 'fa-step-backward' : 'fa-step-forward'}
+								iconPosition={eventStore.isHebrew ? 'end' : 'start'}
+								onClick={nextInStory}
+								disabled={currentStoryIndex === currentDayEvents.length - 1}
+								flavor={ButtonFlavor.secondary}
+								text={TranslateService.translate(eventStore, 'NEXT')}
+							/>
+						</>
+					)}
+				</div>
+				{currentStoryIndex !== null && (
+					<div className="story-info">
+						<h3 className="event-name">{currentDayEvents[currentStoryIndex].title}</h3>
+						<span className="current-step">
+							{TranslateService.translate(eventStore, 'EVENT_PROGRESS', {
+								X: currentStoryIndex + 1,
+								Y: currentDayEvents.length,
+							})}
+						</span>
+						{getDistanceInfo() && <span className="distance-info">{getDistanceInfo()}</span>}
+					</div>
+				)}
 			</div>
 
 			{/* Map and list container */}

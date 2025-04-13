@@ -1018,5 +1018,12 @@
 	"ACTIVITIES.ERROR": "Error processing activities. Please try again.",
 	"ACTIVITIES.SUCCESS": "{count} activities successfully added to your trip",
 	"FOCUS_MODE": "Fullscreen Mode",
-	"OUT_OF_FOCUS_MODE": "Out of Fullscreen Mode"
+	"OUT_OF_FOCUS_MODE": "Out of Fullscreen Mode",
+	"START_STORY": "Start Story",
+	"STOP_STORY": "Stop Story",
+	"NEXT": "Next",
+	"PREVIOUS": "Previous",
+	"EVENT_PROGRESS": "Activity {X} of {Y}",
+	"NEXT_DESTINATION.DRIVE": "Route to here: {DISTANCE}, {TIME}min drive",
+	"NEXT_DESTINATION.WALK": "Route to here: {DISTANCE}, {TIME}min walk"
 }

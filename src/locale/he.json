@@ -1256,5 +1256,12 @@
 	"ACTIVITIES.ERROR": "שגיאה בעיבוד הפעילויות. אנא נסה שוב.",
 	"ACTIVITIES.SUCCESS": "{count} פעילויות נוספו בהצלחה לטיול שלך",
 	"FOCUS_MODE": "עבור למצב מסך מלא",
-	"OUT_OF_FOCUS_MODE": "צא ממצב מסך מלא"
+	"OUT_OF_FOCUS_MODE": "צא ממצב מסך מלא",
+	"START_STORY": "התחל סיור",
+	"STOP_STORY": "סיים סיור",
+	"NEXT": "הבא",
+	"PREVIOUS": "הקודם",
+	"EVENT_PROGRESS": "פעילות {X} מתוך {Y}",
+	"NEXT_DESTINATION.DRIVE": "הגעה הנה: {DISTANCE}, {TIME} דקות נסיעה",
+	"NEXT_DESTINATION.WALK": "הגעה הנה: {DISTANCE}, {TIME} דקות הליכה"
 }

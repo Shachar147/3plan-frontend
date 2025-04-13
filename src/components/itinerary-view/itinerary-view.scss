@@ -235,6 +235,60 @@
 		}
 	}
 
+	.story-controls {
+		padding: 16px;
+		padding-top: 0;
+		background: #fff;
+		border-radius: 8px;
+		margin: 16px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		align-items: center;
+
+		.story-buttons {
+			display: flex;
+			gap: 8px;
+			justify-content: center;
+		}
+
+		.story-info {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 4px;
+			text-align: center;
+
+			.event-name {
+				margin: 0;
+				font-size: 18px;
+				color: var(--blue);
+				font-weight: 600;
+			}
+
+			.current-step {
+				font-weight: 500;
+				color: #666;
+				font-size: 14px;
+			}
+
+			.distance-info {
+				color: #888;
+				font-size: 14px;
+				display: flex;
+				align-items: center;
+				gap: 4px;
+
+				&::before {
+					content: '\f1b9'; // Car icon
+					font-family: 'FontAwesome';
+					font-size: 14px;
+				}
+			}
+		}
+	}
+
 	&.mobile {
 		.content-container {
 			flex-direction: column;
@@ -302,46 +356,54 @@
 				padding: 8px 12px;
 			}
 		}
+
+		.story-controls {
+			margin: 8px;
+			padding: 12px;
+		}
 	}
-}
 
-body.rtl .itinerary-view,
-.itinerary-view.hebrew {
-	.day-tabs {
-		flex-direction: row-reverse;
-	}
-	.list-section {
-		border-left: none;
-		border-right: 1px solid #e0e0e0;
-		text-align: right;
+	&.hebrew {
+		.day-tabs {
+			flex-direction: row-reverse;
+		}
+		.list-section {
+			border-left: none;
+			border-right: 1px solid #e0e0e0;
+			text-align: right;
 
-		.event-card {
-			//flex-direction: row-reverse;
-
-			.event-content {
+			.event-card {
 				//flex-direction: row-reverse;
 
-				.event-details {
-					// align-items: flex-end;
+				.event-content {
+					//flex-direction: row-reverse;
 
-					.event-time,
-					.event-duration {
-						//flex-direction: row-reverse;
+					.event-details {
+						// align-items: flex-end;
+
+						.event-time,
+						.event-duration {
+							//flex-direction: row-reverse;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	&.mobile {
-		.list-section {
-			border-right: none;
+		&.mobile {
+			.list-section {
+				border-right: none;
 
-			.event-card {
-				.event-content {
-					flex-direction: row-reverse;
+				.event-card {
+					.event-content {
+						flex-direction: row-reverse;
+					}
 				}
 			}
+		}
+
+		.story-controls {
+			direction: rtl;
 		}
 	}
 }
