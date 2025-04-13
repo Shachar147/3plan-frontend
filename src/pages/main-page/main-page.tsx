@@ -37,6 +37,7 @@ import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatDate } from '../../utils/time-utils';
 import FeedView from '../../v2/components/feed-view/feed-view';
 import { FeatureFlagsService } from '../../utils/feature-flags';
+import ItineraryView from '../../components/itinerary-view/itinerary-view';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -663,6 +664,22 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function renderItineraryView() {
+		if (!eventStore.isItineraryView) return null;
+
+		return (
+			<div
+				className={getClasses(
+					['itinerary-container flex-1-1-0']
+					// !eventStore.isItineraryView && 'opacity-0 position-absolute',
+					// !eventStore.isMobile && 'pc'
+				)}
+			>
+				<ItineraryView events={eventStore.calendarEvents} />
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<div
@@ -698,6 +715,7 @@ function MainPage(props: MainPageProps) {
 										{eventStore.isListView && renderListView()}
 										{eventStore.isCalendarView && renderCalendarView()}
 										{eventStore.isCombinedView && renderCombinedView()}
+										{eventStore.isItineraryView && renderItineraryView()}
 										{eventStore.shouldRenderSuggestions && renderSuggestions()}
 									</div>
 								</div>

@@ -137,15 +137,18 @@ function Marker(props: MarkerProps): ReactElement {
 
 interface MapContainerProps {
 	allEvents?: AllEventsEvent[];
+	events?: CalendarEvent[];
 	getNameLink?: (x: AllEventsEvent) => string;
 	isCombined?: boolean;
-	addToEventsToCategories: (event: SidebarEvent) => void;
+	addToEventsToCategories?: (event: SidebarEvent) => void;
 
 	noHeader?: boolean;
 	noFilters?: boolean;
 	isReadOnly?: boolean;
 	zoom?: number;
 	isTemplate?: boolean;
+	showNumbers?: boolean;
+	isItineraryView?: boolean;
 }
 
 export interface MapContainerRef {
@@ -176,12 +179,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 	const getKey = (x: Coordinate) => x.lat + ',' + x.lng;
 
-	const locations = (props.allEvents ?? eventStore.allEventsFilteredComputed)
+	const locations = (props.events || props.allEvents || eventStore.allEventsFilteredComputed)
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
 			event: x,
-			// label: x.title,
-			label: getEventTitle(x, eventStore, true),
+			label: getEventTitle(x as CalendarEvent, eventStore, true),
 			lat: x.location?.latitude,
 			lng: x.location?.longitude,
 		}));

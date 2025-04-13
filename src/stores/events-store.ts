@@ -797,6 +797,11 @@ export class EventStore {
 	}
 
 	@computed
+	get isItineraryView() {
+		return this.isMobile ? this.mobileViewMode == ViewMode.itinerary : this.viewMode === ViewMode.itinerary;
+	}
+
+	@computed
 	get shouldRenderSuggestions() {
 		return (
 			!this.isMobile &&
