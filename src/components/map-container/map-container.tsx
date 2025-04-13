@@ -430,7 +430,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				bgColor = flightColor;
 			} else if (isHotel(category, title)) {
 				icon = iconsMap['hotel'];
-				bgColor = '4CAF50'; // Green color for hotels
+				bgColor = hotelColor;
 			} else if (isMatching(category, FOOD_KEYWORDS) || isMatching(title, FOOD_KEYWORDS)) {
 				icon = iconsMap['food'];
 			} else if (isMatching(category, ['photo', 'תמונות'])) {
@@ -586,7 +586,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		};
 		markers = coordinates && coordinates.map((coordinate: Coordinate) => initMarkerFromCoordinate(coordinate));
 
-		console.log('hereee');
 		if (eventStore.showEventOnMap) {
 			const eventId: number = eventStore.showEventOnMap!;
 			eventStore.showEventOnMap = null;
@@ -1191,6 +1190,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	}, []);
 
 	function renderVisibleItemsPane() {
+		// todo remove: try to fix the fact that if the same day have the same location twice, we see '1', '2', '4'.
 		if (props.hideVisibleItems) return null;
 		return (
 			<div
@@ -1231,40 +1231,27 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					{filteredVisibleItems
 						.map((info) => {
 							const calendarEvent = eventStore.calendarEvents.find((c) => c.id === info.event.id);
-							const isNote = info.event.category?.toString().toLowerCase().includes('note');
+
+							// TODO - if it's an OR activity (two activities on the exact same time, both of them should be encountered on the same time.
 
 							let idxInDay = -1;
 							if (
-								(eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
-									eventStore.mapViewDayFilter) ||
-								props.isItineraryView
+								eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+								eventStore.mapViewDayFilter
 							) {
-								if (calendarEvent) {
-									idxInDay = eventStore.getEventIndexInCalendarByDay(calendarEvent);
-								}
+								idxInDay = calendarEvent
+									? eventStore.getEventIndexInCalendarByDay(calendarEvent)
+									: 99999999;
 							}
 
 							return {
 								info,
 								calendarEvent,
 								idxInDay,
-								isNote,
 							};
 						})
-						.sort((a, b) => {
-							// Put notes at the end
-							if (a.isNote && !b.isNote) return 1;
-							if (!a.isNote && b.isNote) return -1;
-							// Only compare indices if both events have valid indices
-							if (a.idxInDay >= 0 && b.idxInDay >= 0) {
-								return a.idxInDay - b.idxInDay;
-							}
-							// Put events without indices at the end (before notes)
-							if (a.idxInDay >= 0) return -1;
-							if (b.idxInDay >= 0) return 1;
-							return 0;
-						})
-						.map(({ info, idxInDay, calendarEvent, isNote }, idx) => {
+						.sort((a, b) => a.idxInDay - b.idxInDay)
+						.map(({ info, idxInDay, calendarEvent }, idx) => {
 							let addToCalendar = undefined;
 							if (props.addToEventsToCategories) {
 								addToCalendar = (
@@ -1315,10 +1302,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 							return (
 								<div
 									key={`filtered-visible-item-${idx}`}
-									className={getClasses(
-										'fc-event',
-										isNote ? 'note-event' : `priority-${info.event.priority}`
-									)}
+									className={`fc-event priority-${info.event.priority}`}
 									onClick={() => {
 										if (props.isReadOnly) {
 											return;
@@ -1330,15 +1314,14 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 									{((eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
 										eventStore.mapViewDayFilter) ||
 										props.isItineraryView) &&
-									idxInDay >= 0 && // Only show numbers for events with valid indices
-									visibleItemsSearchValue === '' &&
-									!isNote ? (
+									idxInDay != undefined &&
+									idxInDay >= 0 &&
+									visibleItemsSearchValue === '' ? (
 										<>
 											{idxInDay + 1}
 											{' - '}
 										</>
 									) : undefined}
-									{isNote ? `${TranslateService.translate(eventStore, 'NOTE')}: ` : ''}
 									{getEventTitle(
 										{ title: info.event.title } as unknown as CalendarEvent,
 										eventStore,
