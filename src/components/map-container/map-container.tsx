@@ -1418,7 +1418,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			{!props.noFilters && locations.length > 0 && renderMapFilters()}
 			{!props.noHeader && renderMapHeader()}
 			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
-				{locations.length == 0 && renderNoItemsOnMapPlaceholder()}
+				{locations.length == 0 &&
+					!(eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER) &&
+					!(eventStore.viewMode == ViewMode.itinerary) &&
+					renderNoItemsOnMapPlaceholder()}
 				<GoogleMapReact
 					bootstrapURLKeys={{
 						key: 'AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo',
