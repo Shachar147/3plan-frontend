@@ -137,15 +137,19 @@ function Marker(props: MarkerProps): ReactElement {
 
 interface MapContainerProps {
 	allEvents?: AllEventsEvent[];
+	events?: CalendarEvent[];
 	getNameLink?: (x: AllEventsEvent) => string;
 	isCombined?: boolean;
-	addToEventsToCategories: (event: SidebarEvent) => void;
+	addToEventsToCategories?: (event: SidebarEvent) => void;
 
 	noHeader?: boolean;
 	noFilters?: boolean;
 	isReadOnly?: boolean;
 	zoom?: number;
 	isTemplate?: boolean;
+	showNumbers?: boolean;
+	isItineraryView?: boolean;
+	hideVisibleItems?: boolean;
 }
 
 export interface MapContainerRef {
@@ -176,12 +180,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 	const getKey = (x: Coordinate) => x.lat + ',' + x.lng;
 
-	const locations = (props.allEvents ?? eventStore.allEventsFilteredComputed)
+	const locations = (props.events || props.allEvents || eventStore.allEventsFilteredComputed)
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
 			event: x,
-			// label: x.title,
-			label: getEventTitle(x, eventStore, true),
+			label: getEventTitle(x as CalendarEvent, eventStore, true),
 			lat: x.location?.latitude,
 			lng: x.location?.longitude,
 		}));
@@ -392,7 +395,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
 			let category: string = props.allEvents
 				? event.category
-				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
+				: eventStore.categories.find((x) => x.id.toString() === event.category?.toString())?.title;
 
 			category = category ? category.toString().toLowerCase() : '';
 			const title = event.title.toLowerCase();
@@ -506,6 +509,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				// by day and index in day
 				const idx = eventStore.getEventIndexInCalendarByDay(event as CalendarEvent);
 				icon.url = getIconUrlByIdx(event, idx + 1);
+			} else if (props.isItineraryView) {
+				// by day and index in day
+				const idx = props.events.findIndex((e) => e.id == event.id);
+				icon.url = getIconUrlByIdx(event, idx + 1);
 			} else {
 				icon.url = getIconUrl(event);
 			}
@@ -521,12 +528,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			// set marker
 			const refMarker = new googleRef.Marker({
 				position: { lat: coordinate.lat, lng: coordinate.lng },
-
-				// label: texts[key],
-				// labelContent: 'A',
-				// labelAnchor: new google.maps.Point(3, 30),
-				// labelClass: 'labels', // the CSS class for the label
-				// labelInBackground: false,
 				label: {
 					text: texts[key],
 					color: '#c0bbbb',
@@ -534,10 +535,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					fontWeight: 'bold',
 					className: 'marker-label',
 				},
-
 				title: texts[key],
 				icon: markerIcon,
-				// label: event.icon
 			});
 
 			// for visible items to be able to get more info about this marker
@@ -1192,13 +1191,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 	function renderVisibleItemsPane() {
 		// todo remove: try to fix the fact that if the same day have the same location twice, we see '1', '2', '4'.
-		// if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
-		// 	console.log({
-		// 		day: eventStore.mapViewDayFilter,
-		// 		calendarEvents: eventStore.calendarEvents,
-		// 	});
-		// }
-
+		if (props.hideVisibleItems) return null;
 		return (
 			<div
 				className={getClasses(
@@ -1318,8 +1311,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 									}}
 								>
 									{addToCalendar}
-									{eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
-									eventStore.mapViewDayFilter &&
+									{((eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+										eventStore.mapViewDayFilter) ||
+										props.isItineraryView) &&
 									idxInDay != undefined &&
 									idxInDay >= 0 &&
 									visibleItemsSearchValue === '' ? (
@@ -1415,7 +1409,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			{!props.noFilters && locations.length > 0 && renderMapFilters()}
 			{!props.noHeader && renderMapHeader()}
 			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
-				{locations.length == 0 && renderNoItemsOnMapPlaceholder()}
+				{locations.length == 0 &&
+					!(eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER) &&
+					!(eventStore.viewMode == ViewMode.itinerary) &&
+					renderNoItemsOnMapPlaceholder()}
 				<GoogleMapReact
 					bootstrapURLKeys={{
 						key: 'AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo',

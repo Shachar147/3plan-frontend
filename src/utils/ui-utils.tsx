@@ -294,6 +294,13 @@ export const getViewSelectorOptions = (
 			iconClass: 'fa-list',
 		},
 		{
+			key: ViewMode.itinerary,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.ITINERARY_VIEW' + suffix),
+			icon: <i className="fa fa-sort-numeric-asc black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-sort-numeric-asc selected-color" aria-hidden="true" />,
+			iconClass: 'fa-sort-numeric-asc',
+		},
+		{
 			key: ViewMode.feed,
 			name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${eventStore.isMobile ? '.SHORT' : ''}`),
 			icon: <i className="fa fa-search black-color" aria-hidden="true" />,

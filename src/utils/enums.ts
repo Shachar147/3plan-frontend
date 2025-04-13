@@ -43,8 +43,8 @@ export enum ViewMode {
 	list = 'list',
 	calendar = 'calendar',
 	map = 'map',
-
 	feed = 'feed',
+	itinerary = 'itinerary',
 
 	// for mobile:
 	sidebar = 'sidebar',

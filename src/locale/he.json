@@ -143,6 +143,8 @@
 	"GENERAL_CATEGORY.TITLE": "כללי",
 	"BUTTON_TEXT.LIST_VIEW": "רשימה",
 	"BUTTON_TEXT.LIST_VIEW.SHORT": "רשימה",
+	"BUTTON_TEXT.ITINERARY_VIEW": "מסלול",
+	"BUTTON_TEXT.ITINERARY_VIEW.SHORT": "מסלול",
 	"BUTTON_TEXT.MAP_VIEW": "מפה",
 	"BUTTON_TEXT.MAP_VIEW.SHORT": "מפה",
 	"BUTTON_TEXT.FEED_VIEW": "מצא נקודות עניין",
@@ -273,7 +275,7 @@
 	"MODALS.ERROR.OOPS_SOMETHING_WENT_WRONG": "אופס! משהו השתבש",
 	"THE_FOLLOWING_EVENTS": "הפעילויות הבאות",
 	"AND_THEN_ONE_OF_THE_FOLLOWING": "ואז - אחד מהבאים",
-	"MAP.VISIBLE_ITEMS.TITLE": "אתם מסתכל כרגע על",
+	"MAP.VISIBLE_ITEMS.TITLE": "אתם מסתכלים כרגע על",
 	"MAP.VISIBLE_ITEMS.NO_ITEMS": "אין פעילויות שמוצגות כרגע על המפה",
 	"MAP.VISIBLE_ITEMS.NO_SEARCH_RESULTS": "אין תוצאות לחיפוש שביצעת",
 	"MODALS.OPENING_HOURS": "שעות פעילות",
@@ -1254,5 +1256,12 @@
 	"ACTIVITIES.ERROR": "שגיאה בעיבוד הפעילויות. אנא נסה שוב.",
 	"ACTIVITIES.SUCCESS": "{count} פעילויות נוספו בהצלחה לטיול שלך",
 	"FOCUS_MODE": "עבור למצב מסך מלא",
-	"OUT_OF_FOCUS_MODE": "צא ממצב מסך מלא"
+	"OUT_OF_FOCUS_MODE": "צא ממצב מסך מלא",
+	"START_STORY": "התחל סיור",
+	"STOP_STORY": "סיים סיור",
+	"NEXT": "הבא",
+	"PREVIOUS": "הקודם",
+	"EVENT_PROGRESS": "פעילות {X} מתוך {Y}",
+	"NEXT_DESTINATION.DRIVE": "הגעה הנה: {DISTANCE}, {TIME} דקות נסיעה",
+	"NEXT_DESTINATION.WALK": "הגעה הנה: {DISTANCE}, {TIME} דקות הליכה"
 }
