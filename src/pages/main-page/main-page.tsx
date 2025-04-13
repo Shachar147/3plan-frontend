@@ -451,7 +451,13 @@ function MainPage(props: MainPageProps) {
 
 		return (
 			<div className="suggestions-sidebar bright-scrollbar">
-				<FeedView eventStore={eventStore} filterByDestination suggestionsMode withHideSuggestionsButton />
+				<FeedView
+					eventStore={eventStore}
+					filterByDestination
+					suggestionsMode
+					withHideSuggestionsButton
+					onlySystemRecommendations
+				/>
 			</div>
 		);
 	}

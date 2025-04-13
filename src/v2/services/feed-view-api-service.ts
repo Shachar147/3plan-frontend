@@ -17,8 +17,14 @@ export const SourceToUrl = (destination: string, page: number): Record<string, s
 };
 
 export default class FeedViewApiService {
-	getCount = async (destination: string) => {
-		const result = await apiGetPromise(this, `${endpoints.v2.poi.count}/${destination}`);
+	getCount = async (destination: string, onlySystemRecommendations?: boolean) => {
+		let url = `${endpoints.v2.poi.count}/${destination}`;
+
+		if (onlySystemRecommendations) {
+			url += '&isSystemRecommendation=1';
+		}
+
+		const result = await apiGetPromise(this, url);
 		if (result) {
 			return result?.data;
 		}
@@ -114,10 +120,15 @@ export default class FeedViewApiService {
 		};
 	};
 
-	getMainFeedItems = async (page?: number) => {
-		const url = page
+	getMainFeedItems = async (page?: number, onlySystemRecommendations?: boolean) => {
+		let url = page
 			? `${endpoints.v2.poi.feed}?withoutSystemRecommendations=1&p=${page}`
 			: `${endpoints.v2.poi.feed}?withoutSystemRecommendations=1`;
+
+		if (onlySystemRecommendations) {
+			url += '&isSystemRecommendation=1';
+		}
+
 		const result = await apiGetPromise(this, url);
 		if (result) {
 			return result?.data;
