@@ -394,7 +394,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
 			let category: string = props.allEvents
 				? event.category
-				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
+				: eventStore.categories.find((x) => x.id.toString() === event.category?.toString())?.title;
 
 			category = category ? category.toString().toLowerCase() : '';
 			const title = event.title.toLowerCase();
@@ -503,28 +503,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			const key = getKey(coordinate);
 			const event = coordinatesToEvents[key];
 
-			// Adjust coordinates for hotels at the same location
-			let adjustedCoordinate = { ...coordinate };
-			if (isHotel(event.category?.toString() || '', event.title)) {
-				// Find other hotels at this location
-				const hotelsAtLocation = markers.filter(
-					(m) =>
-						m.position.lat() === coordinate.lat &&
-						m.position.lng() === coordinate.lng &&
-						isHotel(
-							coordinatesToEvents[`${m.position.lat()},${m.position.lng()}`].category?.toString() || '',
-							coordinatesToEvents[`${m.position.lat()},${m.position.lng()}`].title
-						)
-				);
-
-				if (hotelsAtLocation.length > 0) {
-					// Offset by a small amount (about 20 meters) for each existing hotel
-					const offset = 0.0002 * hotelsAtLocation.length;
-					adjustedCoordinate.lat += offset;
-					adjustedCoordinate.lng += offset;
-				}
-			}
-
 			// marker + marker when hovering
 			if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
 				// by day and index in day
@@ -548,7 +526,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 			// set marker
 			const refMarker = new googleRef.Marker({
-				position: { lat: adjustedCoordinate.lat, lng: adjustedCoordinate.lng },
+				position: { lat: coordinate.lat, lng: coordinate.lng },
 				label: {
 					text: texts[key],
 					color: '#c0bbbb',
