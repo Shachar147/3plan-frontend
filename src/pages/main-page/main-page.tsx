@@ -670,7 +670,8 @@ function MainPage(props: MainPageProps) {
 		return (
 			<div
 				className={getClasses(
-					['itinerary-container flex-1-1-0']
+					['itinerary-container flex-1-1-0'],
+					'overflow-hidden'
 					// !eventStore.isItineraryView && 'opacity-0 position-absolute',
 					// !eventStore.isMobile && 'pc'
 				)}

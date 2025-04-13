@@ -149,6 +149,7 @@ interface MapContainerProps {
 	isTemplate?: boolean;
 	showNumbers?: boolean;
 	isItineraryView?: boolean;
+	hideVisibleItems?: boolean;
 }
 
 export interface MapContainerRef {
@@ -1190,6 +1191,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	}, []);
 
 	function renderVisibleItemsPane() {
+		if (props.hideVisibleItems) return null;
 		return (
 			<div
 				className={getClasses(

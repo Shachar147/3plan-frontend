@@ -1,13 +1,16 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { eventStoreContext } from '../../stores/events-store';
 import { getClasses } from '../../utils/utils';
-import MapContainer from '../map-container/map-container';
+import MapContainer, { MapContainerRef } from '../map-container/map-container';
 import { CalendarEvent } from '../../utils/interfaces';
 import { formatDate } from '../../utils/time-utils';
 import './itinerary-view.scss';
 import TranslateService from '../../services/translate-service';
+import { modalsStoreContext } from '../../stores/modals-store';
+import Button, { ButtonFlavor } from '../common/button/button';
 import { runInAction } from 'mobx';
+import { MOBILE_SCROLL_TOP } from '../../v2/components/scroll-top/scroll-top';
 
 interface ItineraryViewProps {
 	events: CalendarEvent[];
@@ -15,7 +18,10 @@ interface ItineraryViewProps {
 
 function ItineraryView({ events }: ItineraryViewProps) {
 	const eventStore = useContext(eventStoreContext);
+	const modalsStore = useContext(modalsStoreContext);
 	const [selectedDay, setSelectedDay] = useState(0);
+	const [mapKey, setMapKey] = useState(0);
+	const mapContainerRef = useRef<MapContainerRef>(null);
 
 	// Group events by day
 	const eventsByDay = events.reduce((acc, event) => {
@@ -91,6 +97,22 @@ function ItineraryView({ events }: ItineraryViewProps) {
 
 	let idxCounter = 0;
 
+	const handleViewOnMap = (event: CalendarEvent) => {
+		if (event?.id) {
+			runInAction(() => {
+				eventStore.showEventOnMap = Number(event.id);
+			});
+			mapContainerRef.current?.showEventOnMap(Number(event.id));
+
+			if (eventStore.isMobile) {
+				window.scrollTo({
+					top: MOBILE_SCROLL_TOP + 300,
+					behavior: 'smooth',
+				});
+			}
+		}
+	};
+
 	return (
 		<div className={viewClasses}>
 			{/* Day tabs */}
@@ -102,7 +124,9 @@ function ItineraryView({ events }: ItineraryViewProps) {
 							className={getClasses('day-tab', selectedDay === index && 'active')}
 							onClick={() => setSelectedDay(index)}
 						>
-							<span className="day-number">Day {index + 1}</span>
+							<span className="day-number">
+								{TranslateService.translate(eventStore, 'DAY_X', { X: index + 1 })}
+							</span>
 							<span className="day-date">{day}</span>
 						</button>
 					))}
@@ -114,12 +138,14 @@ function ItineraryView({ events }: ItineraryViewProps) {
 				{/* Map section */}
 				<div className="map-section">
 					<MapContainer
-						key={`${selectedDay}-${eventStore.showEventOnMap}`}
+						ref={mapContainerRef}
+						key={`${selectedDay}-${mapKey}`}
 						events={currentDayEvents}
 						showNumbers={true}
 						isItineraryView={true}
 						noHeader={true}
 						noFilters={true}
+						hideVisibleItems={eventStore.isMobile}
 					/>
 				</div>
 
@@ -131,7 +157,7 @@ function ItineraryView({ events }: ItineraryViewProps) {
 							className={getClasses('event-card', eventStore.isHebrew && 'direction-rtl')}
 						>
 							{event.allDay ? (
-								<div className="event-number">!</div>
+								<div className="event-number gray">!</div>
 							) : (
 								<div className="event-number">{++idxCounter}</div>
 							)}
@@ -154,6 +180,24 @@ function ItineraryView({ events }: ItineraryViewProps) {
 												<span>{formatDuration(event.duration)}</span>
 											</div>
 										)}
+									</div>
+									<div className="event-actions">
+										{event.location && !event.allDay && (
+											<Button
+												icon="fa-map-marker"
+												className="view-on-map-btn margin-inline-start--5"
+												onClick={() => handleViewOnMap(event)}
+												text={TranslateService.translate(eventStore, 'SHOW_ON_MAP')}
+												flavor={ButtonFlavor.link}
+											/>
+										)}
+										{/*<button */}
+										{/*	className="edit-event-btn"*/}
+										{/*	onClick={() => handleEditEvent(event)}*/}
+										{/*	title={TranslateService.translate(eventStore, 'EDIT_EVENT')}*/}
+										{/*>*/}
+										{/*	<i className="fa fa-edit" aria-hidden="true" />*/}
+										{/*</button>*/}
 									</div>
 								</div>
 								{event.images && (
