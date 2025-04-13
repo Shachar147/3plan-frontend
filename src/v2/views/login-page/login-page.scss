@@ -78,7 +78,10 @@ body:has(.login-page-v2) {
 		.divider {
 			width: 1px;
 			height: 350px;
-			margin-inline-end: 50px;
+			//margin-inline-end: 50px;
+			margin-inline: 40px;
+			position: relative;
+
 			background-color: #efefef;
 		}
 
@@ -142,8 +145,8 @@ body.rtl {
 		text-align: right;
 
 		.divider {
-			margin-inline-start: -25px !important;
-			margin-inline-end: 60px !important;
+			//margin-inline-start: -25px !important;
+			//margin-inline-end: 60px !important;
 		}
 	}
 }
@@ -212,6 +215,22 @@ body.rtl {
 			position: relative;
 			top: 20px;
 			height: max-content !important;
+		}
+	}
+}
+
+.login-page-container,
+.register-page-container {
+	flex-direction: row-reverse;
+}
+
+body.rtl {
+	.login-page-container,
+	.register-page-container {
+		.divider {
+			margin-inline-start: 50px !important;
+			inset-inline-end: -25px;
+			position: relative;
 		}
 	}
 }
