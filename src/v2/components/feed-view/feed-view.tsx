@@ -24,6 +24,7 @@ interface FeedViewProps {
 	filterByDestination?: boolean;
 	suggestionsMode?: boolean;
 	withHideSuggestionsButton?: boolean;
+	onlySystemRecommendations?: boolean; // only stuff I recommend
 }
 
 const cacheThreshold = 300;
@@ -64,6 +65,7 @@ const FeedView = ({
 	filterByDestination,
 	suggestionsMode,
 	withHideSuggestionsButton,
+	onlySystemRecommendations,
 }: FeedViewProps) => {
 	const currentPage = useRef(1);
 	const emptyResultsCountPerCategory = useRef({});
@@ -96,7 +98,9 @@ const FeedView = ({
 				feedStore.setIsLoading(false);
 				return;
 			}
-			const countsPromises = eventStore.destinations.map((destination) => apiService.getCount(destination));
+			const countsPromises = eventStore.destinations.map((destination) =>
+				apiService.getCount(destination, onlySystemRecommendations)
+			);
 			const countsResults = await Promise.all(countsPromises);
 
 			const newSourceCounts = {};
@@ -148,7 +152,7 @@ const FeedView = ({
 				if (feedStore.allReachedEnd) {
 					return;
 				}
-				const response = await apiService.getMainFeedItems(page);
+				const response = await apiService.getMainFeedItems(page, onlySystemRecommendations);
 				newItems.push(...response.results);
 				feedStore.setAllReachedEnd(response.isFinished);
 			} else {
@@ -156,7 +160,9 @@ const FeedView = ({
 					return;
 				}
 				const destination = 'MainFeed';
-				const responses = await Promise.all([apiService.getMainFeedItems()]);
+				const responses = await Promise.all([
+					apiService.getMainFeedItems(undefined, onlySystemRecommendations),
+				]);
 
 				responses.forEach((response) => {
 					newItems.push(...response.results);
