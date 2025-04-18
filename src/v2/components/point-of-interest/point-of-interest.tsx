@@ -822,7 +822,7 @@ const PointOfInterest = ({
 		if (savedCollection || myTrips) {
 			return (
 				<div className="flex-row gap-3">
-					<span>{TranslateService.translate(eventStore, item.category)}</span>
+					<span>{TranslateService.translate(eventStore, item.category.toUpperCase())}</span>
 					<span>
 						{(item.destination ?? '')
 							.split(',')
