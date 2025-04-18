@@ -569,6 +569,7 @@
 	"aed_sign": "AED",
 	"usd_sign": "$",
 	"eur_sign": "€",
+	"baht_sign": "฿",
 	"UNKNOWN_PRICE": "?",
 	"SHOW_TRIPS_LIST": "Back to trips list",
 	"SHOW_TEMPLATES_LIST": "Back to templates list",
