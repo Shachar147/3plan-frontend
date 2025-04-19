@@ -470,6 +470,12 @@
 	"Canada": "קנדה",
 	"Bolivia": "בוליביה",
 	"Czechia": "צ׳כיה",
+	"Netanya": "נתניה",
+	"Kholon": "חולון",
+	"Nesher": "נשר",
+	"Hadera": "חדרה",
+	"Yavne": "יבנה",
+	"Qiryat Gat": "קריית גת",
 	"MODALS.EXIT": "לחץ כאן ליציאה",
 	"PLACES_TINDER.LIKE": "אהבתי!",
 	"PLACES_TINDER.DISLIKE": "לא אהבתי",
@@ -1281,5 +1287,6 @@
 	"NEXT_DESTINATION.WALK": "הגעה הנה: {DISTANCE}, {TIME} דקות הליכה",
 	"GENERAL.EXPAND_ALL": "פתחו הכל",
 	"GENERAL.COLLAPSE_ALL": "סגרו הכל",
-	"CREATE_TRIP_FROM_COUNTRY": "צרו טיול מכל האוספים של מדינה זו!"
+	"CREATE_TRIP_FROM_COUNTRY": "צרו טיול מכל האוספים של מדינה זו!",
+	"MULTIPLE_DESTINATIONS": "מספר יעדים"
 }

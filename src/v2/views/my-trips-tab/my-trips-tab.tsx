@@ -74,15 +74,13 @@ function MyTripsTab() {
 	const savedCollectionIds = window.location.hash.includes('createTrip')
 		? getParameterFromHash('ids')?.split(',')
 		: undefined;
+	const countryName =
+		getParameterFromHash('countryName') ?? TranslateService.translate(eventStore, 'MULTIPLE_DESTINATIONS');
 	const savedCollections = savedCollectionIds
 		? feedStore.savedCollections.filter((c) => c?.id && savedCollectionIds.includes(c.id.toString()))
 		: savedCollectionId
 		? [feedStore.savedCollections.find((c) => c?.id == savedCollectionId)].filter(Boolean)
 		: undefined;
-
-	console.log({
-		savedCollections,
-	});
 
 	const templateId = window.location.hash.includes('createTrip') ? getParameterFromHash('tid') : undefined;
 	const [template, setTemplate] = useState(
@@ -110,24 +108,14 @@ function MyTripsTab() {
 				.map((c) => c.destination)
 				.filter((d): d is string => d !== null && d !== undefined);
 
-			const country =
-				savedCollections.length > 1 && savedCollections[0]?.destination
-					? savedCollections[0].destination.split(',')[1]?.trim() || ''
-					: '';
-
 			const tripName =
 				savedCollections.length === 1 && destinations.length > 0
 					? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
-							X: TranslateService.translate(eventStore, destinations[0]),
-					  })
-					: country
-					? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
-							X: TranslateService.translate(eventStore, country),
+							X: TranslateService.translate(eventStore, destinations[0]), // For single destination, show full destination
 					  })
 					: destinations.length > 0
-					? TranslateService.translate(eventStore, 'MY_TRIP_TO_MULTIPLE', {
-							X: TranslateService.translate(eventStore, destinations[0]),
-							Y: destinations.length - 1,
+					? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
+							X: TranslateService.translate(eventStore, countryName), // For multiple destinations, show just country
 					  })
 					: '';
 
@@ -721,80 +709,53 @@ function MyTripsTab() {
 	}
 
 	function buildTripDataForSavedCollection(tripData: any, categoryNameToId: Record<string, number>) {
-		if (!savedCollections) return tripData;
+		const items = savedCollections?.map((c) => c.items.map((i) => i.fullDetails)).flat();
 
-		// Initialize arrays if they don't exist
-		tripData.allEvents = tripData.allEvents || [];
-		tripData.sidebarEvents = tripData.sidebarEvents || {};
-		tripData.categories = tripData.categories || [];
+		const sidebarEvents = {};
 
-		// Process each saved collection
-		const processedEvents = savedCollections.flatMap((collection) => {
-			if (!collection?.items) return [];
+		const allEvents = items.map((i, idx) => {
+			const parsedItem = IPointOfInterestToTripEvent(i, idx);
 
-			return collection.items
-				.map((item) => {
-					if (!item?.fullDetails) return null;
+			i.category = i.category || 'CATEGORY.GENERAL';
 
-					const baseEvent = IPointOfInterestToTripEvent(item.fullDetails, tripData.allEvents.length);
-					const parsedItem: IPointOfInterest = {
-						...baseEvent,
-						isVerified: true,
-						currency: item.fullDetails.currency || 'USD',
-						images: [],
-						imagesNames: [],
-					};
+			// @ts-ignore
+			parsedItem.images = i.images?.join('\n');
 
-					// Handle images
-					if (item.fullDetails.images) {
-						parsedItem.images = Array.isArray(item.fullDetails.images)
-							? item.fullDetails.images
-							: [String(item.fullDetails.images)];
-					}
+			const { title, icon } = splitTitleAndIcons(i.category);
 
-					// Handle category
-					const category = item.fullDetails.category || 'CATEGORY.GENERAL';
-					const { title, icon } = splitTitleAndIcons(category);
+			let categoryId =
+				categoryNameToId[title] ??
+				categoryNameToId[TranslateService.translate(eventStore, title)] ??
+				categoryNameToId[
+					TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
+				] ??
+				categoryNameToId[
+					TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
+				];
 
-					let categoryId =
-						categoryNameToId[title] ??
-						categoryNameToId[TranslateService.translate(eventStore, title)] ??
-						categoryNameToId[
-							TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
-						] ??
-						categoryNameToId[
-							TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
-						];
+			if (!categoryId) {
+				const maxCategoryId = Math.max(...Object.values(categoryNameToId));
+				categoryId = maxCategoryId + 1;
 
-					if (!categoryId) {
-						const validCategoryIds = Object.values(categoryNameToId).filter(
-							(id): id is number => typeof id === 'number'
-						);
-						const maxCategoryId = validCategoryIds.length > 0 ? Math.max(...validCategoryIds) : 0;
-						categoryId = maxCategoryId + 1;
-						categoryNameToId[title] = categoryId;
+				tripData.categories.push({
+					id: maxCategoryId + 1,
+					title,
+					icon,
+					// title: i.category,
+					// icon: ''
+				});
+				categoryNameToId[i.category] = categoryId;
+			}
+			parsedItem.category = categoryId;
 
-						tripData.categories.push({
-							id: categoryId,
-							title,
-							icon,
-							isVerified: true,
-							currency: item.fullDetails.currency || 'USD',
-						});
-					}
+			sidebarEvents[categoryId] ||= [];
+			sidebarEvents[categoryId].push(parsedItem);
 
-					parsedItem.category = categoryId.toString();
-
-					// Initialize category array in sidebarEvents if it doesn't exist
-					tripData.sidebarEvents[categoryId] = tripData.sidebarEvents[categoryId] || [];
-					tripData.sidebarEvents[categoryId].push(parsedItem);
-
-					return parsedItem;
-				})
-				.filter((item): item is IPointOfInterest => item !== null);
+			return parsedItem;
 		});
 
-		tripData.allEvents = [...tripData.allEvents, ...processedEvents];
+		tripData.allEvents = allEvents;
+		tripData.sidebarEvents = sidebarEvents;
 
 		return tripData;
 	}

@@ -165,7 +165,10 @@ function SavedCollectionsTab() {
 						iconPosition={eventStore.isHebrew ? 'start' : 'end'}
 						onClick={() => {
 							const collectionIds = collections.map((c) => c.id).join(',');
-							window.location.hash = `createTrip?ids=${collectionIds}`;
+							window.location.hash = `createTrip?ids=${collectionIds}&countryName=${TranslateService.translate(
+								eventStore,
+								country
+							)}`;
 						}}
 					/>
 				</div>
