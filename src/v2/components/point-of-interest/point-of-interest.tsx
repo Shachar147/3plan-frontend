@@ -896,21 +896,29 @@ const PointOfInterest = ({
 			);
 		}
 
+		const seenFlags = new Set();
+
 		return (
 			<>
 				{destinations
 					.map((destination) => {
-						const found = sources.find((c) => c.value === destination.trim());
-						if (found) {
+						const trimmed = destination.trim();
+						const found = sources.find((c) => c.value === trimmed);
+
+						if (found && !seenFlags.has(found.flagClass)) {
+							seenFlags.add(found.flagClass);
 							return (
 								<i
+									key={found.flagClass}
 									className={found.flagClass}
-									alt={destination.trim()}
-									title={destination.trim()}
+									alt={trimmed}
+									title={trimmed}
 									onClick={onLabelClick}
 								/>
 							);
 						}
+
+						return null;
 					})
 					.filter(Boolean)}
 			</>
@@ -922,7 +930,7 @@ const PointOfInterest = ({
 	function renderItemCategory() {
 		return (
 			<div className={getClasses('category-label', mainFeed && 'main-feed')}>
-				<div className="flex-row gap-8 flex-wrap-wrap align-items-center">
+				<div className="flex-row gap-8 flex-wrap-wrap align-items-center line-height-15">
 					{renderDestinationIcon()}
 					{renderCategoryName()}
 					{!savedCollection && !myTrips && (
