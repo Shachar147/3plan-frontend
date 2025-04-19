@@ -1177,7 +1177,11 @@ const PointOfInterest = ({
 							<br />
 							<span className="white-space-pre-line">
 								{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.YOU_ARE_LOOKING_AT', {
-									X: item.imagesNames[currentSlide],
+									X: getEventTitle(
+										{ title: item.imagesNames[currentSlide] } as unknown as CalendarEvent,
+										eventStore,
+										true
+									),
 								})}
 							</span>
 						</>

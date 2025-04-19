@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import { feedStoreContext } from '../../stores/feed-view-store';
 import { getClasses } from '../../../utils/utils';
@@ -8,18 +8,54 @@ import { SavedCollection } from '../../utils/interfaces';
 import PointOfInterest from '../../components/point-of-interest/point-of-interest';
 import { rootStoreContext } from '../../stores/root-store';
 import { exploreTabId, mainPageContentTabLsKey } from '../../utils/consts';
+import { getCityCountry } from '../../utils/destination-utils';
 import './saved-collections-tab.scss';
+
+declare const $: any; // Add jQuery type declaration
 
 function SavedCollectionsTab() {
 	const rootStore = useContext(rootStoreContext);
 	const eventStore = useContext(eventStoreContext);
 	const feedStore = useContext(feedStoreContext);
+	const [isGroupedByCountry, setIsGroupedByCountry] = useState(false);
 
 	useEffect(() => {
 		$(document).on('click', '.navigate-to-explore', () => {
 			navigateToExploreTab();
 		});
 	}, []);
+
+	// Group collections by country
+	const collectionsByCountry = useMemo(() => {
+		const grouped: { [country: string]: SavedCollection[] } = {};
+
+		feedStore.savedCollections.forEach((collection) => {
+			const country = getCityCountry(collection.destination);
+			if (country) {
+				if (!grouped[country]) {
+					grouped[country] = [];
+				}
+				grouped[country].push(collection);
+			} else {
+				// If no country found, use the destination as is
+				if (!grouped[collection.destination]) {
+					grouped[collection.destination] = [];
+				}
+				grouped[collection.destination].push(collection);
+			}
+		});
+
+		return grouped;
+	}, [feedStore.savedCollections]);
+
+	// Calculate total items for each country
+	const countryTotalItems = useMemo(() => {
+		const totals: { [country: string]: number } = {};
+		Object.entries(collectionsByCountry).forEach(([country, collections]) => {
+			totals[country] = collections.reduce((sum, collection) => sum + collection.items.length, 0);
+		});
+		return totals;
+	}, [collectionsByCountry]);
 
 	function renderCollection(collection: SavedCollection) {
 		const classList = getClasses('align-items-center', eventStore.isHebrew ? 'flex-row-reverse' : 'flex-row');
@@ -76,7 +112,6 @@ function SavedCollectionsTab() {
 							__html: TranslateService.translate(eventStore, 'NO_SAVED_COLLECTIONS.DESCRIPTION'),
 						}}
 					/>
-					{/*<img src="/images/saved-collection-example.png" width="200" style={{ marginTop: 20 }} />*/}
 				</div>
 				<br />
 				<br />
@@ -87,30 +122,70 @@ function SavedCollectionsTab() {
 		);
 	}
 
+	function renderCountrySection(country: string, collections: SavedCollection[]) {
+		return (
+			<div key={country} className="country-section">
+				<h3 className="country-title">
+					{country} ({countryTotalItems[country]})
+				</h3>
+				<div className="saved-collections flex-row justify-content-center flex-wrap-wrap align-items-start">
+					{collections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
+				</div>
+			</div>
+		);
+	}
+
+	function renderCollections() {
+		if (!isGroupedByCountry) {
+			return (
+				<div className="saved-collections flex-row justify-content-center flex-wrap-wrap align-items-start">
+					{feedStore.savedCollections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
+				</div>
+			);
+		}
+
+		// Sort countries by total items count
+		const sortedCountries = Object.entries(collectionsByCountry).sort(
+			([countryA], [countryB]) => countryTotalItems[countryB] - countryTotalItems[countryA]
+		);
+
+		return (
+			<div className="countries-container">
+				{sortedCountries.map(([country, collections]) => renderCountrySection(country, collections))}
+			</div>
+		);
+	}
+
 	return (
 		<div
 			className="flex-row justify-content-center flex-wrap-wrap align-items-start"
 			key={feedStore.savedCollections.length}
 		>
 			<div className="flex-column margin-top-10 width-100-percents">
-					<h2 className="main-feed-header width-100-percents">
-						{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.TITLE')}
-					</h2>
-					{feedStore.savedCollections.length == 0 ? (
-						renderNoSavedCollectionsPlaceholder()
-					) : (
-						<>
-							<span className="main-feed-description white-space-pre-wrap text-align-start">
-								{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.DESCRIPTION')}
-							</span>
-							<div className="saved-collections flex-row justify-content-center flex-wrap-wrap align-items-start">
-								{feedStore.savedCollections
-									.sort((a, b) => b.items.length - a.items.length)
-									.map(renderCollection)}
-							</div>
-						</>
-					)}
-				</div>
+				<h2 className="main-feed-header width-100-percents">
+					{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.TITLE')}
+				</h2>
+				{feedStore.savedCollections.length == 0 ? (
+					renderNoSavedCollectionsPlaceholder()
+				) : (
+					<>
+						<span className="main-feed-description white-space-pre-wrap text-align-start">
+							{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.DESCRIPTION')}
+						</span>
+						<div className="group-toggle">
+							<label className="toggle-label">
+								<input
+									type="checkbox"
+									checked={isGroupedByCountry}
+									onChange={(e) => setIsGroupedByCountry(e.target.checked)}
+								/>
+								{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.GROUP_BY_COUNTRY')}
+							</label>
+						</div>
+						{renderCollections()}
+					</>
+				)}
+			</div>
 		</div>
 	);
 }
