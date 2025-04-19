@@ -226,9 +226,13 @@ function POIForm() {
 					formData.name = eventStore.modalValues['name'];
 					// }
 					// if (!formData.destination) {
-					formData.destination = fetchCitiesAndSetOptions()
-						.filter((x) => x.type == 'country')
-						.find((x) => (value.address ?? '').toLowerCase().includes(x.value.toLowerCase()))?.value;
+					formData.destination =
+						fetchCitiesAndSetOptions()
+							.filter((x) => x.type != 'country')
+							.find((x) => (value.address ?? '').toLowerCase().includes(x.value.toLowerCase()))?.value ??
+						fetchCitiesAndSetOptions()
+							.filter((x) => x.type == 'country')
+							.find((x) => (value.address ?? '').toLowerCase().includes(x.value.toLowerCase()))?.value;
 					// }
 
 					// if (!formData.more_info) {
@@ -240,6 +244,7 @@ function POIForm() {
 						!eventStore.modalValues['category']?.label.includes(
 							TranslateService.translate(eventStore, 'CATEGORY.GENERAL')
 						);
+
 					if (foundCategory) {
 						formData.category = eventStore.modalValues['category']?.label;
 						// renderCounter += 1;
