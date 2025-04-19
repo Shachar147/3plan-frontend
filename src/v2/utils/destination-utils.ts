@@ -26,7 +26,8 @@ export function getDestinationsByCountry(): DestinationsByCountry {
 
 	// Then map cities to their countries
 	allOptions.forEach((option: CityOrCountry) => {
-		if (option.type === 'city' || option.type === 'island') {
+		if (option.type != 'country') {
+			// todo: consider matching by flag instead of by the label with split...
 			const [city, country] = option.label.split(', ');
 			if (destinationsByCountry[country]) {
 				if (!destinationsByCountry[country].cities.includes(city)) {

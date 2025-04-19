@@ -128,7 +128,7 @@ function MyTripsTab() {
 				setSelectedDestinations(destinations);
 			}
 		}
-	}, [savedCollections, eventStore]); // Removed tripName from dependencies to prevent loop
+	}, [savedCollections]);
 
 	useEffect(() => {
 		if (templatesStore.tripTemplates.length == 0) {
