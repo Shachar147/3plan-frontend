@@ -51,6 +51,7 @@ function ItineraryView({ events }: ItineraryViewProps) {
 	// 	return dateA.getTime() - dateB.getTime();
 	// });
 	const days = Object.keys(eventsByDay).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+	console.log(days);
 
 	if (days.length === 0) {
 		return null;
@@ -276,18 +277,20 @@ function ItineraryView({ events }: ItineraryViewProps) {
 			{/* Map and list container */}
 			<div className="content-container">
 				{/* Map section */}
-				<div className="map-section">
-					<MapContainer
-						ref={mapContainerRef}
-						key={`${selectedDay}-${mapKey}`}
-						events={currentDayEvents}
-						showNumbers={true}
-						isItineraryView={true}
-						noHeader={true}
-						noFilters={true}
-						hideVisibleItems={eventStore.isMobile}
-					/>
-				</div>
+				{currentDayEvents.filter((e) => e.location?.latitude).length > 0 && (
+					<div className="map-section">
+						<MapContainer
+							ref={mapContainerRef}
+							key={`${selectedDay}-${mapKey}`}
+							events={currentDayEvents}
+							showNumbers={true}
+							isItineraryView={true}
+							noHeader={true}
+							noFilters={true}
+							hideVisibleItems={eventStore.isMobile}
+						/>
+					</div>
+				)}
 
 				{/* List section */}
 				<div className="list-section bright-scrollbar">

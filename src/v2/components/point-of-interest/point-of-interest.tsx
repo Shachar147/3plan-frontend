@@ -345,7 +345,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean }) =
 							<path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z" />
 						</svg>
 					</div>
-					<div className="poi-footer">
+					<div className={getClasses('poi-footer', !isSmall && 'is-big')}>
 						{!isSmall && (
 							<div
 								className="source-logo shimmer-animation"
@@ -694,7 +694,30 @@ const PointOfInterest = ({
 			? TranslateService.translate(eventStore, 'REMOVE_FROM_SAVED')
 			: TranslateService.translate(eventStore, 'KEEP_TO_SAVED');
 
-		const flavor = mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary;
+		const openOrDeleteButton = (
+			<Button
+				icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
+				className={getClasses(
+					'cursor-pointer',
+					'black',
+					eventStore.isMobile && 'min-width-150 padding-inline-15',
+					onClickText === TranslateService.translate(eventStore, 'DELETE') && 'red'
+				)}
+				flavor={
+					onClickText === TranslateService.translate(eventStore, 'DELETE')
+						? ButtonFlavor.primary
+						: ButtonFlavor.secondary
+				}
+				text={
+					onClickText ??
+					TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')
+				}
+				onClick={() => onClick()}
+			/>
+		);
+
+		// const flavor = mainFeed ? ButtonFlavor.link : alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.primary;
+		const flavor = ButtonFlavor.link;
 		if (mainFeed || isSearchResult || isViewItem) {
 			return (
 				<>
@@ -739,25 +762,7 @@ const PointOfInterest = ({
 							/>
 						</div>
 					)}
-					{isAdmin() && !isSmall && (
-						<Button
-							icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
-							className={getClasses(
-								'cursor-pointer',
-								'black',
-								eventStore.isMobile && 'min-width-150 padding-inline-15'
-							)}
-							flavor={ButtonFlavor.secondary}
-							text={
-								onClickText ??
-								TranslateService.translate(
-									eventStore,
-									isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP'
-								)
-							}
-							onClick={() => onClick()}
-						/>
-					)}
+					{isAdmin() && !isSmall && openOrDeleteButton}
 				</>
 			);
 		}
@@ -765,7 +770,8 @@ const PointOfInterest = ({
 		return (
 			<>
 				<Button
-					flavor={alreadyInPlan ? ButtonFlavor.success : ButtonFlavor.primary}
+					// flavor={alreadyInPlan ? ButtonFlavor.success : ButtonFlavor.primary}
+					flavor={ButtonFlavor.link}
 					onClick={handleAddToPlan}
 					icon={alreadyInPlan ? 'fa fa-check' : undefined}
 					text={
@@ -1036,7 +1042,8 @@ const PointOfInterest = ({
 
 	const likeBtn = (
 		<Button
-			flavor={alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.secondary}
+			// flavor={alreadyInSaved ? ButtonFlavor.success : ButtonFlavor.secondary}
+			flavor={ButtonFlavor.secondary}
 			onClick={() => {
 				setIsAddingToSaved(true);
 				if (alreadyInSaved) {
@@ -1062,11 +1069,19 @@ const PointOfInterest = ({
 			icon={onClickIcon ?? `fa-angle-double-${eventStore.getCurrentDirectionEnd()}`}
 			className={getClasses(
 				'cursor-pointer',
-				eventStore.isMobile && 'black',
+				onClickText === TranslateService.translate(eventStore, 'DELETE')
+					? 'red'
+					: eventStore.isMobile
+					? 'black'
+					: '',
 				eventStore.isMobile && 'padding-inline-15',
 				'width-max-content'
 			)}
-			type={ButtonFlavor.secondary}
+			flavor={
+				onClickText === TranslateService.translate(eventStore, 'DELETE')
+					? ButtonFlavor.primary
+					: ButtonFlavor.secondary
+			}
 			text={
 				onClickText ??
 				TranslateService.translate(eventStore, isTemplateUsername() ? 'OPEN_TEMPLATE' : 'OPEN_TRIP')
@@ -1086,7 +1101,7 @@ const PointOfInterest = ({
 	if ((mainFeed || (isSearchResult && isSmall)) && !myTrips && !savedCollection && !isInPlan) {
 		buttons.push(openItemBtn);
 	}
-	if (onClick) {
+	if (onClick && mainFeed) {
 		buttons.push(openTripBtn);
 	}
 
@@ -1102,7 +1117,7 @@ const PointOfInterest = ({
 				isViewItem && 'view-item',
 				suggestionsMode && 'suggestions'
 			)}
-			onClick={suggestionsMode && isSmall && handleAddToPlan}
+			onClick={suggestionsMode && isSmall && !eventStore.isMobile && handleAddToPlan}
 		>
 			<div className="poi-left">
 				<div className="carousel-wrapper" onClick={(e) => item.images?.length > 1 && e.stopPropagation()}>
@@ -1227,7 +1242,7 @@ const PointOfInterest = ({
 						</div>
 					)}
 					{!savedCollection && !myTrips && (
-						<div className="poi-footer">
+						<div className={getClasses('poi-footer', !isSmall && 'is-big')}>
 							{!isShrinkedMode && (
 								<div className="source-logo">
 									<img
@@ -1261,14 +1276,21 @@ const PointOfInterest = ({
 					)}
 					{renderTripInfo?.()}
 				</div>
-				<div
-					className={getClasses(
-						'flex-row gap-4 align-items-center padding-top-10 padding-bottom-20',
-						buttons.length == 1 ? 'justify-content-center' : 'justify-content-space-between'
-					)}
-				>
-					{buttons}
-				</div>
+				{buttons.length > 0 && (
+					<div
+						className={getClasses(
+							'flex-row gap-4 align-items-center padding-top-10 padding-bottom-20',
+							buttons.length == 1 ? 'justify-content-center' : 'justify-content-space-between',
+							// eventStore.isMobile && (buttons.length > 2 ? 'flex-column margin-top-0' : !!onClickText && 'margin-top-10')
+							isSmall &&
+								(buttons.length > 2
+									? 'flex-wrap-wrap gap-8'
+									: eventStore.isMobile && !!onClickText && 'margin-top-10')
+						)}
+					>
+						{buttons}
+					</div>
+				)}
 			</div>
 		</div>
 	);

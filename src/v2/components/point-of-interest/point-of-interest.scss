@@ -20,7 +20,18 @@
 	.poi-right {
 		button {
 			padding-inline: 16px;
+			flex: 1 1 0;
+
+			&.link-button {
+				padding-inline: 0;
+			}
 		}
+	}
+}
+
+.poi-footer.is-big {
+	button {
+		flex: 0;
 	}
 }
 
@@ -193,7 +204,7 @@ h2 {
 		padding: 0;
 
 		.poi-right {
-			min-height: 420px;
+			min-height: 480px;
 			padding-inline: 15px;
 		}
 
@@ -339,6 +350,10 @@ h2 {
 		.poi-right {
 			order: 2;
 			margin-bottom: 10px;
+
+			button {
+				flex: 1 1 0;
+			}
 		}
 
 		.poi-left,
@@ -364,8 +379,17 @@ h2 {
 		.poi-footer {
 			display: flex;
 			//justify-content: space-between;
-			justify-content: center;
+			//justify-content: center;
 			width: 100%;
+
+			justify-content: start;
+			//flex-direction: column;
+
+			button:not(:first-child) {
+				padding-inline-start: 16px;
+				border-inline-start: 1px solid #eaeaea;
+				border-radius: 0;
+			}
 		}
 	}
 }
