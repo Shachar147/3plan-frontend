@@ -16,7 +16,7 @@ export function getDestinationsByCountry(): DestinationsByCountry {
 	allOptions.forEach((option: CityOrCountry) => {
 		if (option.type === 'country') {
 			const countryName = option.label;
-			const countryCode = option.flagClass.split('fi-')[1];
+			const countryCode = option.flagClass?.split('fi-')[1] || '';
 			destinationsByCountry[countryName] = {
 				countryCode,
 				cities: [],
@@ -26,10 +26,12 @@ export function getDestinationsByCountry(): DestinationsByCountry {
 
 	// Then map cities to their countries
 	allOptions.forEach((option: CityOrCountry) => {
-		if (option.type === 'city') {
+		if (option.type === 'city' || option.type === 'island') {
 			const [city, country] = option.label.split(', ');
 			if (destinationsByCountry[country]) {
-				destinationsByCountry[country].cities.push(city);
+				if (!destinationsByCountry[country].cities.includes(city)) {
+					destinationsByCountry[country].cities.push(city);
+				}
 			}
 		}
 	});
@@ -41,7 +43,8 @@ export function getCityCountry(cityName: string): string | null {
 	const allOptions = fetchCitiesAndSetOptions();
 	const cityOption = allOptions.find(
 		(option: CityOrCountry) =>
-			option.type === 'city' && option.label.toLowerCase().startsWith(cityName.toLowerCase() + ',')
+			(option.type === 'city' || option.type === 'island') &&
+			option.label.toLowerCase().startsWith(cityName.toLowerCase() + ',')
 	);
 
 	if (cityOption) {
