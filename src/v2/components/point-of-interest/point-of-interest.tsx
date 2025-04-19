@@ -508,7 +508,10 @@ const PointOfInterest = ({
 
 		if (item.category) {
 			let existingCategory = eventStore.categories.filter(
-				(c) => c.title === item.category || c.title === TranslateService.translate(eventStore, item.category)
+				(c) =>
+					c.title === item.category ||
+					c.title === TranslateService.translate(eventStore, item.category) ||
+					c.title === TranslateService.translate(eventStore, item.category?.toUpperCase())
 			);
 
 			if (existingCategory.length == 0) {
@@ -822,7 +825,7 @@ const PointOfInterest = ({
 		if (savedCollection || myTrips) {
 			return (
 				<div className="flex-row gap-3">
-					<span>{TranslateService.translate(eventStore, item.category.toUpperCase())}</span>
+					<span>{TranslateService.translate(eventStore, item.category?.toUpperCase())}</span>
 					<span>
 						{(item.destination ?? '')
 							.split(',')
@@ -832,8 +835,25 @@ const PointOfInterest = ({
 				</div>
 			);
 		}
+
+		function getTranslatedCategory(category?: string) {
+			// Remove non-English characters and spaces
+			let cleaned = category?.replace(/[^a-zA-Z.]/g, '');
+			if (isAdmin()) {
+				cleaned = category; // since the solution above will just hide the problem but the actual item will be with invalid category
+			}
+
+			const key = !cleaned || cleaned.startsWith('CATEGORY.') ? cleaned : `CATEGORY.${cleaned.toUpperCase()}`;
+
+			if (TranslateService.translate(eventStore, key) != key) {
+				return TranslateService.translate(eventStore, key);
+			}
+
+			return category;
+		}
+
 		const name = TranslateService.translate(eventStore, 'X_IN_Y', {
-			X: TranslateService.translate(eventStore, item.category),
+			X: getTranslatedCategory(item.category),
 			Y: TranslateService.translate(eventStore, item.destination),
 		}).replace(' בהאיים', ' באיים');
 
@@ -1074,7 +1094,7 @@ const PointOfInterest = ({
 				isViewItem && 'view-item',
 				suggestionsMode && 'suggestions'
 			)}
-			onClick={suggestionsMode && handleAddToPlan}
+			onClick={suggestionsMode && isSmall && handleAddToPlan}
 		>
 			<div className="poi-left">
 				<div className="carousel-wrapper" onClick={(e) => item.images?.length > 1 && e.stopPropagation()}>
