@@ -1106,6 +1106,10 @@
 		}
 	}
 
+	.tabular.menu {
+		overflow-y: hidden !important;
+	}
+
 	.carousel-wrapper {
 		max-height: 228px;
 		overflow-y: hidden;
