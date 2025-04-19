@@ -142,7 +142,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean }) =
 		<div
 			className={getClasses('point-of-interest point-of-interest-shimmering', isSmall && 'main-feed')}
 			style={{
-				width: isSmall ? 300 : 1274,
+				width: isSmall ? 300 : '90%', // 1274,
 			}}
 		>
 			<div className="poi-left">
@@ -216,7 +216,7 @@ const PointOfInterestShimmering = ({ isSmall = false }: { isSmall?: boolean }) =
 						<h2
 							className="shimmer-animation"
 							style={{
-								width: 828,
+								width: '80%', // 828,
 								height: 40,
 								borderRadius: 10,
 							}}
