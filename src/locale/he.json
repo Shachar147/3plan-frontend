@@ -1288,5 +1288,6 @@
 	"GENERAL.EXPAND_ALL": "פתחו הכל",
 	"GENERAL.COLLAPSE_ALL": "סגרו הכל",
 	"CREATE_TRIP_FROM_COUNTRY": "צרו טיול מכל האוספים של מדינה זו!",
-	"MULTIPLE_DESTINATIONS": "מספר יעדים"
+	"MULTIPLE_DESTINATIONS": "מספר יעדים",
+	"CREATE_TRIP_FROM_COUNTRY.SHORT": "צרו טיול"
 }

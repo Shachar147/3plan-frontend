@@ -1032,5 +1032,6 @@
 	"GENERAL.EXPAND_ALL": "Expand all",
 	"GENERAL.COLLAPSE_ALL": "Collapse all",
 	"CREATE_TRIP_FROM_COUNTRY": "Create trip from this country collections!",
-	"MULTIPLE_DESTINATIONS": "multiple destinations"
+	"MULTIPLE_DESTINATIONS": "multiple destinations",
+	"CREATE_TRIP_FROM_COUNTRY.SHORT": "Create trip"
 }

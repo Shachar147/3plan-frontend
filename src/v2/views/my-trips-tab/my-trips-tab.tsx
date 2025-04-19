@@ -108,23 +108,27 @@ function MyTripsTab() {
 				.map((c) => c.destination)
 				.filter((d): d is string => d !== null && d !== undefined);
 
-			const tripName =
-				savedCollections.length === 1 && destinations.length > 0
-					? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
-							X: TranslateService.translate(eventStore, destinations[0]), // For single destination, show full destination
-					  })
-					: destinations.length > 0
-					? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
-							X: TranslateService.translate(eventStore, countryName), // For multiple destinations, show just country
-					  })
-					: '';
+			// Only set the default trip name if it hasn't been modified by the user yet
+			if (!tripName) {
+				const defaultTripName =
+					savedCollections.length === 1 && destinations.length > 0
+						? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
+								X: TranslateService.translate(eventStore, destinations[0]), // For single destination, show full destination
+						  })
+						: destinations.length > 0
+						? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
+								X: TranslateService.translate(eventStore, countryName), // For multiple destinations, show just country
+						  })
+						: '';
 
-			setTripName(tripName || '');
+				setTripName(defaultTripName || '');
+			}
+
 			if (destinations.length > 0) {
 				setSelectedDestinations(destinations);
 			}
 		}
-	}, [savedCollections, eventStore]);
+	}, [savedCollections, eventStore]); // Removed tripName from dependencies to prevent loop
 
 	useEffect(() => {
 		if (templatesStore.tripTemplates.length == 0) {

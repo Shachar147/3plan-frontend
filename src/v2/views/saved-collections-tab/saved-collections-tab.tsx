@@ -159,7 +159,10 @@ function SavedCollectionsTab() {
 
 					<Button
 						flavor={ButtonFlavor.link}
-						text={TranslateService.translate(eventStore, 'CREATE_TRIP_FROM_COUNTRY')}
+						text={TranslateService.translate(
+							eventStore,
+							`CREATE_TRIP_FROM_COUNTRY${eventStore.isMobile ? '.SHORT' : ''}`
+						)}
 						icon="fa-rocket"
 						className="black"
 						iconPosition={eventStore.isHebrew ? 'start' : 'end'}
