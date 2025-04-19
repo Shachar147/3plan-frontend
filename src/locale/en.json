@@ -831,6 +831,8 @@
 	"PROFILE": "Profile",
 	"SAVED_COLLECTIONS.TITLE": "Saved Collections",
 	"SAVED_COLLECTIONS.DESCRIPTION": "All the places you saved will appear here, grouped by destination!",
+	"SAVED_COLLECTIONS.UNGROUPED": "Show each destination alone",
+	"SAVED_COLLECTIONS.GROUPED_BY_COUNTRY": "Group by country",
 	"SAVED_COLLECTIONS": "Saved Collections ({X})",
 	"SAVED_COLLECTIONS.SHORT": "Saved Collections ({X})",
 	"HEADER_SEARCH_PLACEHOLDER": "Find places and things to do",

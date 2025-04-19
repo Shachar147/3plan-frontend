@@ -9,6 +9,7 @@ import PointOfInterest from '../../components/point-of-interest/point-of-interes
 import { rootStoreContext } from '../../stores/root-store';
 import { exploreTabId, mainPageContentTabLsKey } from '../../utils/consts';
 import { getCityCountry } from '../../utils/destination-utils';
+import ToggleButton from '../../../components/toggle-button/toggle-button';
 import './saved-collections-tab.scss';
 
 declare const $: any; // Add jQuery type declaration
@@ -18,6 +19,7 @@ function SavedCollectionsTab() {
 	const eventStore = useContext(eventStoreContext);
 	const feedStore = useContext(feedStoreContext);
 	const [isGroupedByCountry, setIsGroupedByCountry] = useState(false);
+	const [collapsedCountries, setCollapsedCountries] = useState<Set<string>>(new Set());
 
 	useEffect(() => {
 		$(document).on('click', '.navigate-to-explore', () => {
@@ -122,15 +124,33 @@ function SavedCollectionsTab() {
 		);
 	}
 
+	function toggleCountryCollapse(country: string) {
+		setCollapsedCountries((prev) => {
+			const newSet = new Set(prev);
+			if (newSet.has(country)) {
+				newSet.delete(country);
+			} else {
+				newSet.add(country);
+			}
+			return newSet;
+		});
+	}
+
 	function renderCountrySection(country: string, collections: SavedCollection[]) {
+		const isCollapsed = collapsedCountries.has(country);
 		return (
 			<div key={country} className="country-section">
-				<h3 className="country-title">
-					{country} ({countryTotalItems[country]})
-				</h3>
-				<div className="saved-collections flex-row justify-content-center flex-wrap-wrap align-items-start">
-					{collections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
+				<div className="country-header" onClick={() => toggleCountryCollapse(country)}>
+					<h3 className="country-title">
+						{TranslateService.translate(eventStore, country)} ({countryTotalItems[country]})
+					</h3>
+					<i className={`fa fa-chevron-${isCollapsed ? 'down' : 'up'}`} />
 				</div>
+				{!isCollapsed && (
+					<div className="saved-collections flex-row justify-content-center flex-wrap-wrap align-items-start">
+						{collections.sort((a, b) => b.items.length - a.items.length).map(renderCollection)}
+					</div>
+				)}
 			</div>
 		);
 	}
@@ -156,6 +176,19 @@ function SavedCollectionsTab() {
 		);
 	}
 
+	const groupingOptions = [
+		{
+			key: 'ungrouped',
+			name: TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.UNGROUPED'),
+			icon: '🗂️',
+		},
+		{
+			key: 'grouped',
+			name: TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.GROUPED_BY_COUNTRY'),
+			icon: '🌍',
+		},
+	];
+
 	return (
 		<div
 			className="flex-row justify-content-center flex-wrap-wrap align-items-start"
@@ -169,18 +202,18 @@ function SavedCollectionsTab() {
 					renderNoSavedCollectionsPlaceholder()
 				) : (
 					<>
-						<span className="main-feed-description white-space-pre-wrap text-align-start">
-							{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.DESCRIPTION')}
-						</span>
-						<div className="group-toggle">
-							<label className="toggle-label">
-								<input
-									type="checkbox"
-									checked={isGroupedByCountry}
-									onChange={(e) => setIsGroupedByCountry(e.target.checked)}
+						<div className={getClasses('description-and-toggle', !eventStore.isMobile && 'desktop')}>
+							<span className="main-feed-description white-space-pre-wrap text-align-start">
+								{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.DESCRIPTION')}
+							</span>
+							<div className="group-toggle">
+								<ToggleButton
+									value={isGroupedByCountry ? 'grouped' : 'ungrouped'}
+									onChange={(value) => setIsGroupedByCountry(value === 'grouped')}
+									options={groupingOptions}
+									customStyle="white"
 								/>
-								{TranslateService.translate(eventStore, 'SAVED_COLLECTIONS.GROUP_BY_COUNTRY')}
-							</label>
+							</div>
 						</div>
 						{renderCollections()}
 					</>
