@@ -736,7 +736,7 @@ const PointOfInterest = ({
 						icon={alreadyInSaved ? 'fa fa-heart' : 'fa fa-heart-o'}
 						text={isSearchResult || isViewItem ? text : ''}
 						tooltip={mainFeed ? text : ''}
-						className="padding-inline-15"
+						className={getClasses('padding-inline-15', alreadyInSaved && 'red-pink-color')}
 					/>
 					{!isViewItem && !isSmall && !isInPlan && (
 						<div
@@ -797,7 +797,8 @@ const PointOfInterest = ({
 					icon={alreadyInSaved ? 'fa fa-heart' : 'fa fa-heart-o'}
 					text={text}
 					tooltip={text}
-					className="padding-inline-15"
+					// className="padding-inline-15"
+					className={getClasses('padding-inline-15', alreadyInSaved && 'red-pink-color')}
 				/>
 				{!isInPlan && (
 					<div
