@@ -40,7 +40,7 @@ const popularCities = [
 	{ city: 'Bangkok', countryCode: 'TH', countryLabel: 'Thailand' },
 	{ city: 'Phuket', countryCode: 'TH', countryLabel: 'Thailand' },
 	{ city: 'Chiang Mai', countryCode: 'TH', countryLabel: 'Thailand' },
-	{ city: 'Ko Pha Ngan', countryCode: 'TH', countryLabel: 'Thailand' },
+	{ city: 'Koh Pha Ngan', countryCode: 'TH', countryLabel: 'Thailand' },
 	{ city: 'Krabi', countryCode: 'TH', countryLabel: 'Thailand' },
 	// Additional popular places in Mexico
 	{ city: 'Tulum', countryCode: 'MX', countryLabel: 'Mexico' },
