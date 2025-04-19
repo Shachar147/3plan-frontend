@@ -1110,6 +1110,12 @@
 		overflow-y: hidden !important;
 	}
 
+	.login-page-v2 {
+		.tabular.menu {
+			overflow-y: auto !important;
+		}
+	}
+
 	.carousel-wrapper {
 		max-height: 228px;
 		overflow-y: hidden;
