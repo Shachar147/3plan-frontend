@@ -149,11 +149,25 @@ function SavedCollectionsTab() {
 		const isCollapsed = collapsedCountries.has(country);
 		return (
 			<div key={country} className="country-section">
-				<div className="country-header" onClick={() => toggleCountryCollapse(country)}>
-					<h3 className="country-title">
-						{TranslateService.translate(eventStore, country)} ({countryTotalItems[country]})
-					</h3>
-					<i className={`fa fa-chevron-${isCollapsed ? 'up' : 'down'}`} />
+				<div className="country-header-container">
+					<div className="country-header" onClick={() => toggleCountryCollapse(country)}>
+						<h3 className="country-title">
+							{TranslateService.translate(eventStore, country)} ({countryTotalItems[country]})
+						</h3>
+						<i className={`fa fa-chevron-${isCollapsed ? 'up' : 'down'}`} />
+					</div>
+
+					<Button
+						flavor={ButtonFlavor.link}
+						text={TranslateService.translate(eventStore, 'CREATE_TRIP_FROM_COUNTRY')}
+						icon="fa-rocket"
+						className="black"
+						iconPosition={eventStore.isHebrew ? 'start' : 'end'}
+						onClick={() => {
+							const collectionIds = collections.map((c) => c.id).join(',');
+							window.location.hash = `createTrip?ids=${collectionIds}`;
+						}}
+					/>
 				</div>
 				{!isCollapsed && (
 					<div className="saved-collections flex-row justify-content-center flex-wrap-wrap align-items-start">

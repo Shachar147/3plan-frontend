@@ -38,20 +38,27 @@
 	margin-top: 1rem;
 
 	.country-section {
-		.country-header {
+		.country-header-container {
 			display: flex;
-			//align-items: center;
-			//justify-content: space-between;
-			cursor: pointer;
-			margin-inline: 90px;
 			flex: 1;
 			border-bottom: 1px solid #eaeaea;
+			margin-inline: 90px;
+			justify-content: space-between;
+			padding-bottom: 4px;
+		}
+		.country-header {
+			display: flex;
+			align-items: center;
+			//justify-content: space-between;
+			cursor: pointer;
+			//margin-inline: 90px;
+			//flex: 1;
+			//border-bottom: 1px solid #eaeaea;
 
 			.country-title {
 				font-size: 1.5rem;
 				font-weight: 600;
 				margin: 0;
-				padding-bottom: 0.5rem;
 				//flex: 1;
 				display: flex;
 				align-items: center;

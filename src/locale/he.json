@@ -1241,7 +1241,7 @@
 	"EDIT_AREA_NAME": "ערוך שם אזור",
 	"AREA_CUSTOM_NAME_PLACEHOLDER": "הכניסו שם מותאם אישית לאזור",
 	"FLIGHT_DETAILS.TITLE": "פרטי טיסה",
-	"FLIGHT_DETAILS.ADD_FLIGHT": "הסיפו טיסה",
+	"FLIGHT_DETAILS.ADD_FLIGHT": "הוסיפו טיסה",
 	"FLIGHT_DETAILS.START_DATE": "תאריך יציאה",
 	"FLIGHT_DETAILS.START_TIME": "שעת יציאה",
 	"FLIGHT_DETAILS.END_DATE": "תאריך הגעה",
@@ -1279,6 +1279,7 @@
 	"EVENT_PROGRESS": "פעילות {X} מתוך {Y}",
 	"NEXT_DESTINATION.DRIVE": "הגעה הנה: {DISTANCE}, {TIME} דקות נסיעה",
 	"NEXT_DESTINATION.WALK": "הגעה הנה: {DISTANCE}, {TIME} דקות הליכה",
-	"GENERAL.EXPAND_ALL": "פתח הכל",
-	"GENERAL.COLLAPSE_ALL": "סגור הכל"
+	"GENERAL.EXPAND_ALL": "פתחו הכל",
+	"GENERAL.COLLAPSE_ALL": "סגרו הכל",
+	"CREATE_TRIP_FROM_COUNTRY": "צרו טיול מכל האוספים של מדינה זו!"
 }

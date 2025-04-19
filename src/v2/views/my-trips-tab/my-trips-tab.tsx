@@ -71,9 +71,18 @@ function MyTripsTab() {
 
 	const [addNewTripMode, setAddNewTripMode] = useState(window.location.hash.includes('createTrip'));
 	const savedCollectionId = window.location.hash.includes('createTrip') ? getParameterFromHash('id') : undefined;
-	const savedCollection = savedCollectionId
-		? feedStore.savedCollections.find((c) => c.id == savedCollectionId)
+	const savedCollectionIds = window.location.hash.includes('createTrip')
+		? getParameterFromHash('ids')?.split(',')
 		: undefined;
+	const savedCollections = savedCollectionIds
+		? feedStore.savedCollections.filter((c) => c?.id && savedCollectionIds.includes(c.id.toString()))
+		: savedCollectionId
+		? [feedStore.savedCollections.find((c) => c?.id == savedCollectionId)].filter(Boolean)
+		: undefined;
+
+	console.log({
+		savedCollections,
+	});
 
 	const templateId = window.location.hash.includes('createTrip') ? getParameterFromHash('tid') : undefined;
 	const [template, setTemplate] = useState(
@@ -88,22 +97,46 @@ function MyTripsTab() {
 	const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
 
 	const [tripName, setTripName] = useState<string>('');
-	const [selectedDestinations, setSelectedDestinations] = useState([]);
+	const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
 	const [flights, setFlights] = useState<FlightDetails[]>([]);
 	const [hotels, setHotels] = useState<HotelDetails[]>([]);
 	const [activities, setActivities] = useState<string>('');
 	const [isProcessingActivities, setIsProcessingActivities] = useState(false);
 
 	useEffect(() => {
-		if (savedCollection?.destination) {
-			setTripName(
-				TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
-					X: TranslateService.translate(eventStore, savedCollection.destination),
-				})
-			);
-			setSelectedDestinations([savedCollection.destination]);
+		if (savedCollections?.length) {
+			const destinations = savedCollections
+				.filter((c): c is NonNullable<typeof c> => c !== null && c !== undefined)
+				.map((c) => c.destination)
+				.filter((d): d is string => d !== null && d !== undefined);
+
+			const country =
+				savedCollections.length > 1 && savedCollections[0]?.destination
+					? savedCollections[0].destination.split(',')[1]?.trim() || ''
+					: '';
+
+			const tripName =
+				savedCollections.length === 1 && destinations.length > 0
+					? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
+							X: TranslateService.translate(eventStore, destinations[0]),
+					  })
+					: country
+					? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
+							X: TranslateService.translate(eventStore, country),
+					  })
+					: destinations.length > 0
+					? TranslateService.translate(eventStore, 'MY_TRIP_TO_MULTIPLE', {
+							X: TranslateService.translate(eventStore, destinations[0]),
+							Y: destinations.length - 1,
+					  })
+					: '';
+
+			setTripName(tripName || '');
+			if (destinations.length > 0) {
+				setSelectedDestinations(destinations);
+			}
 		}
-	}, [savedCollection]);
+	}, [savedCollections, eventStore]);
 
 	useEffect(() => {
 		if (templatesStore.tripTemplates.length == 0) {
@@ -138,9 +171,12 @@ function MyTripsTab() {
 	}, [template]);
 
 	useEffect(() => {
-		document.querySelector('body').classList.remove('rtl');
-		document.querySelector('body').classList.remove('ltr');
-		document.querySelector('body').classList.add(eventStore.getCurrentDirection());
+		const body = document.querySelector('body');
+		if (body) {
+			body.classList.remove('rtl');
+			body.classList.remove('ltr');
+			body.classList.add(eventStore.getCurrentDirection());
+		}
 		eventStore.dataService.setCalendarLocale(eventStore.calendarLocalCode);
 	}, [eventStore.calendarLocalCode]);
 
@@ -684,54 +720,81 @@ function MyTripsTab() {
 		return results;
 	}
 
-	function buildTripDataForSavedCollection(tripData, categoryNameToId) {
-		const items = savedCollection.items.map((i) => i.fullDetails);
+	function buildTripDataForSavedCollection(tripData: any, categoryNameToId: Record<string, number>) {
+		if (!savedCollections) return tripData;
 
-		const sidebarEvents = {};
+		// Initialize arrays if they don't exist
+		tripData.allEvents = tripData.allEvents || [];
+		tripData.sidebarEvents = tripData.sidebarEvents || {};
+		tripData.categories = tripData.categories || [];
 
-		const allEvents = items.map((i, idx) => {
-			const parsedItem = IPointOfInterestToTripEvent(i, idx);
+		// Process each saved collection
+		const processedEvents = savedCollections.flatMap((collection) => {
+			if (!collection?.items) return [];
 
-			i.category = i.category || 'CATEGORY.GENERAL';
+			return collection.items
+				.map((item) => {
+					if (!item?.fullDetails) return null;
 
-			// @ts-ignore
-			parsedItem.images = i.images?.join('\n');
+					const baseEvent = IPointOfInterestToTripEvent(item.fullDetails, tripData.allEvents.length);
+					const parsedItem: IPointOfInterest = {
+						...baseEvent,
+						isVerified: true,
+						currency: item.fullDetails.currency || 'USD',
+						images: [],
+						imagesNames: [],
+					};
 
-			const { title, icon } = splitTitleAndIcons(i.category);
+					// Handle images
+					if (item.fullDetails.images) {
+						parsedItem.images = Array.isArray(item.fullDetails.images)
+							? item.fullDetails.images
+							: [String(item.fullDetails.images)];
+					}
 
-			let categoryId =
-				categoryNameToId[title] ??
-				categoryNameToId[TranslateService.translate(eventStore, title)] ??
-				categoryNameToId[
-					TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
-				] ??
-				categoryNameToId[
-					TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
-				];
+					// Handle category
+					const category = item.fullDetails.category || 'CATEGORY.GENERAL';
+					const { title, icon } = splitTitleAndIcons(category);
 
-			if (!categoryId) {
-				const maxCategoryId = Math.max(...Object.values(categoryNameToId));
-				categoryId = maxCategoryId + 1;
+					let categoryId =
+						categoryNameToId[title] ??
+						categoryNameToId[TranslateService.translate(eventStore, title)] ??
+						categoryNameToId[
+							TranslateService.translateFromTo(eventStore, title, {}, 'en', eventStore.calendarLocalCode)
+						] ??
+						categoryNameToId[
+							TranslateService.translateFromTo(eventStore, title, {}, 'he', eventStore.calendarLocalCode)
+						];
 
-				tripData.categories.push({
-					id: maxCategoryId + 1,
-					title,
-					icon,
-					// title: i.category,
-					// icon: ''
-				});
-				categoryNameToId[i.category] = categoryId;
-			}
-			parsedItem.category = categoryId;
+					if (!categoryId) {
+						const validCategoryIds = Object.values(categoryNameToId).filter(
+							(id): id is number => typeof id === 'number'
+						);
+						const maxCategoryId = validCategoryIds.length > 0 ? Math.max(...validCategoryIds) : 0;
+						categoryId = maxCategoryId + 1;
+						categoryNameToId[title] = categoryId;
 
-			sidebarEvents[categoryId] ||= [];
-			sidebarEvents[categoryId].push(parsedItem);
+						tripData.categories.push({
+							id: categoryId,
+							title,
+							icon,
+							isVerified: true,
+							currency: item.fullDetails.currency || 'USD',
+						});
+					}
 
-			return parsedItem;
+					parsedItem.category = categoryId.toString();
+
+					// Initialize category array in sidebarEvents if it doesn't exist
+					tripData.sidebarEvents[categoryId] = tripData.sidebarEvents[categoryId] || [];
+					tripData.sidebarEvents[categoryId].push(parsedItem);
+
+					return parsedItem;
+				})
+				.filter((item): item is IPointOfInterest => item !== null);
 		});
 
-		tripData.allEvents = allEvents;
-		tripData.sidebarEvents = sidebarEvents;
+		tripData.allEvents = [...tripData.allEvents, ...processedEvents];
 
 		return tripData;
 	}
@@ -1027,7 +1090,7 @@ function MyTripsTab() {
 					}
 				});
 
-				if (savedCollection) {
+				if (savedCollections) {
 					const categoryNameToId = tripData.categories.reduce((hash, category) => {
 						hash[category.title] = category.id;
 						return hash;

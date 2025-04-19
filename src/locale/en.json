@@ -1030,5 +1030,6 @@
 	"NEXT_DESTINATION.DRIVE": "Route to here: {DISTANCE}, {TIME}min drive",
 	"NEXT_DESTINATION.WALK": "Route to here: {DISTANCE}, {TIME}min walk",
 	"GENERAL.EXPAND_ALL": "Expand all",
-	"GENERAL.COLLAPSE_ALL": "Collapse all"
+	"GENERAL.COLLAPSE_ALL": "Collapse all",
+	"CREATE_TRIP_FROM_COUNTRY": "Create trip from this country collections!"
 }
