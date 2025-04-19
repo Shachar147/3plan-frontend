@@ -37,7 +37,7 @@ const CategoryFilter = ({ categories, onFilterChange }) => {
 			{/* todo complete: use bubble-tag or something with X option */}
 			{!!filteredByDestination && (
 				<div>
-					{TranslateService.translate(eventStore, 'DESTINATION')}: {filteredByDestination}
+					{TranslateService.translate(eventStore, 'DESTINATION')} {filteredByDestination}
 				</div>
 			)}
 		</div>
