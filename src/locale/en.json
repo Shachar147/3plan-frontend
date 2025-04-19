@@ -831,7 +831,7 @@
 	"PROFILE": "Profile",
 	"SAVED_COLLECTIONS.TITLE": "Saved Collections",
 	"SAVED_COLLECTIONS.DESCRIPTION": "All the places you saved will appear here, grouped by destination!",
-	"SAVED_COLLECTIONS.UNGROUPED": "Show each destination alone",
+	"SAVED_COLLECTIONS.UNGROUPED": "Ungrouped",
 	"SAVED_COLLECTIONS.GROUPED_BY_COUNTRY": "Group by country",
 	"SAVED_COLLECTIONS": "Saved Collections ({X})",
 	"SAVED_COLLECTIONS.SHORT": "Saved Collections ({X})",
@@ -1028,5 +1028,7 @@
 	"PREVIOUS": "Previous",
 	"EVENT_PROGRESS": "Activity {X} of {Y}",
 	"NEXT_DESTINATION.DRIVE": "Route to here: {DISTANCE}, {TIME}min drive",
-	"NEXT_DESTINATION.WALK": "Route to here: {DISTANCE}, {TIME}min walk"
+	"NEXT_DESTINATION.WALK": "Route to here: {DISTANCE}, {TIME}min walk",
+	"GENERAL.EXPAND_ALL": "Expand all",
+	"GENERAL.COLLAPSE_ALL": "Collapse all"
 }

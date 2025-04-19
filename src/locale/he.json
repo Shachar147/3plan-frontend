@@ -466,7 +466,7 @@
 	"United Kingdom":"בריטניה",
 	"Cameroon": "קמרון",
 	"Saint Helena": "סנט הלנה",
-	"Keyna": "קניה",
+	"Kenya": "קניה",
 	"Canada": "קנדה",
 	"Bolivia": "בוליביה",
 	"Czechia": "צ׳כיה",
@@ -1278,5 +1278,7 @@
 	"PREVIOUS": "הקודם",
 	"EVENT_PROGRESS": "פעילות {X} מתוך {Y}",
 	"NEXT_DESTINATION.DRIVE": "הגעה הנה: {DISTANCE}, {TIME} דקות נסיעה",
-	"NEXT_DESTINATION.WALK": "הגעה הנה: {DISTANCE}, {TIME} דקות הליכה"
+	"NEXT_DESTINATION.WALK": "הגעה הנה: {DISTANCE}, {TIME} דקות הליכה",
+	"GENERAL.EXPAND_ALL": "פתח הכל",
+	"GENERAL.COLLAPSE_ALL": "סגור הכל"
 }
