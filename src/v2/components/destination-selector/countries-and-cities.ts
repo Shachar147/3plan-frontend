@@ -1568,6 +1568,13 @@ const countriesAndCities = [
 		isPopular: false,
 	},
 	{
+		value: 'Firence',
+		label: 'Firence, Italy',
+		type: 'city',
+		flagClass: 'fi fi-it',
+		isPopular: true,
+	},
+	{
 		value: 'Firindah',
 		label: 'Firindah, Algeria',
 		type: 'city',

@@ -1106,9 +1106,23 @@
 		}
 	}
 
+	.tabular.menu {
+		overflow-y: hidden !important;
+	}
+
 	.carousel-wrapper {
 		max-height: 228px;
 		overflow-y: hidden;
+	}
+
+	.description-and-toggle {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.country-header-container {
+		margin-inline: 20px !important;
 	}
 }
 

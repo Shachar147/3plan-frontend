@@ -71,8 +71,15 @@ function MyTripsTab() {
 
 	const [addNewTripMode, setAddNewTripMode] = useState(window.location.hash.includes('createTrip'));
 	const savedCollectionId = window.location.hash.includes('createTrip') ? getParameterFromHash('id') : undefined;
-	const savedCollection = savedCollectionId
-		? feedStore.savedCollections.find((c) => c.id == savedCollectionId)
+	const savedCollectionIds = window.location.hash.includes('createTrip')
+		? getParameterFromHash('ids')?.split(',')
+		: undefined;
+	const countryName =
+		getParameterFromHash('countryName') ?? TranslateService.translate(eventStore, 'MULTIPLE_DESTINATIONS');
+	const savedCollections = savedCollectionIds
+		? feedStore.savedCollections.filter((c) => c?.id && savedCollectionIds.includes(c.id.toString()))
+		: savedCollectionId
+		? [feedStore.savedCollections.find((c) => c?.id == savedCollectionId)].filter(Boolean)
 		: undefined;
 
 	const templateId = window.location.hash.includes('createTrip') ? getParameterFromHash('tid') : undefined;
@@ -88,22 +95,40 @@ function MyTripsTab() {
 	const [customDateRange, setCustomDateRange] = useState(defaultDateRange());
 
 	const [tripName, setTripName] = useState<string>('');
-	const [selectedDestinations, setSelectedDestinations] = useState([]);
+	const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
 	const [flights, setFlights] = useState<FlightDetails[]>([]);
 	const [hotels, setHotels] = useState<HotelDetails[]>([]);
 	const [activities, setActivities] = useState<string>('');
 	const [isProcessingActivities, setIsProcessingActivities] = useState(false);
 
 	useEffect(() => {
-		if (savedCollection?.destination) {
-			setTripName(
-				TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
-					X: TranslateService.translate(eventStore, savedCollection.destination),
-				})
-			);
-			setSelectedDestinations([savedCollection.destination]);
+		if (savedCollections?.length) {
+			const destinations = savedCollections
+				.filter((c): c is NonNullable<typeof c> => c !== null && c !== undefined)
+				.map((c) => c.destination)
+				.filter((d): d is string => d !== null && d !== undefined);
+
+			// Only set the default trip name if it hasn't been modified by the user yet
+			if (!tripName) {
+				const defaultTripName =
+					savedCollections.length === 1 && destinations.length > 0
+						? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
+								X: TranslateService.translate(eventStore, destinations[0]), // For single destination, show full destination
+						  })
+						: destinations.length > 0
+						? TranslateService.translate(eventStore, 'MY_TRIP_TO_X', {
+								X: TranslateService.translate(eventStore, countryName), // For multiple destinations, show just country
+						  })
+						: '';
+
+				setTripName(defaultTripName || '');
+			}
+
+			if (destinations.length > 0) {
+				setSelectedDestinations(destinations);
+			}
 		}
-	}, [savedCollection]);
+	}, [savedCollections]);
 
 	useEffect(() => {
 		if (templatesStore.tripTemplates.length == 0) {
@@ -138,9 +163,12 @@ function MyTripsTab() {
 	}, [template]);
 
 	useEffect(() => {
-		document.querySelector('body').classList.remove('rtl');
-		document.querySelector('body').classList.remove('ltr');
-		document.querySelector('body').classList.add(eventStore.getCurrentDirection());
+		const body = document.querySelector('body');
+		if (body) {
+			body.classList.remove('rtl');
+			body.classList.remove('ltr');
+			body.classList.add(eventStore.getCurrentDirection());
+		}
 		eventStore.dataService.setCalendarLocale(eventStore.calendarLocalCode);
 	}, [eventStore.calendarLocalCode]);
 
@@ -684,8 +712,8 @@ function MyTripsTab() {
 		return results;
 	}
 
-	function buildTripDataForSavedCollection(tripData, categoryNameToId) {
-		const items = savedCollection.items.map((i) => i.fullDetails);
+	function buildTripDataForSavedCollection(tripData: any, categoryNameToId: Record<string, number>) {
+		const items = savedCollections?.map((c) => c.items.map((i) => i.fullDetails)).flat();
 
 		const sidebarEvents = {};
 
@@ -1027,7 +1055,7 @@ function MyTripsTab() {
 					}
 				});
 
-				if (savedCollection) {
+				if (savedCollections) {
 					const categoryNameToId = tripData.categories.reduce((hash, category) => {
 						hash[category.title] = category.id;
 						return hash;

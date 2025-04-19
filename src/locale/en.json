@@ -831,6 +831,8 @@
 	"PROFILE": "Profile",
 	"SAVED_COLLECTIONS.TITLE": "Saved Collections",
 	"SAVED_COLLECTIONS.DESCRIPTION": "All the places you saved will appear here, grouped by destination!",
+	"SAVED_COLLECTIONS.UNGROUPED": "Ungrouped",
+	"SAVED_COLLECTIONS.GROUPED_BY_COUNTRY": "Group by country",
 	"SAVED_COLLECTIONS": "Saved Collections ({X})",
 	"SAVED_COLLECTIONS.SHORT": "Saved Collections ({X})",
 	"HEADER_SEARCH_PLACEHOLDER": "Find places and things to do",
@@ -1026,5 +1028,10 @@
 	"PREVIOUS": "Previous",
 	"EVENT_PROGRESS": "Activity {X} of {Y}",
 	"NEXT_DESTINATION.DRIVE": "Route to here: {DISTANCE}, {TIME}min drive",
-	"NEXT_DESTINATION.WALK": "Route to here: {DISTANCE}, {TIME}min walk"
+	"NEXT_DESTINATION.WALK": "Route to here: {DISTANCE}, {TIME}min walk",
+	"GENERAL.EXPAND_ALL": "Expand all",
+	"GENERAL.COLLAPSE_ALL": "Collapse all",
+	"CREATE_TRIP_FROM_COUNTRY": "Create trip from this country collections!",
+	"MULTIPLE_DESTINATIONS": "multiple destinations",
+	"CREATE_TRIP_FROM_COUNTRY.SHORT": "Create trip"
 }
