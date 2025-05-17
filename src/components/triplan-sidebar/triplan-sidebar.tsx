@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { getClasses } from '../../utils/utils';
+import { getClasses, isAdmin } from '../../utils/utils';
 import { eventStoreContext } from '../../stores/events-store';
 import { SidebarEvent } from '../../utils/interfaces';
 import { observer } from 'mobx-react';
@@ -9,6 +9,10 @@ import { DateRangeFormatted } from '../../services/data-handlers/data-handler-ba
 import './triplan-sidebar.scss';
 import MinimizeExpandSidebarButton from './minimze-expand-sidebar-button/minimize-expand-sidebar-button';
 import TriplanSidebarInner from './triplan-sidebar-inner';
+import { apiPost } from '../../helpers/api';
+import { endpoints } from '../../v2/utils/endpoints';
+import TranslateService from '../../services/translate-service';
+import ReactModalService from '../../services/react-modal-service';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -124,6 +128,28 @@ function TriplanSidebar(props: TriplanSidebarProps) {
 	const eventStore = useContext(eventStoreContext);
 	const { customDateRange, setCustomDateRange, TriplanCalendarRef } = props;
 
+	const handleSaveAsTemplate = async () => {
+		try {
+			await apiPost(endpoints.v1.trips.saveAsTemplate, {
+				tripName: eventStore.tripName,
+			});
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.SUCCESS.TITLE',
+				'TRIP_SAVED_AS_TEMPLATE',
+				'success'
+			);
+		} catch (error) {
+			console.error('Error saving trip as template:', error);
+			ReactModalService.internal.alertMessage(
+				eventStore,
+				'MODALS.ERROR.TITLE',
+				'OOPS_SOMETHING_WENT_WRONG',
+				'error'
+			);
+		}
+	};
+
 	return (
 		<>
 			<div
@@ -140,6 +166,14 @@ function TriplanSidebar(props: TriplanSidebarProps) {
 					setCustomDateRange={setCustomDateRange}
 					disabled={eventStore.isTripLocked}
 				/>
+				{isAdmin() && (
+					<div className="sidebar-statistics sidebar-group" onClick={handleSaveAsTemplate}>
+						<i className="fa fa-save" aria-hidden="true" />
+						<span className="flex-gap-5 align-items-center">
+							{TranslateService.translate(eventStore, 'SAVE_AS_TEMPLATE')}
+						</span>
+					</div>
+				)}
 				<TriplanSidebarInner {...props} />
 			</div>
 			{eventStore.isSidebarMinimized && <MinimizeExpandSidebarButton />}
