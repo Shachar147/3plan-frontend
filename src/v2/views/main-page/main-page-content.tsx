@@ -171,6 +171,7 @@ function MainPageContent() {
 				name: TranslateService.translate(eventStore, 'SYSTEM_RECOMMENDATIONS'),
 				icon: 'fa-thumbs-up',
 				render: () => <TriplanTabContent content={<SystemRecommendationsView />} />,
+				className: 'system-recommendations-tab',
 			});
 			tabs.push({
 				id: mobileTopPicksTabId,
@@ -196,6 +197,7 @@ function MainPageContent() {
 						}
 					/>
 				),
+				className: 'system-recommendations-tab',
 			});
 		}
 
@@ -209,6 +211,7 @@ function MainPageContent() {
 				}),
 				icon: 'fa-bookmark-o',
 				render: () => <TriplanTabContent content={<SavedCollectionsTab />} />,
+				className: 'saved-collections-tab',
 			},
 			{
 				id: myTripsTabId,

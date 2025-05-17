@@ -10,6 +10,7 @@ export interface Tab {
 	icon?: string;
 	renderIcon?: () => React.ReactNode | null;
 	render: () => React.ReactNode | null;
+	className?: string;
 }
 export interface TabMenuProps {
 	tabs: Tab[];
@@ -54,7 +55,8 @@ function TabMenu(props: TabMenuProps) {
 							feedStore.activeTab == tab.id && 'active',
 							'item',
 							feedStore.activeTab !== tab.id && 'cursor-pointer',
-							'flex-row gap-8 align-items-center'
+							'flex-row gap-8 align-items-center',
+							tab.className
 						)}
 						onClick={(element) => {
 							if (feedStore.activeTab !== tab.id) {

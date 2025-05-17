@@ -800,10 +800,10 @@ const PointOfInterest = ({
 					icon={alreadyInSaved ? 'fa fa-heart' : 'fa fa-heart-o'}
 					text={text}
 					tooltip={text}
-					// className="padding-inline-15"
 					className={getClasses(
 						'padding-inline-15',
-						alreadyInSaved && eventStore.isMobile && 'red-pink-color'
+						alreadyInSaved && eventStore.isMobile && 'red-pink-color',
+						'save-button'
 					)}
 				/>
 				{!isInPlan && (
@@ -1010,17 +1010,14 @@ const PointOfInterest = ({
 	const createTripFromSavedCollectionBtn = (
 		<Button
 			icon="fa-rocket"
-			className="cursor-pointer width-max-content"
+			className="cursor-pointer width-max-content create-trip-from-collection"
 			type={ButtonFlavor.secondary}
 			text={TranslateService.translate(eventStore, 'CREATE_TRIP_FROM_SAVED_COLLECTION')}
 			onClick={() => {
-				// window.location.href = `${newDesignRootPath}/#createTrip`;
 				localStorage.setItem(mainPageContentTabLsKey, myTripsTabId);
 				window.location.hash = `createTrip?id=${item.collectionId}`;
 				rootStore.triggerTabsReRender();
 				rootStore.triggerHeaderReRender();
-				// window.location.reload();
-
 				window.scrollTo({
 					top: eventStore.isMobile ? MOBILE_SCROLL_TOP : 500,
 					behavior: 'smooth',

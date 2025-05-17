@@ -1596,117 +1596,116 @@ function MyTripsTab() {
 
 	function renderCreateTripForm() {
 		return (
-			<div
-				className="custom-dates-container align-items-center"
-				style={{
-					backgroundColor: 'transparent',
-					border: 0,
-				}}
-			>
-				<div className="main-font font-size-20">
-					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
-				</div>
-				<div className="trip-name-line margin-bottom-5">
-					<input
-						type="text"
-						style={{
-							paddingInline: '15px',
-							height: '40px',
-							maxWidth: '300px',
-						}}
-						placeholder={TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
-						value={tripName}
-						onChange={(e) => {
-							const value = e.target.value;
-							setTripName(value);
-
-							if (errors['title']) {
-								setErrors({
-									...errors,
-									title: value.length == 0,
-								});
-							}
-						}}
-						className={getClasses(errors['title'] && 'red-border')}
-					/>
-				</div>
-
-				<div className="main-font font-size-20">
-					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO')}
-				</div>
-				<div className="custom-dates-line flex-row align-items-center margin-bottom-5">
-					<DestinationSelector
-						onChange={setSelectedDestinations}
-						selectedDestinations={selectedDestinations}
-					/>
-				</div>
-
-				<div className="main-font font-size-20">
-					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
-				</div>
-				<div className="custom-dates-line flex-row align-items-center margin-bottom-5">
-					<input
-						type="date"
-						onKeyDown={(e) => {
-							e.preventDefault();
-							return false;
-						}}
-						value={customDateRange.start}
-						onChange={(e) => {
-							const value = e.target.value;
-							setCustomDateRange({
-								start: value,
-								end: customDateRange.end,
-							});
-							updateErrorsOnDateChange(value, customDateRange.end);
-						}}
-						className={getClasses('flex-row flex-1-1-0', errors['start'] && 'red-border')}
-					/>
-					{TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.UNTIL')}
-					<input
-						type="date"
-						onKeyDown={(e) => {
-							e.preventDefault();
-							return false;
-						}}
-						min={customDateRange.start}
-						value={customDateRange.end}
-						onChange={(e) => {
-							const value = e.target.value;
-							setCustomDateRange({
-								start: customDateRange.start,
-								end: value,
-							});
-							updateErrorsOnDateChange(customDateRange.start, value);
-						}}
-						className={getClasses('flex-row flex-1-1-0', errors['end'] && 'red-border')}
-					/>
-				</div>
-
-				{!templateId && !savedCollectionId && (
-					<>
-						<div className="main-font font-size-20">
-							{TranslateService.translate(eventStore, 'ACTIVITIES.TITLE')}
-						</div>
-						<div className="activities-section margin-bottom-5">
-							<textarea
-								value={activities}
-								onChange={(e) => setActivities(e.target.value)}
-								placeholder={TranslateService.translate(eventStore, 'ACTIVITIES.PLACEHOLDER')}
-								className="activities-textarea"
-								rows={5}
-							/>
-							{isProcessingActivities && (
-								<div className="processing-activities">
-									{TranslateService.translate(eventStore, 'ACTIVITIES.PROCESSING')}
-								</div>
+			<div className="create-trip-form">
+				<div className="custom-dates-container align-items-center">
+					<div className="main-font font-size-20">
+						{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP')}
+					</div>
+					<div className="trip-name-line margin-bottom-5">
+						<input
+							type="text"
+							style={{
+								paddingInline: '15px',
+								height: '40px',
+								maxWidth: '300px',
+							}}
+							placeholder={TranslateService.translate(
+								eventStore,
+								'GETTING_STARTED_PAGE.WHERE_IS_YOUR_TRIP'
 							)}
-						</div>
+							value={tripName}
+							onChange={(e) => {
+								const value = e.target.value;
+								setTripName(value);
 
-						{renderFlightDetailsSection()}
-						{renderHotelDetailsSection()}
-					</>
-				)}
+								if (errors['title']) {
+									setErrors({
+										...errors,
+										title: value.length == 0,
+									});
+								}
+							}}
+							className={getClasses(errors['title'] && 'red-border')}
+						/>
+					</div>
+
+					<div className="main-font font-size-20">
+						{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHERE_ARE_YOU_GOING_TO')}
+					</div>
+					<div className="custom-dates-line flex-row align-items-center margin-bottom-5">
+						<DestinationSelector
+							onChange={setSelectedDestinations}
+							selectedDestinations={selectedDestinations}
+						/>
+					</div>
+
+					<div className="main-font font-size-20">
+						{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
+					</div>
+					<div className="custom-dates-line flex-row align-items-center margin-bottom-5">
+						<input
+							type="date"
+							onKeyDown={(e) => {
+								e.preventDefault();
+								return false;
+							}}
+							value={customDateRange.start}
+							onChange={(e) => {
+								const value = e.target.value;
+								setCustomDateRange({
+									start: value,
+									end: customDateRange.end,
+								});
+								updateErrorsOnDateChange(value, customDateRange.end);
+							}}
+							className={getClasses('flex-row flex-1-1-0', errors['start'] && 'red-border')}
+						/>
+						{TranslateService.translate(eventStore, 'MODALS.OPENING_HOURS.UNTIL')}
+						<input
+							type="date"
+							onKeyDown={(e) => {
+								e.preventDefault();
+								return false;
+							}}
+							min={customDateRange.start}
+							value={customDateRange.end}
+							onChange={(e) => {
+								const value = e.target.value;
+								setCustomDateRange({
+									start: customDateRange.start,
+									end: value,
+								});
+								updateErrorsOnDateChange(customDateRange.start, value);
+							}}
+							className={getClasses('flex-row flex-1-1-0', errors['end'] && 'red-border')}
+						/>
+					</div>
+
+					{!templateId && !savedCollectionId && (
+						<>
+							<div className="main-font font-size-20">
+								{TranslateService.translate(eventStore, 'ACTIVITIES.TITLE')}
+							</div>
+							<div className="activities-section margin-bottom-5">
+								<textarea
+									value={activities}
+									onChange={(e) => setActivities(e.target.value)}
+									placeholder={TranslateService.translate(eventStore, 'ACTIVITIES.PLACEHOLDER')}
+									className="activities-textarea"
+									rows={5}
+								/>
+								{isProcessingActivities && (
+									<div className="processing-activities">
+										{TranslateService.translate(eventStore, 'ACTIVITIES.PROCESSING')}
+									</div>
+								)}
+							</div>
+
+							{renderFlightDetailsSection()}
+							{renderHotelDetailsSection()}
+						</>
+					)}
+				</div>
 			</div>
 		);
 	}
