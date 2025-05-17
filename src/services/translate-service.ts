@@ -14,8 +14,12 @@ const translates: Record<LocaleCode, Record<string, TranslationValue>> = {
 export type TranslationParams = Record<string, string | number | undefined>;
 
 const TranslateService = {
-	translate: (eventStore: EventStore, key: string, params: TranslationParams = {}) => {
-		const language = eventStore.calendarLocalCode;
+	translate: (
+		eventStore: EventStore,
+		key: string,
+		params: TranslationParams = {},
+		language = eventStore.calendarLocalCode
+	) => {
 		const translations = translates[language];
 
 		let result = key;

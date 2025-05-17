@@ -129,14 +129,48 @@ function TriplanSidebar(props: TriplanSidebarProps) {
 	const { customDateRange, setCustomDateRange, TriplanCalendarRef } = props;
 
 	const handleSaveAsTemplate = async () => {
+		const tripName = TranslateService.translate(
+			eventStore,
+			'TEMPLATE_NAME_FORMAT',
+			{
+				days: eventStore.tripDaysArray.length,
+				destination: eventStore.destinations.join(','),
+			},
+			'en'
+		);
+		const hebTripName = TranslateService.translate(
+			eventStore,
+			'TEMPLATE_NAME_FORMAT',
+			{
+				days: eventStore.tripDaysArray.length,
+				destination: eventStore.destinations
+					.map((d) => TranslateService.translate(eventStore, d, {}, 'he'))
+					.join(','),
+			},
+			'he'
+		);
+
 		try {
-			await apiPost(endpoints.v1.trips.saveAsTemplate, {
+			const res = await apiPost(endpoints.v1.trips.saveAsTemplate, {
 				tripName: eventStore.tripName,
+				newTripName: [tripName, hebTripName].join('|'),
 			});
+
+			const isSaved = res.data.updated || res.data.created;
+			if (!isSaved) {
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'MODALS.ERROR.TITLE',
+					'OOPS_SOMETHING_WENT_WRONG',
+					'error'
+				);
+				return;
+			}
+
 			ReactModalService.internal.alertMessage(
 				eventStore,
-				'MODALS.SUCCESS.TITLE',
-				'TRIP_SAVED_AS_TEMPLATE',
+				'SAVED_SUCCESSFULLY',
+				res.data.updated ? 'TEMPLATE_UPDATED' : 'TRIP_SAVED_AS_TEMPLATE',
 				'success'
 			);
 		} catch (error) {
