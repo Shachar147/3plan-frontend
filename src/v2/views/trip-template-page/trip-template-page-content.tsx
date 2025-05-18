@@ -87,6 +87,10 @@ function TripTemplateSidebarSuggestions() {
 		eventsByCategory[catId].push(event);
 	});
 
+	if (sidebarEvents.length == 0) {
+		return;
+	}
+
 	return (
 		<div className="trip-template-sidebar-suggestions">
 			<h1>{TranslateService.translate(eventStore, 'YOU_MAY_ALSO_WANT_TO_VISIT')}</h1>
