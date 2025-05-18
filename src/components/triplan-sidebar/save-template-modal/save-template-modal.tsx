@@ -67,68 +67,74 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 					<div className="flex-col gap-10">
 						<h3>{TranslateService.translate(eventStore, 'CALENDAR_EVENTS')}</h3>
 						<div className="calendar-events-list">
-							{eventStore.calendarEvents.map((event) => {
-								const images = parseImages(event.images);
-								return (
-									<div key={event.id} className="calendar-event-item">
-										<div className="event-image-col">
-											{images.length > 0 && (
-												<Carousel
-													showThumbs={false}
-													showIndicators={false}
-													infiniteLoop={true}
-													selectedItem={currentCalendarSlides[event.id] || 0}
-													onChange={(idx) =>
-														setCurrentCalendarSlides((prev) => ({
-															...prev,
-															[event.id]: idx,
-														}))
-													}
-													className="event-image-carousel"
-												>
-													{images.map((image, index) => (
-														<div key={`calendar-${event.id}-image-${index}`}>
-															<Image
-																image={image}
-																alt={event.title}
-																key={event.id + '-' + index}
-																idx={index}
-																isSmall={true}
-															/>
-														</div>
-													))}
-												</Carousel>
-											)}
-										</div>
-										<div className="event-info-col">
-											<div className="event-header">
-												<span className="event-title">{event.title}</span>
-												<button
-													className="edit-event-btn"
-													onClick={() => {
-														ReactModalService.openEditCalendarEventModal(
-															eventStore,
-															addEventToSidebar,
-															{
-																event: {
-																	...event,
-																	_def: event,
+							{eventStore.calendarEvents
+								.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+								.map((event) => {
+									const images = parseImages(event.images);
+									return (
+										<div key={event.id} className="calendar-event-item">
+											<div className="event-image-col">
+												{images.length > 0 && (
+													<Carousel
+														showThumbs={false}
+														showIndicators={false}
+														infiniteLoop={true}
+														selectedItem={currentCalendarSlides[event.id] || 0}
+														onChange={(idx) =>
+															setCurrentCalendarSlides((prev) => ({
+																...prev,
+																[event.id]: idx,
+															}))
+														}
+														className="event-image-carousel"
+													>
+														{images.map((image, index) => (
+															<div key={`calendar-${event.id}-image-${index}`}>
+																<Image
+																	image={image}
+																	alt={event.title}
+																	key={event.id + '-' + index}
+																	idx={index}
+																	isSmall={true}
+																/>
+															</div>
+														))}
+													</Carousel>
+												)}
+											</div>
+											<div className="event-info-col">
+												<div className="event-header">
+													<span className="event-title">{event.title}</span>
+													<button
+														className="edit-event-btn"
+														onClick={() => {
+															eventStore.isModalMinimized = false;
+															modalsStore.switchToEditMode();
+															ReactModalService.openEditCalendarEventModal(
+																eventStore,
+																addEventToSidebar,
+																{
+																	event: {
+																		...event,
+																		start: new Date(event.start),
+																		end: new Date(event.end),
+																		_def: event,
+																	},
 																},
-															},
-															modalsStore
-														);
-													}}
-												>
-													{TranslateService.translate(eventStore, 'EDIT')}
-												</button>
-											</div>
-											<div className="event-details">
-												{event.description && <p>{event.description}</p>}
+																modalsStore
+															);
+														}}
+													>
+														{TranslateService.translate(eventStore, 'EDIT')}
+													</button>
+												</div>
+												<div className="event-details">
+													{event.description && <p>{event.description}</p>}
+												</div>
 											</div>
 										</div>
-									</div>
-								);
-							})}
+									);
+								})}
 						</div>
 					</div>
 					<div className="flex-col gap-10">
@@ -173,6 +179,8 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 												<button
 													className="edit-event-btn"
 													onClick={() => {
+														eventStore.isModalMinimized = false;
+														modalsStore.switchToEditMode();
 														ReactModalService.openEditSidebarEventModal(
 															eventStore,
 															event,

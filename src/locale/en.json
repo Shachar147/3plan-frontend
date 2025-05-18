@@ -1037,5 +1037,6 @@
 	"TEMPLATE_NAME_FORMAT": "{days} days in {destination}",
 	"SAVE_AS_TEMPLATE": "Save as template",
 	"TRIP_SAVED_AS_TEMPLATE": "Template created successfully!",
-	"TEMPLATE_UPDATED": "Template updated successfully!"
+	"TEMPLATE_UPDATED": "Template updated successfully!",
+	"EDIT": "Edit"
 }
