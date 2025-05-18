@@ -1,13 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { Observer } from 'mobx-react';
-import { eventStoreContext } from '../../../stores/events-store';
+import { EventStore, eventStoreContext } from '../../../stores/events-store';
 import { modalsStoreContext } from '../../../stores/modals-store';
 import TranslateService from '../../../services/translate-service';
 import ReactModalService, { ReactModalRenderHelper } from '../../../services/react-modal-service';
-import { SidebarEvent } from '../../../utils/interfaces';
+import { CalendarEvent, SidebarEvent } from '../../../utils/interfaces';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Image } from '../../../v2/components/point-of-interest/point-of-interest';
+import { FaTrash, FaPen } from 'react-icons/fa';
+import { runInAction } from 'mobx';
 
 interface SaveTemplateModalProps {
 	defaultTripName: string;
@@ -53,7 +55,10 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 	return (
 		<Observer>
 			{() => (
-				<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
+				<div
+					className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar"
+					key={`save-template-modal-${eventStore.forceUpdate}`}
+				>
 					{ReactModalRenderHelper.renderInputWithLabel(
 						eventStore,
 						'MODALS.TITLE',
@@ -105,29 +110,43 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 											<div className="event-info-col">
 												<div className="event-header">
 													<span className="event-title">{event.title}</span>
-													<button
-														className="edit-event-btn"
-														onClick={() => {
-															eventStore.isModalMinimized = false;
-															modalsStore.switchToEditMode();
-															ReactModalService.openEditCalendarEventModal(
-																eventStore,
-																addEventToSidebar,
-																{
-																	event: {
-																		...event,
-																		start: new Date(event.start),
-																		end: new Date(event.end),
-																		_def: event,
+													<span className="event-action-icons">
+														<i
+															className="fa fa-pencil edit-icon"
+															title={TranslateService.translate(eventStore, 'EDIT')}
+															onClick={() => {
+																eventStore.isModalMinimized = false;
+																modalsStore.switchToEditMode();
+																ReactModalService.openEditCalendarEventModal(
+																	eventStore,
+																	addEventToSidebar,
+																	{
+																		event: {
+																			...event,
+																			start: new Date(event.start),
+																			end: new Date(event.end),
+																			_def: event,
+																		},
 																	},
-																},
-																modalsStore,
-																true
-															);
-														}}
-													>
-														{TranslateService.translate(eventStore, 'EDIT')}
-													</button>
+																	modalsStore,
+																	true
+																);
+															}}
+														/>
+														<i
+															className="fa fa-trash delete-icon"
+															title={TranslateService.translate(eventStore, 'DELETE')}
+															onClick={async () => {
+																await eventStore.deleteEvent(event.id);
+																runInAction(() => {
+																	eventStore.forceUpdate++;
+																});
+															}}
+															// onClick={() => openDeleteCalendarEventModal(eventStore, event, () => {
+															// 	void eventStore.deleteEvent(event.id);
+															// }, true)}
+														/>
+													</span>
 												</div>
 												<div className="event-details">
 													{event.description && <p>{event.description}</p>}
@@ -177,23 +196,40 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 										<div className="event-info-col">
 											<div className="event-header">
 												<span className="event-title">{event.title}</span>
-												<button
-													className="edit-event-btn"
-													onClick={() => {
-														eventStore.isModalMinimized = false;
-														modalsStore.switchToEditMode();
-														ReactModalService.openEditSidebarEventModal(
-															eventStore,
-															event,
-															removeEventFromSidebarById,
-															addToEventsToCategories,
-															modalsStore,
-															true
-														);
-													}}
-												>
-													{TranslateService.translate(eventStore, 'EDIT')}
-												</button>
+												<span className="event-action-icons">
+													<i
+														className="fa fa-pencil edit-icon"
+														title={TranslateService.translate(eventStore, 'EDIT')}
+														onClick={() => {
+															eventStore.isModalMinimized = false;
+															modalsStore.switchToEditMode();
+															ReactModalService.openEditSidebarEventModal(
+																eventStore,
+																event,
+																removeEventFromSidebarById,
+																addToEventsToCategories,
+																modalsStore,
+																true
+															);
+														}}
+													/>
+													<i
+														className="fa fa-trash delete-icon"
+														title={TranslateService.translate(eventStore, 'DELETE')}
+														onClick={async () => {
+															const newEvents: Record<number, SidebarEvent[]> = {
+																...eventStore.sidebarEvents,
+															};
+															Object.keys(newEvents).forEach((category) => {
+																const categoryId = Number(category);
+																newEvents[categoryId] = newEvents[categoryId].filter(
+																	(e) => e.id != event.id
+																);
+															});
+															await eventStore.setSidebarEvents(newEvents);
+														}}
+													/>
+												</span>
 											</div>
 											<div className="event-details">
 												{event.description && <p>{event.description}</p>}

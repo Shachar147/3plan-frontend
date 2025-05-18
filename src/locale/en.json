@@ -1038,5 +1038,6 @@
 	"SAVE_AS_TEMPLATE": "Save as template",
 	"TRIP_SAVED_AS_TEMPLATE": "Template created successfully!",
 	"TEMPLATE_UPDATED": "Template updated successfully!",
-	"EDIT": "Edit"
+	"EDIT": "Edit",
+	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar"
 }

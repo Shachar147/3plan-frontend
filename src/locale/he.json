@@ -1294,5 +1294,6 @@
 	"SAVE_AS_TEMPLATE": "שמור כטמפלייט",
 	"TRIP_SAVED_AS_TEMPLATE": "הטמפלייט נשמר בהצלחה!",
 	"TEMPLATE_UPDATED": "הטמפלייט עודכן בהצלחה!",
-	"EDIT": "עריכה"
+	"EDIT": "עריכה",
+	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "מחק פעילות זאת לצמיתות"
 }

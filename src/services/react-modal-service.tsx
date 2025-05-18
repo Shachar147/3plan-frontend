@@ -3960,43 +3960,48 @@ const ReactModalService = {
 	openDeleteSidebarEventModal: (
 		eventStore: EventStore,
 		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
-		event: SidebarEvent
+		event: SidebarEvent,
+		isSecondModal = false
 	) => {
-		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
-			title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${event.title}`,
-			content: (
-				<div
-					dangerouslySetInnerHTML={{
-						__html: TranslateService.translate(eventStore, 'MODALS.DELETE_SIDEBAR_EVENT.CONTENT'),
-					}}
-				/>
-			),
-			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
-			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
-			confirmBtnCssClass: 'primary-button red',
+		ReactModalService.internal.openModal(
+			eventStore,
+			{
+				...getDefaultSettings(eventStore),
+				title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${event.title}`,
+				content: (
+					<div
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.DELETE_SIDEBAR_EVENT.CONTENT'),
+						}}
+					/>
+				),
+				cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+				confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
+				confirmBtnCssClass: 'primary-button red',
 
-			// ERROR HANDLING: todo add try/catch & show a message if fails
-			onConfirm: async () => {
-				ReactModalService.internal.disableOnConfirm();
+				// ERROR HANDLING: todo add try/catch & show a message if fails
+				onConfirm: async () => {
+					ReactModalService.internal.disableOnConfirm();
 
-				await removeEventFromSidebarById(event.id);
-				// await eventStore.setAllEvents(eventStore.allEventsComputed.filter((x) => x.id !== event.id));
+					await removeEventFromSidebarById(event.id);
+					// await eventStore.setAllEvents(eventStore.allEventsComputed.filter((x) => x.id !== event.id));
 
-				LogHistoryService.logHistory(
-					eventStore,
-					TripActions.deletedSidebarEvent,
-					{
-						was: event,
-						eventName: event.title,
-					},
-					Number(event.id),
-					event.title
-				);
+					LogHistoryService.logHistory(
+						eventStore,
+						TripActions.deletedSidebarEvent,
+						{
+							was: event,
+							eventName: event.title,
+						},
+						Number(event.id),
+						event.title
+					);
 
-				ReactModalService.internal.closeModal(eventStore);
+					ReactModalService.internal.closeModal(eventStore);
+				},
 			},
-		});
+			isSecondModal
+		);
 	},
 	openConfirmModalContent: (
 		eventStore: EventStore,
