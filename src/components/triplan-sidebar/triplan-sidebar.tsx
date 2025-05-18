@@ -12,7 +12,10 @@ import TriplanSidebarInner from './triplan-sidebar-inner';
 import { apiPost } from '../../helpers/api';
 import { endpoints } from '../../v2/utils/endpoints';
 import TranslateService from '../../services/translate-service';
-import ReactModalService from '../../services/react-modal-service';
+import ReactModalService, { getDefaultSettings } from '../../services/react-modal-service';
+import { modalsStoreContext } from '../../stores/modals-store';
+import { SaveTemplateModal } from './save-template-modal/save-template-modal';
+import './save-template-modal/save-template-modal.scss';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -150,38 +153,58 @@ function TriplanSidebar(props: TriplanSidebarProps) {
 			'he'
 		);
 
-		try {
-			const res = await apiPost(endpoints.v1.trips.saveAsTemplate, {
-				tripName: eventStore.tripName,
-				newTripName: [tripName, hebTripName].join('|'),
-			});
+		const defaultTripName = [tripName, hebTripName].join('|');
 
-			const isSaved = res.data.updated || res.data.created;
-			if (!isSaved) {
+		const onConfirm = async () => {
+			try {
+				const res = await apiPost(endpoints.v1.trips.saveAsTemplate, {
+					tripName: eventStore.tripName,
+					newTripName: eventStore.modalValues['template-name'] || defaultTripName,
+				});
+
+				const isSaved = res.data.updated || res.data.created;
+				if (!isSaved) {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'OOPS_SOMETHING_WENT_WRONG',
+						'error'
+					);
+					return;
+				}
+
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'SAVED_SUCCESSFULLY',
+					res.data.updated ? 'TEMPLATE_UPDATED' : 'TRIP_SAVED_AS_TEMPLATE',
+					'success'
+				);
+			} catch (error) {
+				console.error('Error saving trip as template:', error);
 				ReactModalService.internal.alertMessage(
 					eventStore,
 					'MODALS.ERROR.TITLE',
 					'OOPS_SOMETHING_WENT_WRONG',
 					'error'
 				);
-				return;
 			}
+		};
 
-			ReactModalService.internal.alertMessage(
-				eventStore,
-				'SAVED_SUCCESSFULLY',
-				res.data.updated ? 'TEMPLATE_UPDATED' : 'TRIP_SAVED_AS_TEMPLATE',
-				'success'
-			);
-		} catch (error) {
-			console.error('Error saving trip as template:', error);
-			ReactModalService.internal.alertMessage(
-				eventStore,
-				'MODALS.ERROR.TITLE',
-				'OOPS_SOMETHING_WENT_WRONG',
-				'error'
-			);
-		}
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'SAVE_AS_TEMPLATE'),
+			content: (
+				<SaveTemplateModal
+					defaultTripName={defaultTripName}
+					onConfirm={onConfirm}
+					addEventToSidebar={props.addEventToSidebar}
+					removeEventFromSidebarById={props.removeEventFromSidebarById}
+					addToEventsToCategories={props.addToEventsToCategories}
+				/>
+			),
+			onConfirm,
+			type: 'controlled',
+		});
 	};
 
 	return (
