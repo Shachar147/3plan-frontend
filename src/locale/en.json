@@ -1039,5 +1039,6 @@
 	"TRIP_SAVED_AS_TEMPLATE": "Template created successfully!",
 	"TEMPLATE_UPDATED": "Template updated successfully!",
 	"EDIT": "Edit",
-	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar"
+	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar",
+	"YOU_MAY_ALSO_WANT_TO_VISIT": "You may also want to visit:"
 }

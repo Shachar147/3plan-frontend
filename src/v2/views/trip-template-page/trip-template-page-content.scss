@@ -168,7 +168,7 @@
 		}
 	}
 
-	.trip-template-itinerary,
+	//.trip-template-itinerary,
 	.map-container {
 		resize: horizontal;
 		min-width: 35vw;
@@ -235,5 +235,37 @@ body.rtl {
 				}
 			}
 		}
+	}
+}
+
+.itinerary-and-suggestions-column {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	overflow-y: auto;
+	position: relative;
+	resize: horizontal;
+	min-width: 35vw;
+	width: 40vw;
+	max-width: 40vw;
+}
+
+.trip-template-sidebar-suggestions {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 20px;
+}
+
+.sidebar-suggestion-event:hover {
+	background: #f6f6f6 !important;
+	opacity: 1;
+}
+
+@media only screen and (max-width: 750px) {
+	.itinerary-and-suggestions-column {
+		width: 100vw;
+		max-width: unset;
+		min-width: 100vw;
 	}
 }
