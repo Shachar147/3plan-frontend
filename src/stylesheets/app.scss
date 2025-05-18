@@ -612,6 +612,9 @@ body {
 	cursor: pointer;
 }
 
+.gap-0-important {
+	gap: 0 !important;
+}
 .gap-2 {
 	gap: 2px;
 }
@@ -1716,4 +1719,12 @@ body.rtl {
 			direction: rtl;
 		}
 	}
+}
+
+.text-overflow-ellipsis {
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.max-width-90-percents {
+	max-width: 90%;
 }

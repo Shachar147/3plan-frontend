@@ -99,6 +99,7 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 						/>
 						<div className="calendar-events-list bright-scrollbar">
 							{filteredCalendarEvents
+								.filter((event): event is CalendarEvent => 'start' in event && 'end' in event)
 								.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
 								.map((event) => {
 									const images = parseImages(event.images);
@@ -168,14 +169,32 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 																	eventStore.forceUpdate++;
 																});
 															}}
-															// onClick={() => openDeleteCalendarEventModal(eventStore, event, () => {
-															// 	void eventStore.deleteEvent(event.id);
-															// }, true)}
 														/>
 													</span>
 												</div>
 												<div className="event-details">
-													{event.description && <p>{event.description}</p>}
+													{event.description && (
+														<p className="text-overflow-ellipsis max-width-90-percents">
+															{event.description}
+														</p>
+													)}
+													<div className="event-category-footer">
+														{(() => {
+															const categoryObj = eventStore.categories.find(
+																(cat) => String(cat.id) === String(event.category)
+															);
+															const categoryName = categoryObj
+																? categoryObj.title
+																: event.category;
+															return `${TranslateService.translate(
+																eventStore,
+																'ADMIN_MANAGE_ITEM.CATEGORY'
+															)}: ${TranslateService.translate(
+																eventStore,
+																categoryName
+															)}`;
+														})()}
+													</div>
 												</div>
 											</div>
 										</div>
@@ -268,7 +287,25 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 												</span>
 											</div>
 											<div className="event-details">
-												{event.description && <p>{event.description}</p>}
+												{event.description && (
+													<p className="text-overflow-ellipsis max-width-90-percents">
+														{event.description}
+													</p>
+												)}
+												<div className="event-category-footer">
+													{(() => {
+														const categoryObj = eventStore.categories.find(
+															(cat) => String(cat.id) === String(event.category)
+														);
+														const categoryName = categoryObj
+															? categoryObj.title
+															: event.category;
+														return `${TranslateService.translate(
+															eventStore,
+															'ADMIN_MANAGE_ITEM.CATEGORY'
+														)}: ${TranslateService.translate(eventStore, categoryName)}`;
+													})()}
+												</div>
 											</div>
 										</div>
 									</div>
