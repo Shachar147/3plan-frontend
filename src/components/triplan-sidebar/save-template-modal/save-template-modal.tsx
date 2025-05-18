@@ -121,7 +121,8 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 																		_def: event,
 																	},
 																},
-																modalsStore
+																modalsStore,
+																true
 															);
 														}}
 													>
@@ -186,7 +187,8 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 															event,
 															removeEventFromSidebarById,
 															addToEventsToCategories,
-															modalsStore
+															modalsStore,
+															true
 														);
 													}}
 												>

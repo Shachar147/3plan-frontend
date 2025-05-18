@@ -2186,7 +2186,8 @@ const ReactModalService = {
 		event: SidebarEvent,
 		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
 		addToEventsToCategories: (value: any) => void,
-		modalsStore: ModalsStore
+		modalsStore: ModalsStore,
+		isSecondModal = false
 	) => {
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleEditSidebarEventResult = async (eventStore: EventStore, originalEvent: SidebarEvent) => {
@@ -2472,16 +2473,20 @@ const ReactModalService = {
 
 		const settings = getDefaultSettings(eventStore);
 		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
-		ReactModalService.internal.openModal(eventStore, {
-			...settings,
-			confirmBtnText: modalsStore?.isViewMode
-				? TranslateService.translate(eventStore, 'MODALS.EDIT')
-				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
-			title,
-			content,
-			onConfirm,
-			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
-		});
+		ReactModalService.internal.openModal(
+			eventStore,
+			{
+				...settings,
+				confirmBtnText: modalsStore?.isViewMode
+					? TranslateService.translate(eventStore, 'MODALS.EDIT')
+					: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+				title,
+				content,
+				onConfirm,
+				confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
+			},
+			isSecondModal
+		);
 	},
 	openDuplicateSidebarEventModal: (eventStore: EventStore, event: SidebarEvent) => {
 		// ERROR HANDLING: todo add try/catch & show a message if fails
@@ -3335,7 +3340,8 @@ const ReactModalService = {
 		eventStore: EventStore,
 		addEventToSidebar: (event: SidebarEvent) => boolean,
 		info: any,
-		modalsStore: ModalsStore
+		modalsStore: ModalsStore,
+		isSecondModal = false
 	) => {
 		ReactModalService.internal.resetWindowVariables(eventStore);
 
@@ -3936,16 +3942,20 @@ const ReactModalService = {
 
 		const settings = getDefaultSettings(eventStore);
 		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
-		ReactModalService.internal.openModal(eventStore, {
-			...settings,
-			title,
-			confirmBtnText: modalsStore?.isViewMode
-				? TranslateService.translate(eventStore, 'MODALS.EDIT')
-				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
-			content,
-			onConfirm,
-			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
-		});
+		ReactModalService.internal.openModal(
+			eventStore,
+			{
+				...settings,
+				title,
+				confirmBtnText: modalsStore?.isViewMode
+					? TranslateService.translate(eventStore, 'MODALS.EDIT')
+					: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+				content,
+				onConfirm,
+				confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
+			},
+			isSecondModal
+		);
 	},
 	openDeleteSidebarEventModal: (
 		eventStore: EventStore,
