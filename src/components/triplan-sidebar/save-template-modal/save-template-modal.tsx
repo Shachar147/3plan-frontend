@@ -30,6 +30,8 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 	const modalsStore = useContext(modalsStoreContext);
 	const [currentCalendarSlides, setCurrentCalendarSlides] = useState<{ [id: string]: number }>({});
 	const [currentSidebarSlides, setCurrentSidebarSlides] = useState<{ [id: string]: number }>({});
+	const [calendarSearch, setCalendarSearch] = useState('');
+	const [sidebarSearch, setSidebarSearch] = useState('');
 
 	// Helper to parse images (string or array)
 	const parseImages = (images: any): string[] => {
@@ -52,6 +54,19 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 		return [];
 	};
 
+	const filterEvents = (events: (SidebarEvent | CalendarEvent)[], query: string) => {
+		if (!query) return events;
+		const q = query.toLowerCase();
+		return events.filter(
+			(e) =>
+				(e.title && e.title.toLowerCase().includes(q)) ||
+				(e.description && e.description.toLowerCase().includes(q))
+		);
+	};
+
+	const filteredCalendarEvents = filterEvents(eventStore.calendarEvents, calendarSearch);
+	const filteredSidebarEvents = filterEvents(eventStore.allSidebarEvents, sidebarSearch);
+
 	return (
 		<Observer>
 			{() => (
@@ -70,9 +85,20 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 						'border-top-gray border-bottom-gray padding-bottom-20'
 					)}
 					<div className="flex-col gap-10">
-						<h3>{TranslateService.translate(eventStore, 'CALENDAR_EVENTS')}</h3>
-						<div className="calendar-events-list">
-							{eventStore.calendarEvents
+						<h3>
+							{TranslateService.translate(eventStore, 'CALENDAR_EVENTS')} ({filteredCalendarEvents.length}
+							)
+						</h3>
+						<input
+							type="text"
+							className="event-search-input"
+							placeholder={TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
+							value={calendarSearch}
+							onChange={(e) => setCalendarSearch(e.target.value)}
+							style={{ marginBottom: 8, width: '100%' }}
+						/>
+						<div className="calendar-events-list bright-scrollbar">
+							{filteredCalendarEvents
 								.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
 								.map((event) => {
 									const images = parseImages(event.images);
@@ -158,9 +184,19 @@ export const SaveTemplateModal: React.FC<SaveTemplateModalProps> = ({
 						</div>
 					</div>
 					<div className="flex-col gap-10">
-						<h3>{TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')}</h3>
-						<div className="sidebar-events-list">
-							{eventStore.allSidebarEvents.map((event) => {
+						<h3>
+							{TranslateService.translate(eventStore, 'SIDEBAR_EVENTS')} ({filteredSidebarEvents.length})
+						</h3>
+						<input
+							type="text"
+							className="event-search-input"
+							placeholder={TranslateService.translate(eventStore, 'MOBILE_NAVBAR.SEARCH')}
+							value={sidebarSearch}
+							onChange={(e) => setSidebarSearch(e.target.value)}
+							style={{ marginBottom: 8, width: '100%' }}
+						/>
+						<div className="sidebar-events-list bright-scrollbar">
+							{filteredSidebarEvents.map((event) => {
 								const images = parseImages(event.images);
 								return (
 									<div key={event.id} className="sidebar-event-item">

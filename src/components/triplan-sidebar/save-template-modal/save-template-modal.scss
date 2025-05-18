@@ -139,3 +139,21 @@
 .delete-icon:hover {
 	color: #b71c1c;
 }
+
+.event-search-input {
+	border: 1px solid #d0d4da;
+	border-radius: 6px;
+	padding-inline: 10px !important;
+	font-size: 15px;
+	margin-bottom: 12px;
+	background: #f7f8fa;
+	transition: border 0.2s, box-shadow 0.2s;
+	outline: none;
+	width: 100%;
+}
+
+.event-search-input:focus {
+	//border: 1.5px solid #0078d4;
+	background: #fff;
+	box-shadow: 0 2px 8px rgba(0, 120, 212, 0.07);
+}
