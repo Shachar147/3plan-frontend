@@ -1033,5 +1033,12 @@
 	"GENERAL.COLLAPSE_ALL": "Collapse all",
 	"CREATE_TRIP_FROM_COUNTRY": "Create trip from this country collections!",
 	"MULTIPLE_DESTINATIONS": "multiple destinations",
-	"CREATE_TRIP_FROM_COUNTRY.SHORT": "Create trip"
+	"CREATE_TRIP_FROM_COUNTRY.SHORT": "Create trip",
+	"TEMPLATE_NAME_FORMAT": "{days} days in {destination}",
+	"SAVE_AS_TEMPLATE": "Save as template",
+	"TRIP_SAVED_AS_TEMPLATE": "Template created successfully!",
+	"TEMPLATE_UPDATED": "Template updated successfully!",
+	"EDIT": "Edit",
+	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar",
+	"YOU_MAY_ALSO_WANT_TO_VISIT": "You may also want to visit:"
 }

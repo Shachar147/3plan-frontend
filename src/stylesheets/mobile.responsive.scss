@@ -1130,6 +1130,11 @@
 	.country-header-container {
 		margin-inline: 20px !important;
 	}
+
+	.itinerary-and-suggestions-column {
+		max-width: unset !important;
+		width: 100vw !important;
+	}
 }
 
 @media only screen and (max-height: 500px) {

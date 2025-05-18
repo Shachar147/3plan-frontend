@@ -9,6 +9,7 @@ import { DateRangeFormatted } from '../../services/data-handlers/data-handler-ba
 import './triplan-sidebar.scss';
 import MinimizeExpandSidebarButton from './minimze-expand-sidebar-button/minimize-expand-sidebar-button';
 import TriplanSidebarInner from './triplan-sidebar-inner';
+import './save-template-modal/save-template-modal.scss';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;

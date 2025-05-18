@@ -16,6 +16,7 @@ export const endpoints: Record<string, any> = {
 			duplicateTrip: '/trip/duplicate',
 			getAllTrips: '/trip/',
 			getAllTripsShort: '/trip/short',
+			saveAsTemplate: '/trip/save-as-template',
 
 			updateTripByName: (tripName: string) => `/trip/name/${tripName}`,
 			hideTripByName: (tripName: string) => `/trip/hide/name/${tripName}`,
