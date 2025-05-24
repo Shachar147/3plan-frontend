@@ -105,6 +105,7 @@
 	"MODALS.IMPORTED.TITLE": "הועלה!",
 	"MODALS.IMPORTED.CONTENT": "הקטגוריות והפעילויות הועלו בהצלחה",
 	"OOPS_SOMETHING_WENT_WRONG": "אופס, משהו השתבש :(",
+	"OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH": "אופס, משהו השתבש :( נסו לרענן את הדף",
 	"IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_CATEGORIES": "הקטגוריות הבאות יתווספו עם הלחיצה על אישור:",
 	"IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_EVENTS": "הפעילויות הבאות יתווספו עם הלחיצה על אישור:",
 	"MODALS.DELETE_CATEGORY.CONTENT": "האם אתם בטוחים שאתם רוצים למחוק את הקטגוריה הזאת?<br/>מחיקת הקטגורייה תמחק איתה את כל הפעילויות שתחתיה.<br/>זוהי פעולה בלתי הפיכה",

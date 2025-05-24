@@ -1040,5 +1040,6 @@
 	"TEMPLATE_UPDATED": "Template updated successfully!",
 	"EDIT": "Edit",
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar",
-	"YOU_MAY_ALSO_WANT_TO_VISIT": "You may also want to visit:"
+	"YOU_MAY_ALSO_WANT_TO_VISIT": "You may also want to visit:",
+	"OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH": "Oops, something went wrong :( try refreshing the page"
 }

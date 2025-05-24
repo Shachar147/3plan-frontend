@@ -219,7 +219,7 @@ function TripTemplatePageContent() {
 		const tripData = templatesStore.tripTemplates.find((t) => t.id == templateId);
 
 		if (!tripData) {
-			setErrorMessage(TranslateService.translate(eventStore, 'OOPS_SOMETHING_WENT_WRONG'));
+			setErrorMessage(TranslateService.translate(eventStore, 'OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH'));
 			setIsLoading(false);
 		} else {
 			await eventStore.updateTripData(tripData);
