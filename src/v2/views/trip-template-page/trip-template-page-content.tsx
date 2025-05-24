@@ -88,7 +88,7 @@ function TripTemplateSidebarSuggestions() {
 	});
 
 	if (sidebarEvents.length == 0) {
-		return;
+		return null;
 	}
 
 	return (
