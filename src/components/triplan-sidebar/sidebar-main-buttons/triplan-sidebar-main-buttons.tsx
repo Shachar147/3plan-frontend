@@ -20,10 +20,11 @@ function TriplanSidebarMainButtons() {
 		setAutoScheduleMessage(null);
 		try {
 			const response = await autoScheduleApiService.autoScheduleTrip(eventStore.tripName);
-			setAutoScheduleMessage('הלו"ז נבנה בהצלחה!');
-			// Optionally, reload events here if needed
+			setAutoScheduleMessage(TranslateService.translate(eventStore, 'AUTO_SCHEDULE.SUCCESS'));
+			// Reload trip details after successful auto-scheduling
+			await eventStore.setTripName(eventStore.tripName);
 		} catch (error) {
-			setAutoScheduleMessage('אירעה שגיאה בעת בניית הלו"ז');
+			setAutoScheduleMessage(TranslateService.translate(eventStore, 'AUTO_SCHEDULE.ERROR'));
 		} finally {
 			setIsAutoScheduling(false);
 		}
@@ -36,7 +37,11 @@ function TriplanSidebarMainButtons() {
 					flavor={ButtonFlavor.primary}
 					className="width-100-percents blue"
 					onClick={handleAutoSchedule}
-					text={isAutoScheduling ? TranslateService.translate(eventStore, 'LOADING') : 'תזמן אוטומטית'}
+					text={
+						isAutoScheduling
+							? TranslateService.translate(eventStore, 'LOADING')
+							: TranslateService.translate(eventStore, 'AUTO_SCHEDULE.BUTTON_TEXT')
+					}
 					disabled={isAutoScheduling || eventStore.isTripLocked}
 					icon={isAutoScheduling ? 'fa-spinner fa-spin' : 'fa-magic'}
 				/>

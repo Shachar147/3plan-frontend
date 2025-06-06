@@ -1297,5 +1297,8 @@
 	"TEMPLATE_UPDATED": "הטמפלייט עודכן בהצלחה!",
 	"EDIT": "עריכה",
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "מחק פעילות זאת לצמיתות",
-	"YOU_MAY_ALSO_WANT_TO_VISIT": "אולי תרצה לבקר גם ב:"
+	"YOU_MAY_ALSO_WANT_TO_VISIT": "אולי תרצה לבקר גם ב:",
+	"AUTO_SCHEDULE.BUTTON_TEXT": "תזמן אוטומטית",
+	"AUTO_SCHEDULE.SUCCESS": "הלו\"ז נבנה בהצלחה!",
+	"AUTO_SCHEDULE.ERROR": "אירעה שגיאה בעת בניית הלו\"ז"
 }
