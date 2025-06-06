@@ -1,5 +1,5 @@
 import MinimizeExpandSidebarButton from '../minimze-expand-sidebar-button/minimize-expand-sidebar-button';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { observer } from 'mobx-react';
 import Button, { ButtonFlavor } from '../../common/button/button';
 import ReactModalService from '../../../services/react-modal-service';
@@ -7,9 +7,43 @@ import TranslateService from '../../../services/translate-service';
 import { eventStoreContext } from '../../../stores/events-store';
 import { getClasses } from '../../../utils/utils';
 import './triplan-sidebar-main-buttons.scss';
+import AutoScheduleApiService from '../../../v2/services/auto-schedule-api-service';
 
 function TriplanSidebarMainButtons() {
 	const eventStore = useContext(eventStoreContext);
+	const [isAutoScheduling, setIsAutoScheduling] = useState(false);
+	const [autoScheduleMessage, setAutoScheduleMessage] = useState<string | null>(null);
+	const autoScheduleApiService = new AutoScheduleApiService();
+
+	async function handleAutoSchedule() {
+		setIsAutoScheduling(true);
+		setAutoScheduleMessage(null);
+		try {
+			const response = await autoScheduleApiService.autoScheduleTrip(eventStore.tripName);
+			setAutoScheduleMessage('הלו"ז נבנה בהצלחה!');
+			// Optionally, reload events here if needed
+		} catch (error) {
+			setAutoScheduleMessage('אירעה שגיאה בעת בניית הלו"ז');
+		} finally {
+			setIsAutoScheduling(false);
+		}
+	}
+
+	function renderAutoScheduleButton() {
+		return (
+			<div className="auto-schedule-button">
+				<Button
+					flavor={ButtonFlavor.primary}
+					className="width-100-percents blue"
+					onClick={handleAutoSchedule}
+					text={isAutoScheduling ? TranslateService.translate(eventStore, 'LOADING') : 'תזמן אוטומטית'}
+					disabled={isAutoScheduling || eventStore.isTripLocked}
+					icon={isAutoScheduling ? 'fa-spinner fa-spin' : 'fa-magic'}
+				/>
+				{autoScheduleMessage && <div className="auto-schedule-message">{autoScheduleMessage}</div>}
+			</div>
+		);
+	}
 
 	function renderAddCategoryButton() {
 		return (
@@ -55,6 +89,7 @@ function TriplanSidebarMainButtons() {
 			<MinimizeExpandSidebarButton />
 			{renderAddEventButton()}
 			{renderAddCategoryButton()}
+			{renderAutoScheduleButton()}
 		</div>
 	);
 }
