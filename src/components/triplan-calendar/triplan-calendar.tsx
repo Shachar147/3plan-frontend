@@ -228,9 +228,16 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			eventStore.setSelectedEventForNearBy(calendarEvent);
 		}
 
-		refreshSources();
-
-		eventStore.triggerCalendarReRender();
+		// --------------------------------------------------------------------------------------------
+		// NOTE:
+		// --------------------------------------------------------------------------------------------
+		// trying to solve bug of calendar refreshing itself every time I drag and drop an event.
+		// commented these lines to solve it.
+		// if there are other problems, try to uncomment these lines again.
+		// --------------------------------------------------------------------------------------------
+		// refreshSources();
+		// eventStore.triggerCalendarReRender();
+		// --------------------------------------------------------------------------------------------
 	};
 
 	const onEventClick = (info: any) => {
