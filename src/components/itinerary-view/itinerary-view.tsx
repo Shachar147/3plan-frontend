@@ -34,7 +34,7 @@ function ItineraryView({ events }: ItineraryViewProps) {
 
 	// Group events by day
 	const eventsByDay = events.reduce((acc, event) => {
-		const date = formatDate(new Date(event.start));
+		const date = moment(new Date(event.start)).format('DD/MM/YYYY'); // formatDate(new Date(event.start));
 		if (!acc[date]) {
 			acc[date] = [];
 		}
@@ -51,7 +51,6 @@ function ItineraryView({ events }: ItineraryViewProps) {
 	// 	return dateA.getTime() - dateB.getTime();
 	// });
 	const days = Object.keys(eventsByDay).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-	console.log(days);
 
 	if (days.length === 0) {
 		return null;
@@ -215,7 +214,7 @@ function ItineraryView({ events }: ItineraryViewProps) {
 							<span className="day-number">
 								{TranslateService.translate(eventStore, 'DAY_X', { X: index + 1 })}
 							</span>
-							<span className="day-date">{moment(day).format('DD/MM/YYYY')}</span>
+							<span className="day-date">{day}</span>
 						</button>
 					))}
 				</div>
