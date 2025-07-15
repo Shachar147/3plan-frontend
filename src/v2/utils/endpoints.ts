@@ -102,5 +102,8 @@ export const endpoints: Record<string, any> = {
 		templates: {
 			feed: '/templates/feed/',
 		},
+		trips: {
+			autoSchedule: '/auto-schedule',
+		},
 	},
 };
