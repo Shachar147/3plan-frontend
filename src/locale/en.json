@@ -56,6 +56,8 @@
 	"MODALS.UPDATED_CATEGORY.CONTENT": "Category have been updated",
 	"MODALS.START_TIME": "Start Time",
 	"MODALS.END_TIME": "End Time",
+	"ADD_15_MINUTES": "Add 15 minutes",
+	"SUBTRACT_15_MINUTES": "Subtract 15 minutes",
 	"SEARCH_PLACEHOLDER": "Enter search keywords",
 	"IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT": "Import Activities - Download Template",
 	"IMPORT_EVENTS.BUTTON_TEXT": "Import Activities",

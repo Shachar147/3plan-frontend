@@ -36,6 +36,7 @@ import {
 	ViewMode,
 } from '../utils/enums';
 import {
+	add15Minutes,
 	addHours,
 	addHoursToDate,
 	convertMsToHM,
@@ -46,6 +47,7 @@ import {
 	getEndDate,
 	getInputDateTimeValue,
 	getOffsetInHours,
+	subtract15Minutes,
 	validateDateRange,
 	validateDuration,
 } from '../utils/time-utils';
@@ -230,6 +232,88 @@ export const ReactModalRenderHelper = {
 				readOnly={extra.disabled || extra.readOnly}
 				enforceMinMax={extra.enforceMinMax}
 			/>
+		);
+	},
+	renderDatePickerWithShortcutsInput: (
+		eventStore: EventStore,
+		modalValueName: string,
+		extra: {
+			placeholderKey?: string;
+			placeholder?: string;
+			id?: string;
+			className?: string;
+			value?: string;
+			disabled?: boolean;
+			enforceMinMax?: boolean;
+			readOnly?: boolean;
+		},
+		ref?: any
+	) => {
+		if (extra.value && !eventStore.modalValues[modalValueName]) {
+			runInAction(() => {
+				eventStore.modalValues[modalValueName] = extra.value;
+			});
+		}
+
+		const adjustTime = (minutes: number) => {
+			const currentValue = eventStore.modalValues[modalValueName];
+			if (currentValue) {
+				// Parse the datetime-local value (format: YYYY-MM-DDTHH:mm)
+				const [datePart, timePart] = currentValue.split('T');
+				const [year, month, day] = datePart.split('-').map(Number);
+				const [hour, minute] = timePart.split(':').map(Number);
+
+				// Create date object in local timezone
+				const date = new Date(year, month - 1, day, hour, minute);
+				const adjustedDate = minutes > 0 ? add15Minutes(date) : subtract15Minutes(date);
+
+				// Format back to datetime-local format (YYYY-MM-DDTHH:mm) without timezone conversion
+				const newYear = adjustedDate.getFullYear();
+				const newMonth = String(adjustedDate.getMonth() + 1).padStart(2, '0');
+				const newDay = String(adjustedDate.getDate()).padStart(2, '0');
+				const newHour = String(adjustedDate.getHours()).padStart(2, '0');
+				const newMinute = String(adjustedDate.getMinutes()).padStart(2, '0');
+				const newValue = `${newYear}-${newMonth}-${newDay}T${newHour}:${newMinute}`;
+
+				runInAction(() => {
+					eventStore.modalValues[modalValueName] = newValue;
+					// Force re-render by updating a reactive property
+					eventStore.forceUpdate = (eventStore.forceUpdate || 0) + 1;
+				});
+			}
+		};
+
+		return (
+			<div className="date-picker-with-shortcuts">
+				<DatePicker
+					id={extra.id}
+					className={extra.className}
+					ref={ref}
+					modalValueName={modalValueName}
+					placeholder={extra.placeholder}
+					placeholderKey={extra.placeholderKey}
+					readOnly={extra.disabled || extra.readOnly}
+					enforceMinMax={extra.enforceMinMax}
+				/>
+				{!extra.readOnly && (
+					<div className="time-shortcuts">
+						<Button
+							flavor={ButtonFlavor.link}
+							text="-15"
+							onClick={() => adjustTime(-15)}
+							className="time-shortcut-btn"
+							tooltip={TranslateService.translate(eventStore, 'SUBTRACT_15_MINUTES')}
+						/>
+						<Button
+							flavor={ButtonFlavor.link}
+							text="+15"
+							onClick={() => adjustTime(15)}
+							className="time-shortcut-btn"
+							tooltip={TranslateService.translate(eventStore, 'ADD_15_MINUTES')}
+						/>
+					</div>
+				)}
+			</div>
 		);
 	},
 	renderTextAreaInput: (
@@ -541,6 +625,14 @@ export const ReactModalRenderHelper = {
 				break;
 			case 'date-picker':
 				input = ReactModalRenderHelper.renderDatePickerInput(
+					eventStore,
+					row.settings.modalValueName,
+					row.settings.extra,
+					row.settings.ref
+				);
+				break;
+			case 'date-picker-with-shortcuts':
+				input = ReactModalRenderHelper.renderDatePickerWithShortcutsInput(
 					eventStore,
 					row.settings.modalValueName,
 					row.settings.extra,
@@ -1204,7 +1296,7 @@ const ReactModalService = {
 						settings: {
 							modalValueName: 'start-time',
 							ref: eventStore.modalValuesRefs['start-time'],
-							type: 'date-picker',
+							type: 'date-picker-with-shortcuts',
 							extra: {
 								placeholder: `${TranslateService.translate(
 									eventStore,
@@ -1222,7 +1314,7 @@ const ReactModalService = {
 						settings: {
 							modalValueName: 'end-time',
 							ref: eventStore.modalValuesRefs['end-time'],
-							type: 'date-picker',
+							type: 'date-picker-with-shortcuts',
 							extra: {
 								placeholder: `${TranslateService.translate(
 									eventStore,

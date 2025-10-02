@@ -204,6 +204,19 @@ export function addHours(dt: Date, hours: number): Date {
 	return dt;
 }
 
+export function addMinutes(dt: Date, minutes: number): Date {
+	dt.setMinutes(dt.getMinutes() + minutes);
+	return dt;
+}
+
+export function add15Minutes(dt: Date): Date {
+	return addMinutes(dt, 15);
+}
+
+export function subtract15Minutes(dt: Date): Date {
+	return addMinutes(dt, -15);
+}
+
 export function addSeconds(dt: Date, seconds: number): Date {
 	dt.setSeconds(dt.getSeconds() + seconds);
 	return dt;

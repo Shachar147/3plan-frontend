@@ -1409,6 +1409,42 @@ input:read-only {
 		max-width: unset !important;
 	}
 }
+
+// Time adjustment buttons styling
+.date-picker-with-shortcuts {
+	display: flex;
+	flex: 1 1 0;
+	align-items: center;
+	gap: 10px;
+
+	.triplan-date-picker-input {
+		flex: 1;
+
+		.datePickerInput {
+			min-width: unset; // otherwise it'll be 100%, and the line will overflow due to the buttons.
+		}
+	}
+
+	.time-shortcuts {
+		display: flex;
+		gap: 5px;
+
+		.time-shortcut-btn {
+			min-width: 40px;
+			padding: 4px 8px;
+			font-size: 12px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			background: #f8f9fa;
+			color: #495057;
+
+			&:hover {
+				background: #e9ecef;
+				border-color: #adb5bd;
+			}
+		}
+	}
+}
 .triplan-selector {
 	max-width: unset;
 }

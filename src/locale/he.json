@@ -69,6 +69,8 @@
 	"MODALS.UPDATED_CATEGORY.CONTENT": "הקטגוריה עודכנה בהצלחה",
 	"MODALS.START_TIME": "זמן התחלה",
 	"MODALS.END_TIME": "זמן סיום",
+	"ADD_15_MINUTES": "הוסף 15 דקות",
+	"SUBTRACT_15_MINUTES": "הפחת 15 דקות",
 	"SEARCH_PLACEHOLDER": "הקלד טקסט לחיפוש",
 	"IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT": "ייבא פעילויות - הורד טמפלייט",
 	"IMPORT_EVENTS.BUTTON_TEXT": "ייבא פעילויות",
