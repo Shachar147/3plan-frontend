@@ -43,14 +43,19 @@ function ItineraryView({ events }: ItineraryViewProps) {
 	}, {} as Record<string, CalendarEvent[]>);
 
 	// Sort days by actual date, not string representation
-	// const days = Object.keys(eventsByDay).sort((a, b) => {
-	// 	const [dayA, monthA, yearA] = a.split('/').map(Number);
-	// 	const [dayB, monthB, yearB] = b.split('/').map(Number);
-	// 	const dateA = new Date(yearA, monthA - 1, dayA);
-	// 	const dateB = new Date(yearB, monthB - 1, dayB);
-	// 	return dateA.getTime() - dateB.getTime();
-	// });
-	const days = Object.keys(eventsByDay).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+	const isDev = window.location.href.includes('localhost');
+
+	const days = isDev
+		? Object.keys(eventsByDay).sort((a, b) => {
+				const [dayA, monthA, yearA] = a.split('/').map(Number);
+				const [dayB, monthB, yearB] = b.split('/').map(Number);
+				const dateA = new Date(yearA, monthA - 1, dayA);
+				const dateB = new Date(yearB, monthB - 1, dayB);
+				return dateA.getTime() - dateB.getTime();
+		  })
+		: Object.keys(eventsByDay).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+	// const days = Object.keys(eventsByDay).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
 	if (days.length === 0) {
 		return null;
