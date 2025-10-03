@@ -419,9 +419,13 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				musicals: 'icons/onion/1637-music-note_4x.png',
 				flights: 'icons/onion/1504-airport-plane_4x.png',
 				coffee_shops: 'icons/onion/1868-smoking_4x.png',
+				gimmicks: 'icons/onion/1796-ghost_4x.png',
+				golf: 'icons/onion/1585-golf_4x.png',
 			};
 
-			if (isBasketball(category, title)) {
+			if (isMatching(category, ['golf', 'גולף'])) {
+				icon = iconsMap['golf'];
+			} else if (isBasketball(category, title)) {
 				icon = iconsMap['basketball'];
 			} else if (isDessert(category, title)) {
 				icon = iconsMap['desserts'];
@@ -444,6 +448,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				isMatching(title, ['coffee shops', 'coffee shop', 'קופישופס'])
 			) {
 				icon = iconsMap['coffee_shops'];
+			} else if (isMatching(category, ['gimmick', 'gimick', 'גימיקים'])) {
+				icon = iconsMap['gimmicks'];
 			} else if (
 				isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
 			) {
@@ -517,10 +523,13 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				icon.url = getIconUrl(event);
 			}
 
+			// Check if event is scheduled
+			const isScheduled = !props.allEvents && eventStore.calendarEvents.find((x) => x.id === event.id);
+
 			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority!] };
 			const markerIconWithBorder = {
 				...markerIcon,
-				strokeColor: '#ffffff',
+				strokeColor: 'red', // '#ffffff',
 				strokeOpacity: 0.6,
 				strokeWeight: 8,
 			};
@@ -536,7 +545,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					className: 'marker-label',
 				},
 				title: texts[key],
-				icon: markerIcon,
+				icon: isScheduled ? markerIconWithBorder : markerIcon,
 			});
 
 			// for visible items to be able to get more info about this marker
