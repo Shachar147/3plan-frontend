@@ -389,109 +389,109 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
                              </div>`;
 	};
 
-	const initMarkers = (map = googleMapRef) => {
-		const getIconUrl = (event: any) => {
-			let icon = '';
-			let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
-			let category: string = props.allEvents
-				? event.category
-				: eventStore.categories.find((x) => x.id.toString() === event.category?.toString())?.title;
+	const getIconUrl = (event: any) => {
+		let icon = '';
+		let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+		let category = resolveCategoryTitle(event);
 
-			category = category ? category.toString().toLowerCase() : '';
-			const title = event.title.toLowerCase();
+		category = category ? category.toString().toLowerCase() : '';
+		const title = event.title.toLowerCase();
 
-			const iconsMap = {
-				basketball: 'icons/onion/1520-basketball_4x.png',
-				food: 'icons/onion/1577-food-fork-knife_4x.png',
-				photos: 'icons/onion/1535-camera-photo_4x.png',
-				attractions: 'icons/onion/1502-shape_star_4x.png',
-				beach: 'icons/onion/1521-beach_4x.png',
-				nightlife: 'icons/onion/1517-bar-cocktail_4x.png',
-				hotel: 'icons/onion/1602-hotel-bed_4x.png',
-				shopping: 'icons/onion/1684-shopping-bag_4x.png',
-				tourism: 'icons/onion/1548-civic_4x.png', // 'icons/onion/1715-tower_4x.png',
-				flowers: 'icons/onion/1582-garden-flower_4x.png',
-				desserts: 'icons/onion/1607-ice-cream_4x.png',
-				cities: 'icons/onion/1546-city-buildings_4x.png',
-				mountains: 'icons/onion/1634-mountain_4x.png',
-				lakes: 'icons/onion/1697-spa_4x.png',
-				trains: 'icons/onion/1716-train_4x.png',
-				musicals: 'icons/onion/1637-music-note_4x.png',
-				flights: 'icons/onion/1504-airport-plane_4x.png',
-				coffee_shops: 'icons/onion/1868-smoking_4x.png',
-				gimmicks: 'icons/onion/1796-ghost_4x.png',
-				golf: 'icons/onion/1585-golf_4x.png',
-			};
-
-			if (isMatching(category, ['golf', 'גולף'])) {
-				icon = iconsMap['golf'];
-			} else if (isBasketball(category, title)) {
-				icon = iconsMap['basketball'];
-			} else if (isDessert(category, title)) {
-				icon = iconsMap['desserts'];
-			} else if (isFlight(category, title)) {
-				icon = iconsMap['flights'];
-				bgColor = flightColor;
-			} else if (isHotel(category, title)) {
-				icon = iconsMap['hotel'];
-				bgColor = hotelColor;
-			} else if (isMatching(category, FOOD_KEYWORDS) || isMatching(title, FOOD_KEYWORDS)) {
-				icon = iconsMap['food'];
-			} else if (isMatching(category, ['photo', 'תמונות'])) {
-				icon = iconsMap['photos'];
-			} else if (isMatching(category, NATURE_KEYWORDS) || isMatching(title, NATURE_KEYWORDS)) {
-				icon = iconsMap['flowers'];
-			} else if (isMatching(category, ATTRACTIONS_KEYWORDS)) {
-				icon = iconsMap['attractions'];
-			} else if (
-				isMatching(category, ['coffee shops', 'coffee shop', 'קופישופס']) ||
-				isMatching(title, ['coffee shops', 'coffee shop', 'קופישופס'])
-			) {
-				icon = iconsMap['coffee_shops'];
-			} else if (isMatching(category, ['gimmick', 'gimick', 'גימיקים'])) {
-				icon = iconsMap['gimmicks'];
-			} else if (
-				isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
-			) {
-				icon = iconsMap['beach'];
-			} else if (isMatching(category, NIGHTLIFE_KEYWORDS)) {
-				icon = iconsMap['nightlife'];
-			} else if (isMatching(category, STORE_KEYWORDS)) {
-				icon = iconsMap['shopping'];
-			} else if (isMatching(category, TOURIST_KEYWORDS)) {
-				icon = iconsMap['tourism'];
-			} else if (
-				isMatching(title, ['city', 'עיירה']) ||
-				isMatching(category, ['cities', 'עיירות', 'כפרים', 'village', 'ערים'])
-			) {
-				icon = iconsMap['cities'];
-			} else if (
-				isMatching(title, ['mountain', 'cliff', ' הר ', 'פסגת']) ||
-				isMatching(category, ['mountains', 'הרים'])
-			) {
-				icon = iconsMap['mountains'];
-			} else if (
-				isMatching(title, ['lake ', 'lakes', ' נהר ', 'אגם']) ||
-				isMatching(category, ['lakes', 'נהרות', 'אגמים'])
-			) {
-				icon = iconsMap['lakes'];
-			} else if (
-				isMatching(title, ['rollercoaster', 'roller coaster', 'רכבת']) ||
-				isMatching(category, ['trains', 'roller coasters', 'רכבות'])
-			) {
-				icon = iconsMap['trains'];
-			} else if (
-				isMatching(title, ['show', 'musical', 'הופעה', 'הצגה', 'תאטרון', 'מחזמר', 'תיאטרון']) ||
-				isMatching(title, ['shows', 'musicals', 'הופעות', 'הצגות', 'תאטרון', 'מחזות זמר', 'music shows'])
-			) {
-				icon = iconsMap['musicals'];
-			} else if (icon === '') {
-				// return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
-				return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
-			}
-			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
+		const iconsMap = {
+			basketball: 'icons/onion/1520-basketball_4x.png',
+			food: 'icons/onion/1577-food-fork-knife_4x.png',
+			photos: 'icons/onion/1535-camera-photo_4x.png',
+			attractions: 'icons/onion/1502-shape_star_4x.png',
+			beach: 'icons/onion/1521-beach_4x.png',
+			nightlife: 'icons/onion/1517-bar-cocktail_4x.png',
+			hotel: 'icons/onion/1602-hotel-bed_4x.png',
+			shopping: 'icons/onion/1684-shopping-bag_4x.png',
+			tourism: 'icons/onion/1548-civic_4x.png', // 'icons/onion/1715-tower_4x.png',
+			flowers: 'icons/onion/1582-garden-flower_4x.png',
+			desserts: 'icons/onion/1607-ice-cream_4x.png',
+			cities: 'icons/onion/1546-city-buildings_4x.png',
+			mountains: 'icons/onion/1634-mountain_4x.png',
+			lakes: 'icons/onion/1697-spa_4x.png',
+			trains: 'icons/onion/1716-train_4x.png',
+			musicals: 'icons/onion/1637-music-note_4x.png',
+			flights: 'icons/onion/1504-airport-plane_4x.png',
+			coffee_shops: 'icons/onion/1868-smoking_4x.png',
+			gimmicks: 'icons/onion/1796-ghost_4x.png',
+			golf: 'icons/onion/1585-golf_4x.png',
 		};
 
+		if (isMatching(category, ['golf', 'גולף'])) {
+			icon = iconsMap['golf'];
+		} else if (isBasketball(category, title)) {
+			icon = iconsMap['basketball'];
+		} else if (isDessert(category, title)) {
+			icon = iconsMap['desserts'];
+		} else if (isFlight(category, title)) {
+			icon = iconsMap['flights'];
+			bgColor = flightColor;
+		} else if (isHotel(category, title)) {
+			icon = iconsMap['hotel'];
+			bgColor = hotelColor;
+		} else if (isMatching(category, FOOD_KEYWORDS)) {
+			icon = iconsMap['food'];
+		} else if (isMatching(category, ['photo', 'תמונות'])) {
+			icon = iconsMap['photos'];
+		} else if (isMatching(category, NATURE_KEYWORDS) || isMatching(title, NATURE_KEYWORDS)) {
+			icon = iconsMap['flowers'];
+		} else if (isMatching(category, ATTRACTIONS_KEYWORDS)) {
+			icon = iconsMap['attractions'];
+		} else if (
+			isMatching(category, ['coffee shops', 'coffee shop', 'קופישופס']) ||
+			isMatching(title, ['coffee shops', 'coffee shop', 'קופישופס'])
+		) {
+			icon = iconsMap['coffee_shops'];
+		} else if (isMatching(category, ['gimmick', 'gimick', 'גימיקים'])) {
+			icon = iconsMap['gimmicks'];
+		} else if (
+			isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
+		) {
+			icon = iconsMap['beach'];
+		} else if (isMatching(category, NIGHTLIFE_KEYWORDS)) {
+			icon = iconsMap['nightlife'];
+		} else if (isMatching(category, STORE_KEYWORDS)) {
+			icon = iconsMap['shopping'];
+		} else if (isMatching(category, TOURIST_KEYWORDS)) {
+			icon = iconsMap['tourism'];
+		} else if (
+			isMatching(title, ['city', 'עיירה']) ||
+			isMatching(category, ['cities', 'עיירות', 'כפרים', 'village', 'ערים'])
+		) {
+			icon = iconsMap['cities'];
+		} else if (
+			isMatching(title, ['mountain', 'cliff', ' הר ', 'פסגת']) ||
+			isMatching(category, ['mountains', 'הרים'])
+		) {
+			icon = iconsMap['mountains'];
+		} else if (
+			isMatching(title, ['lake ', 'lakes', ' נהר ', 'אגם']) ||
+			isMatching(category, ['lakes', 'נהרות', 'אגמים'])
+		) {
+			icon = iconsMap['lakes'];
+		} else if (
+			isMatching(title, ['rollercoaster', 'roller coaster', 'רכבת']) ||
+			isMatching(category, ['trains', 'roller coasters', 'רכבות'])
+		) {
+			icon = iconsMap['trains'];
+		} else if (
+			isMatching(title, ['show', 'musical', 'הופעה', 'הצגה', 'תאטרון', 'מחזמר', 'תיאטרון']) ||
+			isMatching(title, ['shows', 'musicals', 'הופעות', 'הצגות', 'תאטרון', 'מחזות זמר', 'music shows'])
+		) {
+			icon = iconsMap['musicals'];
+		} else if (isMatching(title, FOOD_KEYWORDS)) {
+			icon = iconsMap['food'];
+		} else if (icon === '') {
+			// return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
+			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
+		}
+		return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
+	};
+
+	const initMarkers = (map = googleMapRef) => {
 		const getIconUrlByIdx = (event: any, idx: number) => {
 			const bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1738-blank-sequence_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0&color=ffffffff&psize=15&text=${idx}`;
@@ -538,7 +538,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			const refMarker = new googleRef.Marker({
 				position: { lat: coordinate.lat, lng: coordinate.lng },
 				label: {
-					text: texts[key],
+					text: `${isScheduled ? '✓ ' : ''}${texts[key]}`,
 					color: '#c0bbbb',
 					fontSize: '10px',
 					fontWeight: 'bold',
@@ -861,6 +861,190 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		};
 	};
 
+	const resolveCategoryTitle = (event: any) => {
+		// Prefer explicit category/categoryId, handle number or numeric string ids
+		const raw = event?.category ?? event?.categoryId;
+		let title: string | undefined;
+		if (raw !== undefined && raw !== null) {
+			const asNumber = Number(raw);
+			if (!Number.isNaN(asNumber)) {
+				const found = eventStore.categories.find((x) => x.id === asNumber);
+				if (found) {
+					title = found.title;
+				}
+			}
+			// If not a known id or non-numeric, treat it as already a title
+			if (!title) {
+				title = String(raw);
+			}
+		}
+
+		// Fallback for all-events context if nothing resolved
+		if (!title && props.allEvents) {
+			title = String(event?.category ?? '');
+		}
+
+		return title ?? '';
+	};
+
+	const computeIconUrlAndColor = (event: any) => {
+		const color = priorityToMapColor[event.priority || TriplanPriority.unset];
+		let bgColor = color.replace('#', '');
+		const iconUrl = getIconUrl(event);
+
+		return { iconUrl, color: `#${bgColor}` };
+	};
+
+	const downloadFile = (filename: string, mimeType: string, content: string) => {
+		const blob = new Blob([content], { type: mimeType });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = filename;
+		a.click();
+		setTimeout(() => URL.revokeObjectURL(url), 0);
+	};
+
+	const xmlEscape = (value: string) => {
+		if (value == null) return '';
+		return value
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&apos;');
+	};
+
+	const buildKmlFromEvents = (allEvents: any[], groupBy: 'category' | 'day') => {
+		// Group key function
+		const getGroupKey = (ev: any) => {
+			if (groupBy === 'day') {
+				try {
+					const d = new Date(ev.start);
+					const yyyy = d.getFullYear();
+					const mm = String(d.getMonth() + 1).padStart(2, '0');
+					const dd = String(d.getDate()).padStart(2, '0');
+					return `${yyyy}-${mm}-${dd}`; // stable sortable key
+				} catch (_e) {
+					return 'Unscheduled';
+				}
+			}
+			return resolveCategoryTitle(ev) || 'Uncategorized';
+		};
+
+		let events = allEvents.filter((x) => x.location && x.location.latitude && x.location.longitude);
+
+		// Sort by start time when available to preserve calendar order
+		events = [...events].sort((a, b) => {
+			const ta = a?.start ? new Date(a.start).getTime() : Number.POSITIVE_INFINITY;
+			const tb = b?.start ? new Date(b.start).getTime() : Number.POSITIVE_INFINITY;
+			return ta - tb;
+		});
+
+		// Distinct categories for styles
+		const mapTitle = xmlEscape(`${eventStore.tripName || 'My Trip'} - Exported from Triplan`);
+		let kml = `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n<Document>\n<name>${mapTitle}</name>\n<description/>`;
+
+		// Distinct categories + priorities
+		const distinctCategoriesAndPriorities = Array.from(
+			new Set(events.map((ev) => `${resolveCategoryTitle(ev) || 'Uncategorized'}|${ev.priority}`))
+		);
+
+		distinctCategoriesAndPriorities.forEach((catAndPrio) => {
+			const [cat, priorityStr] = catAndPrio.split('|');
+			const priority = Number(priorityStr);
+
+			const sample = events.find(
+				(e) => (resolveCategoryTitle(e) || 'Uncategorized') == cat && e.priority == priority
+			);
+
+			const { iconUrl } = sample ? computeIconUrlAndColor(sample) : ({ iconUrl: '' } as any);
+
+			const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-\u0590-\u05FF]/g, '_')}_${priority}`;
+
+			kml += `\n<Style id="${styleId}">\n  <IconStyle>\n    <scale>1.0</scale>\n    <Icon>\n      <href>${xmlEscape(
+				iconUrl
+			)}</href>\n    </Icon>\n  </IconStyle>\n</Style>`;
+		});
+
+		// Group events while maintaining sorted order
+		const groups: Record<string, any[]> = {};
+		const dayKeyToDisplayName: Record<string, string> = {};
+		const formatDisplayDate = (date: Date) => {
+			const yyyy = date.getFullYear();
+			const mm = String(date.getMonth() + 1).padStart(2, '0');
+			const dd = String(date.getDate()).padStart(2, '0');
+			const isHebrew = eventStore.calendarLocalCode?.startsWith('he');
+			return isHebrew ? `${dd}/${mm}/${yyyy}` : `${mm}/${dd}/${yyyy}`;
+		};
+		events.forEach((ev) => {
+			const key = getGroupKey(ev);
+			groups[key] = groups[key] || [];
+			groups[key].push(ev);
+			if (groupBy === 'day' && !dayKeyToDisplayName[key]) {
+				try {
+					dayKeyToDisplayName[key] = formatDisplayDate(new Date(ev.start));
+				} catch (_e) {
+					dayKeyToDisplayName[key] = key;
+				}
+			}
+		});
+
+		// Determine folder order
+		let groupNames: string[] = Object.keys(groups);
+		if (groupBy === 'day') {
+			groupNames = groupNames.sort((a, b) => (a > b ? 1 : -1)); // yyyy-mm-dd ascending
+		}
+
+		groupNames.forEach((groupName) => {
+			const displayName = groupBy === 'day' ? dayKeyToDisplayName[groupName] : groupName;
+			kml += `\n<Folder>\n<name>${xmlEscape(displayName)}</name>`;
+			groups[groupName].forEach((ev, idx) => {
+				const baseName = xmlEscape(
+					getEventTitle({ title: ev.title } as unknown as CalendarEvent, eventStore, true)
+				);
+				const name = groupBy === 'day' ? `${idx + 1} - ${baseName}` : baseName;
+				const descParts = [] as string[];
+				if (ev.description) descParts.push(ev.description);
+				if (ev.moreInfo) descParts.push(`<a href=\"${ev.moreInfo}\" target=\"_blank\">More info<\/a>`);
+				if (ev.location?.address) descParts.push(ev.location.address);
+				const description = descParts.join('<br/>');
+				const lng = ev.location.longitude;
+				const lat = ev.location.latitude;
+				const cat = resolveCategoryTitle(ev) || 'Uncategorized';
+				const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-\u0590-\u05FF]/g, '_')}_${ev.priority}`;
+				kml += `\n  <Placemark>\n    <name>${name}<\/name>\n    <styleUrl>#${styleId}<\/styleUrl>\n    <description><![CDATA[${description}]]><\/description>\n    <Point><coordinates>${lng},${lat},0<\/coordinates><\/Point>\n  <\/Placemark>`;
+			});
+			kml += `\n<\/Folder>`;
+		});
+
+		kml += `\n<\/Document>\n<\/kml>`;
+		return kml;
+	};
+
+	const startExportToGoogleMaps = () => {
+		ReactModalService.openExportToGoogleMapsSelectionModal(eventStore, (mode) => {
+			const doDownload = () => {
+				let events: any[] = [];
+				let groupBy: 'category' | 'day' = 'category';
+				if (mode === 'all') {
+					events = props.allEvents ?? eventStore.allEventsComputed;
+					groupBy = 'category';
+				} else if (mode === 'scheduled') {
+					events = eventStore.calendarEvents;
+					groupBy = 'category';
+				} else {
+					events = eventStore.calendarEvents;
+					groupBy = 'day';
+				}
+				const kml = buildKmlFromEvents(events, groupBy);
+				downloadFile('triplan-export.kml', 'application/vnd.google-earth.kml+xml', kml);
+			};
+
+			ReactModalService.openExportToGoogleMapsStepsModal(eventStore, doDownload);
+		});
+	};
+
 	const getAllMarkers = (searchValue: string) => {
 		const visibleItems = [];
 
@@ -1128,6 +1312,18 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			);
 		}
 
+		function renderExportToGoogleMapsButton() {
+			return (
+				<Button
+					text={TranslateService.translate(eventStore, 'EXPORT_MAP_TO_GOOGLE_MAPS')}
+					onClick={startExportToGoogleMaps}
+					className="brown"
+					flavor={ButtonFlavor.secondary}
+					icon="fa-location-arrow"
+				/>
+			);
+		}
+
 		function renderFilterButton() {
 			return (
 				<Button
@@ -1151,6 +1347,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					{renderFilterButton()}
 					{renderCalculateDistancesButton()}
 					{!eventStore.isMobile && <FocusModeButton />}
+					{!eventStore.isMobile && renderExportToGoogleMapsButton()}
 					{!eventStore.isMobile && (
 						<div className="pc-map-view-selection-container">{renderMapViewSelection()}</div>
 					)}

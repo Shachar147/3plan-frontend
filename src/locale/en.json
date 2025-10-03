@@ -66,6 +66,7 @@
 	"IMPORT_EVENTS.TITLE": "Import Activities - Download Template",
 	"IMPORT_EVENTS.TITLE2": "Import Activities - Upload Template",
 	"MODALS.DOWNLOAD_TEMPLATE": "Download Template",
+	"MODALS.DOWNLOAD": "Download",
 	"MODALS.UPLOAD": "Upload",
 	"TEMPLATE.ICON": "Icon",
 	"TEMPLATE.TITLE": "Title",
@@ -198,6 +199,13 @@
 	"CATEGORY.HOTELS": "Hotels",
 	"CATEGORY.FLIGHTS": "Flights",
 	"MODALS.LOCATION.PLACEHOLDER": "Enter Location",
+	"EXPORT_TO_GOOGLE_MAPS.TITLE": "Export to Google Maps",
+	"EXPORT_TO_GOOGLE_MAPS.SELECT_WHAT_TO_EXPORT": "Select what to export",
+	"EXPORT_TO_GOOGLE_MAPS.MODES.ALL": "All activities",
+	"EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED": "Only scheduled activities",
+	"EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED_BY_DAY": "Only scheduled activities by day",
+	"EXPORT_TO_GOOGLE_MAPS.STEPS.TITLE": "Export to Google Maps - Steps",
+	"EXPORT_TO_GOOGLE_MAPS_STEPS": "Steps:<br/><b>1. A KML file that includes your activities will be downloaded.<\/b><br/>2. Open <a href=\"{URL}\" target=\"_blank\" rel=\"noreferrer\">Google My Maps<\/a> and click \"Create a new map\".<br/>3. In the new map, click \"Import\" and upload the KML file.",
 	"SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "show which",
 	"SHOW_ONLY_EVENTS_WITH_TODO_COMPLETE": "Show which",
 	"SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS": "Show which",
@@ -480,6 +488,7 @@
 	"CALCULATE_DISTANCES_MODAL.DESCRIPTION": "Calculating the distance between all the coordinates on your map can help you significantly!\n\nDoing so will add a new section to your sidebar allowing you to check the distance and duration from one location to another, or which locations are close to another location you choose!\n\nBeside that, two more useful feature you'll be exposed two are:\n1. Traveling info will be added to your list view summary\n2. Red indication and suggested leave time will be added to activities that are too close to each other\n(based on calculated travel time)",
 	"CALCULATE_DISTANCES_MODAL.CTA": "Let's go!",
 	"CALCULATE_DISTANCES_MODAL.CANCEL": "Close",
+	"GENERAL.CLOSE": "Close",
 	"CALCULATE_DISTANCES_MODAL.CTA.CALCULATING": "Calculating... {X}%",
 	"CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.TITLE": "Yessir!",
 	"CALCULATE_DISTANCES_MODAL.FINISHED_CALCULATING.CONTENT": "Finished Calculating :)",
@@ -1043,5 +1052,6 @@
 	"EDIT": "Edit",
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar",
 	"YOU_MAY_ALSO_WANT_TO_VISIT": "You may also want to visit:",
-	"OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH": "Oops, something went wrong :( try refreshing the page"
+	"OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH": "Oops, something went wrong :( try refreshing the page",
+	"EXPORT_MAP_TO_GOOGLE_MAPS": "Export to Google Maps"
 }
