@@ -1053,5 +1053,13 @@
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar",
 	"YOU_MAY_ALSO_WANT_TO_VISIT": "You may also want to visit:",
 	"OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH": "Oops, something went wrong :( try refreshing the page",
-	"EXPORT_MAP_TO_GOOGLE_MAPS": "Export to Google Maps"
+	"EXPORT_MAP_TO_GOOGLE_MAPS": "Export to Google Maps",
+	"BACKUP_TRIP.BUTTON_TEXT": "Backup Trip",
+	"BACKUP_TRIP.TITLE": "Backup Trip",
+	"BACKUP_TRIP.SELECT_FORMAT": "Select backup format",
+	"BACKUP_TRIP.FORMAT.JSON": "JSON (Complete trip data)",
+	"BACKUP_TRIP.FORMAT.CSV": "CSV (Activities only)",
+	"BACKUP_TRIP.DESCRIPTION.JSON": "Export complete trip data including trip name, dates, categories, events, and more. Can be used to recreate the exact trip using the API.",
+	"BACKUP_TRIP.DESCRIPTION.CSV": "Export activities in CSV format, compatible with the import format.",
+	"BACKUP_TRIP.EXPORT": "Export"
 }

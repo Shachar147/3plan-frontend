@@ -58,6 +58,7 @@ import DatePicker from '../components/inputs/date-picker/date-picker';
 import { EventInput } from '@fullcalendar/react';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ImportService from './import-service';
+import { BackupService } from './backup-service';
 
 // @ts-ignore
 import Slider from 'react-slick';
@@ -4243,6 +4244,82 @@ const ReactModalService = {
 							'error'
 						);
 					};
+				}
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+	openBackupTripModal: (eventStore: EventStore) => {
+		// Initialize modal values
+		eventStore.modalValues['backupFormat'] = 'json';
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'BACKUP_TRIP.TITLE'),
+			content: (
+				<Observer>
+					{() => (
+						<div className="backup-trip-modal">
+							<div className="margin-bottom-15">
+								{TranslateService.translate(eventStore, 'BACKUP_TRIP.SELECT_FORMAT')}
+							</div>
+							<div className="backup-format-options">
+								<div className="backup-format-option">
+									<label className="backup-format-label">
+										<input
+											type="radio"
+											name="backupFormat"
+											value="json"
+											checked={eventStore.modalValues['backupFormat'] === 'json'}
+											onChange={(e) => {
+												runInAction(() => {
+													eventStore.modalValues['backupFormat'] = e.target.value;
+												});
+											}}
+										/>
+										<span className="backup-format-title">
+											{TranslateService.translate(eventStore, 'BACKUP_TRIP.FORMAT.JSON')}
+										</span>
+									</label>
+									<div className="backup-format-description">
+										{TranslateService.translate(eventStore, 'BACKUP_TRIP.DESCRIPTION.JSON')}
+									</div>
+								</div>
+								<div className="backup-format-option">
+									<label className="backup-format-label">
+										<input
+											type="radio"
+											name="backupFormat"
+											value="csv"
+											checked={eventStore.modalValues['backupFormat'] === 'csv'}
+											onChange={(e) => {
+												runInAction(() => {
+													eventStore.modalValues['backupFormat'] = e.target.value;
+												});
+											}}
+										/>
+										<span className="backup-format-title">
+											{TranslateService.translate(eventStore, 'BACKUP_TRIP.FORMAT.CSV')}
+										</span>
+									</label>
+									<div className="backup-format-description">
+										{TranslateService.translate(eventStore, 'BACKUP_TRIP.DESCRIPTION.CSV')}
+									</div>
+								</div>
+							</div>
+						</div>
+					)}
+				</Observer>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'BACKUP_TRIP.EXPORT'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: () => {
+				const format = eventStore.modalValues['backupFormat'];
+				if (format === 'json') {
+					BackupService.exportAsJSON(eventStore);
+				} else if (format === 'csv') {
+					BackupService.exportAsCSV(eventStore);
 				}
 				ReactModalService.internal.closeModal(eventStore);
 			},
