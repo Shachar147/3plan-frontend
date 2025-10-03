@@ -4265,7 +4265,8 @@ const ReactModalService = {
 			},
 		];
 
-		eventStore.modalValues['exportMode'] = eventStore.modalValues['exportMode'] || modes[0];
+		eventStore.modalValues['exportMode'] =
+			eventStore.modalValues['exportMode'] || modes.find((m) => m.value === 'scheduled_by_day') || modes[0];
 
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),

@@ -392,9 +392,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	const getIconUrl = (event: any) => {
 		let icon = '';
 		let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
-		let category: string = props.allEvents
-			? event.category
-			: eventStore.categories.find((x) => x.id.toString() === event.category?.toString())?.title;
+		let category = resolveCategoryTitle(event);
 
 		category = category ? category.toString().toLowerCase() : '';
 		const title = event.title.toLowerCase();
@@ -434,7 +432,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		} else if (isHotel(category, title)) {
 			icon = iconsMap['hotel'];
 			bgColor = hotelColor;
-		} else if (isMatching(category, FOOD_KEYWORDS) || isMatching(title, FOOD_KEYWORDS)) {
+		} else if (isMatching(category, FOOD_KEYWORDS)) {
 			icon = iconsMap['food'];
 		} else if (isMatching(category, ['photo', 'תמונות'])) {
 			icon = iconsMap['photos'];
@@ -484,6 +482,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			isMatching(title, ['shows', 'musicals', 'הופעות', 'הצגות', 'תאטרון', 'מחזות זמר', 'music shows'])
 		) {
 			icon = iconsMap['musicals'];
+		} else if (isMatching(title, FOOD_KEYWORDS)) {
+			icon = iconsMap['food'];
 		} else if (icon === '') {
 			// return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
@@ -862,15 +862,34 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	};
 
 	const resolveCategoryTitle = (event: any) => {
-		let category: string = props.allEvents
-			? event.category
-			: eventStore.categories.find((x) => x.id.toString() === event.category?.toString())?.title;
-		category = category ? category.toString() : '';
-		return category;
+		// Prefer explicit category/categoryId, handle number or numeric string ids
+		const raw = event?.category ?? event?.categoryId;
+		let title: string | undefined;
+		if (raw !== undefined && raw !== null) {
+			const asNumber = Number(raw);
+			if (!Number.isNaN(asNumber)) {
+				const found = eventStore.categories.find((x) => x.id === asNumber);
+				if (found) {
+					title = found.title;
+				}
+			}
+			// If not a known id or non-numeric, treat it as already a title
+			if (!title) {
+				title = String(raw);
+			}
+		}
+
+		// Fallback for all-events context if nothing resolved
+		if (!title && props.allEvents) {
+			title = String(event?.category ?? '');
+		}
+
+		return title ?? '';
 	};
 
 	const computeIconUrlAndColor = (event: any) => {
-		let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+		const color = priorityToMapColor[event.priority || TriplanPriority.unset];
+		let bgColor = color.replace('#', '');
 		const iconUrl = getIconUrl(event);
 
 		return { iconUrl, color: `#${bgColor}` };
@@ -895,54 +914,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			.replace(/"/g, '&quot;')
 			.replace(/'/g, '&apos;');
 	};
-
-	// const exportAllMarkersAsKml = () => {
-	// 	const allEvents = (props.allEvents ?? eventStore.allEventsComputed).filter(
-	// 		(x) => x.location && x.location.latitude && x.location.longitude
-	// 	);
-
-	// 	// Group by category
-	// 	const byCategory: Record<string, any[]> = {};
-	// 	allEvents.forEach((ev: any) => {
-	// 		const cat = resolveCategoryTitle(ev) || 'Uncategorized';
-	// 		byCategory[cat] = byCategory[cat] || [];
-	// 		byCategory[cat].push(ev);
-	// 	});
-
-	// 	let kml = `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2">\n<Document>\n<name>Triplan Export</name>`;
-
-	// 	// Create styles per category (using first item's icon)
-	// 	Object.keys(byCategory).forEach((cat) => {
-	// 		const sample = byCategory[cat][0];
-	// 		const { iconUrl } = computeIconUrlAndColor(sample);
-	// 		const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-]/g, '_')}`;
-	// 		kml += `\n<Style id="${styleId}">\n  <IconStyle>\n    <scale>1.0<\/scale>\n    <Icon>\n      <href>${xmlEscape(
-	// 			iconUrl
-	// 		)}<\/href>\n    <\/Icon>\n  <\/IconStyle>\n<\/Style>`;
-	// 	});
-
-	// 	Object.keys(byCategory).forEach((cat) => {
-	// 		const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-]/g, '_')}`;
-	// 		kml += `\n<Folder>\n<name>${xmlEscape(cat)}</name>`;
-	// 		byCategory[cat].forEach((ev: any) => {
-	// 			const name = xmlEscape(
-	// 				getEventTitle({ title: ev.title } as unknown as CalendarEvent, eventStore, true)
-	// 			);
-	// 			const descParts = [] as string[];
-	// 			if (ev.description) descParts.push(ev.description);
-	// 			if (ev.moreInfo) descParts.push(`<a href="${ev.moreInfo}" target="_blank">More info<\/a>`);
-	// 			if (ev.location?.address) descParts.push(ev.location.address);
-	// 			const description = descParts.join('<br/>');
-	// 			const lng = ev.location.longitude;
-	// 			const lat = ev.location.latitude;
-	// 			kml += `\n  <Placemark>\n    <name>${name}<\/name>\n    <styleUrl>#${styleId}<\/styleUrl>\n    <description><![CDATA[${description}]]><\/description>\n    <Point><coordinates>${lng},${lat},0<\/coordinates><\/Point>\n  <\/Placemark>`;
-	// 		});
-	// 		kml += `\n<\/Folder>`;
-	// 	});
-
-	// 	kml += `\n<\/Document>\n<\/kml>`;
-	// 	downloadFile('triplan-export.kml', 'application/vnd.google-earth.kml+xml', kml);
-	// };
 
 	const buildKmlFromEvents = (allEvents: any[], groupBy: 'category' | 'day') => {
 		// Group key function
@@ -971,29 +942,48 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		});
 
 		// Distinct categories for styles
-		const distinctCategories = Array.from(new Set(events.map((ev) => resolveCategoryTitle(ev) || 'Uncategorized')));
+		const mapTitle = xmlEscape(`${eventStore.tripName || 'My Trip'} - Exported from Triplan`);
+		let kml = `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n<Document>\n<name>${mapTitle}</name>\n<description/>`;
 
-		let kml = `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2">\n<Document>\n<name>Triplan Export</name>`;
+		// Distinct categories + priorities
+		const distinctCategoriesAndPriorities = Array.from(
+			new Set(events.map((ev) => `${resolveCategoryTitle(ev) || 'Uncategorized'}|${ev.priority}`))
+		);
 
-		distinctCategories.forEach((cat) => {
-			const sample = events.find((e) => (resolveCategoryTitle(e) || 'Uncategorized') === cat) || events[0];
-			const { iconUrl } = computeIconUrlAndColor(sample || {});
-			const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-]/g, '_')}`;
-			kml += `\n<Style id="${styleId}">\n  <IconStyle>\n    <scale>1.0<\/scale>\n    <Icon>\n      <href>${xmlEscape(
+		distinctCategoriesAndPriorities.forEach((catAndPrio) => {
+			const [cat, priorityStr] = catAndPrio.split('|');
+			const priority = Number(priorityStr);
+
+			const sample = events.find(
+				(e) => (resolveCategoryTitle(e) || 'Uncategorized') == cat && e.priority == priority
+			);
+
+			const { iconUrl } = sample ? computeIconUrlAndColor(sample) : ({ iconUrl: '' } as any);
+
+			const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-\u0590-\u05FF]/g, '_')}_${priority}`;
+
+			kml += `\n<Style id="${styleId}">\n  <IconStyle>\n    <scale>1.0</scale>\n    <Icon>\n      <href>${xmlEscape(
 				iconUrl
-			)}<\/href>\n    <\/Icon>\n  <\/IconStyle>\n<\/Style>`;
+			)}</href>\n    </Icon>\n  </IconStyle>\n</Style>`;
 		});
 
 		// Group events while maintaining sorted order
 		const groups: Record<string, any[]> = {};
 		const dayKeyToDisplayName: Record<string, string> = {};
+		const formatDisplayDate = (date: Date) => {
+			const yyyy = date.getFullYear();
+			const mm = String(date.getMonth() + 1).padStart(2, '0');
+			const dd = String(date.getDate()).padStart(2, '0');
+			const isHebrew = eventStore.calendarLocalCode?.startsWith('he');
+			return isHebrew ? `${dd}/${mm}/${yyyy}` : `${mm}/${dd}/${yyyy}`;
+		};
 		events.forEach((ev) => {
 			const key = getGroupKey(ev);
 			groups[key] = groups[key] || [];
 			groups[key].push(ev);
 			if (groupBy === 'day' && !dayKeyToDisplayName[key]) {
 				try {
-					dayKeyToDisplayName[key] = new Date(ev.start).toLocaleDateString();
+					dayKeyToDisplayName[key] = formatDisplayDate(new Date(ev.start));
 				} catch (_e) {
 					dayKeyToDisplayName[key] = key;
 				}
@@ -1009,19 +999,20 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		groupNames.forEach((groupName) => {
 			const displayName = groupBy === 'day' ? dayKeyToDisplayName[groupName] : groupName;
 			kml += `\n<Folder>\n<name>${xmlEscape(displayName)}</name>`;
-			groups[groupName].forEach((ev) => {
-				const name = xmlEscape(
+			groups[groupName].forEach((ev, idx) => {
+				const baseName = xmlEscape(
 					getEventTitle({ title: ev.title } as unknown as CalendarEvent, eventStore, true)
 				);
+				const name = groupBy === 'day' ? `${idx + 1} - ${baseName}` : baseName;
 				const descParts = [] as string[];
 				if (ev.description) descParts.push(ev.description);
-				if (ev.moreInfo) descParts.push(`<a href="${ev.moreInfo}" target="_blank">More info<\/a>`);
+				if (ev.moreInfo) descParts.push(`<a href=\"${ev.moreInfo}\" target=\"_blank\">More info<\/a>`);
 				if (ev.location?.address) descParts.push(ev.location.address);
 				const description = descParts.join('<br/>');
 				const lng = ev.location.longitude;
 				const lat = ev.location.latitude;
 				const cat = resolveCategoryTitle(ev) || 'Uncategorized';
-				const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-]/g, '_')}`;
+				const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-\u0590-\u05FF]/g, '_')}_${ev.priority}`;
 				kml += `\n  <Placemark>\n    <name>${name}<\/name>\n    <styleUrl>#${styleId}<\/styleUrl>\n    <description><![CDATA[${description}]]><\/description>\n    <Point><coordinates>${lng},${lat},0<\/coordinates><\/Point>\n  <\/Placemark>`;
 			});
 			kml += `\n<\/Folder>`;

@@ -203,7 +203,7 @@
 	"EXPORT_TO_GOOGLE_MAPS.SELECT_WHAT_TO_EXPORT": "Select what to export",
 	"EXPORT_TO_GOOGLE_MAPS.MODES.ALL": "All activities",
 	"EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED": "Only scheduled activities",
-	"EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED_BY_DAY": "Scheduled activities by day",
+	"EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED_BY_DAY": "Only scheduled activities by day",
 	"EXPORT_TO_GOOGLE_MAPS.STEPS.TITLE": "Export to Google Maps - Steps",
 	"EXPORT_TO_GOOGLE_MAPS_STEPS": "Steps:<br/><b>1. A KML file that includes your activities will be downloaded.<\/b><br/>2. Open <a href=\"{URL}\" target=\"_blank\" rel=\"noreferrer\">Google My Maps<\/a> and click \"Create a new map\".<br/>3. In the new map, click \"Import\" and upload the KML file.",
 	"SHOW_ONLY_EVENTS_WITH_NO_LOCATION": "show which",
