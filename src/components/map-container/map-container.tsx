@@ -538,7 +538,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			const refMarker = new googleRef.Marker({
 				position: { lat: coordinate.lat, lng: coordinate.lng },
 				label: {
-					text: texts[key],
+					text: `${isScheduled ? '✓ ' : ''}${texts[key]}`,
 					color: '#c0bbbb',
 					fontSize: '10px',
 					fontWeight: 'bold',
