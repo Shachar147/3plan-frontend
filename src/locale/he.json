@@ -1299,5 +1299,6 @@
 	"TEMPLATE_UPDATED": "הטמפלייט עודכן בהצלחה!",
 	"EDIT": "עריכה",
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "מחק פעילות זאת לצמיתות",
-	"YOU_MAY_ALSO_WANT_TO_VISIT": "אולי תרצה לבקר גם ב:"
+	"YOU_MAY_ALSO_WANT_TO_VISIT": "אולי תרצה לבקר גם ב:",
+	"EXPORT_MAP_TO_GOOGLE_MAPS": "ייצא לגוגל מפות"
 }

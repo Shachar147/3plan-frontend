@@ -1043,5 +1043,6 @@
 	"EDIT": "Edit",
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar",
 	"YOU_MAY_ALSO_WANT_TO_VISIT": "You may also want to visit:",
-	"OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH": "Oops, something went wrong :( try refreshing the page"
+	"OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH": "Oops, something went wrong :( try refreshing the page",
+	"EXPORT_MAP_TO_GOOGLE_MAPS": "Export to Google Maps"
 }

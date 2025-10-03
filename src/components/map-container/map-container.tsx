@@ -861,6 +861,183 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		};
 	};
 
+	const resolveCategoryTitle = (event: any) => {
+		let category: string = props.allEvents
+			? event.category
+			: eventStore.categories.find((x) => x.id.toString() === event.category?.toString())?.title;
+		category = category ? category.toString() : '';
+		return category;
+	};
+
+	const computeIconUrlAndColor = (event: any) => {
+		let icon = '';
+		let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+		let category: string = resolveCategoryTitle(event).toLowerCase();
+		const title = (event.title || '').toString().toLowerCase();
+
+		const iconsMap: Record<string, string> = {
+			basketball: 'icons/onion/1520-basketball_4x.png',
+			food: 'icons/onion/1577-food-fork-knife_4x.png',
+			photos: 'icons/onion/1535-camera-photo_4x.png',
+			attractions: 'icons/onion/1502-shape_star_4x.png',
+			beach: 'icons/onion/1521-beach_4x.png',
+			nightlife: 'icons/onion/1517-bar-cocktail_4x.png',
+			hotel: 'icons/onion/1602-hotel-bed_4x.png',
+			shopping: 'icons/onion/1684-shopping-bag_4x.png',
+			tourism: 'icons/onion/1548-civic_4x.png',
+			flowers: 'icons/onion/1582-garden-flower_4x.png',
+			desserts: 'icons/onion/1607-ice-cream_4x.png',
+			cities: 'icons/onion/1546-city-buildings_4x.png',
+			mountains: 'icons/onion/1634-mountain_4x.png',
+			lakes: 'icons/onion/1697-spa_4x.png',
+			trains: 'icons/onion/1716-train_4x.png',
+			musicals: 'icons/onion/1637-music-note_4x.png',
+			flights: 'icons/onion/1504-airport-plane_4x.png',
+			coffee_shops: 'icons/onion/1868-smoking_4x.png',
+			gimmicks: 'icons/onion/1796-ghost_4x.png',
+			golf: 'icons/onion/1585-golf_4x.png',
+		};
+
+		if (isMatching(category, ['golf', 'גולף'])) {
+			icon = iconsMap['golf'];
+		} else if (isBasketball(category, title)) {
+			icon = iconsMap['basketball'];
+		} else if (isDessert(category, title)) {
+			icon = iconsMap['desserts'];
+		} else if (isFlight(category, title)) {
+			icon = iconsMap['flights'];
+			bgColor = flightColor;
+		} else if (isHotel(category, title)) {
+			icon = iconsMap['hotel'];
+			bgColor = hotelColor;
+		} else if (isMatching(category, FOOD_KEYWORDS) || isMatching(title, FOOD_KEYWORDS)) {
+			icon = iconsMap['food'];
+		} else if (isMatching(category, ['photo', 'תמונות'])) {
+			icon = iconsMap['photos'];
+		} else if (isMatching(category, NATURE_KEYWORDS) || isMatching(title, NATURE_KEYWORDS)) {
+			icon = iconsMap['flowers'];
+		} else if (isMatching(category, ATTRACTIONS_KEYWORDS)) {
+			icon = iconsMap['attractions'];
+		} else if (
+			isMatching(category, ['coffee shops', 'coffee shop', 'קופישופס']) ||
+			isMatching(title, ['coffee shops', 'coffee shop', 'קופישופס'])
+		) {
+			icon = iconsMap['coffee_shops'];
+		} else if (isMatching(category, ['gimmick', 'gimick', 'גימיקים'])) {
+			icon = iconsMap['gimmicks'];
+		} else if (
+			isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
+		) {
+			icon = iconsMap['beach'];
+		} else if (isMatching(category, NIGHTLIFE_KEYWORDS)) {
+			icon = iconsMap['nightlife'];
+		} else if (isMatching(category, STORE_KEYWORDS)) {
+			icon = iconsMap['shopping'];
+		} else if (isMatching(category, TOURIST_KEYWORDS)) {
+			icon = iconsMap['tourism'];
+		} else if (
+			isMatching(title, ['city', 'עיירה']) ||
+			isMatching(category, ['cities', 'עיירות', 'כפרים', 'village', 'ערים'])
+		) {
+			icon = iconsMap['cities'];
+		} else if (
+			isMatching(title, ['mountain', 'cliff', ' הר ', 'פסגת']) ||
+			isMatching(category, ['mountains', 'הרים'])
+		) {
+			icon = iconsMap['mountains'];
+		} else if (
+			isMatching(title, ['lake ', 'lakes', ' נהר ', 'אגם']) ||
+			isMatching(category, ['lakes', 'נהרות', 'אגמים'])
+		) {
+			icon = iconsMap['lakes'];
+		} else if (
+			isMatching(title, ['rollercoaster', 'roller coaster', 'רכבת']) ||
+			isMatching(category, ['trains', 'roller coasters', 'רכבות'])
+		) {
+			icon = iconsMap['trains'];
+		} else if (
+			isMatching(title, ['show', 'musical', 'הופעה', 'הצגה', 'תאטרון', 'מחזמר', 'תיאטרון']) ||
+			isMatching(title, ['shows', 'musicals', 'הופעות', 'הצגות', 'תאטרון', 'מחזות זמר', 'music shows'])
+		) {
+			icon = iconsMap['musicals'];
+		}
+
+		const iconUrl =
+			icon === ''
+				? `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`
+				: `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
+
+		return { iconUrl, color: `#${bgColor}` };
+	};
+
+	const downloadFile = (filename: string, mimeType: string, content: string) => {
+		const blob = new Blob([content], { type: mimeType });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = filename;
+		a.click();
+		setTimeout(() => URL.revokeObjectURL(url), 0);
+	};
+
+	const xmlEscape = (value: string) => {
+		if (value == null) return '';
+		return value
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&apos;');
+	};
+
+	const exportAllMarkersAsKml = () => {
+		const allEvents = (props.allEvents ?? eventStore.allEventsComputed).filter(
+			(x) => x.location && x.location.latitude && x.location.longitude
+		);
+
+		// Group by category
+		const byCategory: Record<string, any[]> = {};
+		allEvents.forEach((ev: any) => {
+			const cat = resolveCategoryTitle(ev) || 'Uncategorized';
+			byCategory[cat] = byCategory[cat] || [];
+			byCategory[cat].push(ev);
+		});
+
+		let kml = `<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2">\n<Document>\n<name>Triplan Export</name>`;
+
+		// Create styles per category (using first item's icon)
+		Object.keys(byCategory).forEach((cat) => {
+			const sample = byCategory[cat][0];
+			const { iconUrl } = computeIconUrlAndColor(sample);
+			const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-]/g, '_')}`;
+			kml += `\n<Style id="${styleId}">\n  <IconStyle>\n    <scale>1.0<\/scale>\n    <Icon>\n      <href>${xmlEscape(
+				iconUrl
+			)}<\/href>\n    <\/Icon>\n  <\/IconStyle>\n<\/Style>`;
+		});
+
+		Object.keys(byCategory).forEach((cat) => {
+			const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-]/g, '_')}`;
+			kml += `\n<Folder>\n<name>${xmlEscape(cat)}</name>`;
+			byCategory[cat].forEach((ev: any) => {
+				const name = xmlEscape(
+					getEventTitle({ title: ev.title } as unknown as CalendarEvent, eventStore, true)
+				);
+				const descParts = [] as string[];
+				if (ev.description) descParts.push(ev.description);
+				if (ev.moreInfo) descParts.push(`<a href="${ev.moreInfo}" target="_blank">More info<\/a>`);
+				if (ev.location?.address) descParts.push(ev.location.address);
+				const description = descParts.join('<br/>');
+				const lng = ev.location.longitude;
+				const lat = ev.location.latitude;
+				kml += `\n  <Placemark>\n    <name>${name}<\/name>\n    <styleUrl>#${styleId}<\/styleUrl>\n    <description><![CDATA[${description}]]><\/description>\n    <Point><coordinates>${lng},${lat},0<\/coordinates><\/Point>\n  <\/Placemark>`;
+			});
+			kml += `\n<\/Folder>`;
+		});
+
+		kml += `\n<\/Document>\n<\/kml>`;
+		downloadFile('triplan-export.kml', 'application/vnd.google-earth.kml+xml', kml);
+	};
+
 	const getAllMarkers = (searchValue: string) => {
 		const visibleItems = [];
 
@@ -1128,6 +1305,18 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			);
 		}
 
+		function renderExportToGoogleMapsButton() {
+			return (
+				<Button
+					text={TranslateService.translate(eventStore, 'EXPORT_MAP_TO_GOOGLE_MAPS')}
+					onClick={exportAllMarkersAsKml}
+					className="brown"
+					flavor={ButtonFlavor.secondary}
+					icon="fa-location-arrow"
+				/>
+			);
+		}
+
 		function renderFilterButton() {
 			return (
 				<Button
@@ -1151,6 +1340,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					{renderFilterButton()}
 					{renderCalculateDistancesButton()}
 					{!eventStore.isMobile && <FocusModeButton />}
+					{!eventStore.isMobile && renderExportToGoogleMapsButton()}
 					{!eventStore.isMobile && (
 						<div className="pc-map-view-selection-container">{renderMapViewSelection()}</div>
 					)}
