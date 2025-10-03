@@ -79,6 +79,7 @@
 	"IMPORT_EVENTS.TITLE": "ייבא פעילויות - הורד טמפלייט",
 	"IMPORT_EVENTS.TITLE2": "ייבוא פעילויות - העלה טמפלייט",
 	"MODALS.DOWNLOAD_TEMPLATE": "הורד טמפלייט",
+	"MODALS.DOWNLOAD": "הורדה",
 	"MODALS.UPLOAD": "העלה",
 	"TEMPLATE.ICON": "אייקון",
 	"TEMPLATE.TITLE": "כותרת",
@@ -158,6 +159,13 @@
 	"BUTTON_TEXT.CALENDAR_VIEW.SHORT": "לוח שנה",
 	"BUTTON_TEXT.SIDEBAR_VIEW": "פעילויות",
 	"BUTTON_TEXT.SIDEBAR_VIEW.SHORT": "פעילויות",
+	"EXPORT_TO_GOOGLE_MAPS.TITLE": "ייצוא לגוגל מפות",
+	"EXPORT_TO_GOOGLE_MAPS.SELECT_WHAT_TO_EXPORT": "בחר מה לייצא",
+	"EXPORT_TO_GOOGLE_MAPS.MODES.ALL": "כל הפעילויות",
+	"EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED": "רק פעילויות משובצות",
+	"EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED_BY_DAY": "פעילויות משובצות לפי יום",
+	"EXPORT_TO_GOOGLE_MAPS.STEPS.TITLE": "ייצוא לגוגל מפות - שלבים",
+	"EXPORT_TO_GOOGLE_MAPS_STEPS": "שלבים:<br/><b>1. קובץ KML שמכיל את הפעילויות שלך יורד כעת.<\/b><br/>2. פתחו את <a href=\"{URL}\" target=\"_blank\" rel=\"noreferrer\">Google My Maps<\/a> ולחצו \"Create a new map\".<br/>3. במפה החדשה, לחצו \"Import\" וצרפו את קובץ ה-KML.",
 	"MODALS.ARE_YOU_SURE": "האם אתם בטוחים?",
 	"MODALS.ARE_YOU_SURE.CONTENT": "האם אתם בטוחים שאתם רוצים לעשות את זה?",
 	"MODALS.CONTINUE": "המשך",
@@ -1300,5 +1308,6 @@
 	"EDIT": "עריכה",
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "מחק פעילות זאת לצמיתות",
 	"YOU_MAY_ALSO_WANT_TO_VISIT": "אולי תרצה לבקר גם ב:",
-	"EXPORT_MAP_TO_GOOGLE_MAPS": "ייצא לגוגל מפות"
+	"EXPORT_MAP_TO_GOOGLE_MAPS": "ייצא לגוגל מפות",
+	"GENERAL.CLOSE": "סגור"
 }

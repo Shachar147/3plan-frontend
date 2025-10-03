@@ -411,9 +411,9 @@ export const ReactModalRenderHelper = {
 				}));
 
 		if (!eventStore.modalValues[modalValueName]) {
-			eventStore.modalValues[modalValueName] = extra.value
-				? options.find((x) => x.value == extra.value)
-				: undefined;
+			const initialVal: any = (extra as any)?.value;
+			eventStore.modalValues[modalValueName] =
+				initialVal != null ? options.find((x) => (x as any).value == initialVal) : undefined;
 		}
 
 		// console.log("category", extra.value, options.find((x) => x.value == extra.value), eventStore.modalValues[modalValueName])
@@ -4246,6 +4246,80 @@ const ReactModalService = {
 				}
 				ReactModalService.internal.closeModal(eventStore);
 			},
+		});
+	},
+
+	openExportToGoogleMapsSelectionModal: (
+		eventStore: EventStore,
+		onExportChosen: (mode: 'all' | 'scheduled' | 'scheduled_by_day') => void
+	) => {
+		const modes: { label: string; value: 'all' | 'scheduled' | 'scheduled_by_day' }[] = [
+			{ label: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.MODES.ALL'), value: 'all' },
+			{
+				label: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED'),
+				value: 'scheduled',
+			},
+			{
+				label: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED_BY_DAY'),
+				value: 'scheduled_by_day',
+			},
+		];
+
+		eventStore.modalValues['exportMode'] = eventStore.modalValues['exportMode'] || modes[0];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.TITLE'),
+			content: (
+				<div className="flex-col gap-12">
+					<div>{TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.SELECT_WHAT_TO_EXPORT')}:</div>
+					<SelectInput
+						ref={undefined}
+						id="export-to-google-maps-mode"
+						name="export-to-google-maps-mode"
+						options={modes}
+						value={eventStore.modalValues['exportMode']}
+						onChange={(opt: any) => (eventStore.modalValues['exportMode'] = opt)}
+						modalValueName="exportMode"
+						removeDefaultClass={true}
+						isClearable={false}
+					/>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DOWNLOAD'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: () => {
+				const chosen = eventStore.modalValues['exportMode']?.value ?? 'all';
+				ReactModalService.internal.closeModal(eventStore);
+				onExportChosen(chosen);
+			},
+		});
+	},
+
+	openExportToGoogleMapsStepsModal: (eventStore: EventStore, doDownload: () => void) => {
+		const Steps = () => {
+			useEffect(() => {
+				setTimeout(() => doDownload(), 50);
+			}, []);
+			return (
+				<div
+					className="import-events-steps"
+					dangerouslySetInnerHTML={{
+						__html: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS_STEPS', {
+							URL: 'https://mymaps.google.com/',
+						}),
+					}}
+				/>
+			);
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.STEPS.TITLE'),
+			content: <Steps />,
+			cancelBtnText: TranslateService.translate(eventStore, 'GENERAL.CLOSE'),
+			hideConfirmBtn: true,
 		});
 	},
 	openImportEventsConfirmModal: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
