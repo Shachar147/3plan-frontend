@@ -168,6 +168,26 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	};
 
+	const renderBackupTrip = () => {
+		if (eventStore.isMobile) return;
+
+		const isDisabled = eventStore.isTripLocked;
+		const disabledReason = isDisabled ? TranslateService.translate(eventStore, 'TRIP_IS_LOCKED') : undefined;
+
+		return (
+			<Button
+				icon="fa-download"
+				text={TranslateService.translate(eventStore, 'BACKUP_TRIP.BUTTON_TEXT')}
+				onClick={() => {
+					ReactModalService.openBackupTripModal(eventStore);
+				}}
+				flavor={ButtonFlavor['movable-link']}
+				disabled={isDisabled}
+				disabledReason={disabledReason}
+			/>
+		);
+	};
+
 	const renderTasksNavbar = () => {
 		const eyeIcon = eventStore.hideDoneTasks ? 'fa-eye' : 'fa-eye-slash';
 		const groupIcon = 'fa-sitemap'; // eventStore.groupTasksByEvent ? 'fa-object-group' : 'fa-object-ungroup';
@@ -930,6 +950,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 				{renderLockTrip()}
 				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
 				{renderImportButtons()}
+				{renderBackupTrip()}
 				<TriplanSidebarShareTripButton isMoveAble={true} textKey="SHARE_TRIP" />
 			</>,
 			undefined,

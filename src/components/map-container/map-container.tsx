@@ -43,6 +43,7 @@ import { observable, runInAction } from 'mobx';
 import Button, { ButtonFlavor } from '../common/button/button';
 import { LimitationsService } from '../../utils/limitations';
 import FocusModeButton from '../focus-mode-button/focus-mode-button';
+import { sanitizeString } from '../../utils/string-sanitizer';
 
 interface MarkerProps {
 	text?: string;
@@ -960,7 +961,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 			const { iconUrl } = sample ? computeIconUrlAndColor(sample) : ({ iconUrl: '' } as any);
 
-			const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-\u0590-\u05FF]/g, '_')}_${priority}`;
+			const styleId = `style_${sanitizeString(cat)}_${priority}`;
 
 			kml += `\n<Style id="${styleId}">\n  <IconStyle>\n    <scale>1.0</scale>\n    <Icon>\n      <href>${xmlEscape(
 				iconUrl
@@ -1012,7 +1013,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				const lng = ev.location.longitude;
 				const lat = ev.location.latitude;
 				const cat = resolveCategoryTitle(ev) || 'Uncategorized';
-				const styleId = `style_${cat.replace(/[^a-zA-Z0-9_\-\u0590-\u05FF]/g, '_')}_${ev.priority}`;
+				const styleId = `style_${sanitizeString(cat)}_${ev.priority}`;
 				kml += `\n  <Placemark>\n    <name>${name}<\/name>\n    <styleUrl>#${styleId}<\/styleUrl>\n    <description><![CDATA[${description}]]><\/description>\n    <Point><coordinates>${lng},${lat},0<\/coordinates><\/Point>\n  <\/Placemark>`;
 			});
 			kml += `\n<\/Folder>`;

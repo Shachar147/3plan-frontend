@@ -1309,5 +1309,13 @@
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "מחק פעילות זאת לצמיתות",
 	"YOU_MAY_ALSO_WANT_TO_VISIT": "אולי תרצה לבקר גם ב:",
 	"EXPORT_MAP_TO_GOOGLE_MAPS": "ייצא לגוגל מפות",
-	"GENERAL.CLOSE": "סגור"
+	"GENERAL.CLOSE": "סגור",
+	"BACKUP_TRIP.BUTTON_TEXT": "גיבוי טיול",
+	"BACKUP_TRIP.TITLE": "גיבוי טיול",
+	"BACKUP_TRIP.SELECT_FORMAT": "בחר פורמט גיבוי",
+	"BACKUP_TRIP.FORMAT.JSON": "JSON (נתוני טיול מלאים)",
+	"BACKUP_TRIP.FORMAT.CSV": "CSV (פעילויות בלבד)",
+	"BACKUP_TRIP.DESCRIPTION.JSON": "ייצא נתוני טיול מלאים כולל שם הטיול, תאריכי הטיול, קטגוריות ועוד. ניתן להשתמש ליצירת טיול זהה באמצעות הAPI.",
+	"BACKUP_TRIP.DESCRIPTION.CSV": "ייצא פעילויות בפורמט CSV, התואם לפורמט הייבוא.",
+	"BACKUP_TRIP.EXPORT": "ייצא"
 }
