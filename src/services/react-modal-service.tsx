@@ -4459,6 +4459,10 @@ const ReactModalService = {
 			confirmBtnText: TranslateService.translate(eventStore, 'SAVE'),
 			confirmBtnCssClass: 'primary-button',
 			onConfirm: async () => {
+				// capture previous values for history logging
+				const previousColors = { ...eventStore.priorityColors };
+				const previousMapColors = { ...eventStore.priorityMapColors };
+
 				// update store
 				runInAction(() => {
 					eventStore.priorityColors = { ...Object.fromEntries(colors) };
@@ -4472,6 +4476,33 @@ const ReactModalService = {
 						priorityMapColors: eventStore.priorityMapColors,
 					});
 				} catch (e) {}
+
+				// log history for color changes (DB only)
+				try {
+					// build compact diff strings: only changed priorities
+					const changedIds = Object.keys(eventStore.priorityColors || {}).filter(
+						(pid) => (previousColors as any)[pid] !== (eventStore.priorityColors as any)[pid]
+					);
+
+					const toEnglishKey = (pid: string) => TriplanPriority[pid] ?? pid; // enum key is english
+					const diffPayload: any = {};
+					changedIds.forEach((pid) => {
+						const key = toEnglishKey(pid);
+						diffPayload[key] = {
+							was: (previousColors as any)[pid],
+							now: (eventStore.priorityColors as any)[pid],
+						};
+					});
+
+					LogHistoryService.logHistory(
+						eventStore,
+						TripActions.changedTripColors,
+						diffPayload,
+						undefined,
+						undefined,
+						eventStore.tripId
+					);
+				} catch {}
 
 				ReactModalService.internal.closeModal(eventStore);
 			},
@@ -5441,6 +5472,41 @@ const ReactModalService = {
 							<td>{TranslateService.translate(eventStore, historyRow.actionParams.permissions)}</td>
 						</tr>
 					)}
+					{Object.keys(TriplanPriority)
+						.filter((key) => isNaN(Number(key)))
+						.map(
+							(key) =>
+								historyRow.actionParams[key] && (
+									<tr>
+										<td className="main-font-heavy">
+											{TranslateService.translate(eventStore, key)}
+										</td>
+										<td>
+											<div className="flex-row align-items-center gap-4">
+												<PreviewBox size={16} color={historyRow.actionParams[key].was} />
+												<div className="text-align-start width-150">
+													{TranslateService.translate(eventStore, 'BEFORE')}: &nbsp;
+													{TranslateService.translate(
+														eventStore,
+														historyRow.actionParams[key].was
+													)}{' '}
+													&nbsp;&nbsp;
+												</div>
+											</div>
+											<div className="flex-row align-items-center gap-4">
+												<PreviewBox size={16} color={historyRow.actionParams[key].now} />
+												<div className="text-align-start width-150">
+													{TranslateService.translate(eventStore, 'AFTER')}: &nbsp;
+													{TranslateService.translate(
+														eventStore,
+														historyRow.actionParams[key].now
+													)}
+												</div>
+											</div>
+										</td>
+									</tr>
+								)
+						)}
 					{historyRow.action == TripActions.deletedCategory && (
 						<>
 							<tr>

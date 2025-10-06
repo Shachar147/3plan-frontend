@@ -1324,5 +1324,9 @@
 	"PRIORITY_MAP_COLORS": "צבעי מפה",
 	"RESET_TO_DEFAULTS": "איפוס להגדרות ברירת מחדל",
 	"SAVE": "שמור",
-	"CLICK_TO_EDIT": "לחץ על שורה כדי לערוך אותה"
+	"CLICK_TO_EDIT": "לחץ על שורה כדי לערוך אותה",
+	"changedTripColors": "צבעי הטיול שונו",
+	"changedTripColorsYou": "שינית את צבעי הטיול",
+	"changedTripColorsFull": "{who} שינה את צבעי הטיול",
+	"changedTripColorsFullYou": "שינית את צבעי הטיול"
 }

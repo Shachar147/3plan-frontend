@@ -61,6 +61,12 @@ const LogHistoryService = {
 			name?: string;
 			who?: string;
 			whoId?: number;
+
+			must?: string;
+			high?: string;
+			maybe?: string;
+			least?: string;
+			unset?: string;
 		},
 		eventId?: number,
 		eventName?: string,
