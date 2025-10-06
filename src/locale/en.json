@@ -1066,5 +1066,7 @@
 	"EDIT_COLORS_DESCRIPTION": "Customize your trip view by editing the colors of activity priorities.\nThis helps you quickly recognize what's most important on the map, making it easier to plan your days, balance must-do activities with flexible ones, and keep your itinerary clear and organized.",
 	"PRIORITY_COLORS": "Priority Colors",
 	"PRIORITY_MAP_COLORS": "Map Colors",
-	"SAVE": "Save"
+	"RESET_TO_DEFAULTS": "Reset to defaults",
+	"SAVE": "Save",
+	"CLICK_TO_EDIT": "Click on a row to edit"
 }

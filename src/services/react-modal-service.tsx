@@ -1,9 +1,11 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService, { TranslationParams } from './translate-service';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
 import PreviewBox from '../components/preview-box/preview-box';
+import { ColorPicker, useColor } from 'react-color-palette';
+import 'react-color-palette/css';
 import {
 	getClasses,
 	getCurrentUsername,
@@ -4348,33 +4350,106 @@ const ReactModalService = {
 								<div className="white-space-pre-line">
 									{TranslateService.translate(eventStore, 'EDIT_COLORS_DESCRIPTION')}
 								</div>
+								<div className="margin-top-5 margin-bottom-10 bold">
+									{TranslateService.translate(eventStore, 'CLICK_TO_EDIT')}
+								</div>
 								{Object.keys(TriplanPriority)
 									.filter((p) => !isNaN(Number(p)))
 									.map((priorityId) => {
 										const priorityKey = TriplanPriority[priorityId];
+										const [color, setColor] = useColor(colors.get(priorityId));
+										const [isEdit, setIsEdit] = useState(false);
+
 										return (
 											<div
 												className="flex-row gap-10 align-items-center width-400"
 												key={`pcol-${priorityId}`}
 											>
 												<div className="flex-row align-items-center gap-16 width-100-percents input-with-label">
-													<label className="width-150 text-align-start">
+													<label
+														className="width-150 text-align-start"
+														onClick={() => {
+															setIsEdit(true);
+														}}
+													>
 														{TranslateService.translate(eventStore, priorityKey)}:
 													</label>
-													<TextInput
-														modalValueName={`priorityColor_${priorityId}`}
-														value={colors.get(priorityId) || ''}
-														onChange={(e) => {
-															colors.set(priorityId, e.target.value);
-															mapColors.set(priorityId, e.target.value);
+													<div
+														className={getClasses(
+															'flex-row align-items-center gap-16',
+															!isEdit && 'display-none'
+														)}
+													>
+														<ColorPicker
+															height={50}
+															hideInput={['rgb', 'hsv']}
+															color={color}
+															onChange={(newColor) => {
+																setColor(newColor);
+															}}
+														/>
+														<div className="flex-column gap-4 width-80">
+															<button
+																className="secondary-button"
+																onClick={() => {
+																	colors.set(priorityId, color.hex);
+																	mapColors.set(priorityId, color.hex);
+																	setIsEdit(false);
+																}}
+															>
+																{TranslateService.translate(eventStore, 'SAVE')}
+															</button>
+															<button
+																className="secondary-button"
+																onClick={() => {
+																	setIsEdit(false);
+																}}
+															>
+																{TranslateService.translate(
+																	eventStore,
+																	'MODALS.CANCEL'
+																)}
+															</button>
+														</div>
+													</div>
+													<div
+														className={getClasses(
+															'flex-row align-items-center gap-16',
+															isEdit && 'display-none'
+														)}
+														onClick={() => {
+															setIsEdit(true);
 														}}
-														placeholder={priorityToMapColor[priorityId]}
-													/>
-													<PreviewBox size={37} color={colors.get(priorityId)} />
+													>
+														<TextInput
+															modalValueName={`priorityColor_${priorityId}`}
+															value={colors.get(priorityId) || ''}
+															readOnly
+															placeholder={priorityToMapColor[priorityId]}
+														/>
+														<PreviewBox size={37} color={colors.get(priorityId)} />
+													</div>
 												</div>
 											</div>
 										);
 									})}
+
+								<div className="flex-row gap-10 align-items-center margin-top-10">
+									<button
+										className="secondary-button"
+										onClick={() => {
+											Object.keys(TriplanPriority)
+												.filter((p) => !isNaN(Number(p)))
+												.forEach((pid) => {
+													const def = priorityToColor[pid];
+													colors.set(pid, def);
+													mapColors.set(pid, priorityToMapColor[pid] ?? def);
+												});
+										}}
+									>
+										{TranslateService.translate(eventStore, 'RESET_TO_DEFAULTS')}
+									</button>
+								</div>
 							</div>
 						</div>
 					)}

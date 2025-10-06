@@ -1510,6 +1510,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 								<div
 									key={`filtered-visible-item-${idx}`}
 									className={`fc-event priority-${info.event.priority}`}
+									style={{
+										borderLeft: `3px solid ${eventStore.priorityMapColors[info.event.priority]}`,
+									}}
 									onClick={() => {
 										if (props.isReadOnly) {
 											return;
@@ -1612,6 +1615,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				props.isCombined && 'combined',
 				eventStore.isMobile && 'resize-none'
 			)}
+			key={JSON.stringify(eventStore.priorityMapColors)}
 		>
 			{!props.noFilters && locations.length > 0 && renderMapFilters()}
 			{!props.noHeader && renderMapHeader()}

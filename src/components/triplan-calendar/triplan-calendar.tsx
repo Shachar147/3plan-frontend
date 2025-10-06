@@ -245,6 +245,14 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info, modalsStore);
 	};
 
+	const onEventDidMount = (info: any) => {
+		// apply colors based on eventStore.priorityColors rather than CSS
+		const priority = Number(info.event.extendedProps?.priority);
+		const color = eventStore.priorityColors?.[priority];
+		if (!color) return;
+		info.el.style.setProperty('border-left', `3px solid ${color}`, 'important');
+	};
+
 	const handleEventChange = async (changeInfo: any) => {
 		// // when changing "allDay" event to be regular event, it has no "end".
 		// // the following lines fix it by extracting start&end from _instance.range, and converting them to the correct timezone.
@@ -655,7 +663,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		<div className="triplan-calendar-container">
 			<div
 				className="flex-col width-100-percents position-relative calendar-wrapper"
-				key={eventStore.forceCalendarReRender}
+				key={`${eventStore.forceCalendarReRender}-${JSON.stringify(eventStore.priorityColors)}`}
 			>
 				{eventStore.isSwitchDaysEnabled && !eventStore.isTripLocked && <DraggableList />}
 				<FullCalendar
@@ -698,6 +706,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 					eventReceive={onEventReceive}
 					eventClick={onEventClick}
 					eventChange={(changeInfo) => handleEventChange(changeInfo)}
+					eventDidMount={onEventDidMount}
 					eventResizableFromStart={!eventStore.isMobile && !eventStore.isTripLocked}
 					locale={eventStore.calendarLocalCode}
 					direction={eventStore.getCurrentDirection()}

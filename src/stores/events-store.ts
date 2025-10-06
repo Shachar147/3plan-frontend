@@ -51,7 +51,6 @@ import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
 import LogHistoryService from '../services/data-handlers/log-history-service';
 import { endpoints } from '../v2/utils/endpoints';
-import { string } from 'prop-types';
 import { FeatureFlagsService } from '../utils/feature-flags';
 import { mainPageContentTabLsKey, myTripsTabId, newDesignRootPath } from '../v2/utils/consts';
 import { priorityToColor, priorityToMapColor } from '../utils/consts';
