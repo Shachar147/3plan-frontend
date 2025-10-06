@@ -166,6 +166,7 @@ export enum TripActions {
 	unlockedTrip = 'unlockedTrip',
 	lockedTrip = 'lockedTrip',
 	updatedTrip = 'updatedTrip',
+	changedTripColors = 'changedTripColors',
 	hideTrip = 'hideTrip',
 	unhideTrip = 'unhideTrip',
 	createdTrip = 'createdTrip',

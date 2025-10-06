@@ -1199,7 +1199,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					const notInCalendar = TranslateService.translate(eventStore, 'NOT_IN_CALENDAR');
 					const prefix = TranslateService.translate(eventStore, 'EVENTS_ON_PRIORITY');
 
-					const color = priorityToColor[priority];
+					const color = eventStore.priorityColors[priority];
 
 					const translatedPriority = TranslateService.translate(eventStore, priorityText)
 						.replace('עדיפות ', '')
@@ -1471,13 +1471,45 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 	}
 
 	function renderSidebarSettings() {
+		const editColors = (
+			<div className="sidebar-statistics">
+				<a className="pointer" onClick={() => ReactModalService.openEditColorsModal(eventStore)}>
+					{TranslateService.translate(eventStore, 'EDIT_COLORS')}
+				</a>
+			</div>
+		);
+
+		const toggleSetting = (item) => {
+			runInAction(() => {
+				eventStore.sidebarSettings.set(item.id, !eventStore.sidebarSettings.get(item.id));
+				// Save to localStorage when changed
+				eventStore.saveSidebarSettings();
+			});
+		};
+
 		const settingsItems = [
+			{
+				id: 'edit-colors',
+				name: 'EDIT_COLORS',
+				icon: 'fa-paint-brush',
+				onClick: () => ReactModalService.openEditColorsModal(eventStore),
+				className: undefined,
+			},
 			{
 				id: 'hide-scheduled',
 				name: 'HIDE_SCHEDULED_EVENTS.FILTER_TAG',
 				icon: 'fa-calendar-times-o',
+				toggleable: true,
 			},
 		];
+
+		settingsItems.forEach((s) => {
+			if (s.toggleable) {
+				s.onClick = () => toggleSetting(s);
+			} else {
+				s.className = 'opacity-1';
+			}
+		});
 
 		// Function to handle threshold input changes
 		const handleThresholdChange = (settingId: string, value: string) => {
@@ -1499,18 +1531,10 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 								<div
 									className={getClasses(
 										'flex-row gap-5 align-items-center sidebar-settings',
+										item.className,
 										eventStore.sidebarSettings.get(item.id) && 'active'
 									)}
-									onClick={() => {
-										runInAction(() => {
-											eventStore.sidebarSettings.set(
-												item.id,
-												!eventStore.sidebarSettings.get(item.id)
-											);
-											// Save to localStorage when changed
-											eventStore.saveSidebarSettings();
-										});
-									}}
+									onClick={item.onClick}
 								>
 									<i className={`fa ${item.icon}`} aria-hidden="true"></i>
 									<span>{TranslateService.translate(eventStore, item.name)}</span>

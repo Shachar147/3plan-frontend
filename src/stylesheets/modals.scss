@@ -225,3 +225,41 @@
 		text-align: start;
 	}
 }
+
+// Edit Colors Modal Styles
+.edit-colors-modal {
+	.flex-col {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.flex-row {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.gap-10 {
+		gap: 10px;
+	}
+
+	hr {
+		margin: 15px 0;
+		border: none;
+		border-top: 1px solid #ddd;
+	}
+
+	input[type='color'] {
+		width: 40px;
+		height: 30px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	span {
+		font-size: 14px;
+	}
+}

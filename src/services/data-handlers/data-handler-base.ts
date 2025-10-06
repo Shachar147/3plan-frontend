@@ -20,6 +20,8 @@ export interface Trip {
 	id?: number; // for my trips page
 	lastUpdateAt?: string;
 	destinations?: string[];
+	priorityColors?: Record<string, string>;
+	priorityMapColors?: Record<string, string>;
 	createdAt?: number;
 }
 

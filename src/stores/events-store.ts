@@ -51,9 +51,9 @@ import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
 import LogHistoryService from '../services/data-handlers/log-history-service';
 import { endpoints } from '../v2/utils/endpoints';
-import { string } from 'prop-types';
 import { FeatureFlagsService } from '../utils/feature-flags';
 import { mainPageContentTabLsKey, myTripsTabId, newDesignRootPath } from '../v2/utils/consts';
+import { priorityToColor, priorityToMapColor } from '../utils/consts';
 
 const defaultModalSettings = {
 	show: false,
@@ -218,6 +218,10 @@ export class EventStore {
 
 	// focus mode
 	@observable focusMode: boolean = false;
+
+	// editable colors (defaults from consts)
+	@observable priorityColors: Record<string, string> = { ...priorityToColor };
+	@observable priorityMapColors: Record<string, string> = { ...priorityToMapColor };
 
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
@@ -1513,6 +1517,13 @@ export class EventStore {
 		this.categories = categories;
 		this.isTripLocked = !!isLocked && !isTemplateUsername();
 		this.destinations = tripData.destinations;
+		// apply colors if provided
+		if (tripData.priorityColors) {
+			this.priorityColors = { ...tripData.priorityColors };
+		}
+		if (tripData.priorityMapColors) {
+			this.priorityMapColors = { ...tripData.priorityMapColors };
+		}
 
 		if ('canRead' in Object.keys(tripData) || 'canWrite' in Object.keys(tripData)) {
 			// @ts-ignore

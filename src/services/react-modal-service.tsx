@@ -1,8 +1,11 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService, { TranslationParams } from './translate-service';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
+import PreviewBox from '../components/preview-box/preview-box';
+import { ColorPicker, useColor } from 'react-color-palette';
+import 'react-color-palette/css';
 import {
 	getClasses,
 	getCurrentUsername,
@@ -69,7 +72,12 @@ import LocationInput from '../components/inputs/location-input/location-input';
 import { apiGetNew, apiPost } from '../helpers/api';
 import { LimitationsService } from '../utils/limitations';
 import ToggleButton from '../components/toggle-button/toggle-button';
-import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
+import {
+	ACTIVITY_MAX_SIZE_DAYS,
+	ACTIVITY_MIN_SIZE_MINUTES,
+	priorityToColor,
+	priorityToMapColor,
+} from '../utils/consts';
 import { ModalsStore } from '../stores/modals-store';
 // @ts-ignore
 import _ from 'lodash';
@@ -4326,6 +4334,181 @@ const ReactModalService = {
 		});
 	},
 
+	openEditColorsModal: (eventStore: EventStore) => {
+		// Prepare local editable copies - ensure they are plain objects
+		const colors = observable.map<string, string>({ ...eventStore.priorityColors });
+		const mapColors = observable.map<string, string>({ ...eventStore.priorityMapColors });
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'EDIT_COLORS'),
+			content: (
+				<Observer>
+					{() => (
+						<div className="edit-colors-modal">
+							<div className="flex-col gap-10 align-items-center">
+								<div className="white-space-pre-line">
+									{TranslateService.translate(eventStore, 'EDIT_COLORS_DESCRIPTION')}
+								</div>
+								<div className="margin-top-5 margin-bottom-10 bold">
+									{TranslateService.translate(eventStore, 'CLICK_TO_EDIT')}
+								</div>
+								{Object.keys(TriplanPriority)
+									.filter((p) => !isNaN(Number(p)))
+									.map((priorityId) => {
+										const priorityKey = TriplanPriority[priorityId];
+										const [color, setColor] = useColor(colors.get(priorityId));
+										const [isEdit, setIsEdit] = useState(false);
+
+										return (
+											<div
+												className="flex-row gap-10 align-items-center width-400"
+												key={`pcol-${priorityId}`}
+											>
+												<div className="flex-row align-items-center gap-16 width-100-percents input-with-label">
+													<label
+														className="width-150 text-align-start"
+														onClick={() => {
+															setIsEdit(true);
+														}}
+													>
+														{TranslateService.translate(eventStore, priorityKey)}:
+													</label>
+													<div
+														className={getClasses(
+															'flex-row align-items-center gap-16',
+															!isEdit && 'display-none'
+														)}
+													>
+														<ColorPicker
+															height={50}
+															hideInput={['rgb', 'hsv']}
+															color={color}
+															onChange={(newColor) => {
+																setColor(newColor);
+															}}
+														/>
+														<div className="flex-column gap-4 width-80">
+															<button
+																className="secondary-button"
+																onClick={() => {
+																	colors.set(priorityId, color.hex);
+																	mapColors.set(priorityId, color.hex);
+																	setIsEdit(false);
+																}}
+															>
+																{TranslateService.translate(eventStore, 'SAVE')}
+															</button>
+															<button
+																className="secondary-button"
+																onClick={() => {
+																	setIsEdit(false);
+																}}
+															>
+																{TranslateService.translate(
+																	eventStore,
+																	'MODALS.CANCEL'
+																)}
+															</button>
+														</div>
+													</div>
+													<div
+														className={getClasses(
+															'flex-row align-items-center gap-16',
+															isEdit && 'display-none'
+														)}
+														onClick={() => {
+															setIsEdit(true);
+														}}
+													>
+														<TextInput
+															modalValueName={`priorityColor_${priorityId}`}
+															value={colors.get(priorityId) || ''}
+															readOnly
+															placeholder={priorityToMapColor[priorityId]}
+														/>
+														<PreviewBox size={37} color={colors.get(priorityId)} />
+													</div>
+												</div>
+											</div>
+										);
+									})}
+
+								<div className="flex-row gap-10 align-items-center margin-top-10">
+									<button
+										className="secondary-button"
+										onClick={() => {
+											Object.keys(TriplanPriority)
+												.filter((p) => !isNaN(Number(p)))
+												.forEach((pid) => {
+													const def = priorityToColor[pid];
+													colors.set(pid, def);
+													mapColors.set(pid, priorityToMapColor[pid] ?? def);
+												});
+										}}
+									>
+										{TranslateService.translate(eventStore, 'RESET_TO_DEFAULTS')}
+									</button>
+								</div>
+							</div>
+						</div>
+					)}
+				</Observer>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				// capture previous values for history logging
+				const previousColors = { ...eventStore.priorityColors };
+				const previousMapColors = { ...eventStore.priorityMapColors };
+
+				// update store
+				runInAction(() => {
+					eventStore.priorityColors = { ...Object.fromEntries(colors) };
+					eventStore.priorityMapColors = { ...Object.fromEntries(mapColors) };
+				});
+
+				// persist via trip update
+				try {
+					await DataServices.DBService.updateTripColors(eventStore.tripName, {
+						priorityColors: eventStore.priorityColors,
+						priorityMapColors: eventStore.priorityMapColors,
+					});
+				} catch (e) {}
+
+				// log history for color changes (DB only)
+				try {
+					// build compact diff strings: only changed priorities
+					const changedIds = Object.keys(eventStore.priorityColors || {}).filter(
+						(pid) => (previousColors as any)[pid] !== (eventStore.priorityColors as any)[pid]
+					);
+
+					const toEnglishKey = (pid: string) => TriplanPriority[pid] ?? pid; // enum key is english
+					const diffPayload: any = {};
+					changedIds.forEach((pid) => {
+						const key = toEnglishKey(pid);
+						diffPayload[key] = {
+							was: (previousColors as any)[pid],
+							now: (eventStore.priorityColors as any)[pid],
+						};
+					});
+
+					LogHistoryService.logHistory(
+						eventStore,
+						TripActions.changedTripColors,
+						diffPayload,
+						undefined,
+						undefined,
+						eventStore.tripId
+					);
+				} catch {}
+
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+
 	openExportToGoogleMapsSelectionModal: (
 		eventStore: EventStore,
 		onExportChosen: (mode: 'all' | 'scheduled' | 'scheduled_by_day') => void
@@ -5289,6 +5472,41 @@ const ReactModalService = {
 							<td>{TranslateService.translate(eventStore, historyRow.actionParams.permissions)}</td>
 						</tr>
 					)}
+					{Object.keys(TriplanPriority)
+						.filter((key) => isNaN(Number(key)))
+						.map(
+							(key) =>
+								historyRow.actionParams[key] && (
+									<tr>
+										<td className="main-font-heavy">
+											{TranslateService.translate(eventStore, key)}
+										</td>
+										<td>
+											<div className="flex-row align-items-center gap-4">
+												<PreviewBox size={16} color={historyRow.actionParams[key].was} />
+												<div className="text-align-start width-150">
+													{TranslateService.translate(eventStore, 'BEFORE')}: &nbsp;
+													{TranslateService.translate(
+														eventStore,
+														historyRow.actionParams[key].was
+													)}{' '}
+													&nbsp;&nbsp;
+												</div>
+											</div>
+											<div className="flex-row align-items-center gap-4">
+												<PreviewBox size={16} color={historyRow.actionParams[key].now} />
+												<div className="text-align-start width-150">
+													{TranslateService.translate(eventStore, 'AFTER')}: &nbsp;
+													{TranslateService.translate(
+														eventStore,
+														historyRow.actionParams[key].now
+													)}
+												</div>
+											</div>
+										</td>
+									</tr>
+								)
+						)}
 					{historyRow.action == TripActions.deletedCategory && (
 						<>
 							<tr>

@@ -11,8 +11,8 @@ export const DEFAULT_VIEW_MODE_FOR_NEW_TRIPS: ViewMode = ViewMode.feed; // ViewM
 export const priorityToColor: Record<string, string> = {
 	[TriplanPriority.must]: '#E06666FF',
 	[TriplanPriority.maybe]: '#ffb752', // '#8E7CC3FF'
-	[TriplanPriority.unset]: 'var(--gray)',
-	[TriplanPriority.least]: 'var(--black)',
+	[TriplanPriority.unset]: '#b4b4b4',
+	[TriplanPriority.least]: '#000000',
 	[TriplanPriority.high]: '#d2105b', // '#f57c01',
 };
 
