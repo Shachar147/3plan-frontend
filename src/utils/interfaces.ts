@@ -86,6 +86,8 @@ export interface TriPlanCategory {
 	icon: string;
 	description?: string;
 	titleKey?: string;
+	/** Optional Google Maps marker icon key (see icons map) */
+	googleMapIcon?: string;
 }
 
 export interface LocationData {

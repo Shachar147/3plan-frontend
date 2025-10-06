@@ -1072,5 +1072,7 @@
 	"PRIORITY_MAP_COLORS": "Map Colors",
 	"RESET_TO_DEFAULTS": "Reset to defaults",
 	"SAVE": "Save",
-	"CLICK_TO_EDIT": "Click on a row to edit"
+	"CLICK_TO_EDIT": "Click on a row to edit",
+	"GOOGLE_MAP_ICON": "Map Icon",
+	"MODALS.GOOGLEMAPICON":"Map Icon"
 }

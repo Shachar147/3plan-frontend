@@ -59,7 +59,7 @@ function TriplanSidebarHistory(props: TriplanSidebarHistoryProps) {
 			}
 		}
 
-		historyRow.actionParams.count2 = historyRow.actionParams.count2 ?? historyRow.actionParams.count;
+		const count2 = historyRow.actionParams.count2 ?? historyRow.actionParams.count;
 
 		const title = TranslateService.translate(
 			eventStore,
@@ -69,7 +69,7 @@ function TriplanSidebarHistory(props: TriplanSidebarHistoryProps) {
 				eventName: historyRow.eventName,
 				count,
 				categoryName: historyRow.actionParams?.categoryName,
-				count2: historyRow.actionParams.count2,
+				count2,
 				totalAffected:
 					historyRow.action == TripActions.deletedCategory
 						? (historyRow.actionParams?.totalAffectedCalendar ?? 0) +

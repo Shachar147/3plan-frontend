@@ -3,7 +3,7 @@ import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
 import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent, TriPlanCategory } from './interfaces';
-import { FLIGHT_KEYWORDS, HOTEL_KEYWORDS } from '../components/map-container/map-container';
+import { FLIGHT_KEYWORDS, HOTEL_KEYWORDS } from '../components/map-container/map-container-utils';
 import { formatDate, formatTime, toDate } from './time-utils';
 
 import jwt_decode from 'jwt-decode';

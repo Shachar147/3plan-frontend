@@ -1328,5 +1328,7 @@
 	"changedTripColors": "צבעי הטיול שונו",
 	"changedTripColorsYou": "שינית את צבעי הטיול",
 	"changedTripColorsFull": "{who} שינה את צבעי הטיול",
-	"changedTripColorsFullYou": "שינית את צבעי הטיול"
+	"changedTripColorsFullYou": "שינית את צבעי הטיול",
+	"GOOGLE_MAP_ICON": "אייקון במפה",
+	"MODALS.GOOGLEMAPICON": "אייקון במפה"
 }
