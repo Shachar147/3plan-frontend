@@ -28,6 +28,8 @@ export interface upsertTripProps {
 	allEvents?: AllEventsEvent[];
 	calendarLocale?: LocaleCode;
 	destinations?: string[];
+	priorityColors?: Record<string, string>;
+	priorityMapColors?: Record<string, string>;
 }
 
 export const useInviteLinkLSKey = 'triplan-invite-link';
@@ -105,6 +107,13 @@ export class DBService implements BaseDataHandler {
 			window.location.href = '/login';
 		}
 		return res.data as Trip;
+	}
+
+	async updateTripColors(
+		tripName: string,
+		data: { priorityColors: Record<string, string>; priorityMapColors: Record<string, string> }
+	) {
+		return apiPut(endpoints.v1.trips.updateTripByName(tripName), data);
 	}
 
 	// unused

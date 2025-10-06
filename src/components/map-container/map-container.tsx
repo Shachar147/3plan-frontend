@@ -14,7 +14,7 @@ import MarkerClusterer from '@googlemaps/markerclustererplus';
 // @ts-ignore
 import * as _ from 'lodash';
 import { eventStoreContext } from '../../stores/events-store';
-import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
+import { flightColor, hotelColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
 import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
 import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../../utils/enums';
@@ -392,7 +392,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 	const getIconUrl = (event: any) => {
 		let icon = '';
-		let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+		let bgColor = eventStore.priorityMapColors[event.priority || TriplanPriority.unset].replace('#', '');
 		let category = resolveCategoryTitle(event);
 
 		category = category ? category.toString().toLowerCase() : '';
@@ -494,7 +494,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 	const initMarkers = (map = googleMapRef) => {
 		const getIconUrlByIdx = (event: any, idx: number) => {
-			const bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+			const bgColor = eventStore.priorityMapColors[event.priority || TriplanPriority.unset].replace('#', '');
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1738-blank-sequence_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0&color=ffffffff&psize=15&text=${idx}`;
 		};
 
@@ -527,7 +527,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			// Check if event is scheduled
 			const isScheduled = !props.allEvents && eventStore.calendarEvents.find((x) => x.id === event.id);
 
-			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority!] };
+			const markerIcon = { ...icon, fillColor: eventStore.priorityColors[event.priority!] };
 			const markerIconWithBorder = {
 				...markerIcon,
 				strokeColor: 'red', // '#ffffff',
@@ -889,7 +889,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	};
 
 	const computeIconUrlAndColor = (event: any) => {
-		const color = priorityToMapColor[event.priority || TriplanPriority.unset];
+		const color = eventStore.priorityMapColors[event.priority || TriplanPriority.unset];
 		let bgColor = color.replace('#', '');
 		const iconUrl = getIconUrl(event);
 

@@ -74,6 +74,9 @@ function TriplanSidebarDraggableEvent(props: TriplanSidebarDraggableEventProps) 
 	return (
 		<div
 			className={`fc-event flex-col align-items-start priority-${event.priority}`}
+			style={{
+				borderLeftColor: eventStore.priorityColors[event.priority], // override border color to be based on settings
+			}}
 			title={event.title}
 			data-id={event.id}
 			data-duration={event.duration}

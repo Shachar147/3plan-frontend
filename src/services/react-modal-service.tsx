@@ -1,8 +1,9 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService, { TranslationParams } from './translate-service';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
+import PreviewBox from '../components/preview-box/preview-box';
 import {
 	getClasses,
 	getCurrentUsername,
@@ -69,7 +70,12 @@ import LocationInput from '../components/inputs/location-input/location-input';
 import { apiGetNew, apiPost } from '../helpers/api';
 import { LimitationsService } from '../utils/limitations';
 import ToggleButton from '../components/toggle-button/toggle-button';
-import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
+import {
+	ACTIVITY_MAX_SIZE_DAYS,
+	ACTIVITY_MIN_SIZE_MINUTES,
+	priorityToColor,
+	priorityToMapColor,
+} from '../utils/consts';
 import { ModalsStore } from '../stores/modals-store';
 // @ts-ignore
 import _ from 'lodash';
@@ -4321,6 +4327,77 @@ const ReactModalService = {
 				} else if (format === 'csv') {
 					BackupService.exportAsCSV(eventStore);
 				}
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+
+	openEditColorsModal: (eventStore: EventStore) => {
+		// Prepare local editable copies - ensure they are plain objects
+		const colors = observable.map<string, string>({ ...eventStore.priorityColors });
+		const mapColors = observable.map<string, string>({ ...eventStore.priorityMapColors });
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'EDIT_COLORS'),
+			content: (
+				<Observer>
+					{() => (
+						<div className="edit-colors-modal">
+							<div className="flex-col gap-10 align-items-center">
+								<div className="white-space-pre-line">
+									{TranslateService.translate(eventStore, 'EDIT_COLORS_DESCRIPTION')}
+								</div>
+								{Object.keys(TriplanPriority)
+									.filter((p) => !isNaN(Number(p)))
+									.map((priorityId) => {
+										const priorityKey = TriplanPriority[priorityId];
+										return (
+											<div
+												className="flex-row gap-10 align-items-center width-400"
+												key={`pcol-${priorityId}`}
+											>
+												<div className="flex-row align-items-center gap-16 width-100-percents input-with-label">
+													<label className="width-150 text-align-start">
+														{TranslateService.translate(eventStore, priorityKey)}:
+													</label>
+													<TextInput
+														modalValueName={`priorityColor_${priorityId}`}
+														value={colors.get(priorityId) || ''}
+														onChange={(e) => {
+															colors.set(priorityId, e.target.value);
+															mapColors.set(priorityId, e.target.value);
+														}}
+														placeholder={priorityToMapColor[priorityId]}
+													/>
+													<PreviewBox size={37} color={colors.get(priorityId)} />
+												</div>
+											</div>
+										);
+									})}
+							</div>
+						</div>
+					)}
+				</Observer>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				// update store
+				runInAction(() => {
+					eventStore.priorityColors = { ...Object.fromEntries(colors) };
+					eventStore.priorityMapColors = { ...Object.fromEntries(mapColors) };
+				});
+
+				// persist via trip update
+				try {
+					await DataServices.DBService.updateTripColors(eventStore.tripName, {
+						priorityColors: eventStore.priorityColors,
+						priorityMapColors: eventStore.priorityMapColors,
+					});
+				} catch (e) {}
+
 				ReactModalService.internal.closeModal(eventStore);
 			},
 		});

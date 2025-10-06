@@ -1061,5 +1061,10 @@
 	"BACKUP_TRIP.FORMAT.CSV": "CSV (Activities only)",
 	"BACKUP_TRIP.DESCRIPTION.JSON": "Export complete trip data including trip name, dates, categories, events, and more. Can be used to recreate the exact trip using the API.",
 	"BACKUP_TRIP.DESCRIPTION.CSV": "Export activities in CSV format, compatible with the import format.",
-	"BACKUP_TRIP.EXPORT": "Export"
+	"BACKUP_TRIP.EXPORT": "Export",
+	"EDIT_COLORS": "Edit Colors",
+	"EDIT_COLORS_DESCRIPTION": "Customize your trip view by editing the colors of activity priorities.\nThis helps you quickly recognize what's most important on the map, making it easier to plan your days, balance must-do activities with flexible ones, and keep your itinerary clear and organized.",
+	"PRIORITY_COLORS": "Priority Colors",
+	"PRIORITY_MAP_COLORS": "Map Colors",
+	"SAVE": "Save"
 }
