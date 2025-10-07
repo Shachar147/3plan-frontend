@@ -1,0 +1,16 @@
+.google-map-icon-selector {
+	max-width: 100%;
+	flex-wrap: wrap;
+	max-height: 90px;
+	overflow: auto;
+
+	button {
+		padding-inline: 4px !important;
+		padding-block: 0 !important;
+
+		&.active,
+		&.active:hover {
+			border: 1px solid var(--blue);
+		}
+	}
+}

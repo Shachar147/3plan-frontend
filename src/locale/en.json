@@ -17,7 +17,8 @@
 	"DUPLICATE": "Duplicate",
 	"DELETE": "Delete",
 	"EDIT_CATEGORY_MODAL.TITLE.EDIT_CATEGORY": "Edit Category",
-	"MODALS.ICON": "Icon",
+	"MODALS.ICON": "Sidebar Icon",
+	"GENERAL.ICON": "Icon",
 	"MODALS.TITLE": "Title",
 	"MODALS.SAVE": "Save",
 	"MODALS.EDIT": "Edit",
@@ -296,9 +297,10 @@
 	"NO_FILE_CHOSEN": "No file chosen",
 	"LOGIN": "Login",
 	"REGISTER_PREFIX": "Not a member yet?",
-	"REGISTER": "sign up!",
+	"REGISTER": "sign up - it's free!",
 	"LOGIN_PAGE.WRONG_CREDENTIALS": "Username or Password are incorrect.",
 	"REGISTER_BUTTON": "Sign up",
+	"REGISTER_ITS_FREE": "Sign up - it's free!",
 	"LOGIN_PREFIX": "Already a member?",
 	"LOGIN_LINK": "login!",
 	"LOGOUT": "Logout",
@@ -1072,5 +1074,7 @@
 	"PRIORITY_MAP_COLORS": "Map Colors",
 	"RESET_TO_DEFAULTS": "Reset to defaults",
 	"SAVE": "Save",
-	"CLICK_TO_EDIT": "Click on a row to edit"
+	"CLICK_TO_EDIT": "Click on a row to edit",
+	"GOOGLE_MAP_ICON": "Map Icon",
+	"MODALS.GOOGLEMAPICON":"Map Icon"
 }

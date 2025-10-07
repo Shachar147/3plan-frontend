@@ -40,7 +40,7 @@ import {
 	NIGHTLIFE_KEYWORDS,
 	STORE_KEYWORDS,
 	TOURIST_KEYWORDS,
-} from './components/map-container/map-container';
+} from './components/map-container/map-container-utils';
 import { BiEventsService } from './services/bi-events.service';
 import useIsAdmin from './custom-hooks/use-is-admin';
 import InviteLink from './pages/invite-link/invite-link';

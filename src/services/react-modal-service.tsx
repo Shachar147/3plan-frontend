@@ -3,6 +3,10 @@ import TranslateService, { TranslationParams } from './translate-service';
 import React, { useEffect, useState } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
+import GoogleMapIconSelector, {
+	GOOGLE_MAP_ICONS_MAP,
+	iconToName,
+} from '../components/inputs/google-map-icon-selector/google-map-icon-selector';
 import PreviewBox from '../components/preview-box/preview-box';
 import { ColorPicker, useColor } from 'react-color-palette';
 import 'react-color-palette/css';
@@ -88,6 +92,7 @@ import { useNavigate } from 'react-router-dom';
 import { endpoints } from '../v2/utils/endpoints';
 import { FeatureFlagsService } from '../utils/feature-flags';
 import { newDesignRootPath } from '../v2/utils/consts';
+import { getIcon } from '../components/map-container/map-container-utils';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -668,6 +673,17 @@ export const ReactModalRenderHelper = {
 					/>
 				);
 				break;
+			case 'google-map-icon-selector':
+				input = (
+					<GoogleMapIconSelector
+						value={row.settings.extra.value}
+						modalValueName={row.settings.modalValueName}
+						onChange={(val) => {
+							eventStore.modalValues[row.settings.modalValueName] = GOOGLE_MAP_ICONS_MAP[val].icon;
+						}}
+					/>
+				);
+				break;
 			case 'category-selector':
 				input = ReactModalRenderHelper.renderCategorySelector(
 					eventStore,
@@ -1012,7 +1028,7 @@ const ReactModalService = {
 							readOnly: modalsStore?.isViewMode,
 						},
 					},
-					textKey: 'MODALS.ICON',
+					textKey: 'GENERAL.ICON',
 					className: 'border-top-gray icon-row',
 					showOnMinimized: false,
 				},
@@ -1397,7 +1413,7 @@ const ReactModalService = {
 								readOnly: modalsStore?.isViewMode,
 							},
 						},
-						textKey: 'MODALS.ICON',
+						textKey: 'GENERAL.ICON',
 						className: 'border-top-gray icon-row',
 						showOnMinimized: false,
 					},
@@ -1592,6 +1608,8 @@ const ReactModalService = {
 			// @ts-ignore
 			const newName = eventStore.modalValues.name;
 
+			const googleMapIcon = eventStore.modalValues.googleMapIcon;
+
 			let isOk = true;
 
 			// validate not already exist
@@ -1626,6 +1644,7 @@ const ReactModalService = {
 								id: categoryId,
 								title: newName,
 								icon: newIcon,
+								googleMapIcon: googleMapIcon,
 							},
 						],
 						false
@@ -1658,6 +1677,17 @@ const ReactModalService = {
 					},
 				},
 				textKey: 'MODALS.ICON',
+				className: 'border-top-gray',
+			},
+			{
+				settings: {
+					modalValueName: 'googleMapIcon',
+					type: 'google-map-icon-selector',
+					extra: {
+						value: undefined, // no default value
+					},
+				},
+				textKey: 'GOOGLE_MAP_ICON',
 				className: 'border-top-gray',
 			},
 			{
@@ -3240,6 +3270,12 @@ const ReactModalService = {
 		if (!category) return;
 		const categoryName = category.title;
 
+		const { icon: defaultGoogleMapIcon } = getIcon(eventStore, {
+			category: categoryId,
+			priority: TriplanPriority.unset,
+			title: categoryName,
+		});
+
 		const onConfirm = async () => {
 			const oldIcon = category.icon;
 			const oldName = categoryName;
@@ -3277,10 +3313,15 @@ const ReactModalService = {
 				return;
 			}
 
+			// @ts-ignore
+			const newGoogleMapIcon = eventStore.modalValues.googleMapIcon;
+			const oldGoogleMapIcon = category.googleMapIcon;
+
 			const iconChanged = oldIcon !== newIcon;
 			const titleChanged = oldName !== newName;
 			const orderChanged = oldOrder !== order;
-			const isChanged = titleChanged || iconChanged || orderChanged;
+			const googleMapIconChanged = newGoogleMapIcon && oldGoogleMapIcon !== newGoogleMapIcon;
+			const isChanged = titleChanged || iconChanged || orderChanged || googleMapIconChanged;
 
 			if (isChanged) {
 				// validate title not already exist
@@ -3301,6 +3342,7 @@ const ReactModalService = {
 					id: categoryId,
 					title: newName,
 					icon: newIcon,
+					googleMapIcon: newGoogleMapIcon || oldGoogleMapIcon,
 				});
 
 				await eventStore.setCategories(newCategories, false);
@@ -3332,6 +3374,12 @@ const ReactModalService = {
 					diff['title'] = {
 						was: oldName,
 						now: newName,
+					};
+				}
+				if (googleMapIconChanged) {
+					diff['googleMapIcon'] = {
+						was: iconToName(oldGoogleMapIcon),
+						now: iconToName(newGoogleMapIcon),
 					};
 				}
 				if (orderChanged) {
@@ -3368,6 +3416,17 @@ const ReactModalService = {
 					},
 				},
 				textKey: 'MODALS.ICON',
+				className: 'border-top-gray',
+			},
+			{
+				settings: {
+					modalValueName: 'googleMapIcon',
+					type: 'google-map-icon-selector',
+					extra: {
+						value: category.googleMapIcon || defaultGoogleMapIcon,
+					},
+				},
+				textKey: 'GOOGLE_MAP_ICON',
 				className: 'border-top-gray',
 			},
 			{
@@ -5361,41 +5420,7 @@ const ReactModalService = {
 					</tr>
 					<tr>
 						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'WHAT')}</td>
-						<td>
-							{fullTitle}
-							{/*{TranslateService.translate(*/}
-							{/*	eventStore,*/}
-							{/*	isYou ? historyRow.action + 'You' : historyRow.action,*/}
-							{/*	{*/}
-							{/*		eventName: historyRow.eventName,*/}
-							{/*		count:*/}
-							{/*			historyRow.actionParams.count ??*/}
-							{/*			historyRow.action == TripActions.changedCategory*/}
-							{/*				? Object.keys(historyRow.actionParams).filter(*/}
-							{/*						(c) =>*/}
-							{/*							[*/}
-							{/*								'openingHours',*/}
-							{/*								'images',*/}
-							{/*								'timingError',*/}
-							{/*								'className',*/}
-							{/*								'id',*/}
-							{/*							].indexOf(c) == -1*/}
-							{/*				  ).length - 1*/}
-							{/*				: Object.keys(historyRow.actionParams).filter(*/}
-							{/*						(c) =>*/}
-							{/*							[*/}
-							{/*								'openingHours',*/}
-							{/*								'images',*/}
-							{/*								'timingError',*/}
-							{/*								'className',*/}
-							{/*								'id',*/}
-							{/*							].indexOf(c) == -1*/}
-							{/*				  ).length,*/}
-							{/*		count2: historyRow.actionParams.count2,*/}
-							{/*		...historyRow.actionParams,*/}
-							{/*	}*/}
-							{/*)}*/}
-						</td>
+						<td>{fullTitle}</td>
 					</tr>
 					{historyRow.actionParams.eventName && (
 						<tr>
@@ -5588,6 +5613,11 @@ const ReactModalService = {
 										'count',
 										historyRow.action == TripActions.changedCategory && 'categoryName',
 									].indexOf(k) == -1
+							)
+							.filter(
+								(changedKey) =>
+									Object.keys(historyRow.actionParams[changedKey]).includes('was') &&
+									Object.keys(historyRow.actionParams[changedKey]).includes('now')
 							)
 							.map((changedKey, idx) => (
 								<tr>

@@ -776,6 +776,13 @@ export class EventStore {
 	}
 
 	@computed
+	get categoriesMapIcons(): Record<number, string> {
+		const hash: Record<number, string> = {};
+		this.categories.forEach((x) => (hash[x.id] = x.googleMapIcon));
+		return hash;
+	}
+
+	@computed
 	get isListView() {
 		return this.isMobile ? this.mobileViewMode === ViewMode.list : this.viewMode === ViewMode.list;
 	}
