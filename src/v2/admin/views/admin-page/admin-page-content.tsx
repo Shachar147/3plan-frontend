@@ -57,7 +57,7 @@ function AdminPageContent() {
 			{
 				id: addReleaseNoteTabId,
 				order: 1,
-				name: 'Add Release Note',
+				name: TranslateService.translate(eventStore, `ADMIN_PAGE_V2.ADD_RELEASE_NOTES${isShort}`),
 				icon: 'fa-bolt',
 				render: () => (
 					<TriplanTabContent

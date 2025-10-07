@@ -4,6 +4,8 @@ import TranslateService from '../../../../services/translate-service';
 import { eventStoreContext } from '../../../../stores/events-store';
 import FileUploadApiService from '../../../services/file-upload-api-service';
 import ReleaseNotesApiService from '../../../services/release-notes-api-service';
+import TextInput from '../../../../components/inputs/text-input/text-input';
+import TextareaInput from '../../../../components/inputs/textarea-input/textarea-input';
 
 function AddReleaseNoteForm() {
 	const eventStore = useContext(eventStoreContext);
@@ -65,25 +67,44 @@ function AddReleaseNoteForm() {
 		<div className="add-poi-form-container">
 			<div className="add-poi-form">
 				<label>{TranslateService.translate(eventStore, 'ENGLISH')}:</label>
-				<input
+				<TextInput
+					modalValueName="englishTitle"
 					name="englishTitle"
 					value={form.englishTitle}
 					onChange={handleChange}
-					placeholder="English title"
+					placeholder={TranslateService.translate(eventStore, 'ENGLISH_TITLE')}
 				/>
 				<label>{TranslateService.translate(eventStore, 'HEBREW')}:</label>
-				<input name="hebrewTitle" value={form.hebrewTitle} onChange={handleChange} placeholder="Hebrew title" />
+				<TextInput
+					modalValueName="hebrewTitle"
+					name="hebrewTitle"
+					value={form.hebrewTitle}
+					onChange={handleChange}
+					placeholder={TranslateService.translate(eventStore, 'HEBREW_TITLE')}
+				/>
 
 				<label>
 					{TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESCRIPTION')} (
 					{TranslateService.translate(eventStore, 'ENGLISH')})
 				</label>
-				<textarea name="englishDescription" value={form.englishDescription} onChange={handleChange} />
+				<TextareaInput
+					modalValueName="englishDescription"
+					name="englishDescription"
+					value={form.englishDescription}
+					onChange={handleChange}
+					placeholder={TranslateService.translate(eventStore, 'ENGLISH_DESCRIPTION')}
+				/>
 				<label>
 					{TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.DESCRIPTION')} (
 					{TranslateService.translate(eventStore, 'HEBREW')})
 				</label>
-				<textarea name="hebrewDescription" value={form.hebrewDescription} onChange={handleChange} />
+				<TextareaInput
+					modalValueName="hebrewDescription"
+					name="hebrewDescription"
+					value={form.hebrewDescription}
+					onChange={handleChange}
+					placeholder={TranslateService.translate(eventStore, 'HEBREW_DESCRIPTION')}
+				/>
 
 				<label>{TranslateService.translate(eventStore, 'MODALS.IMAGES')}</label>
 				<input type="file" accept="image/*" multiple onChange={handleImageUpload} />

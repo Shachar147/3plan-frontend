@@ -974,6 +974,8 @@
 	"CREATE_TRIP_FROM_TEMPLATE.BUTTON.TEXT": "Make it mine!",
 	"ADMIN_PAGE_V2.ADD_POIS": "Add Point Of Interests",
 	"ADMIN_PAGE_V2.ADD_POIS.SHORT": "Add POIs",
+	"ADMIN_PAGE_V2.ADD_RELEASE_NOTES": "Add Release Notes",
+	"ADMIN_PAGE_V2.ADD_RELEASE_NOTES.SHORT": "Add Releases",
 	"CHOOSE_A_FILE": "Choose file/s",
 	"X_FILES_CHOSEN": "{X} files chosen",
 	"SOURCE_OR_LINK": "Source / Link",
@@ -1084,5 +1086,9 @@
 	"WHATS_NEW.PRIORITY_COLORS.TITLE": "Customize Priority Colors",
 	"WHATS_NEW.PRIORITY_COLORS.DESC": "Choose the colors that represent priorities on the map for better visual focus.",
 	"WHATS_NEW.CATEGORY_ICONS.TITLE": "Choose Category Icons",
-	"WHATS_NEW.CATEGORY_ICONS.DESC": "Control which icons are shown on the map per category to match your style."
+	"WHATS_NEW.CATEGORY_ICONS.DESC": "Control which icons are shown on the map per category to match your style.",
+	"ENGLISH_TITLE": "Enter english title",
+	"HEBREW_TITLE": "Enter hebrew title",
+	"ENGLISH_DESCRIPTION": "Enter english description",
+	"HEBREW_DESCRIPTION": "Enter hebrew description"
 }

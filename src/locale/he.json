@@ -1232,6 +1232,8 @@
 	"CREATE_TRIP_FROM_TEMPLATE.BUTTON.TEXT": "צור טיול מטמפלייט זה!",
 	"ADMIN_PAGE_V2.ADD_POIS": "הוסף נקודות עניין",
 	"ADMIN_PAGE_V2.ADD_POIS.SHORT": "הוסף נק' עניין",
+	"ADMIN_PAGE_V2.ADD_RELEASE_NOTES": "הוסף רליס נוטס",
+	"ADMIN_PAGE_V2.ADD_RELEASE_NOTES.SHORT": "הוסף רליס",
 	"CHOOSE_A_FILE": "בחר קבצים",
 	"X_FILES_CHOSEN": "{X} קבצים נבחרו",
 	"SOURCE_OR_LINK": "מקור / לינק למידע נוסף",
@@ -1340,5 +1342,9 @@
 	"WHATS_NEW.PRIORITY_COLORS.TITLE": "שליטה בצבעי עדיפויות",
 	"WHATS_NEW.PRIORITY_COLORS.DESC": "בחרו את הצבעים שמייצגים את העדיפויות על המפה כדי להתמקד במה שחשוב.",
 	"WHATS_NEW.CATEGORY_ICONS.TITLE": "שליטה באייקונים לפי קטגוריה",
-	"WHATS_NEW.CATEGORY_ICONS.DESC": "קבעו אילו אייקונים יוצגו על המפה עבור כל קטגוריה."
+	"WHATS_NEW.CATEGORY_ICONS.DESC": "קבעו אילו אייקונים יוצגו על המפה עבור כל קטגוריה.",
+	"ENGLISH_TITLE": "הזן כותרת באנגלית",
+	"HEBREW_TITLE": "הזן כותרת בעברית",
+	"ENGLISH_DESCRIPTION": "הזן תיאור באנגלית",
+	"HEBREW_DESCRIPTION": "הזן תיאור בעברית"
 }

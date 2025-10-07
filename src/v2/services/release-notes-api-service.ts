@@ -1,4 +1,3 @@
-import { endpoints } from '../utils/endpoints';
 import { apiGetPromise, apiPost, apiPut, apiDeletePromise } from '../../helpers/api';
 
 export interface ReleaseNotePayload {
