@@ -10,6 +10,7 @@ import { rootStoreContext } from '../../../stores/root-store';
 import { TabData } from '../../../utils/interfaces';
 import LoadingComponent from '../../../../components/loading/loading-component';
 import POIForm from '../../components/add-poi-form/add-poi-form';
+import AddReleaseNoteForm from '../../components/add-release-note-form/add-release-note-form';
 import useIsAdminV2 from '../../../../custom-hooks/use-is-admin-v2';
 
 function TriplanTabContent({ content }: { content: string | React.ReactNode }) {
@@ -17,6 +18,7 @@ function TriplanTabContent({ content }: { content: string | React.ReactNode }) {
 }
 
 const addPoisTabId = 'add-pois';
+const addReleaseNoteTabId = 'add-release-note';
 
 function AdminPageContent() {
 	const rootStore = useContext(rootStoreContext);
@@ -47,6 +49,21 @@ function AdminPageContent() {
 						content={
 							<div className="flex-row align-items-center justify-content-center width-100-percents">
 								<POIForm />
+							</div>
+						}
+					/>
+				),
+			},
+			{
+				id: addReleaseNoteTabId,
+				order: 1,
+				name: TranslateService.translate(eventStore, `ADMIN_PAGE_V2.ADD_RELEASE_NOTES${isShort}`),
+				icon: 'fa-bolt',
+				render: () => (
+					<TriplanTabContent
+						content={
+							<div className="flex-row align-items-center justify-content-center width-100-percents">
+								<AddReleaseNoteForm />
 							</div>
 						}
 					/>

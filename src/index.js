@@ -17,6 +17,7 @@ import MyTrips from './pages/my-trips/my-trips';
 import TranslateService from './services/translate-service';
 import { eventStoreContext } from './stores/events-store';
 import ThemeExample from './pages/theme-example/theme-example';
+import WhatsNewPage from './v2/views/whats-new/whats-new';
 import { runInAction } from 'mobx';
 import { getCoordinatesRangeKey, isMatching, padTo2Digits } from './utils/utils';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -1026,12 +1027,14 @@ const RootRouter = () => {
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/logout" element={<LogoutPage />} />
 					<Route exact path="/getting-started" element={<GettingStartedPage />} />
+					<Route exact path="/whats-new" element={<WhatsNewPage />} />
 					<Route exact path="/my-trips" element={<MyTrips />} />
 					<Route path="/plan/create/:tripName/:locale" element={<MainPage createMode={true} />} />
 					<Route path="/plan/:tripName/:locale" element={<MainPage />} />
 					<Route path="/plan/:tripName/" element={<MainPage />} />
 					<Route path={`${newDesignRootPath}/plan/:tripName/`} element={<PlanPageV2 />} />
 					<Route path={`${newDesignRootPath}/template/:templateId/`} element={<TripTemplatePageV2 />} />
+					<Route path={`${newDesignRootPath}/whats-new`} element={<WhatsNewPage />} />
 					<Route path="/plan" element={<MainPage />} />
 					<Route path="/inviteLink" element={<InviteLink />} />
 					<Route path="/theme" element={<ThemeExample />} />

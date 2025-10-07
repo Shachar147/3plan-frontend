@@ -8,6 +8,7 @@ const mobileSuggestedTripsTabId = 'suggested-trips';
 const mobileTopPicksTabId = 'top-picks';
 const mobileSystemRecommendationsTabId = 'system-recommendations';
 const savedCollectionsTabId = 'saved-collections';
+const whatsNewTabId = 'whats-new';
 const newDesignRootPath = '/v2';
 const searchResultsTabId = 'search-results';
 const specificItemTabId = 'view-item';
@@ -227,6 +228,7 @@ export {
 	exploreTabId,
 	newDesignRootPath,
 	savedCollectionsTabId,
+	whatsNewTabId,
 	cityImage,
 	islandImage,
 	searchResultsTabId,

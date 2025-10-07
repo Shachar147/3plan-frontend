@@ -144,6 +144,18 @@ function TriplanHeaderLine({
 		/>
 	);
 
+	const whatsNewBtn = (
+		<Button
+			icon="fa-bolt"
+			className="whats-new-btn"
+			text={TranslateService.translate(eventStore, 'WHATS_NEW.LINK')}
+			onClick={() => {
+				window.location.href = `${newDesignRootPath}/whats-new`;
+			}}
+			flavor={ButtonFlavor.link}
+		/>
+	);
+
 	const signInOutBtn = (
 		<Button
 			// icon="fa-user"
@@ -240,6 +252,7 @@ function TriplanHeaderLine({
 				{isAdmin() ? (isInAdmin ? goToUserSideBtn : goToAdminSideBtn) : undefined}
 				{!isInPlan && wishlistBtn}
 				{!eventStore.isMobile && myTripsBtn}
+				{whatsNewBtn}
 				{languageBtn}
 				{signInOutBtn}
 			</div>
@@ -262,15 +275,15 @@ function TriplanHeaderLine({
 			<div className={`${baseClass}-top-shadow`} />
 			<div className={getClasses(baseClass, !isMobile && 'sticky', isSticky && 'is-sticky')}>
 				<div className={`${baseClass}-left-side`}>
-						{!eventStore.isMobile && (
-							<TriplanLogo
-								onClick={() => (window.location.href = newDesignRootPath)}
-								white={!isSticky}
-								height={60}
-							/>
-						)}
-						{condition1 && !condition2 && <div>{search}</div>}
-					</div>
+					{!eventStore.isMobile && (
+						<TriplanLogo
+							onClick={() => (window.location.href = newDesignRootPath)}
+							white={!isSticky}
+							height={60}
+						/>
+					)}
+					{condition1 && !condition2 && <div>{search}</div>}
+				</div>
 				<div className={`${baseClass}-right-side`} key={rootStore.headerReRenderCounter}>
 					<div className="flex-column gap-4">
 						{renderHeaderButtons()}
