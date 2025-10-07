@@ -1332,5 +1332,13 @@
 	"changedTripColorsFull": "{who} שינה את צבעי הטיול",
 	"changedTripColorsFullYou": "שינית את צבעי הטיול",
 	"GOOGLE_MAP_ICON": "אייקון במפה",
-	"MODALS.GOOGLEMAPICON": "אייקון במפה"
+	"MODALS.GOOGLEMAPICON": "אייקון במפה",
+	"WHATS_NEW.TITLE": "מה חדש?",
+	"WHATS_NEW.LINK": "מה חדש?",
+	"WHATS_NEW.EXPORT_GOOGLE_MAPS.TITLE": "ייצוא לגוגל מיי מפס",
+	"WHATS_NEW.EXPORT_GOOGLE_MAPS.DESC": "ייצאו את המפה שלכם עם האייקונים וחלוקה לימים ישירות ל-Google My Maps.",
+	"WHATS_NEW.PRIORITY_COLORS.TITLE": "שליטה בצבעי עדיפויות",
+	"WHATS_NEW.PRIORITY_COLORS.DESC": "בחרו את הצבעים שמייצגים את העדיפויות על המפה כדי להתמקד במה שחשוב.",
+	"WHATS_NEW.CATEGORY_ICONS.TITLE": "שליטה באייקונים לפי קטגוריה",
+	"WHATS_NEW.CATEGORY_ICONS.DESC": "קבעו אילו אייקונים יוצגו על המפה עבור כל קטגוריה."
 }

@@ -1076,5 +1076,13 @@
 	"SAVE": "Save",
 	"CLICK_TO_EDIT": "Click on a row to edit",
 	"GOOGLE_MAP_ICON": "Map Icon",
-	"MODALS.GOOGLEMAPICON":"Map Icon"
+	"MODALS.GOOGLEMAPICON":"Map Icon",
+	"WHATS_NEW.TITLE": "What's new?",
+	"WHATS_NEW.LINK": "What's new?",
+	"WHATS_NEW.EXPORT_GOOGLE_MAPS.TITLE": "Export to Google My Maps",
+	"WHATS_NEW.EXPORT_GOOGLE_MAPS.DESC": "Export your full map with icons and daily layers to Google My Maps.",
+	"WHATS_NEW.PRIORITY_COLORS.TITLE": "Customize Priority Colors",
+	"WHATS_NEW.PRIORITY_COLORS.DESC": "Choose the colors that represent priorities on the map for better visual focus.",
+	"WHATS_NEW.CATEGORY_ICONS.TITLE": "Choose Category Icons",
+	"WHATS_NEW.CATEGORY_ICONS.DESC": "Control which icons are shown on the map per category to match your style."
 }

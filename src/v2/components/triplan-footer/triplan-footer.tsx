@@ -112,6 +112,14 @@ function TriplanFooter() {
 				{structure.map((dict, idx) => (
 					<div key={idx}>{renderStatsBlock(dict)}</div>
 				))}
+				<div className="flex-column gap-8">
+					<Button
+						flavor={ButtonFlavor.link}
+						className="white-color"
+						onClick={() => (window.location.href = `${newDesignRootPath}/whats-new`)}
+						text={TranslateService.translate(eventStore, 'WHATS_NEW.LINK')}
+					/>
+				</div>
 			</div>
 			{isAdmin() && (
 				<Button
