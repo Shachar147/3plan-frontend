@@ -350,7 +350,7 @@ function ItineraryView({ events }: ItineraryViewProps) {
 								{event.images && (
 									<div className="event-image-wrapper">
 										<img
-											src={event.images.split(',')[0]}
+											src={event.images.split(',')[0].split('\n')[0]}
 											alt={event.title}
 											className="event-image"
 											onError={handleImageError}
