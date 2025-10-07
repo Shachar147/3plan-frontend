@@ -43,5 +43,10 @@ body.rtl {
 	.whats-new-text h3,
 	.whats-new-text div {
 		direction: rtl;
+		text-align: right;
+	}
+
+	.whats-new-row {
+		direction: ltr;
 	}
 }

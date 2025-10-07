@@ -1090,5 +1090,8 @@
 	"ENGLISH_TITLE": "Enter english title",
 	"HEBREW_TITLE": "Enter hebrew title",
 	"ENGLISH_DESCRIPTION": "Enter english description",
-	"HEBREW_DESCRIPTION": "Enter hebrew description"
+	"HEBREW_DESCRIPTION": "Enter hebrew description",
+	"ADMIN_MANAGE_ITEM.HOW_TO_USE": "How to use",
+	"ENGLISH_HOW_TO_USE": "Enter instructions how to use it, in english",
+	"HEBREW_HOW_TO_USE": "Enter instructions how to use it, in hebrew"
 }

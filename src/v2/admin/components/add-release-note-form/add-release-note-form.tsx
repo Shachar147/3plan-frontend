@@ -19,6 +19,8 @@ function AddReleaseNoteForm() {
 		hebrewTitle: '',
 		englishDescription: '',
 		hebrewDescription: '',
+		englishHowToUse: '',
+		hebrewHowToUse: '',
 	});
 
 	const handleChange = (e: any) => {
@@ -55,7 +57,14 @@ function AddReleaseNoteForm() {
 			const api = new ReleaseNotesApiService();
 			await api.create({ ...form, imageUrls });
 			alert('Saved!');
-			setForm({ englishTitle: '', hebrewTitle: '', englishDescription: '', hebrewDescription: '' });
+			setForm({
+				englishTitle: '',
+				hebrewTitle: '',
+				englishDescription: '',
+				hebrewDescription: '',
+				englishHowToUse: '',
+				hebrewHowToUse: '',
+			});
 			setImages([]);
 			setPreviewUrls([]);
 		} finally {
@@ -104,6 +113,29 @@ function AddReleaseNoteForm() {
 					value={form.hebrewDescription}
 					onChange={handleChange}
 					placeholder={TranslateService.translate(eventStore, 'HEBREW_DESCRIPTION')}
+				/>
+
+				<label>
+					{TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.HOW_TO_USE')} (
+					{TranslateService.translate(eventStore, 'ENGLISH')})
+				</label>
+				<TextareaInput
+					modalValueName="englishHowToUse"
+					name="englishHowToUse"
+					value={form.englishHowToUse}
+					onChange={handleChange}
+					placeholder={TranslateService.translate(eventStore, 'ENGLISH_HOW_TO_USE')}
+				/>
+				<label>
+					{TranslateService.translate(eventStore, 'ADMIN_MANAGE_ITEM.HOW_TO_USE')} (
+					{TranslateService.translate(eventStore, 'HEBREW')})
+				</label>
+				<TextareaInput
+					modalValueName="hebrewHowToUse"
+					name="hebrewHowToUse"
+					value={form.hebrewHowToUse}
+					onChange={handleChange}
+					placeholder={TranslateService.translate(eventStore, 'HEBREW_HOW_TO_USE')}
 				/>
 
 				<label>{TranslateService.translate(eventStore, 'MODALS.IMAGES')}</label>

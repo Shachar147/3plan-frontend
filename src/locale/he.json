@@ -1346,5 +1346,8 @@
 	"ENGLISH_TITLE": "הזן כותרת באנגלית",
 	"HEBREW_TITLE": "הזן כותרת בעברית",
 	"ENGLISH_DESCRIPTION": "הזן תיאור באנגלית",
-	"HEBREW_DESCRIPTION": "הזן תיאור בעברית"
+	"HEBREW_DESCRIPTION": "הזן תיאור בעברית",
+	"ADMIN_MANAGE_ITEM.HOW_TO_USE": "איך להשתמש",
+	"ENGLISH_HOW_TO_USE": "הזן הסברים איך להשתמש ביכולת זו, באנגלית",
+	"HEBREW_HOW_TO_USE": "הזן הסברים איך להשתמש ביכולת זו, בעברית"
 }
