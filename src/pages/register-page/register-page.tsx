@@ -205,7 +205,7 @@ function RegisterPage() {
 					})}
 					<div className="login-form-buttons">
 						<Button
-							text={TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
+							text={TranslateService.translate(eventStore, 'REGISTER_ITS_FREE')}
 							onClick={register}
 							flavor={ButtonFlavor.primary}
 							disabled={validating}

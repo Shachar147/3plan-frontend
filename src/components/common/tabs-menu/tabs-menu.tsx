@@ -33,7 +33,13 @@ function TabMenu(props: TabMenuProps) {
 
 	function scrollToDiv(tabId: string) {
 		const element = document.querySelector(`[data-tab-id='${tabId}']`);
+		if (!element) {
+			return;
+		}
 		const container = element.parentElement;
+		if (!container) {
+			return;
+		}
 		const containerScrollPosition = container.scrollLeft;
 		const elementOffsetLeft = element.offsetLeft;
 

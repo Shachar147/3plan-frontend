@@ -213,7 +213,7 @@ const RegisterPageOld = () => {
 								data-testid="submit"
 								onClick={register}
 							>
-								{TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
+								{TranslateService.translate(eventStore, 'REGISTER_ITS_FREE')}
 							</style.Button>
 						</div>
 						<div className="login-link-container" key="login-link-container">
