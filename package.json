@@ -127,7 +127,7 @@
 		"start:all": "concurrently \"npm run start:background\" \"cd ../server && npm run start:background\""
 	},
 	"engines": {
-		"node": "18.20.7",
+		"node": "22.19.0",
 		"npm": "8.19.4"
 	},
 	"browserslist": [
