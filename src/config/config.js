@@ -13,7 +13,8 @@ export function getServerAddress() {
 		// return 'http://192.168.1.30:3001'; // Hadera
 		// return 'https://triplan-server.herokuapp.com';
 	} else {
-		return 'https://triplan-server.herokuapp.com';
+		// return 'https://triplan-server.herokuapp.com';
+		return 'https://threeplan-server.onrender.com';
 	}
 }
 

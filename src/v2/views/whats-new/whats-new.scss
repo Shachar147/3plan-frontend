@@ -11,6 +11,7 @@
 	border-radius: 10px;
 	padding: 16px;
 	background: rgba(255, 255, 255, 0.9);
+	// background: rgba(0, 0, 0, 0.01);
 	align-items: flex-start;
 }
 
@@ -31,6 +32,16 @@
 
 .whats-new-text {
 	flex: 1 1 0;
+}
+
+.whats-new-content {
+	.triplan-header-banner-slogan,
+	.triplan-header-banner-bottom-shadow {
+		display: none;
+	}
+	.triplan-header-banner {
+		height: 200px;
+	}
 }
 
 body.rtl {

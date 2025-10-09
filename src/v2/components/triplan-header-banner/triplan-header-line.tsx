@@ -62,11 +62,15 @@ function TriplanHeaderLine({
 
 	const hideSearch = !isLoggedIn; // || (eventStore.isMobile && scrollY > 160);
 
+	const isWhatNew = window.location.href.includes('whats-new');
+
 	const wishlistBtn = (
 		<Button
 			icon="fa-heart"
 			text={TranslateService.translate(eventStore, 'WISHLIST')}
-			className={localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId && 'active'}
+			className={
+				!isWhatNew && localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId && 'active'
+			}
 			onClick={() => {
 				// if (localStorage.getItem(mainPageContentTabLsKey) === savedCollectionsTabId) {
 				//     return;
@@ -107,6 +111,7 @@ function TriplanHeaderLine({
 				!isInPlan &&
 				localStorage.getItem(mainPageContentTabLsKey) === myTripsTabId &&
 				!isInAdmin &&
+				!isWhatNew &&
 				'active'
 			}
 			onClick={() => {
@@ -147,7 +152,7 @@ function TriplanHeaderLine({
 	const whatsNewBtn = (
 		<Button
 			icon="fa-bolt"
-			className="whats-new-btn"
+			className={getClasses('whats-new-btn', isWhatNew && 'active')}
 			text={TranslateService.translate(eventStore, 'WHATS_NEW.LINK')}
 			onClick={() => {
 				window.location.href = `${newDesignRootPath}/whats-new`;

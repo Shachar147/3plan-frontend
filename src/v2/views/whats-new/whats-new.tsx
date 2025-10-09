@@ -92,7 +92,12 @@ function WhatsNewPage() {
 		}
 
 		return (
-			<div className="flex-column gap-16 padding-top-24">
+			<div
+				className={getClasses(
+					'flex-column gap-16 padding-top-24',
+					!eventStore.isMobile && 'padding-inline-128'
+				)}
+			>
 				{releaseNotes.data.map((feature) => (
 					<FeatureRow
 						images={feature.imageUrls ?? []}
@@ -106,8 +111,8 @@ function WhatsNewPage() {
 	}
 
 	return (
-		<div className="triplan-main-page-container flex-column">
-			<TriplanHeaderBanner />
+		<div className="triplan-main-page-container whats-new-content flex-column">
+			<TriplanHeaderBanner isAlwaysSticky />
 			<div
 				className={getClasses(
 					'triplan-header-banner-footer',
