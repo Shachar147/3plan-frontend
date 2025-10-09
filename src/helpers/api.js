@@ -49,7 +49,7 @@ export async function apiGetNew(url, data) {
 	return await axios
 		.get(getServerAddress() + url, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				// 'Access-Control-Allow-Origin': '*',
 			},
 		})
 		.then((res) => {
@@ -68,7 +68,7 @@ export async function apiPost(url, data, redirectUnauthorized = true, onSuccess 
 	return await axios
 		.post(getServerAddress() + url, data, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				// 'Access-Control-Allow-Origin': '*',
 			},
 		})
 		.then((res) => {
@@ -93,7 +93,7 @@ export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
 	axios
 		.post(getServerAddress() + url, data, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				// 'Access-Control-Allow-Origin': '*',
 			},
 		})
 		.then((res) => {
@@ -117,7 +117,7 @@ export function apiPut(url, data, onSuccess, onError, onFinish) {
 	return axios
 		.put(getServerAddress() + url, data, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				// 'Access-Control-Allow-Origin': '*',
 			},
 		})
 		.then((res) => {
@@ -133,7 +133,7 @@ export function apiPut(url, data, onSuccess, onError, onFinish) {
 export async function apiDeletePromise(url) {
 	return await axios.delete(getServerAddress() + url, {
 		headers: {
-			'Access-Control-Allow-Origin': '*',
+			// 'Access-Control-Allow-Origin': '*',
 		},
 	});
 }
@@ -149,7 +149,7 @@ export function apiDelete(self, url, onSuccess, onError, onFinish) {
 			{
 				timeout: 600000,
 				headers: {
-					'Access-Control-Allow-Origin': '*',
+					// 'Access-Control-Allow-Origin': '*',
 				},
 			}
 		)
