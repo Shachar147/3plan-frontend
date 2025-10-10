@@ -14,7 +14,8 @@ export function getServerAddress() {
 		// return 'https://triplan-server.herokuapp.com';
 	} else {
 		// return 'https://triplan-server.herokuapp.com';
-		return 'https://threeplan-server.onrender.com';
+		// return 'https://threeplan-server.onrender.com';
+		return 'http://localhost:3001';
 	}
 }
 
