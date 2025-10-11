@@ -127,7 +127,7 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 	},
 	'golf course': {
 		keywords: ['golf course'],
-		icon: 'icons/onion/1799-golf course_4x.png',
+		icon: 'icons/onion/1799-golf-course_4x.png',
 	},
 	tennis: {
 		keywords: ['tennis'],
@@ -180,7 +180,7 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 	},
 	racing: {
 		keywords: ['racing'],
-		icon: 'icons/onion/1661-racing_4x.png',
+		icon: 'icons/onion/1661-racetrack-flag_4x.png',
 	},
 	stadium: {
 		keywords: ['stadium'],
@@ -259,12 +259,12 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 		icon: 'icons/onion/1867-skating_4x.png',
 	},
 	'skiing (downhill)': {
-		keywords: ['skiing (downhill)'],
-		icon: 'icons/onion/1688-skiing (downhill)_4x.png',
+		keywords: ['ski', 'סקי', 'sport', 'ספורט'],
+		icon: 'icons/onion/1688-ski-downhill_4x.png',
 	},
 	'skiing (cross country)': {
-		keywords: ['skiing (cross country)'],
-		icon: 'icons/onion/1690-skiing (cross country)_4x.png',
+		keywords: ['ski', 'סקי', 'sport', 'ספורט'],
+		icon: 'icons/onion/1690-ski-xc_4x.png',
 	},
 	'ski lift': {
 		keywords: ['ski lift'],
@@ -1622,7 +1622,7 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 	},
 	mouse: {
 		keywords: ['mouse'],
-		icon: 'icons/onion/1679-mouse_4x.png',
+		icon: 'icons/onion/1679-rodent-rat_4x.png',
 	},
 	jellyfish: {
 		keywords: ['jellyfish'],
@@ -1702,6 +1702,191 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 	},
 };
 
+const ignoreKeys = [
+	'stadium',
+	'running', // <-
+	'cycling',
+	'billiards',
+	'horseback riding',
+	'climbing (ropes)',
+	'climbing (carabiner)',
+	'sledding',
+	'skating', // <-
+	'canoeing', // <-
+	'kayaking', // <-
+	'sailing', // <-
+	'snorkeling',
+	'jet ski',
+	'snorcling', // <-
+	'fishing',
+	'picnic', // <-
+	'hiking (group)',
+	'hiking', // <-
+	'trailhead',
+	'tidepool',
+	'hot spring',
+	'groceries', // <-
+	'camping',
+	'viewpoint', // <-
+	'stargazing', // <-
+	'wildlife',
+	'steak', // <-
+	'sushi', // <-
+	'pizza', // <-
+	'restaurant', // <-
+	'cafe', // <-
+	'beer', // <-
+	'pub', // <-
+	'cocktails', // <-
+	'seafood', // <-
+	'garden', // <-
+	'clothing', // <-
+	'shoes', // <-
+	'groeceris', // <-
+	'gifts', // <-
+	'teahouse', // <-
+	'television', // <-
+	'internet services',
+	'mobile phones', // <-
+	'pharmacy (europe)',
+	'health food',
+	'dollar', // <-
+	'bank', // <-
+	'financial services',
+	'atm (generic)', // <-
+	'newsstand',
+	'books', // <-
+	'movies', // <-
+	'birthday', // <-
+	'event', // <-
+	'yen/yuan',
+	'won',
+	'pound', // <-
+	'euro', // <-
+	'music', // <-
+	'music hall', // <-
+	'zoo', // <-
+	'amusement park', // <-
+	'gambling', // <-
+	'ticket (star)', // <-
+	'playground', // <-
+	'handicapped',
+	'art', // <-
+	'adult entertainment',
+	'escalator (up)', // <-
+	'escalator (down)', // <-
+	'door', // <-
+	'photo', // <-
+	'park', // <-
+	'restroom (men)',
+	'restroom (women)',
+	'restroom',
+	'trash',
+	'marina', // <-
+	'medical services',
+	'stroller',
+	'nursery',
+	'shower',
+	'point of intereset',
+	'monument',
+	'animal services',
+	'ampitheater',
+	'yact',
+	'farm',
+	'plaque',
+	'post office',
+	'convenience store',
+	'dormitory',
+	'vista (partial)',
+	'radio tower',
+	'laundry center',
+	'laundry service',
+	'barber/salon',
+	'dating',
+	'ev charging station',
+	'gas station',
+	'travel',
+	'business',
+	'plumbing',
+	'electrition',
+	'hardware',
+	'construction',
+	'dentist',
+	'police',
+	'courthouse',
+	'civic building',
+	'library',
+	'school',
+	'buddhist (wheel)',
+	"bahá'í",
+	'prayer',
+	'optometrist',
+	'buddhist (zen)',
+	'christian',
+	'hindu',
+	'islamic',
+	'jain',
+	'jewish',
+	'shinto',
+	'sikh',
+	'place of worship',
+	'you are here', // <-
+	'information', // <-
+	'neighborhood', // <-
+	'city', // <-
+	'downtown', // <-
+	'city office',
+	'bank',
+	'museum',
+	'walking', // <-
+	'rental car', // <-
+	'subway', // <-
+	'tram', // <-
+	'railway', // <-
+	'train (stream)', // <-
+	'cable car', // <-
+	'vehicle ferry', // <-
+	'airport', // <----
+	'parking space',
+	'road work',
+	'police station',
+	'hospital',
+	'hospital (crescent)',
+	'hospital (cross)',
+	'hospital (shield)',
+	'death',
+	'civil disturbance',
+	'atomic',
+	'radioactive',
+	'poison',
+	'chemical',
+	'pollution',
+	'spill',
+	'no water',
+	'water', // <-
+	'electrical',
+	'hurricane (strong)',
+	'hurricane (weak)',
+	'monster', // <-
+	'chance of rain',
+	'thunderstorm',
+	'windstorm',
+	'temperature',
+	'animal',
+	'alligator',
+	'bird',
+	'dinosaur',
+	'elephant',
+	'fish (tropical)',
+	'gecko',
+	'yacht',
+	'amphitheatre',
+	'point of interest',
+	'electrician',
+	'historic building (china)',
+	'train (steam)',
+];
+
 export function iconToName(icon: string): string | undefined {
 	let found;
 	Object.keys(GOOGLE_MAP_ICONS_MAP).forEach((key) => {
@@ -1725,6 +1910,8 @@ export default function GoogleMapIconSelector({ value, onChange }: GoogleMapIcon
 
 	const availableIcons = Object.keys(GOOGLE_MAP_ICONS_MAP).filter(
 		(key) =>
+			!ignoreKeys.includes(key) &&
+			!GOOGLE_MAP_ICONS_MAP[key].icon.includes('(japan)') &&
 			!!GOOGLE_MAP_ICONS_MAP[key].keywords.find(
 				(keyword) =>
 					keyword.includes(searchValue.toLocaleLowerCase()) ||
@@ -1746,7 +1933,7 @@ export default function GoogleMapIconSelector({ value, onChange }: GoogleMapIcon
 				{availableIcons.map((key) => {
 					const iconUrl = GOOGLE_MAP_ICONS_MAP[key].icon;
 					const isSelected = iconUrl == localSelected;
-					const imageUrl = getUrl(GOOGLE_MAP_ICONS_MAP[key].icon, isSelected);
+					const imageUrl = getUrl(GOOGLE_MAP_ICONS_MAP[key].icon.replaceAll(' ', '-'), isSelected);
 
 					return (
 						<button
