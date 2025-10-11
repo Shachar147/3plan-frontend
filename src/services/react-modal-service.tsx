@@ -66,6 +66,7 @@ import { EventInput } from '@fullcalendar/react';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ImportService from './import-service';
 import { BackupService } from './backup-service';
+import { getServerAddress } from '../config/config';
 
 // @ts-ignore
 import Slider from 'react-slick';
@@ -73,7 +74,7 @@ import Slider from 'react-slick';
 import { DataServices, LocaleCode, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../pages/main-page/modals/places-tinder/places-tinder';
 import LocationInput from '../components/inputs/location-input/location-input';
-import { apiGetNew, apiPost } from '../helpers/api';
+import { apiGetNew, apiPost, apiPut } from '../helpers/api';
 import { LimitationsService } from '../utils/limitations';
 import ToggleButton from '../components/toggle-button/toggle-button';
 import {
@@ -87,8 +88,6 @@ import { ModalsStore } from '../stores/modals-store';
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
 import LogHistoryService from './data-handlers/log-history-service';
-import { navigate } from '@storybook/addon-links';
-import { useNavigate } from 'react-router-dom';
 import { endpoints } from '../v2/utils/endpoints';
 import { FeatureFlagsService } from '../utils/feature-flags';
 import { newDesignRootPath } from '../v2/utils/consts';
@@ -6017,6 +6016,55 @@ const ReactModalService = {
 		});
 	},
 	openViewTaskModal(eventStore: EventStore, task: TriplanTask, title: string) {},
+	openSyncTripModal: (eventStore: EventStore, titleKey: string = 'SYNC_TRIP_TO_REMOTE') => {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, titleKey)}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, `MODALS.${titleKey}.CONTENT`),
+						}}
+					/>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'SYNC_TRIP'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripData = (await apiGetNew(endpoints.v1.trips.getTripByName(eventStore.tripName)))?.data;
+				delete tripData.id;
+				delete tripData.createdAt;
+				delete tripData.updatedAt;
+				console.log(tripData);
+				try {
+					const res = await apiPost(endpoints.v1.trips.syncTripByName(eventStore.tripName), tripData, false);
+					console.log(res);
+
+					// console.log("on server:", tripDataRemote);
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.TRIP_SYNCED.TITLE',
+						'MODALS.TRIP_SYNCED.CONTENT',
+						'success'
+					);
+					ReactModalService.internal.closeModal(eventStore);
+				} catch (e) {
+					console.log(e);
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.TRIP_SYNC_FAILED.TITLE',
+						'MODALS.TRIP_SYNC_FAILED.CONTENT',
+						'error'
+					);
+				}
+			},
+		});
+	},
 };
 
 export default ReactModalService;

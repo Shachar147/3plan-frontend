@@ -1093,5 +1093,12 @@
 	"HEBREW_DESCRIPTION": "Enter hebrew description",
 	"ADMIN_MANAGE_ITEM.HOW_TO_USE": "How to use",
 	"ENGLISH_HOW_TO_USE": "Enter instructions how to use it, in english",
-	"HEBREW_HOW_TO_USE": "Enter instructions how to use it, in hebrew"
+	"HEBREW_HOW_TO_USE": "Enter instructions how to use it, in hebrew",
+	"SYNC_TRIP_TO_REMOTE": "Sync trip to remote server",
+	"MODALS.SYNC_TRIP_TO_REMOTE.CONTENT": "Sync trip details from local server to the remote one.\n\nCareful! if you set anything in the remote server that doesn't exist locally it will be overwritten.",
+	"SYNC_TRIP": "Sync trip",
+	"MODALS.TRIP_SYNCED.TITLE": "Trip synced",
+	"MODALS.TRIP_SYNCED.CONTENT": "Trip synced successfully",
+	"MODALS.TRIP_SYNC_FAILED.TITLE": "Trip sync failed",
+	"MODALS.TRIP_SYNC_FAILED.CONTENT": "Trip sync failed"
 }

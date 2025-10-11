@@ -6,8 +6,6 @@ import './triplan-sidebar-inner.scss';
 import TriplanSidebarCollapsableMenu from './sidebar-collapsable-menu/triplan-sidebar-collapsable-menu';
 import TriplanSidebarMainButtons from './sidebar-main-buttons/triplan-sidebar-main-buttons';
 
-// @ts-ignore
-import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import { TriplanSidebarDivider } from './triplan-sidebar-divider';
 import TriplanSidebarCategories from './sidebar-categories/triplan-sidebar-categories';
 import TriplanSidebarShareTripPlaceholder from './sidebar-share-trip-placeholder/triplan-sidebar-share-trip-placeholder';
