@@ -66,7 +66,7 @@ function _apiPost(url: string, data: any, accessToken?: string, serverAddress: s
 	return axios
 		.post(serverAddress + url, data, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				// 'Access-Control-Allow-Origin': '*',
 				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
 			},
 		})
@@ -83,7 +83,7 @@ function _apiPut(url: string, data: any, accessToken?: string) {
 	return axios
 		.put(getTinderServerAddress() + url, data, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				// 'Access-Control-Allow-Origin': '*',
 				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
 			},
 		})
@@ -102,7 +102,7 @@ function _apiDelete(url: string, accessToken?: string) {
 	return axios
 		.delete(getTinderServerAddress() + url, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				// 'Access-Control-Allow-Origin': '*',
 				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
 			},
 		})
