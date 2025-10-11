@@ -480,6 +480,10 @@ export function isAdmin() {
 	return ['Shachar', TEMPLATES_USER_NAME].includes(getCurrentUsername());
 }
 
+export function isLocal() {
+	return window.location.href.includes('localhost:3000');
+}
+
 export function getCurrentUsername(): string | null {
 	const token = axios.defaults.headers.Authorization?.toString().replace(`Bearer `, '');
 	if (!token) {

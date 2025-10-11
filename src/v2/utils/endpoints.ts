@@ -25,6 +25,8 @@ export const endpoints: Record<string, any> = {
 			unlockTripByName: (tripName: string) => `/trip/unlock/name/${tripName}`,
 			deleteTripByName: (tripName: string) => `/trip/name/${tripName}`,
 			getTripByName: (tripName: string) => `/trip/name/${tripName}`,
+			upsertTrip: '/trip/upsertTrip',
+			syncTripByName: (tripName: string) => `/trip/sync/name/${tripName}`,
 		},
 		sharedTrips: {
 			createInviteLink: '/shared-trips/create-invite-link',

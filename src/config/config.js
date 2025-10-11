@@ -1,8 +1,8 @@
 export const withPlacesFinder = false; // disabled for now
 
-export function getServerAddress() {
+export function getServerAddress(isRemote = false) {
 	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
-	if (mode && mode.trim() === 'development') {
+	if (mode && mode.trim() === 'development' && !isRemote) {
 		// return 'http://192.168.1.25:3001'; // Tel Aviv
 		// return 'http://192.168.1.83:3001'; // Nesher
 		// return 'http://192.168.1.20:3001'; // Nesher

@@ -3,11 +3,13 @@ import {
 	calendarOrSidebarEventDetails,
 	formatNumberWithCommas,
 	getClasses,
+	isAdmin,
 	isBasketball,
 	isDessert,
 	isFlight,
 	isFlightCategory,
 	isHotel,
+	isLocal,
 	locationToString,
 	toDistanceString,
 } from '../../../utils/utils';
@@ -44,7 +46,8 @@ import TriplanSidebarDraggableEvent from '../sidebar-draggable-event/triplan-sid
 import { modalsStoreContext } from '../../../stores/modals-store';
 import { rootStoreContext } from '../../../v2/stores/root-store';
 import './sidebar-priority-filters.scss';
-import { TriplanSidebarDivider, TriplanSidebarEqualDivider } from '../triplan-sidebar-divider';
+import { TriplanSidebarEqualDivider } from '../triplan-sidebar-divider';
+import TriplanSidebarSyncTripButton from '../sidebar-sync-trip-button/triplan-sidebar-sync-trip-button';
 
 interface TriplanSidebarCollapsableMenuProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -952,6 +955,9 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 				{renderImportButtons()}
 				{renderBackupTrip()}
 				<TriplanSidebarShareTripButton isMoveAble={true} textKey="SHARE_TRIP" />
+				{isAdmin() && isLocal() && (
+					<TriplanSidebarSyncTripButton isMoveAble={true} textKey="SYNC_TRIP_TO_REMOTE" />
+				)}
 			</>,
 			undefined,
 			SidebarGroups.ACTIONS,
