@@ -1081,6 +1081,7 @@
 	"MODALS.GOOGLEMAPICON":"Map Icon",
 	"WHATS_NEW.TITLE": "What's new?",
 	"WHATS_NEW.LINK": "What's new?",
+	"WHATS_NEW.LINK.SHORT": "New",
 	"WHATS_NEW.EXPORT_GOOGLE_MAPS.TITLE": "Export to Google My Maps",
 	"WHATS_NEW.EXPORT_GOOGLE_MAPS.DESC": "Export your full map with icons and daily layers to Google My Maps.",
 	"WHATS_NEW.PRIORITY_COLORS.TITLE": "Customize Priority Colors",

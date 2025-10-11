@@ -153,7 +153,10 @@ function TriplanHeaderLine({
 		<Button
 			icon="fa-bolt"
 			className={getClasses('whats-new-btn', isWhatNew && 'active')}
-			text={TranslateService.translate(eventStore, 'WHATS_NEW.LINK')}
+			text={TranslateService.translate(
+				eventStore,
+				eventStore.isMobile ? 'WHATS_NEW.LINK.SHORT' : 'WHATS_NEW.LINK'
+			)}
 			onClick={() => {
 				window.location.href = `${newDesignRootPath}/whats-new`;
 			}}
