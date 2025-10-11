@@ -14,11 +14,11 @@ interface GoogleMapIconSelectorProps {
 // Central icons map; should match MapContainer usage
 export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: string }> = {
 	basketball: {
-		keywords: ['basketball', 'כדורסל', 'nba'],
+		keywords: ['basketball', 'כדורסל', 'nba', 'sport', 'ספורט'],
 		icon: 'icons/onion/1520-basketball_4x.png',
 	},
 	baseball: {
-		keywords: ['baseball', 'בייסבול', 'בייס בול'],
+		keywords: ['baseball', 'בייסבול', 'בייס בול', 'sport', 'ספורט'],
 		icon: 'icons/onion/1519-baseball_4x.png',
 	},
 	food: {
@@ -110,47 +110,47 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 		icon: 'icons/onion/1769-checkmark_4x.png',
 	},
 	football: {
-		keywords: ['football'],
+		keywords: ['football', 'sport', 'ספורט', 'פוטבול'],
 		icon: 'icons/onion/1579-football_4x.png',
 	},
 	soccer: {
-		keywords: ['soccer'],
+		keywords: ['soccer', 'sport', 'ספורט', 'כדורגל'],
 		icon: 'icons/onion/1696-soccer_4x.png',
 	},
 	rugby: {
-		keywords: ['rugby'],
+		keywords: ['rugby', 'רוגבי', 'sport', 'ספורט'],
 		icon: 'icons/onion/1858-rugby_4x.png',
 	},
 	volleyball: {
-		keywords: ['volleyball'],
+		keywords: ['volleyball', 'כדורעף', 'כדור עף', 'כדור-עף', 'sport', 'ספורט'],
 		icon: 'icons/onion/1890-volleyball_4x.png',
 	},
 	'golf course': {
-		keywords: ['golf course'],
+		keywords: ['golf course', 'גולף', 'sport', 'ספורט'],
 		icon: 'icons/onion/1799-golf-course_4x.png',
 	},
 	tennis: {
-		keywords: ['tennis'],
+		keywords: ['tennis', 'טניס', 'sport', 'ספורט'],
 		icon: 'icons/onion/1707-tennis_4x.png',
 	},
 	polo: {
-		keywords: ['polo'],
+		keywords: ['polo', 'sport', 'ספורט'],
 		icon: 'icons/onion/1843-polo_4x.png',
 	},
 	badminton: {
-		keywords: ['badminton'],
+		keywords: ['badminton', 'sport', 'ספורט'],
 		icon: 'icons/onion/1755-badminton_4x.png',
 	},
 	racquetball: {
-		keywords: ['racquetball'],
+		keywords: ['racquetball', 'sport', 'ספורט'],
 		icon: 'icons/onion/1849-racquetball_4x.png',
 	},
 	squash: {
-		keywords: ['squash'],
+		keywords: ['squash', 'sport', 'ספורט'],
 		icon: 'icons/onion/1875-squash_4x.png',
 	},
 	boxing: {
-		keywords: ['boxing'],
+		keywords: ['boxing', 'איגרוף', 'sport', 'ספורט'],
 		icon: 'icons/onion/1761-boxing_4x.png',
 	},
 	'martial arts': {
@@ -175,51 +175,53 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 			'אימונים',
 			'חזק',
 			'שרירי',
+			'sport',
+			'ספורט',
 		],
 		icon: 'icons/onion/1893-weight-barbell_4x.png',
 	},
 	racing: {
-		keywords: ['racing'],
+		keywords: ['racing', 'sport', 'ספורט'],
 		icon: 'icons/onion/1661-racetrack-flag_4x.png',
 	},
 	stadium: {
-		keywords: ['stadium'],
+		keywords: ['stadium', 'sport', 'ספורט'],
 		icon: 'icons/onion/1698-stadium_4x.png',
 	},
 	'horseback riding': {
-		keywords: ['horseback riding'],
+		keywords: ['horseback riding', 'רכיבה', 'רכיבת', 'sport', 'ספורט'],
 		icon: 'icons/onion/1601-horseback riding_4x.png',
 	},
 	bowling: {
-		keywords: ['bowling'],
+		keywords: ['bowling', 'באולינג', 'sport', 'ספורט'],
 		icon: 'icons/onion/1527-bowling_4x.png',
 	},
 	billiards: {
-		keywords: ['billiards'],
+		keywords: ['billiards', 'sport', 'ספורט'],
 		icon: 'icons/onion/1747-billiards_4x.png',
 	},
 	cricket: {
-		keywords: ['cricket'],
+		keywords: ['cricket', 'sport', 'ספורט'],
 		icon: 'icons/onion/1554-cricket_4x.png',
 	},
 	archery: {
-		keywords: ['archery'],
+		keywords: ['archery', 'sport', 'ספורט'],
 		icon: 'icons/onion/1752-archery_4x.png',
 	},
 	running: {
-		keywords: ['running'],
+		keywords: ['running', 'sport', 'ספורט'],
 		icon: 'icons/onion/1680-running_4x.png',
 	},
 	'nordic walking': {
-		keywords: ['nordic walking'],
+		keywords: ['nordic walking', 'sport', 'ספורט', 'הליכה'],
 		icon: 'icons/onion/1837-nordic walking_4x.png',
 	},
 	cycling: {
-		keywords: ['cycling'],
+		keywords: ['cycling', 'sport', 'ספורט'],
 		icon: 'icons/onion/1522-cycling_4x.png',
 	},
 	dancing: {
-		keywords: ['dancing'],
+		keywords: ['dancing', 'ריקוד', 'לרקוד', 'dance'],
 		icon: 'icons/onion/1773-dancing_4x.png',
 	},
 	'climbing (carabiner)': {
@@ -271,75 +273,75 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 		icon: 'icons/onion/1689-ski lift_4x.png',
 	},
 	snowboarding: {
-		keywords: ['snowboarding'],
+		keywords: ['snowboarding', 'סנואו', 'sport', 'ספורט', 'סקי', 'שלג'],
 		icon: 'icons/onion/1871-snowboarding_4x.png',
 	},
 	sledding: {
-		keywords: ['sledding'],
+		keywords: ['sledding', 'sport', 'ספורט'],
 		icon: 'icons/onion/1691-sledding_4x.png',
 	},
 	snowshoeing: {
-		keywords: ['snowshoeing'],
+		keywords: ['snowshoeing', 'sport', 'ספורט'],
 		icon: 'icons/onion/1873-snowshoeing_4x.png',
 	},
 	snowmobile: {
-		keywords: ['snowmobile'],
+		keywords: ['snowmobile', 'sport', 'ספורט'],
 		icon: 'icons/onion/1872-snowmobile_4x.png',
 	},
 	canoeing: {
-		keywords: ['canoeing'],
+		keywords: ['canoeing', 'sport', 'ספורט'],
 		icon: 'icons/onion/1536-canoeing_4x.png',
 	},
 	kayaking: {
-		keywords: ['kayaking'],
+		keywords: ['kayaking', 'sport', 'ספורט'],
 		icon: 'icons/onion/1615-kayaking_4x.png',
 	},
 	sailing: {
-		keywords: ['sailing'],
+		keywords: ['sailing', 'sport', 'ספורט'],
 		icon: 'icons/onion/1681-sailing_4x.png',
 	},
 	'jet ski': {
-		keywords: ['jet ski'],
+		keywords: ['jet ski', 'סקי', 'sport', 'ספורט'],
 		icon: 'icons/onion/1814-jet ski_4x.png',
 	},
 	surfing: {
-		keywords: ['surfing'],
+		keywords: ['surfing', 'sport', 'ספורט'],
 		icon: 'icons/onion/1880-surfing_4x.png',
 	},
 	kitesurfing: {
-		keywords: ['kitesurfing'],
+		keywords: ['kitesurfing', 'sport', 'ספורט'],
 		icon: 'icons/onion/1817-kitesurfing_4x.png',
 	},
 	windsurfing: {
-		keywords: ['windsurfing'],
+		keywords: ['windsurfing', 'sport', 'ספורט'],
 		icon: 'icons/onion/1896-windsurfing_4x.png',
 	},
 	swimming: {
-		keywords: ['swimming'],
+		keywords: ['swimming', 'שחיה', 'שחייה', 'sport', 'ספורט'],
 		icon: 'icons/onion/1701-swimming_4x.png',
 	},
 	snorkeling: {
-		keywords: ['snorkeling'],
+		keywords: ['snorkeling', 'שנורקל', 'sport', 'ספורט'],
 		icon: 'icons/onion/1870-snorkeling_4x.png',
 	},
 	scuba: {
-		keywords: ['scuba'],
+		keywords: ['scuba', 'sport', 'ספורט', 'צלילה'],
 		icon: 'icons/onion/1861-scuba_4x.png',
 	},
 	fishing: {
-		keywords: ['fishing'],
+		keywords: ['fishing', 'דייג', 'דיג', 'דגים', 'sport', 'ספורט'],
 		icon: 'icons/onion/1573-fishing_4x.png',
 	},
 	shipwreck: {
-		keywords: ['shipwreck'],
+		keywords: ['shipwreck', 'sport', 'ספורט'],
 		icon: 'icons/onion/1864-shipwreck_4x.png',
 	},
 	diving: {
-		keywords: ['diving'],
+		keywords: ['diving', 'צלילה', 'sport', 'ספורט'],
 		icon: 'icons/onion/1777-diving_4x.png',
 	},
 	picnic: {
-		keywords: ['picnic'],
+		keywords: ['picnic', 'פיקניק'],
 		icon: 'icons/onion/1650-picnic_4x.png',
 	},
 	// "tree (conifer)": {
