@@ -24,6 +24,11 @@ export function getWebSocketsServerAddress() {
 	return getServerAddress().replace('http://', 'ws://').replace('https://', 'wss://');
 }
 
+export function isDev() {
+	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
+	return mode && mode.trim() === 'development';
+}
+
 export function getTinderServerAddress() {
 	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
 	if (mode && mode.trim() === 'development') {

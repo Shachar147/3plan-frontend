@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getServerAddress } from '../config/config';
+import { getServerAddress, isDev } from '../config/config';
 
 const unAuthorizedRoutes = ['signin'];
 
@@ -48,9 +48,7 @@ async function handleUnauthorizedError(error, url, redirectUnautirhized = true) 
 export async function apiGetNew(url, data) {
 	return await axios
 		.get(getServerAddress() + url, {
-			headers: {
-				// 'Access-Control-Allow-Origin': '*',
-			},
+			headers: getBaseHeaders(),
 		})
 		.then((res) => {
 			return res;
@@ -64,12 +62,19 @@ export async function apiGetNew(url, data) {
 		});
 }
 
+function getBaseHeaders() {
+	if (isDev()) {
+		return {
+			'Access-Control-Allow-Origin': '*',
+		};
+	}
+	return {};
+}
+
 export async function apiPost(url, data, redirectUnauthorized = true, onSuccess = () => {}, onError = () => {}) {
 	return await axios
 		.post(getServerAddress() + url, data, {
-			headers: {
-				// 'Access-Control-Allow-Origin': '*',
-			},
+			headers: getBaseHeaders(),
 		})
 		.then((res) => {
 			if (onSuccess) {
@@ -92,9 +97,7 @@ export async function apiPost(url, data, redirectUnauthorized = true, onSuccess 
 export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
 	axios
 		.post(getServerAddress() + url, data, {
-			headers: {
-				// 'Access-Control-Allow-Origin': '*',
-			},
+			headers: getBaseHeaders(),
 		})
 		.then((res) => {
 			onSuccess(res);
@@ -116,9 +119,7 @@ export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
 export function apiPut(url, data, onSuccess, onError, onFinish) {
 	return axios
 		.put(getServerAddress() + url, data, {
-			headers: {
-				// 'Access-Control-Allow-Origin': '*',
-			},
+			headers: getBaseHeaders(),
 		})
 		.then((res) => {
 			return res;
@@ -132,9 +133,7 @@ export function apiPut(url, data, onSuccess, onError, onFinish) {
 
 export async function apiDeletePromise(url) {
 	return await axios.delete(getServerAddress() + url, {
-		headers: {
-			// 'Access-Control-Allow-Origin': '*',
-		},
+		headers: getBaseHeaders(),
 	});
 }
 
@@ -148,9 +147,7 @@ export function apiDelete(self, url, onSuccess, onError, onFinish) {
 			{},
 			{
 				timeout: 600000,
-				headers: {
-					// 'Access-Control-Allow-Origin': '*',
-				},
+				headers: getBaseHeaders(),
 			}
 		)
 		.then((res) => {
