@@ -1103,5 +1103,6 @@
 	"MODALS.TRIP_SYNC_FAILED.TITLE": "Trip sync failed",
 	"MODALS.TRIP_SYNC_FAILED.CONTENT": "Trip sync failed",
 	"SYNC_TRIP_TO_LOCAL": "Sync trip to local server",
-	"MODALS.SYNC_TRIP_TO_LOCAL.CONTENT": "Sync trip details from remote server to the local one.\n\nCareful! if you set anything in the local server that doesn't exist in the remote server it will be overwritten."
+	"MODALS.SYNC_TRIP_TO_LOCAL.CONTENT": "Sync trip details from remote server to the local one.\n\nCareful! if you set anything in the local server that doesn't exist in the remote server it will be overwritten.",
+	"SYNCING": "Syncing..."
 }

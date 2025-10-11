@@ -932,7 +932,7 @@ const ReactModalService = {
 				</div>
 			);
 		},
-		disableOnConfirm: () => {
+		disableOnConfirm: (eventStore: EventStore, textKey = 'SAVING') => {
 			// @ts-ignore
 			$(
 				'.triplan-react-modal .input-with-label input, .triplan-react-modal .input-with-label textarea, .triplan-react-modal .input-with-label button'
@@ -942,7 +942,11 @@ const ReactModalService = {
 			// @ts-ignore
 			$('.triplan-react-modal>p .primary-button')
 				.parent()
-				.html('<a href="#" class="btn btn-lg btn-info primary-button disabled">שומר...</a>');
+				.html(
+					'<a href="#" class="btn btn-lg btn-info primary-button disabled">' +
+						TranslateService.translate(eventStore, textKey) +
+						'</a>'
+				);
 		},
 		openOopsErrorModal: (eventStore: EventStore) => {
 			ReactModalService.internal.alertMessage(
@@ -1636,7 +1640,7 @@ const ReactModalService = {
 			if (isOk) {
 				const categoryId = eventStore.createCategoryId();
 				runInAction(async () => {
-					ReactModalService.internal.disableOnConfirm();
+					ReactModalService.internal.disableOnConfirm(eventStore);
 					await eventStore.setCategories(
 						[
 							...eventStore.categories,
@@ -2225,7 +2229,7 @@ const ReactModalService = {
 				return;
 			}
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
@@ -2414,7 +2418,7 @@ const ReactModalService = {
 				isPriceChanged || // add column 11
 				isMoreInfoChanged;
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			if (isCategoryChanged) {
 				// remove it from the old category
@@ -2692,7 +2696,7 @@ const ReactModalService = {
 				return;
 			}
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[parseInt(category)] = existingSidebarEvents[parseInt(category)] || [];
@@ -2730,7 +2734,7 @@ const ReactModalService = {
 		window.openingHours = initialData.openingHours || undefined;
 
 		const onConfirm = async () => {
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 			await handleDuplicateSidebarEventResult(eventStore, event);
 			ReactModalService.internal.closeModal(eventStore);
 		};
@@ -3070,7 +3074,7 @@ const ReactModalService = {
 				return false;
 			}
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 			addToEventsToCategories(currentEvent);
@@ -3197,7 +3201,7 @@ const ReactModalService = {
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const onConfirm = async () => {
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			// delete from sidebar
 			await eventStore.setSidebarEvents(newSidebarEvents);
@@ -3335,7 +3339,7 @@ const ReactModalService = {
 					return;
 				}
 
-				ReactModalService.internal.disableOnConfirm();
+				ReactModalService.internal.disableOnConfirm(eventStore);
 
 				const newCategories = eventStore.categories.filter((c) => c.id !== categoryId);
 				newCategories.splice(order.value, 0, {
@@ -3534,7 +3538,7 @@ const ReactModalService = {
 				async () => {
 					// add back to sidebar
 					if (addEventToSidebar(currentEvent)) {
-						ReactModalService.internal.disableOnConfirm();
+						ReactModalService.internal.disableOnConfirm(eventStore);
 
 						// remove from calendar
 						eventStore.allowRemoveAllCalendarEvents = true;
@@ -3697,7 +3701,7 @@ const ReactModalService = {
 				isMoreInfoChanged ||
 				isPriceChanged; // add column 12
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			const _actuallyUpdate = async (
 				isHotel: boolean = false,
@@ -3931,7 +3935,7 @@ const ReactModalService = {
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleDuplicateEventResult = async (eventStore: EventStore, originalEvent: CalendarEvent) => {
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			let newEvent = Object.assign({}, originalEvent);
 			const newId = eventStore.createEventId();
@@ -3967,7 +3971,7 @@ const ReactModalService = {
 		};
 
 		const onDuplicateClick = async () => {
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 			const calendarEvent = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
 			await handleDuplicateEventResult(eventStore, calendarEvent as CalendarEvent);
 			ReactModalService.internal.closeModal(eventStore);
@@ -4141,7 +4145,7 @@ const ReactModalService = {
 
 				// ERROR HANDLING: todo add try/catch & show a message if fails
 				onConfirm: async () => {
-					ReactModalService.internal.disableOnConfirm();
+					ReactModalService.internal.disableOnConfirm(eventStore);
 
 					await removeEventFromSidebarById(event.id);
 					// await eventStore.setAllEvents(eventStore.allEventsComputed.filter((x) => x.id !== event.id));
@@ -6038,6 +6042,7 @@ const ReactModalService = {
 			confirmBtnText: TranslateService.translate(eventStore, 'SYNC_TRIP'),
 			confirmBtnCssClass: 'primary-button',
 			onConfirm: async () => {
+				ReactModalService.internal.disableOnConfirm(eventStore, 'SYNCING');
 				const tripData = (await apiGetNew(endpoints.v1.trips.getTripByName(eventStore.tripName)))?.data;
 				delete tripData.id;
 				delete tripData.createdAt;
@@ -6067,6 +6072,8 @@ const ReactModalService = {
 						'MODALS.TRIP_SYNC_FAILED.CONTENT',
 						'error'
 					);
+
+					ReactModalService.internal.closeModal(eventStore);
 				}
 			},
 		});

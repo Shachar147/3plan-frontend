@@ -27,6 +27,7 @@ import {
 	TriplanPriority,
 	TriplanEventPreferredTime,
 	prioritiesOrder,
+	SyncMode,
 } from '../../../utils/enums';
 import { CalendarEvent, SidebarEvent, TriplanTask, TriplanTaskStatus } from '../../../utils/interfaces';
 import { hotelColor, priorityToColor } from '../../../utils/consts';
@@ -958,7 +959,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 				{isAdmin() && (
 					<TriplanSidebarSyncTripButton
 						isMoveAble={true}
-						textKey={isLocal() ? 'SYNC_TRIP_TO_REMOTE' : 'SYNC_TRIP_TO_LOCAL'}
+						mode={isLocal() ? SyncMode.localToRemote : SyncMode.remoteToLocal}
 					/>
 				)}
 			</>,
