@@ -27,6 +27,7 @@ export const endpoints: Record<string, any> = {
 			getTripByName: (tripName: string) => `/trip/name/${tripName}`,
 			upsertTrip: '/trip/upsertTrip',
 			syncTripByName: (tripName: string) => `/trip/sync/name/${tripName}`,
+			syncTripToLocalByName: (tripName: string) => `/trip/syncToLocal/name/${tripName}`,
 		},
 		sharedTrips: {
 			createInviteLink: '/shared-trips/create-invite-link',
