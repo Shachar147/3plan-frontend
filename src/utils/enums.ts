@@ -90,3 +90,8 @@ export function getEnumKey(enumObj: any, value: any) {
 export enum InputValidation {
 	link = 'link',
 }
+
+export enum SyncMode {
+	localToRemote = 'localToRemote',
+	remoteToLocal = 'remoteToLocal',
+}

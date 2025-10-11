@@ -955,8 +955,11 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 				{renderImportButtons()}
 				{renderBackupTrip()}
 				<TriplanSidebarShareTripButton isMoveAble={true} textKey="SHARE_TRIP" />
-				{isAdmin() && isLocal() && (
-					<TriplanSidebarSyncTripButton isMoveAble={true} textKey="SYNC_TRIP_TO_REMOTE" />
+				{isAdmin() && (
+					<TriplanSidebarSyncTripButton
+						isMoveAble={true}
+						textKey={isLocal() ? 'SYNC_TRIP_TO_REMOTE' : 'SYNC_TRIP_TO_LOCAL'}
+					/>
 				)}
 			</>,
 			undefined,

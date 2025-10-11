@@ -36,6 +36,7 @@ import {
 } from '../utils/interfaces';
 import {
 	InputValidation,
+	SyncMode,
 	TripDataSource,
 	TriplanCurrency,
 	TriplanEventPreferredTime,
@@ -6016,8 +6017,9 @@ const ReactModalService = {
 		});
 	},
 	openViewTaskModal(eventStore: EventStore, task: TriplanTask, title: string) {},
-	openSyncTripModal: (eventStore: EventStore, titleKey: string = 'SYNC_TRIP_TO_REMOTE') => {
+	openSyncTripModal: (eventStore: EventStore, mode: SyncMode) => {
 		const tripName = eventStore.tripName.replaceAll('-', ' ');
+		const titleKey = mode == SyncMode.localToRemote ? 'SYNC_TRIP_TO_REMOTE' : 'SYNC_TRIP_TO_LOCAL';
 
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
@@ -6042,7 +6044,11 @@ const ReactModalService = {
 				delete tripData.updatedAt;
 				console.log(tripData);
 				try {
-					const res = await apiPost(endpoints.v1.trips.syncTripByName(eventStore.tripName), tripData, false);
+					const url =
+						mode == SyncMode.localToRemote
+							? endpoints.v1.trips.syncTripByName(eventStore.tripName)
+							: endpoints.v1.trips.syncTripToLocalByName(eventStore.tripName);
+					const res = await apiPost(url, tripData, false);
 					console.log(res);
 
 					// console.log("on server:", tripDataRemote);
