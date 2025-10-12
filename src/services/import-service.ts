@@ -1,7 +1,7 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService from './translate-service';
 import { TriplanEventPreferredTime, TriplanPriority } from '../utils/enums';
-import { ImportEventsConfirmInfo, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
+import { ImportEventsConfirmInfo, LocationData, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
 import { defaultTimedEventDuration } from '../utils/defaults';
 import { formatDuration, validateDuration } from '../utils/time-utils';
 import ReactModalService from './react-modal-service';
@@ -478,13 +478,28 @@ const ImportService = {
 				color = `rgba(${r}, ${g}, ${b}, ${a})`;
 			}
 
-			// ===== Coordinates =====
+			// ===== Location Data =====
 			const coordsText = pm.getElementsByTagName('coordinates')[0]?.textContent?.trim() || '';
-			let coordinates: { lat: number; lng: number } | null = null;
+			let location: LocationData | null = null;
 			if (coordsText) {
 				const [lng, lat] = coordsText.split(',').map(Number);
 				if (!isNaN(lat) && !isNaN(lng)) {
-					coordinates = { lat, lng };
+					// Try to extract a better address from description or use name as fallback
+					let address = name;
+					if (description) {
+						// Look for address-like patterns in description
+						const addressMatch = description.match(/([^,\n]+(?:,\s*[^,\n]+)*)/);
+						if (addressMatch && addressMatch[1].trim().length > 0) {
+							address = addressMatch[1].trim();
+						}
+					}
+
+					location = {
+						address: address,
+						latitude: lat,
+						longitude: lng,
+						eventName: name,
+					};
 				}
 			}
 
@@ -495,9 +510,18 @@ const ImportService = {
 				errors.push(error);
 				numOfEventsWithErrors[i] = 1;
 			}
+			if (!location) {
+				isValid = false;
+				const error = `Placemark #${i + 1} (${name}) has no valid coordinates`;
+				errors.push(error);
+				numOfEventsWithErrors[i] = 1;
+			}
 			if (eventStore.allEventsComputed.find((e) => e.title === name)) {
 				isValid = false;
-				const error = `${TranslateService.translate(eventStore, 'EVENT_WITH_NAME')} ${name} ${TranslateService.translate(eventStore, 'ALREADY_EXISTS')}.`;
+				const error = `${TranslateService.translate(
+					eventStore,
+					'EVENT_WITH_NAME'
+				)} ${name} ${TranslateService.translate(eventStore, 'ALREADY_EXISTS')}.`;
 				errors.push(error);
 				numOfEventsWithErrors[i] = 1;
 			}
@@ -526,7 +550,7 @@ const ImportService = {
 			event['category'] = categoryId;
 			event['icon'] = iconHref;
 			event['color'] = color;
-			event['coordinates'] = coordinates;
+			event['location'] = location;
 			event['priority'] = TriplanPriority.unset;
 			event['preferredTime'] = TriplanEventPreferredTime.unset;
 
@@ -585,13 +609,13 @@ const ImportService = {
 		try {
 			const parser = new DOMParser();
 			const xml = parser.parseFromString(kmlText, 'application/xml');
-	
+
 			const placemarks = Array.from(xml.getElementsByTagName('Placemark'));
-	
-			const results = placemarks.map(pm => {
+
+			const results = placemarks.map((pm) => {
 				const name = pm.getElementsByTagName('name')[0]?.textContent?.trim() || '';
 				const description = pm.getElementsByTagName('description')[0]?.textContent?.trim() || '';
-	
+
 				// Find parent Folder (layer)
 				let layer: string | null = null;
 				let parent = pm.parentElement;
@@ -605,14 +629,14 @@ const ImportService = {
 					}
 					parent = parent.parentElement;
 				}
-	
+
 				// Extract Style info
 				const styleUrl = pm.getElementsByTagName('styleUrl')[0]?.textContent?.replace('#', '') || null;
 				const styleNode = styleUrl ? xml.querySelector(`Style[id="${styleUrl}"]`) : null;
-	
+
 				const iconHref = styleNode?.getElementsByTagName('href')[0]?.textContent?.trim() || null;
 				const colorTag = styleNode?.getElementsByTagName('color')[0]?.textContent?.trim() || null;
-	
+
 				let color: string | null = null;
 				if (colorTag) {
 					// KML color is AABBGGRR (alpha, blue, green, red)
@@ -622,25 +646,25 @@ const ImportService = {
 					const r = parseInt(colorTag.slice(6, 8), 16);
 					color = `rgba(${r}, ${g}, ${b}, ${a})`;
 				}
-	
+
 				return {
 					layer,
 					iconHref,
 					color,
 					name,
-					description
+					description,
 				};
 			});
-	
+
 			// You can now store or process results
 			console.log('✅ Parsed KML results:', results);
-	
+
 			// For example, you could update your MobX store:
 			// eventStore.importedMarkers = results;
-	
+
 			// Or trigger a success modal/toast:
 			// ReactModalService.internal.alertMessage(eventStore, 'Import successful', `${results.length} markers found`, 'success');
-	
+
 			return results;
 		} catch (error) {
 			console.error('❌ Error parsing KML file:', error);
@@ -648,7 +672,7 @@ const ImportService = {
 			// ReactModalService.internal.alertMessage(eventStore, 'Error', 'Failed to parse KML file', 'error');
 			return [];
 		}
-	}
+	},
 };
 
 export default ImportService;

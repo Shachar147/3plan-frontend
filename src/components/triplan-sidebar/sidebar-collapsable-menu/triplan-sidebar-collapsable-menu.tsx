@@ -168,6 +168,16 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					disabled={isDisabled}
 					disabledReason={disabledReason}
 				/>
+				<Button
+					icon="fa-arrow-circle-up"
+					text={TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS')}
+					onClick={() => {
+						ReactModalService.openImportFromGoogleMapsModal(eventStore);
+					}}
+					flavor={ButtonFlavor['movable-link']}
+					disabled={isDisabled}
+					disabledReason={disabledReason}
+				/>
 			</>
 		);
 	};

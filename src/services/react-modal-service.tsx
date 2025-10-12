@@ -1600,14 +1600,18 @@ const ReactModalService = {
 			eventStore.modalValues['selectedLocation'] = undefined;
 			eventStore.modalValues['openingHours'] = undefined;
 		},
-		renderFileUploader: (eventStore: EventStore) => {
+		renderFileUploader: (eventStore: EventStore, acceptedFormats?: string) => {
+			const defaultFormats =
+				'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv';
+			const acceptAttribute = acceptedFormats || defaultFormats;
+
 			return (
 				<div className="file-upload-container">
 					<input
 						type="file"
 						name="upload[]"
 						id="fileToUpload"
-						accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv"
+						accept={acceptAttribute}
 						className="display-none"
 						onChange={(event) => {
 							const target = event?.target;
@@ -4290,7 +4294,10 @@ const ReactModalService = {
 									__html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS2'),
 								}}
 							/>
-							{ReactModalService.internal.renderFileUploader(eventStore)}
+							{ReactModalService.internal.renderFileUploader(
+								eventStore,
+								'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv'
+							)}
 						</>
 					)}
 				</Observer>
@@ -4660,7 +4667,10 @@ const ReactModalService = {
 							__html: TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS.CONTENT'),
 						}}
 					/>
-					{ReactModalService.internal.renderFileUploader(eventStore)}
+					{ReactModalService.internal.renderFileUploader(
+						eventStore,
+						'.kml,application/vnd.google-earth.kml+xml'
+					)}
 				</div>
 			),
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
@@ -4673,21 +4683,20 @@ const ReactModalService = {
 				const file = eventStore.modalValues['fileToUpload'];
 
 				if (file) {
-					console.log('got file');
-					// const reader = new FileReader();
-					// reader.readAsText(file, 'UTF-8');
-					// reader.onload = function (evt) {
-					// 	// @ts-ignore
-					// 	ImportService.handleUploadedKMLFile(eventStore, evt.target.result);
-					// };
-					// reader.onerror = function (evt) {
-					// 	ReactModalService.internal.alertMessage(
-					// 		eventStore,
-					// 		'MODALS.ERROR.TITLE',
-					// 		'MODALS.IMPORT_EVENTS_ERROR.CONTENT',
-					// 		'error'
-					// 	);
-					// };
+					const reader = new FileReader();
+					reader.readAsText(file, 'UTF-8');
+					reader.onload = function (evt) {
+						// @ts-ignore
+						ImportService.handleUploadedKMLFile(eventStore, evt.target.result);
+					};
+					reader.onerror = function (evt) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.IMPORT_EVENTS_ERROR.CONTENT',
+							'error'
+						);
+					};
 				}
 				ReactModalService.internal.closeModal(eventStore);
 			},

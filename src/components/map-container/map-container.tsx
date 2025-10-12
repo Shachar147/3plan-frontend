@@ -1140,7 +1140,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					onClick={startExportToGoogleMaps}
 					className="brown"
 					flavor={ButtonFlavor.secondary}
-					icon="fa-arrow-circle-up"
+					icon="fa-arrow-circle-down"
 				/>
 			);
 		}
@@ -1152,7 +1152,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					onClick={() => ReactModalService.openImportFromGoogleMapsModal(eventStore)}
 					className="brown"
 					flavor={ButtonFlavor.secondary}
-					icon="fa-arrow-circle-down"
+					icon="fa-arrow-circle-up"
 				/>
 			);
 		}
