@@ -4067,47 +4067,8 @@ const ReactModalService = {
 									__html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS2'),
 								}}
 							/>
-<<<<<<< Updated upstream
-							<div className={'file-upload-container'}>
-								<input
-									type={'file'}
-									name={'upload[]'}
-									id={'fileToUpload'}
-									accept={
-										'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv'
-									}
-									className={'display-none'}
-									onChange={(event) => {
-										const target = event?.target;
-										const files = target?.files;
-										const file = files && files.length > 0 ? files[0] : undefined;
-
-										runInAction(() => {
-											eventStore.modalValues['fileToUpload'] = file;
-										});
-
-										// @ts-ignore
-										document.getElementsByClassName('file-name-label')[0].innerText =
-											file?.name || TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
-									}}
-								/>
-								<div className={'file-upload-label-container'}>
-									<label
-										htmlFor={'fileToUpload'}
-										className={'btn secondary-button pointer black file-button-label'}
-									>
-										{TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
-									</label>
-									<label className={'file-name-label'}>
-										{eventStore.modalValues['fileToUpload']?.name ||
-											TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}
-									</label>
-								</div>
-							</div>
-=======
-							{ReactModalService.internal.renderFileUploader(eventStore)}
->>>>>>> Stashed changes
-						</>
+							{ReactModalService.internal.renderFileUploader(eventStore)}						
+							</>
 					)}
 				</Observer>
 			),
@@ -4509,8 +4470,6 @@ const ReactModalService = {
 			},
 		});
 	},
-
->>>>>>> Stashed changes
 	openImportEventsConfirmModal: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
 		let contentArr = [
 			`${info.eventsToAdd.length} ${TranslateService.translate(
