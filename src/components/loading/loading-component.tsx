@@ -29,7 +29,7 @@ function LoadingComponent({ title, message, loaderDetails }: LoadingComponentPro
 			}}
 		>
 			<div
-				className="flex-column align-items-center justify-content-center"
+				className="loading-component flex-column align-items-center justify-content-center"
 				style={{ width: '100vw', height: '100vh', backgroundColor: loaderDetails.backgroundColor }}
 			>
 				<div className="text-align-center">

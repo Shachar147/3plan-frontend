@@ -3,12 +3,13 @@ import { EventStore } from '../stores/events-store';
 import { EventInput } from '@fullcalendar/react';
 import TranslateService from '../services/translate-service';
 import { CalendarEvent, Coordinate, DistanceResult, LocationData, SidebarEvent, TriPlanCategory } from './interfaces';
-import { FLIGHT_KEYWORDS, HOTEL_KEYWORDS } from '../components/map-container/map-container';
+import { FLIGHT_KEYWORDS, HOTEL_KEYWORDS } from '../components/map-container/map-container-utils';
 import { formatDate, formatTime, toDate } from './time-utils';
 
 import jwt_decode from 'jwt-decode';
 import axios from 'axios';
 import { HOTELS_DESCRIPTION } from './defaults';
+import { TEMPLATES_USER_NAME } from '../v2/utils/consts';
 
 export function padTo2Digits(num: number) {
 	return num.toString().padStart(2, '0');
@@ -288,8 +289,12 @@ export function isMatching(str: string = '', options: string[]) {
 	let isMatch = false;
 	let idx = 0;
 	while (!isMatch && idx < options.length) {
-		isMatch = str.toLowerCase().indexOf(options[idx].toLowerCase()) !== -1;
-		idx++;
+		try {
+			isMatch = str.toString().toLowerCase().indexOf(options[idx].toLowerCase()) !== -1;
+			idx++;
+		} catch {
+			// debugger;
+		}
 	}
 	return isMatch;
 }
@@ -300,10 +305,10 @@ export function isFlight(category: string, title: string) {
 
 export function isFlightCategory(eventStore: EventStore, categoryId: number) {
 	const category = eventStore.categories.find((c) => c.id == categoryId);
-	if (!category){
+	if (!category) {
 		return false;
 	}
-	return (category.title == "טיסות" || category.title == TranslateService.translate(eventStore, 'CATEGORY.FLIGHTS'));
+	return category.title == 'טיסות' || category.title == TranslateService.translate(eventStore, 'CATEGORY.FLIGHTS');
 }
 
 export function isDessert(category: string, title: string) {
@@ -369,13 +374,14 @@ export function lockEvents(eventStore: EventStore, calendarEvent: CalendarEvent)
 }
 
 export function isEventAlreadyOrdered(eventStore: EventStore, calendarEvent: EventInput) {
-	return (calendarEvent.description && isMatching(calendarEvent.description?.toLowerCase(), ['הוזמן', 'ordered'])) || (
+	return (
+		(calendarEvent.description && isMatching(calendarEvent.description?.toLowerCase(), ['הוזמן', 'ordered'])) ||
 		isFlightCategory(eventStore, calendarEvent.category!)
 	);
 }
 
 export function formatNumberWithCommas(number) {
-	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export function isDefined(value: any) {
@@ -426,6 +432,56 @@ export function calendarOrSidebarEventDetails(eventStore: EventStore, event: Sid
 		return `${TranslateService.translate(eventStore, 'MAP.INFO_WINDOW.SCHEDULED_TO')}: ${dt} ${end}-${start}`;
 	}
 	return undefined;
+}
+
+function containsHebrew(text) {
+	const hebrewPattern = /[\u0590-\u05FF]/;
+	return hebrewPattern.test(text);
+}
+
+export function getEventTitle(calendarEvent: CalendarEvent, eventStore: EventStore, isTemplate?: boolean) {
+	if (!calendarEvent.title) {
+		return null;
+	}
+	if (isTemplate || isTemplateUsername()) {
+		if (eventStore.isHebrew) {
+			let title = calendarEvent.title.split('|')?.[1]?.trim() ?? calendarEvent.title;
+			if (!containsHebrew(title) && containsHebrew(calendarEvent.title.split('|')?.[0]?.trim())) {
+				return calendarEvent.title.split('|')?.[0]?.trim();
+			}
+			return title;
+		}
+		return calendarEvent.title.split('|')?.[0]?.trim();
+	}
+
+	return calendarEvent.title;
+}
+
+export function getEventDescription(calendarEvent: CalendarEvent, eventStore: EventStore, isTemplate?: boolean) {
+	if (isTemplate || isTemplateUsername()) {
+		if (eventStore.isHebrew) {
+			let description = calendarEvent.description?.split('|')?.[1]?.trim() ?? calendarEvent.description;
+			if (!containsHebrew(description) && containsHebrew(calendarEvent.description?.split('|')?.[0]?.trim())) {
+				return calendarEvent.description?.split('|')?.[0]?.trim();
+			}
+			return description;
+		}
+		return calendarEvent.description?.split('|')?.[0]?.trim();
+	}
+
+	return calendarEvent.description;
+}
+
+export function isTemplateUsername() {
+	return getCurrentUsername() == TEMPLATES_USER_NAME;
+}
+
+export function isAdmin() {
+	return ['Shachar', TEMPLATES_USER_NAME].includes(getCurrentUsername());
+}
+
+export function isLocal() {
+	return window.location.href.includes('localhost:3000');
 }
 
 export function getCurrentUsername(): string | null {
@@ -504,34 +560,19 @@ export function jsonDiff(obj1: object, obj2: object): any {
 
 export function extractCategory(arr: string[]): string {
 	const categoryToKeywordMapping: Record<string, string[]> = {
-		אטרקציות: ["hiking", "hikes", "dive", " Terme ", "skypool"],
-		תיירות: [
-			"city-walk",
-			"burj",
-			"מסגד",
-			"טיילת",
-			"המרינה",
-			"אייפל",
-			"eifel",
-		],
-		תצפיות: ["sky view", "תצפית", "dubai frame"],
-		"ברים חיי לילה": ["dance club", "lounge"],
-		פארקים: ["פארק"],
-		עיירות: ["עיירה", "עיירות"],
-		חופים: ["beach "],
-		"ביץ׳ ברים": ["beach bar"],
-		"בתי מלון": [
-			"six senses",
-			"sixsenses",
-			"hotel",
-			"resort",
-			"בית מלון",
-			"המלון",
-		],
-		אוכל: ["resturant", "cafe", "מסעדה", "chocolate", "croissants"],
+		אטרקציות: ['hiking', 'hikes', 'dive', ' Terme ', 'skypool'],
+		תיירות: ['city-walk', 'burj', 'מסגד', 'טיילת', 'המרינה', 'אייפל', 'eifel'],
+		תצפיות: ['sky view', 'תצפית', 'dubai frame'],
+		'ברים חיי לילה': ['dance club', 'lounge'],
+		פארקים: ['פארק'],
+		עיירות: ['עיירה', 'עיירות'],
+		חופים: ['beach '],
+		'ביץ׳ ברים': ['beach bar'],
+		'בתי מלון': ['six senses', 'sixsenses', 'hotel', 'resort', 'בית מלון', 'המלון'],
+		אוכל: ['resturant', 'cafe', 'מסעדה', 'chocolate', 'croissants'],
 	};
 
-	let toReturn = "";
+	let toReturn = '';
 	Object.keys(categoryToKeywordMapping).forEach((category) => {
 		arr.forEach((str) => {
 			categoryToKeywordMapping[category].forEach((keyword) => {
@@ -541,13 +582,23 @@ export function extractCategory(arr: string[]): string {
 				}
 			});
 
-			if (toReturn !== "") {
+			if (toReturn !== '') {
 				return toReturn;
 			}
 		});
-		if (toReturn !== "") {
+		if (toReturn !== '') {
 			return toReturn;
 		}
 	});
 	return toReturn;
+}
+
+export function mergeArraysUnique(arr1, arr2) {
+	return Array.from(new Set(arr1.concat(arr2)));
+}
+
+export function getRandomEnumValue<T>(enumObject: T): T[keyof T] {
+	const values = Object.values(enumObject);
+	const randomIndex = Math.floor(Math.random() * values.length);
+	return values[randomIndex] as T[keyof T];
 }

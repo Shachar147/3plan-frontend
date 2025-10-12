@@ -1,172 +1,265 @@
 /* react modal */
 .sweet-alert {
-  overflow: unset !important;
-  width: fit-content !important;
-  max-width: 800px;
+	overflow: unset !important;
+	width: fit-content !important;
+	max-width: 800px;
 }
 
 .react-modal {
-  padding: 20px;
+	padding: 20px;
 
-  min-height: 220px;
-  max-height: 600px;
-  overflow: auto;
+	min-height: 220px;
+	max-height: 600px;
+	overflow: auto;
 }
 
 .triplan-react-modal a.btn {
-  padding: 5px !important;
-  padding-inline: 15px !important;
+	padding: 5px !important;
+	padding-inline: 15px !important;
 }
 
-.triplan-react-modal>p {
-  flex-direction: column;
+.triplan-react-modal > p {
+	flex-direction: column;
 }
 
 .triplan-react-modal button.primary-button,
 .triplan-react-modal button.secondary-button {
-  /* for delete button when editing calendar event */
-  min-height: 40px;
-  padding: 5px;
-  min-width: 120px;
-  padding-inline: 20px;
+	/* for delete button when editing calendar event */
+	min-height: 40px;
+	padding: 5px;
+	min-width: 120px;
+	padding-inline: 20px;
 }
 
 .triplan-react-modal {
-  min-width: 500px;
-  max-width: 570px !important;
+	min-width: 500px;
+	max-width: 570px !important;
 
-  &.max-width-650 {
-    max-width: 650px !important;
-  }
+	&.max-width-650 {
+		max-width: 650px !important;
+	}
 
-  p {
-    z-index: 0 !important;
-  }
+	p {
+		z-index: 0 !important;
+	}
 }
 
 .triplan-react-modal ul {
-  text-align: left;
+	text-align: left;
 }
 
 .sweet-alert,
 .sweet-alert h2 {
-  font-family: GaretBook, Heebo, Arial;
+	font-family: GaretBook, Heebo, Arial;
 }
 
 .sweet-alert h2 {
-  position: relative;
-  max-width: 100%;
-  margin: 0 0 0.4em;
-  padding: 0;
-  color: #595959;
-  font-size: 1.875em;
-  font-weight: 600;
-  text-align: center;
-  text-transform: none;
-  word-wrap: break-word;
-  margin-top: 12px;
+	position: relative;
+	max-width: 100%;
+	margin: 0 0 0.4em;
+	padding: 0;
+	color: #595959;
+	font-size: 1.875em;
+	font-weight: 600;
+	text-align: center;
+	text-transform: none;
+	word-wrap: break-word;
+	margin-top: 12px;
 }
 
-.add-calendar-event-modal-choose-where{
-  display: flex;
-  flex-direction: column;
-  //flex-direction: row;
-  justify-content: center;
-  gap:10px;
-  width: 100% !important;
+.add-calendar-event-modal-choose-where {
+	display: flex;
+	flex-direction: column;
+	//flex-direction: row;
+	justify-content: center;
+	gap: 10px;
+	width: 100% !important;
 
-  align-items: center;
+	align-items: center;
 
-  button {
-    width: max-content;
-  }
+	button {
+		width: max-content;
+	}
 }
 
 .triplan-add-calendar-event-from-existing {
-  > div {
-    z-index: 2 !important;
-    overflow:visible !important; /* for the select of the activity */
+	> div {
+		z-index: 2 !important;
+		overflow: visible !important; /* for the select of the activity */
 
-    .react-modal {
-      min-height: unset;
-      overflow: visible;
-    }
-  }
+		.react-modal {
+			min-height: unset;
+			overflow: visible;
+		}
+	}
 }
 
 .show-hide-more {
-  color: var(--blue) !important;
-  text-decoration: underline !important;
-  user-select: none;
-  cursor: pointer;
+	color: var(--blue) !important;
+	text-decoration: underline !important;
+	user-select: none;
+	cursor: pointer;
 
-  &:hover {
-    opacity: 0.6;
-  }
+	&:hover {
+		opacity: 0.6;
+	}
 }
 
 .modal-minimized {
-  .location-row{
-    order: 1;
-  }
-  .name-row {
-    order: 2;
-  }
-  .category-row {
-    order: 3;
-  }
-  .description-row {
-    order: 4;
-  }
-  .start-time-row {
-    order: 5;
-  }
-  .end-time-row {
-    order: 6;
-  }
-  .priority-row {
-    order: 7;
-  }
-  .preferred-time-row {
-    order: 8;
-  }
-  .actions-row {
-    order: 9;
-  }
-  .show-hide-more-row {
-    order: 10;
-  }
+	.location-row {
+		order: 1;
+	}
+	.name-row {
+		order: 2;
+	}
+	.category-row {
+		order: 3;
+	}
+	.description-row {
+		order: 4;
+	}
+	.start-time-row {
+		order: 5;
+	}
+	.end-time-row {
+		order: 6;
+	}
+	.priority-row {
+		order: 7;
+	}
+	.preferred-time-row {
+		order: 8;
+	}
+	.actions-row {
+		order: 9;
+	}
+	.show-hide-more-row {
+		order: 10;
+	}
 
-  &.view-mode {
-    .images-row {
-      order: 1;
-    }
-    .name-row {
-      order: 2;
-    }
-    .location-row{
-      order: 3;
-    }
-    .category-row {
-      order: 4;
-    }
-    .description-row {
-      order: 5;
-    }
-    .start-time-row {
-      order: 6;
-    }
-    .end-time-row {
-      order: 7;
-    }
-    .opening-hours-row {
-      order: 8;
-    }
-    .actions-row {
-      order: 9;
-    }
-    .show-hide-more-row {
-      order: 10;
-    }
-  }
+	&.view-mode {
+		.images-row {
+			order: 1;
+		}
+		.name-row {
+			order: 2;
+		}
+		.location-row {
+			order: 3;
+		}
+		.category-row {
+			order: 4;
+		}
+		.description-row {
+			order: 5;
+		}
+		.start-time-row {
+			order: 6;
+		}
+		.end-time-row {
+			order: 7;
+		}
+		.opening-hours-row {
+			order: 8;
+		}
+		.actions-row {
+			order: 9;
+		}
+		.show-hide-more-row {
+			order: 10;
+		}
+	}
+}
+
+// Backup Trip Modal Styles
+.backup-trip-modal {
+	.backup-format-options {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+		margin-top: 15px;
+	}
+
+	.backup-format-option {
+		border: 1px solid #ddd;
+		border-radius: 8px;
+		padding: 15px;
+		transition: border-color 0.2s ease, background-color 0.2s ease;
+
+		&:hover {
+			border-color: #4a90e2;
+			background-color: #f8f9fa;
+		}
+
+		&:has(input:checked) {
+			border-color: #4a90e2;
+			background-color: #e3f2fd;
+		}
+	}
+
+	.backup-format-label {
+		display: flex;
+		align-items: flex-start;
+		gap: 10px;
+		cursor: pointer;
+		margin: 0;
+
+		input[type='radio'] {
+			margin: 0;
+			margin-top: 2px;
+		}
+	}
+
+	.backup-format-title {
+		font-weight: 600;
+		font-size: 16px;
+		color: #333;
+	}
+
+	.backup-format-description {
+		margin-top: 5px;
+		font-size: 14px;
+		color: #666;
+		line-height: 1.4;
+		margin-left: 26px;
+		text-align: start;
+	}
+}
+
+// Edit Colors Modal Styles
+.edit-colors-modal {
+	.flex-col {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.flex-row {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.gap-10 {
+		gap: 10px;
+	}
+
+	hr {
+		margin: 15px 0;
+		border: none;
+		border-top: 1px solid #ddd;
+	}
+
+	input[type='color'] {
+		width: 40px;
+		height: 30px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	span {
+		font-size: 14px;
+	}
 }

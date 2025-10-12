@@ -13,7 +13,7 @@ function MobileMenu({ items }: MobileMenuProps) {
 		<div className="margin-bottom-10">
 			<div className="mobile-menu">
 				{hamburgerIcon()}
-				<img src={'/images/logo/new-logo-white.png'} height={45} />
+				<img src="/images/logo/new-logo-white.png" height={45} />
 			</div>
 			<MenuContent items={items} />
 		</div>

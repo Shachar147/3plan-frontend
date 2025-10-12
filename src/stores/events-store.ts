@@ -21,7 +21,7 @@ import {
 	TriplanPriority,
 	ViewMode,
 } from '../utils/enums';
-import {addDays, convertMsToHM, formatDate, getEndDate, serializeDuration, toDate} from '../utils/time-utils';
+import { addDays, convertMsToHM, formatDate, getEndDate, serializeDuration, toDate } from '../utils/time-utils';
 
 // @ts-ignore
 import _ from 'lodash';
@@ -30,7 +30,8 @@ import {
 	generate_uuidv4,
 	getCoordinatesRangeKey,
 	isEventAlreadyOrdered,
-	lockEvents
+	isTemplateUsername,
+	lockEvents,
 } from '../utils/utils';
 import ReactModalService from '../services/react-modal-service';
 import {
@@ -49,10 +50,10 @@ import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
 import { MapContainerRef } from '../components/map-container/map-container';
 import LogHistoryService from '../services/data-handlers/log-history-service';
-import {endpoints} from "../v2/utils/endpoints";
-import {string} from "prop-types";
-import {FeatureFlagsService} from "../utils/feature-flags";
-import {mainPageContentTabLsKey, myTripsTabId, newDesignRootPath} from "../v2/utils/consts";
+import { endpoints } from '../v2/utils/endpoints';
+import { FeatureFlagsService } from '../utils/feature-flags';
+import { mainPageContentTabLsKey, myTripsTabId, newDesignRootPath } from '../v2/utils/consts';
+import { priorityToColor, priorityToMapColor } from '../utils/consts';
 
 const defaultModalSettings = {
 	show: false,
@@ -73,6 +74,8 @@ const defaultModalSettings = {
 	// }
 	customOverlayClass: 'z-index-99999999',
 };
+
+export const hideSuggestionsLsKey = 'hide-suggestions';
 
 const minLoadTimeInSeconds = 1.5;
 
@@ -126,9 +129,12 @@ export class EventStore {
 	@observable isSearchOpen = true;
 	@observable didChangeSearchOpenState = false;
 
+	@observable clickedHideSuggestions = false;
+
 	@observable forceUpdate = 0;
 	@observable forceSetDraggable = 0;
 	@observable forceCalendarReRender = 0;
+	@observable forceMapReRender = 0; // v2
 
 	// map filters
 	@observable mapFiltersVisible: boolean = false;
@@ -137,6 +143,12 @@ export class EventStore {
 	@observable hideUnScheduled: boolean = false;
 	@observable mapViewMode: MapViewMode = MapViewMode.CATEGORIES_AND_PRIORITIES;
 	@observable mapViewDayFilter: string | undefined;
+
+	// sidebar settings
+	@observable filterSidebarPriorities = observable.map({});
+	@observable filterSidebarCategories = observable.map({});
+	@observable filterSidebarPreferredTimes = observable.map({});
+	@observable sidebarSettings = observable.map({});
 
 	// add side bar modal
 	@observable isModalMinimized: boolean = true;
@@ -157,6 +169,7 @@ export class EventStore {
 	@observable mapContainerRef: React.MutableRefObject<MapContainerRef> | null = null;
 	showEventOnMap: number | null = null;
 
+	@observable togglingTripLock: boolean = false;
 	@observable isTripLocked: boolean = false;
 
 	toastrClearTimeout: NodeJS.Timeout | null = null;
@@ -192,6 +205,24 @@ export class EventStore {
 	@observable hideDoneTasks: boolean = false;
 	@observable groupTasksByEvent: boolean = false;
 
+	@observable sidebarGroupBy: 'priority' | 'category' | 'area' = 'category';
+
+	// Store custom area names - maps area key (contains sorted event IDs) to custom name
+	@observable customAreaNames = observable.map<string, string>({});
+
+	// Store debounce timer as a class property
+	private sidebarGroupByDebounceTimer: any = null;
+
+	// Add debounceDistanceTimerId property to the class
+	debounceDistanceTimerId: NodeJS.Timeout | null = null;
+
+	// focus mode
+	@observable focusMode: boolean = false;
+
+	// editable colors (defaults from consts)
+	@observable priorityColors: Record<string, string> = { ...priorityToColor };
+	@observable priorityMapColors: Record<string, string> = { ...priorityToMapColor };
+
 	constructor() {
 		let dataSourceName = LocalStorageService.getLastDataSource();
 		if (!dataSourceName) {
@@ -212,7 +243,92 @@ export class EventStore {
 		// for the admin view
 		this.setCalendarLocalCode(DataServices.LocalStorageService.getCalendarLocale());
 
+		// Initialize sidebarSettings from localStorage
+		this.initSidebarSettings();
+
+		this.sidebarGroupBy =
+			(localStorage.getItem('sidebarGroupBy') as 'priority' | 'category' | 'area') || 'category';
+
 		this.init();
+	}
+
+	// Helper method to initialize sidebar settings
+	initSidebarSettings() {
+		// Set default value first
+		this.sidebarSettings.set('hide-scheduled', false);
+		// Set default area grouping thresholds (in minutes)
+		this.sidebarSettings.set('area-driving-threshold', 10); // 10 min driving
+		this.sidebarSettings.set('area-walking-threshold', 20); // 20 min walking
+
+		// Load custom area names from localStorage
+		try {
+			const savedCustomAreaNames = localStorage.getItem('customAreaNames');
+			console.log('Loading custom area names from localStorage', savedCustomAreaNames);
+
+			if (savedCustomAreaNames) {
+				const parsedNames = JSON.parse(savedCustomAreaNames);
+
+				// Check if we need to migrate from old format to new format
+				let needsMigration = false;
+				Object.keys(parsedNames).forEach((key) => {
+					// If the key doesn't start with 'events_' and contains area name information, convert it
+					if (!key.startsWith('events_') && !key.startsWith('area_name_')) {
+						needsMigration = true;
+					}
+				});
+
+				if (needsMigration) {
+					console.log('Migrating custom area names to new format');
+					// Create new format and save it back
+					const newNames: Record<string, string> = {};
+					Object.entries(parsedNames).forEach(([key, value]) => {
+						// If it's not in our expected format, try to convert it
+						if (!key.startsWith('events_') && !key.startsWith('area_name_')) {
+							// Extract event IDs if they exist in the key
+							const match = key.match(/events_([^:]+)/);
+							if (match && match[1]) {
+								const eventIds = match[1].split(/[-|]/).filter(Boolean);
+								if (eventIds.length > 0) {
+									const newKey = 'events_' + eventIds.sort().join('|');
+									newNames[newKey] = value as string;
+								} else {
+									// If we can't extract IDs, keep the original key
+									newNames[key] = value as string;
+								}
+							} else {
+								// If there's no pattern to extract from, keep as is
+								newNames[key] = value as string;
+							}
+						} else {
+							// Already in the right format, keep it
+							newNames[key] = value as string;
+						}
+					});
+
+					// Save the migrated names
+					localStorage.setItem('customAreaNames', JSON.stringify(newNames));
+					this.customAreaNames.replace(newNames);
+					console.log('Migrated custom area names', newNames);
+				} else {
+					// Just load as normal
+					this.customAreaNames.replace(parsedNames);
+				}
+			}
+		} catch (e) {
+			console.error('Failed to load custom area names from localStorage', e);
+		}
+
+		try {
+			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
+			if (savedSettings) {
+				const parsedSettings = JSON.parse(savedSettings);
+				Object.keys(parsedSettings).forEach((key) => {
+					this.sidebarSettings.set(key, parsedSettings[key]);
+				});
+			}
+		} catch (e) {
+			console.error('Error loading sidebar settings from localStorage', e);
+		}
 	}
 
 	@action
@@ -260,17 +376,8 @@ export class EventStore {
 	}
 
 	checkIfEventHaveOpenTasks(event: SidebarEvent | CalendarEvent | AllEventsEvent | EventInput): boolean {
-		// let { title, description } = event;
-		// const { taskKeywords } = ListViewService._initSummaryConfiguration();
-		// const isTodoComplete = taskKeywords.find(
-		// 	(k: string) =>
-		// 		title!.toLowerCase().indexOf(k.toLowerCase()) !== -1 ||
-		// 		(description && description.toLowerCase().indexOf(k.toLowerCase()) !== -1)
-		// );
-		//
-		// return !!isTodoComplete;
 		const { id: eventId } = event;
-		return !!this.tasks.find((t) => t.eventId == eventId);
+		return !!this.tasks.find((t) => String(t.eventId) === String(eventId));
 	}
 
 	@action
@@ -288,37 +395,42 @@ export class EventStore {
 
 	// --- computed -------------------------------------------------------------
 
-	validateArrivalTime = (filteredEvents: CalendarEvent[], eventStore: EventStore, e:CalendarEvent, idx: number): string => {
-		return "";
+	validateArrivalTime = (
+		filteredEvents: CalendarEvent[],
+		eventStore: EventStore,
+		e: CalendarEvent,
+		idx: number
+	): string => {
+		return '';
 
-		const prev = idx > 0 ? filteredEvents[idx-1] : undefined;
+		const prev = idx > 0 ? filteredEvents[idx - 1] : undefined;
 		let distanceKey = undefined;
 		let loc1, loc2;
-		let distanceResult: DistanceResult | undefined
+		let distanceResult: DistanceResult | undefined;
 		let diffInSeconds = 0;
-		if (prev && e && prev.location && e.location){
+		if (prev && e && prev.location && e.location) {
 			loc1 = {
 				lat: prev.location.latitude,
 				lng: prev.location.longitude,
-				eventName: prev.title
+				eventName: prev.title,
 			};
 
 			loc2 = {
 				lat: e.location.latitude,
 				lng: e.location.longitude,
-				eventName: e.title
-			}
+				eventName: e.title,
+			};
 
 			distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
 			distanceResult = eventStore.distanceResults.has(distanceKey)
 				? eventStore.distanceResults.get(distanceKey)
 				: undefined;
-			diffInSeconds = (new Date(e.start).getTime()/1000) - (new Date(prev.end).getTime()/1000);
+			diffInSeconds = new Date(e.start).getTime() / 1000 - new Date(prev.end).getTime() / 1000;
 
 			if (diffInSeconds < (distanceResult?.duration_value ?? 0)) {
 				const missingTimeInSeconds = (distanceResult?.duration_value ?? 0) - diffInSeconds;
 				return TranslateService.translate(eventStore, 'YOU_WONT_MAKE_IT', {
-					missingTime: serializeDuration(this, missingTimeInSeconds)
+					missingTime: serializeDuration(this, missingTimeInSeconds),
 				});
 			}
 		}
@@ -333,7 +445,7 @@ export class EventStore {
 		// 	requiredDiff: distanceResult?.duration_value ?? 0,
 		// 	isOk: diffInSeconds >= (distanceResult?.duration_value ?? 0)
 		// })
-	}
+	};
 
 	addSuggestedLeavingTime = (filteredEvents: CalendarEvent[], eventStore: EventStore): CalendarEvent[] => {
 		if (this.showOnlyEventsWithDistanceProblems) {
@@ -562,7 +674,7 @@ export class EventStore {
 						}
 					}
 
-					if (errorReason == ''){
+					if (errorReason == '') {
 						errorReason = this.validateArrivalTime(filteredEvents, eventStore, e, idx);
 					}
 
@@ -572,7 +684,7 @@ export class EventStore {
 						e.className = e.className || '';
 						e.className = e.className.replaceAll(' red-background', '') + ' red-background';
 						e.className += ' red-background';
-						console.log({ id: e.id, timingError: errorReason });
+						// console.log({ id: e.id, timingError: errorReason });
 						eventsWithOpeningHoursProblems.push({ id: e.id, timingError: errorReason });
 					} else {
 						e.timingError = '';
@@ -664,6 +776,13 @@ export class EventStore {
 	}
 
 	@computed
+	get categoriesMapIcons(): Record<number, string> {
+		const hash: Record<number, string> = {};
+		this.categories.forEach((x) => (hash[x.id] = x.googleMapIcon));
+		return hash;
+	}
+
+	@computed
 	get isListView() {
 		return this.isMobile ? this.mobileViewMode === ViewMode.list : this.viewMode === ViewMode.list;
 	}
@@ -686,6 +805,22 @@ export class EventStore {
 	@computed
 	get isCombinedView() {
 		return this.isMobile ? false : this.viewMode === ViewMode.combined;
+	}
+
+	@computed
+	get isItineraryView() {
+		return this.isMobile ? this.mobileViewMode == ViewMode.itinerary : this.viewMode === ViewMode.itinerary;
+	}
+
+	@computed
+	get shouldRenderSuggestions() {
+		return (
+			!this.isMobile &&
+			this.viewMode != ViewMode.feed &&
+			!localStorage.getItem(hideSuggestionsLsKey) &&
+			!this.clickedHideSuggestions &&
+			!this.focusMode
+		);
 	}
 
 	@computed
@@ -752,7 +887,14 @@ export class EventStore {
 						this._isEventMatchingSearch(event, this.sidebarSearchValue) &&
 						(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
 						(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
-						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true)
+						(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
+						(this.filterSidebarPriorities.size === 0 ||
+							this.filterSidebarPriorities.get(getEnumKey(TriplanPriority, event.priority))) &&
+						(this.filterSidebarCategories.size === 0 || this.filterSidebarCategories.get(event.category)) &&
+						(this.filterSidebarPreferredTimes.size === 0 ||
+							this.filterSidebarPreferredTimes.get(
+								getEnumKey(TriplanEventPreferredTime, event.preferredTime)
+							))
 				);
 		});
 		return toReturn;
@@ -817,11 +959,10 @@ export class EventStore {
 			!!this.sidebarSearchValue?.length ||
 			this.showOnlyEventsWithNoLocation ||
 			this.showOnlyEventsWithNoOpeningHours ||
-			this.showOnlyEventsWithTodoComplete
-			// for now it affects only map. todo complete - add it to sidebar filters as well both in UI and on logic
-			// || !!Array.from(this.filterOutPriorities.values()).length
-			// || this.hideScheduled
-			// || this.hideUnScheduled
+			this.showOnlyEventsWithTodoComplete ||
+			!!Array.from(this.filterSidebarPriorities.values()).length ||
+			!!Array.from(this.filterSidebarCategories.values()).length ||
+			!!Array.from(this.filterSidebarPreferredTimes.values()).length
 		);
 	}
 
@@ -1059,18 +1200,18 @@ export class EventStore {
 		return Promise.all([promise1, promise2]).then(() => {
 			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
 				count2: count,
-				type: 'all activities'
+				type: 'all activities',
 			});
 		});
 	}
 
 	@computed
-	get orderedCalendarEvents(): CalendarEvent[]{
+	get orderedCalendarEvents(): CalendarEvent[] {
 		return this.calendarEvents.filter((x) => isEventAlreadyOrdered(this, x));
 	}
 
 	@computed
-	get nonOrderedCalendarEvents(): CalendarEvent[]{
+	get nonOrderedCalendarEvents(): CalendarEvent[] {
 		return this.calendarEvents.filter((x) => !isEventAlreadyOrdered(this, x));
 	}
 
@@ -1108,7 +1249,7 @@ export class EventStore {
 		return Promise.all([promise1, promise2]).then(() => {
 			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
 				count2: count,
-				type: 'non ordered'
+				type: 'non ordered',
 			});
 		});
 	}
@@ -1143,6 +1284,8 @@ export class EventStore {
 
 		// show hide custom dates based on view
 		this.initCustomDatesVisibilityBasedOnViewMode();
+
+		this.isSidebarMinimized = newViewMode === ViewMode.itinerary;
 
 		DataServices.LocalStorageService.setLastViewMode(newViewMode);
 	}
@@ -1189,7 +1332,7 @@ export class EventStore {
 		this.openSidebarGroup(SidebarGroups.DISTANCES);
 		this.openSidebarGroup(SidebarGroups.DISTANCES_NEARBY);
 		this.distanceSectionAutoOpened = true;
-		localStorage.setItem('distanceSectionAutoOpened', "1")
+		localStorage.setItem('distanceSectionAutoOpened', '1');
 	}
 
 	@action
@@ -1252,7 +1395,7 @@ export class EventStore {
 			const sharedTrip = sharedTrips.find((s) => s.name === name);
 			this.isSharedTrip = !!sharedTrip;
 			if (!!sharedTrip) {
-				this.isTripLocked = !!sharedTrip.isLocked;
+				this.isTripLocked = !!sharedTrip.isLocked && !isTemplateUsername();
 				this.canRead = sharedTrip.canRead;
 				this.canWrite = sharedTrip.canWrite;
 
@@ -1356,6 +1499,9 @@ export class EventStore {
 			this.allEventsTripName = name;
 			runInAction(() => {
 				this.distanceResults = observable.map(newDistanceResults);
+
+				// Clean up orphaned custom area names after loading trip data
+				setTimeout(() => this.cleanupOrphanedAreaNames(), 1000);
 			});
 		}
 
@@ -1376,8 +1522,15 @@ export class EventStore {
 		this.customDateRange = dateRange;
 		this.allEvents = allEvents;
 		this.categories = categories;
-		this.isTripLocked = !!isLocked;
+		this.isTripLocked = !!isLocked && !isTemplateUsername();
 		this.destinations = tripData.destinations;
+		// apply colors if provided
+		if (tripData.priorityColors) {
+			this.priorityColors = { ...tripData.priorityColors };
+		}
+		if (tripData.priorityMapColors) {
+			this.priorityMapColors = { ...tripData.priorityMapColors };
+		}
 
 		if ('canRead' in Object.keys(tripData) || 'canWrite' in Object.keys(tripData)) {
 			// @ts-ignore
@@ -1400,7 +1553,7 @@ export class EventStore {
 		const key2 = 'auto-locked-' + this.tripId;
 		if (!isLocked) {
 			if (new Date().getTime() > new Date(endDate).getTime()) {
-				console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
+				// console.log('passed time', new Date().getTime() - new Date(endDate).getTime());
 				if (!localStorage.getItem(key) && !localStorage.getItem(key2)) {
 					this.dataService.lockTrip(this.tripName);
 					localStorage.setItem(key, '1');
@@ -1468,7 +1621,14 @@ export class EventStore {
 	@action
 	setDistance(key: string, value: DistanceResult) {
 		this.distanceResults.set(key, value);
-		this.dataService.setDistanceResults(this.distanceResults, this.tripName);
+
+		// Convert ObservableMap to a regular object
+		const distanceResultsObj: Record<string, DistanceResult> = {};
+		this.distanceResults.forEach((val, k) => {
+			distanceResultsObj[k] = val;
+		});
+
+		this.dataService.setDistanceResults(distanceResultsObj as any, this.tripName);
 	}
 
 	@action
@@ -1512,6 +1672,15 @@ export class EventStore {
 			this.filterOutPriorities.delete(priority);
 		} else {
 			this.filterOutPriorities.set(priority, true);
+		}
+	}
+
+	@action
+	toggleSidebarFilterPriority(priority: string) {
+		if (this.filterSidebarPriorities.get(priority)) {
+			this.filterSidebarPriorities.delete(priority);
+		} else {
+			this.filterSidebarPriorities.set(priority, true);
 		}
 	}
 
@@ -1595,7 +1764,9 @@ export class EventStore {
 
 	@action
 	async toggleTripLocked() {
+		this.togglingTripLock = true;
 		if (this.isSharedTrip && !this.canWrite) {
+			this.togglingTripLock = false;
 			return;
 		}
 
@@ -1607,9 +1778,16 @@ export class EventStore {
 			LogHistoryService.logHistory(this, TripActions.lockedTrip, {});
 		}
 
-		if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
-			this.isTripLocked = !this.isTripLocked;
-		}
+		runInAction(() => {
+			if (this.dataService.getDataSourceName() == TripDataSource.LOCAL) {
+				this.isTripLocked = !this.isTripLocked && !isTemplateUsername();
+			}
+
+			// slight delay since it takes time to re-render
+			setTimeout(() => {
+				this.togglingTripLock = false;
+			}, 300);
+		});
 	}
 
 	// --- private functions ----------------------------------------------------
@@ -1782,7 +1960,7 @@ export class EventStore {
 	}
 
 	@action
-	resetFilters(){
+	resetFilters() {
 		this.setSearchValue('');
 		this.setSidebarSearchValue('');
 		this.setShowOnlyEventsWithNoLocation(false);
@@ -1790,6 +1968,11 @@ export class EventStore {
 		this.setShowOnlyEventsWithNoOpeningHours(false);
 		this.setShowOnlyEventsWithDistanceProblems(false);
 		this.setShowOnlyEventsWithOpeningHoursProblems(false);
+
+		// Reset sidebar priority filters
+		this.filterSidebarPriorities = observable.map({});
+		this.filterSidebarCategories = observable.map({});
+		this.filterSidebarPreferredTimes = observable.map({});
 
 		setTimeout(() => {
 			document.getElementsByName('fc-search').forEach((element) => {
@@ -1799,8 +1982,175 @@ export class EventStore {
 	}
 
 	@action
-	triggerCalendarReRender(){
+	triggerCalendarReRender() {
 		this.forceCalendarReRender += 1;
+	}
+
+	@computed
+	get formattedTripName() {
+		if (!this.tripName) {
+			return undefined;
+		}
+		return this.tripName.includes(' ')
+			? this.tripName
+			: this.tripName.replaceAll('-', ' ').replaceAll('   ', ' - ');
+	}
+
+	@action
+	toggleSidebarFilterCategory(category: string) {
+		if (this.filterSidebarCategories.get(category)) {
+			this.filterSidebarCategories.delete(category);
+		} else {
+			this.filterSidebarCategories.set(category, true);
+		}
+	}
+
+	@action
+	toggleSidebarFilterPreferredTime(preferredTime: string) {
+		if (this.filterSidebarPreferredTimes.get(preferredTime)) {
+			this.filterSidebarPreferredTimes.delete(preferredTime);
+		} else {
+			this.filterSidebarPreferredTimes.set(preferredTime, true);
+		}
+	}
+
+	@action
+	saveSidebarSettings() {
+		try {
+			const settingsObject = {};
+			this.sidebarSettings.forEach((value, key) => {
+				settingsObject[key] = value;
+			});
+			localStorage.setItem('triplan-sidebar-settings', JSON.stringify(settingsObject));
+		} catch (e) {
+			console.error('Error saving sidebar settings to localStorage', e);
+		}
+	}
+
+	@action
+	setSidebarGroupBy(groupBy: 'priority' | 'category' | 'area') {
+		this.sidebarGroupBy = groupBy;
+		localStorage.setItem('sidebarGroupBy', groupBy);
+	}
+
+	// Check if two areas contain exactly the same events
+	areasContainSameEvents(area1Events: any[], area2Events: any[]): boolean {
+		if (area1Events.length !== area2Events.length) return false;
+
+		const area1Ids = area1Events.map((event) => event.id).sort();
+		const area2Ids = area2Events.map((event) => event.id).sort();
+
+		return area1Ids.join('|') === area2Ids.join('|');
+	}
+
+	// Clear orphaned custom area names that are no longer used
+	@action
+	cleanupOrphanedAreaNames() {
+		try {
+			// Skip if we don't have events loaded yet
+			if (Object.keys(this.sidebarEvents).length === 0) {
+				return;
+			}
+
+			// Get all current valid area keys
+			const validKeys = new Set<string>();
+
+			// Process events with no location - this key should always be kept
+			const noLocationKey = 'NO_LOCATION';
+			validKeys.add(noLocationKey);
+
+			// Get all event IDs in the system for existence checks
+			const allEvents = this.allEventsFilteredComputed;
+			const allEventIds = new Set(allEvents.map((event) => event.id));
+
+			// IMPORTANT: Instead of removing custom area names that don't match current groups,
+			// we'll only remove names if the events in those groups don't exist anymore
+
+			// For each custom area name, check if all events in the key still exist
+			this.customAreaNames.forEach((customName, key) => {
+				// Skip area_name_ keys (they're not tied to specific events)
+				if (key.startsWith('area_name_')) {
+					validKeys.add(key);
+					return;
+				}
+
+				// Extract event IDs from the key
+				if (key.startsWith('events_')) {
+					// Parse the event IDs from the key
+					const eventIdsInKey = key.replace('events_', '').split(/[|,-]/).filter(Boolean);
+
+					// Check if all events in this key still exist in the system
+					const allEventsStillExist = eventIdsInKey.every((id) => allEventIds.has(id));
+
+					// If all events still exist, this is a valid key to keep
+					if (allEventsStillExist) {
+						validKeys.add(key);
+					}
+				}
+			});
+
+			// Remove orphaned area names (keys where some events no longer exist)
+			const keysToRemove: string[] = [];
+			this.customAreaNames.forEach((value, key) => {
+				if (!validKeys.has(key)) {
+					keysToRemove.push(key);
+				}
+			});
+
+			// Remove orphaned keys
+			keysToRemove.forEach((key) => {
+				this.customAreaNames.delete(key);
+			});
+
+			if (keysToRemove.length > 0) {
+				this.saveCustomAreaNames();
+			}
+		} catch (error) {
+			console.error('Error cleaning up area names:', error);
+		}
+	}
+
+	// Generate a consistent area key from an array of events
+	generateAreaKey(events: any[]): string {
+		// Skip if no events provided
+		if (!events || events.length === 0) {
+			return '';
+		}
+
+		try {
+			// Extract event IDs and sort them for consistency
+			const eventIds = events.map((event) => event.id || event).sort();
+
+			// Create the key in format events_id1|id2|id3...
+			const areaKey = 'events_' + eventIds.join('|');
+
+			return areaKey;
+		} catch (error) {
+			console.error('Error generating area key:', error);
+			return '';
+		}
+	}
+
+	// Save custom area names to localStorage
+	@action
+	saveCustomAreaNames() {
+		try {
+			const namesToSave = Object.fromEntries(this.customAreaNames.entries());
+			localStorage.setItem('customAreaNames', JSON.stringify(namesToSave));
+		} catch (error) {
+			console.error('Error saving custom area names to localStorage:', error);
+		}
+	}
+
+	@action
+	toggleFocusMode() {
+		const prevValue = this.focusMode;
+		this.focusMode = !prevValue;
+		if (prevValue) {
+			this.isSidebarMinimized = false;
+		} else {
+			this.isSidebarMinimized = true;
+		}
 	}
 }
 

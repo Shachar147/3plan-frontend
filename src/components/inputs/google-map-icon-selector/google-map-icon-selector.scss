@@ -1,0 +1,20 @@
+.google-map-icon-selector {
+	max-width: 100%;
+	flex-wrap: wrap;
+	min-height: 90px;
+	height: 90px;
+	resize: vertical;
+	max-height: 190px;
+	overflow: auto;
+
+	button {
+		padding-inline: 4px !important;
+		padding-block: 0 !important;
+		max-height: max-content;
+
+		&.active,
+		&.active:hover {
+			border: 1px solid var(--blue);
+		}
+	}
+}

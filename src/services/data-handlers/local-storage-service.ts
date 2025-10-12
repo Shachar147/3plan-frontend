@@ -28,7 +28,7 @@ import DataServices, {
 	tripNameToLSTripName,
 } from './data-handler-base';
 import { TripDataSource, ViewMode } from '../../utils/enums';
-import {apiPut} from "../../helpers/api";
+import { apiPut } from '../../helpers/api';
 
 export class LocalStorageService implements BaseDataHandler {
 	CONTINUE_AS_GUEST_MODAL_LS_KEY = 'triplan-hide-continue-as-guest-modal';

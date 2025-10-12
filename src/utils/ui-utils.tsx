@@ -5,15 +5,14 @@ import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ToggleButton, { OptionToggleButton } from '../components/toggle-button/toggle-button';
 import { ViewMode } from './enums';
-import { getClasses, isEventAlreadyOrdered } from './utils';
+import { getClasses, getEventTitle, isEventAlreadyOrdered } from './utils';
 import TriplanTag from '../components/common/triplan-tag/triplan-tag';
 import { getUser } from '../helpers/auth';
 import Select from 'react-select';
 import { Observer } from 'mobx-react';
-import { EventApi, EventInput } from '@fullcalendar/react';
 import { getTimeStringFromDate, toDate } from './time-utils';
-import { buildCalendarEvent, CalendarEvent } from './interfaces';
-import {FeatureFlagsService} from "./feature-flags";
+import { CalendarEvent } from './interfaces';
+import { FeatureFlagsService } from './feature-flags';
 
 export const renderLanguageSelector = (eventStore: EventStore) => {
 	const options: any[] = [
@@ -28,8 +27,8 @@ export const renderLanguageSelector = (eventStore: EventStore) => {
 					key={`locale-selector-${eventStore.calendarLocalCode}`}
 					isClearable={false}
 					isSearchable={false}
-					id={'locale-selector'}
-					name={'locale-selector'}
+					id="locale-selector"
+					name="locale-selector"
 					options={options}
 					value={options.find((x) => x.value == eventStore.calendarLocalCode)}
 					onChange={(e: any) => {
@@ -40,7 +39,7 @@ export const renderLanguageSelector = (eventStore: EventStore) => {
 				/>
 			)}
 		</Observer>
-		// <select id="locale-selector" className={"main-font"} onChange={(e) => {
+		// <select id="locale-selector" className="main-font" onChange={(e) => {
 		//     // @ts-ignore
 		//     eventStore.setCalendarLocalCode(e.target.value);
 		// }} value={eventStore.calendarLocalCode}>
@@ -59,7 +58,11 @@ export interface HeaderLineOptions {
 	withLoginLogout?: boolean;
 }
 
-export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOptions = {}) => {
+export const renderHeaderLine = (
+	eventStore: EventStore,
+	options: HeaderLineOptions = {},
+	navigate: NavigateFunction
+) => {
 	const {
 		withLogo = false,
 		withRecommended = true,
@@ -69,8 +72,6 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
 		withLoginLogout = true,
 	} = options;
 
-	const navigate = useNavigate();
-
 	return (
 		<div className="header" style={{ height: 'fit-content' }}>
 			<div className="start-side">
@@ -79,7 +80,7 @@ export const renderHeaderLine = (eventStore: EventStore, options: HeaderLineOpti
 						<img
 							className="choose-language-image"
 							alt=""
-							src={'/images/landing-page/icons/choose-lang.png'}
+							src="/images/landing-page/icons/choose-lang.png"
 						/>
 						{TranslateService.translate(eventStore, 'CHOOSE_LANGUAGE')}
 					</a>
@@ -104,17 +105,17 @@ const renderMyTrips = (
 	withLogo: boolean,
 	navigate: NavigateFunction
 ) => (
-	<div className={'recommended-destinations main-font'}>
+	<div className="recommended-destinations main-font">
 		{!withMyTrips ? undefined : (
 			<Link
-				to={'/my-trips'}
+				to="/my-trips"
 				style={{
 					textDecoration: 'none',
 				}}
 			>
 				<Button
 					flavor={ButtonFlavor.link}
-					image={'/images/landing-page/icons/map.png'}
+					image="/images/landing-page/icons/map.png"
 					text={TranslateService.translate(eventStore, 'LANDING_PAGE.MY_TRIPS')}
 					onClick={() => {}}
 				/>
@@ -131,7 +132,7 @@ const renderMyTrips = (
 				}}
 				style={{ cursor: 'pointer', display: 'flex', maxHeight: '40px', height: '40px' }}
 			>
-				<img alt={''} src={'/images/logo/new-logo.png'} />
+				<img alt="" src="/images/logo/new-logo.png" />
 			</div>
 		)}
 	</div>
@@ -139,14 +140,14 @@ const renderMyTrips = (
 
 const renderLogout = (eventStore: EventStore) => (
 	<Link
-		to={'/logout'}
+		to="/logout"
 		style={{
 			textDecoration: 'none',
 		}}
 	>
 		<Button
 			flavor={ButtonFlavor.link}
-			icon={'fa-sign-out darkest-blue-color'}
+			icon="fa-sign-out darkest-blue-color"
 			text={`${TranslateService.translate(eventStore, 'LOGOUT')}, ${getUser()}`}
 			onClick={() => {}}
 		/>
@@ -155,14 +156,14 @@ const renderLogout = (eventStore: EventStore) => (
 
 const renderLogin = (eventStore: EventStore) => (
 	<Link
-		to={'/login'}
+		to="/login"
 		style={{
 			textDecoration: 'none',
 		}}
 	>
 		<Button
 			flavor={ButtonFlavor.link}
-			icon={'fa-sign-in darkest-blue-color'}
+			icon="fa-sign-in darkest-blue-color"
 			text={`${TranslateService.translate(eventStore, 'LOGIN')}`}
 			onClick={() => {}}
 		/>
@@ -171,10 +172,10 @@ const renderLogin = (eventStore: EventStore) => (
 
 const renderSearch = (eventStore: EventStore) => {
 	return (
-		<div className={'search-container'}>
+		<div className="search-container">
 			<input
-				type={'text'}
-				name={'fc-search'}
+				type="text"
+				name="fc-search"
 				value={eventStore.searchValue}
 				onChange={(e) => {
 					eventStore.setSearchValue(e.target.value);
@@ -207,7 +208,7 @@ const renderFilterTags = (eventStore: EventStore) => {
 	}
 
 	return (
-		<div className={'filter-tags-container'}>
+		<div className="filter-tags-container">
 			{showOnlyEventsWithOpeningHoursProblems && (
 				<TriplanTag
 					text={TranslateService.translate(eventStore, 'SHOW_ONLY_EVENTS_WITH_DISTANCE_PROBLEMS.FILTER_TAG')}
@@ -266,7 +267,7 @@ export const getViewSelectorOptions = (
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.MAP_VIEW' + suffix),
 			icon: <i className="fa fa-map-o black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-map selected-color" aria-hidden="true" />,
-			iconClass: 'fa-map-o'
+			iconClass: 'fa-map-o',
 		},
 		{
 			key: ViewMode.calendar,
@@ -274,7 +275,7 @@ export const getViewSelectorOptions = (
 			icon: <i className="fa fa-calendar-o black-color" aria-hidden="true" />,
 			defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-calendar selected-color" aria-hidden="true" />,
-			iconClass: 'fa-calendar'
+			iconClass: 'fa-calendar',
 		},
 		{
 			key: ViewMode.combined,
@@ -283,21 +284,28 @@ export const getViewSelectorOptions = (
 			// defaultIcon: <i className="fa fa-calendar black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-compress selected-color" aria-hidden="true" />,
 			desktopOnly: true,
-			iconClass: 'fa-compress'
+			iconClass: 'fa-compress',
 		},
 		{
 			key: ViewMode.list,
 			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW' + suffix),
 			icon: <i className="fa fa-list black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-th-list selected-color" aria-hidden="true" />,
-			iconClass: 'fa-list'
+			iconClass: 'fa-list',
+		},
+		{
+			key: ViewMode.itinerary,
+			name: TranslateService.translate(eventStore, 'BUTTON_TEXT.ITINERARY_VIEW' + suffix),
+			icon: <i className="fa fa-sort-numeric-asc black-color" aria-hidden="true" />,
+			iconActive: <i className="fa fa-sort-numeric-asc selected-color" aria-hidden="true" />,
+			iconClass: 'fa-sort-numeric-asc',
 		},
 		{
 			key: ViewMode.feed,
 			name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${eventStore.isMobile ? '.SHORT' : ''}`),
 			icon: <i className="fa fa-search black-color" aria-hidden="true" />,
 			iconActive: <i className="fa fa-search selected-color" aria-hidden="true" />,
-			iconClass: 'fa-search'
+			iconClass: 'fa-search',
 		},
 	];
 
@@ -308,7 +316,7 @@ export const getViewSelectorOptions = (
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.SIDEBAR_VIEW'),
 				icon: <i className="fa fa-star-o black-color" aria-hidden="true" />,
 				iconActive: <i className="fa fa-star selected-color" aria-hidden="true" />,
-				iconClass: 'fa-start-o'
+				iconClass: 'fa-start-o',
 			},
 			...baseArray.filter((x) => !x.desktopOnly),
 		];
@@ -341,7 +349,7 @@ export const getAdminViewSelectorOptions = (
 
 const renderViewSelector = (eventStore: EventStore) => {
 	return (
-		<div className={'view-selector'} key={`view-selector-${eventStore.calendarLocalCode}`}>
+		<div className="view-selector" key={`view-selector-${eventStore.calendarLocalCode}`}>
 			<ToggleButton
 				value={eventStore.viewMode}
 				onChange={(newVal) => eventStore.setViewMode(newVal as ViewMode)}
@@ -419,7 +427,9 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 		lockIconIfNeeded = '<span class="locked-icon">🔒</span>';
 	}
 
-	return `<div title="${tooltip}">${icon} ${calendarEvent.title}${lockIconIfNeeded}</div>
+	const title = getEventTitle(calendarEvent, eventStore);
+
+	return `<div title="${tooltip}">${icon} ${title}${lockIconIfNeeded}</div>
                 ${
 					calendarEvent.allDay
 						? ''
@@ -435,21 +445,21 @@ export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarE
 export const renderFooterLine = (eventStore: EventStore, classList?: string) => (
 	<div className={getClasses(['footer main-font'], classList)}>
 		<a>
-			<img alt="" src={'/images/landing-page/icons/checklist.png'} />{' '}
+			<img alt="" src="/images/landing-page/icons/checklist.png" />{' '}
 			{TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.LIST')}
 		</a>
 		<a>
-			<img alt="" src={'/images/landing-page/icons/calendar.png'} />{' '}
+			<img alt="" src="/images/landing-page/icons/calendar.png" />{' '}
 			{TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.ORGANIZE')}
 		</a>
 		<a>
-			<img alt="" src={'/images/landing-page/icons/organized-list.png'} />{' '}
+			<img alt="" src="/images/landing-page/icons/organized-list.png" />{' '}
 			{TranslateService.translate(eventStore, 'LANDING_PAGE.FOOTER.SUMMARY')}
 		</a>
 	</div>
 );
 
-export function renderLineWithText(text: string, className?: string){
+export function renderLineWithText(text: string, className?: string) {
 	return (
 		<div className={getClasses('preferred-time', className)}>
 			<div className="preferred-time-divider max-width-20" />

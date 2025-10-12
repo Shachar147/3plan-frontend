@@ -31,7 +31,7 @@ function LocationInput(props: LocationInputProps, ref: Ref<TextInputRef> | any) 
 		<div className="flex-row gap-4 text-align-left align-items-start">
 			<div>{address}</div>
 			{showIcon && (
-				<i data-testid={`data-test-id-${props.modalValueName}`} className={`fa fa-map-marker margin-top-3`} />
+				<i data-testid={`data-test-id-${props.modalValueName}`} className="fa fa-map-marker margin-top-3" />
 			)}
 		</div>
 	) : (

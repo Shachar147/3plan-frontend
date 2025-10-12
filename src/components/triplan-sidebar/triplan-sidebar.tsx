@@ -1,19 +1,15 @@
-import React, {CSSProperties, useContext} from 'react';
-import {getClasses} from '../../utils/utils';
-import {eventStoreContext} from '../../stores/events-store';
-import {SidebarEvent} from '../../utils/interfaces';
-import {observer} from 'mobx-react';
+import React, { useContext } from 'react';
+import { getClasses } from '../../utils/utils';
+import { eventStoreContext } from '../../stores/events-store';
+import { SidebarEvent } from '../../utils/interfaces';
+import { observer } from 'mobx-react';
 import './triplan-sidebar-inner.scss';
 import CustomDatesSelector from './custom-dates-selector/custom-dates-selector';
-import {DateRangeFormatted} from '../../services/data-handlers/data-handler-base';
+import { DateRangeFormatted } from '../../services/data-handlers/data-handler-base';
 import './triplan-sidebar.scss';
-
-// @ts-ignore
-import * as _ from 'lodash';
-// @ts-ignore
-import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
-import MinimizeExpandSidebarButton from "./minimze-expand-sidebar-button/minimize-expand-sidebar-button";
-import TriplanSidebarInner from "./triplan-sidebar-inner";
+import MinimizeExpandSidebarButton from './minimze-expand-sidebar-button/minimize-expand-sidebar-button';
+import TriplanSidebarInner from './triplan-sidebar-inner';
+import './save-template-modal/save-template-modal.scss';
 
 export interface TriplanSidebarProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -30,41 +26,47 @@ export enum SidebarGroups {
 	ACTIONS = 'ACTIONS',
 	RECOMMENDATIONS = 'RECOMMENDATIONS',
 	PRIORITIES_LEGEND = 'PRIORITIES_LEGEND',
+	PRIORITIES_FILTER = 'PRIORITIES_FILTER',
+	CATEGORIES_FILTER = 'CATEGORIES_FILTER',
+	PREFERRED_TIME_FILTER = 'PREFERRED_TIME_FILTER',
+	SETTINGS = 'SETTINGS',
 	DISTANCES = 'DISTANCES',
 	DISTANCES_NEARBY = 'DISTANCES_NEARBY',
 	DISTANCES_FROMTO = 'DISTANCES_FROMTO',
 	TASKS = 'TASKS',
 }
 
-export const wrapWithSidebarGroup = (
-	children: JSX.Element,
-	groupIcon: string | undefined = undefined,
-	groupKey: string,
-	groupTitle: string,
-	itemsCount: number,
-	textColor: string = 'inherit',
-	maxHeight?: number,
-	titleSuffix?: string
-) => {
+interface SidebarGroupProps {
+	children: JSX.Element;
+	groupIcon?: string;
+	groupKey: string;
+	groupTitle: string;
+	itemsCount: number;
+	textColor?: string;
+	maxHeight?: number;
+	titleSuffix?: string;
+}
+
+// The SidebarGroup component with observer
+const SidebarGroup: React.FC<SidebarGroupProps> = ({
+	children,
+	groupIcon,
+	groupKey,
+	groupTitle,
+	itemsCount,
+	textColor = 'inherit',
+	maxHeight,
+	titleSuffix,
+}) => {
 	const eventStore = useContext(eventStoreContext);
 	const isOpen = eventStore.openSidebarGroups.has(groupKey);
 	const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
 
+	// Calculate max height for open state
 	const num = maxHeight ?? 100 * itemsCount + 90;
 
-	const openStyle = {
-		maxHeight: num + 'px',
-		padding: '10px',
-		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
-	};
-	const closedStyle = {
-		maxHeight: 0,
-		overflowY: 'hidden',
-		padding: 0,
-		transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
-	};
-
-	const eventsStyle = isOpen ? openStyle : closedStyle;
+	// Set custom max height via style attribute, but use classes for all other styling
+	const customMaxHeight = isOpen ? { maxHeight: num + 'px' } : {};
 
 	return (
 		<>
@@ -77,17 +79,49 @@ export const wrapWithSidebarGroup = (
 					className={isOpen ? 'fa fa-angle-double-down' : 'fa fa-angle-double-' + arrowDirection}
 					aria-hidden="true"
 				/>
-				<span className={'flex-gap-5 align-items-center'}>
+				<span className="flex-gap-5 align-items-center">
 					{groupIcon ? <i className={`fa ${groupIcon}`} aria-hidden="true" /> : null} {groupTitle}
 				</span>
 				{!!titleSuffix && <div>{titleSuffix}</div>}
 			</div>
-			<div style={eventsStyle as unknown as CSSProperties}>{children}</div>
+			<div className={getClasses('sidebar-group-content', isOpen ? 'open' : 'closed')} style={customMaxHeight}>
+				{children}
+			</div>
 		</>
 	);
 };
 
-function TriplanSidebar (props: TriplanSidebarProps) {
+// Export the observer-wrapped component
+export const ObservedSidebarGroup = observer(SidebarGroup);
+
+// Keep the createSidebarGroup function for backward compatibility
+export const createSidebarGroup = (
+	children: JSX.Element,
+	groupIcon: string | undefined = undefined,
+	groupKey: string,
+	groupTitle: string,
+	itemsCount: number,
+	textColor: string = 'inherit',
+	maxHeight?: number,
+	titleSuffix?: string
+) => {
+	// Return the JSX directly now
+	return (
+		<ObservedSidebarGroup
+			groupIcon={groupIcon}
+			groupKey={groupKey}
+			groupTitle={groupTitle}
+			itemsCount={itemsCount}
+			textColor={textColor}
+			maxHeight={maxHeight}
+			titleSuffix={titleSuffix}
+		>
+			{children}
+		</ObservedSidebarGroup>
+	);
+};
+
+function TriplanSidebar(props: TriplanSidebarProps) {
 	const eventStore = useContext(eventStoreContext);
 	const { customDateRange, setCustomDateRange, TriplanCalendarRef } = props;
 
@@ -109,7 +143,7 @@ function TriplanSidebar (props: TriplanSidebarProps) {
 				/>
 				<TriplanSidebarInner {...props} />
 			</div>
-			{eventStore.isSidebarMinimized && <MinimizeExpandSidebarButton/>}
+			{eventStore.isSidebarMinimized && <MinimizeExpandSidebarButton />}
 		</>
 	);
 }

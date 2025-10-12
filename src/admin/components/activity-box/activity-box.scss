@@ -1,48 +1,48 @@
 .activity-box {
-  width: 200px;
-  height: 200px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: white;
-  flex-direction: column;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  opacity: 0.5;
-  text-align: center;
-  padding: 15px;
-  word-break: break-all;
+	width: 200px;
+	height: 200px;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: white;
+	flex-direction: column;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	opacity: 0.5;
+	text-align: center;
+	padding: 15px;
+	word-break: break-all;
 
-  &:hover {
-    width: 210px;
-    height: 210px;
-    opacity: 1;
-  }
+	&:hover {
+		width: 210px;
+		height: 210px;
+		opacity: 1;
+	}
 
-  .activity-box-name {
-    font-family: 'Arial';
-    font-weight: bold;
-  }
+	.activity-box-name {
+		font-family: 'Arial';
+		font-weight: bold;
+	}
 
-  .activity-box-errors {
-    display: flex;
-    flex-direction: column;
-    color: slategray;
-    font-size: 10px;
-    margin-top: 5px;
-    text-align: center;
-  }
+	.activity-box-errors {
+		display: flex;
+		flex-direction: column;
+		color: slategray;
+		font-size: 10px;
+		margin-top: 5px;
+		text-align: center;
+	}
 
-  .activity-box-is-verified {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 10px;
+	.activity-box-is-verified {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		margin-top: 10px;
 
-    img {
-      max-width: 30px;
-    }
-  }
+		img {
+			max-width: 30px;
+		}
+	}
 }

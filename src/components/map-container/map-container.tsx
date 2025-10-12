@@ -14,20 +14,10 @@ import MarkerClusterer from '@googlemaps/markerclustererplus';
 // @ts-ignore
 import * as _ from 'lodash';
 import { eventStoreContext } from '../../stores/events-store';
-import { flightColor, hotelColor, priorityToColor, priorityToMapColor } from '../../utils/consts';
 import TranslateService from '../../services/translate-service';
 import { formatDate, formatTime, getDurationString, toDate } from '../../utils/time-utils';
 import { MapViewMode, TripDataSource, TriplanEventPreferredTime, TriplanPriority, ViewMode } from '../../utils/enums';
-import {
-	BuildEventUrl,
-	getClasses,
-	isBasketball,
-	isDessert,
-	isFlight,
-	isHotel,
-	isMatching,
-	sleep,
-} from '../../utils/utils';
+import { BuildEventUrl, getClasses, getEventDescription, getEventTitle } from '../../utils/utils';
 import './map-container.scss';
 import ReactModalService from '../../services/react-modal-service';
 import * as ReactDOMServer from 'react-dom/server';
@@ -40,6 +30,9 @@ import SelectInput from '../inputs/select-input/select-input';
 import { observable, runInAction } from 'mobx';
 import Button, { ButtonFlavor } from '../common/button/button';
 import { LimitationsService } from '../../utils/limitations';
+import FocusModeButton from '../focus-mode-button/focus-mode-button';
+import { sanitizeString } from '../../utils/string-sanitizer';
+import { getIconUrl, resolveCategoryTitle } from './map-container-utils';
 
 interface MarkerProps {
 	text?: string;
@@ -50,53 +43,6 @@ interface MarkerProps {
 	searchValue: string;
 	clearSearch?: () => void;
 }
-
-export const NIGHTLIFE_KEYWORDS = [
-	'club',
-	'cocktail',
-	'beer',
-	'bar',
-	'מועדונים',
-	'ברים',
-	'מסיבות',
-	'חיי לילה',
-	'casino',
-	'קזינו',
-];
-export const ATTRACTIONS_KEYWORDS = ['attraction', 'attractions', 'אטרקציות', 'פעילויות'];
-export const DESSERTS_KEYWORDS = [
-	'desserts',
-	'קינוחים',
-	'גלידה',
-	'macaroons',
-	'מקרונים',
-	'cookie',
-	'עוגייה',
-	'ice cream',
-];
-export const FOOD_KEYWORDS = ['food', 'restaurant', 'אוכל', 'מסעדת', 'מסעדות', 'cafe', 'קפה', 'steak'];
-export const STORE_KEYWORDS = ['shopping', 'stores', 'חנויות', 'קניות', 'malls', 'קניונים'];
-export const FLIGHT_KEYWORDS = ['flight', 'טיסה', 'airport', 'שדה תעופה', 'שדה התעופה', 'טיסות'];
-export const HOTEL_KEYWORDS = ['hotel', 'מלון'];
-export const TOURIST_KEYWORDS = ['tourism', 'תיירות', 'אתרים'];
-export const NATURE_KEYWORDS = [
-	'nature',
-	'טבע',
-	'lake',
-	'lakes',
-	'waterfall',
-	'sea',
-	'אגם',
-	'אגמים',
-	'נהר',
-	'נהרות',
-	'מפל',
-	'flower',
-	'garden',
-	'גן ה',
-	'גני ה',
-	'פרח',
-];
 
 function Marker(props: MarkerProps): ReactElement {
 	const { text, lng, lat, locationData, openingHours, searchValue, clearSearch } = props;
@@ -134,9 +80,19 @@ function Marker(props: MarkerProps): ReactElement {
 
 interface MapContainerProps {
 	allEvents?: AllEventsEvent[];
+	events?: CalendarEvent[];
 	getNameLink?: (x: AllEventsEvent) => string;
 	isCombined?: boolean;
-	addToEventsToCategories: (event: SidebarEvent) => void;
+	addToEventsToCategories?: (event: SidebarEvent) => void;
+
+	noHeader?: boolean;
+	noFilters?: boolean;
+	isReadOnly?: boolean;
+	zoom?: number;
+	isTemplate?: boolean;
+	showNumbers?: boolean;
+	isItineraryView?: boolean;
+	hideVisibleItems?: boolean;
 }
 
 export interface MapContainerRef {
@@ -167,11 +123,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 	const getKey = (x: Coordinate) => x.lat + ',' + x.lng;
 
-	const locations = (props.allEvents ?? eventStore.allEventsFilteredComputed)
+	const locations = (props.events || props.allEvents || eventStore.allEventsFilteredComputed)
 		.filter((x) => x.location && x.location.latitude && x.location.longitude)
 		.map((x) => ({
 			event: x,
-			label: x.title,
+			label: getEventTitle(x as CalendarEvent, eventStore, true),
 			lat: x.location?.latitude,
 			lng: x.location?.longitude,
 		}));
@@ -217,11 +173,24 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	const rowContainerStyle = 'display: flex; flex-direction: row; align-items: center; gap: 10px;';
 
 	const buildInfoWindowContent = (event: any) => {
-		const title = `<div style="font-size:20px; margin-inline-end: 5px;" class='map-info-window-title'><b><u>${event.title}</u></b></div>`;
-		const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${event.location.address}</span></span>`;
+		const title = `<div style="font-size:20px; margin-inline-end: 5px;" class='map-info-window-title'><b><u>${getEventTitle(
+			event,
+			eventStore,
+			props.isTemplate
+		)}</u></b></div>`;
+		const addressText = getEventTitle(
+			{ title: event.location.address } as unknown as CalendarEvent,
+			eventStore,
+			true
+		);
+		const address = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-map-marker" aria-hidden="true"></i><span> ${addressPrefix}: ${addressText}</span></span>`;
 
-		const description = event.description
-			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${event.description}</span></span>`
+		const description = event.description?.trim()?.length
+			? `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-info" aria-hidden="true"></i> <span>${descriptionPrefix}: ${getEventDescription(
+					event,
+					eventStore,
+					props.isTemplate
+			  )}</span></span>`
 			: '';
 
 		let scheduledTo = '';
@@ -245,7 +214,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		}
 
 		let category = event.category;
-		if (!props.allEvents) {
+		// if (!props.allEvents) {
+		if (!Number.isNaN(Number(event.category))) {
 			category = eventStore.categories.find((x) => x.id.toString() === category.toString())?.title;
 		}
 		const categoryBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-tag" aria-hidden="true"></i> <span>${categoryPrefix}: ${category}</span></span>`;
@@ -255,8 +225,13 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		if (preferredTime) {
 			preferredTime = TriplanEventPreferredTime[preferredTime];
 		} else {
-			preferredTime = TriplanEventPreferredTime.unset;
+			preferredTime = TriplanEventPreferredTime[TriplanEventPreferredTime.unset];
 		}
+
+		if (preferredTime == 'unset' && eventStore.isHebrew) {
+			preferredTime = 'unset.male';
+		}
+
 		const preferredHoursBlock = `<span style="${rowContainerStyle}"><i style="${iStyle}" class="fa fa-clock-o" aria-hidden="true"></i> <span>${preferredHoursPrefix}: ${TranslateService.translate(
 			eventStore,
 			preferredTime
@@ -266,7 +241,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		// const lng = event.location.longitude.toFixed(7);
 		// const url = `https://maps.google.com/maps?q=${lat},${lng}`;
 		const url = BuildEventUrl(event.location);
-		const urlBlock = `<span><a href="${url}" target="_blank">View on google maps</a></span>`;
+		const urlBlock = `<span><a href="${url}" target="_blank">${TranslateService.translate(
+			eventStore,
+			'VIEW_ON_GOOGLE_MAPS'
+		)}</a></span>`;
 
 		const moreInfoUrl = event.moreInfo;
 		const moreInfoBlock = moreInfoUrl
@@ -299,7 +277,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 								width: 300,
 								height: 150,
 							}}
-							alt={''}
+							alt=""
 							src={image}
 						/>
 					))}
@@ -355,104 +333,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	};
 
 	const initMarkers = (map = googleMapRef) => {
-		const getIconUrl = (event: any) => {
-			let icon = '';
-			let bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
-			let category: string = props.allEvents
-				? event.category
-				: eventStore.categories.find((x) => x.id.toString() === event.category.toString())?.title;
-
-			category = category ? category.toLowerCase() : '';
-			const title = event.title.toLowerCase();
-
-			const iconsMap = {
-				basketball: 'icons/onion/1520-basketball_4x.png',
-				food: 'icons/onion/1577-food-fork-knife_4x.png',
-				photos: 'icons/onion/1535-camera-photo_4x.png',
-				attractions: 'icons/onion/1502-shape_star_4x.png',
-				beach: 'icons/onion/1521-beach_4x.png',
-				nightlife: 'icons/onion/1517-bar-cocktail_4x.png',
-				hotel: 'icons/onion/1602-hotel-bed_4x.png',
-				shopping: 'icons/onion/1684-shopping-bag_4x.png',
-				tourism: 'icons/onion/1548-civic_4x.png', // 'icons/onion/1715-tower_4x.png',
-				flowers: 'icons/onion/1582-garden-flower_4x.png',
-				desserts: 'icons/onion/1607-ice-cream_4x.png',
-				cities: 'icons/onion/1546-city-buildings_4x.png',
-				mountains: 'icons/onion/1634-mountain_4x.png',
-				lakes: 'icons/onion/1697-spa_4x.png',
-				trains: 'icons/onion/1716-train_4x.png',
-				musicals: 'icons/onion/1637-music-note_4x.png',
-				flights: 'icons/onion/1504-airport-plane_4x.png',
-				coffee_shops: 'icons/onion/1868-smoking_4x.png',
-			};
-
-			if (isBasketball(category, title)) {
-				icon = iconsMap['basketball'];
-			} else if (isDessert(category, title)) {
-				icon = iconsMap['desserts'];
-			} else if (isFlight(category, title)) {
-				icon = iconsMap['flights'];
-				bgColor = flightColor;
-			} else if (isHotel(category, title)) {
-				icon = iconsMap['hotel'];
-				bgColor = hotelColor;
-			} else if (isMatching(category, FOOD_KEYWORDS) || isMatching(title, FOOD_KEYWORDS)) {
-				icon = iconsMap['food'];
-			} else if (isMatching(category, ['photo', 'תמונות'])) {
-				icon = iconsMap['photos'];
-			} else if (isMatching(category, NATURE_KEYWORDS) || isMatching(title, NATURE_KEYWORDS)) {
-				icon = iconsMap['flowers'];
-			} else if (isMatching(category, ATTRACTIONS_KEYWORDS)) {
-				icon = iconsMap['attractions'];
-			} else if (
-				isMatching(category, ['coffee shops', 'coffee shop', 'קופישופס']) ||
-				isMatching(title, ['coffee shops', 'coffee shop', 'קופישופס'])
-			) {
-				icon = iconsMap['coffee_shops'];
-			} else if (
-				isMatching(category, ['beach', 'beaches', 'beach club', 'beach bar', 'חופים', 'ביץ׳ באר', 'ביץ׳ בר'])
-			) {
-				icon = iconsMap['beach'];
-			} else if (isMatching(category, NIGHTLIFE_KEYWORDS)) {
-				icon = iconsMap['nightlife'];
-			} else if (isMatching(category, STORE_KEYWORDS)) {
-				icon = iconsMap['shopping'];
-			} else if (isMatching(category, TOURIST_KEYWORDS)) {
-				icon = iconsMap['tourism'];
-			} else if (
-				isMatching(title, ['city', 'עיירה']) ||
-				isMatching(category, ['cities', 'עיירות', 'כפרים', 'village', 'ערים'])
-			) {
-				icon = iconsMap['cities'];
-			} else if (
-				isMatching(title, ['mountain', 'cliff', ' הר ', 'פסגת']) ||
-				isMatching(category, ['mountains', 'הרים'])
-			) {
-				icon = iconsMap['mountains'];
-			} else if (
-				isMatching(title, ['lake ', 'lakes', ' נהר ', 'אגם']) ||
-				isMatching(category, ['lakes', 'נהרות', 'אגמים'])
-			) {
-				icon = iconsMap['lakes'];
-			} else if (
-				isMatching(title, ['rollercoaster', 'roller coaster', 'רכבת']) ||
-				isMatching(category, ['trains', 'roller coasters', 'רכבות'])
-			) {
-				icon = iconsMap['trains'];
-			} else if (
-				isMatching(title, ['show', 'musical', 'הופעה', 'הצגה', 'תאטרון', 'מחזמר', 'תיאטרון']) ||
-				isMatching(title, ['shows', 'musicals', 'הופעות', 'הצגות', 'תאטרון', 'מחזות זמר', 'music shows'])
-			) {
-				icon = iconsMap['musicals'];
-			} else if (icon === '') {
-				// return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
-				return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
-			}
-			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,${icon}&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
-		};
-
 		const getIconUrlByIdx = (event: any, idx: number) => {
-			const bgColor = priorityToMapColor[event.priority || TriplanPriority.unset].replace('#', '');
+			const bgColor = eventStore.priorityMapColors[event.priority || TriplanPriority.unset].replace('#', '');
 			return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1738-blank-sequence_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0&color=ffffffff&psize=15&text=${idx}`;
 		};
 
@@ -474,14 +356,21 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				// by day and index in day
 				const idx = eventStore.getEventIndexInCalendarByDay(event as CalendarEvent);
 				icon.url = getIconUrlByIdx(event, idx + 1);
+			} else if (props.isItineraryView) {
+				// by day and index in day
+				const idx = props.events.findIndex((e) => e.id == event.id);
+				icon.url = getIconUrlByIdx(event, idx + 1);
 			} else {
-				icon.url = getIconUrl(event);
+				icon.url = getIconUrl(eventStore, event, props.allEvents);
 			}
 
-			const markerIcon = { ...icon, fillColor: priorityToColor[event.priority!] };
+			// Check if event is scheduled
+			const isScheduled = !props.allEvents && eventStore.calendarEvents.find((x) => x.id === event.id);
+
+			const markerIcon = { ...icon, fillColor: eventStore.priorityColors[event.priority!] };
 			const markerIconWithBorder = {
 				...markerIcon,
-				strokeColor: '#ffffff',
+				strokeColor: 'red', // '#ffffff',
 				strokeOpacity: 0.6,
 				strokeWeight: 8,
 			};
@@ -489,27 +378,21 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			// set marker
 			const refMarker = new googleRef.Marker({
 				position: { lat: coordinate.lat, lng: coordinate.lng },
-
-				// label: texts[key],
-				// labelContent: 'A',
-				// labelAnchor: new google.maps.Point(3, 30),
-				// labelClass: 'labels', // the CSS class for the label
-				// labelInBackground: false,
 				label: {
-					text: texts[key],
+					text: `${isScheduled ? '✓ ' : ''}${texts[key]}`,
 					color: '#c0bbbb',
 					fontSize: '10px',
 					fontWeight: 'bold',
 					className: 'marker-label',
 				},
-
 				title: texts[key],
-				icon: markerIcon,
-				// label: event.icon
+				icon: isScheduled ? markerIconWithBorder : markerIcon,
 			});
 
 			// for visible items to be able to get more info about this marker
 			refMarker.eventId = event.id;
+			refMarker.latitude = coordinate.lat;
+			refMarker.longitude = coordinate.lng;
 
 			// on click event
 			googleRef.event.addListener(
@@ -819,6 +702,170 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		};
 	};
 
+	const computeIconUrlAndColor = (event: any) => {
+		const color = eventStore.priorityMapColors[event.priority || TriplanPriority.unset];
+		let bgColor = color.replace('#', '');
+		const iconUrl = getIconUrl(eventStore, event, props.allEvents);
+
+		return { iconUrl, color: `#${bgColor}` };
+	};
+
+	const downloadFile = (filename: string, mimeType: string, content: string) => {
+		const blob = new Blob([content], { type: mimeType });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = filename;
+		a.click();
+		setTimeout(() => URL.revokeObjectURL(url), 0);
+	};
+
+	const xmlEscape = (value: string) => {
+		if (value == null) return '';
+		return value
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&apos;');
+	};
+
+	const buildKmlFromEvents = (allEvents: any[], groupBy: 'category' | 'day') => {
+		// Group key function
+		const getGroupKey = (ev: any) => {
+			if (groupBy === 'day') {
+				try {
+					const d = new Date(ev.start);
+					const yyyy = d.getFullYear();
+					const mm = String(d.getMonth() + 1).padStart(2, '0');
+					const dd = String(d.getDate()).padStart(2, '0');
+					return `${yyyy}-${mm}-${dd}`; // stable sortable key
+				} catch (_e) {
+					return 'Unscheduled';
+				}
+			}
+			return resolveCategoryTitle(eventStore, ev, props.allEvents) || 'Uncategorized';
+		};
+
+		let events = allEvents.filter((x) => x.location && x.location.latitude && x.location.longitude);
+
+		// Sort by start time when available to preserve calendar order
+		events = [...events].sort((a, b) => {
+			const ta = a?.start ? new Date(a.start).getTime() : Number.POSITIVE_INFINITY;
+			const tb = b?.start ? new Date(b.start).getTime() : Number.POSITIVE_INFINITY;
+			return ta - tb;
+		});
+
+		// Distinct categories for styles
+		const mapTitle = xmlEscape(`${eventStore.tripName || 'My Trip'} - Exported from Triplan`);
+		let kml = `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n<Document>\n<name>${mapTitle}</name>\n<description/>`;
+
+		// Distinct categories + priorities
+		const distinctCategoriesAndPriorities = Array.from(
+			new Set(
+				events.map(
+					(ev) => `${resolveCategoryTitle(eventStore, ev, props.allEvents) || 'Uncategorized'}|${ev.priority}`
+				)
+			)
+		);
+
+		distinctCategoriesAndPriorities.forEach((catAndPrio) => {
+			const [cat, priorityStr] = catAndPrio.split('|');
+			const priority = Number(priorityStr);
+
+			const sample = events.find(
+				(e) =>
+					(resolveCategoryTitle(eventStore, e, props.allEvents) || 'Uncategorized') == cat &&
+					e.priority == priority
+			);
+
+			const { iconUrl } = sample ? computeIconUrlAndColor(sample) : ({ iconUrl: '' } as any);
+
+			const styleId = `style_${sanitizeString(cat)}_${priority}`;
+
+			kml += `\n<Style id="${styleId}">\n  <IconStyle>\n    <scale>1.0</scale>\n    <Icon>\n      <href>${xmlEscape(
+				iconUrl
+			)}</href>\n    </Icon>\n  </IconStyle>\n</Style>`;
+		});
+
+		// Group events while maintaining sorted order
+		const groups: Record<string, any[]> = {};
+		const dayKeyToDisplayName: Record<string, string> = {};
+		const formatDisplayDate = (date: Date) => {
+			const yyyy = date.getFullYear();
+			const mm = String(date.getMonth() + 1).padStart(2, '0');
+			const dd = String(date.getDate()).padStart(2, '0');
+			const isHebrew = eventStore.calendarLocalCode?.startsWith('he');
+			return isHebrew ? `${dd}/${mm}/${yyyy}` : `${mm}/${dd}/${yyyy}`;
+		};
+		events.forEach((ev) => {
+			const key = getGroupKey(ev);
+			groups[key] = groups[key] || [];
+			groups[key].push(ev);
+			if (groupBy === 'day' && !dayKeyToDisplayName[key]) {
+				try {
+					dayKeyToDisplayName[key] = formatDisplayDate(new Date(ev.start));
+				} catch (_e) {
+					dayKeyToDisplayName[key] = key;
+				}
+			}
+		});
+
+		// Determine folder order
+		let groupNames: string[] = Object.keys(groups);
+		if (groupBy === 'day') {
+			groupNames = groupNames.sort((a, b) => (a > b ? 1 : -1)); // yyyy-mm-dd ascending
+		}
+
+		groupNames.forEach((groupName) => {
+			const displayName = groupBy === 'day' ? dayKeyToDisplayName[groupName] : groupName;
+			kml += `\n<Folder>\n<name>${xmlEscape(displayName)}</name>`;
+			groups[groupName].forEach((ev, idx) => {
+				const baseName = xmlEscape(
+					getEventTitle({ title: ev.title } as unknown as CalendarEvent, eventStore, true)
+				);
+				const name = groupBy === 'day' ? `${idx + 1} - ${baseName}` : baseName;
+				const descParts = [] as string[];
+				if (ev.description) descParts.push(ev.description);
+				if (ev.moreInfo) descParts.push(`<a href=\"${ev.moreInfo}\" target=\"_blank\">More info<\/a>`);
+				if (ev.location?.address) descParts.push(ev.location.address);
+				const description = descParts.join('<br/>');
+				const lng = ev.location.longitude;
+				const lat = ev.location.latitude;
+				const cat = resolveCategoryTitle(eventStore, ev, props.allEvents) || 'Uncategorized';
+				const styleId = `style_${sanitizeString(cat)}_${ev.priority}`;
+				kml += `\n  <Placemark>\n    <name>${name}<\/name>\n    <styleUrl>#${styleId}<\/styleUrl>\n    <description><![CDATA[${description}]]><\/description>\n    <Point><coordinates>${lng},${lat},0<\/coordinates><\/Point>\n  <\/Placemark>`;
+			});
+			kml += `\n<\/Folder>`;
+		});
+
+		kml += `\n<\/Document>\n<\/kml>`;
+		return kml;
+	};
+
+	const startExportToGoogleMaps = () => {
+		ReactModalService.openExportToGoogleMapsSelectionModal(eventStore, (mode) => {
+			const doDownload = () => {
+				let events: any[] = [];
+				let groupBy: 'category' | 'day' = 'category';
+				if (mode === 'all') {
+					events = props.allEvents ?? eventStore.allEventsComputed;
+					groupBy = 'category';
+				} else if (mode === 'scheduled') {
+					events = eventStore.calendarEvents;
+					groupBy = 'category';
+				} else {
+					events = eventStore.calendarEvents;
+					groupBy = 'day';
+				}
+				const kml = buildKmlFromEvents(events, groupBy);
+				downloadFile('triplan-export.kml', 'application/vnd.google-earth.kml+xml', kml);
+			};
+
+			ReactModalService.openExportToGoogleMapsStepsModal(eventStore, doDownload);
+		});
+	};
+
 	const getAllMarkers = (searchValue: string) => {
 		const visibleItems = [];
 
@@ -831,7 +878,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		);
 		for (let i = 0; i < allEvents.length; i++) {
 			const event = allEvents[i];
-			const marker = markers.find((x: any) => event.id.toString() === x.eventId.toString());
+			// const marker = markers.find((x: any) => event.id.toString() === x.eventId.toString());
+			const marker = markers.find(
+				(x: any) =>
+					event.location && event.location.longitude === x.longitude && event.location.latitude == x.latitude
+			);
 			visibleItems.push({ event, marker });
 		}
 		return visibleItems.sort((a, b) => (a.event.title > b.event.title ? 1 : -1));
@@ -847,6 +898,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		const allMarkers = getAllMarkers('');
 		const found = allMarkers.find((m: any) => Number(m.event.id) == eventId);
 		if (found) {
+			setCenter({ lat: found.event.location.latitude, lng: found.event.location.longitude });
 			onVisibleItemClick(found.event, found.marker);
 		}
 	};
@@ -943,8 +995,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					{eventStore.isMobile && (
 						<SelectInput
 							ref={undefined}
-							id={'map-filter-priorities'}
-							name={'map-filter-priorities'}
+							id="map-filter-priorities"
+							name="map-filter-priorities"
 							options={[allOption, ...otherOptions]}
 							value={
 								Array.from(eventStore.filterOutPriorities.values()).length == 0
@@ -967,7 +1019,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 									}
 								});
 							}}
-							modalValueName={'filterByPriority'}
+							modalValueName="filterByPriority"
 							maxMenuHeight={120}
 							removeDefaultClass={true}
 							isClearable={false}
@@ -1024,8 +1076,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					<span>{TranslateService.translate(eventStore, 'SHOW_MAP_ACTIVITIES_BY')}</span>
 					<SelectInput
 						ref={undefined}
-						id={'map-view-mode'}
-						name={'map-view-mode'}
+						id="map-view-mode"
+						name="map-view-mode"
 						options={options}
 						value={
 							options.find((o) => o.value === eventStore.mapViewMode) ??
@@ -1044,7 +1096,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 								}
 							});
 						}}
-						modalValueName={'mapViewModeSelector'}
+						modalValueName="mapViewModeSelector"
 						maxMenuHeight={eventStore.viewMode === ViewMode.combined ? 210 : 45 * 6}
 						removeDefaultClass={true}
 						isClearable={false}
@@ -1081,8 +1133,6 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			);
 		}
 
-<<<<<<< Updated upstream
-=======
 		function renderExportToGoogleMapsButton() {
 			return (
 				<Button
@@ -1107,15 +1157,14 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 			);
 		}
 
->>>>>>> Stashed changes
 		function renderFilterButton() {
 			return (
 				<Button
-					text={''}
+					text=""
 					onClick={() => eventStore.toggleMapFilters()}
 					className={getClasses('min-width-38', !eventStore.mapFiltersVisible && 'brown')}
 					flavor={ButtonFlavor.secondary}
-					icon={'fa-filter'}
+					icon="fa-filter"
 				/>
 			);
 		}
@@ -1130,14 +1179,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				>
 					{renderFilterButton()}
 					{renderCalculateDistancesButton()}
-<<<<<<< Updated upstream
-=======
 					{!eventStore.isMobile && <FocusModeButton />}
 					{!eventStore.isMobile && renderExportToGoogleMapsButton()}
 					{!eventStore.isMobile && renderImportFromGoogleMapsButton()}
->>>>>>> Stashed changes
 					{!eventStore.isMobile && (
-						<div className={'pc-map-view-selection-container'}>{renderMapViewSelection()}</div>
+						<div className="pc-map-view-selection-container">{renderMapViewSelection()}</div>
 					)}
 				</div>
 				{eventStore.mapFiltersVisible ? (
@@ -1185,13 +1231,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 	function renderVisibleItemsPane() {
 		// todo remove: try to fix the fact that if the same day have the same location twice, we see '1', '2', '4'.
-		// if (eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && eventStore.mapViewDayFilter) {
-		// 	console.log({
-		// 		day: eventStore.mapViewDayFilter,
-		// 		calendarEvents: eventStore.calendarEvents,
-		// 	});
-		// }
-
+		if (props.hideVisibleItems) return null;
 		return (
 			<div
 				className={getClasses(
@@ -1201,10 +1241,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					props.isCombined && 'combined'
 				)}
 			>
-				<div className={'search-container'}>
+				<div className="search-container">
 					<input
-						type={'text'}
-						name={'fc-search'}
+						type="text"
+						name="fc-search"
 						value={visibleItemsSearchValue}
 						onChange={(e) => {
 							setVisibleItemsSearchValue(e.target.value);
@@ -1221,7 +1261,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 						:
 					</b>
 				</div>
-				<div className={'visible-items-fc-events bright-scrollbar'}>
+				<div className="visible-items-fc-events bright-scrollbar">
 					{!visibleItemsSearchValue &&
 						visibleItems.length === 0 &&
 						TranslateService.translate(eventStore, 'MAP.VISIBLE_ITEMS.NO_ITEMS')}
@@ -1273,7 +1313,14 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 												info.event
 											);
 										}}
-										title={TranslateService.translate(eventStore, 'CLICK_HERE_TO_ADD_TO_CALENDAR')}
+										title={
+											props.isReadOnly
+												? undefined
+												: TranslateService.translate(
+														eventStore,
+														'CLICK_HERE_TO_ADD_TO_CALENDAR'
+												  )
+										}
 									/>
 								);
 
@@ -1282,7 +1329,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 										<i
 											className="fa fa-calendar-check-o visible-items-calendar-indicator"
 											aria-hidden="true"
-											title={TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')}
+											title={
+												props.isReadOnly
+													? undefined
+													: TranslateService.translate(eventStore, 'ALREADY_IN_CALENDAR')
+											}
 										/>
 									);
 								}
@@ -1292,13 +1343,20 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 								<div
 									key={`filtered-visible-item-${idx}`}
 									className={`fc-event priority-${info.event.priority}`}
+									style={{
+										borderLeft: `3px solid ${eventStore.priorityMapColors[info.event.priority]}`,
+									}}
 									onClick={() => {
+										if (props.isReadOnly) {
+											return;
+										}
 										onVisibleItemClick(info.event, info.marker);
 									}}
 								>
 									{addToCalendar}
-									{eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
-									eventStore.mapViewDayFilter &&
+									{((eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER &&
+										eventStore.mapViewDayFilter) ||
+										props.isItineraryView) &&
 									idxInDay != undefined &&
 									idxInDay >= 0 &&
 									visibleItemsSearchValue === '' ? (
@@ -1307,7 +1365,11 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 											{' - '}
 										</>
 									) : undefined}
-									{info.event.title}
+									{getEventTitle(
+										{ title: info.event.title } as unknown as CalendarEvent,
+										eventStore,
+										true
+									)}
 								</div>
 							);
 						})}
@@ -1319,7 +1381,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 	function renderNoItemsOnMapPlaceholder() {
 		return (
 			<div className="no-items-on-map-placeholder">
-				<img className="no-items-on-map-placeholder-image" src={'/images/arrow-up-placeholder.png'} />
+				<img className="no-items-on-map-placeholder-image" src="/images/arrow-up-placeholder.png" />
 				<div className="no-items-on-map-placeholder-title main-font-heavy">
 					{TranslateService.translate(eventStore, 'NO_ITEMS_ON_MAP_PLACEHOLDER.TITLE')}
 				</div>
@@ -1333,15 +1395,8 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 		);
 	}
 
-	return (
-		<div
-			className={getClasses(
-				'map-container',
-				props.isCombined && 'combined',
-				eventStore.isMobile && 'resize-none'
-			)}
-		>
-			{locations.length > 0 && renderMapFilters()}
+	function renderMapHeader() {
+		return (
 			<div className="map-header">
 				<div
 					className={getClasses(
@@ -1383,8 +1438,25 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					</div>
 				</div>
 			</div>
+		);
+	}
+
+	return (
+		<div
+			className={getClasses(
+				'map-container',
+				props.isCombined && 'combined',
+				eventStore.isMobile && 'resize-none'
+			)}
+			key={`${JSON.stringify(eventStore.priorityMapColors)}-${JSON.stringify(eventStore.categoriesMapIcons)}`}
+		>
+			{!props.noFilters && locations.length > 0 && renderMapFilters()}
+			{!props.noHeader && renderMapHeader()}
 			<div className="google-map-react position-relative" style={{ height: '100%', width: '100%' }}>
-				{locations.length == 0 && renderNoItemsOnMapPlaceholder()}
+				{locations.length == 0 &&
+					!(eventStore.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER) &&
+					!(eventStore.viewMode == ViewMode.itinerary) &&
+					renderNoItemsOnMapPlaceholder()}
 				<GoogleMapReact
 					bootstrapURLKeys={{
 						key: 'AIzaSyDfnY7GcBdHHFQTxRCSJGR-AGUEUnMBfqo',
@@ -1398,7 +1470,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 							? { lat: coordinates[0].lat, lng: coordinates[0].lng }
 							: undefined
 					}
-					zoom={searchCoordinates.length > 0 || center ? 14 : 7}
+					zoom={props.zoom ?? (searchCoordinates.length > 0 || center ? 14 : 7)}
 					yesIWantToUseGoogleMapApiInternals
 					// @ts-ignore
 					onGoogleApiLoaded={({ map, maps }) => initMap(map, maps)}

@@ -1,0 +1,9 @@
+.admin-page-content {
+	height: max-content;
+	min-height: 600px;
+
+	.textInput {
+		min-width: 0;
+		border: 1px solid #ccc;
+	}
+}

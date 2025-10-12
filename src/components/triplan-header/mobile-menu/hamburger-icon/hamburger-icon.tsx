@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import './hamburger-icon.scss';
 import { getClasses } from '../../../../utils/utils';
 import { eventStoreContext } from '../../../../stores/events-store';
 
-const hamburgerIcon = (props: { className?: string; onClick?: () => any; isOpen?: boolean }) => {
+const HamburgerIcon = (props: { className?: string; onClick?: () => any; isOpen?: boolean }) => {
 	const eventStore = useContext(eventStoreContext);
 	return (
 		<div
@@ -20,4 +20,4 @@ const hamburgerIcon = (props: { className?: string; onClick?: () => any; isOpen?
 	);
 };
 
-export default hamburgerIcon;
+export default HamburgerIcon;

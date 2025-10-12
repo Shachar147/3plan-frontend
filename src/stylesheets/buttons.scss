@@ -11,7 +11,6 @@ button {
 	// prevent double click on button from being interrupted as zoom in on mobile
 	touch-action: manipulation;
 
-
 	// for icons
 	display: flex;
 	justify-content: center;
@@ -99,12 +98,14 @@ button.secondary-button {
 	&.black {
 		color: var(--black) !important;
 		border: 1px solid var(--gray);
+		transition: background-color 0.3s ease-in-out, opacity 0.3s ease-in-out, color 0.3s ease-in-out;
 
 		&:not(:disabled):hover {
 			/*border: 1px solid var(--black) !important;*/
 			//border-color: #aaa !important;
 			//border: 1px solid var(--white) !important;
-			background-color: #f3f3f3 !important; // #eaeff4
+			//background-color: #f3f3f3 !important; // #eaeff4
+			color: gray !important;
 		}
 	}
 
@@ -148,6 +149,10 @@ button.secondary-button {
 	}
 	&.blue-color {
 		color: var(--blue);
+	}
+
+	&.red-pink-color {
+		color: #ff0074;
 	}
 
 	&.orange-color {
@@ -214,7 +219,6 @@ button.secondary-button {
 	color: white !important;
 	border: 1px solid var(--dark-gray) !important;
 }
-
 
 .buttons-group {
 	button {

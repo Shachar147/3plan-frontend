@@ -61,16 +61,22 @@ const LogHistoryService = {
 			name?: string;
 			who?: string;
 			whoId?: number;
+
+			must?: string;
+			high?: string;
+			maybe?: string;
+			least?: string;
+			unset?: string;
 		},
 		eventId?: number,
 		eventName?: string,
-		tripId?: number,
+		tripId?: number
 	) {
 		data = {
 			who: getCurrentUsername()!,
 			whoId: Number(getUserId()!),
-			...data
-		}
+			...data,
+		};
 		if (eventStore.dataService.getDataSourceName() == TripDataSource.DB) {
 			(eventStore.dataService as DBService)
 				.logHistory(tripId ?? eventStore.tripId, action, data, eventId, eventName)

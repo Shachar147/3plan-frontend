@@ -18,70 +18,131 @@ export const getDefaultCategories = (eventStore: EventStore): TriPlanCategory[] 
 			id: 1,
 			icon: '🧞‍♂️',
 			title: TranslateService.translate(eventStore, 'CATEGORY.GENERAL'),
+			titleKey: 'CATEGORY.GENERAL',
 			description: 'CATEGORY.GENERAL.DESCRIPTION',
 		},
 		{
 			id: 2,
 			icon: '🛫',
 			title: TranslateService.translate(eventStore, 'CATEGORY.FLIGHTS'),
+			titleKey: 'CATEGORY.FLIGHTS',
 			description: 'CATEGORY.FLIGHTS.DESCRIPTION',
 		},
 		{
 			id: 3,
 			icon: '🏩',
 			title: TranslateService.translate(eventStore, 'CATEGORY.HOTELS'),
+			titleKey: 'CATEGORY.HOTELS',
 			description: HOTELS_DESCRIPTION,
 		},
 		{
 			id: 4,
 			icon: '🍕',
 			title: TranslateService.translate(eventStore, 'CATEGORY.FOOD'),
+			titleKey: 'CATEGORY.FOOD',
 			description: 'CATEGORY.FOOD.DESCRIPTION',
 		},
 		{
 			id: 5,
 			icon: '🍦',
 			title: TranslateService.translate(eventStore, 'CATEGORY.DESSERTS'),
+			titleKey: 'CATEGORY.DESSERTS',
 			description: 'CATEGORY.DESSERTS.DESCRIPTION',
 		},
 		{
 			id: 6,
 			icon: '🍹',
 			title: TranslateService.translate(eventStore, 'CATEGORY.BARS_AND_NIGHTLIFE'),
+			titleKey: 'CATEGORY.BARS_AND_NIGHTLIFE',
 			description: 'CATEGORY.BARS_AND_NIGHTLIFE.DESCRIPTION',
 		},
 		{
 			id: 7,
 			icon: '🛒',
 			title: TranslateService.translate(eventStore, 'CATEGORY.SHOPPING'),
+			titleKey: 'CATEGORY.SHOPPING',
 			description: 'CATEGORY.SHOPPING.DESCRIPTION',
 		},
 		{
 			id: 8,
 			icon: '⭐',
 			title: TranslateService.translate(eventStore, 'CATEGORY.ATTRACTIONS'),
+			titleKey: 'CATEGORY.ATTRACTIONS',
 			description: 'CATEGORY.ATTRACTIONS.DESCRIPTION',
 		},
 		{
 			id: 9,
 			icon: '👻',
 			title: TranslateService.translate(eventStore, 'CATEGORY.GIMMICKS'),
+			titleKey: 'CATEGORY.GIMMICKS',
 			description: 'CATEGORY.GIMMICKS.DESCRIPTION',
 		},
 		{
 			id: 10,
 			icon: '🌺',
 			title: TranslateService.translate(eventStore, 'CATEGORY.NATURE'),
+			titleKey: 'CATEGORY.NATURE',
 			description: 'CATEGORY.NATURE.DESCRIPTION',
 		},
 		{
 			id: 11,
 			icon: '🗽',
 			title: TranslateService.translate(eventStore, 'CATEGORY.TOURISM'),
+			titleKey: 'CATEGORY.TOURISM',
 			description: 'CATEGORY.TOURISM.DESCRIPTION',
 		},
 	];
 };
+
+export const getDefaultCategoriesExtended = (eventStore: EventStore): TriPlanCategory[] => {
+	return [
+		...getDefaultCategories(eventStore),
+		{
+			id: 20,
+			icon: '🌆️',
+			title: TranslateService.translate(eventStore, 'CATEGORY.CITIES'),
+			titleKey: 'CATEGORY.CITIES',
+		},
+		{
+			id: 21,
+			icon: '🏝',
+			title: TranslateService.translate(eventStore, 'CATEGORY.ISLANDS'),
+			titleKey: 'CATEGORY.ISLANDS',
+		},
+		{
+			id: 22,
+			icon: '🏛',
+			title: TranslateService.translate(eventStore, 'CATEGORY.MUSEUMS'),
+			titleKey: 'CATEGORY.MUSEUMS',
+		},
+		{
+			id: 23,
+			icon: '🏖🍻',
+			title: TranslateService.translate(eventStore, 'CATEGORY.BEACH_BARS'),
+			titleKey: 'CATEGORY.BEACH_BARS',
+		},
+		{
+			id: 24,
+			icon: '🏖',
+			title: TranslateService.translate(eventStore, 'CATEGORY.BEACHES'),
+			titleKey: 'CATEGORY.BEACHES',
+		},
+	];
+};
+
+export const defaultCategoriesKeys: string[] = [
+	'CATEGORY.GENERAL',
+	'CATEGORY.FLIGHTS',
+	'CATEGORY.HOTELS',
+	'CATEGORY.FOOD',
+	'CATEGORY.DESSERTS',
+	'CATEGORY.BARS_AND_NIGHTLIFE',
+	'CATEGORY.SHOPPING',
+	'CATEGORY.ATTRACTIONS',
+	'CATEGORY.GIMMICKS',
+	'CATEGORY.NATURE',
+	'CATEGORY.TOURISM',
+];
 
 export const defaultCategoriesOldold: TriPlanCategory[] = [];
 export const defaultCategoriesHeb: TriPlanCategory[] = [

@@ -1,0 +1,63 @@
+.whats-new-container {
+	max-width: 1100px;
+	margin: 0 auto;
+	text-align: left;
+	display: flex;
+	gap: 16px;
+}
+
+.whats-new-row {
+	border: 1px solid rgba(0, 0, 0, 0.06);
+	border-radius: 10px;
+	padding: 16px;
+	background: rgba(255, 255, 255, 0.9);
+	// background: rgba(0, 0, 0, 0.01);
+	align-items: flex-start;
+}
+
+.whats-new-image-gallery {
+	max-width: 300px;
+
+	.slider-wrapper.axis-horizontal {
+		min-width: 300px;
+	}
+}
+
+.whats-new-image {
+	width: 260px;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+.whats-new-text {
+	flex: 1 1 0;
+}
+
+.whats-new-content {
+	.triplan-header-banner-slogan,
+	.triplan-header-banner-bottom-shadow {
+		display: none;
+	}
+	.triplan-header-banner {
+		height: 200px;
+	}
+}
+
+body.rtl {
+	.whats-new-container {
+		text-align: right;
+	}
+	.whats-new-title {
+		direction: rtl;
+	}
+	.whats-new-text h3,
+	.whats-new-text div {
+		direction: rtl;
+		text-align: right;
+	}
+
+	.whats-new-row {
+		direction: ltr;
+	}
+}

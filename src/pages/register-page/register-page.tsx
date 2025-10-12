@@ -45,16 +45,16 @@ function RegisterPage() {
 	const TriplanLogo = ({ onClick }: { onClick?: () => void }) => (
 		<img
 			className={getClasses('logo-container', !eventStore.isMobile && 'pointer')}
-			src={'/images/logo/new-logo.png'}
+			src="/images/logo/new-logo.png"
 			onClick={onClick}
 		/>
 	);
 
 	const FooterLinkBlock = () => (
-		<span className={'login-link-container'} key={'login-link-container'}>
-			<div style={{ direction: eventStore.getCurrentDirection() }}>
+		<span className="login-link-container" key="login-link-container">
+			<div>
 				{TranslateService.translate(eventStore, 'LOGIN_PREFIX')}{' '}
-				<Link data-testid={'login'} to={'/login'}>
+				<Link data-testid="login" to="/login">
 					{TranslateService.translate(eventStore, 'LOGIN')}
 				</Link>
 			</div>
@@ -101,13 +101,9 @@ function RegisterPage() {
 						setError(res.error);
 					} else {
 						setMessage('REGISTERED_SUCCESSFULLY');
-						setTimeout(
-							function (self) {
-								navigate('/login');
-							},
-							LOGIN_DELAY,
-							self
-						);
+						setTimeout(function () {
+							navigate('/login');
+						}, LOGIN_DELAY);
 					}
 				},
 				function (err: any) {
@@ -159,7 +155,7 @@ function RegisterPage() {
 		error === '' ? (
 			''
 		) : (
-			<div className={'field red'} data-testid={errorTestId}>
+			<div className="field red" data-testid={errorTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
 			</div>
 		);
@@ -167,7 +163,7 @@ function RegisterPage() {
 		message === '' || error !== '' ? (
 			''
 		) : (
-			<div className={'field blue'} data-testid={messageTestId}>
+			<div className="field blue" data-testid={messageTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, message) }} />
 			</div>
 		);
@@ -209,7 +205,7 @@ function RegisterPage() {
 					})}
 					<div className="login-form-buttons">
 						<Button
-							text={TranslateService.translate(eventStore, 'REGISTER_BUTTON')}
+							text={TranslateService.translate(eventStore, 'REGISTER_ITS_FREE')}
 							onClick={register}
 							flavor={ButtonFlavor.primary}
 							disabled={validating}

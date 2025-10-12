@@ -1,16 +1,39 @@
-.feed-view-filter-bar {
-  padding-inline: 16px;
-  display: flex;
-  align-items: center;
-  min-width: 100%;
+.feed-view {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	padding-inline-end: 8px;
+	position: relative;
+	inset-inline-start: 4px;
+
+	max-height: 100vh;
+	overflow: auto;
 }
 
+.main-layout:has(.feed-view) {
+	height: max-content;
+}
+
+.feed-view-filter-bar {
+	padding-inline: 16px;
+	display: flex;
+	align-items: center;
+	min-width: 100%;
+}
 
 @media (max-width: 768px) {
-  .category-filter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px;
-  }
+	.category-filter {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 8px;
+	}
+}
+
+body.rtl {
+	.main-feed-header span {
+		direction: rtl;
+	}
 }

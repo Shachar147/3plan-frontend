@@ -1,58 +1,55 @@
-.main-layout {
-  height: max-content !important;
-}
 .destinations-content {
-  display: flex;
-  flex-direction: column;
-  align-items:flex-start;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
-  gap: 10px;
-  flex-flow: row wrap;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+	gap: 10px;
+	flex-flow: row wrap;
 
-  .sub-title {
-    width: 100%;
-    text-align:center;
-  }
+	.sub-title {
+		width: 100%;
+		text-align: center;
+	}
 
-  .destination-slider {
-    height: 100%;
-  }
+	.destination-slider {
+		height: 100%;
+	}
 
-  i {
-    display: none;
-  }
+	i {
+		display: none;
+	}
 
-  //overflow:auto;
-  //height: 210px; // todo change to 100% if we do not want slider
-  //flex-flow: row nowrap; // todo change to wrap if we do not want slider
-  //width: max-content; // todo change to 100% if we do not want slider
-  //padding-inline: 20px;
+	//overflow:auto;
+	//height: 210px; // todo change to 100% if we do not want slider
+	//flex-flow: row nowrap; // todo change to wrap if we do not want slider
+	//width: max-content; // todo change to 100% if we do not want slider
+	//padding-inline: 20px;
 }
 
 .no-destinations-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-inline-start: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-inline-start: 20px;
 }
 
 body.rtl {
-  .destinations-content {
-    direction: rtl;
-  }
+	.destinations-content {
+		direction: rtl;
+	}
 }
 
 body.admin-side {
-  #root {
-    height: fit-content !important;
+	#root {
+		height: fit-content !important;
 
-    .max-height-250 {
-      max-height: 150px !important;
-    }
-    .main-page {
-      height: fit-content !important;
-    }
-  }
+		.max-height-250 {
+			max-height: 150px !important;
+		}
+		.main-page {
+			height: fit-content !important;
+		}
+	}
 }

@@ -1,57 +1,57 @@
 .triplan-draggable-list-container {
-  margin: 0 auto;
+	margin: 0 auto;
 
-  position: absolute;
-  top: 50px;
-  text-align: center;
-  width: CALC(100% - 50px);
-  align-items: center;
-  display: inline-table !important;
-  background-color: transparent;
+	position: absolute;
+	top: 50px;
+	text-align: center;
+	width: CALC(100% - 50px);
+	align-items: center;
+	display: inline-table !important;
+	background-color: transparent;
 }
 
 .triplan-draggable-list {
-  display: flex;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
+	display: flex;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	background-color: transparent;
 
-  //padding-inline-start: 50px;
-  justify-content: space-between;
+	//padding-inline-start: 50px;
+	justify-content: space-between;
 
-  gap: 5px;
+	gap: 5px;
 }
 
 body.rtl {
-  .triplan-draggable-list {
-    direction: rtl;
-  }
+	.triplan-draggable-list {
+		direction: rtl;
+	}
 }
 
 .triplan-draggable-list-item {
-  flex: 0 0 auto;
-  //border-radius: 4px;
-  padding: 2.5px;
-  margin-right: 0;
-  cursor: move !important;
-  user-select: none;
-  flex-grow: 1;
-  background-color: transparent;
+	flex: 0 0 auto;
+	//border-radius: 4px;
+	padding: 2.5px;
+	margin-right: 0;
+	cursor: move !important;
+	user-select: none;
+	flex-grow: 1;
+	background-color: transparent;
 
-  i {
-    font-size: 10px;
-  }
+	i {
+		font-size: 10px;
+	}
 
-  &:not(:hover){
-    color: var(--gray);
-  }
+	&:not(:hover) {
+		color: var(--gray);
+	}
 
-  &.disabled {
-    cursor: default !important;
-  }
+	&.disabled {
+		cursor: default !important;
+	}
 }
 
 .triplan-draggable-list-item:active {
-  background-color: #eee;
+	background-color: #eee;
 }

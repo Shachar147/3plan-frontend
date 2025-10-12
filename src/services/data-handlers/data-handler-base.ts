@@ -3,7 +3,7 @@ import { EventStore } from '../../stores/events-store';
 import { LocalStorageService } from './local-storage-service';
 import { TripDataSource } from '../../utils/enums';
 import { DBService } from './db-service';
-import {apiPut} from "../../helpers/api";
+import { apiPut } from '../../helpers/api';
 
 export type LocaleCode = 'he' | 'en';
 
@@ -20,6 +20,8 @@ export interface Trip {
 	id?: number; // for my trips page
 	lastUpdateAt?: string;
 	destinations?: string[];
+	priorityColors?: Record<string, string>;
+	priorityMapColors?: Record<string, string>;
 	createdAt?: number;
 }
 
@@ -60,7 +62,7 @@ export interface BaseDataHandler {
 	setDistanceResults: (distanceResults: Map<String, DistanceResult>, tripName?: string) => void;
 	duplicateTrip: (eventStore: EventStore, tripName: string, newTripName: string) => Promise<any>;
 
-	setDestinations: (destinations: string[], tripName: string) => Promise<any>
+	setDestinations: (destinations: string[], tripName: string) => Promise<any>;
 
 	getDateRange: (tripName: string, createMode?: boolean) => Promise<DateRangeFormatted> | DateRangeFormatted;
 	getCategories: (

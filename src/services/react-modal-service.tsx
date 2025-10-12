@@ -1,9 +1,24 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService, { TranslationParams } from './translate-service';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { observable, runInAction } from 'mobx';
 import IconSelector from '../components/inputs/icon-selector/icon-selector';
-import { getClasses, getCurrentUsername, isHotel, isHotelsCategory, ucfirst, ucword } from '../utils/utils';
+import GoogleMapIconSelector, {
+	GOOGLE_MAP_ICONS_MAP,
+	iconToName,
+} from '../components/inputs/google-map-icon-selector/google-map-icon-selector';
+import PreviewBox from '../components/preview-box/preview-box';
+import { ColorPicker, useColor } from 'react-color-palette';
+import 'react-color-palette/css';
+import {
+	getClasses,
+	getCurrentUsername,
+	isHotel,
+	isHotelsCategory,
+	isTemplateUsername,
+	ucfirst,
+	ucword,
+} from '../utils/utils';
 
 import Alert from 'sweetalert2';
 import { defaultTimedEventDuration, getLocalStorageKeys, LS_CUSTOM_DATE_RANGE } from '../utils/defaults';
@@ -21,6 +36,7 @@ import {
 } from '../utils/interfaces';
 import {
 	InputValidation,
+	SyncMode,
 	TripDataSource,
 	TriplanCurrency,
 	TriplanEventPreferredTime,
@@ -28,6 +44,7 @@ import {
 	ViewMode,
 } from '../utils/enums';
 import {
+	add15Minutes,
 	addHours,
 	addHoursToDate,
 	convertMsToHM,
@@ -38,6 +55,7 @@ import {
 	getEndDate,
 	getInputDateTimeValue,
 	getOffsetInHours,
+	subtract15Minutes,
 	validateDateRange,
 	validateDuration,
 } from '../utils/time-utils';
@@ -48,6 +66,8 @@ import DatePicker from '../components/inputs/date-picker/date-picker';
 import { EventInput } from '@fullcalendar/react';
 import Button, { ButtonFlavor } from '../components/common/button/button';
 import ImportService from './import-service';
+import { BackupService } from './backup-service';
+import { getServerAddress } from '../config/config';
 
 // @ts-ignore
 import Slider from 'react-slick';
@@ -55,20 +75,24 @@ import Slider from 'react-slick';
 import { DataServices, LocaleCode, lsTripNameToTripName } from './data-handlers/data-handler-base';
 import PlacesTinder from '../pages/main-page/modals/places-tinder/places-tinder';
 import LocationInput from '../components/inputs/location-input/location-input';
-import { apiGetNew, apiPost } from '../helpers/api';
+import { apiGetNew, apiPost, apiPut } from '../helpers/api';
 import { LimitationsService } from '../utils/limitations';
 import ToggleButton from '../components/toggle-button/toggle-button';
-import { ACTIVITY_MAX_SIZE_DAYS, ACTIVITY_MIN_SIZE_MINUTES } from '../utils/consts';
+import {
+	ACTIVITY_MAX_SIZE_DAYS,
+	ACTIVITY_MIN_SIZE_MINUTES,
+	priorityToColor,
+	priorityToMapColor,
+} from '../utils/consts';
 import { ModalsStore } from '../stores/modals-store';
 // @ts-ignore
 import _ from 'lodash';
 import CopyInput from '../components/common/copy-input/copy-input';
 import LogHistoryService from './data-handlers/log-history-service';
-import {navigate} from "@storybook/addon-links";
-import {useNavigate} from "react-router-dom";
-import {endpoints} from "../v2/utils/endpoints";
-import {FeatureFlagsService} from "../utils/feature-flags";
-import {newDesignRootPath} from "../v2/utils/consts";
+import { endpoints } from '../v2/utils/endpoints';
+import { FeatureFlagsService } from '../utils/feature-flags';
+import { newDesignRootPath } from '../v2/utils/consts';
+import { getIcon } from '../components/map-container/map-container-utils';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -224,6 +248,88 @@ export const ReactModalRenderHelper = {
 			/>
 		);
 	},
+	renderDatePickerWithShortcutsInput: (
+		eventStore: EventStore,
+		modalValueName: string,
+		extra: {
+			placeholderKey?: string;
+			placeholder?: string;
+			id?: string;
+			className?: string;
+			value?: string;
+			disabled?: boolean;
+			enforceMinMax?: boolean;
+			readOnly?: boolean;
+		},
+		ref?: any
+	) => {
+		if (extra.value && !eventStore.modalValues[modalValueName]) {
+			runInAction(() => {
+				eventStore.modalValues[modalValueName] = extra.value;
+			});
+		}
+
+		const adjustTime = (minutes: number) => {
+			const currentValue = eventStore.modalValues[modalValueName];
+			if (currentValue) {
+				// Parse the datetime-local value (format: YYYY-MM-DDTHH:mm)
+				const [datePart, timePart] = currentValue.split('T');
+				const [year, month, day] = datePart.split('-').map(Number);
+				const [hour, minute] = timePart.split(':').map(Number);
+
+				// Create date object in local timezone
+				const date = new Date(year, month - 1, day, hour, minute);
+				const adjustedDate = minutes > 0 ? add15Minutes(date) : subtract15Minutes(date);
+
+				// Format back to datetime-local format (YYYY-MM-DDTHH:mm) without timezone conversion
+				const newYear = adjustedDate.getFullYear();
+				const newMonth = String(adjustedDate.getMonth() + 1).padStart(2, '0');
+				const newDay = String(adjustedDate.getDate()).padStart(2, '0');
+				const newHour = String(adjustedDate.getHours()).padStart(2, '0');
+				const newMinute = String(adjustedDate.getMinutes()).padStart(2, '0');
+				const newValue = `${newYear}-${newMonth}-${newDay}T${newHour}:${newMinute}`;
+
+				runInAction(() => {
+					eventStore.modalValues[modalValueName] = newValue;
+					// Force re-render by updating a reactive property
+					eventStore.forceUpdate = (eventStore.forceUpdate || 0) + 1;
+				});
+			}
+		};
+
+		return (
+			<div className="date-picker-with-shortcuts">
+				<DatePicker
+					id={extra.id}
+					className={extra.className}
+					ref={ref}
+					modalValueName={modalValueName}
+					placeholder={extra.placeholder}
+					placeholderKey={extra.placeholderKey}
+					readOnly={extra.disabled || extra.readOnly}
+					enforceMinMax={extra.enforceMinMax}
+				/>
+				{!extra.readOnly && (
+					<div className="time-shortcuts">
+						<Button
+							flavor={ButtonFlavor.link}
+							text="-15"
+							onClick={() => adjustTime(-15)}
+							className="time-shortcut-btn"
+							tooltip={TranslateService.translate(eventStore, 'SUBTRACT_15_MINUTES')}
+						/>
+						<Button
+							flavor={ButtonFlavor.link}
+							text="+15"
+							onClick={() => adjustTime(15)}
+							className="time-shortcut-btn"
+							tooltip={TranslateService.translate(eventStore, 'ADD_15_MINUTES')}
+						/>
+					</div>
+				)}
+			</div>
+		);
+	},
 	renderTextAreaInput: (
 		eventStore: EventStore,
 		modalValueName: string,
@@ -247,7 +353,7 @@ export const ReactModalRenderHelper = {
 			<TextareaInput
 				rows={extra.rows || 3}
 				id={extra.id}
-				className={'textAreaInput'}
+				className="textAreaInput"
 				ref={ref}
 				modalValueName={modalValueName}
 				placeholder={extra.placeholder}
@@ -306,19 +412,22 @@ export const ReactModalRenderHelper = {
 		eventStore: EventStore,
 		modalValueName: string,
 		extra: { id?: string; name?: string; value: any },
-		ref?: any
+		ref?: any,
+		categories?: TriPlanCategory[]
 	) => {
-		const options = eventStore.categories
-			.sort((a, b) => a.id - b.id)
-			.map((x, index) => ({
-				value: x.id,
-				label: x.icon ? `${x.icon} ${x.title}` : x.title,
-			}));
+		const options =
+			categories ??
+			eventStore.categories
+				.sort((a, b) => a.id - b.id)
+				.map((x, index) => ({
+					value: x.id,
+					label: x.icon ? `${x.icon} ${x.title}` : x.title,
+				}));
 
 		if (!eventStore.modalValues[modalValueName]) {
-			eventStore.modalValues[modalValueName] = extra.value
-				? options.find((x) => x.value == extra.value)
-				: undefined;
+			const initialVal: any = (extra as any)?.value;
+			eventStore.modalValues[modalValueName] =
+				initialVal != null ? options.find((x) => (x as any).value == initialVal) : undefined;
 		}
 
 		// console.log("category", extra.value, options.find((x) => x.value == extra.value), eventStore.modalValues[modalValueName])
@@ -411,7 +520,7 @@ export const ReactModalRenderHelper = {
 	renderCurrencySelector: (
 		eventStore: EventStore,
 		modalValueName: string,
-		extra: { id?: string; name?: string; value: any },
+		extra: { id?: string; name?: string; value: any; readOnly?: boolean },
 		ref?: any
 	) => {
 		const values = Object.keys(TriplanCurrency);
@@ -445,7 +554,9 @@ export const ReactModalRenderHelper = {
 			});
 
 		if (!eventStore.modalValues[modalValueName]) {
-			const selectedOption = options.find((option) => option.value.toLowerCase() == extra.value?.toString()?.toLowerCase());
+			const selectedOption = options.find(
+				(option) => option.value.toLowerCase() == extra.value?.toString()?.toLowerCase()
+			);
 			eventStore.modalValues[modalValueName] = selectedOption;
 		}
 
@@ -534,6 +645,14 @@ export const ReactModalRenderHelper = {
 					row.settings.ref
 				);
 				break;
+			case 'date-picker-with-shortcuts':
+				input = ReactModalRenderHelper.renderDatePickerWithShortcutsInput(
+					eventStore,
+					row.settings.modalValueName,
+					row.settings.extra,
+					row.settings.ref
+				);
+				break;
 			case 'textarea':
 				input = ReactModalRenderHelper.renderTextAreaInput(
 					eventStore,
@@ -551,6 +670,17 @@ export const ReactModalRenderHelper = {
 						onChange={(data) => (eventStore.modalValues[row.settings.modalValueName] = data)}
 						ref={row.settings.ref}
 						readOnly={row.settings.extra.readOnly}
+					/>
+				);
+				break;
+			case 'google-map-icon-selector':
+				input = (
+					<GoogleMapIconSelector
+						value={row.settings.extra.value}
+						modalValueName={row.settings.modalValueName}
+						onChange={(val) => {
+							eventStore.modalValues[row.settings.modalValueName] = GOOGLE_MAP_ICONS_MAP[val].icon;
+						}}
 					/>
 				);
 				break;
@@ -644,7 +774,7 @@ export const ReactModalRenderHelper = {
 											width: 300,
 											height: 150,
 										}}
-										alt={''}
+										alt=""
 										src={image}
 									/>
 								))}
@@ -802,7 +932,7 @@ const ReactModalService = {
 				</div>
 			);
 		},
-		disableOnConfirm: () => {
+		disableOnConfirm: (eventStore: EventStore, textKey = 'SAVING') => {
 			// @ts-ignore
 			$(
 				'.triplan-react-modal .input-with-label input, .triplan-react-modal .input-with-label textarea, .triplan-react-modal .input-with-label button'
@@ -812,7 +942,11 @@ const ReactModalService = {
 			// @ts-ignore
 			$('.triplan-react-modal>p .primary-button')
 				.parent()
-				.html('<a href="#" class="btn btn-lg btn-info primary-button disabled">שומר...</a>');
+				.html(
+					'<a href="#" class="btn btn-lg btn-info primary-button disabled">' +
+						TranslateService.translate(eventStore, textKey) +
+						'</a>'
+				);
 		},
 		openOopsErrorModal: (eventStore: EventStore) => {
 			ReactModalService.internal.alertMessage(
@@ -898,7 +1032,7 @@ const ReactModalService = {
 							readOnly: modalsStore?.isViewMode,
 						},
 					},
-					textKey: 'MODALS.ICON',
+					textKey: 'GENERAL.ICON',
 					className: 'border-top-gray icon-row',
 					showOnMinimized: false,
 				},
@@ -1191,7 +1325,7 @@ const ReactModalService = {
 						settings: {
 							modalValueName: 'start-time',
 							ref: eventStore.modalValuesRefs['start-time'],
-							type: 'date-picker',
+							type: 'date-picker-with-shortcuts',
 							extra: {
 								placeholder: `${TranslateService.translate(
 									eventStore,
@@ -1209,7 +1343,7 @@ const ReactModalService = {
 						settings: {
 							modalValueName: 'end-time',
 							ref: eventStore.modalValuesRefs['end-time'],
-							type: 'date-picker',
+							type: 'date-picker-with-shortcuts',
 							extra: {
 								placeholder: `${TranslateService.translate(
 									eventStore,
@@ -1283,7 +1417,7 @@ const ReactModalService = {
 								readOnly: modalsStore?.isViewMode,
 							},
 						},
-						textKey: 'MODALS.ICON',
+						textKey: 'GENERAL.ICON',
 						className: 'border-top-gray icon-row',
 						showOnMinimized: false,
 					},
@@ -1474,7 +1608,7 @@ const ReactModalService = {
 						name="upload[]"
 						id="fileToUpload"
 						accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv"
-						// className="display-none"
+						className="display-none"
 						onChange={(event) => {
 							const target = event?.target;
 							const files = target?.files;
@@ -1490,10 +1624,7 @@ const ReactModalService = {
 						}}
 					/>
 					<div className="file-upload-label-container">
-						<label
-							htmlFor="fileToUpload"
-							className="btn secondary-button pointer black file-button-label"
-						>
+						<label htmlFor="fileToUpload" className="btn secondary-button pointer black file-button-label">
 							{TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
 						</label>
 						<label className="file-name-label">
@@ -1502,8 +1633,8 @@ const ReactModalService = {
 						</label>
 					</div>
 				</div>
-			)
-		}
+			);
+		},
 	},
 
 	openAddCategoryModal: (eventStore: EventStore) => {
@@ -1515,6 +1646,8 @@ const ReactModalService = {
 
 			// @ts-ignore
 			const newName = eventStore.modalValues.name;
+
+			const googleMapIcon = eventStore.modalValues.googleMapIcon;
 
 			let isOk = true;
 
@@ -1542,7 +1675,7 @@ const ReactModalService = {
 			if (isOk) {
 				const categoryId = eventStore.createCategoryId();
 				runInAction(async () => {
-					ReactModalService.internal.disableOnConfirm();
+					ReactModalService.internal.disableOnConfirm(eventStore);
 					await eventStore.setCategories(
 						[
 							...eventStore.categories,
@@ -1550,6 +1683,7 @@ const ReactModalService = {
 								id: categoryId,
 								title: newName,
 								icon: newIcon,
+								googleMapIcon: googleMapIcon,
 							},
 						],
 						false
@@ -1586,6 +1720,17 @@ const ReactModalService = {
 			},
 			{
 				settings: {
+					modalValueName: 'googleMapIcon',
+					type: 'google-map-icon-selector',
+					extra: {
+						value: undefined, // no default value
+					},
+				},
+				textKey: 'GOOGLE_MAP_ICON',
+				className: 'border-top-gray',
+			},
+			{
+				settings: {
 					modalValueName: 'name',
 					type: 'text',
 					extra: {
@@ -1601,7 +1746,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
 					</div>
 				)}
@@ -1656,12 +1801,19 @@ const ReactModalService = {
 
 				ReactModalService.internal.closeModal(eventStore);
 
-				LogHistoryService.logHistory(eventStore, TripActions.updatedTrip, {
-					tripName: {
-						was: oldName,
-						now: newName,
+				LogHistoryService.logHistory(
+					eventStore,
+					TripActions.updatedTrip,
+					{
+						tripName: {
+							was: oldName,
+							now: newName,
+						},
 					},
-				}, undefined, undefined, tripId);
+					undefined,
+					undefined,
+					tripId
+				);
 
 				ReactModalService.internal.alertMessage(
 					eventStore,
@@ -1679,7 +1831,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderInputWithLabel(
 							eventStore,
 							'MODALS.TITLE',
@@ -1778,7 +1930,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderInputWithLabel(
 							eventStore,
 							'MODALS.TITLE',
@@ -1849,6 +2001,41 @@ const ReactModalService = {
 		onConfirm?: () => void
 	) => {
 		const tripName = LSTripName !== '' ? LSTripName.replaceAll('-', ' ') : '';
+
+		async function hideTrip() {
+			if (tripDataSource === TripDataSource.DB) {
+				await DataServices.DBService.hideTripByName(tripName)
+					.then(() => {
+						LogHistoryService.logHistory(eventStore, TripActions.hideTrip, {
+							tripName,
+						});
+
+						if (onConfirm) {
+							onConfirm();
+							ReactModalService.internal.closeModal(eventStore);
+						} else {
+							window.location.reload();
+						}
+					})
+					.catch(() => {
+						ReactModalService.internal.openOopsErrorModal(eventStore);
+					});
+			} else {
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'MODALS.ERROR.TITLE',
+					'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+					'error'
+				);
+				return;
+			}
+		}
+
+		if (isTemplateUsername()) {
+			hideTrip();
+			return;
+		}
+
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: `${TranslateService.translate(eventStore, 'HIDE_TRIP')}: ${tripName}`,
@@ -1864,34 +2051,7 @@ const ReactModalService = {
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, 'HIDE_TRIP'),
 			confirmBtnCssClass: 'primary-button',
-			onConfirm: async () => {
-				if (tripDataSource === TripDataSource.DB) {
-					await DataServices.DBService.hideTripByName(tripName)
-						.then(() => {
-							LogHistoryService.logHistory(eventStore, TripActions.hideTrip, {
-								tripName,
-							});
-
-							if (onConfirm) {
-								onConfirm();
-								ReactModalService.internal.closeModal(eventStore);
-							} else {
-								window.location.reload();
-							}
-						})
-						.catch(() => {
-							ReactModalService.internal.openOopsErrorModal(eventStore);
-						});
-				} else {
-					ReactModalService.internal.alertMessage(
-						eventStore,
-						'MODALS.ERROR.TITLE',
-						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
-						'error'
-					);
-					return;
-				}
-			},
+			onConfirm: hideTrip,
 		});
 	},
 	openShareTripModal: (eventStore: EventStore) => {
@@ -2070,7 +2230,7 @@ const ReactModalService = {
 			if (initialData.extra?.feedId) {
 				// @ts-ignore
 				currentEvent.extra = {
-					feedId: initialData.extra?.feedId
+					feedId: initialData.extra?.feedId,
 				};
 			}
 
@@ -2104,7 +2264,7 @@ const ReactModalService = {
 				return;
 			}
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[categoryId] = existingSidebarEvents[categoryId] || [];
@@ -2196,7 +2356,8 @@ const ReactModalService = {
 		event: SidebarEvent,
 		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
 		addToEventsToCategories: (value: any) => void,
-		modalsStore: ModalsStore
+		modalsStore: ModalsStore,
+		isSecondModal = false
 	) => {
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleEditSidebarEventResult = async (eventStore: EventStore, originalEvent: SidebarEvent) => {
@@ -2292,7 +2453,7 @@ const ReactModalService = {
 				isPriceChanged || // add column 11
 				isMoreInfoChanged;
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			if (isCategoryChanged) {
 				// remove it from the old category
@@ -2482,16 +2643,20 @@ const ReactModalService = {
 
 		const settings = getDefaultSettings(eventStore);
 		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
-		ReactModalService.internal.openModal(eventStore, {
-			...settings,
-			confirmBtnText: modalsStore?.isViewMode
-				? TranslateService.translate(eventStore, 'MODALS.EDIT')
-				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
-			title,
-			content,
-			onConfirm,
-			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
-		});
+		ReactModalService.internal.openModal(
+			eventStore,
+			{
+				...settings,
+				confirmBtnText: modalsStore?.isViewMode
+					? TranslateService.translate(eventStore, 'MODALS.EDIT')
+					: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+				title,
+				content,
+				onConfirm,
+				confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
+			},
+			isSecondModal
+		);
 	},
 	openDuplicateSidebarEventModal: (eventStore: EventStore, event: SidebarEvent) => {
 		// ERROR HANDLING: todo add try/catch & show a message if fails
@@ -2566,7 +2731,7 @@ const ReactModalService = {
 				return;
 			}
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			const existingSidebarEvents = eventStore.getJSSidebarEvents();
 			existingSidebarEvents[parseInt(category)] = existingSidebarEvents[parseInt(category)] || [];
@@ -2604,7 +2769,7 @@ const ReactModalService = {
 		window.openingHours = initialData.openingHours || undefined;
 
 		const onConfirm = async () => {
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 			await handleDuplicateSidebarEventResult(eventStore, event);
 			ReactModalService.internal.closeModal(eventStore);
 		};
@@ -2683,7 +2848,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderSelectInput(
 							eventStore,
 							'sidebar-event-to-add-to-calendar',
@@ -2781,7 +2946,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{ReactModalRenderHelper.renderSelectInput(
 							eventStore,
 							'sidebar-hotel-to-add-to-calendar',
@@ -2944,7 +3109,7 @@ const ReactModalService = {
 				return false;
 			}
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			await eventStore.setCalendarEvents([...eventStore.getJSCalendarEvents(), currentEvent]);
 			addToEventsToCategories(currentEvent);
@@ -3071,7 +3236,7 @@ const ReactModalService = {
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const onConfirm = async () => {
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			// delete from sidebar
 			await eventStore.setSidebarEvents(newSidebarEvents);
@@ -3144,6 +3309,12 @@ const ReactModalService = {
 		if (!category) return;
 		const categoryName = category.title;
 
+		const { icon: defaultGoogleMapIcon } = getIcon(eventStore, {
+			category: categoryId,
+			priority: TriplanPriority.unset,
+			title: categoryName,
+		});
+
 		const onConfirm = async () => {
 			const oldIcon = category.icon;
 			const oldName = categoryName;
@@ -3181,10 +3352,15 @@ const ReactModalService = {
 				return;
 			}
 
+			// @ts-ignore
+			const newGoogleMapIcon = eventStore.modalValues.googleMapIcon;
+			const oldGoogleMapIcon = category.googleMapIcon;
+
 			const iconChanged = oldIcon !== newIcon;
 			const titleChanged = oldName !== newName;
 			const orderChanged = oldOrder !== order;
-			const isChanged = titleChanged || iconChanged || orderChanged;
+			const googleMapIconChanged = newGoogleMapIcon && oldGoogleMapIcon !== newGoogleMapIcon;
+			const isChanged = titleChanged || iconChanged || orderChanged || googleMapIconChanged;
 
 			if (isChanged) {
 				// validate title not already exist
@@ -3198,13 +3374,14 @@ const ReactModalService = {
 					return;
 				}
 
-				ReactModalService.internal.disableOnConfirm();
+				ReactModalService.internal.disableOnConfirm(eventStore);
 
 				const newCategories = eventStore.categories.filter((c) => c.id !== categoryId);
 				newCategories.splice(order.value, 0, {
 					id: categoryId,
 					title: newName,
 					icon: newIcon,
+					googleMapIcon: newGoogleMapIcon || oldGoogleMapIcon,
 				});
 
 				await eventStore.setCategories(newCategories, false);
@@ -3236,6 +3413,12 @@ const ReactModalService = {
 					diff['title'] = {
 						was: oldName,
 						now: newName,
+					};
+				}
+				if (googleMapIconChanged) {
+					diff['googleMapIcon'] = {
+						was: iconToName(oldGoogleMapIcon),
+						now: iconToName(newGoogleMapIcon),
 					};
 				}
 				if (orderChanged) {
@@ -3272,6 +3455,17 @@ const ReactModalService = {
 					},
 				},
 				textKey: 'MODALS.ICON',
+				className: 'border-top-gray',
+			},
+			{
+				settings: {
+					modalValueName: 'googleMapIcon',
+					type: 'google-map-icon-selector',
+					extra: {
+						value: category.googleMapIcon || defaultGoogleMapIcon,
+					},
+				},
+				textKey: 'GOOGLE_MAP_ICON',
 				className: 'border-top-gray',
 			},
 			{
@@ -3315,7 +3509,7 @@ const ReactModalService = {
 		const content = (
 			<Observer>
 				{() => (
-					<div className={'flex-col gap-20 align-layout-direction react-modal bright-scrollbar'}>
+					<div className="flex-col gap-20 align-layout-direction react-modal bright-scrollbar">
 						{inputs.map((input) => ReactModalRenderHelper.renderRow(eventStore, input))}
 					</div>
 				)}
@@ -3345,7 +3539,8 @@ const ReactModalService = {
 		eventStore: EventStore,
 		addEventToSidebar: (event: SidebarEvent) => boolean,
 		info: any,
-		modalsStore: ModalsStore
+		modalsStore: ModalsStore,
+		isSecondModal = false
 	) => {
 		ReactModalService.internal.resetWindowVariables(eventStore);
 
@@ -3368,7 +3563,8 @@ const ReactModalService = {
 
 		const handleDeleteEventResult = (
 			currentEvent: CalendarEvent,
-			addEventToSidebar: (event: SidebarEvent) => boolean
+			addEventToSidebar: (event: SidebarEvent) => boolean,
+			isDeleteComplete: boolean = false
 		) => {
 			const original = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
 
@@ -3377,7 +3573,7 @@ const ReactModalService = {
 				async () => {
 					// add back to sidebar
 					if (addEventToSidebar(currentEvent)) {
-						ReactModalService.internal.disableOnConfirm();
+						ReactModalService.internal.disableOnConfirm(eventStore);
 
 						// remove from calendar
 						eventStore.allowRemoveAllCalendarEvents = true;
@@ -3409,7 +3605,9 @@ const ReactModalService = {
 					}
 				},
 				'MODALS.REMOVE_EVENT_FROM_CALENDAR.TITLE',
-				'MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT',
+				isDeleteComplete
+					? 'MODALS.REMOVE_EVENT_FROM_CALENDAR_COMPLETELY.CONTENT'
+					: 'MODALS.REMOVE_EVENT_FROM_CALENDAR.CONTENT',
 				undefined,
 				{
 					X: categoryName,
@@ -3538,7 +3736,7 @@ const ReactModalService = {
 				isMoreInfoChanged ||
 				isPriceChanged; // add column 12
 
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			const _actuallyUpdate = async (
 				isHotel: boolean = false,
@@ -3772,7 +3970,7 @@ const ReactModalService = {
 
 		// ERROR HANDLING: todo add try/catch & show a message if fails
 		const handleDuplicateEventResult = async (eventStore: EventStore, originalEvent: CalendarEvent) => {
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 
 			let newEvent = Object.assign({}, originalEvent);
 			const newId = eventStore.createEventId();
@@ -3799,12 +3997,16 @@ const ReactModalService = {
 			// await eventStore.setAllEvents([...eventStore.allEvents, newEvent]);
 		};
 
+		const onDeleteCompleteClick = () => {
+			handleDeleteEventResult(currentEvent as unknown as CalendarEvent, () => true, true);
+		};
+
 		const onDeleteClick = () => {
 			handleDeleteEventResult(currentEvent as unknown as CalendarEvent, addEventToSidebar);
 		};
 
 		const onDuplicateClick = async () => {
-			ReactModalService.internal.disableOnConfirm();
+			ReactModalService.internal.disableOnConfirm(eventStore);
 			const calendarEvent = eventStore.calendarEvents.find((e: any) => e.id.toString() === eventId.toString());
 			await handleDuplicateEventResult(eventStore, calendarEvent as CalendarEvent);
 			ReactModalService.internal.closeModal(eventStore);
@@ -3871,8 +4073,20 @@ const ReactModalService = {
 					modalValueName: 'irrelevant',
 					type: 'custom-group',
 					extra: {
-						customGroupClassName: getClasses('actions', eventStore.isEnglish && 'flex-column'),
+						customGroupClassName: 'actions flex-column',
 						content: [
+							{
+								settings: {
+									type: 'button',
+									extra: {
+										onClick: onDeleteCompleteClick,
+										flavor: ButtonFlavor.primary,
+										className: 'red',
+									},
+								},
+								textKey: 'MODALS.REMOVE_EVENT_COMPLETELY',
+								// className: 'border-top-gray'
+							},
 							{
 								settings: {
 									type: 'button',
@@ -3927,57 +4141,66 @@ const ReactModalService = {
 
 		const settings = getDefaultSettings(eventStore);
 		if (eventStore.isMobile) settings.customClass = [settings.customClass, 'fullscreen-modal'].join(' ');
-		ReactModalService.internal.openModal(eventStore, {
-			...settings,
-			title,
-			confirmBtnText: modalsStore?.isViewMode
-				? TranslateService.translate(eventStore, 'MODALS.EDIT')
-				: TranslateService.translate(eventStore, 'MODALS.SAVE'),
-			content,
-			onConfirm,
-			confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
-		});
+		ReactModalService.internal.openModal(
+			eventStore,
+			{
+				...settings,
+				title,
+				confirmBtnText: modalsStore?.isViewMode
+					? TranslateService.translate(eventStore, 'MODALS.EDIT')
+					: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+				content,
+				onConfirm,
+				confirmBtnCssClass: eventStore.isTripLocked ? 'display-none' : 'primary-button',
+			},
+			isSecondModal
+		);
 	},
 	openDeleteSidebarEventModal: (
 		eventStore: EventStore,
 		removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>,
-		event: SidebarEvent
+		event: SidebarEvent,
+		isSecondModal = false
 	) => {
-		ReactModalService.internal.openModal(eventStore, {
-			...getDefaultSettings(eventStore),
-			title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${event.title}`,
-			content: (
-				<div
-					dangerouslySetInnerHTML={{
-						__html: TranslateService.translate(eventStore, 'MODALS.DELETE_SIDEBAR_EVENT.CONTENT'),
-					}}
-				/>
-			),
-			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
-			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
-			confirmBtnCssClass: 'primary-button red',
+		ReactModalService.internal.openModal(
+			eventStore,
+			{
+				...getDefaultSettings(eventStore),
+				title: `${TranslateService.translate(eventStore, 'MODALS.DELETE')}: ${event.title}`,
+				content: (
+					<div
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.DELETE_SIDEBAR_EVENT.CONTENT'),
+						}}
+					/>
+				),
+				cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+				confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DELETE'),
+				confirmBtnCssClass: 'primary-button red',
 
-			// ERROR HANDLING: todo add try/catch & show a message if fails
-			onConfirm: async () => {
-				ReactModalService.internal.disableOnConfirm();
+				// ERROR HANDLING: todo add try/catch & show a message if fails
+				onConfirm: async () => {
+					ReactModalService.internal.disableOnConfirm(eventStore);
 
-				await removeEventFromSidebarById(event.id);
-				// await eventStore.setAllEvents(eventStore.allEventsComputed.filter((x) => x.id !== event.id));
+					await removeEventFromSidebarById(event.id);
+					// await eventStore.setAllEvents(eventStore.allEventsComputed.filter((x) => x.id !== event.id));
 
-				LogHistoryService.logHistory(
-					eventStore,
-					TripActions.deletedSidebarEvent,
-					{
-						was: event,
-						eventName: event.title,
-					},
-					Number(event.id),
-					event.title
-				);
+					LogHistoryService.logHistory(
+						eventStore,
+						TripActions.deletedSidebarEvent,
+						{
+							was: event,
+							eventName: event.title,
+						},
+						Number(event.id),
+						event.title
+					);
 
-				ReactModalService.internal.closeModal(eventStore);
+					ReactModalService.internal.closeModal(eventStore);
+				},
 			},
-		});
+			isSecondModal
+		);
 	},
 	openConfirmModalContent: (
 		eventStore: EventStore,
@@ -3985,7 +4208,7 @@ const ReactModalService = {
 		titleKey = 'MODALS.ARE_YOU_SURE',
 		content: () => React.ReactNode,
 		continueKey = 'MODALS.CONTINUE',
-		confirmBtnCssClass?: string,
+		confirmBtnCssClass?: string
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
@@ -4008,7 +4231,7 @@ const ReactModalService = {
 		contentKey = 'MODALS.ARE_YOU_SURE.CONTENT',
 		continueKey = 'MODALS.CONTINUE',
 		contentParams?: TranslationParams,
-		confirmBtnCssClass?: string,
+		confirmBtnCssClass?: string
 	) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
@@ -4067,8 +4290,8 @@ const ReactModalService = {
 									__html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS2'),
 								}}
 							/>
-							{ReactModalService.internal.renderFileUploader(eventStore)}						
-							</>
+							{ReactModalService.internal.renderFileUploader(eventStore)}
+						</>
 					)}
 				</Observer>
 			),
@@ -4426,15 +4649,17 @@ const ReactModalService = {
 		});
 	},
 
-	openImportFromGoogleMapsModal: (
-		eventStore: EventStore,
-	) => {
+	openImportFromGoogleMapsModal: (eventStore: EventStore) => {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS.TITLE'),
 			content: (
 				<div className="flex-col gap-12">
-					<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS.CONTENT') }} />
+					<div
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS.CONTENT'),
+						}}
+					/>
 					{ReactModalService.internal.renderFileUploader(eventStore)}
 				</div>
 			),
@@ -4442,13 +4667,13 @@ const ReactModalService = {
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.IMPORT'),
 			confirmBtnCssClass: 'primary-button',
 			onConfirm: () => {
-				alert("here!");
+				alert('here!');
 
 				// @ts-ignore
 				const file = eventStore.modalValues['fileToUpload'];
 
 				if (file) {
-					console.log("got file");
+					console.log('got file');
 					// const reader = new FileReader();
 					// reader.readAsText(file, 'UTF-8');
 					// reader.onload = function (evt) {
@@ -4468,6 +4693,7 @@ const ReactModalService = {
 			},
 		});
 	},
+
 	openImportEventsConfirmModal: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
 		let contentArr = [
 			`${info.eventsToAdd.length} ${TranslateService.translate(
@@ -4522,7 +4748,7 @@ const ReactModalService = {
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE3'),
-			content: <div className={'react-modal bright-scrollbar'} dangerouslySetInnerHTML={{ __html: html }} />,
+			content: <div className="react-modal bright-scrollbar" dangerouslySetInnerHTML={{ __html: html }} />,
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(
 				eventStore,
@@ -4811,15 +5037,10 @@ const ReactModalService = {
 		};
 
 		const onConfirm = async () => {
-
 			// log
-			LogHistoryService.logHistory(
-				eventStore,
-				TripActions.ranDistanceCalculation,
-				{
-					count2: allLocations.length
-				}
-			);
+			LogHistoryService.logHistory(eventStore, TripActions.ranDistanceCalculation, {
+				count2: allLocations.length,
+			});
 
 			const result = await apiPost(endpoints.v1.distance.calculateDistances, {
 				from: allLocations,
@@ -4991,41 +5212,42 @@ const ReactModalService = {
 		const tripsData = await eventStore.dataService.getTripsShort(eventStore);
 		const { trips, sharedTrips } = tripsData;
 
-		const options = trips
-			.map((trip) => ({
-				value: trip.name,
-				label: trip.name,
-			}));
+		const options = trips.map((trip) => ({
+			value: trip.name,
+			label: trip.name,
+		}));
 
 		sharedTrips.forEach((trip) => {
 			options.push({
 				value: trip.name,
-				label: `${trip.name} (${TranslateService.translate(eventStore, 'SHARED_TRIP')})`
+				label: `${trip.name} (${TranslateService.translate(eventStore, 'SHARED_TRIP')})`,
 			});
-		})
+		});
 
 		const content = () => {
 			return (
 				<Observer>
-					{ () => <div className="width-100-percents flex-row justify-content-center margin-top-10">
-						<SelectInput
-							readOnly={false}
-							id={"select-other-trip"}
-							name={"select-other-trip"}
-							options={options}
-							value={undefined}
-							placeholderKey={'TYPE_TO_SEARCH_PLACEHOLDER'}
-							modalValueName={"select-other-trip"}
-							menuPortalTarget={document.body}
-							onChange={(data) => {
-								if (FeatureFlagsService.isNewDesignEnabled()) {
-									window.location.href = `${newDesignRootPath}/plan/${data.value}`;
-								} else {
-									window.location.href = `/plan/${data.value}`;
-								}
-							}}
-						/>
-					</div>}
+					{() => (
+						<div className="width-100-percents flex-row justify-content-center margin-top-10">
+							<SelectInput
+								readOnly={false}
+								id="select-other-trip"
+								name="select-other-trip"
+								options={options}
+								value={undefined}
+								placeholderKey="TYPE_TO_SEARCH_PLACEHOLDER"
+								modalValueName="select-other-trip"
+								menuPortalTarget={document.body}
+								onChange={(data) => {
+									if (FeatureFlagsService.isNewDesignEnabled()) {
+										window.location.href = `${newDesignRootPath}/plan/${data.value}`;
+									} else {
+										window.location.href = `/plan/${data.value}`;
+									}
+								}}
+							/>
+						</div>
+					)}
 				</Observer>
 			);
 		};
@@ -5127,7 +5349,7 @@ const ReactModalService = {
 
 		const content = () => {
 			return (
-				<div className={'white-space-pre-line'}>
+				<div className="white-space-pre-line">
 					{TranslateService.translate(eventStore, 'SWITCH_DAYS.CONTENT', {
 						X: draggedItem.text,
 						Y: item.text,
@@ -5161,13 +5383,9 @@ const ReactModalService = {
 								eventStore.reloadCollaboratorsCounter += 1;
 							});
 
-							LogHistoryService.logHistory(
-								eventStore,
-								TripActions.deleteCollaborator,
-								{
-									name: response["data"]["collaboratorUserName"],
-								}
-							);
+							LogHistoryService.logHistory(eventStore, TripActions.deleteCollaborator, {
+								name: response['data']['collaboratorUserName'],
+							});
 						},
 						() => {
 							ReactModalService.internal.openOopsErrorModal(eventStore);
@@ -5255,18 +5473,13 @@ const ReactModalService = {
 							}
 
 							// log history - changed collaborator permissions
-							if (collaborator.canWrite != response["data"]["canWrite"]) {
-								LogHistoryService.logHistory(
-									eventStore,
-									TripActions.changeCollaboratorPermissions,
-									{
-										name: response["data"]["collaboratorUserName"],
-										was: collaborator.canWrite ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
-										now: response["data"]["canWrite"] ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ'
-									}
-								);
-							}
-							else {
+							if (collaborator.canWrite != response['data']['canWrite']) {
+								LogHistoryService.logHistory(eventStore, TripActions.changeCollaboratorPermissions, {
+									name: response['data']['collaboratorUserName'],
+									was: collaborator.canWrite ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
+									now: response['data']['canWrite'] ? 'PERMISSIONS.READ_WRITE' : 'PERMISSIONS.READ',
+								});
+							} else {
 								// alert nothing changed?
 							}
 
@@ -5355,41 +5568,7 @@ const ReactModalService = {
 					</tr>
 					<tr>
 						<td className="main-font-heavy">{TranslateService.translate(eventStore, 'WHAT')}</td>
-						<td>
-							{fullTitle}
-							{/*{TranslateService.translate(*/}
-							{/*	eventStore,*/}
-							{/*	isYou ? historyRow.action + 'You' : historyRow.action,*/}
-							{/*	{*/}
-							{/*		eventName: historyRow.eventName,*/}
-							{/*		count:*/}
-							{/*			historyRow.actionParams.count ??*/}
-							{/*			historyRow.action == TripActions.changedCategory*/}
-							{/*				? Object.keys(historyRow.actionParams).filter(*/}
-							{/*						(c) =>*/}
-							{/*							[*/}
-							{/*								'openingHours',*/}
-							{/*								'images',*/}
-							{/*								'timingError',*/}
-							{/*								'className',*/}
-							{/*								'id',*/}
-							{/*							].indexOf(c) == -1*/}
-							{/*				  ).length - 1*/}
-							{/*				: Object.keys(historyRow.actionParams).filter(*/}
-							{/*						(c) =>*/}
-							{/*							[*/}
-							{/*								'openingHours',*/}
-							{/*								'images',*/}
-							{/*								'timingError',*/}
-							{/*								'className',*/}
-							{/*								'id',*/}
-							{/*							].indexOf(c) == -1*/}
-							{/*				  ).length,*/}
-							{/*		count2: historyRow.actionParams.count2,*/}
-							{/*		...historyRow.actionParams,*/}
-							{/*	}*/}
-							{/*)}*/}
-						</td>
+						<td>{fullTitle}</td>
 					</tr>
 					{historyRow.actionParams.eventName && (
 						<tr>
@@ -5466,6 +5645,41 @@ const ReactModalService = {
 							<td>{TranslateService.translate(eventStore, historyRow.actionParams.permissions)}</td>
 						</tr>
 					)}
+					{Object.keys(TriplanPriority)
+						.filter((key) => isNaN(Number(key)))
+						.map(
+							(key) =>
+								historyRow.actionParams[key] && (
+									<tr>
+										<td className="main-font-heavy">
+											{TranslateService.translate(eventStore, key)}
+										</td>
+										<td>
+											<div className="flex-row align-items-center gap-4">
+												<PreviewBox size={16} color={historyRow.actionParams[key].was} />
+												<div className="text-align-start width-150">
+													{TranslateService.translate(eventStore, 'BEFORE')}: &nbsp;
+													{TranslateService.translate(
+														eventStore,
+														historyRow.actionParams[key].was
+													)}{' '}
+													&nbsp;&nbsp;
+												</div>
+											</div>
+											<div className="flex-row align-items-center gap-4">
+												<PreviewBox size={16} color={historyRow.actionParams[key].now} />
+												<div className="text-align-start width-150">
+													{TranslateService.translate(eventStore, 'AFTER')}: &nbsp;
+													{TranslateService.translate(
+														eventStore,
+														historyRow.actionParams[key].now
+													)}
+												</div>
+											</div>
+										</td>
+									</tr>
+								)
+						)}
 					{historyRow.action == TripActions.deletedCategory && (
 						<>
 							<tr>
@@ -5547,6 +5761,11 @@ const ReactModalService = {
 										'count',
 										historyRow.action == TripActions.changedCategory && 'categoryName',
 									].indexOf(k) == -1
+							)
+							.filter(
+								(changedKey) =>
+									Object.keys(historyRow.actionParams[changedKey]).includes('was') &&
+									Object.keys(historyRow.actionParams[changedKey]).includes('now')
 							)
 							.map((changedKey, idx) => (
 								<tr>
@@ -5725,8 +5944,6 @@ const ReactModalService = {
 						mustBeDoneBefore: mustBeDoneBefore ? new Date(mustBeDoneBefore).getTime() / 1000 : undefined,
 					};
 
-					console.log(data);
-
 					await DataServices.DBService.createTask(data)
 						.then((response) => {
 							const { data } = response.data;
@@ -5776,7 +5993,235 @@ const ReactModalService = {
 			},
 		});
 	},
+	openEditTaskModal(eventStore: EventStore, task: TriplanTask) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const event_options = eventStore.allEventsComputed.map((x) => ({ value: x.id, label: x.title }));
+
+		const status_options = Object.keys(TriplanTaskStatus).map((x) => ({
+			value: x,
+			label: ucword(TranslateService.translate(eventStore, x).replaceAll('_', ' ')),
+		}));
+
+		const rows = [
+			{
+				textKey: 'MODALS.TITLE',
+				component: ReactModalRenderHelper.renderTextInput(eventStore, 'add-task-title', {
+					placeholderKey: 'DUPLICATE_TRIP_MODAL.TITLE.PLACEHOLDER',
+					id: 'add-task-title',
+					value: task.title,
+					className: 'min-width-100-important',
+				}),
+				required: true,
+			},
+			{
+				textKey: 'CHOOSE_TASK_STATUS.LABEL',
+				component: ReactModalRenderHelper.renderSelectInput(
+					eventStore,
+					'add-task-status',
+					{
+						options: status_options,
+						placeholderKey: 'CHOOSE_TASK_STATUS.PLACEHOLDER',
+						removeDefaultClass: true,
+						value: task.status,
+						isClearable: false,
+						maxMenuHeight: eventStore.isMobile ? 45 * Math.min(status_options.length, 4) : undefined,
+					},
+					'add-task-selector'
+				),
+				required: true,
+			},
+			{
+				textKey: 'ASSIGN_TASK_TO_EVENT.LABEL',
+				component: ReactModalRenderHelper.renderSelectInput(
+					eventStore,
+					'add-task-event-id',
+					{
+						options: event_options,
+						placeholderKey: 'ASSIGN_TASK_TO_EVENT.PLACEHOLDER',
+						removeDefaultClass: true,
+						value: task.eventId,
+						isClearable: true,
+						maxMenuHeight: eventStore.isMobile ? 45 * Math.min(event_options.length, 4) : undefined,
+					},
+					'add-task-selector'
+				),
+			},
+			{
+				textKey: 'MUST_BE_DONE_BEFORE.LABEL',
+				component: ReactModalRenderHelper.renderDatePickerInput(
+					eventStore,
+					'add-task-must-be-done-before',
+					{
+						placeholderKey: 'MUST_BE_DONE_BEFORE.PLACEHOLDER',
+						value: task.mustBeDoneBefore
+							? new Date(task.mustBeDoneBefore * 1000).toISOString().split('.')[0]
+							: undefined,
+					},
+					eventStore.modalValuesRefs['add-task-must-be-done-before']
+				),
+			},
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'EDIT_TASK.MODAL_TITLE', {
+				taskName: task.title,
+			})}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.ADD_TASK.CONTENT'),
+						}}
+					/>
+					<div>
+						{rows.map((row, idx) =>
+							ReactModalRenderHelper.renderInputWithLabel(
+								eventStore,
+								row.textKey,
+								row.component,
+								getClasses('padding-bottom-20', idx == 0 && 'border-top-gray', 'border-bottom-gray'),
+								undefined,
+								'add-task-label',
+								row.required
+							)
+						)}
+					</div>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				const title: string = eventStore.modalValues['add-task-title']?.length
+					? eventStore.modalValues['add-task-title']
+					: undefined;
+				const eventId: number = Number(eventStore.modalValues['add-task-event-id']?.value);
+				const status: TriplanTaskStatus =
+					eventStore.modalValues['add-task-status']?.value ?? TriplanTaskStatus.TODO;
+				const description: string = eventStore.modalValues['add-task-content'];
+				const mustBeDoneBefore: number = eventStore.modalValues['add-task-must-be-done-before'];
+
+				if (tripDataSource === TripDataSource.DB) {
+					const data = {
+						tripId: eventStore.tripId,
+						title,
+						eventId,
+						status,
+						description,
+						mustBeDoneBefore: mustBeDoneBefore ? new Date(mustBeDoneBefore).getTime() / 1000 : undefined,
+					};
+
+					await DataServices.DBService.updateTask(task.id, data)
+						.then((response) => {
+							const { data } = response.data;
+
+							// log history
+							LogHistoryService.logHistory(eventStore, TripActions.updatedTask, {
+								name: title,
+								eventName: eventId
+									? eventStore.allEventsComputed.find((e) => Number(e.id) == Number(eventId))?.title
+									: undefined,
+							});
+
+							ReactModalService.internal.closeModal(eventStore);
+
+							ReactModalService.internal.alertMessage(
+								eventStore,
+								'MODALS.CREATE.TITLE',
+								'MODALS.UPDATE_TASK.CONTENT',
+								'success'
+							);
+
+							setTimeout(() => {
+								eventStore.reloadTasks();
+							}, 1000);
+						})
+						.catch((e) => {
+							if (e.response.data.statusCode === 409) {
+								ReactModalService.internal.alertMessage(
+									eventStore,
+									'MODALS.ERROR.TITLE',
+									'TASK_ALREADY_EXISTS',
+									'error'
+								);
+							} else {
+								ReactModalService.internal.openOopsErrorModal(eventStore);
+							}
+						});
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
+	},
 	openViewTaskModal(eventStore: EventStore, task: TriplanTask, title: string) {},
+	openSyncTripModal: (eventStore: EventStore, mode: SyncMode) => {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+		const titleKey = mode == SyncMode.localToRemote ? 'SYNC_TRIP_TO_REMOTE' : 'SYNC_TRIP_TO_LOCAL';
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, titleKey)}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, `MODALS.${titleKey}.CONTENT`),
+						}}
+					/>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'SYNC_TRIP'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				ReactModalService.internal.disableOnConfirm(eventStore, 'SYNCING');
+				const tripData = (await apiGetNew(endpoints.v1.trips.getTripByName(eventStore.tripName)))?.data;
+				delete tripData.id;
+				delete tripData.createdAt;
+				delete tripData.updatedAt;
+				console.log(tripData);
+				try {
+					const url =
+						mode == SyncMode.localToRemote
+							? endpoints.v1.trips.syncTripByName(eventStore.tripName)
+							: endpoints.v1.trips.syncTripToLocalByName(eventStore.tripName);
+					const res = await apiPost(url, tripData, false);
+					console.log(res);
+
+					// console.log("on server:", tripDataRemote);
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.TRIP_SYNCED.TITLE',
+						'MODALS.TRIP_SYNCED.CONTENT',
+						'success'
+					);
+					ReactModalService.internal.closeModal(eventStore);
+				} catch (e) {
+					console.log(e);
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.TRIP_SYNC_FAILED.TITLE',
+						'MODALS.TRIP_SYNC_FAILED.CONTENT',
+						'error'
+					);
+
+					ReactModalService.internal.closeModal(eventStore);
+				}
+			},
+		});
+	},
 };
 
 export default ReactModalService;

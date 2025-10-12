@@ -274,13 +274,13 @@ function PlacesTinder(props: PlacesTinderProps) {
 		[];
 
 	return (
-		<div className={'places-tinder flex-column gap-10 justify-content-center bright-scrollbar'}>
+		<div className="places-tinder flex-column gap-10 justify-content-center bright-scrollbar">
 			<SelectInput
 				options={Object.keys(placesDataMap).map(
 					(x: string) => ({ value: x, label: TranslateService.translate(eventStore, x) } as SelectInputOption)
 				)}
-				placeholderKey={'PLACES_TINDER_PLACEHOLDER'}
-				modalValueName={'FLYING_TO'}
+				placeholderKey="PLACES_TINDER_PLACEHOLDER"
+				modalValueName="FLYING_TO"
 				onChange={(data: any) => {
 					setDestination(data.value);
 				}}
@@ -288,7 +288,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 			{renderNavigation()}
 			{renderPlaceholders()}
 			{currentPlace && (
-				<div className={'flex-col gap-10 justify-content-center align-items-center'} style={{ maxWidth: 500 }}>
+				<div className="flex-col gap-10 justify-content-center align-items-center" style={{ maxWidth: 500 }}>
 					{(images.length || videos.length) && (
 						<Slider {...sliderSettings}>
 							{videos.map((video: string) => (
@@ -303,7 +303,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 										width: 300,
 										height: 150,
 									}}
-									alt={''}
+									alt=""
 									src={buildMediaUrl(image)}
 								/>
 							))}
@@ -314,17 +314,18 @@ function PlacesTinder(props: PlacesTinderProps) {
 					{currentPlace.description && (
 						<div
 							style={{ opacity: 0.6, wordBreak: 'break-all', maxHeight: '400px', overflowY: 'scroll' }}
-							className={'bright-scrollbar'}
+							className="bright-scrollbar"
 							dangerouslySetInnerHTML={{ __html: formatDescription(currentPlace.description) }}
 						/>
 					)}
 					{(currentPlace.tinder || currentPlace)?.more_info && (
 						<div>
 							<a
-								target={'_blank'}
-								className={'cursor-pointer'}
+								target="_blank"
+								className="cursor-pointer"
 								style={{ opacity: 0.6 }}
 								href={(currentPlace.tinder || currentPlace).more_info}
+								rel="noreferrer"
 							>
 								{/*todo complete - lokalise*/}
 								למידע נוסף
@@ -332,7 +333,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 						</div>
 					)}
 					<div />
-					<div className={'flex-row gap-20 justify-content-center'}>
+					<div className="flex-row gap-20 justify-content-center">
 						<Button
 							flavor={ButtonFlavor.primary}
 							text={TranslateService.translate(eventStore, 'PLACES_TINDER.LIKE')}
@@ -345,7 +346,7 @@ function PlacesTinder(props: PlacesTinderProps) {
 						/>
 						<Button
 							flavor={ButtonFlavor.primary}
-							className={'red'}
+							className="red"
 							text={TranslateService.translate(eventStore, 'PLACES_TINDER.DISLIKE')}
 							onClick={dislike}
 						/>

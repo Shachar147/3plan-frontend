@@ -12,6 +12,7 @@ interface TriplanSearchProps {
 	onChange?: (e: string) => void;
 	placeholder?: string;
 	className?: string;
+	resetCallback?: () => void;
 }
 
 function TriplanSearch(props: TriplanSearchProps) {
@@ -20,9 +21,9 @@ function TriplanSearch(props: TriplanSearchProps) {
 	return (
 		<div className={getClasses('search-container', isHidden && 'hidden', props.className)}>
 			<TextInput
-				modalValueName={'fc-search'}
-				type={'text'}
-				name={'fc-search'}
+				modalValueName="fc-search"
+				type="text"
+				name="fc-search"
 				value={value ?? eventStore.searchValue}
 				onChange={(e) => {
 					if (onChange) {
@@ -32,6 +33,8 @@ function TriplanSearch(props: TriplanSearchProps) {
 					}
 				}}
 				placeholder={props.placeholder ?? TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
+				updateValueWhenPropsChanged
+				resetCallback={props.resetCallback}
 			/>
 		</div>
 	);

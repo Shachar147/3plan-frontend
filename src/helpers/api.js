@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { getServerAddress } from '../config/config';
+import { getServerAddress, isDev } from '../config/config';
 
 const unAuthorizedRoutes = ['signin'];
 
-export function apiGet(self, url, onSuccess, onError, onFinish) {
+export function apiGet(self, url, onSuccess, onError, onFinish, isRemote = false) {
 	return axios
-		.get(getServerAddress() + url)
+		.get(getServerAddress(isRemote) + url)
 		.then((res) => {
 			onSuccess && onSuccess(res);
 			return res;
@@ -25,8 +25,8 @@ export function apiGet(self, url, onSuccess, onError, onFinish) {
 		});
 }
 
-export function apiGetPromise(self, url, handleUnAuthorized = true) {
-	return axios.get(getServerAddress() + url).catch((error) => {
+export function apiGetPromise(self, url, handleUnAuthorized = true, isRemote = false) {
+	return axios.get(getServerAddress(isRemote) + url).catch((error) => {
 		if (handleUnAuthorized) {
 			handleUnauthorizedError(error, url);
 		}
@@ -45,31 +45,45 @@ async function handleUnauthorizedError(error, url, redirectUnautirhized = true) 
 	return false;
 }
 
-export async function apiGetNew(url, data) {
+export async function apiGetNew(url, isRemote = false, throwOnError = true) {
 	return await axios
-		.get(getServerAddress() + url, {
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-			},
+		.get(getServerAddress(isRemote) + url, {
+			headers: getBaseHeaders(),
 		})
 		.then((res) => {
 			return res;
 		})
 		.catch(async (error) => {
-			const isUnauthorized = await handleUnauthorizedError(error, url);
-			if (!isUnauthorized) {
-				throw error;
+			if (throwOnError) {
+				const isUnauthorized = await handleUnauthorizedError(error, url);
+				if (!isUnauthorized) {
+					throw error;
+				}
 			}
 			return error;
 		});
 }
 
-export async function apiPost(url, data, redirectUnauthorized = true, onSuccess = () => {}, onError = () => {}) {
+function getBaseHeaders() {
+	if (isDev()) {
+		return {
+			'Access-Control-Allow-Origin': '*',
+		};
+	}
+	return {};
+}
+
+export async function apiPost(
+	url,
+	data,
+	redirectUnauthorized = true,
+	onSuccess = () => {},
+	onError = () => {},
+	isRemote = false
+) {
 	return await axios
-		.post(getServerAddress() + url, data, {
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-			},
+		.post(getServerAddress(isRemote) + url, data, {
+			headers: getBaseHeaders(),
 		})
 		.then((res) => {
 			if (onSuccess) {
@@ -89,12 +103,10 @@ export async function apiPost(url, data, redirectUnauthorized = true, onSuccess 
 			return error;
 		});
 }
-export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
+export function apiPostWithCallback(url, data, onSuccess, onError, onFinish, isRemote = false) {
 	axios
-		.post(getServerAddress() + url, data, {
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-			},
+		.post(getServerAddress(isRemote) + url, data, {
+			headers: getBaseHeaders(),
 		})
 		.then((res) => {
 			onSuccess(res);
@@ -103,8 +115,7 @@ export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
 			handleUnauthorizedError(error, url).then((isRedirected) => {
 				if (!isRedirected) {
 					onError(error, () => {
-						self.setState({ error: '' });
-						apiPost(self, url, data, onSuccess, onError, onFinish);
+						apiPost(null, url, data, onSuccess, onError, onFinish);
 					});
 				}
 			});
@@ -114,12 +125,10 @@ export function apiPostWithCallback(url, data, onSuccess, onError, onFinish) {
 		});
 }
 
-export function apiPut(url, data, onSuccess, onError, onFinish) {
+export function apiPut(url, data, onSuccess, onError, onFinish, isRemote = false) {
 	return axios
-		.put(getServerAddress() + url, data, {
-			headers: {
-				'Access-Control-Allow-Origin': '*',
-			},
+		.put(getServerAddress(isRemote) + url, data, {
+			headers: getBaseHeaders(),
 		})
 		.then((res) => {
 			return res;
@@ -131,19 +140,23 @@ export function apiPut(url, data, onSuccess, onError, onFinish) {
 		});
 }
 
-export function apiDelete(self, url, onSuccess, onError, onFinish) {
+export async function apiDeletePromise(url, isRemote = false) {
+	return await axios.delete(getServerAddress(isRemote) + url, {
+		headers: getBaseHeaders(),
+	});
+}
+
+export function apiDelete(self, url, onSuccess, onError, onFinish, isRemote = false) {
 	const httpClient = axios.create();
 	httpClient.defaults.timeout = 600000;
 
 	httpClient
 		.delete(
-			getServerAddress() + url,
+			getServerAddress(isRemote) + url,
 			{},
 			{
 				timeout: 600000,
-				headers: {
-					'Access-Control-Allow-Origin': '*',
-				},
+				headers: getBaseHeaders(),
 			}
 		)
 		.then((res) => {
@@ -152,13 +165,13 @@ export function apiDelete(self, url, onSuccess, onError, onFinish) {
 		.catch(function (error) {
 			handleUnauthorizedError(error, url).then((isRedirected) => {
 				if (!isRedirected) {
-					onError(error, () => {
+					onError?.(error, () => {
 						self.setState({ error: '' });
 					});
 				}
 			});
 		})
 		.then(function () {
-			onFinish();
+			onFinish?.();
 		});
 }

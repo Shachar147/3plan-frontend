@@ -1,0 +1,20 @@
+.system-recommendations-view {
+	&.with-divider {
+		padding-bottom: 50px;
+		margin-bottom: 10px;
+		border-bottom: 1px solid #efefef;
+	}
+
+	.system-recommendations-container {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		padding-inline-start: 8px;
+		position: relative;
+		inset-inline-start: 8px;
+
+		padding-inline-end: 24px;
+	}
+}

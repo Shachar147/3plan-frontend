@@ -1,8 +1,8 @@
 export const withPlacesFinder = false; // disabled for now
 
-export function getServerAddress() {
+export function getServerAddress(isRemote = false) {
 	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
-	if (mode && mode.trim() === 'development') {
+	if (mode && mode.trim() === 'development' && !isRemote) {
 		// return 'http://192.168.1.25:3001'; // Tel Aviv
 		// return 'http://192.168.1.83:3001'; // Nesher
 		// return 'http://192.168.1.20:3001'; // Nesher
@@ -13,12 +13,20 @@ export function getServerAddress() {
 		// return 'http://192.168.1.30:3001'; // Hadera
 		// return 'https://triplan-server.herokuapp.com';
 	} else {
-		return 'https://triplan-server.herokuapp.com';
+		// return 'https://triplan-server.herokuapp.com';
+		// return 'https://threeplan-server.onrender.com';
+		return 'https://3plan-server.vercel.app';
+		// return 'http://192.168.1.248:3001';
 	}
 }
 
 export function getWebSocketsServerAddress() {
 	return getServerAddress().replace('http://', 'ws://').replace('https://', 'wss://');
+}
+
+export function isDev() {
+	const mode = process.env.REACT_APP_MODE || process.env.STORYBOOK_APP_MODE;
+	return mode && mode.trim() === 'development';
 }
 
 export function getTinderServerAddress() {

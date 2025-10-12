@@ -13,7 +13,7 @@
 
 	/* make the map container background to have color even when there aren't any places yet */
 	.map-header + div {
-		 &:not(.visible-items-pane) {
+		&:not(.visible-items-pane) {
 			background-color: #f0eded;
 		}
 	}
@@ -69,7 +69,7 @@
 		//max-height: 270px;
 		//height: 270px;
 		//min-height: 270px;
-		min-height : 120px;
+		min-height: 120px;
 		//max-height: 50%;
 		height: 50%;
 		max-height: CALC(100% - 10px);
@@ -265,7 +265,7 @@
 	}
 
 	#map-view-mode {
-		input[id^=react-select-][id$=-input] {
+		input[id^='react-select-'][id$='-input'] {
 			border-bottom: 0 !important;
 		}
 	}
@@ -313,7 +313,8 @@ body.ltr {
 		font-weight: bold;
 	}
 
-	.no-items-on-map-placeholder-content,.no-items-on-map-placeholder-content-bold {
+	.no-items-on-map-placeholder-content,
+	.no-items-on-map-placeholder-content-bold {
 		white-space: pre-line;
 	}
 
@@ -330,7 +331,7 @@ body.rtl {
 
 @keyframes blink {
 	50% {
-		 opacity: 0;
+		opacity: 0;
 	}
 }
 

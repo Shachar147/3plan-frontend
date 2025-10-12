@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { getTinderServerAddress } from '../../config/config';
-import { Exception } from 'sass';
-import {endpoints} from "../../v2/utils/endpoints";
+import { getTinderServerAddress, isDev } from '../../config/config';
+import { endpoints } from '../../v2/utils/endpoints';
 
 const unAuthorizedRoutes = ['signin'];
 
@@ -44,6 +43,10 @@ export async function apiDelete(url: string) {
 }
 
 function _apiGet(url: string, accessToken: string) {
+	if (!accessToken) {
+		window.location.href = '/login';
+		return;
+	}
 	return axios
 		.get(getTinderServerAddress() + url, {
 			headers: {
@@ -59,11 +62,20 @@ function _apiGet(url: string, accessToken: string) {
 		});
 }
 
+function getBaseHeaders() {
+	if (isDev()) {
+		return {
+			'Access-Control-Allow-Origin': '*',
+		};
+	}
+	return {};
+}
+
 function _apiPost(url: string, data: any, accessToken?: string, serverAddress: string = getTinderServerAddress()) {
 	return axios
 		.post(serverAddress + url, data, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				...getBaseHeaders(),
 				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
 			},
 		})
@@ -80,7 +92,7 @@ function _apiPut(url: string, data: any, accessToken?: string) {
 	return axios
 		.put(getTinderServerAddress() + url, data, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				...getBaseHeaders(),
 				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
 			},
 		})
@@ -99,7 +111,7 @@ function _apiDelete(url: string, accessToken?: string) {
 	return axios
 		.delete(getTinderServerAddress() + url, {
 			headers: {
-				'Access-Control-Allow-Origin': '*',
+				...getBaseHeaders(),
 				Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
 			},
 		})

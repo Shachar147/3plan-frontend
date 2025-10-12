@@ -1,66 +1,80 @@
-import React, {useEffect, useState, useRef, useContext} from 'react';
-import TranslateService from "../../../services/translate-service";
-import {eventStoreContext} from "../../../stores/events-store";
-import {getClasses} from "../../../utils/utils";
-import {observer} from "mobx-react";
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import TranslateService from '../../../services/translate-service';
+import { eventStoreContext } from '../../../stores/events-store';
+import { getClasses } from '../../../utils/utils';
+import { observer } from 'mobx-react';
 
 interface LazyLoadComponentProps {
-    fetchData: (page: number, setLoading: (bool) => void) => Promise<any>;
-    children: React.ReactNode;
-    isLoading: boolean;
-    disableLoader: boolean;
-    className?: string;
-    isReachedEnd?: boolean
+	fetchData: (page: number, setLoading: (bool) => void) => Promise<any>;
+	children: React.ReactNode;
+	isLoading: boolean;
+	disableLoader: boolean;
+	className?: string;
+	isReachedEnd?: boolean;
 }
 
-const LazyLoadComponent = ({ children, fetchData, isLoading, disableLoader, className, isReachedEnd }: LazyLoadComponentProps) => {
-    const eventStore = useContext(eventStoreContext);
-    const [page, setPage] = useState(1);
-    const prevPage = useRef(0);
-    const [loading, setLoading] = useState(isLoading);
-    const loader = useRef(null);
+const LazyLoadComponent = ({
+	children,
+	fetchData,
+	isLoading,
+	disableLoader,
+	className,
+	isReachedEnd,
+}: LazyLoadComponentProps) => {
+	const eventStore = useContext(eventStoreContext);
+	const [page, setPage] = useState(1);
+	const prevPage = useRef(0);
+	const [loading, setLoading] = useState(isLoading);
+	const loader = useRef(null);
 
-    useEffect (() => {
-        if (page != prevPage.current) {
-            fetchData(page, setLoading);
-        }
-    }, [page]);
+	useEffect(() => {
+		if (page != prevPage.current && !isReachedEnd) {
+			fetchData(page, setLoading);
+		}
+	}, [page]);
 
-    useEffect(() => {
-        const options = {
-            root: null, // Use the viewport as the root
-            rootMargin: '0px',
-            threshold: 1.0,
-        };
+	useEffect(() => {
+		const options = {
+			root: null, // Use the viewport as the root
+			rootMargin: '0px',
+			threshold: 1.0,
+		};
 
-        const observer = new IntersectionObserver((entries) => {
-            // console.log("hereeee", entries[0], loading);
-            if (entries[0].isIntersecting && !loading && !isReachedEnd) {
-                setTimeout(() => {
-                    setPage((prevPage) => prevPage + 1);
-                }, 300);
-            }
-        }, options);
+		const observer = new IntersectionObserver((entries) => {
+			// console.log("hereeee", entries[0], loading);
+			if (entries[0].isIntersecting && !loading && !isReachedEnd) {
+				setTimeout(() => {
+					setPage((prevPage) => prevPage + 1);
+				}, 300);
+			}
+		}, options);
 
-        if (loader.current) {
-            observer.observe(loader.current);
-        }
+		if (loader.current) {
+			observer.observe(loader.current);
+		}
 
-        return () => {
-            if (loader.current) {
-                observer.unobserve(loader.current);
-            }
-        };
-    }, [loading]);
+		return () => {
+			if (loader.current) {
+				observer.unobserve(loader.current);
+			}
+		};
+	}, [loading, isReachedEnd]);
 
-    return (
-        <div className={className}>
-            {children}
-            <div ref={loader} className={getClasses("width-100-percents text-align-center", eventStore.isHebrew && 'direction-rtl')}>
-                {loading && !disableLoader && <span className={getClasses(eventStore.isMobile && 'margin-block-8')}>{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}</span>}
-            </div>
-        </div>
-    );
+	return (
+		<div className={className}>
+			{children}
+			<div
+				ref={loader}
+				className={getClasses('width-100-percents text-align-center', eventStore.isHebrew && 'direction-rtl')}
+			>
+				{loading && !disableLoader && (
+					<span className={getClasses(eventStore.isMobile && 'margin-block-8')}>
+						{TranslateService.translate(eventStore, 'LOADING_TRIPS.TEXT')}
+					</span>
+				)}
+			</div>
+		</div>
+	);
 };
 
 export default LazyLoadComponent;

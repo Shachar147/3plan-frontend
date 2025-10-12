@@ -15,8 +15,8 @@ import { LOGIN_DELAY } from '../../utils/consts';
 import { apiPostWithCallback } from '../../helpers/api';
 import './login-page.scss';
 import { useInviteLinkLSKey } from '../../services/data-handlers/db-service';
-import {FeatureFlagsService} from "../../utils/feature-flags";
-import {newDesignRootPath} from "../../v2/utils/consts";
+import { FeatureFlagsService } from '../../utils/feature-flags';
+import { newDesignRootPath } from '../../v2/utils/consts';
 
 const defaultErrorField: Record<string, boolean> = {
 	username: false,
@@ -51,16 +51,16 @@ function LoginPage() {
 	const TriplanLogo = ({ onClick }: { onClick?: () => void }) => (
 		<img
 			className={getClasses('logo-container', !eventStore.isMobile && 'pointer')}
-			src={'/images/logo/new-logo.png'}
+			src="/images/logo/new-logo.png"
 			onClick={onClick}
 		/>
 	);
 
 	const FooterLinkBlock = () => (
-		<span className={'register-link-container'} key={'register-link-container'}>
-			<div style={{ direction: eventStore.getCurrentDirection() }}>
+		<span className="register-link-container" key="register-link-container">
+			<div>
 				{TranslateService.translate(eventStore, 'REGISTER_PREFIX')}{' '}
-				<Link data-testid={'register'} to={'/register'}>
+				<Link data-testid="register" to="/register">
 					{TranslateService.translate(eventStore, 'REGISTER')}
 				</Link>
 			</div>
@@ -171,7 +171,7 @@ function LoginPage() {
 		error === '' ? (
 			''
 		) : (
-			<div className={'field red'} data-testid={errorTestId}>
+			<div className="field red" data-testid={errorTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, error) }} />
 			</div>
 		);
@@ -179,7 +179,7 @@ function LoginPage() {
 		message === '' || error !== '' ? (
 			''
 		) : (
-			<div className={'field blue'} data-testid={messageTestId}>
+			<div className="field blue" data-testid={messageTestId}>
 				<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, message) }} />
 			</div>
 		);

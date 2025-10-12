@@ -72,7 +72,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 			const index = props.options.map((option) => option.key).indexOf(value);
 			const containerRect = containerRef.current?.getBoundingClientRect();
 			const childRect = refs[index]?.getBoundingClientRect();
-			const width = Math.floor(childRect.width);
+			const width = Math.floor(childRect?.width ?? 0);
 
 			// take left / right based on current direction (for different languages)
 			const left =
@@ -106,7 +106,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 		if (typeof icon === 'string') {
 			return (
 				<div className="multiple-options-toggle-button-item-icon-container">
-					<img className="icon-image" src={icon} alt={''} />
+					<img className="icon-image" src={icon} alt="" />
 				</div>
 			);
 		}
@@ -127,7 +127,7 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 					{renderIcon(
 						isSelected && useActiveButtons ? iconActive || defaultIcon || icon : defaultIcon || icon
 					)}
-					<span className={'multiple-options-toggle-button-item-text'}>{name}</span>
+					<span className="multiple-options-toggle-button-item-text">{name}</span>
 				</>
 			</div>
 		);

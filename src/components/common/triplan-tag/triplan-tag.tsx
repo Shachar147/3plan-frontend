@@ -8,9 +8,9 @@ export interface TagProps {
 const TriplanTag = (props: TagProps) => {
 	const { text, onDelete } = props;
 	return (
-		<div className={'triplan-tag'}>
-			<span className={'triplan-tag-text'}>{text}</span>
-			<span className={'triplan-tag-delete'} onClick={onDelete}>
+		<div className="triplan-tag">
+			<span className="triplan-tag-text">{text}</span>
+			<span className="triplan-tag-delete" onClick={onDelete}>
 				x
 			</span>
 		</div>

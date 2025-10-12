@@ -85,6 +85,9 @@ export interface TriPlanCategory {
 	title: string;
 	icon: string;
 	description?: string;
+	titleKey?: string;
+	/** Optional Google Maps marker icon key (see icons map) */
+	googleMapIcon?: string;
 }
 
 export interface LocationData {
@@ -153,6 +156,7 @@ export enum TripActions {
 	changedSidebarEvent = 'changedSidebarEvent',
 	duplicatedSidebarEvent = 'duplicatedSidebarEvent',
 	createdTask = 'createdTask',
+	updatedTask = 'updatedTask',
 
 	// categories
 	addedCategory = 'addedCategory',
@@ -164,6 +168,7 @@ export enum TripActions {
 	unlockedTrip = 'unlockedTrip',
 	lockedTrip = 'lockedTrip',
 	updatedTrip = 'updatedTrip',
+	changedTripColors = 'changedTripColors',
 	hideTrip = 'hideTrip',
 	unhideTrip = 'unhideTrip',
 	createdTrip = 'createdTrip',
@@ -173,7 +178,7 @@ export enum TripActions {
 	sharedTrip = 'sharedTrip',
 	usedShareTripLink = 'usedShareTripLink',
 	changeCollaboratorPermissions = 'changeCollaboratorPermissions',
-	deleteCollaborator = 'deleteCollaborator'
+	deleteCollaborator = 'deleteCollaborator',
 }
 
 export enum TriplanTaskStatus {

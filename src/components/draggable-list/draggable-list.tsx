@@ -112,7 +112,7 @@ const DraggableList = () => {
 							{/*<i className="fa fa-exchange" aria-hidden="true" />*/}
 						</li>
 					) : (
-						<li className={'triplan-draggable-list-item disabled'} />
+						<li className="triplan-draggable-list-item disabled" />
 					)
 				)}
 			</ul>

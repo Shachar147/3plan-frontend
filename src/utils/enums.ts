@@ -3,12 +3,14 @@ export enum TriplanCurrency {
 	usd = 'usd',
 	ils = 'ils',
 	aed = 'aed',
+	baht = 'baht',
 }
 export const exchangeRates = {
-	[TriplanCurrency.usd]: 1,    // base currency
-	[TriplanCurrency.eur]: 0.89, // 1 USD = 0.9 EUR
+	[TriplanCurrency.usd]: 1, // base currency
+	[TriplanCurrency.eur]: 0.88, // 1 USD = 0.9 EUR
 	[TriplanCurrency.ils]: 3.69, // 1 USD = 3.72 ILS
-	[TriplanCurrency.aed]: 3.67  // 1 USD = 3.67 AED
+	[TriplanCurrency.aed]: 3.67, // 1 USD = 3.67 AED
+	[TriplanCurrency.baht]: 33.35, // 1 USD = 33.35 BAHT
 };
 
 export enum TriplanPriority {
@@ -18,6 +20,14 @@ export enum TriplanPriority {
 	least = 3, // black
 	unset = 0, // gray
 }
+
+export const prioritiesOrder = [
+	TriplanPriority.must,
+	TriplanPriority.high,
+	TriplanPriority.maybe,
+	TriplanPriority.least,
+	TriplanPriority.unset,
+];
 
 export enum TriplanEventPreferredTime {
 	morning = 1,
@@ -35,8 +45,8 @@ export enum ViewMode {
 	list = 'list',
 	calendar = 'calendar',
 	map = 'map',
-
 	feed = 'feed',
+	itinerary = 'itinerary',
 
 	// for mobile:
 	sidebar = 'sidebar',
@@ -79,4 +89,9 @@ export function getEnumKey(enumObj: any, value: any) {
 
 export enum InputValidation {
 	link = 'link',
+}
+
+export enum SyncMode {
+	localToRemote = 'localToRemote',
+	remoteToLocal = 'remoteToLocal',
 }

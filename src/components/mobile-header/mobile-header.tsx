@@ -8,7 +8,7 @@ import { eventStoreContext } from '../../stores/events-store';
 import { getClasses } from '../../utils/utils';
 import EllipsisWithTooltip from 'react-ellipsis-with-tooltip';
 import TranslateService from '../../services/translate-service';
-import {FeatureFlagsService} from "../../utils/feature-flags";
+import { FeatureFlagsService } from '../../utils/feature-flags';
 
 interface MobileHeaderProps extends TriplanHeaderProps {
 	showTripName?: boolean;
@@ -32,17 +32,26 @@ function MobileHeader(options: MobileHeaderProps) {
 					<div className="flex-row align-items-center">
 						{withLogo && (
 							<Link to={homeUrl} className="mobile-header-row-logo">
-								<img src={FeatureFlagsService.isNewDesignEnabled() ? "/images/logo/new-logo-white.png" : "/images/logo/new-logo.png"} height={60} />
+								<img
+									src={
+										FeatureFlagsService.isNewDesignEnabled()
+											? '/images/logo/new-logo-white.png'
+											: '/images/logo/new-logo.png'
+									}
+									height={60}
+								/>
 							</Link>
 						)}
 					</div>
 
 					{showTripName && (
-						<span className="mobile-header-trip-name-text"><EllipsisWithTooltip placement="bottom">{eventStore.tripName}</EllipsisWithTooltip></span>
+						<span className="mobile-header-trip-name-text">
+							<EllipsisWithTooltip placement="bottom">{eventStore.tripName}</EllipsisWithTooltip>
+						</span>
 					)}
 
 					{options.adminMode && !showTripName && (
-						<div className={'border-radius-10 opacity-0-6 padding-10'} style={{ backgroundColor: 'white' }} onClick={() => navigate('/')}>
+						<div className="admin-mode-link" onClick={() => navigate('/')}>
 							<EllipsisWithTooltip placement="bottom">
 								{TranslateService.translate(eventStore, 'SWITCH_TO_USER_SIDE')}
 							</EllipsisWithTooltip>
@@ -50,7 +59,7 @@ function MobileHeader(options: MobileHeaderProps) {
 					)}
 
 					<div className="flex-row align-items-center gap-15">
-						<MobileNavbar {...options} isSearchOpen={eventStore.isSearchOpen} />
+						<MobileNavbar {...options} />
 					</div>
 				</div>
 			</div>

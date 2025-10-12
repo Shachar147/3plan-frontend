@@ -1,48 +1,50 @@
 .scroll-top-container {
-  position: fixed;
-  inset-inline-end: 30px;
-  display: flex;
-  justify-content: flex-end;
-  z-index:9999;
+	&:not(.position-sticky) {
+		position: fixed;
+	}
+	inset-inline-end: 30px;
+	display: flex;
+	justify-content: flex-end;
+	z-index: 9999;
 
-  &:not(.bottom-70) {
-    bottom: 30px;
-  }
+	&:not(.bottom-70) {
+		bottom: 30px;
+	}
 
-  button {
-    background-color: #2d2d2d;
-    color: white;
-    border-radius: 50%;
-    padding: 20px;
-    cursor: pointer;
-    transition: opacity 0.2s ease-in-out;
-    border:3px solid white;
+	button {
+		background-color: #2d2d2d;
+		color: white;
+		border-radius: 50%;
+		padding: 20px;
+		cursor: pointer;
+		transition: opacity 0.2s ease-in-out;
+		border: 3px solid white;
 
-    &:hover {
-      opacity: 0.8;
-    }
+		&:hover {
+			opacity: 0.8;
+		}
 
-    i {
-      font-size: 20px;
-    }
-  }
+		i {
+			font-size: 20px;
+		}
+	}
 }
 
 @media only screen and (max-width: 750px) {
-  .scroll-top-container {
-    position: fixed;
-    inset-inline-end: 10px;
+	.scroll-top-container {
+		position: fixed;
+		inset-inline-end: 10px;
 
-    &:not(.bottom-70) {
-      bottom: 20px;
-    }
+		&:not(.bottom-70) {
+			bottom: 20px;
+		}
 
-    button {
-      padding: 20px;
+		button {
+			padding: 20px;
 
-      i {
-        font-size: 16px;
-      }
-    }
-  }
+			i {
+				font-size: 16px;
+			}
+		}
+	}
 }

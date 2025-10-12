@@ -1,15 +1,14 @@
 .external-events-container {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 10px; // 20px
 
-	/*max-height: 945px;*/ /* causing weird double scroll behavior */
 	overflow-y: auto;
 	position: sticky;
 
 	padding-inline-end: 10px;
 	width: fit-content;
-	max-width: 420px; // max-width: 490px;
+	max-width: 420px;
 	min-width: 400px;
 
 	transition: max-width 0.3s ease-in-out;
@@ -25,6 +24,7 @@
 		max-width: 0 !important;
 		width: 0 !important;
 		padding: 0 !important;
+		height: 0 !important;
 
 		+ .minimize-sidebar-container {
 			font-size: 12px;
@@ -199,7 +199,7 @@ body.rtl {
 	gap: 4px;
 	margin-bottom: 10px;
 
-	background-color: rgba(0,0,0,0.03);
+	background-color: rgba(0, 0, 0, 0.03);
 	padding: 2.5px;
 	border-radius: 20px;
 
@@ -379,7 +379,7 @@ body.rtl {
 			padding-inline-start: 5px;
 			max-width: CALC(100% - 20px);
 
-			.triplan-text-input input[type=text] {
+			.triplan-text-input input[type='text'] {
 				min-width: 95px;
 			}
 		}
@@ -387,5 +387,13 @@ body.rtl {
 
 	button {
 		min-height: 30px !important;
+	}
+}
+
+@media only screen and (min-width: 750px) {
+	.external-events-container {
+		height: calc(100vh - 200px); /* Set fixed height to match parent container */
+		position: relative;
+		z-index: 3; /* Set higher than calendar to ensure proper stacking */
 	}
 }

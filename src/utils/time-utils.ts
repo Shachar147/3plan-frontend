@@ -76,6 +76,18 @@ export function convertMsToHM(milliseconds: number): string {
 	return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
 }
 
+export function getDurationInMs(duration: string) {
+	if (!duration) {
+		return 0;
+	}
+	duration = fixDuration(duration);
+
+	const hours = parseInt(duration.split(':')[0]);
+	const minutes = parseInt(duration.split(':')[1]);
+	const milliseconds = minutes * 60000 + hours * 3600000;
+	return milliseconds;
+}
+
 export function formatDuration(duration: string) {
 	duration = fixDuration(duration);
 
@@ -190,6 +202,19 @@ export function addDays(dt: Date, days: number): Date {
 export function addHours(dt: Date, hours: number): Date {
 	dt.setHours(dt.getHours() + hours);
 	return dt;
+}
+
+export function addMinutes(dt: Date, minutes: number): Date {
+	dt.setMinutes(dt.getMinutes() + minutes);
+	return dt;
+}
+
+export function add15Minutes(dt: Date): Date {
+	return addMinutes(dt, 15);
+}
+
+export function subtract15Minutes(dt: Date): Date {
+	return addMinutes(dt, -15);
 }
 
 export function addSeconds(dt: Date, seconds: number): Date {
@@ -334,17 +359,17 @@ export function israelDateFormatToUSA(israelDate: string): string {
 	return [parts[1], parts[0], parts[2]].join('/');
 }
 
-export function getUserDateFormat(eventStore: EventStore){
+export function getUserDateFormat(eventStore: EventStore) {
 	if (eventStore.isHebrew) {
-		return 'DD/MM/YYYY'
+		return 'DD/MM/YYYY';
 	} else {
 		return 'MM/DD/YYYY';
 	}
 }
 
-export function getUserDateFormatLowercase(eventStore: EventStore){
+export function getUserDateFormatLowercase(eventStore: EventStore) {
 	if (eventStore.isHebrew) {
-		return 'dd/mm/YYYY'
+		return 'dd/mm/YYYY';
 	} else {
 		return 'mm/dd/YYYY';
 	}
@@ -354,7 +379,7 @@ export function serializeDuration(eventStore: EventStore, seconds: number) {
 	const timeUnits = [
 		{ unit: 'day', seconds: 86400 },
 		{ unit: 'hour', seconds: 3600 },
-		{ unit: 'min', seconds: 60 }
+		{ unit: 'min', seconds: 60 },
 	];
 	let result = [];
 	for (let { unit, seconds: unitSeconds } of timeUnits) {
@@ -365,7 +390,7 @@ export function serializeDuration(eventStore: EventStore, seconds: number) {
 		}
 	}
 	if (seconds > 0 && result.length === 0) {
-		result.push(seconds + ' ' + TranslateService.translate(eventStore,'sec' + (seconds > 1 ? 's' : '')));
+		result.push(seconds + ' ' + TranslateService.translate(eventStore, 'sec' + (seconds > 1 ? 's' : '')));
 	}
 	return result.join(' ');
 }

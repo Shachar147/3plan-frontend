@@ -84,6 +84,10 @@ body {
 	width: 6px;
 }
 
+.overflow-y-scroll {
+	overflow-y: scroll;
+}
+
 .overflow-hidden {
 	overflow: hidden;
 }
@@ -218,6 +222,10 @@ body {
 	padding-inline-start: 10px;
 }
 
+.padding-inline-end-4 {
+	padding-inline-end: 4px;
+}
+
 .padding-inline-end-10 {
 	padding-inline-end: 10px !important;
 }
@@ -262,6 +270,10 @@ body {
 	padding-inline: 100px;
 }
 
+.padding-inline-128 {
+	padding-inline: 128px;
+}
+
 .padding-inline-150 {
 	padding-inline: 150px !important;
 }
@@ -288,6 +300,14 @@ body {
 
 .padding-top-5 {
 	padding-top: 5px;
+}
+
+.padding-top-10 {
+	padding-top: 5px;
+}
+
+.padding-top-24 {
+	padding-top: 24px;
 }
 
 .padding-top-30 {
@@ -391,6 +411,10 @@ body {
 	margin-inline: 0;
 }
 
+.margin-inline-end-10 {
+	margin-inline-end: 10px;
+}
+
 .margin-inline-2 {
 	margin-inline: 2px;
 }
@@ -405,6 +429,14 @@ body {
 
 .margin-inline-10 {
 	margin-inline: 10px;
+}
+
+.margin-inline-start-3 {
+	margin-inline-start: 3px;
+}
+
+.margin-inline-start--5 {
+	margin-inline-start: -5px;
 }
 
 .margin-inline-start-25 {
@@ -451,7 +483,7 @@ body {
 	margin-top: 80px;
 }
 
-.margin-bottom-0{
+.margin-bottom-0 {
 	margin-bottom: 0;
 }
 
@@ -580,10 +612,17 @@ body {
 	justify-content: center;
 }
 
+.justify-content-space-between {
+	justify-content: space-between;
+}
+
 .cursor-pointer {
 	cursor: pointer;
 }
 
+.gap-0-important {
+	gap: 0 !important;
+}
 .gap-2 {
 	gap: 2px;
 }
@@ -626,6 +665,10 @@ body {
 
 .gap-30 {
 	gap: 30px;
+}
+
+.gap-40 {
+	gap: 40px;
 }
 
 .flex-gap-5 {
@@ -694,6 +737,10 @@ div[class$='-control'] {
 	border-bottom: 1px solid #dee2e6;
 }
 
+.border-bottom-light-gray {
+	border-bottom: 1px solid #efefef;
+}
+
 .input-with-label input.textInput,
 .input-with-label textarea.textAreaInput,
 .input-with-label .datePickerInput {
@@ -711,7 +758,10 @@ div[class$='-control'] {
 	}
 }
 
-.input-with-label .triplan-textarea-input textarea, .input-with-label .triplan-textarea-input input, .input-with-label .triplan-text-input textarea, .input-with-label .triplan-text-input input {
+.input-with-label .triplan-textarea-input textarea,
+.input-with-label .triplan-textarea-input input,
+.input-with-label .triplan-text-input textarea,
+.input-with-label .triplan-text-input input {
 	&:read-only {
 		border: 0 !important;
 	}
@@ -797,7 +847,7 @@ body.ltr {
 		}
 	}
 
-	&:not(.ordered){
+	&:not(.ordered) {
 		.locked-icon {
 			display: none;
 		}
@@ -859,7 +909,8 @@ body.ltr {
 .red-background {
 	background-color: var(--invalid-red-background) !important;
 
-	.fc-event, .fc-event-main {
+	.fc-event,
+	.fc-event-main {
 		background-color: var(--invalid-red-background) !important;
 	}
 }
@@ -867,11 +918,10 @@ body.ltr {
 .red-border {
 	border-color: var(--red) !important;
 
-	&:focus-visible{
+	&:focus-visible {
 		outline: 1px solid var(--red);
 	}
 }
-
 
 .max-width-20 {
 	max-width: 20px;
@@ -896,8 +946,20 @@ body.ltr {
 	max-height: 400px;
 }
 
+.max-height-600 {
+	max-height: 600px;
+}
+
 .max-width-650 {
 	max-width: 650px;
+}
+
+.max-width-50-percents {
+	max-width: 50%;
+}
+
+.max-width-100-percents {
+	max-width: 100%;
 }
 
 .align-items-start {
@@ -994,7 +1056,6 @@ a.disabled {
 }
 
 .images-input {
-
 	// make it be aligned center
 	display: flex;
 	flex: 1 1 0;
@@ -1064,6 +1125,10 @@ a.disabled {
 	top: -1px;
 }
 
+.top-120 {
+	top: 120px;
+}
+
 .text-align-center {
 	text-align: center;
 }
@@ -1078,6 +1143,10 @@ a.disabled {
 
 .text-align-right {
 	text-align: right !important;
+}
+
+.text-align-end {
+	text-align: end;
 }
 
 a.text-decoration-none {
@@ -1180,13 +1249,42 @@ input[type='text'] {
 	font-family: 'Arial';
 }
 
+.line-height-15 {
+	line-height: 15px;
+}
+
+.width-80 {
+	width: 80px;
+}
+
+.width-150 {
+	width: 150px;
+}
+
+.width-200 {
+	width: 200px;
+}
+
+.min-width-150 {
+	min-width: 150px;
+}
+
 .width-300 {
 	width: 300px;
+}
+
+.width-400 {
+	width: 400px;
 }
 
 .width-100-percent,
 .width-100-percents {
 	width: 100%;
+}
+
+.height-100-percent,
+.height-100-percents {
+	height: 100%;
 }
 
 .width-100-percents-important {
@@ -1202,7 +1300,7 @@ input[type='text'] {
 }
 
 .z-index-99999999 {
-	z-index:99999999
+	z-index: 99999999;
 }
 
 .z-index-1000 {
@@ -1226,25 +1324,25 @@ input[type='text'] {
 	width: 100px;
 }
 
-input[type="datetime-local"],
-input[type="datetime-local"] {
+input[type='datetime-local'],
+input[type='datetime-local'] {
 	// content: "" !important;
 }
 
-input[type="datetime-local"][data-value="empty"]:before {
+input[type='datetime-local'][data-value='empty']:before {
 	content: attr(placeholder) !important;
 	color: #aaa;
 	width: 200px;
-	position:absolute;
+	position: absolute;
 }
 
 body.rtl {
-	input[type="datetime-local"]:focus:before,
-	input[type="datetime-local"]:valid:before {
+	input[type='datetime-local']:focus:before,
+	input[type='datetime-local']:valid:before {
 		// content: "" !important;
 	}
 
-	input[type="datetime-local"][data-value="empty"]:before {
+	input[type='datetime-local'][data-value='empty']:before {
 		content: attr(placeholder) !important;
 		direction: rtl;
 		text-align: right;
@@ -1263,17 +1361,29 @@ body.rtl {
 	white-space: pre-line;
 }
 
-.triplan-text-input {
-	position: relative;
+body.rtl {
+	.triplan-text-input {
+		position: relative;
 
-	i.fa {
-		position: absolute;
-		top: 9px;
-		left: 10px;
+		i.fa {
+			position: absolute;
+			top: 9px;
+			left: 10px;
+		}
 	}
 }
 
 body.ltr {
+	.triplan-text-input {
+		position: relative;
+
+		i.fa {
+			position: absolute;
+			top: 9px;
+			right: 10px;
+		}
+	}
+
 	.body-text-align {
 		text-align: left;
 	}
@@ -1285,12 +1395,11 @@ body.rtl {
 	}
 }
 
-
 // remove autocomplete yellow background
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active  {
+input:-webkit-autofill:active {
 	-webkit-box-shadow: 0 0 0 60px #fafafa inset !important;
 	background-color: #fafafa !important;
 	background-clip: content-box !important;
@@ -1314,9 +1423,46 @@ input:read-only {
 .triplan-text-input {
 	display: flex;
 	flex: 1 1 0;
-	input, textarea {
+	input,
+	textarea {
 		width: 100%;
 		max-width: unset !important;
+	}
+}
+
+// Time adjustment buttons styling
+.date-picker-with-shortcuts {
+	display: flex;
+	flex: 1 1 0;
+	align-items: center;
+	gap: 10px;
+
+	.triplan-date-picker-input {
+		flex: 1;
+
+		.datePickerInput {
+			min-width: unset; // otherwise it'll be 100%, and the line will overflow due to the buttons.
+		}
+	}
+
+	.time-shortcuts {
+		display: flex;
+		gap: 5px;
+
+		.time-shortcut-btn {
+			min-width: 40px;
+			padding: 4px 8px;
+			font-size: 12px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			background: #f8f9fa;
+			color: #495057;
+
+			&:hover {
+				background: #e9ecef;
+				border-color: #adb5bd;
+			}
+		}
 	}
 }
 .triplan-selector {
@@ -1325,12 +1471,11 @@ input:read-only {
 
 // style inputs
 .input-with-label {
-
 	input,
 	textarea,
 	select,
 	.icon-selector div[class$='-control'],
-	.triplan-selector div[class$='-control']{
+	.triplan-selector div[class$='-control'] {
 		border-top: 0 !important;
 		border-left: 0 !important;
 		border-right: 0 !important;
@@ -1350,11 +1495,11 @@ input:read-only {
 	select {
 		div[id^='react-select-'][id$='-placeholder'],
 		&::placeholder {
-			color: #CCCCCC;
+			color: #cccccc;
 		}
 	}
 
-	input[type="text"] {
+	input[type='text'] {
 		&:focus,
 		&:active {
 			// border-bottom: 1px solid var(--gray) !important;
@@ -1374,13 +1519,17 @@ input:read-only {
 	}
 	.triplan-selector,
 	.icon-selector {
-		input[type="text"] {
+		input[type='text'] {
 			&:focus,
 			&:active {
 				border: 0 !important;
 			}
 		}
 	}
+}
+
+.border-1px-solid-ccc {
+	border: 1px solid #ccc;
 }
 
 .input-with-label {
@@ -1419,21 +1568,6 @@ input:read-only {
 	}
 }
 
-// limit the views to 100vh minus the header and the gaps around it, to make the whole view appear without window scroll.
-// this way sidebar and the main content will have their own scrolls.
-// added only to pc.
-.external-events-container.pc{
-	&:not(.combined) {
-		// uncomment this line if having problems with sidebar height:
-		//max-height: calc(100vh - 180px) !important;
-	}
-}
-
-.calender-container.pc,
-.list-container.pc {
-	max-height: calc(100vh - 180px) !important;
-}
-
 .combined-container {
 	.calender-container.pc {
 		max-height: unset !important;
@@ -1445,18 +1579,21 @@ input:read-only {
 	align-items: center;
 	justify-content: center;
 	min-height: 33px;
-	background-color: #fcf9f1;
+	//background-color: #fcf9f1;
 	border-radius: 18px;
 	text-align: center;
 	margin-inline: 30px;
 	margin-block: 8px;
+
+	background-color: rgb(239 246 255);
+	border: 1px solid rgb(29 78 216);
 }
 
 .fa-filter + span {
 	display: none;
 }
 .min-height-20 {
-	min-height:20px;
+	min-height: 20px;
 }
 
 .min-height-40 {
@@ -1467,7 +1604,9 @@ body.admin-side {
 	// background-color: #d3efff !important;
 	background-color: #ebebeb !important;
 
-	.mobile-header, .mobile-header .mobile-navbar, .mobile-header .mobile-trip-name {
+	.mobile-header,
+	.mobile-header .mobile-navbar,
+	.mobile-header .mobile-trip-name {
 		//background-color: #c4e1f1 !important;
 		background-color: #bfbfbf !important;
 	}
@@ -1481,14 +1620,15 @@ body.admin-side {
 	}
 }
 
-table{
+table {
 	&.border-solid-table {
 		border: 1px solid;
 		display: table;
 
 		tr {
 			display: table-row;
-			th, td {
+			th,
+			td {
 				display: table-cell;
 				border: 1px solid;
 				padding-inline: 8px;
@@ -1509,14 +1649,15 @@ table{
 }
 
 .gray-color {
-	color: var(--gray)
+	color: var(--gray);
 }
 
 body.rtl {
 	table {
 		&.border-solid-table {
 			tr {
-				th, td {
+				th,
+				td {
 					&:first-child {
 						min-width: 140px;
 						font-weight: bold;
@@ -1535,15 +1676,15 @@ input[id^='react-select-'][id$='-input'] {
 	border-bottom: 1px solid #ccc !important;
 
 	&:focus {
-		border:0 !important;
+		border: 0 !important;
 		border-bottom: 1px solid #ccc !important;
 	}
 }
 
 .input-with-label {
 	div[class^=' css-'][class$='-Input'] {
-		input[type="text"],
-		input[type="text"]:focus {
+		input[type='text'],
+		input[type='text']:focus {
 			border: 0 !important;
 		}
 	}
@@ -1551,6 +1692,10 @@ input[id^='react-select-'][id$='-input'] {
 
 .border-radius-10 {
 	border-radius: 10px;
+}
+
+.border-radius-20 {
+	border-radius: 20px;
 }
 
 .border-radius-round {
@@ -1565,7 +1710,6 @@ input[id^='react-select-'][id$='-input'] {
 	color: black; /* Set the text color to black */
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Create a shadow effect */
 }
-
 
 .max-height-100-ellipsis {
 	max-height: 100px; /* Set the maximum height */
@@ -1602,4 +1746,41 @@ body.rtl {
 			direction: rtl;
 		}
 	}
+}
+
+body:has(.loading-component) {
+	// prevent header from being shown when loading appears.
+	.triplan-header-banner-header-line {
+		display: none !important;
+	}
+}
+
+.shimmer-animation {
+	animation: shimmer 3s infinite;
+	background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+	background-size: 1000px 100%;
+}
+
+// fix carousel rtl bug
+.carousel-wrapper {
+	position: relative;
+}
+
+body.rtl {
+	.carousel-wrapper {
+		direction: ltr; // to fix the gallery view in hebrew
+
+		.category-label,
+		.trips-list-trip-actions-v2 {
+			direction: rtl;
+		}
+	}
+}
+
+.text-overflow-ellipsis {
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.max-width-90-percents {
+	max-width: 90%;
 }

@@ -1,355 +1,297 @@
-import React, {useContext, useEffect, useMemo, useRef, useState} from "react";
-import {eventStoreContext} from "../../../stores/events-store";
-import {useHandleWindowResize} from "../../../custom-hooks/use-window-size";
-import TabMenu from "../../../components/common/tabs-menu/tabs-menu";
-import TranslateService from "../../../services/translate-service";
-import {observer} from "mobx-react";
-import FeedView from "../../components/feed-view/feed-view";
-import './main-page-content.scss'
-import MyTrips from "../my-trips-tab/my-trips-tab";
-import {feedStoreContext} from "../../stores/feed-view-store";
-import SavedCollectionsTab from "../saved-collections-tab/saved-collections-tab";
-import {myTripsContext} from "../../stores/my-trips-store";
-import {getClasses, LOADER_DETAILS} from "../../../utils/utils";
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { eventStoreContext } from '../../../stores/events-store';
+import { useHandleWindowResize } from '../../../custom-hooks/use-window-size';
+import TabMenu from '../../../components/common/tabs-menu/tabs-menu';
+import TranslateService from '../../../services/translate-service';
+import { observer } from 'mobx-react';
+import FeedView from '../../components/feed-view/feed-view';
+import './main-page-content.scss';
+import MyTripsTab from '../my-trips-tab/my-trips-tab';
+import { feedStoreContext } from '../../stores/feed-view-store';
+import SavedCollectionsTab from '../saved-collections-tab/saved-collections-tab';
+import { myTripsContext } from '../../stores/my-trips-store';
+import { getClasses, getEventTitle, isTemplateUsername, LOADER_DETAILS } from '../../../utils/utils';
 import {
-    exploreTabId,
-    mainPageContentTabLsKey,
-    myTripsTabId,
-    savedCollectionsTabId,
-    searchResultsTabId,
-    specificItemTabId
-} from "../../utils/consts";
-import {rootStoreContext} from "../../stores/root-store";
-import {getParameterFromHash} from "../../utils/utils";
-import {useMyTrips, useSavedCollections, useScrollWhenTabChanges} from "../../hooks/main-page-hooks";
-import {TabData} from "../../utils/interfaces";
-import FeedViewApiService, {allSources} from "../../services/feed-view-api-service";
-import {useParams} from "react-router-dom";
-import {runInAction} from "mobx";
-import DataServices, {LocaleCode} from "../../../services/data-handlers/data-handler-base";
-import {TripDataSource} from "../../../utils/enums";
-import LoadingComponent from "../../../components/loading/loading-component";
-import MainPage from "../../../pages/main-page/main-page";
+	exploreTabId,
+	mainPageContentTabLsKey,
+	mobileSuggestedTripsTabId,
+	mobileSystemRecommendationsTabId,
+	mobileTopPicksTabId,
+	myTripsTabId,
+	savedCollectionsTabId,
+	searchResultsTabId,
+	specificItemTabId,
+} from '../../utils/consts';
+import { rootStoreContext } from '../../stores/root-store';
+import { getParameterFromHash } from '../../utils/utils';
+import {
+	useCreateRandomTemplate,
+	useLoadRandomPlacePOIs,
+	useMyTrips,
+	useSavedCollections,
+	useScrollWhenTabChanges,
+} from '../../hooks/main-page-hooks';
+import { TabData } from '../../utils/interfaces';
+import { useParams } from 'react-router-dom';
+import LoadingComponent from '../../../components/loading/loading-component';
+import MainPage from '../../../pages/main-page/main-page';
+import TemplatesView from '../../components/templates-view/templates-view';
+import SystemRecommendationsView from '../../components/system-recommendations-view/system-recommendations-view';
+import { CalendarEvent } from '../../../utils/interfaces';
 
-function TriplanTabContent({ content }: { content: string | React.ReactNode}) {
-    return (
-        <div className="main-page-content">
-            {content}
-        </div>
-    )
+function TriplanTabContent({ content }: { content: string | React.ReactNode }) {
+	return <div className="main-page-content">{content}</div>;
 }
 
-const defaultTab = "explore";
+const defaultTab = 'explore';
 
+function MainPageContent() {
+	const rootStore = useContext(rootStoreContext);
+	const eventStore = useContext(eventStoreContext);
+	const feedStore = useContext(feedStoreContext);
+	const myTripsStore = useContext(myTripsContext);
 
+	const loaderDetails = useRef(LOADER_DETAILS());
+	const { tripName } = useParams();
 
-function MainPageContent(){
-    const rootStore = useContext(rootStoreContext);
-    const eventStore = useContext(eventStoreContext);
-    const feedStore = useContext(feedStoreContext);
-    const myTripsStore = useContext(myTripsContext);
+	useEffect(() => {
+		if (tripName && eventStore.tripName != tripName && !eventStore.isLoading) {
+			eventStore.setTripName(tripName);
+			// eventStore.setTripName(tripName).then(() => {
+			//     runInAction(() => {
+			//         eventStore.isLoading = false;
+			//     });
+			// });
 
-    const loaderDetails = useRef(LOADER_DETAILS());
-    const { tripName } = useParams();
+			// // must put it here, otherwise dates are incorrect
+			// if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
+			//     eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(tripName));
+			// }
+		}
+	}, [tripName, eventStore.isLoading]);
 
-    useEffect(() => {
-        if (tripName && eventStore.tripName != tripName && !eventStore.isLoading) {
-            eventStore.setTripName(tripName);
-            // eventStore.setTripName(tripName).then(() => {
-            //     runInAction(() => {
-            //         eventStore.isLoading = false;
-            //     });
-            // });
+	const isShort = eventStore.isMobile ? '.SHORT' : '';
+	const searchKeyword = getParameterFromHash('q') ?? getParameterFromHash('d');
+	const isInSearch = (searchKeyword?.length ?? 0) > 0;
 
-            // // must put it here, otherwise dates are incorrect
-            // if (eventStore.dataService.getDataSourceName() === TripDataSource.LOCAL) {
-            //     eventStore.setCustomDateRange(DataServices.LocalStorageService.getDateRange(tripName));
-            // }
-        }
-    }, [tripName, eventStore.isLoading]);
+	const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
+	const isInViewItem = (viewItemId?.length ?? 0) > 0;
 
-    const isShort = eventStore.isMobile ? '.SHORT' : '';
-    const searchKeyword = getParameterFromHash('q');
-    const isInSearch = (searchKeyword?.length ?? 0) > 0;
+	const tabs: TabData[] = getTabs();
+	const tabIdToIdx = useMemo<Record<string, number>>(getTabIdToIndexMapping, [tabs]);
 
-    const viewItemId = window.location.hash.includes(specificItemTabId) ? getParameterFromHash('id') : undefined;
-    const isInViewItem = (viewItemId?.length ?? 0) > 0;
+	const tabFromHash = window.location.hash.replace('#', '');
 
-    const tabs: TabData[] = getTabs();
-    const tabIdToIdx = useMemo<Record<string, number>>(getTabIdToIndexMapping, [tabs]);
+	function getActiveTab() {
+		const isInAddItem = window.location.hash.includes('createTrip');
 
-    const tabFromHash = window.location.hash.replace('#', '');
+		if (isInViewItem) {
+			return specificItemTabId;
+		}
+		if (isInSearch) {
+			return searchResultsTabId;
+		}
+		if (isInAddItem) {
+			return myTripsTabId;
+		}
+		if (localStorage.getItem(mainPageContentTabLsKey)) {
+			return localStorage.getItem(mainPageContentTabLsKey);
+		}
+		if (tabs.map((x) => x.id).includes(tabFromHash)) {
+			return tabFromHash;
+		}
+		return defaultTab;
+	}
+	const activeTab = useMemo(getActiveTab, [isInSearch, tabs, tabFromHash, rootStore.tabMenuReRenderCounter]);
+	const [activeTabIdx, setActiveTabIdx] = useState(tabIdToIdx[activeTab]);
 
-    function getActiveTab(){
-        const isInAddItem = window.location.hash.includes('createTrip');
+	useEffect(() => {
+		setActiveTabIdx(tabIdToIdx[activeTab]);
+	}, [activeTab]);
 
-        if (isInViewItem) {
-            return specificItemTabId;
-        }
-        if (isInSearch) {
-            return searchResultsTabId;
-        }
-        if (isInAddItem) {
-            return myTripsTabId;
-        }
-        if (localStorage.getItem(mainPageContentTabLsKey)){
-            return localStorage.getItem(mainPageContentTabLsKey);
-        }
-        if (tabs.map((x) => x.id).includes(tabFromHash)){
-            return tabFromHash;
-        }
-        return defaultTab;
-    }
-    const activeTab = useMemo(getActiveTab, [isInSearch, tabs, tabFromHash, rootStore.tabMenuReRenderCounter]);
-    const [activeTabIdx, setActiveTabIdx] = useState(tabIdToIdx[activeTab]);
+	useHandleWindowResize();
+	useSavedCollections();
+	useMyTrips();
+	useScrollWhenTabChanges(tabs);
+	useLoadRandomPlacePOIs();
+	useCreateRandomTemplate();
 
-    useEffect(() => {
-        setActiveTabIdx(tabIdToIdx[activeTab]);
-    }, [activeTab])
+	function getTabs(): TabData[] {
+		if (isInViewItem) {
+			const itemName = localStorage.getItem(`item-${viewItemId}-name`);
+			return [
+				{
+					id: specificItemTabId,
+					order: 0,
+					name: TranslateService.translate(
+						eventStore,
+						isShort || !itemName ? 'VIEW_ITEM.SHORT' : 'VIEW_ITEM',
+						{
+							X: getEventTitle({ title: itemName } as unknown as CalendarEvent, eventStore, true),
+						}
+					),
+					icon: 'fa-info',
+					render: () => (
+						<TriplanTabContent content={<FeedView eventStore={eventStore} viewItemId={viewItemId} />} />
+					),
+				},
+			];
+		}
+		if (searchKeyword) {
+			const isShort = eventStore.isMobile;
+			return [
+				{
+					id: searchResultsTabId,
+					order: 0,
+					name: TranslateService.translate(eventStore, isShort ? 'SEARCH_RESULTS' : 'SEARCH_RESULTS_FOR_X', {
+						X: searchKeyword,
+					}),
+					icon: 'fa-search',
+					render: () => (
+						<TriplanTabContent
+							content={<FeedView eventStore={eventStore} searchKeyword={searchKeyword} />}
+						/>
+					),
+				},
+			];
+		}
 
-    useHandleWindowResize();
-    useSavedCollections();
-    useMyTrips();
-    useScrollWhenTabChanges(tabs);
+		const tabs = [];
+		if (eventStore.isMobile) {
+			tabs.push({
+				id: mobileSuggestedTripsTabId,
+				order: 0,
+				name: TranslateService.translate(eventStore, 'SUGGESTED_TRIP_TEMPLATES'),
+				icon: 'fa-suitcase',
+				render: () => <TriplanTabContent content={<TemplatesView />} />,
+			});
+			tabs.push({
+				id: exploreTabId,
+				order: 1,
+				name: TranslateService.translate(eventStore, 'SYSTEM_RECOMMENDATIONS'),
+				icon: 'fa-thumbs-up',
+				render: () => <TriplanTabContent content={<SystemRecommendationsView />} />,
+			});
+			tabs.push({
+				id: mobileTopPicksTabId,
+				order: 2,
+				name: TranslateService.translate(eventStore, 'TOP_PICKS'),
+				icon: 'fa-search',
+				render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />,
+			});
+		} else {
+			tabs.push({
+				id: exploreTabId,
+				order: 0,
+				name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
+				icon: 'fa-search',
+				render: () => (
+					<TriplanTabContent
+						content={
+							<div className="flex-col gap-20">
+								<TemplatesView />
+								<SystemRecommendationsView />
+								<FeedView eventStore={eventStore} mainFeed />
+							</div>
+						}
+					/>
+				),
+			});
+		}
 
+		return [
+			...tabs,
+			{
+				id: savedCollectionsTabId,
+				order: tabs.length,
+				name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
+					X: feedStore.savedItems.length,
+				}),
+				icon: 'fa-bookmark-o',
+				render: () => <TriplanTabContent content={<SavedCollectionsTab />} />,
+			},
+			{
+				id: myTripsTabId,
+				order: tabs.length + 1,
+				name: TranslateService.translate(
+					eventStore,
+					`${isTemplateUsername() ? 'TEMPLATES' : 'MY_TRIPS'}_X${isShort}`,
+					{
+						X: myTripsStore.totalTrips,
+					}
+				),
+				icon: 'fa-plane',
+				render: () => <TriplanTabContent content={<MyTripsTab />} />,
+			},
+		];
+	}
 
-    // search destinations randomly to increase the content of Triplan
-    const apiService = useMemo(() => new FeedViewApiService(), []);
-    useEffect(() => {
-        const destination = top100Cities[Math.floor(Math.random() * top100Cities.length)];
-        Promise.all(
-            allSources.map(source => apiService.getItems(source, destination, 1))
-        );
-    }, []);
+	function getTabIdToIndexMapping() {
+		const toReturn = {};
+		tabs.forEach((tab, idx) => {
+			toReturn[tab.id] = idx;
+		});
+		return toReturn;
+	}
 
-    function getTabs():TabData[] {
+	if (eventStore.isLoading || (tripName && tripName != eventStore.tripName)) {
+		return (
+			<LoadingComponent
+				title={TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE')}
+				message={TranslateService.translate(eventStore, 'LOADING_TRIP_PLACEHOLDER')}
+				loaderDetails={loaderDetails.current}
+			/>
+		);
+	}
 
-        if (isInViewItem) {
-            const itemName = localStorage.getItem(`item-${viewItemId}-name`)
-            return  [{
-                id: specificItemTabId,
-                order: 0,
-                name: TranslateService.translate(eventStore, (isShort || !itemName) ? 'VIEW_ITEM.SHORT' : 'VIEW_ITEM', {
-                    X: itemName
-                }),
-                icon: "fa-info",
-                render: () => <TriplanTabContent content={
-                    <FeedView eventStore={eventStore} viewItemId={viewItemId} />
-                } />
-            }];
-        }
-        if (searchKeyword) {
-            const isShort = eventStore.isMobile;
-            return  [{
-                id: searchResultsTabId,
-                order: 0,
-                name: TranslateService.translate(eventStore, isShort ? 'SEARCH_RESULTS' : 'SEARCH_RESULTS_FOR_X', {
-                    X: searchKeyword
-                }),
-                icon: "fa-search",
-                render: () => <TriplanTabContent content={
-                    <FeedView eventStore={eventStore} searchKeyword={searchKeyword} />
-                } />
-            }];
-        }
-        return [
-            {
-                id: exploreTabId,
-                order: 0,
-                name: TranslateService.translate(eventStore, `BUTTON_TEXT.FEED_VIEW${isShort}`),
-                icon: "fa-search",
-                render: () => <TriplanTabContent content={<FeedView eventStore={eventStore} mainFeed />} />
-            },
-            {
-                id: savedCollectionsTabId,
-                order: 1,
-                name: TranslateService.translate(eventStore, `SAVED_COLLECTIONS${isShort}`, {
-                    X: feedStore.savedItems.length
-                }),
-                icon: "fa-bookmark-o",
-                render: () => <TriplanTabContent content={<SavedCollectionsTab />} />
-            },
-            {
-                id: myTripsTabId,
-                order: 2,
-                name: TranslateService.translate(eventStore, `MY_TRIPS_X${isShort}`, {
-                    X: myTripsStore.myTrips.length + myTripsStore.mySharedTrips.length
-                }),
-                icon: "fa-plane",
-                render: () => <TriplanTabContent content={<MyTrips />} />
-            },
-        ];
-    }
+	if (tripName && tripName == eventStore.tripName) {
+		// todo complete: make it appear with a tab viewer
+		return (
+			<>
+				<div className="plan-trip-tab-menu">
+					<TabMenu
+						activeTab="planTrip"
+						tabs={[
+							{
+								id: 'planTrip',
+								order: 1,
+								name: tripName,
+								icon: 'fa-plane',
+								render: () => null,
+							},
+						]}
+						onChange={() => {}}
+					/>
+				</div>
+				<MainPage />
+			</>
+		);
+	}
 
-    function getTabIdToIndexMapping(){
-        const toReturn = {};
-        tabs.forEach((tab, idx) => {
-            toReturn[tab.id] = idx
-        });
-        return toReturn;
-    }
-
-    if (eventStore.isLoading || (tripName && tripName != eventStore.tripName)){
-        return (
-            <LoadingComponent
-                title={TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE')}
-                message={TranslateService.translate(eventStore, 'LOADING_TRIP_PLACEHOLDER')}
-                loaderDetails={loaderDetails.current}
-            />
-        )
-    }
-
-    if (tripName && tripName == eventStore.tripName) {
-        // todo complete: make it appear with a tab viewer
-        return (
-            <>
-                <div className="plan-trip-tab-menu">
-                <TabMenu
-                    activeTab="planTrip"
-                    tabs={[
-                        {
-                            id: 'planTrip',
-                            order: 1,
-                            name: tripName,
-                            icon: "fa-plane",
-                            render: () => null
-                        }
-                    ]}
-                    onChange={() => {}}
-                />
-                </div>
-                <MainPage/>
-            </>
-        )
-    }
-
-    return (
-        <div className={getClasses("triplan-header-banner-footer", eventStore.isMobile && activeTabIdx === tabs.length -1 && 'padding-inline-end-10')} key={rootStore.tabMenuReRenderCounter}>
-            <TabMenu
-                activeTab={activeTab}
-                tabs={tabs}
-                onChange={(tabId) => {
-                    if (tabId != searchResultsTabId && tabId != specificItemTabId) {
-                        localStorage.setItem(mainPageContentTabLsKey, tabId);
-                    }
-                    setActiveTabIdx(tabIdToIdx[tabId]);
-                    rootStore.triggerHeaderReRender();
-                    window.location.hash = tabId;
-                }}
-            />
-        </div>
-    );
+	return (
+		<div
+			className={getClasses(
+				'triplan-header-banner-footer',
+				eventStore.isMobile && activeTabIdx === tabs.length - 1 && 'padding-inline-end-10',
+				isInViewItem && 'view-item-content',
+				searchKeyword && 'search-results-content'
+			)}
+			key={rootStore.tabMenuReRenderCounter}
+		>
+			<TabMenu
+				activeTab={activeTab}
+				tabs={tabs}
+				onChange={(tabId) => {
+					if (tabId != searchResultsTabId && tabId != specificItemTabId) {
+						localStorage.setItem(mainPageContentTabLsKey, tabId);
+					}
+					setActiveTabIdx(tabIdToIdx[tabId]);
+					rootStore.triggerHeaderReRender();
+					window.location.hash = tabId;
+				}}
+			/>
+		</div>
+	);
 }
 
 export default observer(MainPageContent);
-
-const top100Cities = [
-    "Paris",
-    "Tokyo",
-    "New York",
-    "Rome",
-    "Barcelona",
-    "London",
-    "Dubai",
-    "Istanbul",
-    "Bangkok",
-    "Kyoto",
-    "Florence",
-    "Amsterdam",
-    "Venice",
-    "Singapore",
-    "Lisbon",
-    "Hong Kong",
-    "Sydney",
-    "Berlin",
-    "Vienna",
-    "Milan",
-    "Prague",
-    "Madrid",
-    "Seoul",
-    "Rio de Janeiro",
-    "Cape Town",
-    "Los Angeles",
-    "Mexico City",
-    "Copenhagen",
-    "Munich",
-    "Buenos Aires",
-    "San Francisco",
-    "Marrakesh",
-    "Shanghai",
-    "Edinburgh",
-    "Budapest",
-    "Lisbon",
-    "Hanoi",
-    "Beijing",
-    "Stockholm",
-    "Moscow",
-    "Toronto",
-    "Dublin",
-    "Kuala Lumpur",
-    "Vancouver",
-    "Melbourne",
-    "Lima",
-    "San Diego",
-    "Istanbul",
-    "Bruges",
-    "Osaka",
-    "Tel Aviv",
-    "Nice",
-    "Jerusalem",
-    "Naples",
-    "Zürich",
-    "Brussels",
-    "Ho Chi Minh City",
-    "Warsaw",
-    "Santiago",
-    "Casablanca",
-    "Brisbane",
-    "Athens",
-    "Helsinki",
-    "Doha",
-    "Abu Dhabi",
-    "Valencia",
-    "Seattle",
-    "Quebec City",
-    "Cairo",
-    "Ljubljana",
-    "Auckland",
-    "Montevideo",
-    "Kraków",
-    "Salzburg",
-    "Hamburg",
-    "Perth",
-    "Dubrovnik",
-    "Porto",
-    "Bratislava",
-    "Reykjavik",
-    "Cusco",
-    "Fukuoka",
-    "Palermo",
-    "Oslo",
-    "Chennai",
-    "Antwerp",
-    "Bali",
-    "Phuket",
-    "Malé",
-    "Manila",
-    "Kathmandu",
-    "Jakarta",
-    "Colombo",
-    "Havana",
-    "Zagreb",
-    "Aix-en-Provence",
-    "Guadalajara",
-    "Cartagena",
-    "Cape Town",
-    "Bordeaux",
-    "Nairobi",
-    "Bogotá",
-    "Málaga",
-    "Luxembourg City",
-    "Stuttgart",
-    "Bergen",
-    // added:
-    "Rhodes"
-];

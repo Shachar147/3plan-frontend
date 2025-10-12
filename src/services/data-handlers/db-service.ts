@@ -17,7 +17,7 @@ import { getToken } from '../../helpers/auth';
 import _ from 'lodash';
 import { addSeconds } from '../../utils/time-utils';
 import ReactModalService from '../react-modal-service';
-import {endpoints} from "../../v2/utils/endpoints";
+import { endpoints } from '../../v2/utils/endpoints';
 
 export interface upsertTripProps {
 	name?: string;
@@ -28,6 +28,8 @@ export interface upsertTripProps {
 	allEvents?: AllEventsEvent[];
 	calendarLocale?: LocaleCode;
 	destinations?: string[];
+	priorityColors?: Record<string, string>;
+	priorityMapColors?: Record<string, string>;
 }
 
 export const useInviteLinkLSKey = 'triplan-invite-link';
@@ -101,10 +103,17 @@ export class DBService implements BaseDataHandler {
 
 	async getTripData(tripName?: string): Promise<Trip> {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getTripByName(tripName!));
-		if (!res){
-			window.location.href = "/login";
+		if (!res) {
+			window.location.href = '/login';
 		}
 		return res.data as Trip;
+	}
+
+	async updateTripColors(
+		tripName: string,
+		data: { priorityColors: Record<string, string>; priorityMapColors: Record<string, string> }
+	) {
+		return apiPut(endpoints.v1.trips.updateTripByName(tripName), data);
 	}
 
 	// unused
@@ -129,8 +138,8 @@ export class DBService implements BaseDataHandler {
 	async getTripsShort(_: any): Promise<{ trips: Trip[]; sharedTrips: SharedTrip[] }> {
 		const res: any = await apiGetPromise(this, endpoints.v1.trips.getAllTripsShort);
 		const trips: Trip[] = [];
-		if (!res){
-			window.location.href = "/login";
+		if (!res) {
+			window.location.href = '/login';
 		}
 		res.data.data.forEach((x: any) => {
 			trips.push(x as Trip);
@@ -146,11 +155,17 @@ export class DBService implements BaseDataHandler {
 	async getUserStats(): Promise<any[]> {
 		if (!axios.defaults.headers.Authorization) {
 			const token = getToken();
-			axios.defaults.headers.Authorization = `Bearer ${token}`;
+			if (token) {
+				axios.defaults.headers.Authorization = `Bearer ${token}`;
+			}
 		}
 
-		const res: any = await apiGetPromise(this, endpoints.v1.admin.statistics, false);
-		return res?.data ?? [];
+		try {
+			const res: any = await apiGetPromise(this, endpoints.v1.admin.statistics, false);
+			return res?.data ?? [];
+		} catch {
+			return [];
+		}
 	}
 
 	// --- SET ------------------------------------------------------------------------------
@@ -161,7 +176,7 @@ export class DBService implements BaseDataHandler {
 	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
 		const arr = _.cloneDeep(calendarEvents);
 		arr.map((x: CalendarEvent) => {
-			x.className = (x.className ?? "").replace(' locked', '');
+			x.className = (x.className ?? '').replace(' locked', '');
 
 			// @ts-ignore
 			x.classNames = x.classNames?.replace(' locked', '');
@@ -282,7 +297,8 @@ export class DBService implements BaseDataHandler {
 		errorCallback?: (error: any, error_retry: number) => void,
 		finallyCallback?: () => void
 	) {
-		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale, destinations } = data;
+		const { name, dateRange, categories, calendarEvents, sidebarEvents, allEvents, calendarLocale, destinations } =
+			data;
 
 		return await apiPost(endpoints.v1.trips.createTrip, {
 			name,
@@ -292,7 +308,7 @@ export class DBService implements BaseDataHandler {
 			sidebarEvents,
 			allEvents,
 			calendarLocale,
-			destinations
+			destinations,
 		})
 			.then((res: any) => {
 				if (successCallback) {
@@ -389,6 +405,19 @@ export class DBService implements BaseDataHandler {
 		mustBeDoneBefore?: number;
 	}) {
 		return await apiPost(endpoints.v1.tasks.createTask, data);
+	}
+
+	async updateTask(
+		taskId: number,
+		data: {
+			description: string;
+			title: string;
+			status: TriplanTaskStatus;
+			eventId?: number;
+			mustBeDoneBefore?: number;
+		}
+	) {
+		return await apiPut(endpoints.v1.tasks.updateTaskStatus(taskId), data);
 	}
 
 	async updateTaskStatus(taskId: number, status: TriplanTaskStatus) {

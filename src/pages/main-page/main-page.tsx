@@ -35,8 +35,9 @@ import axios from 'axios';
 import { BiEventsService } from '../../services/bi-events.service';
 import Button, { ButtonFlavor } from '../../components/common/button/button';
 import { formatDate } from '../../utils/time-utils';
-import FeedView from "../../v2/components/feed-view/feed-view";
-import {FeatureFlagsService} from "../../utils/feature-flags";
+import FeedView from '../../v2/components/feed-view/feed-view';
+import { FeatureFlagsService } from '../../utils/feature-flags';
+import ItineraryView from '../../components/itinerary-view/itinerary-view';
 
 interface MainPageProps {
 	createMode?: boolean;
@@ -279,7 +280,7 @@ function MainPage(props: MainPageProps) {
 						disabled={currentListViewPage <= 0}
 						text={TranslateService.translate(eventStore, 'NAVIGATION.BACK')}
 						icon={backIcon}
-						className={'black flex-row gap-5 align-items-center justify-content-center'}
+						className="black flex-row gap-5 align-items-center justify-content-center"
 					/>
 					<Button
 						flavor={ButtonFlavor.secondary}
@@ -291,8 +292,8 @@ function MainPage(props: MainPageProps) {
 						disabled={currentListViewPage >= arr.length - 1}
 						text={TranslateService.translate(eventStore, 'NAVIGATION.NEXT')}
 						icon={nextIcon}
-						className={'black flex-row gap-5 align-items-center justify-content-center'}
-						iconPosition={'end'}
+						className="black flex-row gap-5 align-items-center justify-content-center"
+						iconPosition="end"
 					/>
 				</div>
 			);
@@ -350,24 +351,26 @@ function MainPage(props: MainPageProps) {
 									eventStore.listViewShowDaysNavigator = !eventStore.listViewShowDaysNavigator;
 								});
 							}}
-							text={''}
+							text=""
 						/>
 					)}
-					{eventStore.calendarEvents.length > 0 && <Button
-						icon="fa-paper-plane"
-						className={getClasses('min-width-38', !eventStore.listViewShowNavigateTo && 'black')}
-						flavor={ButtonFlavor.secondary}
-						tooltip={TranslateService.translate(
-							eventStore,
-							eventStore.listViewShowNavigateTo ? 'SHOW_NAVIGATE_TO' : 'HIDE_NAVIGATE_TO'
-						)}
-						onClick={() => {
-							runInAction(() => {
-								eventStore.listViewShowNavigateTo = !eventStore.listViewShowNavigateTo;
-							});
-						}}
-						text={''}
-					/>}
+					{eventStore.calendarEvents.length > 0 && (
+						<Button
+							icon="fa-paper-plane"
+							className={getClasses('min-width-38', !eventStore.listViewShowNavigateTo && 'black')}
+							flavor={ButtonFlavor.secondary}
+							tooltip={TranslateService.translate(
+								eventStore,
+								eventStore.listViewShowNavigateTo ? 'SHOW_NAVIGATE_TO' : 'HIDE_NAVIGATE_TO'
+							)}
+							onClick={() => {
+								runInAction(() => {
+									eventStore.listViewShowNavigateTo = !eventStore.listViewShowNavigateTo;
+								});
+							}}
+							text=""
+						/>
+					)}
 				</div>
 				{content}
 			</div>
@@ -379,7 +382,7 @@ function MainPage(props: MainPageProps) {
 	}
 
 	function renderFeedView() {
-		return <FeedView eventStore={eventStore} />
+		return <FeedView eventStore={eventStore} filterByDestination />;
 	}
 
 	function renderMapView(shouldShow: boolean = true) {
@@ -442,6 +445,24 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function renderSuggestions() {
+		if (!eventStore.destinations) {
+			return null;
+		}
+
+		return (
+			<div className="suggestions-sidebar bright-scrollbar">
+				<FeedView
+					eventStore={eventStore}
+					filterByDestination
+					suggestionsMode
+					withHideSuggestionsButton
+					onlySystemRecommendations
+				/>
+			</div>
+		);
+	}
+
 	function addToEventsToCategories(newEvent: any) {
 		setEventsToCategories({
 			...eventsToCategories,
@@ -467,8 +488,9 @@ function MainPage(props: MainPageProps) {
 
 		const content = (
 			<div
+				key={eventStore.isSidebarMinimized}
 				className={getClasses(
-					['calender-container bright-scrollbar flex-1-1-0'],
+					['calender-container'],
 					!shouldDisplay && 'opacity-0 position-absolute',
 					!eventStore.isMobile && 'pc'
 				)}
@@ -505,21 +527,23 @@ function MainPage(props: MainPageProps) {
 	function renderSidebar() {
 		if (eventStore.isMobile && eventStore.mobileViewMode !== ViewMode.sidebar) return null;
 		return (
-			<TriplanSidebar
-				addToEventsToCategories={addToEventsToCategories}
-				addEventToSidebar={addEventToSidebar}
-				removeEventFromSidebarById={removeEventFromSidebarById}
-				customDateRange={eventStore.customDateRange}
-				setCustomDateRange={() => {
-					eventStore.setCustomDateRange.bind(eventStore);
+			<div className="sidebar-wrapper">
+				<TriplanSidebar
+					addToEventsToCategories={addToEventsToCategories}
+					addEventToSidebar={addEventToSidebar}
+					removeEventFromSidebarById={removeEventFromSidebarById}
+					customDateRange={eventStore.customDateRange}
+					setCustomDateRange={() => {
+						eventStore.setCustomDateRange.bind(eventStore);
 
-					if (eventStore.isMobile) {
-						TriplanCalendarContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
-						TriplanCalendarRef.current?.setMobileDefaultView();
-					}
-				}}
-				TriplanCalendarRef={TriplanCalendarRef}
-			/>
+						if (eventStore.isMobile) {
+							TriplanCalendarContainerRef.current?.scrollIntoView({ behavior: 'smooth' });
+							TriplanCalendarRef.current?.setMobileDefaultView();
+						}
+					}}
+					TriplanCalendarRef={TriplanCalendarRef}
+				/>
+			</div>
 		);
 	}
 
@@ -537,12 +561,22 @@ function MainPage(props: MainPageProps) {
 		const viewOptions = getViewSelectorOptions(eventStore, true);
 		const isModalOpened = eventStore.modalSettings.show || eventStore.secondModalSettings.show;
 		return (
-			<div className={getClasses('mobile-footer-navigator', isModalOpened && 'z-index-1000', FeatureFlagsService.isNewDesignEnabled() && 'white-background')}>
+			<div
+				className={getClasses(
+					'mobile-footer-navigator',
+					isModalOpened && 'z-index-1000',
+					FeatureFlagsService.isNewDesignEnabled() && 'white-background'
+				)}
+			>
 				{viewOptions.map((viewOption) => (
 					<a
 						title={viewOption.name}
 						onClick={() => eventStore.setMobileViewMode(viewOption.key as ViewMode)}
-						className={getClasses('mobile-footer-navigator-option', `mobile-footer-navigator-option-${viewOption.key}`, eventStore.mobileViewMode === viewOption.key && 'selected-mobile-option')}
+						className={getClasses(
+							'mobile-footer-navigator-option',
+							`mobile-footer-navigator-option-${viewOption.key}`,
+							eventStore.mobileViewMode === viewOption.key && 'selected-mobile-option'
+						)}
 						key={`mobile-footer-navigation-${viewOption.name}`}
 					>
 						{eventStore.mobileViewMode === viewOption.key ? viewOption.iconActive : viewOption.icon}
@@ -594,7 +628,7 @@ function MainPage(props: MainPageProps) {
 					eventStore.calendarLocalCode == 'he' ? 'direction-rtl' : 'flex-row'
 				)}
 			>
-				<i className={'fa fa-lock'} />
+				<i className="fa fa-lock" />
 				<div
 					className={getClasses(
 						'align-items-center justify-content-center',
@@ -605,7 +639,8 @@ function MainPage(props: MainPageProps) {
 					{eventStore.canWrite && (
 						<Button
 							flavor={ButtonFlavor.link}
-							className={'text-decoration-underline min-height-20'}
+							isLoading={eventStore.togglingTripLock}
+							className="text-decoration-underline min-height-20"
 							onClick={() => {
 								eventStore.toggleTripLocked();
 							}}
@@ -617,19 +652,42 @@ function MainPage(props: MainPageProps) {
 		);
 	}
 
+	function renderHeader() {
+		return (
+			<div className="padding-inline-8 flex-column align-items-center justify-content-center">
+				<TriplanHeaderWrapper
+					{...headerProps}
+					currentMobileView={eventStore.mobileViewMode}
+					showTripName={true}
+				/>
+			</div>
+		);
+	}
+
+	function renderItineraryView() {
+		if (!eventStore.isItineraryView) return null;
+
+		return (
+			<div
+				className={getClasses(
+					['itinerary-container flex-1-1-0'],
+					'overflow-hidden'
+					// !eventStore.isItineraryView && 'opacity-0 position-absolute',
+					// !eventStore.isMobile && 'pc'
+				)}
+			>
+				<ItineraryView events={eventStore.calendarEvents} />
+			</div>
+		);
+	}
+
 	return (
 		<>
 			<div
 				className={getClasses('main-page', eventStore.mobileViewMode)}
 				key={JSON.stringify(eventStore.customDateRange)}
 			>
-				<div className="padding-inline-8 flex-column align-items-center justify-content-center">
-					<TriplanHeaderWrapper
-						{...headerProps}
-						currentMobileView={eventStore.mobileViewMode}
-						showTripName={true}
-					/>
-				</div>
+				{renderHeader()}
 				{eventStore.isTripLocked && renderTripIsLockedHeaderLine()}
 				<div
 					className={getClasses(
@@ -646,11 +704,22 @@ function MainPage(props: MainPageProps) {
 						) : (
 							<>
 								{renderSidebar()}
-								{eventStore.isFeedView && renderFeedView()}
-								{eventStore.isMapView && renderMapView(eventStore.isMapView)}
-								{eventStore.isListView && renderListView()}
-								{eventStore.isCalendarView && renderCalendarView()}
-								{eventStore.isCombinedView && renderCombinedView()}
+								<div className="flex-column width-100-percents gap-4 position-relative">
+									<div
+										className={getClasses(
+											'gap-16 height-100-percents',
+											eventStore.isHebrew ? 'flex-row-reverse' : 'flex-row'
+										)}
+									>
+										{eventStore.isFeedView && renderFeedView()}
+										{eventStore.isMapView && renderMapView(eventStore.isMapView)}
+										{eventStore.isListView && renderListView()}
+										{eventStore.isCalendarView && renderCalendarView()}
+										{eventStore.isCombinedView && renderCombinedView()}
+										{eventStore.isItineraryView && renderItineraryView()}
+										{eventStore.shouldRenderSuggestions && renderSuggestions()}
+									</div>
+								</div>
 							</>
 						)}
 					</div>

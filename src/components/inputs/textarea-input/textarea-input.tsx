@@ -48,7 +48,7 @@ function TextAreaInput(props: TextAreaInputProps, ref: Ref<TextAreaInputRef> | a
 
 	const textOrLink =
 		props.showAsLink && value ? (
-			<a href={value} target={'_blank'}>
+			<a href={value} target="_blank" rel="noreferrer">
 				{TranslateService.translate(eventStore, 'GENERAL.CLICK_HERE')}
 			</a>
 		) : (

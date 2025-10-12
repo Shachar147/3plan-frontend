@@ -1,0 +1,20 @@
+.theme-example {
+	padding-inline: 30%;
+	gap: 10px;
+	padding-block: 20px;
+
+	.title-separator {
+		width: 100%;
+		margin-block: 5px;
+	}
+
+	.color-container {
+		background-color: rgba(255, 255, 255, 0.6);
+		padding: 20px;
+		border-radius: 20px;
+	}
+
+	.color-sample {
+		// The color will be set dynamically
+	}
+}
