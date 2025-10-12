@@ -4099,8 +4099,6 @@ const ReactModalService = {
 			},
 		});
 	},
-<<<<<<< Updated upstream
-=======
 	openBackupTripModal: (eventStore: EventStore) => {
 		// Initialize modal values
 		eventStore.modalValues['backupFormat'] = 'json';
