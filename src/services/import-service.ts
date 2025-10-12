@@ -423,6 +423,232 @@ const ImportService = {
 
 		return { categoriesImported, eventsImported };
 	},
+
+	// KML
+	async handleUploadedKMLFile(eventStore: EventStore, kmlText: string) {
+		const parser = new DOMParser();
+		const xml = parser.parseFromString(kmlText, 'application/xml');
+
+		const placemarks = Array.from(xml.getElementsByTagName('Placemark'));
+
+		const errors: string[] = [];
+		let numOfEventsWithErrors: Record<number, number> = {};
+		const eventsToAdd: SidebarEvent[] = [];
+		let categoriesToAdd: TriPlanCategory[] = [];
+		const newCategoriesTitleToId: Record<string, number> = {};
+		const categoryIcons: any = {};
+
+		for (let i = 0; i < placemarks.length; i++) {
+			const pm = placemarks[i];
+			const event: any = {};
+			let isValid = true;
+
+			const name = pm.getElementsByTagName('name')[0]?.textContent?.trim() || '';
+			const description = pm.getElementsByTagName('description')[0]?.textContent?.trim() || '';
+
+			// ===== Layer (Folder name → category) =====
+			let layer: string | null = null;
+			let parent = pm.parentElement;
+			while (parent) {
+				if (parent.tagName === 'Folder') {
+					const folderName = parent.getElementsByTagName('name')[0]?.textContent?.trim();
+					if (folderName) {
+						layer = folderName;
+						break;
+					}
+				}
+				parent = parent.parentElement;
+			}
+			if (!layer) {
+				layer = TranslateService.translate(eventStore, 'IMPORT_KML.DEFAULT_CATEGORY') || 'Uncategorized';
+			}
+
+			// ===== Style Info =====
+			const styleUrl = pm.getElementsByTagName('styleUrl')[0]?.textContent?.replace('#', '') || null;
+			const styleNode = styleUrl ? xml.querySelector(`Style[id="${styleUrl}"]`) : null;
+			const iconHref = styleNode?.getElementsByTagName('href')[0]?.textContent?.trim() || '';
+			const colorTag = styleNode?.getElementsByTagName('color')[0]?.textContent?.trim() || null;
+
+			let color: string | null = null;
+			if (colorTag) {
+				const a = parseInt(colorTag.slice(0, 2), 16) / 255;
+				const b = parseInt(colorTag.slice(2, 4), 16);
+				const g = parseInt(colorTag.slice(4, 6), 16);
+				const r = parseInt(colorTag.slice(6, 8), 16);
+				color = `rgba(${r}, ${g}, ${b}, ${a})`;
+			}
+
+			// ===== Coordinates =====
+			const coordsText = pm.getElementsByTagName('coordinates')[0]?.textContent?.trim() || '';
+			let coordinates: { lat: number; lng: number } | null = null;
+			if (coordsText) {
+				const [lng, lat] = coordsText.split(',').map(Number);
+				if (!isNaN(lat) && !isNaN(lng)) {
+					coordinates = { lat, lng };
+				}
+			}
+
+			// ===== Validation =====
+			if (!name) {
+				isValid = false;
+				const error = `Placemark #${i + 1} has no name`;
+				errors.push(error);
+				numOfEventsWithErrors[i] = 1;
+			}
+			if (eventStore.allEventsComputed.find((e) => e.title === name)) {
+				isValid = false;
+				const error = `${TranslateService.translate(eventStore, 'EVENT_WITH_NAME')} ${name} ${TranslateService.translate(eventStore, 'ALREADY_EXISTS')}.`;
+				errors.push(error);
+				numOfEventsWithErrors[i] = 1;
+			}
+
+			// ===== Category Handling =====
+			let categoryId: number;
+			const existingCategory = eventStore.categories.find((c) => c.title === layer);
+			if (existingCategory) {
+				categoryId = existingCategory.id;
+			} else if (newCategoriesTitleToId[layer]) {
+				categoryId = newCategoriesTitleToId[layer];
+			} else {
+				const newCategory = {
+					id: eventStore.createCategoryId(),
+					icon: '',
+					title: layer,
+				} as TriPlanCategory;
+				newCategoriesTitleToId[layer] = newCategory.id;
+				categoriesToAdd.push(newCategory);
+				categoryId = newCategory.id;
+			}
+
+			// ===== Create Event =====
+			event['title'] = name;
+			event['description'] = description;
+			event['category'] = categoryId;
+			event['icon'] = iconHref;
+			event['color'] = color;
+			event['coordinates'] = coordinates;
+			event['priority'] = TriplanPriority.unset;
+			event['preferredTime'] = TriplanEventPreferredTime.unset;
+
+			if (isValid) {
+				eventsToAdd.push(event as SidebarEvent);
+			}
+
+			// ===== Category Icon tracking =====
+			categoryIcons[categoryId] = categoryIcons[categoryId] || {};
+			categoryIcons[categoryId][iconHref] = (categoryIcons[categoryId][iconHref] || 0) + 1;
+		}
+
+		// ===== Determine most common icon per category =====
+		Object.keys(categoryIcons).forEach((categoryId) => {
+			let max = 0;
+			let iconMax = '';
+			Object.keys(categoryIcons[categoryId]).forEach((icon) => {
+				if (categoryIcons[categoryId][icon] > max) {
+					max = categoryIcons[categoryId][icon];
+					iconMax = icon;
+				}
+			});
+			categoryIcons[categoryId] = iconMax;
+		});
+
+		// ===== Assign icons to new categories =====
+		categoriesToAdd = categoriesToAdd.map((category) => {
+			category.icon =
+				categoryIcons[category.id] && typeof categoryIcons[category.id] === 'string'
+					? categoryIcons[category.id]
+					: '';
+			return category;
+		});
+
+		// ===== Remove redundant icons from events =====
+		eventsToAdd.forEach((event) => {
+			if (
+				event.category &&
+				categoryIcons[event.category] &&
+				typeof categoryIcons[event.category] === 'string' &&
+				event.icon === categoryIcons[event.category]
+			) {
+				event.icon = '';
+			}
+		});
+
+		// ===== Done — Open confirm modal =====
+		ReactModalService.openImportKMLConfirmModal(eventStore, {
+			eventsToAdd,
+			categoriesToAdd,
+			errors,
+			numOfEventsWithErrors: Object.keys(numOfEventsWithErrors).length,
+		});
+	},
+	handleUploadedKMLFileOld(eventStore: any, kmlText: string) {
+		try {
+			const parser = new DOMParser();
+			const xml = parser.parseFromString(kmlText, 'application/xml');
+	
+			const placemarks = Array.from(xml.getElementsByTagName('Placemark'));
+	
+			const results = placemarks.map(pm => {
+				const name = pm.getElementsByTagName('name')[0]?.textContent?.trim() || '';
+				const description = pm.getElementsByTagName('description')[0]?.textContent?.trim() || '';
+	
+				// Find parent Folder (layer)
+				let layer: string | null = null;
+				let parent = pm.parentElement;
+				while (parent) {
+					if (parent.tagName === 'Folder') {
+						const folderName = parent.getElementsByTagName('name')[0]?.textContent;
+						if (folderName) {
+							layer = folderName.trim();
+							break;
+						}
+					}
+					parent = parent.parentElement;
+				}
+	
+				// Extract Style info
+				const styleUrl = pm.getElementsByTagName('styleUrl')[0]?.textContent?.replace('#', '') || null;
+				const styleNode = styleUrl ? xml.querySelector(`Style[id="${styleUrl}"]`) : null;
+	
+				const iconHref = styleNode?.getElementsByTagName('href')[0]?.textContent?.trim() || null;
+				const colorTag = styleNode?.getElementsByTagName('color')[0]?.textContent?.trim() || null;
+	
+				let color: string | null = null;
+				if (colorTag) {
+					// KML color is AABBGGRR (alpha, blue, green, red)
+					const a = parseInt(colorTag.slice(0, 2), 16) / 255;
+					const b = parseInt(colorTag.slice(2, 4), 16);
+					const g = parseInt(colorTag.slice(4, 6), 16);
+					const r = parseInt(colorTag.slice(6, 8), 16);
+					color = `rgba(${r}, ${g}, ${b}, ${a})`;
+				}
+	
+				return {
+					layer,
+					iconHref,
+					color,
+					name,
+					description
+				};
+			});
+	
+			// You can now store or process results
+			console.log('✅ Parsed KML results:', results);
+	
+			// For example, you could update your MobX store:
+			// eventStore.importedMarkers = results;
+	
+			// Or trigger a success modal/toast:
+			// ReactModalService.internal.alertMessage(eventStore, 'Import successful', `${results.length} markers found`, 'success');
+	
+			return results;
+		} catch (error) {
+			console.error('❌ Error parsing KML file:', error);
+			// Show modal or handle error gracefully
+			// ReactModalService.internal.alertMessage(eventStore, 'Error', 'Failed to parse KML file', 'error');
+			return [];
+		}
+	}
 };
 
 export default ImportService;

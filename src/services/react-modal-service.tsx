@@ -1466,6 +1466,44 @@ const ReactModalService = {
 			eventStore.modalValues['selectedLocation'] = undefined;
 			eventStore.modalValues['openingHours'] = undefined;
 		},
+		renderFileUploader: (eventStore: EventStore) => {
+			return (
+				<div className="file-upload-container">
+					<input
+						type="file"
+						name="upload[]"
+						id="fileToUpload"
+						accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv"
+						// className="display-none"
+						onChange={(event) => {
+							const target = event?.target;
+							const files = target?.files;
+							const file = files && files.length > 0 ? files[0] : undefined;
+
+							runInAction(() => {
+								eventStore.modalValues['fileToUpload'] = file;
+							});
+
+							// @ts-ignore
+							document.getElementsByClassName('file-name-label')[0].innerText =
+								file?.name || TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
+						}}
+					/>
+					<div className="file-upload-label-container">
+						<label
+							htmlFor="fileToUpload"
+							className="btn secondary-button pointer black file-button-label"
+						>
+							{TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
+						</label>
+						<label className="file-name-label">
+							{eventStore.modalValues['fileToUpload']?.name ||
+								TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}
+						</label>
+					</div>
+				</div>
+			)
+		}
 	},
 
 	openAddCategoryModal: (eventStore: EventStore) => {
@@ -4029,6 +4067,7 @@ const ReactModalService = {
 									__html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS2'),
 								}}
 							/>
+<<<<<<< Updated upstream
 							<div className={'file-upload-container'}>
 								<input
 									type={'file'}
@@ -4065,6 +4104,9 @@ const ReactModalService = {
 									</label>
 								</div>
 							</div>
+=======
+							{ReactModalService.internal.renderFileUploader(eventStore)}
+>>>>>>> Stashed changes
 						</>
 					)}
 				</Observer>
@@ -4096,6 +4138,379 @@ const ReactModalService = {
 			},
 		});
 	},
+<<<<<<< Updated upstream
+=======
+	openBackupTripModal: (eventStore: EventStore) => {
+		// Initialize modal values
+		eventStore.modalValues['backupFormat'] = 'json';
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'BACKUP_TRIP.TITLE'),
+			content: (
+				<Observer>
+					{() => (
+						<div className="backup-trip-modal">
+							<div className="margin-bottom-15">
+								{TranslateService.translate(eventStore, 'BACKUP_TRIP.SELECT_FORMAT')}
+							</div>
+							<div className="backup-format-options">
+								<div className="backup-format-option">
+									<label className="backup-format-label">
+										<input
+											type="radio"
+											name="backupFormat"
+											value="json"
+											checked={eventStore.modalValues['backupFormat'] === 'json'}
+											onChange={(e) => {
+												runInAction(() => {
+													eventStore.modalValues['backupFormat'] = e.target.value;
+												});
+											}}
+										/>
+										<span className="backup-format-title">
+											{TranslateService.translate(eventStore, 'BACKUP_TRIP.FORMAT.JSON')}
+										</span>
+									</label>
+									<div className="backup-format-description">
+										{TranslateService.translate(eventStore, 'BACKUP_TRIP.DESCRIPTION.JSON')}
+									</div>
+								</div>
+								<div className="backup-format-option">
+									<label className="backup-format-label">
+										<input
+											type="radio"
+											name="backupFormat"
+											value="csv"
+											checked={eventStore.modalValues['backupFormat'] === 'csv'}
+											onChange={(e) => {
+												runInAction(() => {
+													eventStore.modalValues['backupFormat'] = e.target.value;
+												});
+											}}
+										/>
+										<span className="backup-format-title">
+											{TranslateService.translate(eventStore, 'BACKUP_TRIP.FORMAT.CSV')}
+										</span>
+									</label>
+									<div className="backup-format-description">
+										{TranslateService.translate(eventStore, 'BACKUP_TRIP.DESCRIPTION.CSV')}
+									</div>
+								</div>
+							</div>
+						</div>
+					)}
+				</Observer>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'BACKUP_TRIP.EXPORT'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: () => {
+				const format = eventStore.modalValues['backupFormat'];
+				if (format === 'json') {
+					BackupService.exportAsJSON(eventStore);
+				} else if (format === 'csv') {
+					BackupService.exportAsCSV(eventStore);
+				}
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+
+	openEditColorsModal: (eventStore: EventStore) => {
+		// Prepare local editable copies - ensure they are plain objects
+		const colors = observable.map<string, string>({ ...eventStore.priorityColors });
+		const mapColors = observable.map<string, string>({ ...eventStore.priorityMapColors });
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'EDIT_COLORS'),
+			content: (
+				<Observer>
+					{() => (
+						<div className="edit-colors-modal">
+							<div className="flex-col gap-10 align-items-center">
+								<div className="white-space-pre-line">
+									{TranslateService.translate(eventStore, 'EDIT_COLORS_DESCRIPTION')}
+								</div>
+								<div className="margin-top-5 margin-bottom-10 bold">
+									{TranslateService.translate(eventStore, 'CLICK_TO_EDIT')}
+								</div>
+								{Object.keys(TriplanPriority)
+									.filter((p) => !isNaN(Number(p)))
+									.map((priorityId) => {
+										const priorityKey = TriplanPriority[priorityId];
+										const [color, setColor] = useColor(colors.get(priorityId));
+										const [isEdit, setIsEdit] = useState(false);
+
+										return (
+											<div
+												className="flex-row gap-10 align-items-center width-400"
+												key={`pcol-${priorityId}`}
+											>
+												<div className="flex-row align-items-center gap-16 width-100-percents input-with-label">
+													<label
+														className="width-150 text-align-start"
+														onClick={() => {
+															setIsEdit(true);
+														}}
+													>
+														{TranslateService.translate(eventStore, priorityKey)}:
+													</label>
+													<div
+														className={getClasses(
+															'flex-row align-items-center gap-16',
+															!isEdit && 'display-none'
+														)}
+													>
+														<ColorPicker
+															height={50}
+															hideInput={['rgb', 'hsv']}
+															color={color}
+															onChange={(newColor) => {
+																setColor(newColor);
+															}}
+														/>
+														<div className="flex-column gap-4 width-80">
+															<button
+																className="secondary-button"
+																onClick={() => {
+																	colors.set(priorityId, color.hex);
+																	mapColors.set(priorityId, color.hex);
+																	setIsEdit(false);
+																}}
+															>
+																{TranslateService.translate(eventStore, 'SAVE')}
+															</button>
+															<button
+																className="secondary-button"
+																onClick={() => {
+																	setIsEdit(false);
+																}}
+															>
+																{TranslateService.translate(
+																	eventStore,
+																	'MODALS.CANCEL'
+																)}
+															</button>
+														</div>
+													</div>
+													<div
+														className={getClasses(
+															'flex-row align-items-center gap-16',
+															isEdit && 'display-none'
+														)}
+														onClick={() => {
+															setIsEdit(true);
+														}}
+													>
+														<TextInput
+															modalValueName={`priorityColor_${priorityId}`}
+															value={colors.get(priorityId) || ''}
+															readOnly
+															placeholder={priorityToMapColor[priorityId]}
+														/>
+														<PreviewBox size={37} color={colors.get(priorityId)} />
+													</div>
+												</div>
+											</div>
+										);
+									})}
+
+								<div className="flex-row gap-10 align-items-center margin-top-10">
+									<button
+										className="secondary-button"
+										onClick={() => {
+											Object.keys(TriplanPriority)
+												.filter((p) => !isNaN(Number(p)))
+												.forEach((pid) => {
+													const def = priorityToColor[pid];
+													colors.set(pid, def);
+													mapColors.set(pid, priorityToMapColor[pid] ?? def);
+												});
+										}}
+									>
+										{TranslateService.translate(eventStore, 'RESET_TO_DEFAULTS')}
+									</button>
+								</div>
+							</div>
+						</div>
+					)}
+				</Observer>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				// capture previous values for history logging
+				const previousColors = { ...eventStore.priorityColors };
+				const previousMapColors = { ...eventStore.priorityMapColors };
+
+				// update store
+				runInAction(() => {
+					eventStore.priorityColors = { ...Object.fromEntries(colors) };
+					eventStore.priorityMapColors = { ...Object.fromEntries(mapColors) };
+				});
+
+				// persist via trip update
+				try {
+					await DataServices.DBService.updateTripColors(eventStore.tripName, {
+						priorityColors: eventStore.priorityColors,
+						priorityMapColors: eventStore.priorityMapColors,
+					});
+				} catch (e) {}
+
+				// log history for color changes (DB only)
+				try {
+					// build compact diff strings: only changed priorities
+					const changedIds = Object.keys(eventStore.priorityColors || {}).filter(
+						(pid) => (previousColors as any)[pid] !== (eventStore.priorityColors as any)[pid]
+					);
+
+					const toEnglishKey = (pid: string) => TriplanPriority[pid] ?? pid; // enum key is english
+					const diffPayload: any = {};
+					changedIds.forEach((pid) => {
+						const key = toEnglishKey(pid);
+						diffPayload[key] = {
+							was: (previousColors as any)[pid],
+							now: (eventStore.priorityColors as any)[pid],
+						};
+					});
+
+					LogHistoryService.logHistory(
+						eventStore,
+						TripActions.changedTripColors,
+						diffPayload,
+						undefined,
+						undefined,
+						eventStore.tripId
+					);
+				} catch {}
+
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+
+	openExportToGoogleMapsSelectionModal: (
+		eventStore: EventStore,
+		onExportChosen: (mode: 'all' | 'scheduled' | 'scheduled_by_day') => void
+	) => {
+		const modes: { label: string; value: 'all' | 'scheduled' | 'scheduled_by_day' }[] = [
+			{ label: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.MODES.ALL'), value: 'all' },
+			{
+				label: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED'),
+				value: 'scheduled',
+			},
+			{
+				label: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.MODES.SCHEDULED_BY_DAY'),
+				value: 'scheduled_by_day',
+			},
+		];
+
+		eventStore.modalValues['exportMode'] =
+			eventStore.modalValues['exportMode'] || modes.find((m) => m.value === 'scheduled_by_day') || modes[0];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.TITLE'),
+			content: (
+				<div className="flex-col gap-12">
+					<div>{TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.SELECT_WHAT_TO_EXPORT')}:</div>
+					<SelectInput
+						ref={undefined}
+						id="export-to-google-maps-mode"
+						name="export-to-google-maps-mode"
+						options={modes}
+						value={eventStore.modalValues['exportMode']}
+						onChange={(opt: any) => (eventStore.modalValues['exportMode'] = opt)}
+						modalValueName="exportMode"
+						removeDefaultClass={true}
+						isClearable={false}
+					/>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DOWNLOAD'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: () => {
+				const chosen = eventStore.modalValues['exportMode']?.value ?? 'all';
+				ReactModalService.internal.closeModal(eventStore);
+				onExportChosen(chosen);
+			},
+		});
+	},
+
+	openExportToGoogleMapsStepsModal: (eventStore: EventStore, doDownload: () => void) => {
+		const Steps = () => {
+			useEffect(() => {
+				setTimeout(() => doDownload(), 50);
+			}, []);
+			return (
+				<div
+					className="import-events-steps"
+					dangerouslySetInnerHTML={{
+						__html: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS_STEPS', {
+							URL: 'https://mymaps.google.com/',
+						}),
+					}}
+				/>
+			);
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'EXPORT_TO_GOOGLE_MAPS.STEPS.TITLE'),
+			content: <Steps />,
+			cancelBtnText: TranslateService.translate(eventStore, 'GENERAL.CLOSE'),
+			hideConfirmBtn: true,
+		});
+	},
+
+	openImportFromGoogleMapsModal: (
+		eventStore: EventStore,
+	) => {
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS.TITLE'),
+			content: (
+				<div className="flex-col gap-12">
+					<div dangerouslySetInnerHTML={{ __html: TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS.CONTENT') }} />
+					{ReactModalService.internal.renderFileUploader(eventStore)}
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.IMPORT'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: () => {
+				alert("here!");
+
+				// @ts-ignore
+				const file = eventStore.modalValues['fileToUpload'];
+
+				if (file) {
+					console.log("got file");
+					// const reader = new FileReader();
+					// reader.readAsText(file, 'UTF-8');
+					// reader.onload = function (evt) {
+					// 	// @ts-ignore
+					// 	ImportService.handleUploadedKMLFile(eventStore, evt.target.result);
+					// };
+					// reader.onerror = function (evt) {
+					// 	ReactModalService.internal.alertMessage(
+					// 		eventStore,
+					// 		'MODALS.ERROR.TITLE',
+					// 		'MODALS.IMPORT_EVENTS_ERROR.CONTENT',
+					// 		'error'
+					// 	);
+					// };
+				}
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+
+>>>>>>> Stashed changes
 	openImportEventsConfirmModal: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
 		let contentArr = [
 			`${info.eventsToAdd.length} ${TranslateService.translate(
@@ -4151,6 +4566,102 @@ const ReactModalService = {
 			...getDefaultSettings(eventStore),
 			title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE3'),
 			content: <div className={'react-modal bright-scrollbar'} dangerouslySetInnerHTML={{ __html: html }} />,
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(
+				eventStore,
+				info.errors.length > 0 ? 'MODALS.UPLOAD_ANYWAY' : 'MODALS.UPLOAD'
+			),
+			confirmBtnCssClass: 'primary-button',
+			showConfirmButton: info.categoriesToAdd.length > 0 || info.eventsToAdd.length > 0,
+			onConfirm: async () => {
+				const { categoriesImported, eventsImported } = await ImportService.import(eventStore, info);
+				if (categoriesImported || eventsImported) {
+					LogHistoryService.logHistory(
+						eventStore,
+						categoriesImported ? TripActions.importedCategoriesAndEvents : TripActions.importedEvents,
+						{
+							eventsToAdd: info.eventsToAdd,
+							categoriesToAdd: info.categoriesToAdd,
+							numOfEventsWithErrors: info.numOfEventsWithErrors,
+							errors: info.errors,
+							categoriesImported,
+							eventsImported,
+							count: info.eventsToAdd?.length ?? 0,
+							count2: info.categoriesToAdd?.length ?? 0,
+						}
+					);
+
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.IMPORTED.TITLE',
+						'MODALS.IMPORTED.CONTENT',
+						'success'
+					);
+				} else {
+					ReactModalService.internal.openOopsErrorModal(eventStore);
+				}
+
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+
+	// todo complete: modify
+	openImportKMLConfirmModal: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
+		let contentArr = [
+			`${info.eventsToAdd.length} ${TranslateService.translate(
+				eventStore,
+				'IMPORT_EVENTS.CONFIRM.EVENTS_WILL_BE_ADDED'
+			)}`,
+			`${info.categoriesToAdd.length} ${TranslateService.translate(
+				eventStore,
+				'IMPORT_EVENTS.CONFIRM.CATEGORIES_WILL_BE_ADDED'
+			)}`,
+			`${info.numOfEventsWithErrors} ${TranslateService.translate(
+				eventStore,
+				'IMPORT_EVENTS.CONFIRM.EVENTS_HAVE_ERRORS'
+			)}`,
+		];
+
+		if (info.categoriesToAdd.length > 0) {
+			contentArr = [
+				...contentArr,
+				'',
+				`<u><b>${TranslateService.translate(
+					eventStore,
+					'IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_CATEGORIES'
+				)}</b></u>`,
+				['<ul>', ...info.categoriesToAdd.map((x) => `<li>${x.title}</li>`), '</ul>'].join(''),
+			];
+		}
+
+		if (info.eventsToAdd.length > 0) {
+			contentArr = [
+				...contentArr,
+				// "",
+				`<u><b>${TranslateService.translate(
+					eventStore,
+					'IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_EVENTS'
+				)}</b></u>`,
+				['<ul>', ...info.eventsToAdd.map((x) => `<li>${x.title}</li>`), '</ul>'].join(''),
+			];
+		}
+
+		if (info.errors.length > 0) {
+			contentArr = [
+				...contentArr,
+				// "",
+				`<u><b>${TranslateService.translate(eventStore, 'IMPORT_EVENTS.CONFIRM.ERRORS_DETAILS')}</b></u>`,
+				['<ul>', ...info.errors.map((x) => `<li>${x}</li>`), '</ul>'].join(''),
+			];
+		}
+
+		const html = contentArr.join('<br/>');
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE3'),
+			content: <div className="react-modal bright-scrollbar" dangerouslySetInnerHTML={{ __html: html }} />,
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(
 				eventStore,
