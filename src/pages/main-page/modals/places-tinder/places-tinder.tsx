@@ -324,7 +324,8 @@ function PlacesTinder(props: PlacesTinderProps) {
 								target="_blank"
 								className="cursor-pointer"
 								style={{ opacity: 0.6 }}
-								href={(currentPlace.tinder || currentPlace).more_info} rel="noreferrer"
+								href={(currentPlace.tinder || currentPlace).more_info}
+								rel="noreferrer"
 							>
 								{/*todo complete - lokalise*/}
 								למידע נוסף

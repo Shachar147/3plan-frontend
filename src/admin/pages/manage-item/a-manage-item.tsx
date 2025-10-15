@@ -636,7 +636,11 @@ function AManageItem() {
 					// placeholder={TranslateService.translate(eventStore, 'SEARCH_PLACEHOLDER')}
 				/>
 				{value && value.latitude && value.longitude ? (
-					<a href={`https://maps.google.com/?q=${value.latitude},${value.longitude}`} target="_blank" rel="noreferrer">
+					<a
+						href={`https://maps.google.com/?q=${value.latitude},${value.longitude}`}
+						target="_blank"
+						rel="noreferrer"
+					>
 						<i className="fa fa-external-link" style={{ height: '20px' }} aria-hidden="true" />
 					</a>
 				) : undefined}

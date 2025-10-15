@@ -550,10 +550,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							icon="fa-plus-square-o"
 							text={TranslateService.translate(eventStore, 'EXPAND_ALL')}
 						/>
-						<div className="sidebar-statistics padding-0">
-							{' '}
-							|{' '}
-						</div>
+						<div className="sidebar-statistics padding-0"> | </div>
 						<Button
 							disabled={!expandMinimizedEnabled}
 							flavor={ButtonFlavor.link}
@@ -562,10 +559,7 @@ const TriplanAdminSidebar = (props: TriplanAdminSidebarProps) => {
 							icon="fa-minus-square-o"
 							text={TranslateService.translate(eventStore, 'COLLAPSE_ALL')}
 						/>
-						<div className="sidebar-statistics padding-0">
-							{' '}
-							|{' '}
-						</div>
+						<div className="sidebar-statistics padding-0"> | </div>
 						<Button
 							className={getClasses(
 								['padding-inline-start-10 pointer padding-inline-end-10'],
