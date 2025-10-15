@@ -11,7 +11,7 @@ import { formatDuration, validateDuration } from '../utils/time-utils';
 import ReactModalService from './react-modal-service';
 
 // Helper function to convert KML icon URL to Google Maps icon URL
-const convertKmlIconToGoogleMapIcon = (iconId: string): string => {
+const convertKmlIconToGoogleMapIcon = (iconId: number): string => {
 	console.log('convertKmlIconToGoogleMapIcon input:', iconId);
 
 	if (!iconId.toString().length) {
@@ -493,45 +493,9 @@ const ImportService = {
 			const iconId = Number(styleUrl.split('-')[1]);
 			const iconHref = convertKmlIconToGoogleMapIcon(iconId);
 
-			// // Try to find StyleMap first (Google Maps uses StyleMap)
-			// let styleNode = styleUrl ? xml.querySelector(`StyleMap[id="${styleUrl}"]`) : null;
-			// let iconHref = '';
-			// let colorTag = '';
-
-			// if (styleNode) {
-			// 	// For StyleMap, we need to get the normal style URL and then find that style
-			// 	const normalPair = styleNode.querySelector('Pair[key="normal"] styleUrl');
-			// 	const normalStyleUrl = normalPair?.textContent?.replace('#', '');
-			// 	if (normalStyleUrl) {
-			// 		const actualStyleNode = xml.querySelector(`Style[id="${normalStyleUrl}"]`);
-			// 		if (actualStyleNode) {
-			// 			iconHref = actualStyleNode.getElementsByTagName('href')[0]?.textContent?.trim() || '';
-			// 			colorTag = actualStyleNode.getElementsByTagName('color')[0]?.textContent?.trim() || '';
-			// 		}
-			// 	}
-			// } else {
-			// 	// Fallback to direct Style lookup
-			// 	styleNode = styleUrl ? xml.querySelector(`Style[id="${styleUrl}"]`) : null;
-			// 	if (styleNode) {
-			// 		iconHref = styleNode.getElementsByTagName('href')[0]?.textContent?.trim() || '';
-			// 		colorTag = styleNode.getElementsByTagName('color')[0]?.textContent?.trim() || '';
-			// 	}
-			// }
-
 			// Debug logging for icon extraction
 			console.log('KML Processing - Placemark:', name);
 			console.log('Style URL:', styleUrl);
-			// console.log('Style Node found:', !!styleNode);
-			// console.log('Icon Href extracted:', iconHref);
-
-			// let color: string | null = null;
-			// if (colorTag) {
-			// 	const a = parseInt(colorTag.slice(0, 2), 16) / 255;
-			// 	const b = parseInt(colorTag.slice(2, 4), 16);
-			// 	const g = parseInt(colorTag.slice(4, 6), 16);
-			// 	const r = parseInt(colorTag.slice(6, 8), 16);
-			// 	color = `rgba(${r}, ${g}, ${b}, ${a})`;
-			// }
 
 			// ===== Location Data =====
 			const coordsText = pm.getElementsByTagName('coordinates')[0]?.textContent?.trim() || '';
@@ -561,13 +525,18 @@ const ImportService = {
 			// ===== Validation =====
 			if (!name) {
 				isValid = false;
-				const error = `Placemark #${i + 1} has no name`;
+				const error = TranslateService.translate(eventStore, 'EVENT_HAVE_NO_NAME', {
+					idx: i + 1,
+				});
 				errors.push(error);
 				numOfEventsWithErrors[i] = 1;
 			}
 			if (!location) {
 				isValid = false;
-				const error = `Placemark #${i + 1} (${name}) has no valid coordinates`;
+				const error = TranslateService.translate(eventStore, 'EVENT_HAVE_NO_VALID_COORDINATES', {
+					name,
+				});
+
 				errors.push(error);
 				numOfEventsWithErrors[i] = 1;
 			}
@@ -604,7 +573,6 @@ const ImportService = {
 			event['description'] = description;
 			event['category'] = categoryId;
 			event['icon'] = iconHref;
-			// event['color'] = color;
 			event['location'] = location;
 			event['priority'] = TriplanPriority.unset;
 			event['preferredTime'] = TriplanEventPreferredTime.unset;
@@ -669,74 +637,6 @@ const ImportService = {
 			errors,
 			numOfEventsWithErrors: Object.keys(numOfEventsWithErrors).length,
 		});
-	},
-	handleUploadedKMLFileOld(eventStore: any, kmlText: string) {
-		try {
-			const parser = new DOMParser();
-			const xml = parser.parseFromString(kmlText, 'application/xml');
-
-			const placemarks = Array.from(xml.getElementsByTagName('Placemark'));
-
-			const results = placemarks.map((pm) => {
-				const name = pm.getElementsByTagName('name')[0]?.textContent?.trim() || '';
-				const description = pm.getElementsByTagName('description')[0]?.textContent?.trim() || '';
-
-				// Find parent Folder (layer)
-				let layer: string | null = null;
-				let parent = pm.parentElement;
-				while (parent) {
-					if (parent.tagName === 'Folder') {
-						const folderName = parent.getElementsByTagName('name')[0]?.textContent;
-						if (folderName) {
-							layer = folderName.trim();
-							break;
-						}
-					}
-					parent = parent.parentElement;
-				}
-
-				// Extract Style info
-				const styleUrl = pm.getElementsByTagName('styleUrl')[0]?.textContent?.replace('#', '') || null;
-				const styleNode = styleUrl ? xml.querySelector(`Style[id="${styleUrl}"]`) : null;
-
-				const iconHref = styleNode?.getElementsByTagName('href')[0]?.textContent?.trim() || null;
-				const colorTag = styleNode?.getElementsByTagName('color')[0]?.textContent?.trim() || null;
-
-				let color: string | null = null;
-				if (colorTag) {
-					// KML color is AABBGGRR (alpha, blue, green, red)
-					const a = parseInt(colorTag.slice(0, 2), 16) / 255;
-					const b = parseInt(colorTag.slice(2, 4), 16);
-					const g = parseInt(colorTag.slice(4, 6), 16);
-					const r = parseInt(colorTag.slice(6, 8), 16);
-					color = `rgba(${r}, ${g}, ${b}, ${a})`;
-				}
-
-				return {
-					layer,
-					iconHref,
-					color,
-					name,
-					description,
-				};
-			});
-
-			// You can now store or process results
-			console.log('✅ Parsed KML results:', results);
-
-			// For example, you could update your MobX store:
-			// eventStore.importedMarkers = results;
-
-			// Or trigger a success modal/toast:
-			// ReactModalService.internal.alertMessage(eventStore, 'Import successful', `${results.length} markers found`, 'success');
-
-			return results;
-		} catch (error) {
-			console.error('❌ Error parsing KML file:', error);
-			// Show modal or handle error gracefully
-			// ReactModalService.internal.alertMessage(eventStore, 'Error', 'Failed to parse KML file', 'error');
-			return [];
-		}
 	},
 };
 

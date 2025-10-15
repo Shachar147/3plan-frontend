@@ -116,6 +116,8 @@
 	"MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY": "category name can't be empty",
 	"MODALS.LOCATION": "Location",
 	"EVENT_WITH_NAME": "Activity with name",
+	"EVENT_HAVE_NO_VALID_COORDINATES": "Activity with name {name} have no valid coordinates",
+	"EVENT_HAVE_NO_NAME": "Placemark #{idx} has no name",
 	"ALREADY_EXISTS": "already exists",
 	"TRIP_SUMMARY.START_PREFIX": "Starting the day at ",
 	"TRIP_SUMMARY.LAST_PREFIX": "Closing the day at ",
