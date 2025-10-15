@@ -93,11 +93,11 @@ export const resolveCategoryTitle = (eventStore: EventStore, event: any, allEven
 	return title ?? '';
 };
 
-export const getIcon = (eventStore: EventStore, event: any, allEvents?: AllEventsEvent[]) => {
+export const getIcon = (eventStore: EventStore, event: any, allEvents?: AllEventsEvent[], categoryIcon?: string) => {
 	let icon = '';
 	let bgColor = eventStore.priorityMapColors[event.priority || TriplanPriority.unset].replace('#', '');
 
-	const categoryIcon = resolveCategoryMapIcon(eventStore, event);
+	categoryIcon = categoryIcon ?? resolveCategoryMapIcon(eventStore, event);
 
 	let category = resolveCategoryTitle(eventStore, event, allEvents);
 
@@ -198,8 +198,8 @@ export const getIcon = (eventStore: EventStore, event: any, allEvents?: AllEvent
 	};
 };
 
-export const getIconUrl = (eventStore: EventStore, event: any, allEvents?: AllEventsEvent[]) => {
-	const { icon, bgColor } = getIcon(eventStore, event, allEvents);
+export const getIconUrl = (eventStore: EventStore, event: any, allEvents?: AllEventsEvent[], categoryIcon?: string) => {
+	const { icon, bgColor } = getIcon(eventStore, event, allEvents, categoryIcon);
 	if (icon === '') {
 		// return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-container-bg_4x.png,icons/onion/SHARED-mymaps-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;
 		return `https://mt.google.com/vt/icon/name=icons/onion/SHARED-mymaps-pin-container-bg_4x.png,icons/onion/SHARED-mymaps-pin-container_4x.png,icons/onion/1899-blank-shape_pin_4x.png&highlight=ff000000,${bgColor},ff000000&scale=2.0`;

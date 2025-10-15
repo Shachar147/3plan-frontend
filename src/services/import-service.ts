@@ -2,9 +2,33 @@ import { EventStore } from '../stores/events-store';
 import TranslateService from './translate-service';
 import { TriplanEventPreferredTime, TriplanPriority } from '../utils/enums';
 import { ImportEventsConfirmInfo, LocationData, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
+import {
+	GOOGLE_MAP_ICONS_MAP,
+	ignoreKeys,
+} from '../components/inputs/google-map-icon-selector/google-map-icon-selector';
 import { defaultTimedEventDuration } from '../utils/defaults';
 import { formatDuration, validateDuration } from '../utils/time-utils';
 import ReactModalService from './react-modal-service';
+
+// Helper function to convert KML icon URL to Google Maps icon URL
+const convertKmlIconToGoogleMapIcon = (iconId: string): string => {
+	console.log('convertKmlIconToGoogleMapIcon input:', iconId);
+
+	if (!iconId.toString().length) {
+		return '';
+	}
+
+	// Find the corresponding icon in GOOGLE_MAP_ICONS_MAP
+	for (const [key, value] of Object.entries(GOOGLE_MAP_ICONS_MAP)) {
+		if (value.icon.includes(iconId) && !ignoreKeys.includes(key)) {
+			console.log('Found matching icon in GOOGLE_MAP_ICONS_MAP:', value.icon);
+			return value.icon;
+		}
+	}
+
+	console.log('No matching icon found in GOOGLE_MAP_ICONS_MAP for icon ID:', iconId);
+	return '';
+};
 
 const ImportService = {
 	// ref: http://stackoverflow.com/a/1293163/2343
@@ -465,18 +489,49 @@ const ImportService = {
 
 			// ===== Style Info =====
 			const styleUrl = pm.getElementsByTagName('styleUrl')[0]?.textContent?.replace('#', '') || null;
-			const styleNode = styleUrl ? xml.querySelector(`Style[id="${styleUrl}"]`) : null;
-			const iconHref = styleNode?.getElementsByTagName('href')[0]?.textContent?.trim() || '';
-			const colorTag = styleNode?.getElementsByTagName('color')[0]?.textContent?.trim() || null;
 
-			let color: string | null = null;
-			if (colorTag) {
-				const a = parseInt(colorTag.slice(0, 2), 16) / 255;
-				const b = parseInt(colorTag.slice(2, 4), 16);
-				const g = parseInt(colorTag.slice(4, 6), 16);
-				const r = parseInt(colorTag.slice(6, 8), 16);
-				color = `rgba(${r}, ${g}, ${b}, ${a})`;
-			}
+			const iconId = Number(styleUrl.split('-')[1]);
+			const iconHref = convertKmlIconToGoogleMapIcon(iconId);
+
+			// // Try to find StyleMap first (Google Maps uses StyleMap)
+			// let styleNode = styleUrl ? xml.querySelector(`StyleMap[id="${styleUrl}"]`) : null;
+			// let iconHref = '';
+			// let colorTag = '';
+
+			// if (styleNode) {
+			// 	// For StyleMap, we need to get the normal style URL and then find that style
+			// 	const normalPair = styleNode.querySelector('Pair[key="normal"] styleUrl');
+			// 	const normalStyleUrl = normalPair?.textContent?.replace('#', '');
+			// 	if (normalStyleUrl) {
+			// 		const actualStyleNode = xml.querySelector(`Style[id="${normalStyleUrl}"]`);
+			// 		if (actualStyleNode) {
+			// 			iconHref = actualStyleNode.getElementsByTagName('href')[0]?.textContent?.trim() || '';
+			// 			colorTag = actualStyleNode.getElementsByTagName('color')[0]?.textContent?.trim() || '';
+			// 		}
+			// 	}
+			// } else {
+			// 	// Fallback to direct Style lookup
+			// 	styleNode = styleUrl ? xml.querySelector(`Style[id="${styleUrl}"]`) : null;
+			// 	if (styleNode) {
+			// 		iconHref = styleNode.getElementsByTagName('href')[0]?.textContent?.trim() || '';
+			// 		colorTag = styleNode.getElementsByTagName('color')[0]?.textContent?.trim() || '';
+			// 	}
+			// }
+
+			// Debug logging for icon extraction
+			console.log('KML Processing - Placemark:', name);
+			console.log('Style URL:', styleUrl);
+			// console.log('Style Node found:', !!styleNode);
+			// console.log('Icon Href extracted:', iconHref);
+
+			// let color: string | null = null;
+			// if (colorTag) {
+			// 	const a = parseInt(colorTag.slice(0, 2), 16) / 255;
+			// 	const b = parseInt(colorTag.slice(2, 4), 16);
+			// 	const g = parseInt(colorTag.slice(4, 6), 16);
+			// 	const r = parseInt(colorTag.slice(6, 8), 16);
+			// 	color = `rgba(${r}, ${g}, ${b}, ${a})`;
+			// }
 
 			// ===== Location Data =====
 			const coordsText = pm.getElementsByTagName('coordinates')[0]?.textContent?.trim() || '';
@@ -549,7 +604,7 @@ const ImportService = {
 			event['description'] = description;
 			event['category'] = categoryId;
 			event['icon'] = iconHref;
-			event['color'] = color;
+			// event['color'] = color;
 			event['location'] = location;
 			event['priority'] = TriplanPriority.unset;
 			event['preferredTime'] = TriplanEventPreferredTime.unset;
@@ -576,12 +631,22 @@ const ImportService = {
 			categoryIcons[categoryId] = iconMax;
 		});
 
-		// ===== Assign icons to new categories =====
+		// ===== Assign Google Maps icons to new categories =====
 		categoriesToAdd = categoriesToAdd.map((category) => {
-			category.icon =
-				categoryIcons[category.id] && typeof categoryIcons[category.id] === 'string'
-					? categoryIcons[category.id]
-					: '';
+			const mostCommonKmlIcon = categoryIcons[category.id] ? categoryIcons[category.id] : '';
+
+			// Debug logging
+			console.log('Category:', category.title, 'Most common KML icon:', mostCommonKmlIcon);
+
+			// Convert KML icon to Google Maps icon URL
+			const googleMapIconUrl = convertKmlIconToGoogleMapIcon(mostCommonKmlIcon);
+
+			// Debug logging
+			console.log('Converted Google Maps icon URL:', googleMapIconUrl);
+
+			// Only set googleMapIcon, not the regular icon
+			category.googleMapIcon = googleMapIconUrl;
+
 			return category;
 		});
 

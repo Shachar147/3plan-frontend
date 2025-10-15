@@ -92,7 +92,7 @@ import LogHistoryService from './data-handlers/log-history-service';
 import { endpoints } from '../v2/utils/endpoints';
 import { FeatureFlagsService } from '../utils/feature-flags';
 import { newDesignRootPath } from '../v2/utils/consts';
-import { getIcon } from '../components/map-container/map-container-utils';
+import { getIcon, getIconUrl } from '../components/map-container/map-container-utils';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -4823,7 +4823,25 @@ const ReactModalService = {
 					eventStore,
 					'IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_CATEGORIES'
 				)}</b></u>`,
-				['<ul>', ...info.categoriesToAdd.map((x) => `<li>${x.title}</li>`), '</ul>'].join(''),
+				[
+					'<ul>',
+					...info.categoriesToAdd.map((x) => {
+						const iconUrl = getIconUrl(
+							eventStore,
+							{
+								title: '',
+							},
+							undefined,
+							x.googleMapIcon
+						);
+
+						const iconDisplay = iconUrl
+							? `<img src="${iconUrl}" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;" alt="icon" />`
+							: undefined;
+						return `<li>${iconDisplay}${x.title}</li>`;
+					}),
+					'</ul>',
+				].join(''),
 			];
 		}
 
