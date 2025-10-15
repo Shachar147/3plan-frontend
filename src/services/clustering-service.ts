@@ -15,6 +15,8 @@ export interface ClusteringOptions {
 	distanceThreshold?: number; // in meters
 	drivingThresholdMinutes?: number;
 	walkingThresholdMinutes?: number;
+	useAirDistanceFallback?: boolean;
+	maxAirDistance?: number; // in meters
 }
 
 export interface Cluster {
@@ -73,12 +75,12 @@ export class ClusteringService {
 
 		let clusters: Cluster[];
 		switch (options.algorithm) {
-			case 'kmeans':
-				clusters = this.kMeansClustering(eventsWithLocation, options);
-				break;
-			case 'dbscan':
-				clusters = this.dbscanClustering(eventsWithLocation, options, distanceResults);
-				break;
+			// case 'kmeans':
+			// 	clusters = this.kMeansClustering(eventsWithLocation, options);
+			// 	break;
+			// case 'dbscan':
+			// 	clusters = this.dbscanClustering(eventsWithLocation, options, distanceResults);
+			// 	break;
 			case 'distance-based':
 			default:
 				clusters = this.distanceBasedClustering(eventsWithLocation, options, distanceResults);
@@ -100,7 +102,18 @@ export class ClusteringService {
 		const clusters: Cluster[] = [];
 		const drivingThresholdSeconds = (options.drivingThresholdMinutes || 10) * 60;
 		const walkingThresholdSeconds = (options.walkingThresholdMinutes || 20) * 60;
-		const maxClusters = options.maxClusters || 10;
+		const maxClusters = 3; // options.maxClusters || 10;
+
+		// Use air distance threshold when fallback is enabled
+		const distanceThreshold = options.useAirDistanceFallback
+			? options.maxAirDistance || 5000
+			: Math.min(drivingThresholdSeconds, walkingThresholdSeconds);
+
+		console.log(
+			`Distance-based clustering using ${
+				options.useAirDistanceFallback ? 'air distance' : 'travel time'
+			} threshold: ${distanceThreshold}${options.useAirDistanceFallback ? 'm' : 's'}`
+		);
 
 		// Start with each event as its own cluster
 		for (const event of events) {
@@ -124,7 +137,12 @@ export class ClusteringService {
 			// Find the closest pair of clusters
 			for (let i = 0; i < clusters.length; i++) {
 				for (let j = i + 1; j < clusters.length; j++) {
-					const distance = this.getDistanceBetweenClusters(clusters[i], clusters[j], distanceResults);
+					const distance = this.getDistanceBetweenClusters(
+						clusters[i],
+						clusters[j],
+						distanceResults,
+						options
+					);
 					if (distance < minDistance) {
 						minDistance = distance;
 						closestPair = { cluster1: clusters[i], cluster2: clusters[j], distance };
@@ -132,7 +150,7 @@ export class ClusteringService {
 				}
 			}
 
-			if (!closestPair || minDistance > Math.min(drivingThresholdSeconds, walkingThresholdSeconds)) {
+			if (!closestPair || minDistance > distanceThreshold) {
 				break; // Stop if no close clusters found
 			}
 
@@ -150,228 +168,229 @@ export class ClusteringService {
 		}));
 	}
 
-	/**
-	 * K-Means clustering algorithm
-	 */
-	private static kMeansClustering(events: SidebarEvent[], options: ClusteringOptions): Cluster[] {
-		const k = Math.min(options.maxClusters || 5, events.length);
-		const maxIterations = 100;
-		const tolerance = 0.001;
+	// /**
+	//  * K-Means clustering algorithm
+	//  */
+	// private static kMeansClustering(events: SidebarEvent[], options: ClusteringOptions): Cluster[] {
+	// 	const k = Math.min(options.maxClusters || 5, events.length);
+	// 	const maxIterations = 100;
+	// 	const tolerance = 0.001;
 
-		// Initialize centroids randomly
-		let centroids = this.initializeCentroids(events, k);
-		let clusters: Cluster[] = [];
-		let iterations = 0;
+	// 	// Initialize centroids randomly
+	// 	let centroids = this.initializeCentroids(events, k);
+	// 	let clusters: Cluster[] = [];
+	// 	let iterations = 0;
 
-		while (iterations < maxIterations) {
-			// Assign events to nearest centroid
-			clusters = this.assignEventsToCentroids(events, centroids);
+	// 	while (iterations < maxIterations) {
+	// 		// Assign events to nearest centroid
+	// 		clusters = this.assignEventsToCentroids(events, centroids);
 
-			// Update centroids
-			const newCentroids = this.updateCentroids(clusters);
+	// 		// Update centroids
+	// 		const newCentroids = this.updateCentroids(clusters);
 
-			// Check for convergence
-			if (this.hasConverged(centroids, newCentroids, tolerance)) {
-				break;
-			}
+	// 		// Check for convergence
+	// 		if (this.hasConverged(centroids, newCentroids, tolerance)) {
+	// 			break;
+	// 		}
 
-			centroids = newCentroids;
-			iterations++;
-		}
+	// 		centroids = newCentroids;
+	// 		iterations++;
+	// 	}
 
-		// Filter out empty clusters and calculate radius
-		return clusters
-			.filter((cluster) => cluster.events.length > 0)
-			.map((cluster) => ({
-				...cluster,
-				radius: this.calculateClusterRadius(cluster.events, cluster.center),
-			}));
-	}
+	// 	// Filter out empty clusters and calculate radius
+	// 	return clusters
+	// 		.filter((cluster) => cluster.events.length > 0)
+	// 		.map((cluster) => ({
+	// 			...cluster,
+	// 			radius: this.calculateClusterRadius(cluster.events, cluster.center),
+	// 		}));
+	// }
 
-	/**
-	 * DBSCAN clustering algorithm (Density-Based Spatial Clustering)
-	 */
-	private static dbscanClustering(
-		events: SidebarEvent[],
-		options: ClusteringOptions,
-		distanceResults?: Map<string, any>
-	): Cluster[] {
-		const minPts = options.minClusterSize || 2;
-		const eps = options.distanceThreshold || 1000; // 1km default
-		const maxClusters = options.maxClusters || 10;
+	// /**
+	//  * DBSCAN clustering algorithm (Density-Based Spatial Clustering)
+	//  */
+	// private static dbscanClustering(
+	// 	events: SidebarEvent[],
+	// 	options: ClusteringOptions,
+	// 	distanceResults?: Map<string, any>
+	// ): Cluster[] {
+	// 	const minPts = options.minClusterSize || 2;
+	// 	const eps = options.distanceThreshold || 1000; // 1km default
+	// 	const maxClusters = options.maxClusters || 10;
 
-		const visited = new Set<string>();
-		const clustered = new Set<string>();
-		const clusters: Cluster[] = [];
-		let clusterId = 0;
+	// 	const visited = new Set<string>();
+	// 	const clustered = new Set<string>();
+	// 	const clusters: Cluster[] = [];
+	// 	let clusterId = 0;
 
-		for (const event of events) {
-			if (visited.has(event.id)) continue;
+	// 	for (const event of events) {
+	// 		if (visited.has(event.id)) continue;
 
-			visited.add(event.id);
-			const neighbors = this.getNeighbors(event, events, eps, distanceResults);
+	// 		visited.add(event.id);
+	// 		const neighbors = this.getNeighbors(event, events, eps, distanceResults, options);
 
-			if (neighbors.length < minPts) {
-				// Mark as noise (we'll handle this later)
-				continue;
-			}
+	// 		if (neighbors.length < minPts) {
+	// 			// Mark as noise (we'll handle this later)
+	// 			continue;
+	// 		}
 
-			// Create new cluster
-			const cluster: Cluster = {
-				id: `cluster_${clusterId++}`,
-				events: [event],
-				center: {
-					latitude: (event.location as LocationData).latitude,
-					longitude: (event.location as LocationData).longitude,
-					address: (event.location as LocationData).address,
-				},
-				radius: 0,
-			};
+	// 		// Create new cluster
+	// 		const cluster: Cluster = {
+	// 			id: `cluster_${clusterId++}`,
+	// 			events: [event],
+	// 			center: {
+	// 				latitude: (event.location as LocationData).latitude,
+	// 				longitude: (event.location as LocationData).longitude,
+	// 				address: (event.location as LocationData).address,
+	// 			},
+	// 			radius: 0,
+	// 		};
 
-			clustered.add(event.id);
+	// 		clustered.add(event.id);
 
-			// Expand cluster
-			const seedSet = [...neighbors];
-			let i = 0;
-			while (i < seedSet.length) {
-				const neighbor = seedSet[i];
-				if (!visited.has(neighbor.id)) {
-					visited.add(neighbor.id);
-					const neighborNeighbors = this.getNeighbors(neighbor, events, eps, distanceResults);
-					if (neighborNeighbors.length >= minPts) {
-						seedSet.push(...neighborNeighbors);
-					}
-				}
-				if (!clustered.has(neighbor.id)) {
-					cluster.events.push(neighbor);
-					clustered.add(neighbor.id);
-				}
-				i++;
-			}
+	// 		// Expand cluster
+	// 		const seedSet = [...neighbors];
+	// 		let i = 0;
+	// 		while (i < seedSet.length) {
+	// 			const neighbor = seedSet[i];
+	// 			if (!visited.has(neighbor.id)) {
+	// 				visited.add(neighbor.id);
+	// 				const neighborNeighbors = this.getNeighbors(neighbor, events, eps, distanceResults, options);
+	// 				if (neighborNeighbors.length >= minPts) {
+	// 					seedSet.push(...neighborNeighbors);
+	// 				}
+	// 			}
+	// 			if (!clustered.has(neighbor.id)) {
+	// 				cluster.events.push(neighbor);
+	// 				clustered.add(neighbor.id);
+	// 			}
+	// 			i++;
+	// 		}
 
-			// Update cluster center and radius
-			cluster.center = this.calculateCentroid(cluster.events);
-			cluster.radius = this.calculateClusterRadius(cluster.events, cluster.center);
-			clusters.push(cluster);
+	// 		// Update cluster center and radius
+	// 		cluster.center = this.calculateCentroid(cluster.events);
+	// 		cluster.radius = this.calculateClusterRadius(cluster.events, cluster.center);
+	// 		clusters.push(cluster);
 
-			// Stop if we've reached max clusters
-			if (clusters.length >= maxClusters) {
-				break;
-			}
-		}
+	// 		// Stop if we've reached max clusters
+	// 		if (clusters.length >= maxClusters) {
+	// 			break;
+	// 		}
+	// 	}
 
-		// Add remaining events as individual clusters if we haven't reached max
-		for (const event of events) {
-			if (!clustered.has(event.id) && clusters.length < maxClusters) {
-				clusters.push({
-					id: `cluster_${clusterId++}`,
-					events: [event],
-					center: {
-						latitude: (event.location as LocationData).latitude,
-						longitude: (event.location as LocationData).longitude,
-						address: (event.location as LocationData).address,
-					},
-					radius: 0,
-				});
-			}
-		}
+	// 	// Add remaining events as individual clusters if we haven't reached max
+	// 	for (const event of events) {
+	// 		if (!clustered.has(event.id) && clusters.length < maxClusters) {
+	// 			clusters.push({
+	// 				id: `cluster_${clusterId++}`,
+	// 				events: [event],
+	// 				center: {
+	// 					latitude: (event.location as LocationData).latitude,
+	// 					longitude: (event.location as LocationData).longitude,
+	// 					address: (event.location as LocationData).address,
+	// 				},
+	// 				radius: 0,
+	// 			});
+	// 		}
+	// 	}
 
-		return clusters;
-	}
+	// 	return clusters;
+	// }
 
-	/**
-	 * Helper methods
-	 */
-	private static initializeCentroids(events: SidebarEvent[], k: number): LocationData[] {
-		const centroids: LocationData[] = [];
-		const usedIndices = new Set<number>();
+	// /**
+	//  * Helper methods
+	//  */
+	// private static initializeCentroids(events: SidebarEvent[], k: number): LocationData[] {
+	// 	const centroids: LocationData[] = [];
+	// 	const usedIndices = new Set<number>();
 
-		for (let i = 0; i < k; i++) {
-			let randomIndex;
-			do {
-				randomIndex = Math.floor(Math.random() * events.length);
-			} while (usedIndices.has(randomIndex));
+	// 	for (let i = 0; i < k; i++) {
+	// 		let randomIndex;
+	// 		do {
+	// 			randomIndex = Math.floor(Math.random() * events.length);
+	// 		} while (usedIndices.has(randomIndex));
 
-			usedIndices.add(randomIndex);
-			const eventLocation = events[randomIndex].location;
-			if (eventLocation && typeof eventLocation === 'object') {
-				centroids.push({
-					latitude: eventLocation.latitude,
-					longitude: eventLocation.longitude,
-					address: eventLocation.address,
-				});
-			}
-		}
+	// 		usedIndices.add(randomIndex);
+	// 		const eventLocation = events[randomIndex].location;
+	// 		if (eventLocation && typeof eventLocation === 'object') {
+	// 			centroids.push({
+	// 				latitude: eventLocation.latitude,
+	// 				longitude: eventLocation.longitude,
+	// 				address: eventLocation.address,
+	// 			});
+	// 		}
+	// 	}
 
-		return centroids;
-	}
+	// 	return centroids;
+	// }
 
-	private static assignEventsToCentroids(events: SidebarEvent[], centroids: LocationData[]): Cluster[] {
-		const clusters: Cluster[] = centroids.map((centroid, index) => ({
-			id: `cluster_${index}`,
-			events: [],
-			center: centroid,
-			radius: 0,
-		}));
+	// private static assignEventsToCentroids(events: SidebarEvent[], centroids: LocationData[]): Cluster[] {
+	// 	const clusters: Cluster[] = centroids.map((centroid, index) => ({
+	// 		id: `cluster_${index}`,
+	// 		events: [],
+	// 		center: centroid,
+	// 		radius: 0,
+	// 	}));
 
-		for (const event of events) {
-			let closestClusterIndex = 0;
-			let minDistance = Infinity;
+	// 	for (const event of events) {
+	// 		let closestClusterIndex = 0;
+	// 		let minDistance = Infinity;
 
-			for (let i = 0; i < centroids.length; i++) {
-				const distance = this.calculateHaversineDistance(
-					(event.location as LocationData).latitude,
-					(event.location as LocationData).longitude,
-					centroids[i].latitude,
-					centroids[i].longitude
-				);
-				if (distance < minDistance) {
-					minDistance = distance;
-					closestClusterIndex = i;
-				}
-			}
+	// 		for (let i = 0; i < centroids.length; i++) {
+	// 			const distance = this.calculateHaversineDistance(
+	// 				(event.location as LocationData).latitude,
+	// 				(event.location as LocationData).longitude,
+	// 				centroids[i].latitude,
+	// 				centroids[i].longitude
+	// 			);
+	// 			if (distance < minDistance) {
+	// 				minDistance = distance;
+	// 				closestClusterIndex = i;
+	// 			}
+	// 		}
 
-			clusters[closestClusterIndex].events.push(event);
-		}
+	// 		clusters[closestClusterIndex].events.push(event);
+	// 	}
 
-		return clusters;
-	}
+	// 	return clusters;
+	// }
 
-	private static updateCentroids(clusters: Cluster[]): LocationData[] {
-		return clusters.map((cluster) => this.calculateCentroid(cluster.events));
-	}
+	// private static updateCentroids(clusters: Cluster[]): LocationData[] {
+	// 	return clusters.map((cluster) => this.calculateCentroid(cluster.events));
+	// }
 
-	private static hasConverged(
-		oldCentroids: LocationData[],
-		newCentroids: LocationData[],
-		tolerance: number
-	): boolean {
-		for (let i = 0; i < oldCentroids.length; i++) {
-			const distance = this.calculateHaversineDistance(
-				oldCentroids[i].latitude,
-				oldCentroids[i].longitude,
-				newCentroids[i].latitude,
-				newCentroids[i].longitude
-			);
-			if (distance > tolerance) {
-				return false;
-			}
-		}
-		return true;
-	}
+	// private static hasConverged(
+	// 	oldCentroids: LocationData[],
+	// 	newCentroids: LocationData[],
+	// 	tolerance: number
+	// ): boolean {
+	// 	for (let i = 0; i < oldCentroids.length; i++) {
+	// 		const distance = this.calculateHaversineDistance(
+	// 			oldCentroids[i].latitude,
+	// 			oldCentroids[i].longitude,
+	// 			newCentroids[i].latitude,
+	// 			newCentroids[i].longitude
+	// 		);
+	// 		if (distance > tolerance) {
+	// 			return false;
+	// 		}
+	// 	}
+	// 	return true;
+	// }
 
-	private static getNeighbors(
-		event: SidebarEvent,
-		events: SidebarEvent[],
-		eps: number,
-		distanceResults?: Map<string, any>
-	): SidebarEvent[] {
-		return events.filter((otherEvent) => {
-			if (otherEvent.id === event.id) return false;
-			const distance = this.getDistanceBetweenEvents(event, otherEvent, distanceResults);
-			return distance <= eps;
-		});
-	}
+	// private static getNeighbors(
+	// 	event: SidebarEvent,
+	// 	events: SidebarEvent[],
+	// 	eps: number,
+	// 	distanceResults?: Map<string, any>,
+	// 	options?: ClusteringOptions
+	// ): SidebarEvent[] {
+	// 	return events.filter((otherEvent) => {
+	// 		if (otherEvent.id === event.id) return false;
+	// 		const distance = this.getDistanceBetweenEvents(event, otherEvent, distanceResults, options);
+	// 		return distance <= eps;
+	// 	});
+	// }
 
 	private static mergeClusters(cluster1: Cluster, cluster2: Cluster): Cluster {
 		const mergedEvents = [...cluster1.events, ...cluster2.events];
@@ -389,37 +408,57 @@ export class ClusteringService {
 	private static getDistanceBetweenClusters(
 		cluster1: Cluster,
 		cluster2: Cluster,
-		distanceResults?: Map<string, any>
+		distanceResults?: Map<string, any>,
+		options?: ClusteringOptions
 	): number {
-		// Use the distance between cluster centers
-		return this.calculateHaversineDistance(
+		// Calculate air distance between cluster centers
+		const airDistance = this.calculateHaversineDistance(
 			cluster1.center.latitude,
 			cluster1.center.longitude,
 			cluster2.center.latitude,
 			cluster2.center.longitude
 		);
+
+		console.log('hereeee', airDistance, 'between ', cluster1.events[0].title, 'and', cluster2.events[0].title);
+
+		// If air distance fallback is enabled, use it with the max distance limit
+		if (options?.useAirDistanceFallback && options?.maxAirDistance) {
+			// Return the air distance if it's within the max limit, otherwise return a very large distance
+			const result = airDistance <= options.maxAirDistance ? airDistance : Number.MAX_SAFE_INTEGER;
+			return result;
+		}
+
+		// If air distance fallback is not enabled, return a very large distance to prevent clustering
+		// This forces the system to rely on travel time data only
+		return Number.MAX_SAFE_INTEGER;
 	}
 
 	private static getDistanceBetweenEvents(
 		event1: SidebarEvent,
 		event2: SidebarEvent,
-		distanceResults?: Map<string, any>
+		distanceResults?: Map<string, any>,
+		options?: ClusteringOptions
 	): number {
-		// Try to use cached distance results first
-		if (distanceResults) {
-			// This would need to be implemented based on your distance key format
-			// For now, fall back to Haversine distance
-		}
-
-		// Fall back to Haversine distance
+		// Calculate air distance between events
 		const location1 = event1.location as LocationData;
 		const location2 = event2.location as LocationData;
-		return this.calculateHaversineDistance(
+		const airDistance = this.calculateHaversineDistance(
 			location1.latitude,
 			location1.longitude,
 			location2.latitude,
 			location2.longitude
 		);
+
+		// If air distance fallback is enabled, use it with the max distance limit
+		if (options?.useAirDistanceFallback && options?.maxAirDistance) {
+			// Return the air distance if it's within the max limit, otherwise return a very large distance
+			const result = airDistance <= options.maxAirDistance ? airDistance : Number.MAX_SAFE_INTEGER;
+			return result;
+		}
+
+		// If air distance fallback is not enabled, return a very large distance to prevent clustering
+		// This forces the system to rely on travel time data only
+		return Number.MAX_SAFE_INTEGER;
 	}
 
 	private static calculateCentroid(events: SidebarEvent[]): LocationData {

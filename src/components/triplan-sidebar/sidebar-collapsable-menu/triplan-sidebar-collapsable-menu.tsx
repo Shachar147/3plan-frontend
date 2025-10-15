@@ -1624,14 +1624,14 @@ function GroupBySelector() {
 	};
 
 	const renderAreaSettings = () => (
-		<div className="flex-column gap-2">
+		<div className="flex-column gap-2 padding-inline-start-10">
 			{/* Divider for area settings */}
 			{/* {renderLineWithText(TranslateService.translate(eventStore, 'AREA_GROUPING_SETTINGS'))} */}
 
 			{/* Driving threshold */}
 			<Observer>
 				{() => (
-					<div className="flex-row gap-5 align-items-center sidebar-settings">
+					<div className="flex-row gap-5 align-items-center sidebar-settings opacity-0-8">
 						<i className="fa fa-car" aria-hidden="true"></i>
 						<span>{TranslateService.translate(eventStore, 'DRIVING_THRESHOLD')}</span>
 						<input
@@ -1644,7 +1644,6 @@ function GroupBySelector() {
 							onClick={(e) => e.stopPropagation()}
 							style={{
 								width: '50px',
-								// marginLeft: 'auto',
 								padding: '2px 5px',
 								textAlign: 'center',
 								border: '1px solid var(--gray-light)',
@@ -1658,7 +1657,7 @@ function GroupBySelector() {
 			{/* Walking threshold */}
 			<Observer>
 				{() => (
-					<div className="flex-row gap-5 align-items-center sidebar-settings">
+					<div className="flex-row gap-5 align-items-center sidebar-settings opacity-0-8">
 						<i className="fa fa-male" aria-hidden="true"></i>
 						<span>{TranslateService.translate(eventStore, 'WALKING_THRESHOLD')}</span>
 						<input
@@ -1671,7 +1670,6 @@ function GroupBySelector() {
 							onClick={(e) => e.stopPropagation()}
 							style={{
 								width: '50px',
-								// marginLeft: 'auto',
 								padding: '2px 5px',
 								textAlign: 'center',
 								border: '1px solid var(--gray-light)',
@@ -1680,6 +1678,84 @@ function GroupBySelector() {
 						<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
 					</div>
 				)}
+			</Observer>
+
+			{/* Air Distance Fallback Checkbox */}
+			<Observer>
+				{() => (
+					<div className="flex-row gap-5 align-items-center sidebar-settings opacity-0-8">
+						<input
+							type="checkbox"
+							id="use-air-distance-fallback"
+							checked={eventStore.sidebarSettings.get('use-air-distance-fallback') === '1'}
+							onChange={() => {
+								const currentValue =
+									eventStore.sidebarSettings.get('use-air-distance-fallback') === '1';
+								runInAction(() => {
+									eventStore.sidebarSettings.set(
+										'use-air-distance-fallback',
+										currentValue ? '0' : '1'
+									);
+									eventStore.saveSidebarSettings();
+								});
+							}}
+							style={{
+								...radioStyle,
+								marginRight: '0',
+								marginLeft: '0',
+								marginInlineEnd: '3px',
+							}}
+						/>
+						<label
+							htmlFor="use-air-distance-fallback"
+							onClick={() => {
+								const currentValue =
+									eventStore.sidebarSettings.get('use-air-distance-fallback') === '1';
+								runInAction(() => {
+									eventStore.sidebarSettings.set(
+										'use-air-distance-fallback',
+										currentValue ? '0' : '1'
+									);
+									eventStore.saveSidebarSettings();
+								});
+							}}
+							className="cursor-pointer margin-bottom-0"
+						>
+							{TranslateService.translate(eventStore, 'USE_AIR_DISTANCE_FALLBACK')}
+						</label>
+					</div>
+				)}
+			</Observer>
+
+			{/* Max Air Distance - Only show when checkbox is checked */}
+			<Observer>
+				{() => {
+					const isAirDistanceEnabled = eventStore.sidebarSettings.get('use-air-distance-fallback') === '1';
+					if (!isAirDistanceEnabled) return null;
+
+					return (
+						<div className="flex-row gap-5 align-items-center sidebar-settings opacity-0-8">
+							<i className="fa fa-plane" aria-hidden="true"></i>
+							<span>{TranslateService.translate(eventStore, 'MAX_AIR_DISTANCE')}</span>
+							<input
+								type="number"
+								className="sidebar-settings-input"
+								min="100"
+								max="50000"
+								step="100"
+								value={eventStore.sidebarSettings.get('max-air-distance') || 5000}
+								onChange={(e) => handleThresholdChange('max-air-distance', e.target.value)}
+								// onClick={(e) => e.stopPropagation()}
+								style={{
+									width: '80px',
+									padding: '2px 5px',
+									textAlign: 'center',
+									border: '1px solid var(--gray-light)',
+								}}
+							/>
+						</div>
+					);
+				}}
 			</Observer>
 
 			{/* Clustering Algorithm */}
@@ -1695,7 +1771,6 @@ function GroupBySelector() {
 							onClick={(e) => e.stopPropagation()}
 							style={{
 								width: '120px',
-								// marginLeft: 'auto',
 								padding: '2px 5px',
 								border: '1px solid var(--gray-light)',
 								fontSize: '12px',
@@ -1731,7 +1806,6 @@ function GroupBySelector() {
 							onClick={(e) => e.stopPropagation()}
 							style={{
 								width: '50px',
-								// marginLeft: 'auto',
 								padding: '2px 5px',
 								textAlign: 'center',
 								border: '1px solid var(--gray-light)',
@@ -1757,7 +1831,6 @@ function GroupBySelector() {
 							onClick={(e) => e.stopPropagation()}
 							style={{
 								width: '50px',
-								// marginLeft: 'auto',
 								padding: '2px 5px',
 								textAlign: 'center',
 								border: '1px solid var(--gray-light)',
@@ -1792,7 +1865,6 @@ function GroupBySelector() {
 							onClick={(e) => e.stopPropagation()}
 							style={{
 								width: '100px',
-								// marginLeft: 'auto',
 								padding: '2px 5px',
 								textAlign: 'center',
 								border: '1px solid var(--gray-light)',

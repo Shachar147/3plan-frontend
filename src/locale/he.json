@@ -1368,5 +1368,7 @@
 	"MAX_CLUSTERS": "מקסימום קיבוצים",
 	"MIN_CLUSTER_SIZE": "גודל קיבוץ מינימלי",
 	"DISTANCE_THRESHOLD": "סף מרחק (מטרים)",
-	"MAP_GROUP_BY.AREAS": "לפי אזורים"
+	"MAP_GROUP_BY.AREAS": "לפי אזורים",
+	"USE_AIR_DISTANCE_FALLBACK": "השתמש במרחק אווירי אם לא נמצא זמן נסיעה/הליכה",
+	"MAX_AIR_DISTANCE": "מרחק אווירי מקסימלי (מטרים)"
 }

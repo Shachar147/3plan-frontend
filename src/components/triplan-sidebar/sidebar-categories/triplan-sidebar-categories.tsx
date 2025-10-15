@@ -77,6 +77,8 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			distanceThreshold: Number(eventStore.sidebarSettings.get('distance-threshold')) || 1000, // 1km
 			drivingThresholdMinutes: Number(eventStore.sidebarSettings.get('area-driving-threshold')) || 10,
 			walkingThresholdMinutes: Number(eventStore.sidebarSettings.get('area-walking-threshold')) || 20,
+			useAirDistanceFallback: eventStore.sidebarSettings.get('use-air-distance-fallback') === '1',
+			maxAirDistance: Number(eventStore.sidebarSettings.get('max-air-distance')) || 5000, // 5km default
 		};
 
 		// Perform clustering on events with location
@@ -169,7 +171,19 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	useEffect(() => {
 		const newClusterData = calculateClusters();
 		setEventToClusterMap(newClusterData.eventToClusterMap);
-	}, [eventStore.sidebarSettings]);
+	}, [calculateClusters]);
+
+	// Watch for specific air distance setting changes
+	useEffect(() => {
+		if (eventStore.sidebarGroupBy === 'area') {
+			const newClusterData = calculateClusters();
+			setEventToClusterMap(newClusterData.eventToClusterMap);
+		}
+	}, [
+		eventStore.sidebarSettings.get('use-air-distance-fallback'),
+		eventStore.sidebarSettings.get('max-air-distance'),
+		eventStore.sidebarGroupBy,
+	]);
 
 	// Update eventStore with cluster mapping (separate from calculation)
 	useEffect(() => {
