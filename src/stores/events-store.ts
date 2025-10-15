@@ -250,6 +250,16 @@ export class EventStore {
 		this.sidebarGroupBy =
 			(localStorage.getItem('sidebarGroupBy') as 'priority' | 'category' | 'area') || 'category';
 
+		this.mapViewMode =
+			(localStorage.getItem('mapViewMode') as MapViewMode) || MapViewMode.CATEGORIES_AND_PRIORITIES;
+		if (this.sidebarGroupBy === 'area') {
+			this.mapViewMode = MapViewMode.AREAS;
+		}
+
+		if (this.mapViewMode == MapViewMode.CHRONOLOGICAL_ORDER) {
+			this.mapViewDayFilter = (localStorage.getItem('mapViewDayFilter') as string) || '';
+		}
+
 		this.init();
 	}
 
@@ -2032,6 +2042,11 @@ export class EventStore {
 	setSidebarGroupBy(groupBy: 'priority' | 'category' | 'area') {
 		this.sidebarGroupBy = groupBy;
 		localStorage.setItem('sidebarGroupBy', groupBy);
+
+		// Auto-switch map view to areas when sidebar switches to areas
+		if (groupBy === 'area') {
+			this.mapViewMode = MapViewMode.AREAS;
+		}
 	}
 
 	@action

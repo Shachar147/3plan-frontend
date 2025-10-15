@@ -1062,6 +1062,10 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					label: TranslateService.translate(eventStore, 'BY_CATEGORIES_AND_PRIORITIES'),
 					value: MapViewMode.CATEGORIES_AND_PRIORITIES,
 				},
+				{
+					label: TranslateService.translate(eventStore, 'MAP_GROUP_BY.AREAS'),
+					value: MapViewMode.AREAS,
+				},
 				...eventStore.scheduledDaysNames
 					.map((dayName) => ({
 						label: TranslateService.translate(eventStore, 'CHRONOLOGICAL_ORDER', {
@@ -1079,6 +1083,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 						id="map-view-mode"
 						name="map-view-mode"
 						options={options}
+						key={eventStore.mapViewMode} // to be able to update it from outside when changing the sidebar group by
 						value={
 							options.find((o) => o.value === eventStore.mapViewMode) ??
 							options.find(
@@ -1087,12 +1092,18 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 						}
 						onChange={(data: any) => {
 							runInAction(() => {
-								if (data.value == MapViewMode.CATEGORIES_AND_PRIORITIES) {
+								if (
+									data.value == MapViewMode.CATEGORIES_AND_PRIORITIES ||
+									data.value == MapViewMode.AREAS
+								) {
 									eventStore.mapViewMode = data.value;
+									localStorage.setItem('mapViewMode', data.value);
 								} else {
 									const parts = data.value.split(SEPARATOR);
 									eventStore.mapViewMode = parts[0];
 									eventStore.mapViewDayFilter = parts[1];
+									localStorage.setItem('mapViewMode', data.value);
+									localStorage.setItem('mapViewDayFilter', data.value);
 								}
 							});
 						}}
@@ -1435,7 +1446,9 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				props.isCombined && 'combined',
 				eventStore.isMobile && 'resize-none'
 			)}
-			key={`${JSON.stringify(eventStore.priorityMapColors)}-${JSON.stringify(eventStore.categoriesMapIcons)}`}
+			key={`${JSON.stringify(eventStore.priorityMapColors)}-${JSON.stringify(eventStore.categoriesMapIcons)}-${
+				eventStore.mapViewMode
+			}`}
 		>
 			{!props.noFilters && locations.length > 0 && renderMapFilters()}
 			{!props.noHeader && renderMapHeader()}

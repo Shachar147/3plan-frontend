@@ -1,4 +1,6 @@
+import { EventStore } from '../stores/events-store';
 import { SidebarEvent } from '../utils/interfaces';
+import TranslateService from './translate-service';
 
 export interface LocationData {
 	latitude: number;
@@ -470,9 +472,11 @@ export class ClusteringService {
 	/**
 	 * Generate a human-readable name for a cluster
 	 */
-	static generateClusterName(cluster: Cluster, index: number): string {
+	static generateClusterName(eventStore: EventStore, cluster: Cluster, index: number): string {
 		if (cluster.events.length === 0) {
-			return `Area ${index + 1}`;
+			return TranslateService.translate(eventStore, 'AREA_X', {
+				X: index + 1,
+			});
 		}
 
 		// Try to find a common location name
@@ -490,11 +494,15 @@ export class ClusteringService {
 
 			const mostCommonAddress = Object.entries(addressCounts).sort(([, a], [, b]) => b - a)[0][0];
 
-			return `Area: ${mostCommonAddress}`;
+			return TranslateService.translate(eventStore, 'AREA_X', {
+				X: mostCommonAddress,
+			});
 		}
 
 		// Fallback to generic name
-		return `Area ${index + 1}`;
+		return TranslateService.translate(eventStore, 'AREA_X', {
+			X: index + 1,
+		});
 	}
 
 	/**

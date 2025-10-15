@@ -1111,5 +1111,6 @@
 	"CLUSTERING_ALGORITHM.DBSCAN": "DBSCAN",
 	"MAX_CLUSTERS": "Max Clusters",
 	"MIN_CLUSTER_SIZE": "Min Cluster Size",
-	"DISTANCE_THRESHOLD": "Distance Threshold (meters)"
+	"DISTANCE_THRESHOLD": "Distance Threshold (meters)",
+	"MAP_GROUP_BY.AREAS": "By Areas"
 }

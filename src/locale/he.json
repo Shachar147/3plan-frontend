@@ -1367,5 +1367,6 @@
 	"CLUSTERING_ALGORITHM.DBSCAN": "DBSCAN",
 	"MAX_CLUSTERS": "מקסימום קיבוצים",
 	"MIN_CLUSTER_SIZE": "גודל קיבוץ מינימלי",
-	"DISTANCE_THRESHOLD": "סף מרחק (מטרים)"
+	"DISTANCE_THRESHOLD": "סף מרחק (מטרים)",
+	"MAP_GROUP_BY.AREAS": "לפי אזורים"
 }

@@ -1624,11 +1624,9 @@ function GroupBySelector() {
 	};
 
 	const renderAreaSettings = () => (
-		<div className="flex-column gap-8">
+		<div className="flex-column gap-2">
 			{/* Divider for area settings */}
-			<div className="margin-block-5">
-				{renderLineWithText(TranslateService.translate(eventStore, 'AREA_GROUPING_SETTINGS'))}
-			</div>
+			{/* {renderLineWithText(TranslateService.translate(eventStore, 'AREA_GROUPING_SETTINGS'))} */}
 
 			{/* Driving threshold */}
 			<Observer>
@@ -1685,7 +1683,7 @@ function GroupBySelector() {
 			</Observer>
 
 			{/* Clustering Algorithm */}
-			<Observer>
+			{/* <Observer>
 				{() => (
 					<div className="flex-row gap-5 align-items-center sidebar-settings">
 						<i className="fa fa-sitemap" aria-hidden="true"></i>
@@ -1715,10 +1713,10 @@ function GroupBySelector() {
 						</select>
 					</div>
 				)}
-			</Observer>
+			</Observer> */}
 
 			{/* Max Clusters */}
-			<Observer>
+			{/* <Observer>
 				{() => (
 					<div className="flex-row gap-5 align-items-center sidebar-settings">
 						<i className="fa fa-long-arrow-up" aria-hidden="true"></i>
@@ -1741,10 +1739,10 @@ function GroupBySelector() {
 						/>
 					</div>
 				)}
-			</Observer>
+			</Observer> */}
 
 			{/* Min Cluster Size */}
-			<Observer>
+			{/* <Observer>
 				{() => (
 					<div className="flex-row gap-5 align-items-center sidebar-settings">
 						<i className="fa fa-long-arrow-down" aria-hidden="true"></i>
@@ -1767,10 +1765,10 @@ function GroupBySelector() {
 						/>
 					</div>
 				)}
-			</Observer>
+			</Observer> */}
 
 			{/* Distance Threshold */}
-			<Observer>
+			{/* <Observer>
 				{() => (
 					<div className="flex-row gap-5 align-items-center sidebar-settings">
 						<i
@@ -1802,7 +1800,7 @@ function GroupBySelector() {
 						/>
 					</div>
 				)}
-			</Observer>
+			</Observer> */}
 		</div>
 	);
 

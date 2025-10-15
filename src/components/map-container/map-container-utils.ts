@@ -1,7 +1,7 @@
 import { AllEventsEvent } from '../../services/data-handlers/data-handler-base';
 import { EventStore } from '../../stores/events-store';
 import { flightColor, hotelColor } from '../../utils/consts';
-import { TriplanPriority } from '../../utils/enums';
+import { MapViewMode, TriplanPriority } from '../../utils/enums';
 import { isBasketball, isDessert, isFlight, isHotel, isMatching } from '../../utils/utils';
 
 export const NIGHTLIFE_KEYWORDS = [
@@ -193,9 +193,9 @@ export const getIcon = (eventStore: EventStore, event: any, allEvents?: AllEvent
 		icon = iconsMap['food'];
 	}
 
-	// use cluster color when grouping by area
+	// use cluster color when map view mode is set to areas
 	const clusterColor = eventStore.getClusterColorForEvent(String(event.id));
-	if (eventStore.sidebarGroupBy === 'area' && clusterColor) {
+	if (eventStore.mapViewMode === MapViewMode.AREAS && clusterColor) {
 		bgColor = clusterColor.replace('#', '');
 	}
 

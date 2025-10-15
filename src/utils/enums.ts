@@ -77,6 +77,7 @@ export enum TripDataSource {
 export enum MapViewMode {
 	CATEGORIES_AND_PRIORITIES = 'CATEGORIES_AND_PRIORITIES',
 	CHRONOLOGICAL_ORDER = 'CHRONOLOGICAL_ORDER',
+	AREAS = 'AREAS',
 }
 
 export function getEnumKey(enumObj: any, value: any) {

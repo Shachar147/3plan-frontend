@@ -108,7 +108,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 		// Add clustered events and update cluster mapping
 		clusters.forEach((cluster, index) => {
-			const areaName = ClusteringService.generateClusterName(cluster, index);
+			const areaName = ClusteringService.generateClusterName(eventStore, cluster, index);
 			areasMap.set(areaName, cluster.events);
 
 			// Map each event to its cluster color
@@ -169,7 +169,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	useEffect(() => {
 		const newClusterData = calculateClusters();
 		setEventToClusterMap(newClusterData.eventToClusterMap);
-	}, [calculateClusters]);
+	}, [eventStore.sidebarSettings]);
 
 	// Update eventStore with cluster mapping (separate from calculation)
 	useEffect(() => {
@@ -436,8 +436,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const { areasMap } = clusterData;
 		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
 
-		let totalDisplayedCategories = 0;
-
 		// todo complete: remove inline style
 		const closedStyle = {
 			maxHeight: 0,
@@ -549,7 +547,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 									}
 									aria-hidden="true"
 								/>
-								<span className="flex-row align-items-center gap-5">
+								<span className="flex-row align-items-center gap-3">
 									<i
 										className="fa fa-map-marker"
 										aria-hidden="true"
@@ -578,7 +576,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 										/>
 									) : (
 										<>
-											<span style={{ color: areaColor || 'inherit' }}>{areaNameToDisplay}</span>
+											<span>{areaNameToDisplay}</span>
 											{defaultAreaName !== noLocationText && (
 												<i
 													className="fa fa-pencil cursor-pointer opacity-0-5 opacity-1-hover"
@@ -606,7 +604,14 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				})}
 			</>
 		);
-	}, [calculateClusters, eventStore, editingAreaName, editingValue]);
+	}, [
+		calculateClusters,
+		eventStore,
+		editingAreaName,
+		editingValue,
+		eventStore.searchValue,
+		eventStore.sidebarSearchValue,
+	]);
 
 	function renderCategories() {
 		// todo complete: remove inline style
@@ -1322,7 +1327,9 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			) : (
 				renderCategories()
 			)}
-			{totalDisplayedCategories === 0 && renderNoDisplayedCategoriesPlaceholder()}
+			{totalDisplayedCategories === 0 &&
+				eventStore.sidebarGroupBy != 'area' &&
+				renderNoDisplayedCategoriesPlaceholder()}
 		</>
 	);
 }
