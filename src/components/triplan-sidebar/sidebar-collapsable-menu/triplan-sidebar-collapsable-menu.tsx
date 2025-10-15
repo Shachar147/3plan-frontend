@@ -1481,14 +1481,6 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 	}
 
 	function renderSidebarSettings() {
-		const editColors = (
-			<div className="sidebar-statistics">
-				<a className="pointer" onClick={() => ReactModalService.openEditColorsModal(eventStore)}>
-					{TranslateService.translate(eventStore, 'EDIT_COLORS')}
-				</a>
-			</div>
-		);
-
 		const toggleSetting = (item) => {
 			runInAction(() => {
 				eventStore.sidebarSettings.set(item.id, !eventStore.sidebarSettings.get(item.id));
@@ -1521,17 +1513,6 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			}
 		});
 
-		// Function to handle threshold input changes
-		const handleThresholdChange = (settingId: string, value: string) => {
-			const numValue = parseInt(value);
-			if (!isNaN(numValue) && numValue > 0) {
-				runInAction(() => {
-					eventStore.sidebarSettings.set(settingId, numValue);
-					eventStore.saveSidebarSettings();
-				});
-			}
-		};
-
 		const settingsContent = (
 			<div className="flex-column gap-8">
 				{settingsItems.map((item) => {
@@ -1553,74 +1534,6 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 						</Observer>
 					);
 				})}
-
-				{/* Area grouping threshold settings - only visible when area grouping is selected */}
-				{eventStore.sidebarGroupBy === 'area' && (
-					<>
-						{/* Divider for area settings */}
-						<div className="margin-block-5">
-							{renderLineWithText(TranslateService.translate(eventStore, 'AREA_GROUPING_SETTINGS'))}
-						</div>
-
-						{/* Driving threshold */}
-						<Observer>
-							{() => (
-								<div className="flex-row gap-5 align-items-center sidebar-settings">
-									<i className="fa fa-car" aria-hidden="true"></i>
-									<span>{TranslateService.translate(eventStore, 'DRIVING_THRESHOLD')}</span>
-									<input
-										type="number"
-										className="sidebar-settings-input"
-										min="1"
-										max="60"
-										value={eventStore.sidebarSettings.get('area-driving-threshold') || 10}
-										onChange={(e) =>
-											handleThresholdChange('area-driving-threshold', e.target.value)
-										}
-										onClick={(e) => e.stopPropagation()}
-										style={{
-											width: '50px',
-											marginLeft: 'auto',
-											padding: '2px 5px',
-											textAlign: 'center',
-											border: '1px solid var(--gray-light)',
-										}}
-									/>
-									<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
-								</div>
-							)}
-						</Observer>
-
-						{/* Walking threshold */}
-						<Observer>
-							{() => (
-								<div className="flex-row gap-5 align-items-center sidebar-settings">
-									<i className="fa fa-male" aria-hidden="true"></i>
-									<span>{TranslateService.translate(eventStore, 'WALKING_THRESHOLD')}</span>
-									<input
-										type="number"
-										className="sidebar-settings-input"
-										min="1"
-										max="60"
-										value={eventStore.sidebarSettings.get('area-walking-threshold') || 20}
-										onChange={(e) =>
-											handleThresholdChange('area-walking-threshold', e.target.value)
-										}
-										onClick={(e) => e.stopPropagation()}
-										style={{
-											width: '50px',
-											marginLeft: 'auto',
-											padding: '2px 5px',
-											textAlign: 'center',
-											border: '1px solid var(--gray-light)',
-										}}
-									/>
-									<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
-								</div>
-							)}
-						</Observer>
-					</>
-				)}
 			</div>
 		);
 
@@ -1629,7 +1542,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			'fa-gear',
 			SidebarGroups.SETTINGS,
 			TranslateService.translate(eventStore, 'SETTINGS'),
-			settingsItems.length + (eventStore.sidebarGroupBy === 'area' ? 2 : 0)
+			settingsItems.length + (eventStore.sidebarGroupBy === 'area' ? 6 : 0)
 		);
 
 		return (
@@ -1699,6 +1612,200 @@ function GroupBySelector() {
 		cursor: 'pointer',
 	};
 
+	// Function to handle threshold input changes
+	const handleThresholdChange = (settingId: string, value: string) => {
+		const numValue = parseInt(value);
+		if (!isNaN(numValue) && numValue > 0) {
+			runInAction(() => {
+				eventStore.sidebarSettings.set(settingId, numValue);
+				eventStore.saveSidebarSettings();
+			});
+		}
+	};
+
+	const renderAreaSettings = () => (
+		<div className="flex-column gap-8">
+			{/* Divider for area settings */}
+			<div className="margin-block-5">
+				{renderLineWithText(TranslateService.translate(eventStore, 'AREA_GROUPING_SETTINGS'))}
+			</div>
+
+			{/* Driving threshold */}
+			<Observer>
+				{() => (
+					<div className="flex-row gap-5 align-items-center sidebar-settings">
+						<i className="fa fa-car" aria-hidden="true"></i>
+						<span>{TranslateService.translate(eventStore, 'DRIVING_THRESHOLD')}</span>
+						<input
+							type="number"
+							className="sidebar-settings-input"
+							min="1"
+							max="60"
+							value={eventStore.sidebarSettings.get('area-driving-threshold') || 10}
+							onChange={(e) => handleThresholdChange('area-driving-threshold', e.target.value)}
+							onClick={(e) => e.stopPropagation()}
+							style={{
+								width: '50px',
+								// marginLeft: 'auto',
+								padding: '2px 5px',
+								textAlign: 'center',
+								border: '1px solid var(--gray-light)',
+							}}
+						/>
+						<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
+					</div>
+				)}
+			</Observer>
+
+			{/* Walking threshold */}
+			<Observer>
+				{() => (
+					<div className="flex-row gap-5 align-items-center sidebar-settings">
+						<i className="fa fa-male" aria-hidden="true"></i>
+						<span>{TranslateService.translate(eventStore, 'WALKING_THRESHOLD')}</span>
+						<input
+							type="number"
+							className="sidebar-settings-input"
+							min="1"
+							max="60"
+							value={eventStore.sidebarSettings.get('area-walking-threshold') || 20}
+							onChange={(e) => handleThresholdChange('area-walking-threshold', e.target.value)}
+							onClick={(e) => e.stopPropagation()}
+							style={{
+								width: '50px',
+								// marginLeft: 'auto',
+								padding: '2px 5px',
+								textAlign: 'center',
+								border: '1px solid var(--gray-light)',
+							}}
+						/>
+						<span>{TranslateService.translate(eventStore, 'MINUTES')}</span>
+					</div>
+				)}
+			</Observer>
+
+			{/* Clustering Algorithm */}
+			<Observer>
+				{() => (
+					<div className="flex-row gap-5 align-items-center sidebar-settings">
+						<i className="fa fa-sitemap" aria-hidden="true"></i>
+						<span>{TranslateService.translate(eventStore, 'CLUSTERING_ALGORITHM')}</span>
+						<select
+							className="sidebar-settings-select"
+							value={eventStore.sidebarSettings.get('clustering-algorithm') || 'distance-based'}
+							onChange={(e) => handleThresholdChange('clustering-algorithm', e.target.value)}
+							onClick={(e) => e.stopPropagation()}
+							style={{
+								width: '120px',
+								// marginLeft: 'auto',
+								padding: '2px 5px',
+								border: '1px solid var(--gray-light)',
+								fontSize: '12px',
+							}}
+						>
+							<option value="distance-based">
+								{TranslateService.translate(eventStore, 'CLUSTERING_ALGORITHM.DISTANCE_BASED')}
+							</option>
+							<option value="kmeans">
+								{TranslateService.translate(eventStore, 'CLUSTERING_ALGORITHM.KMEANS')}
+							</option>
+							<option value="dbscan">
+								{TranslateService.translate(eventStore, 'CLUSTERING_ALGORITHM.DBSCAN')}
+							</option>
+						</select>
+					</div>
+				)}
+			</Observer>
+
+			{/* Max Clusters */}
+			<Observer>
+				{() => (
+					<div className="flex-row gap-5 align-items-center sidebar-settings">
+						<i className="fa fa-long-arrow-up" aria-hidden="true"></i>
+						<span>{TranslateService.translate(eventStore, 'MAX_CLUSTERS')}</span>
+						<input
+							type="number"
+							className="sidebar-settings-input"
+							min="1"
+							max="50"
+							value={eventStore.sidebarSettings.get('max-clusters') || 10}
+							onChange={(e) => handleThresholdChange('max-clusters', e.target.value)}
+							onClick={(e) => e.stopPropagation()}
+							style={{
+								width: '50px',
+								// marginLeft: 'auto',
+								padding: '2px 5px',
+								textAlign: 'center',
+								border: '1px solid var(--gray-light)',
+							}}
+						/>
+					</div>
+				)}
+			</Observer>
+
+			{/* Min Cluster Size */}
+			<Observer>
+				{() => (
+					<div className="flex-row gap-5 align-items-center sidebar-settings">
+						<i className="fa fa-long-arrow-down" aria-hidden="true"></i>
+						<span>{TranslateService.translate(eventStore, 'MIN_CLUSTER_SIZE')}</span>
+						<input
+							type="number"
+							className="sidebar-settings-input"
+							min="1"
+							max="20"
+							value={eventStore.sidebarSettings.get('min-cluster-size') || 2}
+							onChange={(e) => handleThresholdChange('min-cluster-size', e.target.value)}
+							onClick={(e) => e.stopPropagation()}
+							style={{
+								width: '50px',
+								// marginLeft: 'auto',
+								padding: '2px 5px',
+								textAlign: 'center',
+								border: '1px solid var(--gray-light)',
+							}}
+						/>
+					</div>
+				)}
+			</Observer>
+
+			{/* Distance Threshold */}
+			<Observer>
+				{() => (
+					<div className="flex-row gap-5 align-items-center sidebar-settings">
+						<i
+							className={getClasses(
+								'fa',
+								eventStore.getCurrentDirection() === 'ltr'
+									? 'fa-long-arrow-right'
+									: 'fa-long-arrow-left'
+							)}
+							aria-hidden="true"
+						></i>
+						<span>{TranslateService.translate(eventStore, 'DISTANCE_THRESHOLD')}</span>
+						<input
+							type="number"
+							className="sidebar-settings-input"
+							min="100"
+							max="10000"
+							step="100"
+							value={eventStore.sidebarSettings.get('distance-threshold') || 1000}
+							onChange={(e) => handleThresholdChange('distance-threshold', e.target.value)}
+							onClick={(e) => e.stopPropagation()}
+							style={{
+								width: '100px',
+								// marginLeft: 'auto',
+								padding: '2px 5px',
+								textAlign: 'center',
+								border: '1px solid var(--gray-light)',
+							}}
+						/>
+					</div>
+				)}
+			</Observer>
+		</div>
+	);
+
 	return (
 		<>
 			<hr className="margin-block-2" />
@@ -1718,6 +1825,7 @@ function GroupBySelector() {
 					className="external-collapse-inner"
 					style={{
 						display: isOpen ? 'block' : 'none',
+						paddingBlock: isOpen ? '10px' : 'unset',
 					}}
 				>
 					<div className="sidebar-statistics">
@@ -1788,6 +1896,7 @@ function GroupBySelector() {
 							</label>
 						</div>
 					</div>
+					{eventStore.sidebarGroupBy === 'area' && renderAreaSettings()}
 				</div>
 			</div>
 		</>

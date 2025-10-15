@@ -1104,5 +1104,12 @@
 	"MODALS.TRIP_SYNC_FAILED.CONTENT": "Trip sync failed",
 	"SYNC_TRIP_TO_LOCAL": "Sync trip to local server",
 	"MODALS.SYNC_TRIP_TO_LOCAL.CONTENT": "Sync trip details from remote server to the local one.\n\nCareful! if you set anything in the local server that doesn't exist in the remote server it will be overwritten.",
-	"SYNCING": "Syncing..."
+	"SYNCING": "Syncing...",
+	"CLUSTERING_ALGORITHM": "Clustering Algorithm",
+	"CLUSTERING_ALGORITHM.DISTANCE_BASED": "Distance-based",
+	"CLUSTERING_ALGORITHM.KMEANS": "K-means",
+	"CLUSTERING_ALGORITHM.DBSCAN": "DBSCAN",
+	"MAX_CLUSTERS": "Max Clusters",
+	"MIN_CLUSTER_SIZE": "Min Cluster Size",
+	"DISTANCE_THRESHOLD": "Distance Threshold (meters)"
 }

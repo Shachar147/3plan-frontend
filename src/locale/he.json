@@ -1360,5 +1360,12 @@
 	"MODALS.TRIP_SYNC_FAILED.CONTENT": "חלה תקלה בסנכרון הטיול",
 	"SYNC_TRIP_TO_LOCAL": "סנכרן טיול לשרת הלוקאלי",
 	"MODALS.SYNC_TRIP_TO_LOCAL.CONTENT": "סנכרן את פרטי הטיול מהשרת המרוחק לשרת הלוקאלי.\nזהירות! אם הגדרת דברים בשרת הלוקאלי שלא קיימים בשרת המרוחק, הם יידרסו.",
-	"SYNCING": "מסנכרן..."
+	"SYNCING": "מסנכרן...",
+	"CLUSTERING_ALGORITHM": "אלגוריתם קיבוץ",
+	"CLUSTERING_ALGORITHM.DISTANCE_BASED": "מבוסס מרחק",
+	"CLUSTERING_ALGORITHM.KMEANS": "K-means",
+	"CLUSTERING_ALGORITHM.DBSCAN": "DBSCAN",
+	"MAX_CLUSTERS": "מקסימום קיבוצים",
+	"MIN_CLUSTER_SIZE": "גודל קיבוץ מינימלי",
+	"DISTANCE_THRESHOLD": "סף מרחק (מטרים)"
 }

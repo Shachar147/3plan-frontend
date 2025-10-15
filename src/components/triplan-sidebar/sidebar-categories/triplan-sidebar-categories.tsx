@@ -21,6 +21,7 @@ import TriplanSidebarDraggableEvent from '../sidebar-draggable-event/triplan-sid
 import { observer } from 'mobx-react';
 import SidebarSearch from '../sidebar-search/sidebar-search';
 import { priorityToColor } from '../../../utils/consts';
+import ClusteringService, { ClusteringOptions, Cluster, LocationData } from '../../../services/clustering-service';
 
 interface TriplanSidebarCategoriesProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -33,6 +34,8 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	const { removeEventFromSidebarById, addToEventsToCategories, TriplanCalendarRef } = props;
 	const eventStore = useContext(eventStoreContext);
 	const modalsStore = useContext(modalsStoreContext);
+
+	const [localEventToClusterMap, setEventToClusterMap] = React.useState<Map<string, string>>(new Map());
 
 	// Store previous threshold values to detect changes
 	const prevThresholdValues = useRef({
@@ -47,6 +50,131 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	// Add these new states at the top of the component, with other states
 	const [editingAreaName, setEditingAreaName] = React.useState<string | null>(null);
 	const [editingValue, setEditingValue] = React.useState('');
+
+	// Separate calculation function that doesn't cause re-renders
+	const calculateClusters = React.useCallback(() => {
+		const sidebarEvents = eventStore.allEventsFilteredComputed;
+		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
+
+		// Separate events with and without location
+		const eventsWithLocation = sidebarEvents.filter(
+			(event) =>
+				event.location &&
+				typeof event.location !== 'string' &&
+				event.location.latitude != null &&
+				event.location.longitude != null
+		);
+
+		const eventsWithoutLocation = sidebarEvents.filter(
+			(event) => !event.location || (typeof event.location === 'string' && event.location === '')
+		);
+
+		// Get clustering options from settings
+		const clusteringOptions: ClusteringOptions = {
+			algorithm: (eventStore.sidebarSettings.get('clustering-algorithm') as any) || 'distance-based',
+			maxClusters: Number(eventStore.sidebarSettings.get('max-clusters')) || 10,
+			minClusterSize: Number(eventStore.sidebarSettings.get('min-cluster-size')) || 2,
+			distanceThreshold: Number(eventStore.sidebarSettings.get('distance-threshold')) || 1000, // 1km
+			drivingThresholdMinutes: Number(eventStore.sidebarSettings.get('area-driving-threshold')) || 10,
+			walkingThresholdMinutes: Number(eventStore.sidebarSettings.get('area-walking-threshold')) || 20,
+		};
+
+		// Perform clustering on events with location
+		let clusters: Cluster[] = [];
+		if (eventsWithLocation.length > 0) {
+			try {
+				// Convert ObservableMap to regular Map for clustering service
+				const distanceResultsMap = new Map<string, any>();
+				eventStore.distanceResults.forEach((value, key) => {
+					distanceResultsMap.set(key, value);
+				});
+
+				clusters = ClusteringService.clusterEvents(eventsWithLocation, clusteringOptions, distanceResultsMap);
+			} catch (error) {
+				console.error('Error during clustering:', error);
+				// Fallback to simple grouping by location string
+				clusters = fallbackLocationGrouping(eventsWithLocation);
+			}
+		}
+
+		// Convert clusters to areas map format
+		const areasMap = new Map<string, SidebarEvent[]>();
+		const eventToClusterMap = new Map<string, string>();
+
+		// Add events without location
+		if (eventsWithoutLocation.length > 0) {
+			areasMap.set(noLocationText, eventsWithoutLocation);
+		}
+
+		// Add clustered events and update cluster mapping
+		clusters.forEach((cluster, index) => {
+			const areaName = ClusteringService.generateClusterName(cluster, index);
+			areasMap.set(areaName, cluster.events);
+
+			// Map each event to its cluster color
+			cluster.events.forEach((event) => {
+				if (cluster.color) {
+					eventToClusterMap.set(event.id, cluster.color);
+				}
+			});
+		});
+
+		return {
+			clusters,
+			eventToClusterMap,
+			areasMap,
+			eventsWithoutLocation,
+		};
+	}, [eventStore.allEventsFilteredComputed, eventStore.sidebarSettings, eventStore.distanceResults]);
+
+	// Fallback function for simple location grouping
+	const fallbackLocationGrouping = React.useCallback((events: SidebarEvent[]): Cluster[] => {
+		const locationGroups = new Map<string, SidebarEvent[]>();
+
+		events.forEach((event) => {
+			if (event.location) {
+				try {
+					let loc = '';
+					if (typeof event.location === 'string') {
+						loc = event.location;
+					} else if (event.location && typeof event.location === 'object') {
+						loc = locationToString(event.location);
+					}
+
+					if (loc && !locationGroups.has(loc)) {
+						locationGroups.set(loc, []);
+					}
+					if (loc) {
+						locationGroups.get(loc)?.push(event);
+					}
+				} catch (error) {
+					console.warn('Error processing event location:', error);
+				}
+			}
+		});
+
+		return Array.from(locationGroups.entries()).map(([location, events], index) => ({
+			id: `fallback_${index}`,
+			events,
+			center:
+				events[0]?.location && typeof events[0].location === 'object'
+					? (events[0].location as LocationData)
+					: { latitude: 0, longitude: 0 },
+			radius: 0,
+			name: location.length > 15 ? location.substring(0, 15) + '...' : location,
+		}));
+	}, []);
+
+	// Update cluster data when dependencies change
+	useEffect(() => {
+		const newClusterData = calculateClusters();
+		setEventToClusterMap(newClusterData.eventToClusterMap);
+	}, [calculateClusters]);
+
+	// Update eventStore with cluster mapping (separate from calculation)
+	useEffect(() => {
+		eventStore.updateEventToClusterMap(localEventToClusterMap);
+	}, [localEventToClusterMap, eventStore]);
 
 	// Set up effect to detect threshold changes
 	useEffect(() => {
@@ -302,152 +430,13 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		}
 	};
 
-	function renderAreas() {
-		// Calculate areas based on distance results
-		const areasMap = new Map<string, SidebarEvent[]>();
-		const sidebarEvents = eventStore.allEventsFilteredComputed;
-
+	// Separate rendering function that uses calculated data
+	const renderAreas = React.useCallback(() => {
+		const clusterData = calculateClusters();
+		const { areasMap } = clusterData;
 		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
 
-		// Default area for events without location
-		areasMap.set(
-			noLocationText,
-			sidebarEvents.filter(
-				(event) => !event.location || (typeof event.location === 'string' && event.location === '')
-			)
-		);
-
-		// Group events by proximity (if we have distance results)
-		if (eventStore.distanceResults && eventStore.distanceResults.size > 0) {
-			// Create proximity clusters - filter out events without proper location data
-			const eventsWithLocation = sidebarEvents.filter(
-				(event) =>
-					event.location &&
-					typeof event.location !== 'string' &&
-					event.location.latitude != null &&
-					event.location.longitude != null
-			);
-
-			// Process each event with location
-			for (const event of eventsWithLocation) {
-				let foundCluster = false;
-
-				// Try to add to existing clusters
-				for (const [areaName, areaEvents] of Array.from(areasMap.entries())) {
-					if (areaName === noLocationText) continue;
-
-					// Check if this event is close to any event in this cluster
-					for (const areaEvent of areaEvents) {
-						if (
-							!areaEvent.location ||
-							typeof areaEvent.location === 'string' ||
-							!areaEvent.location.latitude ||
-							!areaEvent.location.longitude ||
-							!event.location ||
-							!event.location.latitude ||
-							!event.location.longitude
-						) {
-							continue;
-						}
-
-						// Safety check in case of corrupted data
-						try {
-							const loc1 = {
-								lat: areaEvent.location.latitude,
-								lng: areaEvent.location.longitude,
-								eventName: areaEvent.title,
-							};
-
-							const loc2 = {
-								lat: event.location.latitude,
-								lng: event.location.longitude,
-								eventName: event.title,
-							};
-
-							const distanceKey = getCoordinatesRangeKey(GoogleTravelMode.DRIVING, loc1, loc2);
-							const distanceKey2 = getCoordinatesRangeKey(GoogleTravelMode.WALKING, loc1, loc2);
-							const distanceA = eventStore.distanceResults.get(distanceKey);
-							const distanceB = eventStore.distanceResults.get(distanceKey2);
-
-							// Get threshold values from settings (with fallbacks to default values)
-							const drivingThresholdMinutes = Number(
-								eventStore.sidebarSettings.get('area-driving-threshold') || 10
-							);
-							const walkingThresholdMinutes = Number(
-								eventStore.sidebarSettings.get('area-walking-threshold') || 20
-							);
-
-							// Convert minutes to seconds
-							const drivingThresholdSeconds = drivingThresholdMinutes * 60;
-							const walkingThresholdSeconds = walkingThresholdMinutes * 60;
-
-							if (
-								(distanceA &&
-									distanceA.duration_value &&
-									Number(distanceA.duration_value) <= drivingThresholdSeconds) || // Configurable driving threshold
-								(distanceB &&
-									distanceB.duration_value &&
-									Number(distanceB.duration_value) <= walkingThresholdSeconds) // Configurable walking threshold
-							) {
-								// Add to this cluster
-								areaEvents.push(event);
-								foundCluster = true;
-								break;
-							}
-						} catch (error) {
-							console.warn('Error calculating distance between events:', error);
-							continue;
-						}
-					}
-
-					if (foundCluster) break;
-				}
-
-				// If event doesn't fit any cluster, create a new one
-				if (!foundCluster) {
-					const areaName = TranslateService.translate(eventStore, 'AREA_X', {
-						X: areasMap.size,
-					});
-					areasMap.set(areaName, [event]);
-				}
-			}
-		} else {
-			// If distance calculation hasn't been run, group by location string
-			const locationGroups = new Map<string, SidebarEvent[]>();
-
-			sidebarEvents.forEach((event) => {
-				if (event.location) {
-					try {
-						// Handle different location types
-						let loc = '';
-						if (typeof event.location === 'string') {
-							loc = event.location;
-						} else if (event.location && typeof event.location === 'object') {
-							// Location is a LocationData object
-							loc = locationToString(event.location);
-						}
-
-						if (loc && !locationGroups.has(loc)) {
-							locationGroups.set(loc, []);
-						}
-						if (loc) {
-							locationGroups.get(loc)?.push(event);
-						}
-					} catch (error) {
-						console.warn('Error processing event location:', error);
-					}
-				}
-			});
-
-			// Add location groups to areas map
-			locationGroups.forEach((events, location) => {
-				if (location) {
-					// Only use first 15 chars of location as area name
-					const shortLocation = location.length > 15 ? location.substring(0, 15) + '...' : location;
-					areasMap.set(shortLocation, events);
-				}
-			});
-		}
+		let totalDisplayedCategories = 0;
 
 		// todo complete: remove inline style
 		const closedStyle = {
@@ -533,6 +522,10 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 					// Determine the area name to display
 					const areaNameToDisplay = customAreaName || defaultAreaName;
 
+					// Get the cluster color for this area (use the first event's cluster color)
+					const areaColor =
+						areaEvents.length > 0 ? eventStore.getClusterColorForEvent(areaEvents[0].id) : undefined;
+
 					// Cast areaName to string type for openCategories.has()
 					const isOpen = eventStore.openCategories.has(defaultAreaName as any);
 					const eventsStyle = isOpen ? openStyle : closedStyle;
@@ -557,7 +550,11 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 									aria-hidden="true"
 								/>
 								<span className="flex-row align-items-center gap-5">
-									<i className="fa fa-map-marker" aria-hidden="true" />
+									<i
+										className="fa fa-map-marker"
+										aria-hidden="true"
+										style={{ color: areaColor || '#666' }}
+									/>
 									&nbsp;
 									{editingAreaName === defaultAreaName ? (
 										<input
@@ -581,7 +578,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 										/>
 									) : (
 										<>
-											{areaNameToDisplay}
+											<span style={{ color: areaColor || 'inherit' }}>{areaNameToDisplay}</span>
 											{defaultAreaName !== noLocationText && (
 												<i
 													className="fa fa-pencil cursor-pointer opacity-0-5 opacity-1-hover"
@@ -609,7 +606,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 				})}
 			</>
 		);
-	}
+	}, [calculateClusters, eventStore, editingAreaName, editingValue]);
 
 	function renderCategories() {
 		// todo complete: remove inline style

@@ -192,6 +192,13 @@ export const getIcon = (eventStore: EventStore, event: any, allEvents?: AllEvent
 	} else if (isMatching(title, FOOD_KEYWORDS)) {
 		icon = iconsMap['food'];
 	}
+
+	// use cluster color when grouping by area
+	const clusterColor = eventStore.getClusterColorForEvent(String(event.id));
+	if (eventStore.sidebarGroupBy === 'area' && clusterColor) {
+		bgColor = clusterColor.replace('#', '');
+	}
+
 	return {
 		icon,
 		bgColor,

@@ -113,6 +113,7 @@ export class EventStore {
 	@observable calculatingDistance = 0;
 	@observable distanceResults = observable.map<string, DistanceResult>();
 	@observable travelMode = GoogleTravelMode.DRIVING;
+	@observable eventToClusterMap = observable.map<string, string>(); // eventId -> clusterColor
 	@observable modalSettings = defaultModalSettings;
 	@observable secondModalSettings = defaultModalSettings;
 	@observable modalValuesRefs: any = {};
@@ -2031,6 +2032,18 @@ export class EventStore {
 	setSidebarGroupBy(groupBy: 'priority' | 'category' | 'area') {
 		this.sidebarGroupBy = groupBy;
 		localStorage.setItem('sidebarGroupBy', groupBy);
+	}
+
+	@action
+	updateEventToClusterMap(eventToClusterMap: Map<string, string>) {
+		this.eventToClusterMap.clear();
+		eventToClusterMap.forEach((color, eventId) => {
+			this.eventToClusterMap.set(eventId, color);
+		});
+	}
+
+	getClusterColorForEvent(eventId: string): string | undefined {
+		return this.eventToClusterMap.get(eventId);
 	}
 
 	// Check if two areas contain exactly the same events
