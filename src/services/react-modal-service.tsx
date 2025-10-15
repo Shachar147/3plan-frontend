@@ -4259,6 +4259,11 @@ const ReactModalService = {
 		});
 	},
 	openImportEventsModal: (eventStore: EventStore) => {
+		$(document).on('click', '.skip-download-template-button', () => {
+			ReactModalService.internal.closeModal(eventStore);
+			ReactModalService.openImportEventsStepTwoModal(eventStore);
+		});
+
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE'),
@@ -4270,7 +4275,7 @@ const ReactModalService = {
 			),
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DOWNLOAD_TEMPLATE'),
-			confirmBtnCssClass: 'primary-button',
+			confirmBtnCssClass: 'primary-button confirm-import-events-modal-button',
 			onConfirm: () => {
 				ImportService._download('TriplanEventsImport.csv', ImportService._buildTemplate(eventStore));
 				ReactModalService.internal.closeModal(eventStore);

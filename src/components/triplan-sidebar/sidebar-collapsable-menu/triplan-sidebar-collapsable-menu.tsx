@@ -149,8 +149,8 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		return (
 			<>
 				<Button
-					icon="fa-download"
-					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT')}
+					icon="fa-table"
+					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT.NEW')}
 					onClick={() => {
 						ReactModalService.openImportEventsModal(eventStore);
 					}}
@@ -158,7 +158,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					disabled={isDisabled}
 					disabledReason={disabledReason}
 				/>
-				<Button
+				{/* <Button
 					icon="fa-upload"
 					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.BUTTON_TEXT')}
 					onClick={() => {
@@ -167,9 +167,9 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					flavor={ButtonFlavor['movable-link']}
 					disabled={isDisabled}
 					disabledReason={disabledReason}
-				/>
+				/> */}
 				<Button
-					icon="fa-arrow-circle-up"
+					icon="fa-location-arrow"
 					text={TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS')}
 					onClick={() => {
 						ReactModalService.openImportFromGoogleMapsModal(eventStore);
