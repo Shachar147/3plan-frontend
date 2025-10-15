@@ -270,6 +270,13 @@ export class EventStore {
 		// Set default area grouping thresholds (in minutes)
 		this.sidebarSettings.set('area-driving-threshold', 10); // 10 min driving
 		this.sidebarSettings.set('area-walking-threshold', 20); // 20 min walking
+		// Set default clustering settings
+		this.sidebarSettings.set('clustering-algorithm', 'distance-based');
+		this.sidebarSettings.set('max-clusters', 10);
+		this.sidebarSettings.set('min-cluster-size', 2);
+		this.sidebarSettings.set('distance-threshold', 1000);
+		this.sidebarSettings.set('use-air-distance-fallback', '1');
+		this.sidebarSettings.set('max-air-distance', 5000);
 
 		// Load custom area names from localStorage
 		try {
@@ -330,7 +337,9 @@ export class EventStore {
 		}
 
 		try {
-			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
+			// Load trip-specific settings
+			const settingsKey = this.getTripSettingsKey();
+			const savedSettings = localStorage.getItem(settingsKey);
 			if (savedSettings) {
 				const parsedSettings = JSON.parse(savedSettings);
 				Object.keys(parsedSettings).forEach((key) => {
@@ -1511,6 +1520,9 @@ export class EventStore {
 			runInAction(() => {
 				this.distanceResults = observable.map(newDistanceResults);
 
+				// Reload trip-specific settings after trip data is loaded
+				this.loadTripSpecificSettings();
+
 				// Clean up orphaned custom area names after loading trip data
 				setTimeout(() => this.cleanupOrphanedAreaNames(), 1000);
 			});
@@ -2025,6 +2037,41 @@ export class EventStore {
 		}
 	}
 
+	// Helper method to get trip-specific settings key
+	private getTripSettingsKey(): string {
+		if (this.tripId && this.tripId > 0) {
+			return `triplan-sidebar-settings-trip-${this.tripId}`;
+		} else if (this.tripName) {
+			return `triplan-sidebar-settings-trip-${this.tripName}`;
+		} else {
+			return 'triplan-sidebar-settings-global';
+		}
+	}
+
+	// Load trip-specific settings
+	@action
+	loadTripSpecificSettings() {
+		// Clear current settings
+		this.sidebarSettings.clear();
+
+		// Initialize with defaults
+		this.initSidebarSettings();
+
+		// Load trip-specific settings
+		try {
+			const settingsKey = this.getTripSettingsKey();
+			const savedSettings = localStorage.getItem(settingsKey);
+			if (savedSettings) {
+				const parsedSettings = JSON.parse(savedSettings);
+				Object.keys(parsedSettings).forEach((key) => {
+					this.sidebarSettings.set(key, parsedSettings[key]);
+				});
+			}
+		} catch (e) {
+			console.error('Error loading trip-specific settings from localStorage', e);
+		}
+	}
+
 	@action
 	saveSidebarSettings() {
 		try {
@@ -2032,7 +2079,9 @@ export class EventStore {
 			this.sidebarSettings.forEach((value, key) => {
 				settingsObject[key] = value;
 			});
-			localStorage.setItem('triplan-sidebar-settings', JSON.stringify(settingsObject));
+			// Save trip-specific settings
+			const settingsKey = this.getTripSettingsKey();
+			localStorage.setItem(settingsKey, JSON.stringify(settingsObject));
 		} catch (e) {
 			console.error('Error saving sidebar settings to localStorage', e);
 		}

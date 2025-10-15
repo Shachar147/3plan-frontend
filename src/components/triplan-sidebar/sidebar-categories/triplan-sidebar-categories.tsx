@@ -54,6 +54,18 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 	// Separate calculation function that doesn't cause re-renders
 	const calculateClusters = React.useCallback(() => {
 		const sidebarEvents = eventStore.allEventsFilteredComputed;
+
+		// Performance check: Skip clustering if too many events
+		if (sidebarEvents.length > 200) {
+			console.log(`Skipping clustering due to large dataset: ${sidebarEvents.length} events`);
+			return {
+				clusters: [],
+				eventToClusterMap: new Map(),
+				areasMap: new Map(),
+				eventsWithoutLocation: [],
+			};
+		}
+
 		const noLocationText = TranslateService.translate(eventStore, 'NO_LOCATION');
 
 		// Separate events with and without location
@@ -173,11 +185,16 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		setEventToClusterMap(newClusterData.eventToClusterMap);
 	}, [calculateClusters]);
 
-	// Watch for specific air distance setting changes
+	// Watch for specific air distance setting changes with debouncing
 	useEffect(() => {
 		if (eventStore.sidebarGroupBy === 'area') {
-			const newClusterData = calculateClusters();
-			setEventToClusterMap(newClusterData.eventToClusterMap);
+			// Debounce the calculation to prevent excessive recalculations
+			const timeoutId = setTimeout(() => {
+				const newClusterData = calculateClusters();
+				setEventToClusterMap(newClusterData.eventToClusterMap);
+			}, 300); // 300ms debounce
+
+			return () => clearTimeout(timeoutId);
 		}
 	}, [
 		eventStore.sidebarSettings.get('use-air-distance-fallback'),

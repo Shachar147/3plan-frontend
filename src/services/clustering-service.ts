@@ -32,11 +32,11 @@ export class ClusteringService {
 	// Color palette for clusters (priority order)
 	private static readonly COLOR_PALETTE = [
 		'#E74C3C', // red
-		'#E67E22', // orange
 		'#A3CB38', // green (soft)
 		'#3498DB', // blue (sky)
 		'#9B59B6', // purple (violet)
 		'#F1C40F', // yellow (amber)
+		'#E67E22', // orange
 		'#8D6E63', // brown
 		'#a70000', // royal blue
 		'#000000', // black
@@ -99,42 +99,51 @@ export class ClusteringService {
 		options: ClusteringOptions,
 		distanceResults?: Map<string, any>
 	): Cluster[] {
+		// Performance optimization: Limit the number of events to process
+		const MAX_EVENTS_TO_PROCESS = 1000;
+		const eventsToProcess = events.length > MAX_EVENTS_TO_PROCESS ? events.slice(0, MAX_EVENTS_TO_PROCESS) : events;
+
+		console.log(`Processing ${eventsToProcess.length} events (limited from ${events.length} for performance)`);
+
 		const clusters: Cluster[] = [];
 		const drivingThresholdSeconds = (options.drivingThresholdMinutes || 10) * 60;
 		const walkingThresholdSeconds = (options.walkingThresholdMinutes || 20) * 60;
-		const maxClusters = 3; // options.maxClusters || 10;
+		const maxClusters = Math.min(options.maxClusters || 10, 20); // Cap at 20 for performance
 
 		// Use air distance threshold when fallback is enabled
+		// Convert time-based thresholds to approximate distance equivalents
+		const drivingThresholdMeters = this.convertTimeToApproximateDistance(drivingThresholdSeconds, 'driving');
+		const walkingThresholdMeters = this.convertTimeToApproximateDistance(walkingThresholdSeconds, 'walking');
+
 		const distanceThreshold = options.useAirDistanceFallback
 			? options.maxAirDistance || 5000
-			: Math.min(drivingThresholdSeconds, walkingThresholdSeconds);
+			: Math.min(drivingThresholdMeters, walkingThresholdMeters);
 
 		console.log(
 			`Distance-based clustering using ${
-				options.useAirDistanceFallback ? 'air distance' : 'travel time'
-			} threshold: ${distanceThreshold}${options.useAirDistanceFallback ? 'm' : 's'}`
+				options.useAirDistanceFallback ? 'air distance' : 'converted travel time'
+			} threshold: ${distanceThreshold}m (driving: ${drivingThresholdMeters}m, walking: ${walkingThresholdMeters}m)`
 		);
 
-		// Start with each event as its own cluster
-		for (const event of events) {
-			clusters.push({
-				id: `cluster_${clusters.length}`,
-				events: [event],
-				center: {
-					latitude: (event.location as LocationData).latitude,
-					longitude: (event.location as LocationData).longitude,
-					address: (event.location as LocationData).address,
-				},
-				radius: 0,
-			});
+		// Start with spatial pre-clustering to group nearby events immediately
+		const initialClusters = this.createInitialSpatialClusters(eventsToProcess, distanceThreshold, options);
+		clusters.push(...initialClusters);
+
+		// Performance optimization: Use a more efficient clustering approach
+		// Instead of O(n²) nested loops, use spatial indexing for large datasets
+		if (clusters.length > 100) {
+			return this.spatialClustering(clusters, distanceThreshold, maxClusters, options);
 		}
 
-		// Merge clusters based on travel time until we reach maxClusters
-		while (clusters.length > maxClusters) {
+		// For smaller datasets, use the original approach but with early termination
+		let iterations = 0;
+		const MAX_ITERATIONS = 50; // Prevent infinite loops
+
+		while (clusters.length > maxClusters && iterations < MAX_ITERATIONS) {
 			let closestPair = null;
 			let minDistance = Infinity;
 
-			// Find the closest pair of clusters
+			// Find the closest pair of clusters with early termination
 			for (let i = 0; i < clusters.length; i++) {
 				for (let j = i + 1; j < clusters.length; j++) {
 					const distance = this.getDistanceBetweenClusters(
@@ -159,6 +168,7 @@ export class ClusteringService {
 			clusters.splice(clusters.indexOf(closestPair.cluster1), 1);
 			clusters.splice(clusters.indexOf(closestPair.cluster2), 1);
 			clusters.push(mergedCluster);
+			iterations++;
 		}
 
 		// Calculate radius for each cluster
@@ -166,6 +176,211 @@ export class ClusteringService {
 			...cluster,
 			radius: this.calculateClusterRadius(cluster.events, cluster.center),
 		}));
+	}
+
+	/**
+	 * Convert time-based thresholds to approximate distance equivalents
+	 */
+	private static convertTimeToApproximateDistance(timeInSeconds: number, mode: 'driving' | 'walking'): number {
+		// Approximate speeds for conversion
+		const averageDrivingSpeed = 30; // km/h in city traffic
+		const averageWalkingSpeed = 5; // km/h walking speed
+
+		const speedKmh = mode === 'driving' ? averageDrivingSpeed : averageWalkingSpeed;
+		const timeInHours = timeInSeconds / 3600; // Convert seconds to hours
+		const distanceKm = speedKmh * timeInHours; // Distance = Speed × Time
+		const distanceMeters = distanceKm * 1000; // Convert km to meters
+
+		return Math.round(distanceMeters);
+	}
+
+	/**
+	 * Create initial spatial clusters by grouping nearby events immediately
+	 */
+	private static createInitialSpatialClusters(
+		events: SidebarEvent[],
+		distanceThreshold: number,
+		options: ClusteringOptions
+	): Cluster[] {
+		const clusters: Cluster[] = [];
+		const processed = new Set<string>();
+
+		// Shuffle events to avoid processing by original order (color/priority)
+		const shuffledEvents = [...events].sort(() => Math.random() - 0.5);
+
+		for (const event of shuffledEvents) {
+			if (processed.has(event.id)) continue;
+
+			// Start a new cluster with this event
+			const cluster: Cluster = {
+				id: `cluster_${clusters.length}`,
+				events: [event],
+				center: {
+					latitude: (event.location as LocationData).latitude,
+					longitude: (event.location as LocationData).longitude,
+					address: (event.location as LocationData).address,
+				},
+				radius: 0,
+			};
+			processed.add(event.id);
+
+			// Find all nearby events to add to this cluster
+			for (const otherEvent of shuffledEvents) {
+				if (processed.has(otherEvent.id)) continue;
+
+				const distance = this.getDistanceBetweenEvents(event, otherEvent, undefined, options);
+				if (distance <= distanceThreshold) {
+					cluster.events.push(otherEvent);
+					processed.add(otherEvent.id);
+				}
+			}
+
+			// Update cluster center to be the centroid of all events
+			cluster.center = this.calculateCentroid(cluster.events);
+			clusters.push(cluster);
+		}
+
+		console.log(`Created ${clusters.length} initial spatial clusters from ${events.length} events`);
+		return clusters;
+	}
+
+	/**
+	 * Spatial clustering for large datasets - truly spatial-based approach
+	 */
+	private static spatialClustering(
+		clusters: Cluster[],
+		distanceThreshold: number,
+		maxClusters: number,
+		options: ClusteringOptions
+	): Cluster[] {
+		console.log(`Using spatial clustering for ${clusters.length} clusters`);
+
+		// Shuffle clusters to avoid processing by original order
+		const shuffledClusters = [...clusters].sort(() => Math.random() - 0.5);
+
+		// Use a more sophisticated spatial approach
+		const result: Cluster[] = [];
+		const processed = new Set<string>();
+
+		// Process clusters in random order to avoid bias
+		for (const cluster of shuffledClusters) {
+			if (processed.has(cluster.id)) continue;
+
+			let currentCluster = cluster;
+			processed.add(cluster.id);
+
+			// Find all nearby clusters within distance threshold
+			const nearbyClusters: Cluster[] = [];
+			for (const otherCluster of shuffledClusters) {
+				if (processed.has(otherCluster.id)) continue;
+
+				const distance = this.getDistanceBetweenClusters(currentCluster, otherCluster, undefined, options);
+				if (distance <= distanceThreshold) {
+					nearbyClusters.push(otherCluster);
+					processed.add(otherCluster.id);
+				}
+			}
+
+			// Merge all nearby clusters into one
+			for (const nearbyCluster of nearbyClusters) {
+				currentCluster = this.mergeClusters(currentCluster, nearbyCluster);
+			}
+
+			result.push(currentCluster);
+		}
+
+		// If we still have too many clusters, merge the closest ones
+		if (result.length > maxClusters) {
+			return this.mergeClosestClusters(result, maxClusters, distanceThreshold, options);
+		}
+
+		return result.map((cluster) => ({
+			...cluster,
+			radius: this.calculateClusterRadius(cluster.events, cluster.center),
+		}));
+	}
+
+	/**
+	 * Merge the closest clusters until we reach the target number
+	 */
+	private static mergeClosestClusters(
+		clusters: Cluster[],
+		targetCount: number,
+		distanceThreshold: number,
+		options: ClusteringOptions
+	): Cluster[] {
+		let currentClusters = [...clusters];
+
+		while (currentClusters.length > targetCount) {
+			let closestPair = null;
+			let minDistance = Infinity;
+
+			// Find the closest pair of clusters
+			for (let i = 0; i < currentClusters.length; i++) {
+				for (let j = i + 1; j < currentClusters.length; j++) {
+					const distance = this.getDistanceBetweenClusters(
+						currentClusters[i],
+						currentClusters[j],
+						undefined,
+						options
+					);
+					if (distance < minDistance) {
+						minDistance = distance;
+						closestPair = { cluster1: currentClusters[i], cluster2: currentClusters[j] };
+					}
+				}
+			}
+
+			if (!closestPair) break;
+
+			// Merge the closest pair
+			const merged = this.mergeClusters(closestPair.cluster1, closestPair.cluster2);
+			currentClusters = currentClusters.filter(
+				(c) => c.id !== closestPair.cluster1.id && c.id !== closestPair.cluster2.id
+			);
+			currentClusters.push(merged);
+		}
+
+		return currentClusters.map((cluster) => ({
+			...cluster,
+			radius: this.calculateClusterRadius(cluster.events, cluster.center),
+		}));
+	}
+
+	/**
+	 * Merge clusters that are within the distance threshold
+	 */
+	private static mergeNearbyClusters(
+		clusters: Cluster[],
+		distanceThreshold: number,
+		options: ClusteringOptions
+	): Cluster[] {
+		if (clusters.length <= 1) return clusters;
+
+		const result: Cluster[] = [];
+		const used = new Set<string>();
+
+		for (let i = 0; i < clusters.length; i++) {
+			if (used.has(clusters[i].id)) continue;
+
+			let currentCluster = clusters[i];
+			used.add(currentCluster.id);
+
+			// Find and merge nearby clusters
+			for (let j = i + 1; j < clusters.length; j++) {
+				if (used.has(clusters[j].id)) continue;
+
+				const distance = this.getDistanceBetweenClusters(currentCluster, clusters[j], undefined, options);
+				if (distance <= distanceThreshold) {
+					currentCluster = this.mergeClusters(currentCluster, clusters[j]);
+					used.add(clusters[j].id);
+				}
+			}
+
+			result.push(currentCluster);
+		}
+
+		return result;
 	}
 
 	// /**

@@ -1112,7 +1112,7 @@
 	"MAX_CLUSTERS": "Max Clusters",
 	"MIN_CLUSTER_SIZE": "Min Cluster Size",
 	"DISTANCE_THRESHOLD": "Distance Threshold (meters)",
-	"MAP_GROUP_BY.AREAS": "By Areas",
-	"USE_AIR_DISTANCE_FALLBACK": "Use air distance if no driving/walking timing found",
+	"MAP_GROUP_BY.AREAS": "Categories & Areas",
+	"USE_AIR_DISTANCE_FALLBACK": "Use air distance if no drive/walk timing found",
 	"MAX_AIR_DISTANCE": "Max Air Distance (meters)"
 }
