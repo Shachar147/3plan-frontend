@@ -394,3 +394,97 @@ export function serializeDuration(eventStore: EventStore, seconds: number) {
 	}
 	return result.join(' ');
 }
+
+// Auto-schedule utility functions
+
+/**
+ * Parse duration string (HH:MM format) to minutes
+ */
+export function parseDurationToMinutes(duration: string): number {
+	if (!duration) return 0;
+
+	const fixedDuration = fixDuration(duration);
+	const parts = fixedDuration.split(':');
+	const hours = parseInt(parts[0]) || 0;
+	const minutes = parseInt(parts[1]) || 0;
+
+	return hours * 60 + minutes;
+}
+
+/**
+ * Add minutes to a date and return new date
+ */
+export function addMinutesToDate(date: Date, minutes: number): Date {
+	const result = new Date(date);
+	result.setMinutes(result.getMinutes() + minutes);
+	return result;
+}
+
+/**
+ * Get preferred time slot range based on TriplanEventPreferredTime
+ */
+export function getPreferredTimeSlot(preferredTime: number): { start: number; end: number } | null {
+	switch (preferredTime) {
+		case 1: // morning
+			return { start: 9, end: 12 };
+		case 2: // noon
+			return { start: 12, end: 15 };
+		case 3: // afternoon
+			return { start: 15, end: 18 };
+		case 4: // sunset
+			return { start: 18, end: 19.5 };
+		case 5: // evening
+			return { start: 19.5, end: 22 };
+		case 7: // night
+			return { start: 22, end: 24 };
+		case 6: // nevermind
+		case 0: // unset
+		default:
+			return null; // no preference
+	}
+}
+
+/**
+ * Check if an event is open on a specific day
+ * Supports multiple time ranges per day (e.g., split shifts)
+ */
+export function isEventOpenOnDay(openingHours: any, date: Date): boolean {
+	if (!openingHours) return true; // Assume open if no hours specified
+
+	const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+	const dayHours = openingHours[dayOfWeek];
+
+	if (!dayHours || !Array.isArray(dayHours) || dayHours.length === 0) {
+		return false; // Closed on this day
+	}
+
+	// Check if any time range is available (event is open)
+	return dayHours.some((timeRange: any) => {
+		if (!timeRange.start || !timeRange.end) return false;
+		return true; // Has at least one time range
+	});
+}
+
+/**
+ * Check if an event can fit in a specific time range
+ */
+export function canEventFitInTimeRange(
+	startTime: Date,
+	durationMinutes: number,
+	rangeStart: Date,
+	rangeEnd: Date
+): boolean {
+	const eventEnd = addMinutesToDate(startTime, durationMinutes);
+
+	// Event must start within the range
+	if (startTime < rangeStart || startTime >= rangeEnd) {
+		return false;
+	}
+
+	// Event must end within the range
+	if (eventEnd > rangeEnd) {
+		return false;
+	}
+
+	return true;
+}

@@ -118,6 +118,35 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	};
 
+	const renderAutoScheduleButton = () => {
+		// Check if there are unscheduled events
+		const allSidebarEvents = Object.values(eventStore.sidebarEvents).flat();
+		const hasUnscheduledEvents = allSidebarEvents.length > 0;
+
+		let isDisabled = !hasUnscheduledEvents;
+		let disabledReason = undefined;
+
+		if (eventStore.isTripLocked) {
+			isDisabled = true;
+			disabledReason = TranslateService.translate(eventStore, 'TRIP_IS_LOCKED');
+		} else if (!hasUnscheduledEvents) {
+			disabledReason = TranslateService.translate(eventStore, 'AUTO_SCHEDULE.NO_EVENTS_TO_SCHEDULE');
+		}
+
+		return (
+			<Button
+				disabled={isDisabled}
+				icon="fa-magic"
+				text={TranslateService.translate(eventStore, 'AUTO_SCHEDULE.BUTTON_TEXT')}
+				disabledReason={disabledReason}
+				onClick={() => {
+					ReactModalService.openAutoScheduleConfigModal(eventStore);
+				}}
+				flavor={ButtonFlavor['movable-link']}
+			/>
+		);
+	};
+
 	const renderLockTrip = () => {
 		// const isDisabled = eventStore.calendarEvents.length === 0;
 		return (
@@ -963,6 +992,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			<>
 				{renderLockTrip()}
 				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
+				{renderAutoScheduleButton()}
 				<TriplanSidebarShareTripButton isMoveAble={true} textKey="SHARE_TRIP" />
 				{isAdmin() && (
 					<TriplanSidebarSyncTripButton

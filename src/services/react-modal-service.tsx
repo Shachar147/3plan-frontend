@@ -93,6 +93,7 @@ import { endpoints } from '../v2/utils/endpoints';
 import { FeatureFlagsService } from '../utils/feature-flags';
 import { newDesignRootPath } from '../v2/utils/consts';
 import { getIcon, getIconUrl } from '../components/map-container/map-container-utils';
+import { AutoScheduleService, AutoScheduleConfig } from './auto-schedule-service';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -6251,6 +6252,463 @@ const ReactModalService = {
 
 					ReactModalService.internal.closeModal(eventStore);
 				}
+			},
+		});
+	},
+
+	openAutoScheduleConfigModal: (eventStore: EventStore) => {
+		// Auto-detect categories
+		const detectedCategories = AutoScheduleService.detectCategories(eventStore);
+
+		// Get all categories for dropdowns
+		const allCategories = Array.from(eventStore.categories.values()).map((cat) => ({
+			label: cat.title,
+			value: cat.id.toString(),
+		}));
+
+		// Get hotel events if hotel category is detected
+		const hotelEvents = detectedCategories.hotel
+			? AutoScheduleService.getHotelEvents(eventStore, detectedCategories.hotel)
+			: [];
+
+		// Initialize modal values - store full option objects for SelectInput components
+		eventStore.modalValues['autoScheduleFoodCategoryId'] = detectedCategories.food
+			? allCategories.find((cat) => cat.value == detectedCategories.food.toString())
+			: undefined;
+		eventStore.modalValues['autoScheduleHotelCategoryId'] = detectedCategories.hotel
+			? allCategories.find((cat) => cat.value == detectedCategories.hotel.toString())
+			: undefined;
+		eventStore.modalValues['autoScheduleDessertCategoryId'] = detectedCategories.dessert
+			? allCategories.find((cat) => cat.value == detectedCategories.dessert.toString())
+			: undefined;
+		eventStore.modalValues['autoScheduleSelectedHotelEventId'] =
+			hotelEvents.length > 0 ? { label: hotelEvents[0].title, value: hotelEvents[0].id } : undefined;
+		eventStore.modalValues['autoScheduleTravelBufferMinutes'] = 30;
+
+		// Count events to be scheduled
+		const allSidebarEvents = Object.values(eventStore.sidebarEvents).flat();
+		const eventsToScheduleCount = allSidebarEvents.length;
+
+		function renderCategorySelection() {
+			return (
+				<div className="flex-col gap-10">
+					<h3>{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.CATEGORIES_TITLE')}</h3>
+				</div>
+			);
+		}
+
+		function renderFoodCategory() {
+			return (
+				<div className="auto-schedule-modal-row">
+					<span className="auto-schedule-modal-label">
+						{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.FOOD_CATEGORY')}:
+						<span className="auto-schedule-modal-required-asterisk">*</span>
+					</span>
+					<SelectInput
+						wrapperClassName="auto-schedule-modal-selector"
+						ref={eventStore.modalValuesRefs['autoScheduleFoodCategoryId']}
+						id="food-category"
+						name="food-category"
+						options={allCategories}
+						modalValueName="autoScheduleFoodCategoryId"
+						removeDefaultClass={true}
+						isClearable={true}
+						placeholderKey="AUTO_SCHEDULE.MODAL.SELECT_CATEGORY"
+						required={true}
+					/>
+				</div>
+			);
+		}
+
+		function renderDessertCategory() {
+			return (
+				<div className="auto-schedule-modal-row">
+					<span className="auto-schedule-modal-label">
+						{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.DESSERT_CATEGORY')}:
+						<span className="auto-schedule-modal-required-asterisk">*</span>
+					</span>
+					<SelectInput
+						wrapperClassName="auto-schedule-modal-selector"
+						ref={eventStore.modalValuesRefs['autoScheduleDessertCategoryId']}
+						id="dessert-category"
+						name="dessert-category"
+						options={allCategories}
+						modalValueName="autoScheduleDessertCategoryId"
+						removeDefaultClass={true}
+						isClearable={true}
+						placeholderKey="AUTO_SCHEDULE.MODAL.SELECT_CATEGORY"
+						required={true}
+					/>
+				</div>
+			);
+		}
+
+		function renderHotelCategory() {
+			return (
+				<div className="auto-schedule-modal-row">
+					<span className="auto-schedule-modal-label">
+						{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.HOTEL_CATEGORY')}:
+						<span className="auto-schedule-modal-required-asterisk">*</span>
+					</span>
+					<SelectInput
+						wrapperClassName="auto-schedule-modal-selector"
+						ref={eventStore.modalValuesRefs['autoScheduleHotelCategoryId']}
+						id="hotel-category"
+						name="hotel-category"
+						options={allCategories}
+						modalValueName="autoScheduleHotelCategoryId"
+						removeDefaultClass={true}
+						isClearable={true}
+						placeholderKey="AUTO_SCHEDULE.MODAL.SELECT_CATEGORY"
+						required={true}
+						onChange={(opt: any) => {
+							// Reset selected hotel when category changes
+							eventStore.modalValues['autoScheduleSelectedHotelEventId'] = undefined;
+							eventStore.modalValues['autoScheduleHotelCategoryId'] = opt;
+						}}
+					/>
+				</div>
+			);
+		}
+
+		function renderHotelSelection() {
+			return (
+				<Observer>
+					{() => (
+						<div
+							className="flex-col gap-10"
+							key={eventStore.modalValues['autoScheduleHotelCategoryId']?.value}
+						>
+							<h3>{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.SELECT_HOTEL')}</h3>
+							{renderHotelSelectionInner()}
+						</div>
+					)}
+				</Observer>
+			);
+		}
+
+		function renderHotelSelectionInner() {
+			// if (!eventStore.modalValues['autoScheduleHotelCategoryId']) {
+			// 	return null;
+			// }
+
+			return (
+				<Observer>
+					{() => {
+						const hotelCategoryId = eventStore.modalValues['autoScheduleHotelCategoryId']?.value;
+						if (!hotelCategoryId) {
+							return (
+								<div className="alert alert-warning">
+									{TranslateService.translate(
+										eventStore,
+										'AUTO_SCHEDULE.MODAL.NO_HOTEL_CATEGORY_SELECTED_WARNING'
+									)}
+								</div>
+							);
+						}
+
+						const hotelEvents = AutoScheduleService.getHotelEvents(eventStore, parseInt(hotelCategoryId));
+
+						if (hotelEvents.length === 0) {
+							return (
+								<div className="alert alert-warning">
+									{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.NO_HOTEL_WARNING')}
+								</div>
+							);
+						}
+
+						const hotelOptions = hotelEvents.map((event) => ({
+							label: event.title,
+							value: event.id,
+						}));
+
+						return (
+							<div className="auto-schedule-modal-row">
+								<span className="auto-schedule-modal-label">
+									{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.SELECT_HOTEL')}:
+									<span className="auto-schedule-modal-required-asterisk">*</span>
+								</span>
+								<SelectInput
+									wrapperClassName="auto-schedule-modal-selector"
+									key={eventStore.modalValues['autoScheduleSelectedHotelEventId']?.value}
+									ref={undefined}
+									id="selected-hotel"
+									name="selected-hotel"
+									options={hotelOptions}
+									modalValueName="autoScheduleSelectedHotelEventId"
+									removeDefaultClass={true}
+									isClearable={false}
+									placeholderKey="AUTO_SCHEDULE.MODAL.SELECT_HOTEL"
+									required={true}
+								/>
+							</div>
+						);
+					}}
+				</Observer>
+			);
+		}
+
+		function renderTravelBuffer() {
+			return (
+				<div className="flex-col gap-10">
+					<h3>{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.TRAVEL_BUFFER')}</h3>
+					<div className="auto-schedule-modal-row">
+						<span className="auto-schedule-modal-label">
+							{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.TRAVEL_BUFFER')}:
+						</span>
+						<div className="auto-schedule-modal-input-wrapper">
+							<input
+								type="number"
+								min="0"
+								max="120"
+								value={eventStore.modalValues['autoScheduleTravelBufferMinutes']}
+								onChange={(e) => {
+									eventStore.modalValues['autoScheduleTravelBufferMinutes'] = Math.min(
+										120,
+										Math.max(0, Number(e.target.value ?? 30))
+									);
+								}}
+								className="auto-schedule-modal-number-input"
+							/>
+							<span>{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.MINUTES')}</span>
+						</div>
+					</div>
+				</div>
+			);
+		}
+
+		function renderSummary() {
+			return (
+				<div className="flex-col gap-10">
+					<h3>{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.SUMMARY')}</h3>
+					<div className="flex-col gap-5">
+						<div>
+							<strong>
+								{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.EVENTS_TO_SCHEDULE')}:
+							</strong>{' '}
+							{eventsToScheduleCount}
+						</div>
+						<div>
+							<strong>{TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.TRIP_DATES')}:</strong>{' '}
+							{eventStore.customDateRange.start} - {eventStore.customDateRange.end}
+						</div>
+					</div>
+				</div>
+			);
+		}
+
+		// Function to check if all required fields are valid
+		const isFormValid = () => {
+			const requiredFields = [
+				eventStore.modalValues['autoScheduleFoodCategoryId'],
+				eventStore.modalValues['autoScheduleDessertCategoryId'],
+				eventStore.modalValues['autoScheduleHotelCategoryId'],
+			];
+
+			// Check if all required fields have values
+			const allRequiredFilled = requiredFields.every((field) => field && field.value);
+
+			// If hotel category is selected, also check hotel selection
+			const hotelCategoryId = eventStore.modalValues['autoScheduleHotelCategoryId']?.value;
+			if (hotelCategoryId) {
+				const hotelSelection = eventStore.modalValues['autoScheduleSelectedHotelEventId'];
+				return allRequiredFilled && hotelSelection && !!hotelSelection.value;
+			}
+
+			return !!allRequiredFilled;
+		};
+
+		const getMissingFields = () => {
+			const missingFields = [];
+			if (
+				!eventStore.modalValues['autoScheduleFoodCategoryId'] ||
+				!eventStore.modalValues['autoScheduleFoodCategoryId'].value
+			) {
+				missingFields.push(TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.FOOD_CATEGORY'));
+			}
+			if (
+				!eventStore.modalValues['autoScheduleDessertCategoryId'] ||
+				!eventStore.modalValues['autoScheduleDessertCategoryId'].value
+			) {
+				missingFields.push(TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.DESSERT_CATEGORY'));
+			}
+
+			if (
+				!eventStore.modalValues['autoScheduleHotelCategoryId'] ||
+				!eventStore.modalValues['autoScheduleHotelCategoryId'].value
+			) {
+				missingFields.push(TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.HOTEL_CATEGORY'));
+			}
+
+			if (eventStore.modalValues['autoScheduleHotelCategoryId']?.value) {
+				if (
+					!eventStore.modalValues['autoScheduleSelectedHotelEventId'] ||
+					!eventStore.modalValues['autoScheduleSelectedHotelEventId'].value
+				) {
+					missingFields.push(TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.SELECT_HOTEL'));
+				}
+			}
+
+			return missingFields;
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.TITLE'),
+			content: (
+				<Observer>
+					{() => {
+						const isValid = isFormValid();
+
+						// Update button state reactively
+						const confirmButton = document.querySelector(
+							'.triplan-react-modal .primary-button'
+						) as HTMLButtonElement;
+						if (confirmButton) {
+							confirmButton.disabled = !isValid;
+							confirmButton.classList.toggle('disabled', !isValid);
+
+							if (!isValid) {
+								// Remove existing validation error if any
+								const existingError = document.querySelector('.alert[data-validation-error="true"]');
+								if (existingError) {
+									existingError.remove();
+								}
+
+								// Add validation error message
+								const errorDiv = document.createElement('div');
+								errorDiv.className = 'alert alert-warning';
+								errorDiv.setAttribute('data-validation-error', 'true');
+								errorDiv.textContent = TranslateService.translate(
+									eventStore,
+									'AUTO_SCHEDULE.MODAL.VALIDATION_ERROR',
+									{
+										missingFields: getMissingFields().join(', '),
+									}
+								);
+								confirmButton.parentElement?.prepend(errorDiv);
+							} else {
+								// Remove validation error message
+								const existingError = document.querySelector('.alert[data-validation-error="true"]');
+								if (existingError) {
+									existingError.remove();
+								}
+							}
+						}
+
+						return (
+							<div className="flex-col gap-15">
+								{renderCategorySelection()}
+								{renderFoodCategory()}
+								{renderDessertCategory()}
+								{renderHotelCategory()}
+								{renderHotelSelection()}
+								{renderTravelBuffer()}
+								{renderSummary()}
+							</div>
+						);
+					}}
+				</Observer>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'AUTO_SCHEDULE.MODAL.SCHEDULE_BUTTON'),
+			confirmBtnCssClass: 'primary-button',
+			confirmBtnDisabled: !isFormValid(),
+			onConfirm: () => {
+				// // Validate required fields using SelectInput refs
+				// const requiredFields = [
+				// 	{ ref: eventStore.modalValuesRefs['autoScheduleFoodCategoryId'], name: 'Food Category' },
+				// 	{ ref: eventStore.modalValuesRefs['autoScheduleDessertCategoryId'], name: 'Dessert Category' },
+				// 	{ ref: eventStore.modalValuesRefs['autoScheduleHotelCategoryId'], name: 'Hotel Category' }
+				// ];
+
+				// const invalidFields = requiredFields.filter(field => {
+				// 	if (!field.ref?.current) return true;
+				// 	return !field.ref.current.isValid();
+				// });
+
+				// // Also check hotel selection if hotel category is selected
+				// const hotelCategoryId = eventStore.modalValues['autoScheduleHotelCategoryId']?.value;
+				// if (hotelCategoryId) {
+				// 	const hotelSelectionRef = eventStore.modalValuesRefs['autoScheduleSelectedHotelEventId'];
+				// 	if (!hotelSelectionRef?.current || !hotelSelectionRef.current.isValid()) {
+				// 		invalidFields.push({ ref: hotelSelectionRef, name: 'Hotel Selection' });
+				// 	}
+				// }
+
+				const isValid = isFormValid();
+
+				if (!isValid) {
+					const fieldNames = getMissingFields().join(', ');
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'AUTO_SCHEDULE.MODAL.VALIDATION_ERROR',
+						'error',
+						{ missingFields: fieldNames }
+					);
+					return;
+				}
+
+				// Reconstruct config from individual modal values
+				const config: AutoScheduleConfig = {
+					foodCategoryId: eventStore.modalValues['autoScheduleFoodCategoryId']?.value
+						? parseInt(eventStore.modalValues['autoScheduleFoodCategoryId'].value)
+						: undefined,
+					hotelCategoryId: eventStore.modalValues['autoScheduleHotelCategoryId']?.value
+						? parseInt(eventStore.modalValues['autoScheduleHotelCategoryId'].value)
+						: undefined,
+					dessertCategoryId: eventStore.modalValues['autoScheduleDessertCategoryId']?.value
+						? parseInt(eventStore.modalValues['autoScheduleDessertCategoryId'].value)
+						: undefined,
+					selectedHotelEventId: eventStore.modalValues['autoScheduleSelectedHotelEventId']?.value,
+					travelBufferMinutes: eventStore.modalValues['autoScheduleTravelBufferMinutes'] || 30,
+					tripStartDate: eventStore.customDateRange.start,
+					tripEndDate: eventStore.customDateRange.end,
+				};
+
+				const validation = AutoScheduleService.validateConfig(config);
+
+				if (!validation.valid) {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'AUTO_SCHEDULE.MODAL.VALIDATION_ERROR',
+						'error',
+						{ missingFields: validation.missingFields.join(', ') }
+					);
+					return;
+				}
+
+				// Store config for later use
+				eventStore.setAutoScheduleConfig(config);
+
+				// Run scheduling
+				const result = AutoScheduleService.scheduleEvents(eventStore, config);
+				console.log('🎯 Auto-schedule result:', {
+					scheduledCount: result.scheduledEvents.length,
+					unscheduledCount: result.unscheduledEvents.length,
+					warningsCount: result.warnings.length,
+					scheduledEvents: result.scheduledEvents,
+				});
+
+				ReactModalService.internal.alertMessage(
+					eventStore,
+					'MODALS.SUCCESS.TITLE',
+					'AUTO_SCHEDULE.SUCCESS',
+					'success',
+					{ X: result.scheduledEvents.length }
+				);
+
+				// Set scheduled events and show banner
+				eventStore.setAutoScheduledEvents(result.scheduledEvents);
+				eventStore.setAutoScheduleWarnings(result.warnings);
+				eventStore.setShowAutoScheduleBanner(true);
+
+				console.log('📅 Auto-scheduled events stored in eventStore:', result.scheduledEvents.length);
+				console.log('📅 Current calendar events count:', eventStore.calendarEvents.length);
+
+				ReactModalService.internal.closeModal(eventStore);
 			},
 		});
 	},
