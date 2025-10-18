@@ -4682,8 +4682,6 @@ const ReactModalService = {
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.IMPORT'),
 			confirmBtnCssClass: 'primary-button',
 			onConfirm: () => {
-				alert('here!');
-
 				// @ts-ignore
 				const file = eventStore.modalValues['fileToUpload'];
 

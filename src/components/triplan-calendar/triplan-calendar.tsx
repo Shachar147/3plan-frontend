@@ -530,12 +530,12 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 					typeof currentEvent.end! == 'string' ? new Date(currentEvent.end!) : currentEvent.end!;
 				let gapEnd: Date = typeof nextEvent.start! == 'string' ? new Date(nextEvent.start!) : nextEvent.start!;
 
-				if (gapStart == null || gapEnd == null) {
-					console.log('hereeeeee', {
-						currentEvent,
-						nextEvent,
-					});
-				}
+				// if (gapStart == null || gapEnd == null) {
+				// 	console.log('hereeeeee', {
+				// 		currentEvent,
+				// 		nextEvent,
+				// 	});
+				// }
 
 				if (areDatesOnDifferentDays(gapStart, gapEnd)) {
 					gapEnd = new Date(new Date(gapStart.toISOString()).setHours(23, 59));

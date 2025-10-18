@@ -634,8 +634,6 @@ export class ClusteringService {
 			cluster2.center.longitude
 		);
 
-		console.log('hereeee', airDistance, 'between ', cluster1.events[0].title, 'and', cluster2.events[0].title);
-
 		// If air distance fallback is enabled, use it with the max distance limit
 		if (options?.useAirDistanceFallback && options?.maxAirDistance) {
 			// Return the air distance if it's within the max limit, otherwise return a very large distance
