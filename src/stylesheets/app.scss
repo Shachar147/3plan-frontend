@@ -3,6 +3,110 @@ body {
 	overflow-x: hidden;
 }
 
+/* Auto Schedule Modal Styles */
+.auto-schedule-modal-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+}
+
+.auto-schedule-modal-label {
+	min-width: 120px;
+	text-align: right;
+	flex-shrink: 0;
+}
+
+.auto-schedule-modal-input-wrapper {
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.auto-schedule-modal-number-input {
+	width: 80px;
+	padding: 8px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 4px;
+	box-sizing: border-box;
+	background-color: white;
+	font-size: 14px;
+	color: #374151;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.auto-schedule-modal-number-input:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.auto-schedule-modal-number-input:hover {
+	border-color: #9ca3af;
+}
+
+/* Red asterisk for required fields */
+.auto-schedule-modal-required-asterisk {
+	color: red;
+	margin-left: 4px;
+}
+
+/* Ensure all SelectInput components in auto-schedule modal have consistent styling */
+.auto-schedule-modal-row .triplan-selector {
+	flex-grow: 1;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__control {
+	background-color: white !important;
+	border: 1px solid #d1d5db !important;
+	border-radius: 4px !important;
+	min-height: 38px !important;
+	box-shadow: none !important;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__control:hover {
+	border-color: #9ca3af !important;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__control--is-focused {
+	border-color: #3b82f6 !important;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Red border for invalid required fields - more specific selectors */
+
+.auto-schedule-modal-selector .react-select--is-invalid div[class$='-control'] {
+	border-color: #ef4444 !important;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__value-container {
+	padding: 2px 8px !important;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__single-value {
+	color: #374151 !important;
+	font-size: 14px !important;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__placeholder {
+	color: #9ca3af !important;
+	font-size: 14px !important;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__indicator-separator {
+	background-color: #d1d5db !important;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__dropdown-indicator {
+	color: #6b7280 !important;
+}
+
+.auto-schedule-modal-row .triplan-selector .react-select__clear-indicator {
+	color: #6b7280 !important;
+}
+
 .App {
 	font-family: GaretBook, Heebo, Arial;
 	text-align: center;
@@ -1783,4 +1887,28 @@ body.rtl {
 }
 .max-width-90-percents {
 	max-width: 90%;
+}
+
+.auto-schedule-modal-selector {
+	width: 100%;
+	flex: 1 1 0;
+
+	div[class$='-control'] {
+		width: 100%;
+		flex: 1 1 0;
+
+		> div {
+			text-align: start;
+		}
+
+		> div:last-child {
+			> div:first-child {
+				padding-inline-end: 0;
+			}
+
+			> div:last-child {
+				padding-inline-start: 0;
+			}
+		}
+	}
 }

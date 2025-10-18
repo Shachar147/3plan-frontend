@@ -48,6 +48,7 @@ import { getUser } from '../helpers/auth';
 import { SidebarGroups } from '../components/triplan-sidebar/triplan-sidebar';
 import { apiGetNew } from '../helpers/api';
 import TranslateService from '../services/translate-service';
+import { AutoScheduleConfig } from '../services/auto-schedule-service';
 import { MapContainerRef } from '../components/map-container/map-container';
 import LogHistoryService from '../services/data-handlers/log-history-service';
 import { endpoints } from '../v2/utils/endpoints';
@@ -2151,6 +2152,62 @@ export class EventStore {
 		} else {
 			this.isSidebarMinimized = true;
 		}
+	}
+
+	// Auto-schedule related properties
+	@observable autoScheduledEvents: CalendarEvent[] = [];
+	@observable showAutoScheduleBanner: boolean = false;
+	@observable autoScheduleConfig: AutoScheduleConfig | null = null;
+	@observable autoScheduleWarnings: string[] = [];
+	@observable autoScheduleRandomSeed: number = 0;
+
+	// Auto-schedule related actions
+	@action
+	setAutoScheduledEvents(events: CalendarEvent[]) {
+		this.autoScheduledEvents = events;
+	}
+
+	@action
+	setShowAutoScheduleBanner(show: boolean) {
+		this.showAutoScheduleBanner = show;
+	}
+
+	@action
+	setAutoScheduleConfig(config: AutoScheduleConfig | null) {
+		this.autoScheduleConfig = config;
+	}
+
+	@action
+	setAutoScheduleWarnings(warnings: string[]) {
+		this.autoScheduleWarnings = warnings;
+	}
+
+	@action
+	incrementAutoScheduleRandomSeed() {
+		this.autoScheduleRandomSeed += 1;
+	}
+
+	@action
+	discardAutoScheduleChanges() {
+		this.autoScheduledEvents = [];
+		this.showAutoScheduleBanner = false;
+		this.autoScheduleWarnings = [];
+	}
+
+	@action
+	saveAutoScheduleChanges() {
+		// Add scheduled events to calendar
+		this.autoScheduledEvents.forEach((event) => {
+			this.calendarEvents.push(event);
+		});
+
+		// Clear auto-schedule state
+		this.autoScheduledEvents = [];
+		this.showAutoScheduleBanner = false;
+		this.autoScheduleWarnings = [];
+
+		// Save to backend
+		this.dataService.setCalendarEvents(this.calendarEvents, this.tripName);
 	}
 }
 
