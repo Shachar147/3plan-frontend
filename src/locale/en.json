@@ -62,7 +62,7 @@
 	"SEARCH_PLACEHOLDER": "Enter search keywords",
 	"IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT": "Import Activities - Download Template",
 	"IMPORT_EVENTS.BUTTON_TEXT": "Import Activities",
-	"IMPORT_EVENTS_STEPS": "Steps:<br/><b>1. Click Download Template to download an excel template.</b><br/>2. fill it in with your activities details.<br/>3. Upload it",
+	"IMPORT_EVENTS_STEPS": "Steps:<br/><b>1. Click Download Template to download an excel template.</b><br/>2. fill it in with your activities details.<br/>3. Upload it<br/>4. If you already have a template, click skip to skip the download<br/><br/><div class='flex-row justify-content-center'><button class='skip-download-template-button padding-inline-16'>Already have a template, skip</button></div>",
 	"IMPORT_EVENTS_STEPS2": "Steps:<br/>1. Click Download Template to download an excel template.<br/>2. fill it in with your activities details.<br/><b>3. Upload it</b>",
 	"IMPORT_EVENTS.TITLE": "Import Activities - Download Template",
 	"IMPORT_EVENTS.TITLE2": "Import Activities - Upload Template",
@@ -116,6 +116,8 @@
 	"MODALS.ERROR.CATEGORY_NAME_CANT_BE_EMPTY": "category name can't be empty",
 	"MODALS.LOCATION": "Location",
 	"EVENT_WITH_NAME": "Activity with name",
+	"EVENT_HAVE_NO_VALID_COORDINATES": "Activity with name {name} have no valid coordinates",
+	"EVENT_HAVE_NO_NAME": "Placemark #{idx} has no name",
 	"ALREADY_EXISTS": "already exists",
 	"TRIP_SUMMARY.START_PREFIX": "Starting the day at ",
 	"TRIP_SUMMARY.LAST_PREFIX": "Closing the day at ",
@@ -282,6 +284,7 @@
 	"MODALS.OPENING_HOURS.ALL_WEEK": "All week",
 	"SIDEBAR_GROUPS.GROUP_TITLE.WARNING": "Pay Attention!",
 	"SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS": "Actions",
+	"SIDEBAR_GROUPS.GROUP_TITLE.IMPORT_EXPORT_ACTIONS": "Import/Export Actions",
 	"SIDEBAR_GROUPS.GROUP_TITLE.RECOMMENDATIONS": "Recommendations",
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "So, how many activities already scheduled?",
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT": "Statistics",
@@ -1129,5 +1132,9 @@
 	"AUTO_SCHEDULE.BANNER.TRY_AGAIN": "Try Again",
 	"AUTO_SCHEDULE.BANNER.DISCARD": "Discard Changes",
 	"AUTO_SCHEDULE.MODAL.NO_HOTEL_CATEGORY_SELECTED_WARNING": "No hotel category selected",
-	"MODALS.SUCCESS.TITLE": "Yay!"
+	"MODALS.SUCCESS.TITLE": "Yay!",
+	"IMPORT_FROM_GOOGLE_MAPS.TITLE": "Import from Google Maps",
+	"IMPORT_FROM_GOOGLE_MAPS": "Import from Google Maps",
+	"IMPORT_FROM_GOOGLE_MAPS.CONTENT": "Steps:<br/><b>1. Go to <a href=\"https://www.google.com/maps/d/\">Google My Maps</a> and open the map you want to export.<\/b><br/>2.On the left pane, near map title, hit the 3 dots menu and click on <b>Export to KML/KMZ</b>.<br/>3. Check <b>Export as KML instead of KMZ.</b> and hit <b>Downloads</b>.<br/>4. Import downloaded file here.",
+	"MODALS.IMPORT": "Import"
 }

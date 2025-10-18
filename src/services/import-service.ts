@@ -1,10 +1,34 @@
 import { EventStore } from '../stores/events-store';
 import TranslateService from './translate-service';
 import { TriplanEventPreferredTime, TriplanPriority } from '../utils/enums';
-import { ImportEventsConfirmInfo, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
+import { ImportEventsConfirmInfo, LocationData, SidebarEvent, TriPlanCategory } from '../utils/interfaces';
+import {
+	GOOGLE_MAP_ICONS_MAP,
+	ignoreKeys,
+} from '../components/inputs/google-map-icon-selector/google-map-icon-selector';
 import { defaultTimedEventDuration } from '../utils/defaults';
 import { formatDuration, validateDuration } from '../utils/time-utils';
 import ReactModalService from './react-modal-service';
+
+// Helper function to convert KML icon URL to Google Maps icon URL
+const convertKmlIconToGoogleMapIcon = (iconId: number): string => {
+	console.log('convertKmlIconToGoogleMapIcon input:', iconId);
+
+	if (!iconId.toString().length) {
+		return '';
+	}
+
+	// Find the corresponding icon in GOOGLE_MAP_ICONS_MAP
+	for (const [key, value] of Object.entries(GOOGLE_MAP_ICONS_MAP)) {
+		if (value.icon.includes(iconId) && !ignoreKeys.includes(key)) {
+			console.log('Found matching icon in GOOGLE_MAP_ICONS_MAP:', value.icon);
+			return value.icon;
+		}
+	}
+
+	console.log('No matching icon found in GOOGLE_MAP_ICONS_MAP for icon ID:', iconId);
+	return '';
+};
 
 const ImportService = {
 	// ref: http://stackoverflow.com/a/1293163/2343
@@ -422,6 +446,197 @@ const ImportService = {
 		}
 
 		return { categoriesImported, eventsImported };
+	},
+
+	// KML
+	async handleUploadedKMLFile(eventStore: EventStore, kmlText: string) {
+		const parser = new DOMParser();
+		const xml = parser.parseFromString(kmlText, 'application/xml');
+
+		const placemarks = Array.from(xml.getElementsByTagName('Placemark'));
+
+		const errors: string[] = [];
+		let numOfEventsWithErrors: Record<number, number> = {};
+		const eventsToAdd: SidebarEvent[] = [];
+		let categoriesToAdd: TriPlanCategory[] = [];
+		const newCategoriesTitleToId: Record<string, number> = {};
+		const categoryIcons: any = {};
+
+		for (let i = 0; i < placemarks.length; i++) {
+			const pm = placemarks[i];
+			const event: any = {};
+			let isValid = true;
+
+			const name = pm.getElementsByTagName('name')[0]?.textContent?.trim() || '';
+			const description = pm.getElementsByTagName('description')[0]?.textContent?.trim() || '';
+
+			// ===== Layer (Folder name → category) =====
+			let layer: string | null = null;
+			let parent = pm.parentElement;
+			while (parent) {
+				if (parent.tagName === 'Folder') {
+					const folderName = parent.getElementsByTagName('name')[0]?.textContent?.trim();
+					if (folderName) {
+						layer = folderName;
+						break;
+					}
+				}
+				parent = parent.parentElement;
+			}
+			if (!layer) {
+				layer = TranslateService.translate(eventStore, 'IMPORT_KML.DEFAULT_CATEGORY') || 'Uncategorized';
+			}
+
+			// ===== Style Info =====
+			const styleUrl = pm.getElementsByTagName('styleUrl')[0]?.textContent?.replace('#', '') || null;
+
+			const iconId = Number(styleUrl.split('-')[1]);
+			const iconHref = convertKmlIconToGoogleMapIcon(iconId);
+
+			// Debug logging for icon extraction
+			console.log('KML Processing - Placemark:', name);
+			console.log('Style URL:', styleUrl);
+
+			// ===== Location Data =====
+			const coordsText = pm.getElementsByTagName('coordinates')[0]?.textContent?.trim() || '';
+			let location: LocationData | null = null;
+			if (coordsText) {
+				const [lng, lat] = coordsText.split(',').map(Number);
+				if (!isNaN(lat) && !isNaN(lng)) {
+					// Try to extract a better address from description or use name as fallback
+					let address = name;
+					if (description) {
+						// Look for address-like patterns in description
+						const addressMatch = description.match(/([^,\n]+(?:,\s*[^,\n]+)*)/);
+						if (addressMatch && addressMatch[1].trim().length > 0) {
+							address = addressMatch[1].trim();
+						}
+					}
+
+					location = {
+						address: address,
+						latitude: lat,
+						longitude: lng,
+						eventName: name,
+					};
+				}
+			}
+
+			// ===== Validation =====
+			if (!name) {
+				isValid = false;
+				const error = TranslateService.translate(eventStore, 'EVENT_HAVE_NO_NAME', {
+					idx: i + 1,
+				});
+				errors.push(error);
+				numOfEventsWithErrors[i] = 1;
+			}
+			if (!location) {
+				isValid = false;
+				const error = TranslateService.translate(eventStore, 'EVENT_HAVE_NO_VALID_COORDINATES', {
+					name,
+				});
+
+				errors.push(error);
+				numOfEventsWithErrors[i] = 1;
+			}
+			if (eventStore.allEventsComputed.find((e) => e.title === name)) {
+				isValid = false;
+				const error = `${TranslateService.translate(
+					eventStore,
+					'EVENT_WITH_NAME'
+				)} ${name} ${TranslateService.translate(eventStore, 'ALREADY_EXISTS')}.`;
+				errors.push(error);
+				numOfEventsWithErrors[i] = 1;
+			}
+
+			// ===== Category Handling =====
+			let categoryId: number;
+			const existingCategory = eventStore.categories.find((c) => c.title === layer);
+			if (existingCategory) {
+				categoryId = existingCategory.id;
+			} else if (newCategoriesTitleToId[layer]) {
+				categoryId = newCategoriesTitleToId[layer];
+			} else {
+				const newCategory = {
+					id: eventStore.createCategoryId(),
+					icon: '',
+					title: layer,
+				} as TriPlanCategory;
+				newCategoriesTitleToId[layer] = newCategory.id;
+				categoriesToAdd.push(newCategory);
+				categoryId = newCategory.id;
+			}
+
+			// ===== Create Event =====
+			event['title'] = name;
+			event['description'] = description;
+			event['category'] = categoryId;
+			event['icon'] = iconHref;
+			event['location'] = location;
+			event['priority'] = TriplanPriority.unset;
+			event['preferredTime'] = TriplanEventPreferredTime.unset;
+
+			if (isValid) {
+				eventsToAdd.push(event as SidebarEvent);
+			}
+
+			// ===== Category Icon tracking =====
+			categoryIcons[categoryId] = categoryIcons[categoryId] || {};
+			categoryIcons[categoryId][iconHref] = (categoryIcons[categoryId][iconHref] || 0) + 1;
+		}
+
+		// ===== Determine most common icon per category =====
+		Object.keys(categoryIcons).forEach((categoryId) => {
+			let max = 0;
+			let iconMax = '';
+			Object.keys(categoryIcons[categoryId]).forEach((icon) => {
+				if (categoryIcons[categoryId][icon] > max) {
+					max = categoryIcons[categoryId][icon];
+					iconMax = icon;
+				}
+			});
+			categoryIcons[categoryId] = iconMax;
+		});
+
+		// ===== Assign Google Maps icons to new categories =====
+		categoriesToAdd = categoriesToAdd.map((category) => {
+			const mostCommonKmlIcon = categoryIcons[category.id] ? categoryIcons[category.id] : '';
+
+			// Debug logging
+			console.log('Category:', category.title, 'Most common KML icon:', mostCommonKmlIcon);
+
+			// Convert KML icon to Google Maps icon URL
+			const googleMapIconUrl = convertKmlIconToGoogleMapIcon(mostCommonKmlIcon);
+
+			// Debug logging
+			console.log('Converted Google Maps icon URL:', googleMapIconUrl);
+
+			// Only set googleMapIcon, not the regular icon
+			category.googleMapIcon = googleMapIconUrl;
+
+			return category;
+		});
+
+		// ===== Remove redundant icons from events =====
+		eventsToAdd.forEach((event) => {
+			if (
+				event.category &&
+				categoryIcons[event.category] &&
+				typeof categoryIcons[event.category] === 'string' &&
+				event.icon === categoryIcons[event.category]
+			) {
+				event.icon = '';
+			}
+		});
+
+		// ===== Done — Open confirm modal =====
+		ReactModalService.openImportKMLConfirmModal(eventStore, {
+			eventsToAdd,
+			categoriesToAdd,
+			errors,
+			numOfEventsWithErrors: Object.keys(numOfEventsWithErrors).length,
+		});
 	},
 };
 

@@ -92,7 +92,7 @@ import LogHistoryService from './data-handlers/log-history-service';
 import { endpoints } from '../v2/utils/endpoints';
 import { FeatureFlagsService } from '../utils/feature-flags';
 import { newDesignRootPath } from '../v2/utils/consts';
-import { getIcon } from '../components/map-container/map-container-utils';
+import { getIcon, getIconUrl } from '../components/map-container/map-container-utils';
 import { AutoScheduleService, AutoScheduleConfig } from './auto-schedule-service';
 
 export const ReactModalRenderHelper = {
@@ -1600,6 +1600,45 @@ const ReactModalService = {
 
 			eventStore.modalValues['selectedLocation'] = undefined;
 			eventStore.modalValues['openingHours'] = undefined;
+		},
+		renderFileUploader: (eventStore: EventStore, acceptedFormats?: string) => {
+			const defaultFormats =
+				'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv';
+			const acceptAttribute = acceptedFormats || defaultFormats;
+
+			return (
+				<div className="file-upload-container">
+					<input
+						type="file"
+						name="upload[]"
+						id="fileToUpload"
+						accept={acceptAttribute}
+						className="display-none"
+						onChange={(event) => {
+							const target = event?.target;
+							const files = target?.files;
+							const file = files && files.length > 0 ? files[0] : undefined;
+
+							runInAction(() => {
+								eventStore.modalValues['fileToUpload'] = file;
+							});
+
+							// @ts-ignore
+							document.getElementsByClassName('file-name-label')[0].innerText =
+								file?.name || TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
+						}}
+					/>
+					<div className="file-upload-label-container">
+						<label htmlFor="fileToUpload" className="btn secondary-button pointer black file-button-label">
+							{TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
+						</label>
+						<label className="file-name-label">
+							{eventStore.modalValues['fileToUpload']?.name ||
+								TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}
+						</label>
+					</div>
+				</div>
+			);
 		},
 	},
 
@@ -4221,6 +4260,11 @@ const ReactModalService = {
 		});
 	},
 	openImportEventsModal: (eventStore: EventStore) => {
+		$(document).on('click', '.skip-download-template-button', () => {
+			ReactModalService.internal.closeModal(eventStore);
+			ReactModalService.openImportEventsStepTwoModal(eventStore);
+		});
+
 		ReactModalService.internal.openModal(eventStore, {
 			...getDefaultSettings(eventStore),
 			title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE'),
@@ -4232,7 +4276,7 @@ const ReactModalService = {
 			),
 			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
 			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.DOWNLOAD_TEMPLATE'),
-			confirmBtnCssClass: 'primary-button',
+			confirmBtnCssClass: 'primary-button confirm-import-events-modal-button',
 			onConfirm: () => {
 				ImportService._download('TriplanEventsImport.csv', ImportService._buildTemplate(eventStore));
 				ReactModalService.internal.closeModal(eventStore);
@@ -4256,40 +4300,10 @@ const ReactModalService = {
 									__html: TranslateService.translate(eventStore, 'IMPORT_EVENTS_STEPS2'),
 								}}
 							/>
-							<div className="file-upload-container">
-								<input
-									type="file"
-									name="upload[]"
-									id="fileToUpload"
-									accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv"
-									className="display-none"
-									onChange={(event) => {
-										const target = event?.target;
-										const files = target?.files;
-										const file = files && files.length > 0 ? files[0] : undefined;
-
-										runInAction(() => {
-											eventStore.modalValues['fileToUpload'] = file;
-										});
-
-										// @ts-ignore
-										document.getElementsByClassName('file-name-label')[0].innerText =
-											file?.name || TranslateService.translate(eventStore, 'NO_FILE_CHOSEN');
-									}}
-								/>
-								<div className="file-upload-label-container">
-									<label
-										htmlFor="fileToUpload"
-										className="btn secondary-button pointer black file-button-label"
-									>
-										{TranslateService.translate(eventStore, 'CLICK_HERE_TO_UPLOAD')}
-									</label>
-									<label className="file-name-label">
-										{eventStore.modalValues['fileToUpload']?.name ||
-											TranslateService.translate(eventStore, 'NO_FILE_CHOSEN')}
-									</label>
-								</div>
-							</div>
+							{ReactModalService.internal.renderFileUploader(
+								eventStore,
+								'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv'
+							)}
 						</>
 					)}
 				</Observer>
@@ -4647,6 +4661,54 @@ const ReactModalService = {
 			hideConfirmBtn: true,
 		});
 	},
+
+	openImportFromGoogleMapsModal: (eventStore: EventStore) => {
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS.TITLE'),
+			content: (
+				<div className="flex-col gap-12">
+					<div
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS.CONTENT'),
+						}}
+					/>
+					{ReactModalService.internal.renderFileUploader(
+						eventStore,
+						'.kml,application/vnd.google-earth.kml+xml'
+					)}
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.IMPORT'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: () => {
+				alert('here!');
+
+				// @ts-ignore
+				const file = eventStore.modalValues['fileToUpload'];
+
+				if (file) {
+					const reader = new FileReader();
+					reader.readAsText(file, 'UTF-8');
+					reader.onload = function (evt) {
+						// @ts-ignore
+						ImportService.handleUploadedKMLFile(eventStore, evt.target.result);
+					};
+					reader.onerror = function (evt) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.IMPORT_EVENTS_ERROR.CONTENT',
+							'error'
+						);
+					};
+				}
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+
 	openImportEventsConfirmModal: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
 		let contentArr = [
 			`${info.eventsToAdd.length} ${TranslateService.translate(
@@ -4672,6 +4734,120 @@ const ReactModalService = {
 					'IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_CATEGORIES'
 				)}</b></u>`,
 				['<ul>', ...info.categoriesToAdd.map((x) => `<li>${x.title}</li>`), '</ul>'].join(''),
+			];
+		}
+
+		if (info.eventsToAdd.length > 0) {
+			contentArr = [
+				...contentArr,
+				// "",
+				`<u><b>${TranslateService.translate(
+					eventStore,
+					'IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_EVENTS'
+				)}</b></u>`,
+				['<ul>', ...info.eventsToAdd.map((x) => `<li>${x.title}</li>`), '</ul>'].join(''),
+			];
+		}
+
+		if (info.errors.length > 0) {
+			contentArr = [
+				...contentArr,
+				// "",
+				`<u><b>${TranslateService.translate(eventStore, 'IMPORT_EVENTS.CONFIRM.ERRORS_DETAILS')}</b></u>`,
+				['<ul>', ...info.errors.map((x) => `<li>${x}</li>`), '</ul>'].join(''),
+			];
+		}
+
+		const html = contentArr.join('<br/>');
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'IMPORT_EVENTS.TITLE3'),
+			content: <div className="react-modal bright-scrollbar" dangerouslySetInnerHTML={{ __html: html }} />,
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(
+				eventStore,
+				info.errors.length > 0 ? 'MODALS.UPLOAD_ANYWAY' : 'MODALS.UPLOAD'
+			),
+			confirmBtnCssClass: 'primary-button',
+			showConfirmButton: info.categoriesToAdd.length > 0 || info.eventsToAdd.length > 0,
+			onConfirm: async () => {
+				const { categoriesImported, eventsImported } = await ImportService.import(eventStore, info);
+				if (categoriesImported || eventsImported) {
+					LogHistoryService.logHistory(
+						eventStore,
+						categoriesImported ? TripActions.importedCategoriesAndEvents : TripActions.importedEvents,
+						{
+							eventsToAdd: info.eventsToAdd,
+							categoriesToAdd: info.categoriesToAdd,
+							numOfEventsWithErrors: info.numOfEventsWithErrors,
+							errors: info.errors,
+							categoriesImported,
+							eventsImported,
+							count: info.eventsToAdd?.length ?? 0,
+							count2: info.categoriesToAdd?.length ?? 0,
+						}
+					);
+
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.IMPORTED.TITLE',
+						'MODALS.IMPORTED.CONTENT',
+						'success'
+					);
+				} else {
+					ReactModalService.internal.openOopsErrorModal(eventStore);
+				}
+
+				ReactModalService.internal.closeModal(eventStore);
+			},
+		});
+	},
+
+	// todo complete: modify
+	openImportKMLConfirmModal: (eventStore: EventStore, info: ImportEventsConfirmInfo) => {
+		let contentArr = [
+			`${info.eventsToAdd.length} ${TranslateService.translate(
+				eventStore,
+				'IMPORT_EVENTS.CONFIRM.EVENTS_WILL_BE_ADDED'
+			)}`,
+			`${info.categoriesToAdd.length} ${TranslateService.translate(
+				eventStore,
+				'IMPORT_EVENTS.CONFIRM.CATEGORIES_WILL_BE_ADDED'
+			)}`,
+			`${info.numOfEventsWithErrors} ${TranslateService.translate(
+				eventStore,
+				'IMPORT_EVENTS.CONFIRM.EVENTS_HAVE_ERRORS'
+			)}`,
+		];
+
+		if (info.categoriesToAdd.length > 0) {
+			contentArr = [
+				...contentArr,
+				'',
+				`<u><b>${TranslateService.translate(
+					eventStore,
+					'IMPORT_EVENTS.CONFIRM.ABOUT_TO_UPLOAD_CATEGORIES'
+				)}</b></u>`,
+				[
+					'<ul>',
+					...info.categoriesToAdd.map((x) => {
+						const iconUrl = getIconUrl(
+							eventStore,
+							{
+								title: '',
+							},
+							undefined,
+							x.googleMapIcon
+						);
+
+						const iconDisplay = iconUrl
+							? `<img src="${iconUrl}" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;" alt="icon" />`
+							: undefined;
+						return `<li>${iconDisplay}${x.title}</li>`;
+					}),
+					'</ul>',
+				].join(''),
 			];
 		}
 
