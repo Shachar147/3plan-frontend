@@ -101,7 +101,7 @@ function TriplanHeaderLine({
 		<Button
 			icon="fa-plane"
 			text={
-				isInPlan
+				isInPlan && !eventStore.isEnglish
 					? TranslateService.translate(eventStore, `BACK_TO_MY_TRIPS`)
 					: TranslateService.translate(eventStore, `MY_TRIPS${isShort}`)
 			}

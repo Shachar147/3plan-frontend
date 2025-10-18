@@ -113,6 +113,7 @@ export class EventStore {
 	@observable calculatingDistance = 0;
 	@observable distanceResults = observable.map<string, DistanceResult>();
 	@observable travelMode = GoogleTravelMode.DRIVING;
+	@observable eventToClusterMap = observable.map<string, string>(); // eventId -> clusterColor
 	@observable modalSettings = defaultModalSettings;
 	@observable secondModalSettings = defaultModalSettings;
 	@observable modalValuesRefs: any = {};
@@ -249,6 +250,16 @@ export class EventStore {
 		this.sidebarGroupBy =
 			(localStorage.getItem('sidebarGroupBy') as 'priority' | 'category' | 'area') || 'category';
 
+		this.mapViewMode =
+			(localStorage.getItem('mapViewMode') as MapViewMode) || MapViewMode.CATEGORIES_AND_PRIORITIES;
+		// if (this.sidebarGroupBy === 'area') {
+		// 	this.mapViewMode = MapViewMode.AREAS;
+		// }
+
+		if (this.mapViewMode == MapViewMode.CHRONOLOGICAL_ORDER) {
+			this.mapViewDayFilter = (localStorage.getItem('mapViewDayFilter') as string) || '';
+		}
+
 		this.init();
 	}
 
@@ -259,6 +270,13 @@ export class EventStore {
 		// Set default area grouping thresholds (in minutes)
 		this.sidebarSettings.set('area-driving-threshold', 10); // 10 min driving
 		this.sidebarSettings.set('area-walking-threshold', 20); // 20 min walking
+		// Set default clustering settings
+		this.sidebarSettings.set('clustering-algorithm', 'distance-based');
+		this.sidebarSettings.set('max-clusters', 10);
+		this.sidebarSettings.set('min-cluster-size', 2);
+		this.sidebarSettings.set('distance-threshold', 1000);
+		this.sidebarSettings.set('use-air-distance-fallback', '1');
+		this.sidebarSettings.set('max-air-distance', 5000);
 
 		// Load custom area names from localStorage
 		try {
@@ -319,7 +337,9 @@ export class EventStore {
 		}
 
 		try {
-			const savedSettings = localStorage.getItem('triplan-sidebar-settings');
+			// Load trip-specific settings
+			const settingsKey = this.getTripSettingsKey();
+			const savedSettings = localStorage.getItem(settingsKey);
 			if (savedSettings) {
 				const parsedSettings = JSON.parse(savedSettings);
 				Object.keys(parsedSettings).forEach((key) => {
@@ -953,6 +973,30 @@ export class EventStore {
 	}
 
 	@computed
+	get allEventsFilteredWithSidebarSearchComputed() {
+		return this.allEventsComputed.filter((event) => {
+			const calendarEvent = this.calendarEvents.find((c) => c.id == event.id);
+
+			return (
+				// Apply both main search and sidebar search filters
+				this._isEventMatchingSearch(event, this.searchValue) &&
+				this._isEventMatchingSearch(event, this.sidebarSearchValue) &&
+				(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
+				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
+				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
+				!this.filterOutPriorities.get(getEnumKey(TriplanPriority, event.priority)) &&
+				(this.hideScheduled ? !this.calendarEvents.find((x) => x.id == event.id) : true) &&
+				(this.hideUnScheduled ? !!this.calendarEvents.find((x) => x.id == event.id) : true) &&
+				(this.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && this.mapViewDayFilter
+					? !calendarEvent || calendarEvent.allDay || !calendarEvent.start
+						? false
+						: new Date(calendarEvent.start).toLocaleDateString() === this.mapViewDayFilter
+					: true)
+			);
+		});
+	}
+
+	@computed
 	get isFiltered(): boolean {
 		return (
 			!!this.searchValue?.length ||
@@ -1500,6 +1544,9 @@ export class EventStore {
 			runInAction(() => {
 				this.distanceResults = observable.map(newDistanceResults);
 
+				// Reload trip-specific settings after trip data is loaded
+				this.loadTripSpecificSettings();
+
 				// Clean up orphaned custom area names after loading trip data
 				setTimeout(() => this.cleanupOrphanedAreaNames(), 1000);
 			});
@@ -2014,6 +2061,41 @@ export class EventStore {
 		}
 	}
 
+	// Helper method to get trip-specific settings key
+	private getTripSettingsKey(): string {
+		if (this.tripId && this.tripId > 0) {
+			return `triplan-sidebar-settings-trip-${this.tripId}`;
+		} else if (this.tripName) {
+			return `triplan-sidebar-settings-trip-${this.tripName}`;
+		} else {
+			return 'triplan-sidebar-settings-global';
+		}
+	}
+
+	// Load trip-specific settings
+	@action
+	loadTripSpecificSettings() {
+		// Clear current settings
+		this.sidebarSettings.clear();
+
+		// Initialize with defaults
+		this.initSidebarSettings();
+
+		// Load trip-specific settings
+		try {
+			const settingsKey = this.getTripSettingsKey();
+			const savedSettings = localStorage.getItem(settingsKey);
+			if (savedSettings) {
+				const parsedSettings = JSON.parse(savedSettings);
+				Object.keys(parsedSettings).forEach((key) => {
+					this.sidebarSettings.set(key, parsedSettings[key]);
+				});
+			}
+		} catch (e) {
+			console.error('Error loading trip-specific settings from localStorage', e);
+		}
+	}
+
 	@action
 	saveSidebarSettings() {
 		try {
@@ -2021,7 +2103,9 @@ export class EventStore {
 			this.sidebarSettings.forEach((value, key) => {
 				settingsObject[key] = value;
 			});
-			localStorage.setItem('triplan-sidebar-settings', JSON.stringify(settingsObject));
+			// Save trip-specific settings
+			const settingsKey = this.getTripSettingsKey();
+			localStorage.setItem(settingsKey, JSON.stringify(settingsObject));
 		} catch (e) {
 			console.error('Error saving sidebar settings to localStorage', e);
 		}
@@ -2031,6 +2115,23 @@ export class EventStore {
 	setSidebarGroupBy(groupBy: 'priority' | 'category' | 'area') {
 		this.sidebarGroupBy = groupBy;
 		localStorage.setItem('sidebarGroupBy', groupBy);
+
+		// Auto-switch map view to areas when sidebar switches to areas
+		if (groupBy === 'area') {
+			this.mapViewMode = MapViewMode.AREAS;
+		}
+	}
+
+	@action
+	updateEventToClusterMap(eventToClusterMap: Map<string, string>) {
+		this.eventToClusterMap.clear();
+		eventToClusterMap.forEach((color, eventId) => {
+			this.eventToClusterMap.set(eventId, color);
+		});
+	}
+
+	getClusterColorForEvent(eventId: string): string | undefined {
+		return this.eventToClusterMap.get(eventId);
 	}
 
 	// Check if two areas contain exactly the same events
