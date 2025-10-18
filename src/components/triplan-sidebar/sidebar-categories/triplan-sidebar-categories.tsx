@@ -522,11 +522,11 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		return (
 			<>
 				{sortedAreas.map(([defaultAreaName, areaEvents], index) => {
-					const sidebarItemsCount = eventStore.allSidebarEvents.filter((s) =>
+					const sidebarItemsCount = eventStore.allFilteredSidebarEvents.filter((s) =>
 						areaEvents.map((e) => e.id).includes(s.id)
 					).length;
 
-					if (eventStore.hideEmptyCategories && sidebarItemsCount == 0) {
+					if ((eventStore.hideEmptyCategories || eventStore.isFiltered) && sidebarItemsCount == 0) {
 						return;
 					}
 
