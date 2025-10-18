@@ -973,6 +973,30 @@ export class EventStore {
 	}
 
 	@computed
+	get allEventsFilteredWithSidebarSearchComputed() {
+		return this.allEventsComputed.filter((event) => {
+			const calendarEvent = this.calendarEvents.find((c) => c.id == event.id);
+
+			return (
+				// Apply both main search and sidebar search filters
+				this._isEventMatchingSearch(event, this.searchValue) &&
+				this._isEventMatchingSearch(event, this.sidebarSearchValue) &&
+				(this.showOnlyEventsWithNoLocation ? !event.location : true) &&
+				(this.showOnlyEventsWithNoOpeningHours ? !(event.openingHours != undefined) : true) &&
+				(this.showOnlyEventsWithTodoComplete ? this.checkIfEventHaveOpenTasks(event) : true) &&
+				!this.filterOutPriorities.get(getEnumKey(TriplanPriority, event.priority)) &&
+				(this.hideScheduled ? !this.calendarEvents.find((x) => x.id == event.id) : true) &&
+				(this.hideUnScheduled ? !!this.calendarEvents.find((x) => x.id == event.id) : true) &&
+				(this.mapViewMode === MapViewMode.CHRONOLOGICAL_ORDER && this.mapViewDayFilter
+					? !calendarEvent || calendarEvent.allDay || !calendarEvent.start
+						? false
+						: new Date(calendarEvent.start).toLocaleDateString() === this.mapViewDayFilter
+					: true)
+			);
+		});
+	}
+
+	@computed
 	get isFiltered(): boolean {
 		return (
 			!!this.searchValue?.length ||

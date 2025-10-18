@@ -53,7 +53,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 
 	// Separate calculation function that doesn't cause re-renders
 	const calculateClusters = React.useCallback(() => {
-		const sidebarEvents = eventStore.allEventsFilteredComputed;
+		const sidebarEvents = eventStore.allEventsFilteredWithSidebarSearchComputed;
 
 		// Performance check: Skip clustering if too many events
 		if (sidebarEvents.length > 200) {
@@ -139,7 +139,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			areasMap,
 			eventsWithoutLocation,
 		};
-	}, [eventStore.allEventsFilteredComputed, eventStore.sidebarSettings, eventStore.distanceResults]);
+	}, [eventStore.allEventsFilteredWithSidebarSearchComputed, eventStore.sidebarSettings, eventStore.distanceResults]);
 
 	// Fallback function for simple location grouping
 	const fallbackLocationGrouping = React.useCallback((events: SidebarEvent[]): Cluster[] => {
