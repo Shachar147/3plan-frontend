@@ -1103,7 +1103,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 									eventStore.mapViewMode = parts[0];
 									eventStore.mapViewDayFilter = parts[1];
 									localStorage.setItem('mapViewMode', data.value);
-									localStorage.setItem('mapViewDayFilter', data.value);
+									localStorage.setItem('mapViewDayFilter', parts[1]);
 								}
 							});
 						}}

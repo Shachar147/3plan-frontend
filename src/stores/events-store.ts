@@ -252,9 +252,9 @@ export class EventStore {
 
 		this.mapViewMode =
 			(localStorage.getItem('mapViewMode') as MapViewMode) || MapViewMode.CATEGORIES_AND_PRIORITIES;
-		if (this.sidebarGroupBy === 'area') {
-			this.mapViewMode = MapViewMode.AREAS;
-		}
+		// if (this.sidebarGroupBy === 'area') {
+		// 	this.mapViewMode = MapViewMode.AREAS;
+		// }
 
 		if (this.mapViewMode == MapViewMode.CHRONOLOGICAL_ORDER) {
 			this.mapViewDayFilter = (localStorage.getItem('mapViewDayFilter') as string) || '';

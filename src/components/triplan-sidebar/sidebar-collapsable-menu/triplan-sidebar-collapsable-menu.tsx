@@ -1570,7 +1570,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			'fa-gear',
 			SidebarGroups.SETTINGS,
 			TranslateService.translate(eventStore, 'SETTINGS'),
-			settingsItems.length + (eventStore.sidebarGroupBy === 'area' ? 6 : 0)
+			settingsItems.length
 		);
 
 		return (
