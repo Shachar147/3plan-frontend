@@ -1151,7 +1151,19 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					onClick={startExportToGoogleMaps}
 					className="brown"
 					flavor={ButtonFlavor.secondary}
-					icon="fa-location-arrow"
+					icon="fa-arrow-circle-down"
+				/>
+			);
+		}
+
+		function renderImportFromGoogleMapsButton() {
+			return (
+				<Button
+					text={TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS')}
+					onClick={() => ReactModalService.openImportFromGoogleMapsModal(eventStore)}
+					className="brown"
+					flavor={ButtonFlavor.secondary}
+					icon="fa-arrow-circle-up"
 				/>
 			);
 		}
@@ -1180,6 +1192,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 					{renderCalculateDistancesButton()}
 					{!eventStore.isMobile && <FocusModeButton />}
 					{!eventStore.isMobile && renderExportToGoogleMapsButton()}
+					{!eventStore.isMobile && renderImportFromGoogleMapsButton()}
 					{!eventStore.isMobile && (
 						<div className="pc-map-view-selection-container">{renderMapViewSelection()}</div>
 					)}

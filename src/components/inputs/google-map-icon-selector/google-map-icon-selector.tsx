@@ -1704,7 +1704,7 @@ export const GOOGLE_MAP_ICONS_MAP: Record<string, { keywords: string[]; icon: st
 	},
 };
 
-const ignoreKeys = [
+export const ignoreKeys = [
 	'stadium',
 	'running', // <-
 	'cycling',

@@ -149,8 +149,8 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		return (
 			<>
 				<Button
-					icon="fa-download"
-					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT')}
+					icon="fa-table"
+					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.DOWNLOAD_BUTTON_TEXT.NEW')}
 					onClick={() => {
 						ReactModalService.openImportEventsModal(eventStore);
 					}}
@@ -158,11 +158,21 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 					disabled={isDisabled}
 					disabledReason={disabledReason}
 				/>
-				<Button
+				{/* <Button
 					icon="fa-upload"
 					text={TranslateService.translate(eventStore, 'IMPORT_EVENTS.BUTTON_TEXT')}
 					onClick={() => {
 						ReactModalService.openImportEventsStepTwoModal(eventStore);
+					}}
+					flavor={ButtonFlavor['movable-link']}
+					disabled={isDisabled}
+					disabledReason={disabledReason}
+				/> */}
+				<Button
+					icon="fa-location-arrow"
+					text={TranslateService.translate(eventStore, 'IMPORT_FROM_GOOGLE_MAPS')}
+					onClick={() => {
+						ReactModalService.openImportFromGoogleMapsModal(eventStore);
 					}}
 					flavor={ButtonFlavor['movable-link']}
 					disabled={isDisabled}
@@ -946,15 +956,13 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
 	const renderActions = () => {
 		// do not render actions block on mobile if there are no calendar events since "clear all" is the only action on mobile view.
-		if (eventStore.isMobile && eventStore.calendarEvents.length === 0) return;
+		// if (eventStore.isMobile && eventStore.calendarEvents.length === 0) return;
 
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.ACTIONS');
 		const actionsBlock = createSidebarGroup(
 			<>
 				{renderLockTrip()}
 				{(eventStore.isCalendarView || eventStore.isCombinedView || eventStore.isMobile) && renderClearAll()}
-				{renderImportButtons()}
-				{renderBackupTrip()}
 				<TriplanSidebarShareTripButton isMoveAble={true} textKey="SHARE_TRIP" />
 				{isAdmin() && (
 					<TriplanSidebarSyncTripButton
@@ -967,6 +975,26 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			SidebarGroups.ACTIONS,
 			groupTitle,
 			3
+		);
+		return (
+			<>
+				<hr className="margin-block-2" />
+				{actionsBlock}
+			</>
+		);
+	};
+
+	const renderImportExportActions = () => {
+		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.IMPORT_EXPORT_ACTIONS');
+		const actionsBlock = createSidebarGroup(
+			<>
+				{renderImportButtons()}
+				{renderBackupTrip()}
+			</>,
+			undefined,
+			SidebarGroups.IMPORT_EXPORT_ACTIONS,
+			groupTitle,
+			4
 		);
 		return (
 			<>
@@ -1588,6 +1616,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		<div className="triplan-sidebar-collapsable-menu">
 			{renderWarnings()}
 			{renderDistances()}
+			{!eventStore.isMobile && renderImportExportActions()}
 			{renderActions()}
 			{renderTasks()}
 			{renderCalendarSidebarStatistics()}
