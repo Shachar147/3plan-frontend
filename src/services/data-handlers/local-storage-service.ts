@@ -221,7 +221,7 @@ export class LocalStorageService implements BaseDataHandler {
 		localStorage.setItem(key, JSON.stringify(allEvents));
 	}
 
-	setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string): void {
+	setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string, _rewriteImages: boolean = true): void {
 		const key = tripName ? [LS_CALENDAR_EVENTS, tripName].join('-') : LS_CALENDAR_EVENTS;
 		localStorage.setItem(key, JSON.stringify(calendarEvents));
 	}
@@ -242,7 +242,11 @@ export class LocalStorageService implements BaseDataHandler {
 		localStorage.setItem(key, JSON.stringify(dateRange));
 	}
 
-	setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string): void {
+	setSidebarEvents(
+		sidebarEvents: Record<number, SidebarEvent[]>,
+		tripName: string,
+		_rewriteImages: boolean = true
+	): void {
 		const key = tripName ? [LS_SIDEBAR_EVENTS, tripName].join('-') : LS_SIDEBAR_EVENTS;
 		localStorage.setItem(key, JSON.stringify(sidebarEvents));
 	}

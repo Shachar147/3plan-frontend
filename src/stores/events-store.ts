@@ -1158,7 +1158,7 @@ export class EventStore {
 	}
 
 	@action
-	async setCalendarEvents(newCalenderEvents: CalendarEvent[], updateServer: boolean = true) {
+	async setCalendarEvents(newCalenderEvents: CalendarEvent[], updateServer: boolean = true, rewriteImages = true) {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
@@ -1170,7 +1170,7 @@ export class EventStore {
 		const defaultEvents = this.getJSCalendarEvents() as CalendarEvent[]; // todo: make sure this conversion not fucking things up
 
 		if (updateServer) {
-			return this.dataService.setCalendarEvents(defaultEvents, this.tripName);
+			return this.dataService.setCalendarEvents(defaultEvents, this.tripName, rewriteImages);
 		}
 		return true;
 	}
@@ -1181,10 +1181,14 @@ export class EventStore {
 	}
 
 	@action
-	async setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>, updateServer: boolean = true) {
+	async setSidebarEvents(
+		newSidebarEvents: Record<number, SidebarEvent[]>,
+		updateServer: boolean = true,
+		rewriteImages: boolean = true
+	) {
 		this.sidebarEvents = newSidebarEvents;
 		if (updateServer) {
-			return this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
+			return this.dataService.setSidebarEvents(newSidebarEvents, this.tripName, rewriteImages);
 		}
 		return true;
 	}
@@ -1249,16 +1253,21 @@ export class EventStore {
 			delete sidebarEvent.start;
 			delete sidebarEvent.end;
 
-			sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
-			sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
+			if (categoryId != 0) {
+				sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
+				sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
 
-			newEvents[categoryId] = newEvents[categoryId] || [];
-			newEvents[categoryId].push(sidebarEvent);
+				newEvents[categoryId] = newEvents[categoryId] || [];
+				newEvents[categoryId].push(sidebarEvent);
+			}
 		});
 
-		const promise1 = this.setSidebarEvents(newEvents);
+		// groups
+		delete newEvents[0];
+
+		const promise1 = this.setSidebarEvents(newEvents, true, false);
 		this.allowRemoveAllCalendarEvents = true;
-		const promise2 = this.setCalendarEvents([]);
+		const promise2 = this.setCalendarEvents([], true, false);
 
 		return Promise.all([promise1, promise2]).then(() => {
 			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {

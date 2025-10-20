@@ -173,7 +173,7 @@ export class DBService implements BaseDataHandler {
 		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { allEvents });
 	}
 
-	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string) {
+	async setCalendarEvents(calendarEvents: CalendarEvent[], tripName: string, rewriteImages: boolean = true) {
 		const arr = _.cloneDeep(calendarEvents);
 		arr.map((x: CalendarEvent) => {
 			x.className = (x.className ?? '').replace(' locked', '');
@@ -181,6 +181,10 @@ export class DBService implements BaseDataHandler {
 			// @ts-ignore
 			x.classNames = x.classNames?.replace(' locked', '');
 		});
+
+		if (!rewriteImages) {
+			return await apiPut(endpoints.v1.trips.updateTripByNameNoRewriteImages(tripName), { calendarEvents: arr });
+		}
 
 		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { calendarEvents: arr });
 	}
@@ -204,7 +208,15 @@ export class DBService implements BaseDataHandler {
 		localStorage.setItem(key, JSON.stringify(distanceResults));
 	}
 
-	async setSidebarEvents(sidebarEvents: Record<number, SidebarEvent[]>, tripName: string) {
+	async setSidebarEvents(
+		sidebarEvents: Record<number, SidebarEvent[]>,
+		tripName: string,
+		rewriteImages: boolean = true
+	) {
+		if (!rewriteImages) {
+			return await apiPut(endpoints.v1.trips.updateTripByNameNoRewriteImages(tripName), { sidebarEvents });
+		}
+
 		return await apiPut(endpoints.v1.trips.updateTripByName(tripName), { sidebarEvents });
 	}
 

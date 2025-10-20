@@ -72,10 +72,19 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 			return 60; // Default 1 hour
 		}
 
-		// Parse duration string (e.g., "2h 30m", "90m", "1.5h")
 		const durationStr = event.duration.toLowerCase();
 		let totalMinutes = 0;
 
+		// First check for "XX:YY" format (e.g., "09:45")
+		const timeFormatMatch = durationStr.match(/^(\d{1,2}):(\d{2})$/);
+		if (timeFormatMatch) {
+			const hours = parseInt(timeFormatMatch[1]);
+			const minutes = parseInt(timeFormatMatch[2]);
+			totalMinutes = hours * 60 + minutes;
+			return totalMinutes;
+		}
+
+		// Parse duration string (e.g., "2h 30m", "90m", "1.5h")
 		// Extract hours
 		const hourMatch = durationStr.match(/(\d+(?:\.\d+)?)h/);
 		if (hourMatch) {
@@ -168,7 +177,17 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 							})}
 						</span>
 						<span className="total-time">
-							🕐 {formatDuration(isNaN(combination.totalDuration) ? 0 : combination.totalDuration)}
+							🕐{' '}
+							{(() => {
+								const duration = isNaN(combination.totalDuration) ? 0 : combination.totalDuration;
+								console.log(
+									'Debug - combination totalDuration:',
+									combination.totalDuration,
+									'formatted:',
+									formatDuration(duration)
+								);
+								return formatDuration(duration);
+							})()}
 						</span>
 						{totalTravelTime > 0 && (
 							<span className="travel-time">

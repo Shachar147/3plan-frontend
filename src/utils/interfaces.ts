@@ -21,6 +21,11 @@ export interface CalendarEvent {
 	suggestedEndTime?: any;
 	timingError?: any;
 	className?: string;
+	// Group properties
+	groupId?: string;
+	isGrouped?: boolean;
+	isGroup?: boolean;
+	groupedEvents?: string[];
 
 	extendedProps?: Record<string, any>;
 }
