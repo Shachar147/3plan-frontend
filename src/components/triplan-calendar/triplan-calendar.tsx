@@ -128,6 +128,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		eventStore.forceSetDraggable,
 		eventStore.isTripLocked,
 		eventStore.sidebarSearchValue,
+		eventStore.suggestedCombinations,
 	]);
 
 	useEffect(() => {
@@ -135,6 +136,38 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	}, [eventStore.calendarLocalCode]);
 
 	const getEventData = (eventEl: any) => {
+		// Check if this is a combination event
+		const combinationId = eventEl.getAttribute('data-combination-id');
+		if (combinationId) {
+			// Find the combination to get its details
+			const combination = eventStore.suggestedCombinations.find((c) => c.id === combinationId);
+			if (combination) {
+				const totalDuration = combination.totalDuration || 0;
+				const eventCount = combination.events.length;
+				const title = eventEl.getAttribute('title') || 'Combination';
+
+				// Format duration properly
+				const hours = Math.floor(totalDuration / 60);
+				const minutes = totalDuration % 60;
+				const durationString = minutes > 0 ? `${hours}:${minutes}` : `${hours}:00`;
+
+				return {
+					title: `${title} (${eventCount} activities)`,
+					id: combinationId,
+					duration: durationString,
+					className: 'fc-event', // Use regular styling instead of combination-event
+					extendedProps: {
+						combinationId: combinationId,
+						combinationEvents: eventEl.getAttribute('data-combination-events'),
+						isCombination: true,
+						eventCount: eventCount,
+						totalDuration: totalDuration,
+					},
+				};
+			}
+		}
+
+		// Regular event handling
 		let title = eventEl.getAttribute('title');
 		let id = eventEl.getAttribute('data-id');
 		let duration = eventEl.getAttribute('data-duration');
@@ -280,6 +313,11 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				end: endTime,
 				id: event.id,
 				className: 'fc-event',
+				allDay: false,
+				category: event.category || '0', // Ensure category is set
+				title: event.title || 'Untitled Event',
+				duration: event.duration || '1h',
+				priority: event.priority || 0,
 			};
 
 			newCalendarEvents.push(calendarEvent);
@@ -287,7 +325,9 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			// Add travel time for next event (except for the last event)
 			if (i < combination.events.length - 1) {
 				const travelTime = combination.travelTimeBetween[i] || 0;
-				currentStartTime = new Date(endTime.getTime() + travelTime * 60000);
+				// Round up travel time to nearest 15-minute increment
+				const roundedTravelTime = Math.ceil(travelTime / 15) * 15;
+				currentStartTime = new Date(endTime.getTime() + roundedTravelTime * 60000);
 			}
 		}
 
