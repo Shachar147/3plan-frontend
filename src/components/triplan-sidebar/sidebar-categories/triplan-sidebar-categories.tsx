@@ -22,6 +22,7 @@ import { observer } from 'mobx-react';
 import SidebarSearch from '../sidebar-search/sidebar-search';
 import { priorityToColor } from '../../../utils/consts';
 import ClusteringService, { ClusteringOptions, Cluster, LocationData } from '../../../services/clustering-service';
+import { CombinationsService } from '../../../services/combinations-service';
 
 interface TriplanSidebarCategoriesProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -285,6 +286,38 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		eventStore.sidebarGroupBy,
 		eventStore.calendarEvents.length,
 		eventStore.isFiltered,
+	]);
+
+	// Calculate suggested combinations when sidebar events or calendar events change
+	useEffect(() => {
+		// Add a timeout to prevent infinite loops
+		const timeoutId = setTimeout(() => {
+			try {
+				const allSidebarEvents = Object.values(eventStore.getSidebarEvents).flat();
+				console.log('Debug - allSidebarEvents:', allSidebarEvents.length);
+				console.log('Debug - distanceResults size:', eventStore.distanceResults.size);
+
+				const combinations = CombinationsService.generateCombinations(
+					allSidebarEvents,
+					eventStore.distanceResults,
+					eventStore.calendarEvents,
+					eventStore.categories
+				);
+
+				console.log('Debug - generated combinations:', combinations.length);
+				eventStore.setSuggestedCombinations(combinations);
+			} catch (error) {
+				console.error('Error generating combinations:', error);
+				eventStore.setSuggestedCombinations([]);
+			}
+		}, 100); // Small delay to prevent rapid recalculations
+
+		return () => clearTimeout(timeoutId);
+	}, [
+		eventStore.sidebarEvents,
+		eventStore.calendarEvents,
+		eventStore.distanceResults.size,
+		eventStore.categories.length,
 	]);
 
 	function renderExpandCollapse() {

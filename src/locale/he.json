@@ -1378,5 +1378,17 @@
 	"IMPORT_FROM_GOOGLE_MAPS.TITLE": "ייבוא פעילויות מגוגל מפות",
 	"IMPORT_FROM_GOOGLE_MAPS": "ייבא פעילויות מגוגל מפות",
 	"IMPORT_FROM_GOOGLE_MAPS.CONTENT": "שלבים:<br/>1. פתח את <a href=\"https://www.google.com/maps/d/\">המפות שלי בגוגל</a> ופתח את המפה שברצונך לייצא.<br/>2. בחלונית הימנית, ליד כותרת המפה, לחץ על תפריט שלוש הנקודות ולחץ על <b>ייצוא ל-KML/KMZ</b>.<br/>3. סמן <b>ייצוא כ-KML במקום KMZ.</b> ולחץ על <b>הורדה</b>.<br/>4. ייבא את הקובץ שהורדת לכאן.",
-	"MODALS.IMPORT": "ייבא"
+	"MODALS.IMPORT": "ייבא",
+	"SUGGESTED_COMBINATIONS.TITLE": "שילובים מוצעים",
+	"SUGGESTED_COMBINATIONS.SHOPPING_DAY": "יום קניות",
+	"SUGGESTED_COMBINATIONS.MUST_SEE_TOUR": "פעילויות חובה",
+	"SUGGESTED_COMBINATIONS.ACTIVITIES_IN_AREA": "פעילויות באזור {MUST_ACTIVITY_NAME}",
+	"SUGGESTED_COMBINATIONS.CONTAINS_SCHEDULED": "מכיל פעילויות מתוזמנות - גרירה עלולה לשנות את לוח השנה",
+	"SUGGESTED_COMBINATIONS.TOTAL_TIME": "זמן כולל: {TIME}",
+	"SUGGESTED_COMBINATIONS.EVENT_COUNT": "{COUNT} פעילויות",
+	"SUGGESTED_COMBINATIONS.NO_COMBINATIONS": "אין שילובים זמינים. הוסף פעילויות בעדיפות 'חובה' כדי לראות הצעות.",
+	"SUGGESTED_COMBINATIONS.MORE_COMBINATIONS": "שילובים נוספים",
+	"SUGGESTED_COMBINATIONS.GENERATING_MORE": "מחפש עוד שילובים...",
+	"SUGGESTED_COMBINATIONS.MAXIMUM_REACHED": "הגעת למקסימום שילובים",
+	"SUGGESTED_COMBINATIONS.TRAVEL_TIME": "מעברים: {TIME}"
 }

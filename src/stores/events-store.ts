@@ -7,6 +7,7 @@ import {
 	Coordinate,
 	DistanceResult,
 	SidebarEvent,
+	SuggestedCombination,
 	TripActions,
 	TriPlanCategory,
 	TriplanTask,
@@ -204,6 +205,7 @@ export class EventStore {
 	@observable tasks: TriplanTask[] = [];
 	@observable tasksSearchValue = '';
 	@observable hideDoneTasks: boolean = false;
+	@observable suggestedCombinations: SuggestedCombination[] = [];
 	@observable groupTasksByEvent: boolean = false;
 
 	@observable sidebarGroupBy: 'priority' | 'category' | 'area' = 'category';
@@ -853,6 +855,18 @@ export class EventStore {
 		return this.calendarLocalCode === 'en';
 	}
 
+	@computed
+	get suggestedCombinationsComputed() {
+		// Filter combinations based on sidebar search if needed
+		if (!this.sidebarSearchValue) {
+			return this.suggestedCombinations;
+		}
+
+		return this.suggestedCombinations.filter((combination) =>
+			combination.events.some((event) => this._isEventMatchingSearch(event, this.sidebarSearchValue))
+		);
+	}
+
 	_isEventMatchingSearch(event: SidebarEvent, searchValue: string) {
 		// priority search - if user typed a name of priority, search by it.
 		let prioritySearch = undefined;
@@ -1159,6 +1173,11 @@ export class EventStore {
 			return this.dataService.setCalendarEvents(defaultEvents, this.tripName);
 		}
 		return true;
+	}
+
+	@action
+	setSuggestedCombinations(combinations: SuggestedCombination[]) {
+		this.suggestedCombinations = combinations;
 	}
 
 	@action

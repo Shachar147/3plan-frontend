@@ -16,6 +16,8 @@ import { endpoints } from '../../v2/utils/endpoints';
 import ReactModalService, { getDefaultSettings } from '../../services/react-modal-service';
 import { SaveTemplateModal } from './save-template-modal/save-template-modal';
 import { apiPost } from '../../helpers/api';
+import { SidebarSuggestedCombinations } from './sidebar-suggested-combinations/sidebar-suggested-combinations';
+import { createSidebarGroup, SidebarGroups } from './triplan-sidebar';
 
 const TriplanSidebarInner = (props: TriplanSidebarProps) => {
 	const eventStore = useContext(eventStoreContext);
@@ -107,6 +109,13 @@ const TriplanSidebarInner = (props: TriplanSidebarProps) => {
 							{TranslateService.translate(eventStore, 'SAVE_AS_TEMPLATE')}
 						</span>
 					</div>
+				)}
+				{createSidebarGroup(
+					<SidebarSuggestedCombinations eventStore={eventStore} />,
+					'fa-lightbulb-o',
+					SidebarGroups.SUGGESTED_COMBINATIONS,
+					TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.TITLE'),
+					eventStore.suggestedCombinationsComputed.length * 20
 				)}
 				<TriplanSidebarCollapsableMenu {...props} />
 				<TriplanSidebarDivider />

@@ -202,6 +202,13 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			return;
 		}
 
+		// Check if this is a combination drop
+		const combinationId = info.event.extendedProps?.combinationId;
+		if (combinationId) {
+			handleCombinationDrop(info, combinationId);
+			return;
+		}
+
 		// callback
 		props.onEventReceive?.(info.event.id);
 
@@ -238,6 +245,92 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		// refreshSources();
 		// eventStore.triggerCalendarReRender();
 		// --------------------------------------------------------------------------------------------
+	};
+
+	const handleCombinationDrop = (info: any, combinationId: string) => {
+		// Find the combination
+		const combination = eventStore.suggestedCombinations.find((c) => c.id === combinationId);
+		if (!combination) {
+			console.error('Combination not found:', combinationId);
+			return;
+		}
+
+		// Get drop time
+		const dropTime = info.event.start;
+		if (!dropTime) {
+			console.error('No drop time found');
+			return;
+		}
+
+		// Remove the temporary combination event from FullCalendar
+		info.event.remove();
+
+		// Schedule events sequentially with travel time
+		const newCalendarEvents: CalendarEvent[] = [];
+		let currentStartTime = new Date(dropTime);
+
+		for (let i = 0; i < combination.events.length; i++) {
+			const event = combination.events[i];
+			const eventDuration = getEventDuration(event);
+			const endTime = new Date(currentStartTime.getTime() + eventDuration * 60000);
+
+			const calendarEvent: CalendarEvent = {
+				...event,
+				start: new Date(currentStartTime),
+				end: endTime,
+				id: event.id,
+				className: 'fc-event',
+			};
+
+			newCalendarEvents.push(calendarEvent);
+
+			// Add travel time for next event (except for the last event)
+			if (i < combination.events.length - 1) {
+				const travelTime = combination.travelTimeBetween[i] || 0;
+				currentStartTime = new Date(endTime.getTime() + travelTime * 60000);
+			}
+		}
+
+		// Add all events to calendar
+		eventStore.setCalendarEvents([...eventStore.calendarEvents, ...newCalendarEvents]);
+
+		// Remove events from sidebar
+		const updatedSidebarEvents = { ...eventStore.sidebarEvents };
+		Object.keys(updatedSidebarEvents).forEach((categoryId) => {
+			updatedSidebarEvents[parseInt(categoryId)] = updatedSidebarEvents[parseInt(categoryId)].filter(
+				(event) => !combination.events.some((comboEvent) => comboEvent.id === event.id)
+			);
+		});
+		eventStore.setSidebarEvents(updatedSidebarEvents);
+
+		// Set first event as selected for nearby places
+		if (newCalendarEvents.length > 0 && !eventStore.distanceSectionAutoOpened) {
+			eventStore.setSelectedEventForNearBy(newCalendarEvents[0]);
+		}
+	};
+
+	const getEventDuration = (event: SidebarEvent): number => {
+		if (!event.duration) {
+			return 60; // Default 1 hour
+		}
+
+		// Parse duration string (e.g., "2h 30m", "90m", "1.5h")
+		const durationStr = event.duration.toLowerCase();
+		let totalMinutes = 0;
+
+		// Extract hours
+		const hourMatch = durationStr.match(/(\d+(?:\.\d+)?)h/);
+		if (hourMatch) {
+			totalMinutes += parseFloat(hourMatch[1]) * 60;
+		}
+
+		// Extract minutes
+		const minuteMatch = durationStr.match(/(\d+)m/);
+		if (minuteMatch) {
+			totalMinutes += parseInt(minuteMatch[1]);
+		}
+
+		return totalMinutes || 60; // Default to 1 hour if parsing fails
 	};
 
 	const onEventClick = (info: any) => {
