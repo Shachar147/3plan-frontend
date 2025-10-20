@@ -40,30 +40,6 @@ export class CombinationsService {
 			return hasValidPriority && hasLocation;
 		});
 
-		console.log('Debug - total events:', events.length);
-		console.log('Debug - filtered events:', filteredEvents.length);
-		console.log(
-			'Debug - must events:',
-			filteredEvents.filter((e) => {
-				const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
-				return priority === TriplanPriority.must;
-			}).length
-		);
-		console.log(
-			'Debug - high events:',
-			filteredEvents.filter((e) => {
-				const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
-				return priority === TriplanPriority.high;
-			}).length
-		);
-		console.log(
-			'Debug - maybe events:',
-			filteredEvents.filter((e) => {
-				const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
-				return priority === TriplanPriority.maybe;
-			}).length
-		);
-
 		// Get all "must" priority events as seeds, but limit to prevent too many combinations
 		const mustEvents = filteredEvents.filter((event) => {
 			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
@@ -281,12 +257,8 @@ export class CombinationsService {
 			distanceResults
 		);
 		const totalTravelTime = travelTimeBetween.reduce((sum, time) => sum + time, 0);
-		const finalTotalDuration = totalDuration + totalTravelTime;
-
-		console.log('Debug - combination duration calculation:');
-		console.log('  - Events duration:', totalDuration, 'minutes');
-		console.log('  - Travel time:', totalTravelTime, 'minutes');
-		console.log('  - Final total:', finalTotalDuration, 'minutes');
+		const roundedTravelTime = Math.ceil(totalTravelTime / 15) * 15;
+		const finalTotalDuration = totalDuration + roundedTravelTime;
 
 		// Check if combination exceeds duration limits
 		const maxDuration = isShoppingDay ? this.MAX_SHOPPING_DURATION : this.MAX_COMBINATION_DURATION;
@@ -357,9 +329,6 @@ export class CombinationsService {
 		let scoredCandidates;
 
 		if (allSamePriority) {
-			// If all same priority, use a more sophisticated approach
-			console.log('Debug - all candidates have same priority, using enhanced distance scoring');
-
 			// Calculate average distance to all remaining candidates for each candidate
 			// This helps avoid "dead ends" where we pick a location that's close now but far from everything else
 			scoredCandidates = candidates.map((candidate) => {
@@ -409,7 +378,7 @@ export class CombinationsService {
 			return b.score - a.score; // Higher score first
 		});
 
-		console.log('Debug - top 3 candidates for', currentEvent.title, ':');
+		// console.log('Debug - top 3 candidates for', currentEvent.title, ':');
 		scoredCandidates.slice(0, 3).forEach((c, i) => {
 			console.log(
 				`  ${i + 1}. ${c.event.title} - score: ${c.score.toFixed(1)}, travel: ${c.travelTime}min, priority: ${

@@ -112,7 +112,7 @@ const TriplanSidebarInner = (props: TriplanSidebarProps) => {
 				)}
 				{createSidebarGroup(
 					<SidebarSuggestedCombinations eventStore={eventStore} />,
-					'fa-lightbulb-o',
+					'fa-lastfm-square',
 					SidebarGroups.SUGGESTED_COMBINATIONS,
 					TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.TITLE'),
 					eventStore.suggestedCombinationsComputed.length * 20

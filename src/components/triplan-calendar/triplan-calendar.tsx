@@ -145,11 +145,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				const totalDuration = combination.totalDuration || 0;
 				const eventCount = combination.events.length;
 				const title = eventEl.getAttribute('title') || 'Combination';
-
-				// Format duration properly
-				const hours = Math.floor(totalDuration / 60);
-				const minutes = totalDuration % 60;
-				const durationString = minutes > 0 ? `${hours}:${minutes}` : `${hours}:00`;
+				const durationString = convertMsToHM(totalDuration * 60000);
 
 				return {
 					title: `${title} (${eventCount} activities)`,
@@ -165,6 +161,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 					},
 				};
 			}
+			console.error('failed to find combination', combinationId);
+			return null;
 		}
 
 		// Regular event handling
