@@ -2,6 +2,9 @@ import { SidebarEvent, CalendarEvent, TriPlanCategory, DistanceResult } from '..
 import { TriplanPriority, GoogleTravelMode, TriplanEventPreferredTime } from '../utils/enums';
 import { ObservableMap } from 'mobx';
 import { getCoordinatesRangeKey } from '../utils/utils';
+import TranslateService from './translate-service';
+import { EventStore } from '../stores/events-store';
+import { getDurationInMs } from '../utils/time-utils';
 
 export interface SuggestedCombination {
 	id: string;
@@ -14,12 +17,19 @@ export interface SuggestedCombination {
 	suggestedName: string; // e.g., "Shopping Day", "Must-See Tour"
 }
 
+const isDebug = false;
+
 export class CombinationsService {
 	private static readonly MAX_TRAVEL_TIME = 30; // minutes (30 minutes between activities)
 	private static readonly MAX_COMBINATION_DURATION = 10 * 60; // 10 hours in minutes
 	private static readonly MAX_SHOPPING_DURATION = 12 * 60; // 12 hours in minutes
 	private static readonly MAX_COMBINATIONS = 10; // maximum number of combinations to generate
-	private static readonly ALLOWED_PRIORITIES = [TriplanPriority.must, TriplanPriority.high, TriplanPriority.maybe];
+	private static readonly ALLOWED_PRIORITIES = [TriplanPriority.must, TriplanPriority.high, TriplanPriority.maybe]; // filter events to these priorities.
+	private static readonly COMBINATION_MUST_PRIORITY = [
+		TriplanPriority.must,
+		TriplanPriority.high,
+		TriplanPriority.maybe,
+	]; // build combination around even with this priority
 
 	/**
 	 * Generate suggested combinations based on proximity, priority, and travel time
@@ -28,7 +38,8 @@ export class CombinationsService {
 		events: SidebarEvent[],
 		distanceResults: ObservableMap<string, DistanceResult>,
 		calendarEvents: CalendarEvent[],
-		categories: TriPlanCategory[]
+		categories: TriPlanCategory[],
+		eventStore: EventStore
 	): SuggestedCombination[] {
 		// Filter events to only include allowed priorities and those with locations
 		const filteredEvents = events.filter((event) => {
@@ -43,11 +54,11 @@ export class CombinationsService {
 		// Get all "must" priority events as seeds, but limit to prevent too many combinations
 		const mustEvents = filteredEvents.filter((event) => {
 			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
-			return priority === TriplanPriority.must;
+			return this.COMBINATION_MUST_PRIORITY.includes(priority);
 		});
 
 		if (mustEvents.length === 0) {
-			return []; // No combinations possible without "must" events
+			return []; // No combinations possible
 		}
 
 		const combinations: SuggestedCombination[] = [];
@@ -60,7 +71,7 @@ export class CombinationsService {
 		const seedEvents = shuffledMustEvents.slice(0, maxSeedEvents);
 
 		// Generate combinations starting from each "must" event
-		console.log('Debug - starting combination generation with', seedEvents.length, 'seed events');
+		if (isDebug) console.log('Debug - starting combination generation with', seedEvents.length, 'seed events');
 		const usedSeedEvents = new Set<string>();
 
 		for (let i = 0; i < seedEvents.length; i++) {
@@ -76,34 +87,35 @@ export class CombinationsService {
 				continue;
 			}
 
-			console.log('Debug - building combination from seed:', seedEvent.title);
+			if (isDebug) console.log('Debug - building combination from seed:', seedEvent.title);
 			const combination = this.buildCombinationFromSeed(
 				seedEvent,
 				filteredEvents,
 				distanceResults,
 				calendarEvents,
-				categories
+				categories,
+				eventStore
 			);
 
 			if (combination && combination.events.length > 1) {
-				console.log('Debug - created combination with', combination.events.length, 'events');
+				if (isDebug) console.log('Debug - created combination with', combination.events.length, 'events');
 				combinations.push(combination);
 
 				// Only mark the seed event as used, not all events in the combination
 				usedSeedEvents.add(seedEvent.id);
 			} else {
-				console.log('Debug - combination was null or too short');
+				if (isDebug) console.log('Debug - combination was null or too short');
 			}
 		}
 
-		console.log('Debug - total combinations generated:', combinations.length);
+		if (isDebug) console.log('Debug - total combinations generated:', combinations.length);
 
 		// Remove duplicates and rank by quality
 		const uniqueCombinations = this.removeDuplicateCombinations(combinations);
-		console.log('Debug - unique combinations after deduplication:', uniqueCombinations.length);
+		if (isDebug) console.log('Debug - unique combinations after deduplication:', uniqueCombinations.length);
 
 		const rankedCombinations = this.rankCombinations(uniqueCombinations);
-		console.log('Debug - final combinations after ranking:', rankedCombinations.length);
+		if (isDebug) console.log('Debug - final combinations after ranking:', rankedCombinations.length);
 
 		// Return only the top combinations (max 10)
 		return rankedCombinations.slice(0, this.MAX_COMBINATIONS);
@@ -117,9 +129,11 @@ export class CombinationsService {
 		calendarEvents: CalendarEvent[],
 		distanceResults: ObservableMap<string, DistanceResult>,
 		categories: TriPlanCategory[],
-		shownCombinationIds: Set<string>
+		shownCombinationIds: Set<string>,
+		eventStore: EventStore
 	): Promise<SuggestedCombination[]> {
-		console.log('Debug - generating more combinations, excluding', shownCombinationIds.size, 'already shown');
+		if (isDebug)
+			console.log('Debug - generating more combinations, excluding', shownCombinationIds.size, 'already shown');
 
 		// Filter events by priority and location (same as main function)
 		const filteredEvents = events.filter((event) => {
@@ -133,11 +147,11 @@ export class CombinationsService {
 		// Get all "must" priority events as seeds
 		const mustEvents = filteredEvents.filter((event) => {
 			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
-			return priority === TriplanPriority.must;
+			return priority === TriplanPriority.must || priority === TriplanPriority.high;
 		});
 
 		if (mustEvents.length === 0) {
-			console.log('Debug - no must events available for more combinations');
+			if (isDebug) console.log('Debug - no must events available for more combinations');
 			return [];
 		}
 
@@ -152,7 +166,7 @@ export class CombinationsService {
 		const maxAdditionalSeeds = Math.min(shuffledMustEvents.length, 5);
 		const seedEvents = shuffledMustEvents.slice(0, maxAdditionalSeeds);
 
-		console.log('Debug - trying', seedEvents.length, 'additional seed events');
+		if (isDebug) console.log('Debug - trying', seedEvents.length, 'additional seed events');
 
 		// Generate combinations starting from each "must" event
 		for (const seedEvent of seedEvents) {
@@ -161,35 +175,37 @@ export class CombinationsService {
 			}
 
 			if (combinations.length >= 5) {
-				console.log('Debug - reached limit of 3 additional combinations, stopping');
+				if (isDebug) console.log('Debug - reached limit of 3 additional combinations, stopping');
 				break; // Limit additional combinations to prevent endless loops
 			}
 
-			console.log('Debug - building additional combination from seed:', seedEvent.title);
+			if (isDebug) console.log('Debug - building additional combination from seed:', seedEvent.title);
 
 			const combination = this.buildCombinationFromSeed(
 				seedEvent,
 				filteredEvents,
 				distanceResults,
 				calendarEvents,
-				categories
+				categories,
+				eventStore
 			);
 
 			if (combination && combination.events.length > 1) {
 				// Check if this combination is already shown
 				const combinationId = this.generateCombinationId(combination.events);
 				if (shownCombinationIds.has(combinationId)) {
-					console.log('Debug - combination already shown, skipping');
+					if (isDebug) console.log('Debug - combination already shown, skipping');
 					continue;
 				}
 
-				console.log('Debug - created additional combination with', combination.events.length, 'events');
+				if (isDebug)
+					console.log('Debug - created additional combination with', combination.events.length, 'events');
 				combinations.push(combination);
 				usedSeedEvents.add(seedEvent.id);
 			}
 		}
 
-		console.log('Debug - generated', combinations.length, 'additional combinations');
+		if (isDebug) console.log('Debug - generated', combinations.length, 'additional combinations');
 		return combinations;
 	}
 
@@ -201,7 +217,8 @@ export class CombinationsService {
 		allEvents: SidebarEvent[],
 		distanceResults: ObservableMap<string, DistanceResult>,
 		calendarEvents: CalendarEvent[],
-		categories: TriPlanCategory[]
+		categories: TriPlanCategory[],
+		eventStore: EventStore
 	): SuggestedCombination | null {
 		const combination: SidebarEvent[] = [seedEvent];
 		const usedEventIds = new Set([seedEvent.id]);
@@ -215,7 +232,7 @@ export class CombinationsService {
 		const isShoppingDay = this.isShoppingCategory(seedEvent, categories);
 
 		// Continue adding events using greedy nearest-neighbor approach
-		console.log('Debug - starting combination build for:', seedEvent.title);
+		if (isDebug) console.log('Debug - starting combination build for:', seedEvent.title);
 		while (iterationCount < maxIterations) {
 			iterationCount++;
 
@@ -231,7 +248,7 @@ export class CombinationsService {
 			);
 
 			if (!nextEvent) {
-				console.log('Debug - no more compatible events found at iteration', iterationCount);
+				if (isDebug) console.log('Debug - no more compatible events found at iteration', iterationCount);
 				break; // No more compatible events
 			}
 
@@ -242,9 +259,9 @@ export class CombinationsService {
 			currentEvent = nextEvent;
 		}
 
-		console.log('Debug - final combination length:', combination.length);
+		if (isDebug) console.log('Debug - final combination length:', combination.length);
 		if (combination.length < 2) {
-			console.log('Debug - combination too short, returning null');
+			if (isDebug) console.log('Debug - combination too short, returning null');
 			return null; // Need at least 2 events for a combination
 		}
 
@@ -256,7 +273,7 @@ export class CombinationsService {
 			optimizedCombination,
 			distanceResults
 		);
-		const totalTravelTime = travelTimeBetween.reduce((sum, time) => sum + time, 0);
+		const totalTravelTime = 0; // travelTimeBetween.filter(time => !Number.isNaN(time)).reduce((sum, time) => sum + time, 0);
 		const roundedTravelTime = Math.ceil(totalTravelTime / 15) * 15;
 		const finalTotalDuration = totalDuration + roundedTravelTime;
 
@@ -274,7 +291,7 @@ export class CombinationsService {
 			travelModeBetween,
 			hasScheduledEvents: this.hasScheduledEvents(combination, calendarEvents),
 			isShoppingDay,
-			suggestedName: this.generateCombinationName(combination, isShoppingDay),
+			suggestedName: this.generateCombinationName(eventStore, combination, isShoppingDay),
 		};
 	}
 
@@ -378,13 +395,15 @@ export class CombinationsService {
 			return b.score - a.score; // Higher score first
 		});
 
-		// console.log('Debug - top 3 candidates for', currentEvent.title, ':');
+		// if (isDebug) console.log('Debug - top 3 candidates for', currentEvent.title, ':');
 		scoredCandidates.slice(0, 3).forEach((c, i) => {
-			console.log(
-				`  ${i + 1}. ${c.event.title} - score: ${c.score.toFixed(1)}, travel: ${c.travelTime}min, priority: ${
-					c.priority
-				}`
-			);
+			if (isDebug) {
+				console.log(
+					`  ${i + 1}. ${c.event.title} - score: ${c.score.toFixed(1)}, travel: ${
+						c.travelTime
+					}min, priority: ${c.priority}`
+				);
+			}
 		});
 
 		return scoredCandidates[0].event;
@@ -401,7 +420,7 @@ export class CombinationsService {
 			return events; // No optimization needed for 1-2 events
 		}
 
-		console.log('Debug - optimizing route order for', events.length, 'events');
+		if (isDebug) console.log('Debug - optimizing route order for', events.length, 'events');
 
 		let bestRoute = [...events];
 		let bestDistance = this.calculateTotalRouteDistance(events, distanceResults);
@@ -424,11 +443,13 @@ export class CombinationsService {
 					const newDistance = this.calculateTotalRouteDistance(newRoute, distanceResults);
 
 					if (newDistance < bestDistance) {
-						console.log(
-							`Debug - route improvement found: ${bestDistance.toFixed(1)} -> ${newDistance.toFixed(
-								1
-							)} minutes`
-						);
+						if (isDebug) {
+							console.log(
+								`Debug - route improvement found: ${bestDistance.toFixed(1)} -> ${newDistance.toFixed(
+									1
+								)} minutes`
+							);
+						}
 						bestRoute = newRoute;
 						bestDistance = newDistance;
 						improved = true;
@@ -439,11 +460,13 @@ export class CombinationsService {
 			}
 		}
 
-		console.log(
-			`Debug - route optimization completed in ${iterations} iterations, final distance: ${bestDistance.toFixed(
-				1
-			)} minutes`
-		);
+		if (isDebug) {
+			console.log(
+				`Debug - route optimization completed in ${iterations} iterations, final distance: ${bestDistance.toFixed(
+					1
+				)} minutes`
+			);
+		}
 		return bestRoute;
 	}
 
@@ -476,27 +499,31 @@ export class CombinationsService {
 		// Check travel time constraint
 		const travelTime = this.getTravelTime(currentEvent, event, distanceResults);
 		if (travelTime > this.MAX_TRAVEL_TIME) {
-			console.log(
-				'Debug - rejected due to travel time:',
-				currentEvent.title,
-				'->',
-				event.title,
-				':',
-				travelTime,
-				'minutes >',
-				this.MAX_TRAVEL_TIME
-			);
+			if (isDebug) {
+				console.log(
+					'Debug - rejected due to travel time:',
+					currentEvent.title,
+					'->',
+					event.title,
+					':',
+					travelTime,
+					'minutes >',
+					this.MAX_TRAVEL_TIME
+				);
+			}
 			return false;
 		} else {
-			console.log(
-				'Debug - accepted travel time:',
-				currentEvent.title,
-				'->',
-				event.title,
-				':',
-				travelTime,
-				'minutes'
-			);
+			if (isDebug) {
+				console.log(
+					'Debug - accepted travel time:',
+					currentEvent.title,
+					'->',
+					event.title,
+					':',
+					travelTime,
+					'minutes'
+				);
+			}
 		}
 
 		// Check duration constraint
@@ -504,20 +531,22 @@ export class CombinationsService {
 		const maxDuration = isShoppingDay ? this.MAX_SHOPPING_DURATION : this.MAX_COMBINATION_DURATION;
 
 		if (currentDuration + eventDuration + travelTime > maxDuration) {
-			console.log(
-				'Debug - rejected due to duration:',
-				event.title,
-				currentDuration + eventDuration + travelTime,
-				'>',
-				maxDuration
-			);
+			if (isDebug) {
+				console.log(
+					'Debug - rejected due to duration:',
+					event.title,
+					currentDuration + eventDuration + travelTime,
+					'>',
+					maxDuration
+				);
+			}
 			return false;
 		}
 
 		// Check if location is already used (prevent duplicate locations)
 		const eventLocationKey = this.getLocationKey(event);
 		if (usedLocations.has(eventLocationKey)) {
-			console.log('Debug - rejected due to duplicate location:', event.title);
+			if (isDebug) console.log('Debug - rejected due to duplicate location:', event.title);
 			return false;
 		}
 
@@ -525,13 +554,13 @@ export class CombinationsService {
 		const currentIsFood = this.isFoodCategory(currentEvent, categories);
 		const eventIsFood = this.isFoodCategory(event, categories);
 		if (currentIsFood && eventIsFood) {
-			console.log('Debug - rejected due to food after food:', currentEvent.title, '->', event.title);
+			if (isDebug) console.log('Debug - rejected due to food after food:', currentEvent.title, '->', event.title);
 			return false;
 		}
 
 		// Check preferred time compatibility
 		if (!this.arePreferredTimesCompatible(currentEvent, event)) {
-			console.log('Debug - rejected due to preferred time incompatibility:', event.title);
+			if (isDebug) console.log('Debug - rejected due to preferred time incompatibility:', event.title);
 			return false;
 		}
 
@@ -675,50 +704,44 @@ export class CombinationsService {
 	}
 
 	/**
-	 * Calculate travel times between consecutive events in a combination (backward compatibility)
-	 */
-	private static calculateTravelTimesBetween(
-		events: SidebarEvent[],
-		distanceResults: ObservableMap<string, DistanceResult>
-	): number[] {
-		return this.calculateTravelTimesAndModesBetween(events, distanceResults).times;
-	}
-
-	/**
 	 * Get event duration in minutes
 	 */
 	private static getEventDuration(event: SidebarEvent): number {
 		if (!event.duration) {
-			console.log('Debug - no duration for event:', event.title, 'using default 60min');
+			if (isDebug) console.log('Debug - no duration for event:', event.title, 'using default 60min');
 			return 60; // Default 1 hour
 		}
 
-		// Parse duration string (e.g., "2h 30m", "90m", "1.5h")
-		const durationStr = event.duration.toLowerCase();
-		let totalMinutes = 0;
+		const totalMinutes = getDurationInMs(event.duration) / 60000;
 
-		// Extract hours
-		const hourMatch = durationStr.match(/(\d+(?:\.\d+)?)h/);
-		if (hourMatch) {
-			totalMinutes += parseFloat(hourMatch[1]) * 60;
-		}
+		// // Parse duration string (e.g., "2h 30m", "90m", "1.5h")
+		// const durationStr = event.duration.toLowerCase();
+		// let totalMinutes = 0;
 
-		// Extract minutes
-		const minuteMatch = durationStr.match(/(\d+)m/);
-		if (minuteMatch) {
-			totalMinutes += parseInt(minuteMatch[1]);
-		}
+		// // Extract hours
+		// const hourMatch = durationStr.match(/(\d+(?:\.\d+)?)h/);
+		// if (hourMatch) {
+		// 	totalMinutes += parseFloat(hourMatch[1]) * 60;
+		// }
+
+		// // Extract minutes
+		// const minuteMatch = durationStr.match(/(\d+)m/);
+		// if (minuteMatch) {
+		// 	totalMinutes += parseInt(minuteMatch[1]);
+		// }
 
 		const result = totalMinutes || 60; // Default to 1 hour if parsing fails
-		console.log(
-			'Debug - event duration:',
-			event.title,
-			'duration string:',
-			event.duration,
-			'parsed:',
-			result,
-			'minutes'
-		);
+		if (isDebug) {
+			console.log(
+				'Debug - event duration:',
+				event.title,
+				'duration string:',
+				event.duration,
+				'parsed:',
+				result,
+				'minutes'
+			);
+		}
 		return result;
 	}
 
@@ -822,7 +845,7 @@ export class CombinationsService {
 
 		const isFoodByTitle = titleFoodKeywords.some((keyword) => eventTitle.includes(keyword));
 		if (isFoodByTitle) {
-			console.log('Debug - detected food venue by title:', event.title, 'matches keyword');
+			if (isDebug) console.log('Debug - detected food venue by title:', event.title, 'matches keyword');
 		}
 
 		return isFoodByTitle;
@@ -889,7 +912,11 @@ export class CombinationsService {
 	/**
 	 * Generate descriptive name for combination
 	 */
-	private static generateCombinationName(events: SidebarEvent[], isShoppingDay: boolean): string {
+	private static generateCombinationName(
+		eventStore: EventStore,
+		events: SidebarEvent[],
+		isShoppingDay: boolean
+	): string {
 		if (isShoppingDay) {
 			return 'Shopping Day';
 		}
@@ -897,11 +924,25 @@ export class CombinationsService {
 		// Find the first "must" event to use as the area name
 		const mustEvent = events.find((e) => {
 			const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
-			return priority === TriplanPriority.must;
+			return priority === TriplanPriority.must || priority === TriplanPriority.high;
 		});
 
 		if (mustEvent) {
-			return `ACTIVITIES_IN_AREA:${mustEvent.title}`;
+			return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.ACTIVITIES_IN_AREA', {
+				MUST_ACTIVITY_NAME: mustEvent.title,
+			});
+		}
+
+		// Find the first "high" event to use as the area name
+		const highEvent = events.find((e) => {
+			const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
+			return priority === TriplanPriority.high;
+		});
+
+		if (highEvent) {
+			return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.ACTIVITIES_IN_AREA', {
+				MUST_ACTIVITY_NAME: mustEvent.title,
+			});
 		}
 
 		return 'Activity Combination';

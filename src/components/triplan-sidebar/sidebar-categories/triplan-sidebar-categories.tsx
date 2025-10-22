@@ -301,7 +301,8 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 					allSidebarEvents,
 					eventStore.distanceResults,
 					eventStore.calendarEvents,
-					eventStore.categories
+					eventStore.categories,
+					eventStore
 				);
 
 				console.log('Debug - generated combinations:', combinations.length);

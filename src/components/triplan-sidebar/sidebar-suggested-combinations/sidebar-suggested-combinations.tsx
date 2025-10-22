@@ -42,7 +42,8 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 			eventStore.calendarEvents,
 			eventStore.distanceResults,
 			eventStore.categories,
-			newShownIds
+			newShownIds,
+			eventStore
 		)
 			.then((newCombinations) => {
 				if (newCombinations.length > 0) {

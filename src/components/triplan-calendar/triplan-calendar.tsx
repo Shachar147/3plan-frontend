@@ -365,7 +365,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		const groupEventId = `999${Date.now()}`; // Use timestamp-based numeric ID
 		const groupEvent: CalendarEvent = {
 			id: groupEventId,
-			title: `${combination.events.length} Activities - ${combination.suggestedName}`,
+			icon: '🎯',
+			title: combination.suggestedName,
 			start: combinationStartTime,
 			end: combinationEndTime,
 			className: 'fc-event combination-group',
@@ -528,8 +529,19 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	};
 
 	const onEventClick = (info: any) => {
-		modalsStore.switchToViewMode();
-		ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info, modalsStore);
+		// Check if this is a group event
+		const isGroupEvent = info.event.extendedProps?.isGroup || info.event.id.startsWith('999');
+
+		if (isGroupEvent) {
+			// Find the group event in our store
+			const groupEvent = eventStore.calendarEvents.find((e) => e.id === info.event.id);
+			if (groupEvent) {
+				ReactModalService.openViewGroupModal(eventStore, groupEvent);
+			}
+		} else {
+			modalsStore.switchToViewMode();
+			ReactModalService.openEditCalendarEventModal(eventStore, props.addEventToSidebar, info, modalsStore);
+		}
 	};
 
 	const onEventDidMount = (info: any) => {
@@ -834,6 +846,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				const gapStart: Date =
 					typeof currentEvent.end! == 'string' ? new Date(currentEvent.end!) : currentEvent.end!;
 				let gapEnd: Date = typeof nextEvent.start! == 'string' ? new Date(nextEvent.start!) : nextEvent.start!;
+
+				if (gapStart == null || gapEnd == null) {
+					continue;
+				}
 
 				// if (gapStart == null || gapEnd == null) {
 				// 	console.log('hereeeeee', {
