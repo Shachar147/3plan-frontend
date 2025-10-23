@@ -1,10 +1,19 @@
 import { SidebarEvent, CalendarEvent, TriPlanCategory, DistanceResult } from '../utils/interfaces';
 import { TriplanPriority, GoogleTravelMode, TriplanEventPreferredTime } from '../utils/enums';
 import { ObservableMap } from 'mobx';
-import { getCoordinatesRangeKey } from '../utils/utils';
+import { getCoordinatesRangeKey, isMatching } from '../utils/utils';
 import TranslateService from './translate-service';
 import { EventStore } from '../stores/events-store';
-import { getDurationInMs } from '../utils/time-utils';
+import { getDurationInMs, roundTo15Minutes } from '../utils/time-utils';
+import { STORE_KEYWORDS, TOURIST_KEYWORDS, NATURE_KEYWORDS } from '../components/map-container/map-container-utils';
+
+// todo list:
+// 1. GENERAL - go over combinations service, reduce code duplication, understand it and improve stuff.
+// 2. ORDER IMPROVEMENT - sometimes it order things 1-2-4-3, check if we can improve it.
+// 3. LOGIC - create combination of shopping, combination for morning close by events, noon closeby, etc. (by preferred time)
+// 4. CALENDAR - ensure the time it shows === the actual time in the calendar
+// 5. CALENDAR - improve how it behaves when changing group size / events within the group.
+// ! 6. DISTANCE - allow the user if he wants to rather WALKING over DRIVING, on this case use it.
 
 export interface SuggestedCombination {
 	id: string;
@@ -14,7 +23,7 @@ export interface SuggestedCombination {
 	travelModeBetween: string[]; // travel mode between consecutive events ('WALKING' or 'DRIVING')
 	hasScheduledEvents: boolean; // if any event is on calendar
 	isShoppingDay: boolean;
-	suggestedName: string; // e.g., "Shopping Day", "Must-See Tour"
+	suggestedName: string; // e.g., "Shopping Day", "Must-See Tour", "Activities around X"
 }
 
 const isDebug = false;
@@ -23,6 +32,8 @@ export class CombinationsService {
 	private static readonly MAX_TRAVEL_TIME = 30; // minutes (30 minutes between activities)
 	private static readonly MAX_COMBINATION_DURATION = 10 * 60; // 10 hours in minutes
 	private static readonly MAX_SHOPPING_DURATION = 12 * 60; // 12 hours in minutes
+	private static readonly MAX_TIME_BASED_DURATION = 5 * 60; // 5 hours for time-based combinations
+	private static readonly MAX_CATEGORY_DURATION = 10 * 60; // 10 hours for category-based combinations
 	private static readonly MAX_COMBINATIONS = 10; // maximum number of combinations to generate
 	private static readonly ALLOWED_PRIORITIES = [TriplanPriority.must, TriplanPriority.high, TriplanPriority.maybe]; // filter events to these priorities.
 	private static readonly COMBINATION_MUST_PRIORITY = [
@@ -30,6 +41,8 @@ export class CombinationsService {
 		TriplanPriority.high,
 		TriplanPriority.maybe,
 	]; // build combination around even with this priority
+	// private static readonly ALLOWED_TRAVEL_MODES = [GoogleTravelMode.WALKING, GoogleTravelMode.DRIVING]; // allowed travel modes for combinations
+	private static readonly ALLOWED_TRAVEL_MODES = [GoogleTravelMode.WALKING]; // allowed travel modes for combinations
 
 	/**
 	 * Generate suggested combinations based on proximity, priority, and travel time
@@ -135,78 +148,19 @@ export class CombinationsService {
 		if (isDebug)
 			console.log('Debug - generating more combinations, excluding', shownCombinationIds.size, 'already shown');
 
-		// Filter events by priority and location (same as main function)
-		const filteredEvents = events.filter((event) => {
-			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
-			const hasValidPriority = this.ALLOWED_PRIORITIES.includes(priority);
-			const hasLocation = event.location?.latitude && event.location?.longitude;
+		// Generate all possible combinations first
+		const allCombinations = this.generateCombinations(
+			events,
+			distanceResults,
+			calendarEvents,
+			categories,
+			eventStore
+		);
 
-			return hasValidPriority && hasLocation;
-		});
+		// Filter out already shown combinations
+		const newCombinations = allCombinations.filter((combination) => !shownCombinationIds.has(combination.id));
 
-		// Get all "must" priority events as seeds
-		const mustEvents = filteredEvents.filter((event) => {
-			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
-			return priority === TriplanPriority.must || priority === TriplanPriority.high;
-		});
-
-		if (mustEvents.length === 0) {
-			if (isDebug) console.log('Debug - no must events available for more combinations');
-			return [];
-		}
-
-		const combinations: SuggestedCombination[] = [];
-		const usedSeedEvents = new Set<string>();
-		const usedEventIds = new Set<string>(); // Track events used in additional combinations
-
-		// Shuffle must events to ensure variety
-		const shuffledMustEvents = [...mustEvents].sort(() => Math.random() - 0.5);
-
-		// Use fewer seed events for additional combinations to avoid endless loops
-		const maxAdditionalSeeds = Math.min(shuffledMustEvents.length, 5);
-		const seedEvents = shuffledMustEvents.slice(0, maxAdditionalSeeds);
-
-		if (isDebug) console.log('Debug - trying', seedEvents.length, 'additional seed events');
-
-		// Generate combinations starting from each "must" event
-		for (const seedEvent of seedEvents) {
-			if (usedSeedEvents.has(seedEvent.id)) {
-				continue; // Skip if this seed was already used
-			}
-
-			if (combinations.length >= 5) {
-				if (isDebug) console.log('Debug - reached limit of 3 additional combinations, stopping');
-				break; // Limit additional combinations to prevent endless loops
-			}
-
-			if (isDebug) console.log('Debug - building additional combination from seed:', seedEvent.title);
-
-			const combination = this.buildCombinationFromSeed(
-				seedEvent,
-				filteredEvents,
-				distanceResults,
-				calendarEvents,
-				categories,
-				eventStore
-			);
-
-			if (combination && combination.events.length > 1) {
-				// Check if this combination is already shown
-				const combinationId = this.generateCombinationId(combination.events);
-				if (shownCombinationIds.has(combinationId)) {
-					if (isDebug) console.log('Debug - combination already shown, skipping');
-					continue;
-				}
-
-				if (isDebug)
-					console.log('Debug - created additional combination with', combination.events.length, 'events');
-				combinations.push(combination);
-				usedSeedEvents.add(seedEvent.id);
-			}
-		}
-
-		if (isDebug) console.log('Debug - generated', combinations.length, 'additional combinations');
-		return combinations;
+		return newCombinations;
 	}
 
 	/**
@@ -228,8 +182,8 @@ export class CombinationsService {
 		let iterationCount = 0;
 		const maxIterations = 20; // Safety limit to prevent infinite loops
 
-		// Check if this is a shopping day
-		const isShoppingDay = this.isShoppingCategory(seedEvent, categories);
+		// Determine combination type based on seed event
+		const combinationType = this.determineCombinationType(seedEvent, categories);
 
 		// Continue adding events using greedy nearest-neighbor approach
 		if (isDebug) console.log('Debug - starting combination build for:', seedEvent.title);
@@ -243,7 +197,7 @@ export class CombinationsService {
 				usedLocations,
 				distanceResults,
 				totalDuration,
-				isShoppingDay,
+				combinationType,
 				categories
 			);
 
@@ -274,11 +228,11 @@ export class CombinationsService {
 			distanceResults
 		);
 		const totalTravelTime = 0; // travelTimeBetween.filter(time => !Number.isNaN(time)).reduce((sum, time) => sum + time, 0);
-		const roundedTravelTime = Math.ceil(totalTravelTime / 15) * 15;
+		const roundedTravelTime = roundTo15Minutes(totalTravelTime);
 		const finalTotalDuration = totalDuration + roundedTravelTime;
 
-		// Check if combination exceeds duration limits
-		const maxDuration = isShoppingDay ? this.MAX_SHOPPING_DURATION : this.MAX_COMBINATION_DURATION;
+		// Check if combination exceeds duration limits based on type
+		const maxDuration = this.getMaxDurationForType(combinationType);
 		if (finalTotalDuration > maxDuration) {
 			return null;
 		}
@@ -290,8 +244,8 @@ export class CombinationsService {
 			travelTimeBetween,
 			travelModeBetween,
 			hasScheduledEvents: this.hasScheduledEvents(combination, calendarEvents),
-			isShoppingDay,
-			suggestedName: this.generateCombinationName(eventStore, combination, isShoppingDay),
+			isShoppingDay: combinationType === 'shopping',
+			suggestedName: this.generateCombinationName(eventStore, combination, combinationType, seedEvent),
 		};
 	}
 
@@ -305,7 +259,7 @@ export class CombinationsService {
 		usedLocations: Set<string>,
 		distanceResults: ObservableMap<string, DistanceResult>,
 		currentDuration: number,
-		isShoppingDay: boolean,
+		combinationType: string,
 		categories: TriPlanCategory[]
 	): SidebarEvent | null {
 		const candidates: { event: SidebarEvent; travelTime: number; priority: number }[] = [];
@@ -323,7 +277,7 @@ export class CombinationsService {
 					usedLocations,
 					distanceResults,
 					currentDuration,
-					isShoppingDay,
+					combinationType,
 					categories
 				)
 			) {
@@ -493,7 +447,7 @@ export class CombinationsService {
 		usedLocations: Set<string>,
 		distanceResults: ObservableMap<string, DistanceResult>,
 		currentDuration: number,
-		isShoppingDay: boolean,
+		combinationType: string,
 		categories: TriPlanCategory[]
 	): boolean {
 		// Check travel time constraint
@@ -528,7 +482,7 @@ export class CombinationsService {
 
 		// Check duration constraint
 		const eventDuration = this.getEventDuration(event);
-		const maxDuration = isShoppingDay ? this.MAX_SHOPPING_DURATION : this.MAX_COMBINATION_DURATION;
+		const maxDuration = this.getMaxDurationForType(combinationType);
 
 		if (currentDuration + eventDuration + travelTime > maxDuration) {
 			if (isDebug) {
@@ -564,9 +518,45 @@ export class CombinationsService {
 			return false;
 		}
 
-		// For shopping days, allow unlimited shopping events
-		if (isShoppingDay && this.isShoppingCategory(event, categories)) {
-			return true;
+		// For shopping days, ONLY allow shopping events
+		if (combinationType === 'shopping') {
+			if (!this.isShoppingCategory(event, categories)) {
+				if (isDebug) console.log('Debug - rejected non-shopping event for shopping day:', event.title);
+				return false; // Reject non-shopping events for shopping days
+			}
+		}
+
+		// For time-based combinations, filter by preferred time
+		if (['morning', 'noon', 'afternoon', 'evening', 'night'].includes(combinationType)) {
+			const eventPreferredTime = event.preferredTime;
+			if (eventPreferredTime) {
+				const timeNum =
+					typeof eventPreferredTime === 'string' ? parseInt(eventPreferredTime) : eventPreferredTime;
+				const isCompatibleTime = this.isTimeCompatibleWithType(timeNum, combinationType);
+				if (!isCompatibleTime) {
+					if (isDebug)
+						console.log(
+							'Debug - rejected due to time-based filtering:',
+							event.title,
+							'time:',
+							timeNum,
+							'type:',
+							combinationType
+						);
+					return false;
+				}
+			}
+		}
+
+		// For category-based combinations, filter by category
+		if (combinationType === 'tourism' && !this.isTourismCategory(event, categories)) {
+			if (isDebug) console.log('Debug - rejected due to tourism category filtering:', event.title);
+			return false;
+		}
+
+		if (combinationType === 'nature' && !this.isNatureCategory(event, categories)) {
+			if (isDebug) console.log('Debug - rejected due to nature category filtering:', event.title);
+			return false;
 		}
 
 		// For regular combinations, limit to 6 events max
@@ -590,41 +580,27 @@ export class CombinationsService {
 			return { time: this.MAX_TRAVEL_TIME, mode: 'DRIVING' }; // Default to max if no coordinates
 		}
 
-		// Try to find in distance results using proper coordinate-based keys
-		// First try walking (preferred for city travel)
-		const walkingKey = getCoordinatesRangeKey(
-			GoogleTravelMode.WALKING,
-			{ lat: fromEvent.location.latitude, lng: fromEvent.location.longitude },
-			{ lat: toEvent.location.latitude, lng: toEvent.location.longitude }
-		);
-		const walkingResult = distanceResults.get(walkingKey);
+		// Try each allowed travel mode in order of preference
+		for (const travelMode of this.ALLOWED_TRAVEL_MODES) {
+			const key = getCoordinatesRangeKey(
+				travelMode,
+				{ lat: fromEvent.location.latitude, lng: fromEvent.location.longitude },
+				{ lat: toEvent.location.latitude, lng: toEvent.location.longitude }
+			);
+			const result = distanceResults.get(key);
 
-		if (walkingResult) {
-			return {
-				time: Math.round(walkingResult.duration_value / 60),
-				mode: 'WALKING',
-			};
-		}
-
-		// If no walking result, try driving
-		const drivingKey = getCoordinatesRangeKey(
-			GoogleTravelMode.DRIVING,
-			{ lat: fromEvent.location.latitude, lng: fromEvent.location.longitude },
-			{ lat: toEvent.location.latitude, lng: toEvent.location.longitude }
-		);
-		const drivingResult = distanceResults.get(drivingKey);
-
-		if (drivingResult) {
-			return {
-				time: Math.round(drivingResult.duration_value / 60),
-				mode: 'DRIVING',
-			};
+			if (result) {
+				return {
+					time: Math.round(result.duration_value / 60),
+					mode: travelMode === GoogleTravelMode.WALKING ? 'WALKING' : 'DRIVING',
+				};
+			}
 		}
 
 		// Fallback to Haversine distance calculation
 		return {
 			time: this.calculateHaversineTravelTime(fromEvent, toEvent),
-			mode: 'DRIVING',
+			mode: 'WALKING',
 		};
 	}
 
@@ -772,10 +748,8 @@ export class CombinationsService {
 			return false;
 		}
 
-		const shoppingKeywords = ['shopping', 'market', 'mall', 'store', 'shop', 'boutique', 'retail'];
 		const categoryTitle = category.title.toLowerCase();
-
-		return shoppingKeywords.some((keyword) => categoryTitle.includes(keyword));
+		return isMatching(categoryTitle, STORE_KEYWORDS);
 	}
 
 	/**
@@ -915,37 +889,59 @@ export class CombinationsService {
 	private static generateCombinationName(
 		eventStore: EventStore,
 		events: SidebarEvent[],
-		isShoppingDay: boolean
+		combinationType: string,
+		seedEvent: SidebarEvent
 	): string {
-		if (isShoppingDay) {
-			return 'Shopping Day';
+		const seedName = seedEvent.title;
+
+		switch (combinationType) {
+			case 'shopping':
+				return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.SHOPPING_DAY_AROUND', {
+					SEED_NAME: seedName,
+				});
+			case 'morning':
+				return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.MORNING_ACTIVITIES_NEAR', {
+					SEED_NAME: seedName,
+				});
+			case 'noon':
+				return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.NOON_ACTIVITIES_NEAR', {
+					SEED_NAME: seedName,
+				});
+			case 'afternoon':
+				return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.AFTERNOON_ACTIVITIES_NEAR', {
+					SEED_NAME: seedName,
+				});
+			case 'evening':
+				return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.EVENING_ACTIVITIES_NEAR', {
+					SEED_NAME: seedName,
+				});
+			case 'night':
+				return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.NIGHT_ACTIVITIES_NEAR', {
+					SEED_NAME: seedName,
+				});
+			case 'tourism':
+				return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.TOURISM_ACTIVITIES_NEAR', {
+					SEED_NAME: seedName,
+				});
+			case 'nature':
+				return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.NATURE_ACTIVITIES_NEAR', {
+					SEED_NAME: seedName,
+				});
+			default:
+				// Fallback to general combination name
+				const mustEvent = events.find((e) => {
+					const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
+					return priority === TriplanPriority.must || priority === TriplanPriority.high;
+				});
+
+				if (mustEvent) {
+					return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.ACTIVITIES_IN_AREA', {
+						MUST_ACTIVITY_NAME: mustEvent.title,
+					});
+				}
+
+				return 'Activity Combination';
 		}
-
-		// Find the first "must" event to use as the area name
-		const mustEvent = events.find((e) => {
-			const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
-			return priority === TriplanPriority.must || priority === TriplanPriority.high;
-		});
-
-		if (mustEvent) {
-			return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.ACTIVITIES_IN_AREA', {
-				MUST_ACTIVITY_NAME: mustEvent.title,
-			});
-		}
-
-		// Find the first "high" event to use as the area name
-		const highEvent = events.find((e) => {
-			const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
-			return priority === TriplanPriority.high;
-		});
-
-		if (highEvent) {
-			return TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.ACTIVITIES_IN_AREA', {
-				MUST_ACTIVITY_NAME: mustEvent.title,
-			});
-		}
-
-		return 'Activity Combination';
 	}
 
 	/**
@@ -999,5 +995,134 @@ export class CombinationsService {
 
 			return aTravelTime - bTravelTime;
 		});
+	}
+
+	/**
+	 * Determine the type of combination based on seed event
+	 */
+	private static determineCombinationType(seedEvent: SidebarEvent, categories: TriPlanCategory[]): string {
+		// Check if seed is shopping
+		if (this.isShoppingCategory(seedEvent, categories)) {
+			return 'shopping';
+		}
+
+		// Check if seed has preferred time
+		const preferredTime = seedEvent.preferredTime;
+		if (preferredTime) {
+			const timeNum = typeof preferredTime === 'string' ? parseInt(preferredTime) : preferredTime;
+			switch (timeNum) {
+				case 1:
+					return 'morning';
+				case 2:
+					return 'noon';
+				case 3:
+					return 'afternoon';
+				case 4:
+					return 'afternoon';
+				case 5:
+					return 'evening';
+				case 6:
+					return 'evening';
+				case 7:
+					return 'night';
+				default:
+					break;
+			}
+		}
+
+		// Check if seed is tourism category
+		if (this.isTourismCategory(seedEvent, categories)) {
+			return 'tourism';
+		}
+
+		// Check if seed is nature category
+		if (this.isNatureCategory(seedEvent, categories)) {
+			return 'nature';
+		}
+
+		// Default to general combination
+		return 'general';
+	}
+
+	/**
+	 * Get max duration for combination type
+	 */
+	private static getMaxDurationForType(combinationType: string): number {
+		switch (combinationType) {
+			case 'shopping':
+				return this.MAX_SHOPPING_DURATION;
+			case 'morning':
+			case 'noon':
+			case 'afternoon':
+			case 'evening':
+			case 'night':
+				return this.MAX_TIME_BASED_DURATION;
+			case 'tourism':
+			case 'nature':
+				return this.MAX_CATEGORY_DURATION;
+			default:
+				return this.MAX_COMBINATION_DURATION;
+		}
+	}
+
+	/**
+	 * Check if event is tourism category
+	 */
+	private static isTourismCategory(event: SidebarEvent, categories: TriPlanCategory[]): boolean {
+		const category = categories.find((cat) => cat.id.toString() === event.category);
+		if (!category) {
+			return false;
+		}
+
+		const categoryTitle = category.title.toLowerCase();
+		return isMatching(categoryTitle, TOURIST_KEYWORDS);
+	}
+
+	/**
+	 * Check if event is nature category
+	 */
+	private static isNatureCategory(event: SidebarEvent, categories: TriPlanCategory[]): boolean {
+		const category = categories.find((cat) => cat.id.toString() === event.category);
+		if (!category) {
+			return false;
+		}
+
+		const categoryTitle = category.title.toLowerCase();
+		return isMatching(categoryTitle, NATURE_KEYWORDS);
+	}
+
+	/**
+	 * Check if a preferred time is compatible with a combination type
+	 */
+	private static isTimeCompatibleWithType(preferredTime: number, combinationType: string): boolean {
+		switch (combinationType) {
+			case 'morning':
+				return preferredTime === 1; // Only morning
+			case 'noon':
+				return preferredTime === 2; // Only noon
+			case 'afternoon':
+				return preferredTime === 3 || preferredTime === 4; // Afternoon times
+			case 'evening':
+				return preferredTime === 5 || preferredTime === 6; // Evening times
+			case 'night':
+				return preferredTime === 7; // Only night
+			default:
+				return true; // Allow all times for other types
+		}
+	}
+
+	/**
+	 * Set allowed travel modes for combinations
+	 * @param modes Array of GoogleTravelMode values to allow
+	 */
+	static setAllowedTravelModes(modes: GoogleTravelMode[]): void {
+		(this as any).ALLOWED_TRAVEL_MODES = modes;
+	}
+
+	/**
+	 * Get current allowed travel modes
+	 */
+	static getAllowedTravelModes(): GoogleTravelMode[] {
+		return (this as any).ALLOWED_TRAVEL_MODES;
 	}
 }

@@ -49,6 +49,7 @@ import { rootStoreContext } from '../../../v2/stores/root-store';
 import './sidebar-priority-filters.scss';
 import { TriplanSidebarEqualDivider } from '../triplan-sidebar-divider';
 import TriplanSidebarSyncTripButton from '../sidebar-sync-trip-button/triplan-sidebar-sync-trip-button';
+import { SidebarSuggestedCombinations } from '../sidebar-suggested-combinations/sidebar-suggested-combinations';
 
 interface TriplanSidebarCollapsableMenuProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -1612,9 +1613,20 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	};
 
+	function renderSuggestedCombinations() {
+		return createSidebarGroup(
+			<SidebarSuggestedCombinations eventStore={eventStore} />,
+			eventStore.isRtl ? 'fa-hand-o-left' : 'fa-hand-o-right',
+			SidebarGroups.SUGGESTED_COMBINATIONS,
+			TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.TITLE'),
+			eventStore.suggestedCombinationsComputed.length * 20
+		);
+	}
+
 	return (
 		<div className="triplan-sidebar-collapsable-menu">
 			{renderWarnings()}
+			{renderSuggestedCombinations()}
 			{renderDistances()}
 			{!eventStore.isMobile && renderImportExportActions()}
 			{renderActions()}

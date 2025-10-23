@@ -401,3 +401,8 @@ export function serializeDuration(eventStore: EventStore, seconds: number) {
 	}
 	return result.join(' ');
 }
+
+export function roundTo15Minutes(minutes: number) {
+	return Math.ceil(minutes / 15) * 15;
+	// return Math.round(minutes / 15) * 15;
+}

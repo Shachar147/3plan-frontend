@@ -294,8 +294,6 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		const timeoutId = setTimeout(() => {
 			try {
 				const allSidebarEvents = Object.values(eventStore.getSidebarEvents).flat();
-				console.log('Debug - allSidebarEvents:', allSidebarEvents.length);
-				console.log('Debug - distanceResults size:', eventStore.distanceResults.size);
 
 				const combinations = CombinationsService.generateCombinations(
 					allSidebarEvents,

@@ -16,10 +16,10 @@ import {
 	addSeconds,
 	areDatesOnDifferentDays,
 	convertMsToHM,
-	formatFromISODateString,
 	getDateRangeString,
 	getOffsetInHours,
 	isTodayInDateRange,
+	roundTo15Minutes,
 	toDate,
 } from '../../utils/time-utils';
 import ReactModalService, { getDefaultSettings } from '../../services/react-modal-service';
@@ -28,10 +28,9 @@ import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
 import DraggableList from '../draggable-list/draggable-list';
-import { getClasses, isEventAlreadyOrdered, jsonDiff, lockEvents } from '../../utils/utils';
-import { TripDataSource } from '../../utils/enums';
-import { DBService } from '../../services/data-handlers/db-service';
+import { isEventAlreadyOrdered, lockEvents } from '../../utils/utils';
 import { FeatureFlagsService } from '../../utils/feature-flags';
+import { TriplanPriority } from '../../utils/enums';
 
 export interface TriPlanCalendarProps {
 	defaultCalendarEvents?: CalendarEvent[];
@@ -142,7 +141,9 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			// Find the combination to get its details
 			const combination = eventStore.suggestedCombinations.find((c) => c.id === combinationId);
 			if (combination) {
-				const totalDuration = combination.totalDuration || 0;
+				const totalDuration =
+					(combination.totalDuration || 0) +
+					(combination.travelTimeBetween.reduce((sum, time) => sum + roundTo15Minutes(time), 0) || 0);
 				const eventCount = combination.events.length;
 				const title = eventEl.getAttribute('title') || 'Combination';
 				const durationString = convertMsToHM(totalDuration * 60000);
@@ -242,16 +243,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 
 		// Check if this is a group event being dragged
-		const isGroupEvent = info.event.extendedProps?.isGroup;
+		const isGroupEvent = info.event.isGroup;
 		const isGroupEventById = info.event.id.startsWith('999'); // Fallback detection
-
-		console.log('Debug - onEventReceive:', {
-			eventId: info.event.id,
-			extendedProps: info.event.extendedProps,
-			isGroupEvent: isGroupEvent,
-			isGroupEventById: isGroupEventById,
-			groupId: info.event.extendedProps?.groupId,
-		});
 
 		if (isGroupEvent || isGroupEventById) {
 			console.log('Debug - handling group event drag');
@@ -334,8 +327,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				allDay: false,
 				category: event.category || '0', // Ensure category is set
 				title: event.title || 'Untitled Event',
-				duration: event.duration || '1h',
-				priority: event.priority || 0,
+				duration: event.duration || '01:00',
+				priority: event.priority || TriplanPriority.unset,
 				// Add group metadata
 				groupId: combinationId,
 				isGrouped: true,
@@ -351,13 +344,15 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			if (i < combination.events.length - 1) {
 				const travelTime = combination.travelTimeBetween[i] || 0;
 				// Round up travel time to nearest 15-minute increment
-				const roundedTravelTime = Math.ceil(travelTime / 15) * 15;
+				const roundedTravelTime = roundTo15Minutes(travelTime);
 				currentStartTime = new Date(endTime.getTime() + roundedTravelTime * 60000);
 			}
 		}
 
 		// Calculate total combination duration
-		const totalDuration = combination.totalDuration || 0;
+		const totalDuration =
+			(combination.totalDuration || 0) +
+			(combination.travelTimeBetween.reduce((sum, time) => sum + roundTo15Minutes(time), 0) || 0);
 		const combinationEndTime = new Date(combinationStartTime.getTime() + totalDuration * 60000);
 
 		// Create group event that surrounds all activities
@@ -530,7 +525,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	const onEventClick = (info: any) => {
 		// Check if this is a group event
-		const isGroupEvent = info.event.extendedProps?.isGroup || info.event.id.startsWith('999');
+		const isGroupEvent = info.event.isGroup || info.event.id.startsWith('999');
 
 		if (isGroupEvent) {
 			// Find the group event in our store
@@ -554,16 +549,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 
 	const handleEventChange = async (changeInfo: any) => {
 		// Check if this is a group event being dragged
-		const isGroupEvent = changeInfo.event.extendedProps?.isGroup;
+		const isGroupEvent = changeInfo.event.isGroup;
 		const isGroupEventById = changeInfo.event.id.startsWith('999'); // Fallback detection
-
-		console.log('Debug - handleEventChange:', {
-			eventId: changeInfo.event.id,
-			extendedProps: changeInfo.event.extendedProps,
-			isGroupEvent: isGroupEvent,
-			isGroupEventById: isGroupEventById,
-			groupId: changeInfo.event.extendedProps?.groupId,
-		});
 
 		if (isGroupEvent || isGroupEventById) {
 			console.log('Debug - handling group event change');
@@ -640,6 +627,36 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			end: changeInfo.event.end,
 			duration: convertMsToHM(changeInfo.event.end - changeInfo.event.start),
 		};
+
+		// Check if event is still within group time range
+		if (newEvent.groupId && newEvent.isGrouped) {
+			const groupEvent = eventStore.calendarEvents.find(
+				(event) => event.groupId === newEvent.groupId && event.isGroup
+			);
+
+			if (groupEvent) {
+				const eventStart = new Date(newEvent.start);
+				const eventEnd = new Date(newEvent.end);
+				const groupStart = new Date(groupEvent.start);
+				const groupEnd = new Date(groupEvent.end);
+
+				// Check if event is still within group time range
+				const isWithinGroupTime = eventStart >= groupStart && eventEnd <= groupEnd;
+
+				if (!isWithinGroupTime) {
+					console.log('Debug - event moved outside group time range, removing group properties');
+					// Remove group properties
+					newEvent.groupId = '';
+					newEvent.isGrouped = false;
+					if (newEvent.extendedProps) newEvent.extendedProps['data-group-id'] = undefined;
+
+					groupEvent.groupedEvents = groupEvent.groupedEvents?.filter((eventId) => eventId !== newEvent.id);
+					await eventStore.changeEvent({ event: groupEvent });
+				} else {
+					console.log('Debug - event is still within group time range, keeping group properties');
+				}
+			}
+		}
 
 		if (!eventStore.distanceSectionAutoOpened) {
 			eventStore.setSelectedEventForNearBy(newEvent); // changeInfo.event);

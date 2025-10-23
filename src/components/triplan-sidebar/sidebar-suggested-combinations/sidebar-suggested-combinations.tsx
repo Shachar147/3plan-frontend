@@ -154,11 +154,6 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 				<div className="combination-header" onClick={() => toggleExpanded(combination.id)}>
 					<div className="combination-title">
 						<h4>{getCombinationTitle(combination)}</h4>
-						{combination.isShoppingDay && (
-							<span className="shopping-icon" title="Shopping Day">
-								🛍️
-							</span>
-						)}
 						{combination.hasScheduledEvents && (
 							<span
 								className="warning-badge"
@@ -181,12 +176,12 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 							🕐{' '}
 							{(() => {
 								const duration = isNaN(combination.totalDuration) ? 0 : combination.totalDuration;
-								console.log(
+								/*console.log(
 									'Debug - combination totalDuration:',
 									combination.totalDuration,
 									'formatted:',
 									formatDuration(duration)
-								);
+								);*/
 								return formatDuration(duration);
 							})()}
 						</span>

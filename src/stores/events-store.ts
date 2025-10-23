@@ -738,7 +738,7 @@ export class EventStore {
 					const problem = new Date(e.end!.toString()).getTime() > minStartDate.getTime();
 
 					if (problem || warn) {
-						console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
+						// DEBUG - console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
 						// e.end = minStartDate;
 						if (problem) {
 							e.className = e.className || '';
@@ -1911,6 +1911,15 @@ export class EventStore {
 		// todo check
 		storedEvent.preferredTime = newEvent.preferredTime ?? storedEvent.preferredTime;
 		storedEvent.category = newEvent.category ?? storedEvent.category;
+
+		// update group settings
+		storedEvent.groupId = newEvent.groupId ?? storedEvent.groupId;
+		storedEvent.isGrouped = newEvent.isGrouped ?? storedEvent.isGrouped;
+		if (storedEvent.extendedProps)
+			storedEvent.extendedProps['data-group-id'] =
+				newEvent.extendedProps['data-group-id'] ?? storedEvent.extendedProps['data-group-id'];
+		storedEvent.groupedEvents = newEvent.groupedEvents ?? storedEvent.groupedEvents;
+		storedEvent.isGroup = newEvent.isGroup ?? storedEvent.isGroup;
 
 		return storedEvent;
 	}
