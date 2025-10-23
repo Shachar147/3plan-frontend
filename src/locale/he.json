@@ -1403,5 +1403,7 @@
 	"SUGGESTED_COMBINATIONS.NATURE_ACTIVITIES_NEAR": "פעילויות טבע ליד {SEED_NAME}",
 	"VIEW_GROUP_MODAL.TITLE": "פרטי הקבוצה",
 	"VIEW_GROUP_MODAL.UNGROUP": "בטל קיבוץ",
-	"VIEW_GROUP_MODAL.UNGROUP_AND_REMOVE": "הסר מלוח השנה"
+	"VIEW_GROUP_MODAL.UNGROUP_AND_REMOVE": "הסר מלוח השנה",
+	"MUST_ACTIVITIES": "פעילויות חובה",
+	"HIGH_ACTIVITIES": "פעילויות בעדיפות גבוהה"
 }

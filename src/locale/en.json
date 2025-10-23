@@ -1146,5 +1146,7 @@
 	"SUGGESTED_COMBINATIONS.NATURE_ACTIVITIES_NEAR": "Nature activities near {SEED_NAME}",
 	"VIEW_GROUP_MODAL.TITLE": "Group Details",
 	"VIEW_GROUP_MODAL.UNGROUP": "Ungroup",
-	"VIEW_GROUP_MODAL.UNGROUP_AND_REMOVE": "Remove from calendar"
+	"VIEW_GROUP_MODAL.UNGROUP_AND_REMOVE": "Remove from calendar",
+	"MUST_ACTIVITIES": "Must activities",
+	"HIGH_ACTIVITIES": "High priority activities"
 }

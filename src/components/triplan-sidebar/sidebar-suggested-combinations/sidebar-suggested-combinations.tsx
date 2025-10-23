@@ -136,10 +136,18 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 			const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
 			return priority === TriplanPriority.must;
 		}).length;
+		const highCount = combination.events.filter((e) => {
+			const priority = typeof e.priority === 'string' ? parseInt(e.priority) : e.priority;
+			return priority === TriplanPriority.high;
+		}).length;
 		const totalTravelTime = combination.travelTimeBetween.reduce((sum, time) => {
 			const validTime = isNaN(time) ? 0 : time;
 			return sum + validTime;
 		}, 0);
+
+		const isRtl = eventStore.isRtl;
+		const expandIconArrow = isRtl ? '◀' : '▶'; // RTL shows left arrow, LTR shows right arrow
+		const expandIcon = <div className="expand-icon">{isExpanded ? '▼' : expandIconArrow}</div>;
 
 		return (
 			<div
@@ -152,6 +160,7 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 				data-combination-id-prop={combination.id}
 			>
 				<div className="combination-header" onClick={() => toggleExpanded(combination.id)}>
+					{isRtl && expandIcon}
 					<div className="combination-title">
 						<h4>{getCombinationTitle(combination)}</h4>
 						{combination.hasScheduledEvents && (
@@ -196,14 +205,33 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 							</span>
 						)}
 					</div>
-					{/* <div className="combination-priority">
-						{mustCount > 1 && (
-							<span className="must-count" title={`${mustCount} must-see activities`}>
-								⭐ {mustCount}
+					<div className="combination-priority">
+						{mustCount > 0 && (
+							<span
+								className="must-count"
+								title={`${mustCount} must-see activities`}
+								style={{
+									backgroundColor: `${eventStore.priorityColors[TriplanPriority.must]}`,
+								}}
+							>
+								⭐ {mustCount} {TranslateService.translate(eventStore, 'MUST_ACTIVITIES')}
 							</span>
 						)}
-					</div> */}
-					<div className="expand-icon">{isExpanded ? '▼' : '▶'}</div>
+						{highCount > 0 && (
+							<span
+								className="high-count"
+								title={`${highCount} high-priority activities`}
+								style={{
+									backgroundColor: eventStore.priorityColors?.[TriplanPriority.high]
+										? `${eventStore.priorityColors[TriplanPriority.high]}4D`
+										: undefined,
+								}}
+							>
+								⭐ {highCount} {TranslateService.translate(eventStore, 'HIGH_ACTIVITIES')}
+							</span>
+						)}
+					</div>
+					{!isRtl && expandIcon}
 				</div>
 
 				{isExpanded && (
