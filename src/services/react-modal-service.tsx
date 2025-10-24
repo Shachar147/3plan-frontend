@@ -6512,42 +6512,11 @@ const ReactModalService = {
 		};
 
 		const handleUngroupAndRemove = () => {
-			// Get all individual events in the group
-			const individualEvents = eventStore.calendarEvents.filter(
-				(event) => event.groupId === groupEvent.groupId && !event.isGroup
-			);
-
-			// Convert calendar events back to sidebar events
-			const sidebarEvents = individualEvents.map((event) => ({
-				id: event.id,
-				title: event.title,
-				duration: event.duration,
-				priority: event.priority,
-				category: event.category,
-				preferredTime: event.preferredTime,
-				description: event.description,
-				location: event.location,
-				icon: event.icon,
-				className: event.className,
-			}));
-
-			// Add events back to sidebar
-			sidebarEvents.forEach((sidebarEvent) => {
-				const categoryId = Number(sidebarEvent.category || '0');
-				if (!eventStore.sidebarEvents[categoryId]) {
-					eventStore.sidebarEvents[categoryId] = [];
-				}
-				eventStore.sidebarEvents[categoryId].push(sidebarEvent as SidebarEvent);
+			// Use the new dedicated action
+			eventStore.returnGroupEventsToSidebar(groupEvent.groupId).then(() => {
+				// Close modal after events are returned to sidebar
+				ReactModalService.internal.closeModal(eventStore);
 			});
-
-			// Remove all events in the group from calendar
-			const filteredEvents = eventStore.calendarEvents.filter((event) => event.groupId !== groupEvent.groupId);
-
-			// Update the store
-			eventStore.setCalendarEvents(filteredEvents);
-
-			// Close modal
-			ReactModalService.internal.closeModal(eventStore);
 		};
 
 		ReactModalService.internal.openModal(eventStore, {

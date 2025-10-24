@@ -293,7 +293,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 		// Add a timeout to prevent infinite loops
 		const timeoutId = setTimeout(() => {
 			try {
-				const allSidebarEvents = Object.values(eventStore.getSidebarEvents).flat();
+				const allSidebarEvents = eventStore.allEventsForCombinations;
 
 				const combinations = CombinationsService.generateCombinations(
 					allSidebarEvents,

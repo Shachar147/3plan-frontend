@@ -1119,6 +1119,20 @@ export class EventStore {
 		return parseInt(((this.currentEnd.getTime() - this.currentStart.getTime()) / 86400000).toString()); // + 1
 	}
 
+	@computed
+	get allEventsForCombinations() {
+		const countRelevantEvents = this.allSidebarEvents.filter((event) => {
+			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
+			return [TriplanPriority.maybe, TriplanPriority.high, TriplanPriority.must].includes(priority);
+		}).length;
+
+		if (countRelevantEvents < 5) {
+			return this.allEventsComputed;
+		}
+
+		return this.allSidebarEvents;
+	}
+
 	// --- actions --------------------------------------------------------------
 	@action
 	setHideCustomDates(hide: boolean) {
@@ -1275,6 +1289,57 @@ export class EventStore {
 				type: 'all activities',
 			});
 		});
+	}
+
+	@action
+	async returnGroupEventsToSidebar(groupId: string) {
+		// Get all individual events in the group
+		const individualEvents = this.calendarEvents.filter((event) => event.groupId === groupId && !event.isGroup);
+
+		if (individualEvents.length === 0) {
+			return Promise.resolve();
+		}
+
+		// Create new sidebar events object
+		const newEvents = { ...this.sidebarEvents };
+		const eventToCategory: any = {};
+		const eventIdToEvent: any = {};
+
+		// Build mapping from all events
+		this.allEventsComputed.forEach((e) => {
+			eventToCategory[e.id] = e.category;
+			eventIdToEvent[e.id] = e;
+		});
+
+		// Add individual events back to sidebar
+		individualEvents.forEach((event) => {
+			const eventId = event.id!;
+			const categoryId = eventToCategory[eventId];
+			const sidebarEvent = eventIdToEvent[eventId];
+
+			if (sidebarEvent && categoryId != 0) {
+				// Clean up calendar-specific properties
+				delete sidebarEvent.start;
+				delete sidebarEvent.end;
+
+				// Set defaults if missing
+				sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
+				sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
+
+				// Add to appropriate category
+				newEvents[categoryId] = newEvents[categoryId] || [];
+				newEvents[categoryId].push(sidebarEvent);
+			}
+		});
+
+		// Remove all events in the group from calendar
+		const filteredEvents = this.calendarEvents.filter((event) => event.groupId !== groupId);
+
+		// Update both stores properly
+		this.allowRemoveAllCalendarEvents = true;
+		await this.setCalendarEvents(filteredEvents, true, false);
+		this.allowRemoveAllCalendarEvents = false;
+		await this.setSidebarEvents(newEvents, true, false);
 	}
 
 	@computed

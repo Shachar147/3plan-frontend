@@ -531,7 +531,7 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			// Find the group event in our store
 			const groupEvent = eventStore.calendarEvents.find((e) => e.id === info.event.id);
 			if (groupEvent) {
-				ReactModalService.openViewGroupModal(eventStore, groupEvent);
+				ReactModalService.openViewGroupModal(eventStore, groupEvent, props.addEventToSidebar);
 			}
 		} else {
 			modalsStore.switchToViewMode();

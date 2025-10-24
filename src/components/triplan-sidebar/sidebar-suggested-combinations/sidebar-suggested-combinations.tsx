@@ -36,7 +36,9 @@ export const SidebarSuggestedCombinations: React.FC<SidebarSuggestedCombinations
 		setShownCombinationIds(newShownIds);
 
 		// Generate new combinations excluding the shown ones
-		const allSidebarEvents = Object.values(eventStore.sidebarEvents).flat();
+		// const allSidebarEvents = Object.values(eventStore.sidebarEvents).flat();
+		// const allSidebarEvents = eventStore.allEventsComputed;
+		const allSidebarEvents = eventStore.allEventsForCombinations;
 		CombinationsService.generateMoreCombinations(
 			allSidebarEvents,
 			eventStore.calendarEvents,

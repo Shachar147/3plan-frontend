@@ -135,6 +135,7 @@ export interface DistanceResult {
 	duration: string; // formatted string
 	distance: string; // formatted string
 	duration_value: number; // in seconds
+	distance_value: number; // in meters
 }
 
 export enum TripActions {

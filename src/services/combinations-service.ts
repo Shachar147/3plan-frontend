@@ -34,7 +34,7 @@ export interface SuggestedCombination {
 const isDebug = false;
 
 export class CombinationsService {
-	private static readonly MAX_TRAVEL_TIME = 30; // minutes (30 minutes between activities)
+	private static readonly MAX_TRAVEL_TIME = 30; // minutes (10 minutes between activities)
 	private static readonly MAX_COMBINATION_DURATION = 10 * 60; // 10 hours in minutes
 	private static readonly MAX_SHOPPING_DURATION = 12 * 60; // 12 hours in minutes
 	private static readonly MAX_TIME_BASED_DURATION = 5 * 60; // 5 hours for time-based combinations
@@ -46,8 +46,43 @@ export class CombinationsService {
 		TriplanPriority.high,
 		TriplanPriority.maybe,
 	]; // build combination around even with this priority
-	// private static readonly ALLOWED_TRAVEL_MODES = [GoogleTravelMode.WALKING, GoogleTravelMode.DRIVING]; // allowed travel modes for combinations
-	private static readonly ALLOWED_TRAVEL_MODES = [GoogleTravelMode.WALKING]; // allowed travel modes for combinations
+	private static readonly ALLOWED_TRAVEL_MODES = [GoogleTravelMode.WALKING, GoogleTravelMode.DRIVING]; // allowed travel modes for combinations
+	// private static readonly ALLOWED_TRAVEL_MODES = [GoogleTravelMode.WALKING]; // allowed travel modes for combinations
+
+	/**
+	 * Remove duplicate events with same name and location
+	 */
+	private static removeDuplicateEvents(events: SidebarEvent[]): SidebarEvent[] {
+		const seen = new Map<string, SidebarEvent>();
+
+		for (const event of events) {
+			// Create a unique key based on name and location
+			const locationKey = event.location
+				? `${event.location.latitude.toFixed(4)},${event.location.longitude.toFixed(4)}`
+				: 'no-location';
+			const eventKey = `${event.title.toLowerCase().trim()}|${locationKey}`;
+
+			// If we haven't seen this event before, or if this one has higher priority
+			if (!seen.has(eventKey)) {
+				seen.set(eventKey, event);
+			} else {
+				// Compare priorities and keep the higher priority one
+				const existingEvent = seen.get(eventKey)!;
+				const existingPriority =
+					typeof existingEvent.priority === 'string'
+						? parseInt(existingEvent.priority)
+						: existingEvent.priority;
+				const currentPriority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
+
+				// Keep the event with higher priority (lower number = higher priority: must=1, high=2, maybe=3)
+				if (currentPriority < existingPriority) {
+					seen.set(eventKey, event);
+				}
+			}
+		}
+
+		return Array.from(seen.values());
+	}
 
 	/**
 	 * Generate suggested combinations based on proximity, priority, and travel time
@@ -69,8 +104,19 @@ export class CombinationsService {
 			return hasValidPriority && hasLocation;
 		});
 
+		// Remove duplicate events with same name and location
+		const uniqueEvents = this.removeDuplicateEvents(filteredEvents);
+
+		if (isDebug) {
+			console.log('Debug - duplicate removal:', {
+				original: filteredEvents.length,
+				unique: uniqueEvents.length,
+				removed: filteredEvents.length - uniqueEvents.length,
+			});
+		}
+
 		// Get all "must" priority events as seeds, but limit to prevent too many combinations
-		const mustEvents = filteredEvents.filter((event) => {
+		const mustEvents = uniqueEvents.filter((event) => {
 			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
 			return this.COMBINATION_MUST_PRIORITY.includes(priority);
 		});
@@ -108,7 +154,7 @@ export class CombinationsService {
 			if (isDebug) console.log('Debug - building combination from seed:', seedEvent.title);
 			const combination = this.buildCombinationFromSeed(
 				seedEvent,
-				filteredEvents,
+				uniqueEvents,
 				distanceResults,
 				calendarEvents,
 				categories,
@@ -267,7 +313,7 @@ export class CombinationsService {
 		combinationType: string,
 		categories: TriPlanCategory[]
 	): SidebarEvent | null {
-		const candidates: { event: SidebarEvent; travelTime: number; priority: number }[] = [];
+		const candidates: { event: SidebarEvent; travelTime: number; distanceKm: number; priority: number }[] = [];
 
 		for (const event of allEvents) {
 			if (usedEventIds.has(event.id)) {
@@ -290,9 +336,10 @@ export class CombinationsService {
 			}
 
 			const travelTime = this.getTravelTime(currentEvent, event, distanceResults);
+			const distanceKm = this.getDistanceInKm(currentEvent, event, distanceResults);
 			const priority = this.getEventPriority(event);
 
-			candidates.push({ event, travelTime, priority });
+			candidates.push({ event, travelTime, distanceKm, priority });
 		}
 
 		if (candidates.length === 0) {
@@ -310,13 +357,14 @@ export class CombinationsService {
 			scoredCandidates = candidates.map((candidate) => {
 				const distancesToOthers = candidates
 					.filter((c) => c.event.id !== candidate.event.id)
-					.map((c) => this.getTravelTime(candidate.event, c.event, distanceResults));
+					.map((c) => this.getDistanceInKm(candidate.event, c.event, distanceResults));
 
 				const avgDistanceToOthers =
 					distancesToOthers.reduce((sum, dist) => sum + dist, 0) / distancesToOthers.length;
 
 				// Score combines: 70% distance to current location, 30% average distance to other locations
-				const score = -(candidate.travelTime * 0.7 + avgDistanceToOthers * 0.3);
+				// Use distance in km instead of travel time for fair comparison
+				const score = -(candidate.distanceKm * 0.7 + avgDistanceToOthers * 0.3);
 
 				return {
 					...candidate,
@@ -324,11 +372,11 @@ export class CombinationsService {
 				};
 			});
 		} else {
-			// Use priority + distance scoring when priorities differ
+			// Use improved priority + distance scoring
 			scoredCandidates = candidates.map((candidate) => {
-				// Normalize travel time (0-1 scale, where 0 is closest, 1 is furthest)
-				const maxTravelTime = Math.max(...candidates.map((c) => c.travelTime));
-				const normalizedDistance = candidate.travelTime / maxTravelTime;
+				// Normalize distance in km (0-1 scale, where 0 is closest, 1 is furthest)
+				const maxDistance = Math.max(...candidates.map((c) => c.distanceKm));
+				const normalizedDistance = candidate.distanceKm / maxDistance;
 
 				// Priority scores: must=3, high=2, maybe=1
 				const priorityScore = candidate.priority;
@@ -336,8 +384,15 @@ export class CombinationsService {
 				// Distance score: closer is better (1 - normalizedDistance)
 				const distanceScore = 1 - normalizedDistance;
 
-				// Combined score: 70% priority, 30% distance
-				const finalScore = priorityScore * 0.7 + distanceScore * 0.3;
+				// Improved scoring logic based on priority level
+				let finalScore;
+				if (candidate.priority >= 2) {
+					// For MUST (3) and HIGH (2): Prefer closer events (60% distance, 40% priority)
+					finalScore = distanceScore * 0.6 + priorityScore * 0.4;
+				} else {
+					// For MAYBE (1) and lower: Give priority more weight (70% priority, 30% distance)
+					finalScore = priorityScore * 0.7 + distanceScore * 0.3;
+				}
 
 				return {
 					...candidate,
@@ -346,21 +401,22 @@ export class CombinationsService {
 			});
 		}
 
-		// Sort by score (highest first), then by travel time for tie-breaking
+		// Sort by score (highest first), then by distance for tie-breaking
 		scoredCandidates.sort((a, b) => {
 			if (Math.abs(a.score - b.score) < 0.01) {
-				return a.travelTime - b.travelTime; // Tie-break by distance
+				return a.distanceKm - b.distanceKm; // Tie-break by actual distance
 			}
 			return b.score - a.score; // Higher score first
 		});
 
-		// if (isDebug) console.log('Debug - top 3 candidates for', currentEvent.title, ':');
+		if (isDebug) console.log('Debug - top 3 candidates for', currentEvent.title, ':');
 		scoredCandidates.slice(0, 3).forEach((c, i) => {
 			if (isDebug) {
+				const scoringMethod = c.priority >= 2 ? 'distance-prioritized' : 'priority-prioritized';
 				console.log(
-					`  ${i + 1}. ${c.event.title} - score: ${c.score.toFixed(1)}, travel: ${
-						c.travelTime
-					}min, priority: ${c.priority}`
+					`  ${i + 1}. ${c.event.title} - score: ${c.score.toFixed(2)}, distance: ${c.distanceKm.toFixed(
+						2
+					)}km, travel: ${c.travelTime}min, priority: ${c.priority} (${scoringMethod})`
 				);
 			}
 		});
@@ -621,6 +677,77 @@ export class CombinationsService {
 	}
 
 	/**
+	 * Get actual distance in kilometers between two events
+	 */
+	private static getDistanceInKm(
+		fromEvent: SidebarEvent,
+		toEvent: SidebarEvent,
+		distanceResults: ObservableMap<string, DistanceResult>
+	): number {
+		if (
+			!fromEvent.location?.latitude ||
+			!fromEvent.location?.longitude ||
+			!toEvent.location?.latitude ||
+			!toEvent.location?.longitude
+		) {
+			return 999; // Very large distance if no coordinates
+		}
+
+		// Try each allowed travel mode to find the best distance
+		for (const travelMode of this.ALLOWED_TRAVEL_MODES) {
+			const key = getCoordinatesRangeKey(
+				travelMode,
+				{ lat: fromEvent.location.latitude, lng: fromEvent.location.longitude },
+				{ lat: toEvent.location.latitude, lng: toEvent.location.longitude }
+			);
+			const result = distanceResults.get(key);
+
+			if (result && result.distance_value) {
+				// Convert meters to kilometers
+				return result.distance_value / 1000;
+			}
+		}
+
+		// Fallback to Haversine distance calculation
+		return this.calculateHaversineDistance(fromEvent, toEvent);
+	}
+
+	/**
+	 * Calculate distance using Haversine formula (fallback)
+	 */
+	private static calculateHaversineDistance(fromEvent: SidebarEvent, toEvent: SidebarEvent): number {
+		if (
+			!fromEvent.location?.latitude ||
+			!fromEvent.location?.longitude ||
+			!toEvent.location?.latitude ||
+			!toEvent.location?.longitude
+		) {
+			return 999; // Very large distance if no coordinates
+		}
+
+		const R = 6371; // Earth's radius in kilometers
+		const dLat = this.toRadians(toEvent.location.latitude - fromEvent.location.latitude);
+		const dLon = this.toRadians(toEvent.location.longitude - fromEvent.location.longitude);
+		const lat1 = this.toRadians(fromEvent.location.latitude);
+		const lat2 = this.toRadians(toEvent.location.latitude);
+
+		const a =
+			Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+			Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		const distance = R * c; // Distance in kilometers
+
+		return distance;
+	}
+
+	/**
+	 * Convert degrees to radians
+	 */
+	private static toRadians(degrees: number): number {
+		return degrees * (Math.PI / 180);
+	}
+
+	/**
 	 * Calculate travel time using Haversine formula (fallback)
 	 */
 	private static calculateHaversineTravelTime(fromEvent: SidebarEvent, toEvent: SidebarEvent): number {
@@ -656,13 +783,6 @@ export class CombinationsService {
 
 		// Return minimum 1 minute for very short distances
 		return Math.max(1, travelTimeMinutes);
-	}
-
-	/**
-	 * Convert degrees to radians
-	 */
-	private static toRadians(degrees: number): number {
-		return degrees * (Math.PI / 180);
 	}
 
 	/**

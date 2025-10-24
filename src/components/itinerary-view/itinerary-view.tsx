@@ -38,7 +38,9 @@ function ItineraryView({ events }: ItineraryViewProps) {
 		if (!acc[date]) {
 			acc[date] = [];
 		}
-		acc[date].push(event);
+		if (!event.isGroup && event.location?.latitude && event.location?.longitude) {
+			acc[date].push(event);
+		}
 		return acc;
 	}, {} as Record<string, CalendarEvent[]>);
 
@@ -164,14 +166,14 @@ function ItineraryView({ events }: ItineraryViewProps) {
 		if (!currentEvent?.id || !previousEvent?.id || !currentEvent.location || !previousEvent.location) return null;
 
 		const loc1 = {
-			lat: previousEvent.location.latitude,
-			lng: previousEvent.location.longitude,
+			lat: previousEvent.location.latitude!,
+			lng: previousEvent.location.longitude!,
 			eventName: previousEvent.title,
 		};
 
 		const loc2 = {
-			lat: currentEvent.location.latitude,
-			lng: currentEvent.location.longitude,
+			lat: currentEvent.location.latitude!,
+			lng: currentEvent.location.longitude!,
 			eventName: currentEvent.title,
 		};
 
@@ -193,13 +195,17 @@ function ItineraryView({ events }: ItineraryViewProps) {
 			});
 		}
 
-		let distance = distanceA.distance;
-		distance = distance.replaceAll('km', TranslateService.translate(eventStore, 'DISTANCE.KM'));
-		distance = distance.replaceAll('m', TranslateService.translate(eventStore, 'DISTANCE.M'));
-		return TranslateService.translate(eventStore, 'NEXT_DESTINATION.DRIVE', {
-			DISTANCE: distance,
-			TIME: Math.round(distanceA.duration_value / 60), // Convert to minutes
-		});
+		// @ts-ignore
+		if (distanceA && distanceA?.distance) {
+			// @ts-ignore
+			let distance = distanceA.distance;
+			distance = distance.replaceAll('km', TranslateService.translate(eventStore, 'DISTANCE.KM'));
+			distance = distance.replaceAll('m', TranslateService.translate(eventStore, 'DISTANCE.M'));
+			return TranslateService.translate(eventStore, 'NEXT_DESTINATION.DRIVE', {
+				DISTANCE: distance,
+				TIME: Math.round(distanceA.duration_value / 60), // Convert to minutes
+			});
+		}
 	};
 
 	return (
