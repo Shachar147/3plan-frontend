@@ -5,7 +5,12 @@ import { getCoordinatesRangeKey, isMatching } from '../utils/utils';
 import TranslateService from './translate-service';
 import { EventStore } from '../stores/events-store';
 import { getDurationInMs, roundTo15Minutes } from '../utils/time-utils';
-import { STORE_KEYWORDS, TOURIST_KEYWORDS, NATURE_KEYWORDS } from '../components/map-container/map-container-utils';
+import {
+	STORE_KEYWORDS,
+	TOURIST_KEYWORDS,
+	NATURE_KEYWORDS,
+	FOOD_KEYWORDS,
+} from '../components/map-container/map-container-utils';
 
 // todo list:
 // 1. GENERAL - go over combinations service, reduce code duplication, understand it and improve stuff.
@@ -498,11 +503,11 @@ export class CombinationsService {
 		}
 
 		// Check if location is already used (prevent duplicate locations)
-		const eventLocationKey = this.getLocationKey(event);
-		if (usedLocations.has(eventLocationKey)) {
-			if (isDebug) console.log('Debug - rejected due to duplicate location:', event.title);
-			return false;
-		}
+		// const eventLocationKey = this.getLocationKey(event);
+		// if (usedLocations.has(eventLocationKey)) {
+		// 	if (isDebug) console.log('Debug - rejected due to duplicate location:', event.title);
+		// 	return false;
+		// }
 
 		// Check if both events are food-related (prevent food after food)
 		const currentIsFood = this.isFoodCategory(currentEvent, categories);
@@ -756,73 +761,78 @@ export class CombinationsService {
 	 * Check if event is a food category
 	 */
 	private static isFoodCategory(event: SidebarEvent, categories: TriPlanCategory[]): boolean {
-		// First check category-based detection
 		const category = categories.find((cat) => cat.id.toString() === event.category);
-		if (category) {
-			const foodKeywords = [
-				'restaurant',
-				'food',
-				'dining',
-				'cafe',
-				'bar',
-				'pub',
-				'kitchen',
-				'meal',
-				'eat',
-				'drink',
-				'beverage',
-			];
-			const categoryTitle = category.title.toLowerCase();
+		return (
+			isMatching(event.title.toLowerCase(), FOOD_KEYWORDS) ||
+			isMatching(category?.title.toLowerCase(), FOOD_KEYWORDS)
+		);
+		// // First check category-based detection
+		// const category = categories.find((cat) => cat.id.toString() === event.category);
+		// if (category) {
+		// 	const foodKeywords = [
+		// 		'restaurant',
+		// 		'food',
+		// 		'dining',
+		// 		'cafe',
+		// 		'bar',
+		// 		'pub',
+		// 		'kitchen',
+		// 		'meal',
+		// 		'eat',
+		// 		'drink',
+		// 		'beverage',
+		// 	];
+		// 	const categoryTitle = category.title.toLowerCase();
 
-			if (foodKeywords.some((keyword) => categoryTitle.includes(keyword))) {
-				return true;
-			}
-		}
+		// 	if (foodKeywords.some((keyword) => categoryTitle.includes(keyword))) {
+		// 		return true;
+		// 	}
+		// }
 
-		// Fallback: check event title for food-related keywords
-		const eventTitle = event.title.toLowerCase();
-		const titleFoodKeywords = [
-			'restaurant',
-			'cafe',
-			'bar',
-			'pub',
-			'kitchen',
-			'dining',
-			'food',
-			'eat',
-			'drink',
-			'bistro',
-			'brasserie',
-			'grill',
-			'steakhouse',
-			'pizzeria',
-			'bakery',
-			'deli',
-			'novikov',
-			'bagatelle',
-			'amazónico',
-			'cé la vi',
-			'lío',
-			'zuma',
-			'gaucho',
-			'cut at',
-			'duck & waffle',
-			'sky garden',
-			'eggslut',
-			'drunch',
-			'daisy green',
-			"ralph's coffee",
-			'caffè',
-			'matcha',
-			'matcha',
-		];
+		// // Fallback: check event title for food-related keywords
+		// const eventTitle = event.title.toLowerCase();
+		// const titleFoodKeywords = [
+		// 	'restaurant',
+		// 	'cafe',
+		// 	'bar',
+		// 	'pub',
+		// 	'kitchen',
+		// 	'dining',
+		// 	'food',
+		// 	'eat',
+		// 	'drink',
+		// 	'bistro',
+		// 	'brasserie',
+		// 	'grill',
+		// 	'steakhouse',
+		// 	'pizzeria',
+		// 	'bakery',
+		// 	'deli',
+		// 	'novikov',
+		// 	'bagatelle',
+		// 	'amazónico',
+		// 	'cé la vi',
+		// 	'lío',
+		// 	'zuma',
+		// 	'gaucho',
+		// 	'cut at',
+		// 	'duck & waffle',
+		// 	'sky garden',
+		// 	'eggslut',
+		// 	'drunch',
+		// 	'daisy green',
+		// 	"ralph's coffee",
+		// 	'caffè',
+		// 	'matcha',
+		// 	'matcha',
+		// ];
 
-		const isFoodByTitle = titleFoodKeywords.some((keyword) => eventTitle.includes(keyword));
-		if (isFoodByTitle) {
-			if (isDebug) console.log('Debug - detected food venue by title:', event.title, 'matches keyword');
-		}
+		// const isFoodByTitle = titleFoodKeywords.some((keyword) => eventTitle.includes(keyword));
+		// if (isFoodByTitle) {
+		// 	if (isDebug) console.log('Debug - detected food venue by title:', event.title, 'matches keyword');
+		// }
 
-		return isFoodByTitle;
+		// return isFoodByTitle;
 	}
 
 	/**

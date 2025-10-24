@@ -298,6 +298,7 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 		flex-direction: column;
 		gap: 20px;
 		margin-bottom: 20px;
+		border: 0;
 
 		.activities-list {
 			h3 {
@@ -415,9 +416,9 @@ button.fc-customTitle-button.fc-button.fc-button-primary {
 			}
 
 			.map-container-wrapper {
-				height: 100px;
-				width: 80%;
-				margin-inline: 10%;
+				height: 150px;
+				width: 70%;
+				margin-inline: 15%;
 				border-radius: 8px;
 				overflow: hidden;
 				border: 1px solid #e0e0e0;
