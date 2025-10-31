@@ -93,6 +93,7 @@ function TriplanHeaderBanner({
 						? `${slogan}<hr/>`
 						: slogan,
 				}}
+				data-walkthrough="slogan"
 			/>
 			<div className={`${baseClass}-bottom-shadow`} />
 		</div>

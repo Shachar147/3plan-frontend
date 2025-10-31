@@ -14,7 +14,11 @@ function TriplanLogo({ onClick, height = 40, white = false }: TriplanLogoProps) 
 	const calcHeight = !height.toString().includes('%') && !height.toString().includes('px') ? `${height}px` : height;
 
 	return (
-		<div className="header-logo cursor-pointer flex flex-shrink-0 flex-grow-0" onClick={onClick}>
+		<div
+			className="header-logo cursor-pointer flex flex-shrink-0 flex-grow-0"
+			onClick={onClick}
+			data-walkthrough="logo"
+		>
 			<img
 				alt={TranslateService.translate(eventStore, 'TRIPLAN')}
 				src={`/images/logo/new-logo${white ? '-white' : ''}.png`}
