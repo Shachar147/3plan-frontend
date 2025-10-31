@@ -56,6 +56,7 @@ interface DestinationSelectorProps {
 	isSingle?: boolean;
 	isDisabled?: boolean;
 	hideSelectedChips?: boolean;
+	dataWalkthrough?: string;
 }
 
 export interface CityOrCountry {
@@ -163,6 +164,7 @@ const fetchCitiesAndSetOptions = (): CityOrCountry[] => {
 };
 
 function DestinationSelector(props: DestinationSelectorProps) {
+	const { dataWalkthrough } = props;
 	const prevSelectedDestinations = useRef<string[]>([]);
 	const [selectedOptions, setSelectedOptions] = useState<MultiValue<OptionType>>([]);
 	const [options, setOptions] = useState<OptionType[]>([]);
@@ -221,7 +223,7 @@ function DestinationSelector(props: DestinationSelectorProps) {
 	};
 
 	return (
-		<div className="destination-selector-container">
+		<div className="destination-selector-container" data-walkthrough={dataWalkthrough}>
 			<Select
 				isMulti={!props.isSingle}
 				isClearable

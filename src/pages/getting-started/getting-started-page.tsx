@@ -329,6 +329,7 @@ const GettingStartedPage = () => {
 						// 		: 'MODALS.ERROR.START_DATE_SMALLER'
 						// )}
 						onClick={() => createNewTrip(tripName)}
+						data-walkthrough="create-trip-btn"
 					/>
 					<Button
 						text={TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}

@@ -6,9 +6,20 @@ import { useHandleWindowResize } from '../../../custom-hooks/use-window-size';
 import MainPageContent from './main-page-content';
 import TriplanFooter from '../../components/triplan-footer/triplan-footer';
 import ScrollToTopButton from '../../components/scroll-top/scroll-top';
+import OnboardingGuide from '../../components/walkthrough/onboarding-guide';
+import HelpIcon from '../../components/walkthrough/help-icon';
+import { walkthroughStoreContext } from '../../stores/walkthrough-store';
 
 function MainPageV2() {
 	useHandleWindowResize();
+
+	const handleStartWalkthrough = () => {
+		// @ts-ignore
+		if (window.startWalkthrough) {
+			// @ts-ignore
+			window.startWalkthrough();
+		}
+	};
 
 	return (
 		<div className="triplan-main-page-container flex-column">
@@ -16,6 +27,8 @@ function MainPageV2() {
 			<MainPageContent />
 			<TriplanFooter />
 			<ScrollToTopButton />
+			<OnboardingGuide />
+			<HelpIcon onClick={handleStartWalkthrough} />
 		</div>
 	);
 }

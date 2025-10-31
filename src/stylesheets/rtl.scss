@@ -231,3 +231,7 @@ body.rtl .list-container .list-view-mode-selector {
 	left: unset;
 	right: 10px;
 }
+
+body.rtl div[id^='react-joyride-step-'] {
+	direction: rtl;
+}
