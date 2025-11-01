@@ -24,7 +24,7 @@ function TriplanSidebarMainButtons() {
 						eventStore.isTripLocked ? TranslateService.translate(eventStore, 'TRIP_IS_LOCKED') : undefined
 					}
 					icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
-					data-walkthrough="create-category-btn"
+					dataWalkthrough="create-category-btn"
 				/>
 			</div>
 		);
@@ -46,7 +46,7 @@ function TriplanSidebarMainButtons() {
 					disabled={eventStore.categories.length === 0 || eventStore.isTripLocked}
 					disabledReason={disabledReason}
 					icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
-					data-walkthrough="add-activity-btn"
+					dataWalkthrough="add-activity-btn"
 				/>
 			</div>
 		);

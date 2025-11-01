@@ -5,11 +5,19 @@ import { exploreTabId, myTripsTabId, savedCollectionsTabId } from '../../utils/c
 import { EventStore } from '../../../stores/events-store';
 import { RootStore } from '../../stores/root-store';
 import { generateRandomTripName, simulateTyping, triggerReactOnChange } from './onboarding-guide-utils';
+import { ViewMode } from '../../../utils/enums';
+
+export enum GuideMode {
+	MAIN_PAGE = 'main_page',
+	PLAN = 'plan',
+}
 
 export interface CustomStep extends Step {
 	beforeAction?: () => Promise<void> | void;
 	duringAction?: () => Promise<void> | void;
 	afterAction?: () => Promise<void> | void;
+	scrollToCenter?: boolean;
+	container?: string;
 }
 
 const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
@@ -346,18 +354,50 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 	];
 };
 
-export const getOnboardingGuideSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
-	const steps: CustomStep[] = [
-		...mainPageSteps(eventStore, rootStore),
+const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
+	// todo complete:
+	// 1. first, explain about current tab, and how to switch to it.
+	// 2. then, explain about the sidebar categories, add category, add event
+	// 3. explain about map view and how to add activities from there.
+	// 4. explain about calendar view and how to schedule.
+	// 5. explain about the importance of priority (and the colors), and categories (and the icons).
+	// 6. note that if you scheduled something you can write 'הוזמן' at the description to mark it as booked.
+	// 7. explain about itinerary view.
+	// 8. explain about list view.
+	return [
 		{
-			target: '.triplan-sidebar-categories',
+			// target: `[data-tab-id=${eventStore.viewMode}]`,
+			target: '.tabular.menu',
+			content: (
+				<div>
+					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.TABULAR_MENU')}</h3>
+					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.TABULAR_MENU_DESC')}</p>
+				</div>
+			),
+			placement: 'bottom',
+			disableBeacon: true,
+		},
+		(eventStore.viewMode === ViewMode.feed ||
+			(eventStore.isMobile && eventStore.mobileViewMode === ViewMode.feed)) && {
+			target: '[data-tab-id="feed"]',
+			content: (
+				<div>
+					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.FEED_VIEW')}</h3>
+					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.FEED_VIEW_DESC')}</p>
+				</div>
+			),
+		},
+		{
+			target: '[data-walkthrough="sidebar-categories"]',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.SIDEBAR_CATEGORIES')}</h3>
 					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.SIDEBAR_CATEGORIES_DESC')}</p>
 				</div>
 			),
-			placement: 'right',
+			placement: eventStore.isRtl ? 'left' : 'right',
+			scrollToCenter: true,
+			container: '.external-events-container',
 		},
 		{
 			target: '[data-walkthrough="create-category-btn"]',
@@ -379,6 +419,7 @@ export const getOnboardingGuideSteps = (eventStore: EventStore, rootStore: RootS
 			),
 			placement: 'right',
 		},
+		// todo complete, fix these:
 		{
 			target: '[data-walkthrough="map-view-btn"]',
 			content: (
@@ -509,7 +550,17 @@ export const getOnboardingGuideSteps = (eventStore: EventStore, rootStore: RootS
 			),
 			placement: 'bottom',
 		},
-	];
+	].filter(Boolean);
+};
 
-	return steps;
+export const getOnboardingGuideSteps = (
+	eventStore: EventStore,
+	rootStore: RootStore,
+	mode: GuideMode = GuideMode.MAIN_PAGE
+): CustomStep[] => {
+	if (mode === GuideMode.PLAN) {
+		return planSteps(eventStore, rootStore);
+	}
+	// GuideMode.MAIN_PAGE
+	return mainPageSteps(eventStore, rootStore);
 };

@@ -11,19 +11,20 @@ function HelpIcon({ onClick }: HelpIconProps) {
 	const walkthroughStore = useContext(walkthroughStoreContext);
 	const [isVisible, setIsVisible] = useState(false);
 
+	const checkVisibility = () => {
+		// Show help icon on both main page and plan pages
+		// OnboardingGuide will auto-detect the mode based on route
+		setIsVisible(true);
+	};
+
 	useEffect(() => {
-		// Check if we're on the main page (not inside a trip)
-		const isOnMainPage = !window.location.pathname.includes('/plan/');
-		const shouldShow = isOnMainPage; // && !walkthroughStore.hasCompletedWalkthrough;
-		setIsVisible(shouldShow);
+		checkVisibility();
 	}, [walkthroughStore.hasCompletedWalkthrough]);
 
 	// Listen for route changes
 	useEffect(() => {
 		const handleRouteChange = () => {
-			const isOnMainPage = !window.location.pathname.includes('/plan/');
-			const shouldShow = isOnMainPage; // && !walkthroughStore.hasCompletedWalkthrough;
-			setIsVisible(shouldShow);
+			checkVisibility();
 		};
 
 		window.addEventListener('popstate', handleRouteChange);

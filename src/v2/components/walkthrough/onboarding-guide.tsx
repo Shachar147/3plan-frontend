@@ -6,10 +6,14 @@ import { myTripsContext } from '../../stores/my-trips-store';
 import { rootStoreContext } from '../../stores/root-store';
 import { walkthroughStoreContext } from '../../stores/walkthrough-store';
 import TranslateService from '../../../services/translate-service';
-import { getOnboardingGuideSteps } from './steps';
+import { getOnboardingGuideSteps, GuideMode } from './steps';
 import './onboarding-guide.scss';
 
-function OnboardingGuide() {
+interface OnboardingGuideProps {
+	mode?: GuideMode;
+}
+
+function OnboardingGuide({ mode }: OnboardingGuideProps) {
 	const eventStore = useContext(eventStoreContext);
 	const myTripsStore = useContext(myTripsContext);
 	const rootStore = useContext(rootStoreContext);
@@ -17,6 +21,49 @@ function OnboardingGuide() {
 
 	const [run, setRun] = useState(false);
 	const [stepIndex, setStepIndex] = useState(0);
+
+	// Determine mode from route if not provided as prop
+	const [detectedMode, setDetectedMode] = useState<GuideMode>(() => {
+		if (mode) {
+			return mode;
+		}
+		const isOnPlanPage = window.location.pathname.includes('/plan/');
+		return isOnPlanPage ? GuideMode.PLAN : GuideMode.MAIN_PAGE;
+	});
+
+	// Listen for route changes to update mode
+	useEffect(() => {
+		if (mode) {
+			// If mode is provided as prop, use it
+			setDetectedMode(mode);
+			return;
+		}
+
+		const detectMode = () => {
+			const isOnPlanPage = window.location.pathname.includes('/plan/');
+			setDetectedMode(isOnPlanPage ? GuideMode.PLAN : GuideMode.MAIN_PAGE);
+		};
+
+		detectMode(); // Initial check
+
+		// Listen for route changes
+		window.addEventListener('popstate', detectMode);
+		window.addEventListener('hashchange', detectMode);
+
+		// Use MutationObserver to detect route changes (for SPAs)
+		const observer = new MutationObserver(() => {
+			detectMode();
+		});
+		observer.observe(document.body, { childList: true, subtree: true });
+
+		return () => {
+			window.removeEventListener('popstate', detectMode);
+			window.removeEventListener('hashchange', detectMode);
+			observer.disconnect();
+		};
+	}, [mode]);
+
+	const guideMode = mode || detectedMode;
 
 	// Helper function to scroll to element with -100px offset
 	const scrollToElementWithOffset = (element: HTMLElement, offset = -150) => {
@@ -29,15 +76,38 @@ function OnboardingGuide() {
 		});
 	};
 
-	// Get walkthrough steps
+	// Helper function to scroll element to middle of viewport
+	const scrollToElementCenter = (element: HTMLElement, container = window) => {
+		const elementRect = element.getBoundingClientRect();
+		const offset = -200; // -1 * (elementRect.height / 2);
+
+		// const elementPosition = element.getBoundingClientRect().top;
+		// const offsetPosition = elementPosition + (container.pageYOffset ?? 0) + (offset ?? 0);
+
+		const elementPosition = element.getBoundingClientRect().top;
+		const offsetPosition = elementPosition + (container.pageYOffset ?? 0) + offset;
+
+		// console.log("hereee", elementPosition, container.pageYOffset, offsetPosition, offset);
+		console.log('hereee', elementPosition, offsetPosition);
+
+		container.scrollTo({
+			top: offsetPosition,
+			behavior: 'smooth',
+		});
+	};
+
+	// Get walkthrough steps based on mode
 	const steps = useMemo(
-		() => getOnboardingGuideSteps(eventStore, rootStore),
-		[eventStore, rootStore, eventStore.isMobile]
+		() => getOnboardingGuideSteps(eventStore, rootStore, guideMode),
+		[eventStore, rootStore, eventStore.isMobile, guideMode, eventStore.viewMode, eventStore.mobileViewMode]
 	);
 
-	// Auto-start walkthrough for new users
+	// Auto-start walkthrough for new users (only in FULL mode)
 	useEffect(() => {
-		if (walkthroughStore.shouldAutoStart && myTripsStore.totalTrips === 0) {
+		if (
+			(walkthroughStore.shouldAutoStart && myTripsStore.totalTrips === 0 && guideMode === GuideMode.MAIN_PAGE) ||
+			eventStore.tripName.includes(TranslateService.translate(eventStore, 'WALKTHROUGH.EXAMPLE'))
+		) {
 			// Small delay to ensure page is fully loaded
 			const timer = setTimeout(() => {
 				setRun(true);
@@ -45,7 +115,7 @@ function OnboardingGuide() {
 
 			return () => clearTimeout(timer);
 		}
-	}, [walkthroughStore.shouldAutoStart, myTripsStore.totalTrips]);
+	}, [walkthroughStore.shouldAutoStart, myTripsStore.totalTrips, guideMode, eventStore.tripName]);
 
 	// Handle walkthrough callbacks
 	const handleJoyrideCallback = (data: CallBackProps) => {
@@ -86,7 +156,18 @@ function OnboardingGuide() {
 				if (currentStep && currentStep.target) {
 					const targetElement = document.querySelector(currentStep.target as string) as HTMLElement;
 					if (targetElement) {
-						scrollToElementWithOffset(targetElement);
+						console.log('currentStep', currentStep);
+						// For sidebar-categories, scroll to center; otherwise use offset
+						if (currentStep.scrollToCenter) {
+							scrollToElementCenter(
+								targetElement,
+								currentStep.container
+									? (document.querySelector(currentStep.container) as HTMLElement)
+									: window
+							);
+						} else {
+							scrollToElementWithOffset(targetElement);
+						}
 					}
 				}
 			}, 100);
@@ -214,6 +295,19 @@ function OnboardingGuide() {
 					overlayColor: 'rgba(0, 0, 0, 0.5)',
 					arrowColor: '#fff',
 					width: 400,
+					zIndex: 100000,
+				},
+				tooltip: {
+					zIndex: 100000,
+				},
+				tooltipContainer: {
+					zIndex: 100000,
+				},
+				overlay: {
+					zIndex: 99999,
+				},
+				spotlight: {
+					zIndex: 99998,
 				},
 			}}
 			locale={joyrideLocale}
