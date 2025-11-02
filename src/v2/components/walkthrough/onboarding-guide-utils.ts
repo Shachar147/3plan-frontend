@@ -6,23 +6,6 @@ import { TriplanPriority, TriplanEventPreferredTime } from '../../../utils/enums
 import { runInAction } from 'mobx';
 import { ucfirst } from '../../../utils/utils';
 
-const RANDOM_LOCATIONS = [
-	'London',
-	// 'Paris',
-	// 'Germany',
-	// 'New York',
-	// 'Tokyo',
-	// 'Barcelona',
-	// 'Rome',
-	// 'Amsterdam',
-	// 'Dubai',
-	// 'Thailand',
-	// 'Spain',
-	// 'Italy',
-	// 'Greece',
-	// 'Japan',
-];
-
 export enum Location {
 	London = 'London',
 	Paris = 'Paris',
@@ -41,20 +24,25 @@ export enum Location {
 }
 
 export const LOCATION_POIS: Record<Location, string[]> = {
-	[Location.London]: ['Big Ben London', 'Hyde Park London'],
-	[Location.Paris]: ['Eiffel Tower', 'Louvre Museum'],
-	[Location.Germany]: ['Berlin Wall'],
-	[Location.NewYork]: ['Times Square', 'Central Park New York'],
-	[Location.Tokyo]: ['Shibuya Crossing', 'Tokyo Tower'],
-	[Location.Barcelona]: ['Sagrada Familia', 'Park Güell'],
-	[Location.Rome]: ['Colosseum Rome', 'Rome Fountain'],
-	[Location.Amsterdam]: ['Anne Frank House', 'Amsterdam Heineken Experience'],
-	[Location.Dubai]: ['Burj Khalifa', 'Palm Jumeirah'],
-	[Location.Thailand]: ['Grand Palace Bangkok', 'Phi Phi Islands'],
-	[Location.Spain]: ['Madrid', 'Barcelona'],
-	[Location.Italy]: ['Colosseum Rome', 'Leaning Tower of Pisa'],
-	[Location.Greece]: ['Acropolis Athens', 'Zara Pireus'],
-	[Location.Japan]: ['Mount Fuji', 'Tokyo'],
+	[Location.London]: ['Big Ben London', 'Hyde Park London', 'The Shard London', 'Warner Bros Studio London'],
+	[Location.Paris]: ['Eiffel Tower', 'Louvre Museum', 'Notre Dame Paris', 'Disneyland Paris'],
+	[Location.Germany]: ['Berlin Wall', 'Prison Island Berlin', 'Reichstag Berlin', 'Berlin Icebar'],
+	[Location.NewYork]: ['Times Square', 'Central Park New York', 'Statue of Liberty', 'Empire State Building'],
+	[Location.Tokyo]: ['Shibuya Crossing', 'Tokyo Tower', 'Hello Kitty Smile Tokyo'],
+	[Location.Barcelona]: ['Sagrada Familia', 'Camp Nou Barcelona', 'Barcelona Aquarium'],
+	[Location.Rome]: ['Colosseum Rome', 'Rome Magicland', 'Basilica of Santa Maria in Trastevere'],
+	[Location.Amsterdam]: [
+		'Anne Frank House',
+		'Amsterdam Heineken Experience',
+		'Van Gogh Museum Amsterdam',
+		'Adam lookout amsterdam',
+	],
+	[Location.Dubai]: ['Burj Khalifa', 'Palm Jumeirah', 'Dubai Mall', 'Dubai Frame', 'Museum of the future dubai'],
+	[Location.Thailand]: ['Grand Palace Bangkok', 'Phi Phi Islands', 'Koh Phi Phi', 'Koh Samui', 'Koh Tao'],
+	[Location.Spain]: ['Madrid', 'Barcelona', 'Ibiza'],
+	[Location.Italy]: ['Colosseum Rome', 'Leaning Tower of Pisa', 'Amalfi Coast', 'Florence', 'Venice'],
+	[Location.Greece]: ['Acropolis Athens', 'Zara Pireus', 'Santorini', 'Mykonos', 'Corfu'],
+	[Location.Japan]: ['Mount Fuji', 'Tokyo', 'Kyoto', 'Osaka', 'Hiroshima'],
 };
 
 // Generate random trip name with location
@@ -575,8 +563,6 @@ export const clickSearchMarkerOnMap = async (): Promise<void> => {
 
 // Set random priority value (MUST, HIGH, or MAYBE)
 export const setRandomPriority = async (eventStore: EventStore): Promise<void> => {
-	console.log('[Walkthrough] Setting random priority');
-
 	// Get available priority enum values (excluding unset and least)
 	const priorityEnumValues = [TriplanPriority.must, TriplanPriority.high, TriplanPriority.maybe];
 
@@ -584,26 +570,30 @@ export const setRandomPriority = async (eventStore: EventStore): Promise<void> =
 	const randomPriorityEnum = priorityEnumValues[Math.floor(Math.random() * priorityEnumValues.length)];
 
 	// Build options exactly the same way renderPrioritySelector does
-	const values = Object.keys(TriplanPriority);
-	const keys = Object.values(TriplanPriority);
+	const values = Object.keys(TriplanPriority); // ["0", "1", "10", "2", "3", "must", "high", "maybe", "least", "unset"]
+	const keys = Object.values(TriplanPriority); // [0, 1, 10, 2, 3, "must", "high", "maybe", "least", "unset"]
 
-	const order = [TriplanPriority.must, TriplanPriority.high, TriplanPriority.maybe, TriplanPriority.least];
+	const order = [
+		TriplanPriority.unset,
+		TriplanPriority.must,
+		TriplanPriority.high,
+		TriplanPriority.maybe,
+		TriplanPriority.least,
+	];
 
 	// Build options array - match renderPrioritySelector exactly
+	// Object.values(TriplanPriority).filter(...) gives [0, 1, 10, 2, 3]
+	// Then map with index uses values[index] which gives ["0", "1", "10", "2", "3"]
+	// These numeric string keys are what the options use as their value property
 	const options = Object.values(TriplanPriority)
 		.filter((x) => !Number.isNaN(Number(x)))
 		.map((val, index) => ({
-			value: values[index],
+			value: values[index], // e.g., "0", "1", "10", "2", "3" (numeric string keys)
 			label: ucfirst(TranslateService.translate(eventStore, keys[index].toString())),
 		}))
 		.sort((a, b) => {
-			// The sort logic tries to convert a.value to number, which won't work for string keys
-			// Instead, we need to find the enum value for each option
-			const aEnumVal = TriplanPriority[a.value as keyof typeof TriplanPriority];
-			const bEnumVal = TriplanPriority[b.value as keyof typeof TriplanPriority];
-
-			let A = order.indexOf(aEnumVal);
-			let B = order.indexOf(bEnumVal);
+			let A = order.indexOf(Number(a.value) as unknown as TriplanPriority);
+			let B = order.indexOf(Number(b.value) as unknown as TriplanPriority);
 
 			if (A === -1) {
 				A = 999;
@@ -620,53 +610,41 @@ export const setRandomPriority = async (eventStore: EventStore): Promise<void> =
 			return 0;
 		});
 
-	// Find the key name for our random enum value
-	// The issue is that values[index] gives us the numeric string key, not the enum name key
-	// We need to find the actual enum name that corresponds to our enum value
+	// Find the key name that corresponds to our random enum value
 	const priorityKeyName = Object.keys(TriplanPriority).find((key) => {
-		// Skip numeric string keys (like "0", "1", etc.) and check if the enum value matches
+		// Skip numeric string keys and check if the enum value matches
 		return Number.isNaN(Number(key)) && TriplanPriority[key as keyof typeof TriplanPriority] === randomPriorityEnum;
 	});
 
-	if (priorityKeyName) {
-		// But wait - the options use values[index] which are the numeric string keys
-		// So we need to find which option has the same enum value
-		const matchingOption = options.find((opt) => {
-			// Get the enum value for this option's value
-			const optEnumVal = TriplanPriority[opt.value as keyof typeof TriplanPriority];
-			return optEnumVal === randomPriorityEnum;
+	// Find the matching option - use the same flexible matching logic as setRandomPreferredTime
+	const matchingOption = options.find((opt) => {
+		// Get the enum value for this option's value
+		const optEnumVal = TriplanPriority[opt.value as keyof typeof TriplanPriority];
+
+		// Also try converting opt.value to number if it's a numeric string
+		const numericVal = Number(opt.value);
+
+		// Match if the enum value matches, or if the numeric value matches, or if the value matches the key name
+		return (
+			optEnumVal === randomPriorityEnum ||
+			(numericVal === randomPriorityEnum && !isNaN(numericVal)) ||
+			opt.value === priorityKeyName
+		);
+	});
+
+	if (matchingOption) {
+		// Set in modalValues as SelectInputOption - use runInAction for MobX
+		runInAction(() => {
+			eventStore.modalValues['priority'] = matchingOption;
 		});
 
-		if (matchingOption) {
-			// Set in modalValues as SelectInputOption - use runInAction for MobX
-			runInAction(() => {
-				eventStore.modalValues['priority'] = matchingOption;
-			});
-
-			// Wait a bit for the UI to update
-			await new Promise((resolve) => setTimeout(resolve, 150));
-
-			console.log('[Walkthrough] Set priority to:', matchingOption.value, matchingOption.label);
-		} else {
-			console.error(
-				'[Walkthrough] Could not find matching option for priority enum value:',
-				randomPriorityEnum,
-				'Available options:',
-				options.map((o) => ({
-					value: o.value,
-					enumVal: TriplanPriority[o.value as keyof typeof TriplanPriority],
-				}))
-			);
-		}
-	} else {
-		console.error('[Walkthrough] Could not find key name for enum value:', randomPriorityEnum);
+		// Wait a bit for the UI to update
+		await new Promise((resolve) => setTimeout(resolve, 150));
 	}
 };
 
 // Set random preferred time value (excluding unset)
 export const setRandomPreferredTime = async (eventStore: EventStore): Promise<void> => {
-	console.log('[Walkthrough] Setting random preferred time');
-
 	// Get available preferred time enum values (excluding unset)
 	const preferredTimeEnumValues = [
 		TriplanEventPreferredTime.morning,
@@ -732,17 +710,5 @@ export const setRandomPreferredTime = async (eventStore: EventStore): Promise<vo
 
 		// Wait a bit for the UI to update
 		await new Promise((resolve) => setTimeout(resolve, 150));
-
-		console.log('[Walkthrough] Set preferred time to:', matchingOption.value, matchingOption.label);
-	} else {
-		console.error(
-			'[Walkthrough] Could not find matching option for preferred time enum value:',
-			randomPreferredTimeEnum,
-			'Available options:',
-			options.map((o) => ({
-				value: o.value,
-				enumVal: TriplanEventPreferredTime[o.value as keyof typeof TriplanEventPreferredTime],
-			}))
-		);
 	}
 };
