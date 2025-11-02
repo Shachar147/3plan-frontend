@@ -10,6 +10,9 @@ import {
 	triggerReactOnChange,
 	simulateSearchOnMap,
 	closeAutocompletePicker,
+	setRandomPriority,
+	setRandomPreferredTime,
+	LOCATION_POIS,
 } from './onboarding-guide-utils';
 import { ViewMode } from '../../../utils/enums';
 import { WalkthroughStore } from '../../stores/walkthrough-store';
@@ -29,6 +32,7 @@ export interface CustomStep extends Step {
 	customPositionOffsetPercent?: boolean; // If true, offset is a percentage of screen width
 	autoAdvance?: boolean; // If true, Next button is disabled and step auto-advances after beforeAction completes
 	customZIndex?: number; // Custom z-index for this step (overrides default)
+	fixSpotlightPosition?: boolean; // If true, the spotlight position will be fixed
 }
 
 const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
@@ -473,11 +477,19 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			beforeAction: async () => {
 				const searchInput = document.querySelector('[data-walkthrough="map-search"]') as HTMLInputElement;
 				if (searchInput) {
-					return await simulateSearchOnMap(searchInput, 'Big Ben London', eventStore);
+					const randomLocation = eventStore.destinations?.[0];
+					const randomPois = LOCATION_POIS[randomLocation as keyof typeof LOCATION_POIS];
+					const randomPoi = randomPois[Math.floor(Math.random() * randomPois.length)];
+					return await simulateSearchOnMap(searchInput, randomPoi, eventStore);
 				} else {
 					console.error('Search input not found, stopping walkthrough');
 				}
 			},
+			// afterAction: async () => {
+			// 	setTimeout(() => {
+			// 		walkthroughStore.triggerOnboardingRerender();
+			// 	}, 1000);
+			// },
 		},
 		{
 			target: '.triplan-react-modal',
@@ -494,11 +506,59 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			customPositionOffsetPercent: undefined,
 			beforeAction: async () => {
 				// Close Google Places autocomplete dropdown if it's open
-				const searchInput = document.querySelector('[data-walkthrough="map-search"]') as HTMLInputElement;
-				if (searchInput) {
-					closeAutocompletePicker(searchInput);
-				}
+				// const searchInput = document.querySelector('[data-walkthrough="map-search"]') as HTMLInputElement;
+				// if (searchInput) {
+				// 	closeAutocompletePicker(searchInput);
+				// }
 			},
+		},
+		{
+			target: '.category-row',
+			content: (
+				<div>
+					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL.CATEGORY')}</h3>
+					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL.CATEGORY_DESC')}</p>
+				</div>
+			),
+			disableBeacon: false,
+			placement: 'top',
+			customZIndex: undefined,
+			fixSpotlightPosition: true,
+		},
+		{
+			target: '.priority-row',
+			content: (
+				<div>
+					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL.PRIORITY')}</h3>
+					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL.PRIORITY_DESC')}</p>
+				</div>
+			),
+			disableBeacon: false,
+			placement: 'top',
+			customZIndex: undefined,
+			fixSpotlightPosition: true,
+			afterAction: async () => {
+				// todo complete: for some reason remains UNSET:
+				// Randomly set priority value (MUST, HIGH, or MAYBE)
+				await setRandomPriority(eventStore);
+			},
+		},
+		{
+			target: '.preferred-time-row',
+			content: (
+				<div>
+					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL.PREFERRED_TIME')}</h3>
+					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL.PREFERRED_TIME_DESC')}</p>
+				</div>
+			),
+			disableBeacon: false,
+			placement: 'top',
+			customZIndex: undefined,
+			afterAction: async () => {
+				// Randomly set preferred time value (excluding unset)
+				await setRandomPreferredTime(eventStore);
+			},
+			fixSpotlightPosition: true,
 		},
 		{
 			target: '.show-hide-more',
@@ -510,6 +570,7 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			),
 			disableBeacon: false,
 			placement: 'top', //eventStore.isRtl ? 'left' : 'right',
+			fixSpotlightPosition: true,
 		},
 		{
 			target: '.primary-button',
@@ -520,14 +581,15 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 				</div>
 			),
 			placement: 'top',
-			beforeAction: async () => {
+			afterAction: async () => {
 				// Click submit activity button
-				const button = document.querySelector('[data-walkthrough="submit-activity"]') as HTMLElement;
+				const button = document.querySelector('.primary-button') as HTMLElement;
 				if (button) {
 					button.click();
 				}
 				await new Promise((resolve) => setTimeout(resolve, 500));
 			},
+			fixSpotlightPosition: true,
 		},
 		{
 			target: '[data-walkthrough="calendar-view-btn"]',

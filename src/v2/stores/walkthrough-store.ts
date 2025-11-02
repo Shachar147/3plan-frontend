@@ -4,6 +4,7 @@ import { action, computed, observable } from 'mobx';
 export class WalkthroughStore {
 	@observable hasCompletedWalkthrough = false;
 	@observable isRunning = false;
+	@observable onboardingRerenderKey = 0;
 
 	constructor() {
 		// Check if user has completed walkthrough before
@@ -25,6 +26,11 @@ export class WalkthroughStore {
 	@action
 	skipWalkthrough() {
 		this.isRunning = false;
+	}
+
+	@action
+	triggerOnboardingRerender() {
+		this.onboardingRerenderKey += 1;
 	}
 
 	@computed

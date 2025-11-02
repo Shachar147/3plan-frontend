@@ -137,12 +137,10 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 			walkthroughStore.completeWalkthrough();
 		}
 
-		let promise: Promise<void> | undefined; // = Promise.resolve(void 0);
-
 		if (type === 'step:before') {
 			const currentStep = steps[index];
 			if (currentStep && currentStep.beforeAction) {
-				promise = currentStep.beforeAction().then(() => {
+				currentStep.beforeAction().then(() => {
 					// Auto-advance if this step has autoAdvance enabled
 					if (currentStep && (currentStep as any).autoAdvance === true) {
 						setTimeout(() => {
@@ -156,7 +154,7 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 		if (type === 'step:after') {
 			const currentStep = steps[index];
 			if (currentStep && currentStep.afterAction) {
-				promise = currentStep.afterAction();
+				currentStep.afterAction();
 			}
 
 			if (action === 'prev') {
@@ -211,6 +209,79 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 				// This runs after z-index is applied to ensure positioning is correct
 				const tooltip = document.querySelector('.react-joyride__tooltip') as HTMLElement;
 				const spotlight = document.querySelector('.react-joyride__spotlight') as HTMLElement;
+
+				// Fix spotlight alignment with arrow by repositioning it based on target element
+				const fixSpotlightPosition = () => {
+					if (currentStep && currentStep.target && currentStep.target !== 'body') {
+						const targetElement = document.querySelector(currentStep.target as string) as HTMLElement;
+						const spotlightElement = document.querySelector('.react-joyride__spotlight') as HTMLElement;
+
+						if (targetElement && spotlightElement) {
+							// Get the target element's bounding box
+							const targetRect = targetElement.getBoundingClientRect();
+
+							// Joyride uses fixed positioning for spotlight, so we need to use viewport coordinates
+							// Apply padding/margin if needed (Joyride often adds padding around the spotlight)
+							const padding = 10;
+
+							// Set spotlight position to match target element (using fixed positioning like Joyride does)
+							spotlightElement.style.position = 'fixed';
+							spotlightElement.style.top = `${targetRect.top - padding}px`;
+							spotlightElement.style.left = `${targetRect.left - padding}px`;
+							spotlightElement.style.width = `${targetRect.width + padding * 2}px`;
+							spotlightElement.style.height = `${targetRect.height + padding * 2}px`;
+							spotlightElement.style.transform = 'none'; // Remove any transforms that might be applied
+
+							console.log('[Walkthrough] Repositioned spotlight to match target element:', {
+								top: targetRect.top - padding,
+								left: targetRect.left - padding,
+								width: targetRect.width + padding * 2,
+								height: targetRect.height + padding * 2,
+							});
+						}
+					}
+				};
+
+				// Fix spotlight position multiple times with delays to catch Joyride's positioning updates
+				if (currentStep && currentStep.target && currentStep.target !== 'body') {
+					if (currentStep.fixSpotlightPosition) {
+						fixSpotlightPosition();
+						setTimeout(fixSpotlightPosition, 200);
+						setTimeout(fixSpotlightPosition, 400);
+						setTimeout(fixSpotlightPosition, 600);
+
+						// Also use MutationObserver to watch for changes to the spotlight element
+						const spotlightObserver = new MutationObserver(() => {
+							fixSpotlightPosition();
+						});
+
+						const spotlightElement = document.querySelector('.react-joyride__spotlight') as HTMLElement;
+						if (spotlightElement) {
+							spotlightObserver.observe(spotlightElement, {
+								attributes: true,
+								attributeFilter: ['style', 'class'],
+								childList: false,
+								subtree: false,
+							});
+
+							// Also observe the target element in case it moves
+							const targetElement = document.querySelector(currentStep.target as string) as HTMLElement;
+							if (targetElement) {
+								spotlightObserver.observe(targetElement, {
+									attributes: true,
+									attributeFilter: ['style', 'class'],
+									childList: false,
+									subtree: false,
+								});
+							}
+
+							// Clean up observer after 5 seconds (step should have moved on by then)
+							setTimeout(() => {
+								spotlightObserver.disconnect();
+							}, 5000);
+						}
+					}
+				}
 
 				if (currentStep && (currentStep as any).customPositionOffset !== undefined && tooltip) {
 					const offset = (currentStep as any).customPositionOffset;
@@ -402,6 +473,7 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 
 	return (
 		<Joyride
+			key={walkthroughStore.onboardingRerenderKey}
 			steps={steps}
 			run={run}
 			stepIndex={stepIndex}
