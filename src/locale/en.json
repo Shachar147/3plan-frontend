@@ -1177,7 +1177,7 @@
 	"WALKTHROUGH.CATEGORY_SIDEBAR": "Your Activities",
 	"WALKTHROUGH.CATEGORY_SIDEBAR_DESC": "All your activities are organized by category here.",
 	"WALKTHROUGH.DRAG_TO_CALENDAR": "Schedule Activities",
-	"WALKTHROUGH.DRAG_TO_CALENDAR_DESC": "Drag activities from the sidebar to the calendar to schedule them.",
+	"WALKTHROUGH.DRAG_TO_CALENDAR_DESC": "You can either drag & drop activities from the sidebar to the calendar, or double-click a time slot to add an activity.",
 	"WALKTHROUGH.COMPLETE": "You're All Set!",
 	"WALKTHROUGH.COMPLETE_DESC": "Start planning your adventure! You can always click the help icon to restart this guide.",
 	"WALKTHROUGH.SKIP": "Close",

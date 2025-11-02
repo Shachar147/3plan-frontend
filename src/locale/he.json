@@ -1434,7 +1434,7 @@
 	"WALKTHROUGH.CATEGORY_SIDEBAR": "הפעילויות שלכם",
 	"WALKTHROUGH.CATEGORY_SIDEBAR_DESC": "כל הפעילויות שלכם מאורגנות לפי קטגוריה כאן.",
 	"WALKTHROUGH.DRAG_TO_CALENDAR": "תזמן פעילויות",
-	"WALKTHROUGH.DRAG_TO_CALENDAR_DESC": "גררו פעילויות מהסרגל הצדדי ללוח השנה כדי לתזמן אותן.",
+	"WALKTHROUGH.DRAG_TO_CALENDAR_DESC": "אפשר לגרור פעילויות מהסרגל הצדדי ללוח השנה כדי לתזמן אותן, או ללחוץ לחיצה כפולה על משבצת זמן כדי להוסיף פעילות.",
 	"WALKTHROUGH.COMPLETE": "הכל מוכן!",
 	"WALKTHROUGH.COMPLETE_DESC": "התחילו לתכנן את ההרפתקה שלכם! תמיד תוכלו ללחוץ על אייקון העזרה כדי להפעיל מחדש את המדריך הזה.",
 	"WALKTHROUGH.SKIP": "סגור",

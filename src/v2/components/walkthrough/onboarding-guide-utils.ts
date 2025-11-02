@@ -5,6 +5,7 @@ import { TripActions } from '../../../utils/interfaces';
 import { TriplanPriority, TriplanEventPreferredTime } from '../../../utils/enums';
 import { runInAction } from 'mobx';
 import { ucfirst } from '../../../utils/utils';
+import { addDays, addHours } from '../../../utils/time-utils';
 
 export const setLastAddedCategoryId = (categoryId: number | null) => {
 	localStorage.setItem('triplan-walkthrough-last-added-category-id', categoryId?.toString() || '');
@@ -720,5 +721,172 @@ export const setRandomPreferredTime = async (eventStore: EventStore): Promise<vo
 
 		// Wait a bit for the UI to update
 		await new Promise((resolve) => setTimeout(resolve, 150));
+	}
+};
+
+// Simulate double-clicking a random time slot on the calendar
+export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): Promise<void> => {
+	console.log('[Walkthrough] Starting simulateDoubleClickCalendarSlot');
+
+	// Randomly choose between 08:00, 09:00, or 10:00
+	const hours = [8, 9, 10];
+	const randomHour = hours[Math.floor(Math.random() * hours.length)];
+	console.log('[Walkthrough] Selected random hour:', randomHour);
+
+	// Wait for calendar to render
+	await new Promise((resolve) => setTimeout(resolve, 500));
+
+	// Try to get FullCalendar API from window
+	// @ts-ignore
+	const calendarApi = window.triplanCalendarApi;
+
+	if (!calendarApi) {
+		console.error('[Walkthrough] FullCalendar API not found on window.triplanCalendarApi');
+		console.log('[Walkthrough] Trying to find calendar element and access API...');
+
+		// Wait a bit more and try again
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		// @ts-ignore
+		if (window.triplanCalendarApi) {
+			// @ts-ignore
+			const api = window.triplanCalendarApi;
+			console.log('[Walkthrough] Found API on second try');
+			return await selectTimeSlot(api, randomHour, eventStore);
+		}
+
+		console.error('[Walkthrough] Calendar API still not available');
+		return;
+	}
+
+	console.log('[Walkthrough] Found FullCalendar API');
+	await selectTimeSlot(calendarApi, randomHour, eventStore);
+
+	// Wait for the first modal (choose where) to appear
+	await new Promise((resolve) => setTimeout(resolve, 1000));
+
+	// Click the first button to open "Add from existing" modal
+	const chooseWhereButton = document.querySelector(
+		'.add-calendar-event-modal-choose-where > button:first-child'
+	) as HTMLElement;
+	if (chooseWhereButton) {
+		console.log('[Walkthrough] Clicking "Add from existing" button');
+		chooseWhereButton.click();
+	} else {
+		console.error('[Walkthrough] Could not find "Add from existing" button');
+		return;
+	}
+
+	// Wait for the modal to open
+	await new Promise((resolve) => setTimeout(resolve, 800));
+
+	// Get all sidebar events and select the first one
+	const allSidebarEvents = eventStore.allSidebarEvents;
+	if (allSidebarEvents.length === 0) {
+		console.error('[Walkthrough] No sidebar events available to select');
+		return;
+	}
+
+	const firstEvent = allSidebarEvents[0];
+	console.log('[Walkthrough] Selecting first sidebar event:', firstEvent);
+
+	// Set the value in modalValues (same pattern as setRandomPriority)
+	const selectedOption = {
+		value: firstEvent.id,
+		label: firstEvent.title,
+	};
+
+	runInAction(() => {
+		eventStore.modalValues['sidebar-event-to-add-to-calendar'] = selectedOption;
+	});
+
+	console.log('[Walkthrough] Set modal value:', selectedOption);
+
+	// Wait a bit for the UI to update
+	await new Promise((resolve) => setTimeout(resolve, 300));
+
+	// add this activity to the calendar (eventStore)
+	eventStore.setCalendarEvents([
+		...eventStore.getJSCalendarEvents(),
+		{
+			...firstEvent,
+			start: new Date(new Date(eventStore.customDateRange.start).setHours(randomHour, 0, 0, 0)),
+			end: new Date(new Date(eventStore.customDateRange.start).setHours(randomHour + 1, 0, 0, 0)),
+			allDay: false,
+		},
+	]);
+
+	// close the modal
+	ReactModalService.internal.closeModal(eventStore);
+};
+
+// Helper function to select a time slot using FullCalendar API or direct callback
+const selectTimeSlot = async (calendarApi: any, randomHour: number, eventStore: EventStore): Promise<void> => {
+	if (!calendarApi.view) {
+		console.error('[Walkthrough] Calendar API view not available');
+		return;
+	}
+
+	const view = calendarApi.view;
+	const activeStart = new Date(view.activeStart);
+	console.log('[Walkthrough] Calendar view activeStart:', activeStart.toISOString());
+
+	// Get random day index
+	const timeGridBody = document.querySelector('.fc-timegrid-body');
+	if (!timeGridBody) {
+		console.error('[Walkthrough] Time grid body not found');
+		return;
+	}
+
+	const dayColumns = Array.from(timeGridBody.querySelectorAll('.fc-timegrid-col'));
+	const randomDayIndex = Math.floor(Math.random() * Math.min(dayColumns.length, 7));
+	console.log('[Walkthrough] Selected random day index:', randomDayIndex, 'out of', dayColumns.length);
+
+	// Calculate the date for the selected day using activeStart (which is the first visible day)
+	const startDate = addDays(new Date(activeStart), randomDayIndex);
+	startDate.setHours(randomHour, 0, 0, 0);
+
+	const endDate = addHours(new Date(startDate), 1);
+
+	console.log('[Walkthrough] Calculated selection dates:', {
+		startDate: startDate.toISOString(),
+		endDate: endDate.toISOString(),
+		randomHour,
+		randomDayIndex,
+	});
+
+	// Try calling FullCalendar's select API first
+	if (calendarApi.select) {
+		try {
+			console.log('[Walkthrough] Attempting FullCalendar API select');
+			calendarApi.select(startDate, endDate);
+			await new Promise((resolve) => setTimeout(resolve, 400));
+			console.log('[Walkthrough] FullCalendar select API call completed');
+			return;
+		} catch (e) {
+			console.error('[Walkthrough] Error calling FullCalendar select:', e);
+		}
+	} else {
+		console.warn('[Walkthrough] Calendar API select method not available, trying direct callback');
+	}
+
+	// Fallback: Call onCalendarSelect directly if available
+	// @ts-ignore
+	const onCalendarSelect = window.onCalendarSelect;
+	if (onCalendarSelect && typeof onCalendarSelect === 'function') {
+		console.log('[Walkthrough] Calling onCalendarSelect directly');
+		const selectionInfo = {
+			start: startDate,
+			end: endDate,
+			allDay: false,
+		};
+		try {
+			onCalendarSelect(selectionInfo);
+			console.log('[Walkthrough] onCalendarSelect called successfully');
+			await new Promise((resolve) => setTimeout(resolve, 400));
+		} catch (e) {
+			console.error('[Walkthrough] Error calling onCalendarSelect:', e);
+		}
+	} else {
+		console.error('[Walkthrough] onCalendarSelect not available on window');
 	}
 };

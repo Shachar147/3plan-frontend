@@ -14,6 +14,7 @@ import {
 	setLastAddedCategoryId,
 	LOCATION_POIS,
 	getLastAddedCategoryId,
+	simulateDoubleClickCalendarSlot,
 } from './onboarding-guide-utils';
 import { ViewMode } from '../../../utils/enums';
 import { WalkthroughStore } from '../../stores/walkthrough-store';
@@ -576,7 +577,7 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			fixSpotlightPosition: true,
 		},
 		{
-			target: '.primary-button',
+			target: '.triplan-react-modal .primary-button',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.SUBMIT_ACTIVITY')}</h3>
@@ -595,7 +596,7 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 				}
 
 				// Click submit activity button
-				const button = document.querySelector('.primary-button') as HTMLElement;
+				const button = document.querySelector('.triplan-react-modal .primary-button') as HTMLElement;
 				if (button) {
 					button.click();
 				}
@@ -608,11 +609,18 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 					sidebarCategory.click();
 				}
 
-				setTimeout(() => $('.swal2-confirm').click(), 1000);
-				setTimeout(() => $('.swal2-confirm').click(), 1500);
-				setTimeout(() => $('.swal2-confirm').click(), 2000);
-				setTimeout(() => $('.swal2-confirm').click(), 3000);
-				setTimeout(() => $('.swal2-confirm').click(), 4000);
+				// Click SweetAlert confirm buttons when they appear
+				const clickSwalConfirm = () => {
+					const confirmButton = document.querySelector('.swal2-confirm') as HTMLElement;
+					if (confirmButton) {
+						confirmButton.click();
+					}
+				};
+				setTimeout(clickSwalConfirm, 1000);
+				setTimeout(clickSwalConfirm, 1500);
+				setTimeout(clickSwalConfirm, 2000);
+				setTimeout(clickSwalConfirm, 3000);
+				setTimeout(clickSwalConfirm, 4000);
 
 				eventStore.setViewMode(ViewMode.calendar);
 			},
@@ -646,24 +654,32 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			// },
 		},
 		{
-			target: '[data-walkthrough="drag-to-calendar"]',
+			target: '.fc-view-harness',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.DRAG_TO_CALENDAR')}</h3>
 					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.DRAG_TO_CALENDAR_DESC')}</p>
 				</div>
 			),
-			placement: 'bottom',
+			placement: eventStore.isRtl ? 'right' : 'left',
+			fixSpotlightPosition: true,
+			customZIndex: 5399,
+			beforeAction: async () => {
+				// Simulate double-clicking a random day at 08:00, 09:00, or 10:00
+				return await simulateDoubleClickCalendarSlot(eventStore);
+			},
+			autoAdvance: true,
 		},
 		{
-			target: '.triplan-header-banner',
+			target: 'body',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.COMPLETE')}</h3>
 					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.COMPLETE_DESC')}</p>
 				</div>
 			),
-			placement: 'bottom',
+			placement: 'center',
+			disableBeacon: true,
 		},
 	].filter(Boolean) as CustomStep[];
 };
