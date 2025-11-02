@@ -24,6 +24,7 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 
 	const [run, setRun] = useState(false);
 	const [stepIndex, setStepIndex] = useState(0);
+	const [isDelayed, setIsDelayed] = useState(false);
 
 	// Determine mode from route if not provided as prop
 	const [detectedMode, setDetectedMode] = useState<GuideMode>(() => {
@@ -139,13 +140,29 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 
 		if (type === 'step:before') {
 			const currentStep = steps[index];
+			const nextStep = steps[index + 1];
 			if (currentStep && currentStep.beforeAction) {
 				currentStep.beforeAction().then(() => {
 					// Auto-advance if this step has autoAdvance enabled
 					if (currentStep && (currentStep as any).autoAdvance === true) {
-						setTimeout(() => {
+						// Check if the NEXT step has a delay property
+						const delay = (nextStep as CustomStep)?.delay ?? 0;
+						if (delay > 0) {
+							// Immediately advance to next step (hides current step)
 							setStepIndex(index + 1);
-						}, 300); // Small delay to ensure UI is updated
+							// But pause the walkthrough during the delay
+							setIsDelayed(true);
+							setRun(false);
+							// Resume after delay
+							setTimeout(() => {
+								setIsDelayed(false);
+								setRun(true);
+							}, 300 + delay); // 300ms base delay + custom delay
+						} else {
+							setTimeout(() => {
+								setStepIndex(index + 1);
+							}, 300);
+						}
 					}
 				});
 			}
@@ -153,14 +170,32 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 
 		if (type === 'step:after') {
 			const currentStep = steps[index];
+			const nextStep = steps[index + 1];
 			if (currentStep && currentStep.afterAction) {
 				currentStep.afterAction();
 			}
 
 			if (action === 'prev') {
 				setStepIndex(index - 1);
+				setIsDelayed(false);
 			} else if (action === 'next') {
-				setStepIndex(index + 1);
+				// Check if the NEXT step has a delay property
+				const delay = (nextStep as CustomStep)?.delay ?? 0;
+				if (delay > 0) {
+					// Immediately advance to next step (hides current step)
+					setStepIndex(index + 1);
+					// But pause the walkthrough during the delay
+					setIsDelayed(true);
+					setRun(false);
+					// Resume after delay
+					setTimeout(() => {
+						setIsDelayed(false);
+						setRun(true);
+					}, delay);
+				} else {
+					setStepIndex(index + 1);
+					setIsDelayed(false);
+				}
 			}
 		}
 

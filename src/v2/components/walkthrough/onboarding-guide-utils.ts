@@ -6,6 +6,16 @@ import { TriplanPriority, TriplanEventPreferredTime } from '../../../utils/enums
 import { runInAction } from 'mobx';
 import { ucfirst } from '../../../utils/utils';
 
+export const setLastAddedCategoryId = (categoryId: number | null) => {
+	localStorage.setItem('triplan-walkthrough-last-added-category-id', categoryId?.toString() || '');
+};
+
+export const getLastAddedCategoryId = (): number | null => {
+	return localStorage.getItem('triplan-walkthrough-last-added-category-id')
+		? parseInt(localStorage.getItem('triplan-walkthrough-last-added-category-id') || '0')
+		: null;
+};
+
 export enum Location {
 	London = 'London',
 	Paris = 'Paris',

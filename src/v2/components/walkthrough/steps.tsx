@@ -9,10 +9,11 @@ import {
 	simulateTyping,
 	triggerReactOnChange,
 	simulateSearchOnMap,
-	closeAutocompletePicker,
 	setRandomPriority,
 	setRandomPreferredTime,
+	setLastAddedCategoryId,
 	LOCATION_POIS,
+	getLastAddedCategoryId,
 } from './onboarding-guide-utils';
 import { ViewMode } from '../../../utils/enums';
 import { WalkthroughStore } from '../../stores/walkthrough-store';
@@ -33,6 +34,7 @@ export interface CustomStep extends Step {
 	autoAdvance?: boolean; // If true, Next button is disabled and step auto-advances after beforeAction completes
 	customZIndex?: number; // Custom z-index for this step (overrides default)
 	fixSpotlightPosition?: boolean; // If true, the spotlight position will be fixed
+	delay?: number; // Delay in milliseconds before showing the step
 }
 
 const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
@@ -442,9 +444,10 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			),
 			placement: 'bottom',
 			afterAction: async () => {
-				setTimeout(() => {
-					eventStore.setViewMode(ViewMode.map);
-				}, 1500);
+				eventStore.setViewMode(ViewMode.map);
+				// setTimeout(() => {
+				// 	eventStore.setViewMode(ViewMode.map);
+				// }, 1500);
 			},
 		},
 		{
@@ -582,17 +585,53 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			),
 			placement: 'top',
 			afterAction: async () => {
+				// Capture the category ID before clicking submit (modalValues gets cleared after)
+				const categoryOption = eventStore.modalValues['category'] as
+					| { value: number; label: string }
+					| undefined;
+				const categoryId = categoryOption?.value;
+				if (categoryId) {
+					setLastAddedCategoryId(categoryId);
+				}
+
 				// Click submit activity button
 				const button = document.querySelector('.primary-button') as HTMLElement;
 				if (button) {
 					button.click();
 				}
-				await new Promise((resolve) => setTimeout(resolve, 500));
+				// await new Promise((resolve) => setTimeout(resolve, 500));
+
+				const sidebarCategory = document.querySelector(
+					`[data-walkthrough="category-sidebar-${getLastAddedCategoryId()}"]`
+				) as HTMLElement;
+				if (sidebarCategory) {
+					sidebarCategory.click();
+				}
+
+				setTimeout(() => $('.swal2-confirm').click(), 1000);
+				setTimeout(() => $('.swal2-confirm').click(), 1500);
+				setTimeout(() => $('.swal2-confirm').click(), 2000);
+				setTimeout(() => $('.swal2-confirm').click(), 3000);
+				setTimeout(() => $('.swal2-confirm').click(), 4000);
+
+				eventStore.setViewMode(ViewMode.calendar);
 			},
+			disableBeacon: true,
 			fixSpotlightPosition: true,
 		},
 		{
-			target: '[data-walkthrough="calendar-view-btn"]',
+			target: `.external-events:has([data-walkthrough="category-sidebar-${getLastAddedCategoryId()}"])`, // Will be set dynamically in beforeAction
+			content: (
+				<div>
+					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.CATEGORY_SIDEBAR')}</h3>
+					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.CATEGORY_SIDEBAR_DESC')}</p>
+				</div>
+			),
+			placement: eventStore.isRtl ? 'left' : 'right',
+			delay: 2500,
+		},
+		{
+			target: '[data-walkthrough="tab-calendar"]',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.CALENDAR_VIEW')}</h3>
@@ -600,24 +639,11 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 				</div>
 			),
 			placement: 'bottom',
-			beforeAction: async () => {
-				// Switch to calendar view
-				const button = document.querySelector('[data-walkthrough="calendar-view-btn"]') as HTMLElement;
-				if (button) {
-					button.click();
-				}
-				await new Promise((resolve) => setTimeout(resolve, 800));
-			},
-		},
-		{
-			target: '[data-walkthrough="category-sidebar"]',
-			content: (
-				<div>
-					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.CATEGORY_SIDEBAR')}</h3>
-					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.CATEGORY_SIDEBAR_DESC')}</p>
-				</div>
-			),
-			placement: 'right',
+			// afterAction: async () => {
+			// 	setTimeout(() => {
+			// 		eventStore.setViewMode(ViewMode.calendar);
+			// 	}, 1500);
+			// },
 		},
 		{
 			target: '[data-walkthrough="drag-to-calendar"]',

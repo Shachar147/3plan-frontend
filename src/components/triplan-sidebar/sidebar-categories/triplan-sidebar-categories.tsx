@@ -704,7 +704,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 									borderTop: index === 0 ? borderStyle : '0',
 								}}
 								onClick={() => eventStore.toggleCategory(triplanCategory.id)}
-								data-walkthrough="category-sidebar"
+								data-walkthrough={`category-sidebar-${triplanCategory.id}`}
 							>
 								<i
 									className={
