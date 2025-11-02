@@ -8,6 +8,9 @@ import { walkthroughStoreContext } from '../../stores/walkthrough-store';
 import TranslateService from '../../../services/translate-service';
 import { getOnboardingGuideSteps, GuideMode } from './steps';
 import './onboarding-guide.scss';
+import { CustomStep } from './steps';
+
+const DEFAULT_ONBOARDING_Z_INDEX = 100000; // Default z-index for onboarding tooltips
 
 interface OnboardingGuideProps {
 	mode?: GuideMode;
@@ -98,8 +101,16 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 
 	// Get walkthrough steps based on mode
 	const steps = useMemo(
-		() => getOnboardingGuideSteps(eventStore, rootStore, guideMode),
-		[eventStore, rootStore, eventStore.isMobile, guideMode, eventStore.viewMode, eventStore.mobileViewMode]
+		() => getOnboardingGuideSteps(eventStore, rootStore, walkthroughStore, guideMode),
+		[
+			eventStore,
+			rootStore,
+			walkthroughStore,
+			eventStore.isMobile,
+			guideMode,
+			eventStore.viewMode,
+			eventStore.mobileViewMode,
+		]
 	);
 
 	// Auto-start walkthrough for new users (only in FULL mode)
@@ -131,7 +142,14 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 		if (type === 'step:before') {
 			const currentStep = steps[index];
 			if (currentStep && currentStep.beforeAction) {
-				promise = currentStep.beforeAction();
+				promise = currentStep.beforeAction().then(() => {
+					// Auto-advance if this step has autoAdvance enabled
+					if (currentStep && (currentStep as any).autoAdvance === true) {
+						setTimeout(() => {
+							setStepIndex(index + 1);
+						}, 300); // Small delay to ensure UI is updated
+					}
+				});
 			}
 		}
 
@@ -150,62 +168,104 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 
 		// After tooltip is shown, scroll to target element with offset
 		if (type === 'tooltip') {
-			const currentStep = steps[index];
+			const currentStep = steps[index] as CustomStep;
+
+			// Apply custom z-index if specified for this step (after positioning is done)
+			if (currentStep && currentStep.customZIndex !== undefined) {
+				setTimeout(() => {
+					const zIndex = currentStep.customZIndex!;
+					const tooltip = document.querySelector('.react-joyride__tooltip') as HTMLElement;
+					const tooltipContainer = document.querySelector('.react-joyride__tooltipContainer') as HTMLElement;
+					const overlay = document.querySelector('.react-joyride__overlay') as HTMLElement;
+					const spotlight = document.querySelector('.react-joyride__spotlight') as HTMLElement;
+
+					if (tooltip) {
+						// Apply z-index - this shouldn't affect transform/position
+						tooltip.style.zIndex = `${zIndex}`;
+					}
+					if (tooltipContainer) tooltipContainer.style.zIndex = `${zIndex}`;
+					if (overlay) overlay.style.zIndex = `${zIndex - 1}`;
+					if (spotlight) spotlight.style.zIndex = `${zIndex - 2}`;
+
+					console.log('[Walkthrough] Applied custom z-index:', zIndex, 'for step', index);
+				}, 150); // Delay to ensure Joyride has finished initial positioning
+			}
+
+			// Disable Next button if step has autoAdvance enabled
+			if (currentStep && currentStep.autoAdvance === true) {
+				setTimeout(() => {
+					const nextButton = document.querySelector(
+						'.react-joyride__tooltip button[data-action="primary"]'
+					) as HTMLButtonElement;
+					if (nextButton) {
+						nextButton.disabled = true;
+						nextButton.style.opacity = '0.5';
+						nextButton.style.cursor = 'not-allowed';
+						console.log('[Walkthrough] Disabled Next button for auto-advance step');
+					}
+				}, 150);
+			}
 
 			setTimeout(() => {
 				// Handle custom position offset (for tooltips that need horizontal offset)
-				if (currentStep && (currentStep as any).customPositionOffset !== undefined) {
+				// This runs after z-index is applied to ensure positioning is correct
+				const tooltip = document.querySelector('.react-joyride__tooltip') as HTMLElement;
+				const spotlight = document.querySelector('.react-joyride__spotlight') as HTMLElement;
+
+				if (currentStep && (currentStep as any).customPositionOffset !== undefined && tooltip) {
 					const offset = (currentStep as any).customPositionOffset;
 					const isPercent = (currentStep as any).customPositionOffsetPercent === true;
-					const tooltip = document.querySelector('.react-joyride__tooltip') as HTMLElement;
-					if (tooltip) {
-						let offsetValue: string;
+					let offsetValue: string;
 
-						if (isPercent) {
-							// Calculate offset as percentage of screen width
-							// offset is already a percentage (e.g., -33.33 or +33.33)
-							const screenWidth = window.innerWidth;
-							const offsetPixels = (screenWidth * offset) / 100;
-							offsetValue = `${offsetPixels}px`;
-							console.log(
-								'[Walkthrough] Applied percentage offset:',
-								offset,
-								'% of',
-								screenWidth,
-								'px =',
-								offsetPixels,
-								'px'
-							);
-						} else {
-							// Use pixels directly
-							offsetValue = `${offset}px`;
-						}
-
-						// Add transition for smooth animation
-						tooltip.style.transition = 'transform 0.4s ease-out';
-
-						// Apply horizontal offset using transform for better positioning
-						const currentTransform = tooltip.style.transform || '';
-						const transformMatch = currentTransform.match(/translateX\(([^)]+)\)/);
-
-						// Replace existing translateX or add new one
-						const newTransform = transformMatch
-							? currentTransform.replace(/translateX\([^)]+\)/, `translateX(${offsetValue})`)
-							: currentTransform.trim()
-							? `${currentTransform} translateX(${offsetValue})`
-							: `translateX(${offsetValue})`;
-
-						// Use requestAnimationFrame to ensure smooth animation start
-						requestAnimationFrame(() => {
-							tooltip.style.transform = newTransform;
-							console.log(
-								'[Walkthrough] Applied custom position offset:',
-								offsetValue,
-								'Total transform:',
-								newTransform
-							);
-						});
+					if (isPercent) {
+						// Calculate offset as percentage of screen width
+						// offset is already a percentage (e.g., -33.33 or +33.33)
+						const screenWidth = window.innerWidth;
+						const offsetPixels = (screenWidth * offset) / 100;
+						offsetValue = `${offsetPixels}px`;
+						console.log(
+							'[Walkthrough] Applied percentage offset:',
+							offset,
+							'% of',
+							screenWidth,
+							'px =',
+							offsetPixels,
+							'px'
+						);
+					} else {
+						// Use pixels directly
+						offsetValue = `${offset}px`;
 					}
+
+					// Add transition for smooth animation
+					tooltip.style.transition = 'transform 0.4s ease-out';
+
+					// Get current transform (may already have translateX/Y from Joyride or z-index step)
+					const currentTransform = tooltip.style.transform || '';
+					const translateXMatch = currentTransform.match(/translateX\(([^)]+)\)/);
+					const translateYMatch = currentTransform.match(/translateY\(([^)]+)\)/);
+
+					// Build transform with translateX and preserve translateY if it exists
+					let transforms: string[] = [];
+					transforms.push(`translateX(${offsetValue})`);
+
+					// Preserve translateY if it exists
+					if (translateYMatch) {
+						transforms.push(`translateY(${translateYMatch[1]})`);
+					}
+
+					const newTransform = transforms.join(' ');
+
+					// Use requestAnimationFrame to ensure smooth animation start
+					requestAnimationFrame(() => {
+						tooltip.style.transform = newTransform;
+						console.log(
+							'[Walkthrough] Applied custom position offset:',
+							offsetValue,
+							'Total transform:',
+							newTransform
+						);
+					});
 				}
 
 				if (currentStep && currentStep.target && currentStep.target !== 'body') {
@@ -336,6 +396,10 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 		skip: skipText,
 	};
 
+	// Get current step's z-index (use custom if specified, otherwise use default)
+	const currentStep = steps[stepIndex] as CustomStep | undefined;
+	const currentZIndex = currentStep?.customZIndex ?? DEFAULT_ONBOARDING_Z_INDEX;
+
 	return (
 		<Joyride
 			steps={steps}
@@ -354,19 +418,19 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 					overlayColor: 'rgba(0, 0, 0, 0.5)',
 					arrowColor: '#fff',
 					width: 400,
-					zIndex: 100000,
+					zIndex: currentZIndex,
 				},
 				tooltip: {
-					zIndex: 100000,
+					zIndex: currentZIndex,
 				},
 				tooltipContainer: {
-					zIndex: 100000,
+					zIndex: currentZIndex,
 				},
 				overlay: {
-					zIndex: 99999,
+					zIndex: currentZIndex - 1,
 				},
 				spotlight: {
-					zIndex: 99998,
+					zIndex: currentZIndex - 2,
 				},
 			}}
 			locale={joyrideLocale}

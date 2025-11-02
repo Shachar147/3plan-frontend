@@ -9,9 +9,10 @@ import {
 	simulateTyping,
 	triggerReactOnChange,
 	simulateSearchOnMap,
-	clickSearchMarkerOnMap,
+	closeAutocompletePicker,
 } from './onboarding-guide-utils';
 import { ViewMode } from '../../../utils/enums';
+import { WalkthroughStore } from '../../stores/walkthrough-store';
 
 export enum GuideMode {
 	MAIN_PAGE = 'main_page',
@@ -26,6 +27,8 @@ export interface CustomStep extends Step {
 	container?: string;
 	customPositionOffset?: number; // Horizontal offset in pixels (negative = left, positive = right)
 	customPositionOffsetPercent?: boolean; // If true, offset is a percentage of screen width
+	autoAdvance?: boolean; // If true, Next button is disabled and step auto-advances after beforeAction completes
+	customZIndex?: number; // Custom z-index for this step (overrides default)
 }
 
 const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
@@ -362,14 +365,14 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 	];
 };
 
-const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
+const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): CustomStep[] => {
 	// todo complete:
-	// 3. explain about map view and how to add activities from there.
 	// 4. explain about calendar view and how to schedule.
 	// 5. explain about the importance of priority (and the colors), and categories (and the icons).
 	// 6. note that if you scheduled something you can write 'הוזמן' at the description to mark it as booked.
 	// 7. explain about itinerary view.
 	// 8. explain about list view.
+	// 9. congratulations! you are now experts on planning trips!
 	return [
 		{
 			// target: `[data-tab-id=${eventStore.viewMode}]`,
@@ -466,27 +469,50 @@ const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] =
 			// Middle of right 1/3 = 83.33%, offset from center = +33.33%
 			customPositionOffset: eventStore.isRtl ? -33.33 : 33.33, // RTL: right, LTR: left
 			customPositionOffsetPercent: true,
+			autoAdvance: true, // Auto-advance to next step after beforeAction completes
 			beforeAction: async () => {
 				const searchInput = document.querySelector('[data-walkthrough="map-search"]') as HTMLInputElement;
 				if (searchInput) {
-					await simulateSearchOnMap(searchInput, 'Big Ben London', eventStore);
+					return await simulateSearchOnMap(searchInput, 'Big Ben London', eventStore);
 				} else {
 					console.error('Search input not found, stopping walkthrough');
 				}
 			},
 		},
 		{
-			target: '.add-activity-modal',
+			target: '.triplan-react-modal',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL')}</h3>
 					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL_DESC')}</p>
 				</div>
 			),
-			placement: 'center',
+			disableBeacon: false,
+			placement: eventStore.isRtl ? 'left' : 'right',
+			customZIndex: 5399, // Use lower z-index so tooltip appears below modal
+			customPositionOffset: undefined,
+			customPositionOffsetPercent: undefined,
+			beforeAction: async () => {
+				// Close Google Places autocomplete dropdown if it's open
+				const searchInput = document.querySelector('[data-walkthrough="map-search"]') as HTMLInputElement;
+				if (searchInput) {
+					closeAutocompletePicker(searchInput);
+				}
+			},
 		},
 		{
-			target: '[data-walkthrough="submit-activity"]',
+			target: '.show-hide-more',
+			content: (
+				<div>
+					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL.SHOW_MORE')}</h3>
+					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.ACTIVITY_MODAL.SHOW_MORE_DESC')}</p>
+				</div>
+			),
+			disableBeacon: false,
+			placement: 'top', //eventStore.isRtl ? 'left' : 'right',
+		},
+		{
+			target: '.primary-button',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.SUBMIT_ACTIVITY')}</h3>
@@ -557,10 +583,11 @@ const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] =
 export const getOnboardingGuideSteps = (
 	eventStore: EventStore,
 	rootStore: RootStore,
+	walkthroughStore: WalkthroughStore,
 	mode: GuideMode = GuideMode.MAIN_PAGE
 ): CustomStep[] => {
 	if (mode === GuideMode.PLAN) {
-		return planSteps(eventStore, rootStore);
+		return planSteps(eventStore, walkthroughStore);
 	}
 	// GuideMode.MAIN_PAGE
 	return mainPageSteps(eventStore, rootStore);

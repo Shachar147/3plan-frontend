@@ -5,19 +5,19 @@ import { TripActions } from '../../../utils/interfaces';
 
 const RANDOM_LOCATIONS = [
 	'London',
-	'Paris',
-	'Germany',
-	'New York',
-	'Tokyo',
-	'Barcelona',
-	'Rome',
-	'Amsterdam',
-	'Dubai',
-	'Thailand',
-	'Spain',
-	'Italy',
-	'Greece',
-	'Japan',
+	// 'Paris',
+	// 'Germany',
+	// 'New York',
+	// 'Tokyo',
+	// 'Barcelona',
+	// 'Rome',
+	// 'Amsterdam',
+	// 'Dubai',
+	// 'Thailand',
+	// 'Spain',
+	// 'Italy',
+	// 'Greece',
+	// 'Japan',
 ];
 
 // Generate random trip name with location
@@ -341,6 +341,7 @@ export const simulateGooglePlacesSelection = async (
 										undefined,
 										TripActions.addedNewSidebarEventFromMap
 									);
+
 									console.log('[Walkthrough] Opened add activity modal');
 								}
 
@@ -427,6 +428,42 @@ export const simulateSearchOnMap = async (
 	await simulateGooglePlacesSelection(searchInput, searchQuery, 'selectedSearchLocation', eventStore);
 
 	console.log('[Walkthrough] Map search simulation completed');
+};
+
+// Close Google Places autocomplete picker/dropdown
+export const closeAutocompletePicker = (searchInput: HTMLInputElement): void => {
+	console.log('[Walkthrough] Closing autocomplete picker');
+
+	// Method 1: Blur the input (most reliable)
+	searchInput.blur();
+
+	// Method 2: Trigger Escape key to close dropdown
+	const escapeEvent = new KeyboardEvent('keydown', {
+		bubbles: true,
+		cancelable: true,
+		key: 'Escape',
+		code: 'Escape',
+		keyCode: 27,
+	});
+	searchInput.dispatchEvent(escapeEvent);
+
+	// Method 3: Hide the pac-container directly (Google's autocomplete container)
+	// Wait a bit for the DOM to update, then hide any visible pac-containers
+	setTimeout(() => {
+		const pacContainers = document.querySelectorAll('.pac-container');
+		pacContainers.forEach((container) => {
+			const element = container as HTMLElement;
+			element.style.display = 'none';
+			element.style.visibility = 'hidden';
+		});
+
+		// Also try hiding by removing from DOM temporarily
+		const pacContainer = document.querySelector('.pac-container') as HTMLElement;
+		if (pacContainer) {
+			pacContainer.style.display = 'none';
+			console.log('[Walkthrough] Hidden pac-container');
+		}
+	}, 50);
 };
 
 // Click on the green search marker on the map to open the activity modal
