@@ -4,7 +4,13 @@ import TranslateService from '../../../services/translate-service';
 import { exploreTabId, myTripsTabId, savedCollectionsTabId } from '../../utils/consts';
 import { EventStore } from '../../../stores/events-store';
 import { RootStore } from '../../stores/root-store';
-import { generateRandomTripName, simulateTyping, triggerReactOnChange } from './onboarding-guide-utils';
+import {
+	generateRandomTripName,
+	simulateTyping,
+	triggerReactOnChange,
+	simulateSearchOnMap,
+	clickSearchMarkerOnMap,
+} from './onboarding-guide-utils';
 import { ViewMode } from '../../../utils/enums';
 
 export enum GuideMode {
@@ -13,11 +19,13 @@ export enum GuideMode {
 }
 
 export interface CustomStep extends Step {
-	beforeAction?: () => Promise<void> | void;
-	duringAction?: () => Promise<void> | void;
-	afterAction?: () => Promise<void> | void;
+	beforeAction?: () => Promise<void>;
+	duringAction?: () => Promise<void>;
+	afterAction?: () => Promise<void>;
 	scrollToCenter?: boolean;
 	container?: string;
+	customPositionOffset?: number; // Horizontal offset in pixels (negative = left, positive = right)
+	customPositionOffsetPercent?: boolean; // If true, offset is a percentage of screen width
 }
 
 const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
@@ -356,8 +364,6 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 
 const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
 	// todo complete:
-	// 1. first, explain about current tab, and how to switch to it.
-	// 2. then, explain about the sidebar categories, add category, add event
 	// 3. explain about map view and how to add activities from there.
 	// 4. explain about calendar view and how to schedule.
 	// 5. explain about the importance of priority (and the colors), and categories (and the icons).
@@ -379,7 +385,7 @@ const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] =
 		},
 		(eventStore.viewMode === ViewMode.feed ||
 			(eventStore.isMobile && eventStore.mobileViewMode === ViewMode.feed)) && {
-			target: '[data-tab-id="feed"]',
+			target: '[data-walkthrough="tab-feed"]',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.FEED_VIEW')}</h3>
@@ -419,9 +425,8 @@ const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] =
 			),
 			placement: 'right',
 		},
-		// todo complete, fix these:
 		{
-			target: '[data-walkthrough="map-view-btn"]',
+			target: '[data-walkthrough="tab-map"]',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.MAP_VIEW')}</h3>
@@ -429,13 +434,10 @@ const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] =
 				</div>
 			),
 			placement: 'bottom',
-			beforeAction: async () => {
-				// Switch to map view
-				const button = document.querySelector('[data-walkthrough="map-view-btn"]') as HTMLElement;
-				if (button) {
-					button.click();
-				}
-				await new Promise((resolve) => setTimeout(resolve, 800));
+			afterAction: async () => {
+				setTimeout(() => {
+					eventStore.setViewMode(ViewMode.map);
+				}, 1500);
 			},
 		},
 		{
@@ -449,28 +451,27 @@ const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] =
 			placement: 'bottom',
 		},
 		{
-			target: '[data-walkthrough="map-search"]',
+			target: 'body',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.MAP_DEMO')}</h3>
 					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.MAP_DEMO_DESC')}</p>
 				</div>
 			),
-			placement: 'bottom',
+			placement: 'center',
+			disableBeacon: true,
+			// Position at middle of left/right 1/3 based on RTL
+			// Modal takes center 1/3 (33.33% to 66.66%)
+			// Middle of left 1/3 = 16.67%, offset from center = -33.33%
+			// Middle of right 1/3 = 83.33%, offset from center = +33.33%
+			customPositionOffset: eventStore.isRtl ? -33.33 : 33.33, // RTL: right, LTR: left
+			customPositionOffsetPercent: true,
 			beforeAction: async () => {
-				// Type "Big Ben London" in search
 				const searchInput = document.querySelector('[data-walkthrough="map-search"]') as HTMLInputElement;
 				if (searchInput) {
-					searchInput.value = 'Big Ben London';
-					searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-					searchInput.dispatchEvent(new Event('change', { bubbles: true }));
-				}
-				// Wait for results to appear
-				await new Promise((resolve) => setTimeout(resolve, 2000));
-				// Click on marker
-				const marker = document.querySelector('.map-marker') as HTMLElement;
-				if (marker) {
-					marker.click();
+					await simulateSearchOnMap(searchInput, 'Big Ben London', eventStore);
+				} else {
+					console.error('Search input not found, stopping walkthrough');
 				}
 			},
 		},
@@ -550,7 +551,7 @@ const planSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] =
 			),
 			placement: 'bottom',
 		},
-	].filter(Boolean);
+	].filter(Boolean) as CustomStep[];
 };
 
 export const getOnboardingGuideSteps = (

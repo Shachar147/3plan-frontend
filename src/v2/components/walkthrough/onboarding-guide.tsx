@@ -88,7 +88,7 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 		const offsetPosition = elementPosition + (container.pageYOffset ?? 0) + offset;
 
 		// console.log("hereee", elementPosition, container.pageYOffset, offsetPosition, offset);
-		console.log('hereee', elementPosition, offsetPosition);
+		// console.log('hereee', elementPosition, offsetPosition);
 
 		container.scrollTo({
 			top: offsetPosition,
@@ -126,19 +126,19 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 			walkthroughStore.completeWalkthrough();
 		}
 
-		console.log('heree', data);
+		let promise: Promise<void> | undefined; // = Promise.resolve(void 0);
 
 		if (type === 'step:before') {
 			const currentStep = steps[index];
 			if (currentStep && currentStep.beforeAction) {
-				currentStep.beforeAction();
+				promise = currentStep.beforeAction();
 			}
 		}
 
 		if (type === 'step:after') {
 			const currentStep = steps[index];
 			if (currentStep && currentStep.afterAction) {
-				currentStep.afterAction();
+				promise = currentStep.afterAction();
 			}
 
 			if (action === 'prev') {
@@ -153,18 +153,77 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 			const currentStep = steps[index];
 
 			setTimeout(() => {
-				if (currentStep && currentStep.target) {
+				// Handle custom position offset (for tooltips that need horizontal offset)
+				if (currentStep && (currentStep as any).customPositionOffset !== undefined) {
+					const offset = (currentStep as any).customPositionOffset;
+					const isPercent = (currentStep as any).customPositionOffsetPercent === true;
+					const tooltip = document.querySelector('.react-joyride__tooltip') as HTMLElement;
+					if (tooltip) {
+						let offsetValue: string;
+
+						if (isPercent) {
+							// Calculate offset as percentage of screen width
+							// offset is already a percentage (e.g., -33.33 or +33.33)
+							const screenWidth = window.innerWidth;
+							const offsetPixels = (screenWidth * offset) / 100;
+							offsetValue = `${offsetPixels}px`;
+							console.log(
+								'[Walkthrough] Applied percentage offset:',
+								offset,
+								'% of',
+								screenWidth,
+								'px =',
+								offsetPixels,
+								'px'
+							);
+						} else {
+							// Use pixels directly
+							offsetValue = `${offset}px`;
+						}
+
+						// Add transition for smooth animation
+						tooltip.style.transition = 'transform 0.4s ease-out';
+
+						// Apply horizontal offset using transform for better positioning
+						const currentTransform = tooltip.style.transform || '';
+						const transformMatch = currentTransform.match(/translateX\(([^)]+)\)/);
+
+						// Replace existing translateX or add new one
+						const newTransform = transformMatch
+							? currentTransform.replace(/translateX\([^)]+\)/, `translateX(${offsetValue})`)
+							: currentTransform.trim()
+							? `${currentTransform} translateX(${offsetValue})`
+							: `translateX(${offsetValue})`;
+
+						// Use requestAnimationFrame to ensure smooth animation start
+						requestAnimationFrame(() => {
+							tooltip.style.transform = newTransform;
+							console.log(
+								'[Walkthrough] Applied custom position offset:',
+								offsetValue,
+								'Total transform:',
+								newTransform
+							);
+						});
+					}
+				}
+
+				if (currentStep && currentStep.target && currentStep.target !== 'body') {
 					const targetElement = document.querySelector(currentStep.target as string) as HTMLElement;
 					if (targetElement) {
 						console.log('currentStep', currentStep);
 						// For sidebar-categories, scroll to center; otherwise use offset
 						if (currentStep.scrollToCenter) {
-							scrollToElementCenter(
-								targetElement,
-								currentStep.container
-									? (document.querySelector(currentStep.container) as HTMLElement)
-									: window
-							);
+							if (currentStep.container) {
+								const container = document.querySelector(currentStep.container) as HTMLElement;
+								if (container) {
+									scrollToElementCenter(targetElement, container as any);
+								} else {
+									scrollToElementCenter(targetElement);
+								}
+							} else {
+								scrollToElementCenter(targetElement);
+							}
 						} else {
 							scrollToElementWithOffset(targetElement);
 						}

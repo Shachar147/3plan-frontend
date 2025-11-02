@@ -819,6 +819,12 @@ const RootRouter = () => {
 		const autoCompleteRef = document.querySelector(`.${className}`);
 		const autocomplete = new google.maps.places.Autocomplete(autoCompleteRef);
 
+		// Store autocomplete instance globally so walkthrough can access it
+		if (!window.googleAutocompleteInstances) {
+			window.googleAutocompleteInstances = {};
+		}
+		window.googleAutocompleteInstances[className] = autocomplete;
+
 		// Add an event listener to the Autocomplete instance for 'input' event
 		const inputElement = document.getElementsByClassName(className)[0];
 		inputElement.addEventListener('keyup', (e) => {
