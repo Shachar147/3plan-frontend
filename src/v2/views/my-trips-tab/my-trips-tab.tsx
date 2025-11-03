@@ -1200,6 +1200,7 @@ function MyTripsTab() {
 							behavior: 'smooth',
 						});
 					}}
+					dataWalkthrough={addNewTripMode ? 'submit-trip' : 'create-trip-btn'}
 				/>
 				{addNewTripMode && myTripsStore.allTripsSorted.length > 0 && (
 					<Button
@@ -1250,15 +1251,17 @@ function MyTripsTab() {
 		return (
 			<div className="my-trips-actionbar width-100-percents align-items-center">
 				<hr className="width-100-percents" />
-				<img
-					src="/images/new-trip.png"
-					className={getClasses('border-radius-round', 'fa-spin-reverse')}
-					width="200"
-				/>
-				<div className="flex-column gap-5 form-content">
-					<h3>{TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP')}</h3>
-					{renderCreateTripForm()}
-					{renderAddTripButton()}
+				<div data-walkthrough="create-trip-form">
+					<img
+						src="/images/new-trip.png"
+						className={getClasses('border-radius-round', 'fa-spin-reverse')}
+						width="200"
+					/>
+					<div className="flex-column gap-5 form-content">
+						<h3>{TranslateService.translate(eventStore, 'CREATE_NEW_TRIP_TITLE.ADD_NEW_TRIP')}</h3>
+						{renderCreateTripForm()}
+						{renderAddTripButton()}
+					</div>
 				</div>
 				<br />
 				<br />
@@ -1628,6 +1631,7 @@ function MyTripsTab() {
 							}
 						}}
 						className={getClasses(errors['title'] && 'red-border')}
+						data-walkthrough="trip-name-input"
 					/>
 				</div>
 
@@ -1638,13 +1642,17 @@ function MyTripsTab() {
 					<DestinationSelector
 						onChange={setSelectedDestinations}
 						selectedDestinations={selectedDestinations}
+						dataWalkthrough="destinations-input"
 					/>
 				</div>
 
 				<div className="main-font font-size-20">
 					{TranslateService.translate(eventStore, 'GETTING_STARTED_PAGE.WHEN_IS_YOUR_TRIP')}
 				</div>
-				<div className="custom-dates-line flex-row align-items-center margin-bottom-5">
+				<div
+					className="custom-dates-line flex-row align-items-center margin-bottom-5"
+					data-walkthrough="date-range"
+				>
 					<input
 						type="date"
 						onKeyDown={(e) => {

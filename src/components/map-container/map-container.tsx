@@ -1421,6 +1421,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 							'map-header-location-input-search',
 							eventStore.isTripLocked && 'display-none'
 						)}
+						data-walkthrough="map-search"
 						onClick={() =>
 							// @ts-ignore
 							window.initLocationPicker(

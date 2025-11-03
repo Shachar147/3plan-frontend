@@ -7,6 +7,8 @@ import { rootStoreContext } from '../../stores/root-store';
 import { getViewSelectorOptions } from '../../../utils/ui-utils';
 import MainPage from '../../../pages/main-page/main-page';
 import './plan-page-content.scss';
+import HelpIcon from '../../components/walkthrough/help-icon';
+import OnboardingGuide from '../../components/walkthrough/onboarding-guide';
 
 function PlanPageContent() {
 	const eventStore = useContext(eventStoreContext);
@@ -63,10 +65,20 @@ function PlanPageContent() {
 		);
 	}
 
+	const handleStartWalkthrough = () => {
+		// @ts-ignore
+		if (window.startWalkthrough) {
+			// @ts-ignore
+			window.startWalkthrough();
+		}
+	};
+
 	return (
 		<div>
 			<div className="plan-page-content flex-row align-items-center justify-content-center">
 				{renderTabView()}
+				{!eventStore.isMobile && <OnboardingGuide />}
+				{!eventStore.isMobile && <HelpIcon onClick={handleStartWalkthrough} />}
 			</div>
 		</div>
 	);

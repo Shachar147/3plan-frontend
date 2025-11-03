@@ -25,6 +25,7 @@ export interface ButtonProps {
 	iconPosition?: 'start' | 'end';
 	tooltip?: string;
 	isLoading?: boolean;
+	dataWalkthrough?: string;
 }
 
 const Button = (props: ButtonProps) => {
@@ -43,6 +44,7 @@ const Button = (props: ButtonProps) => {
 			disabled={props.disabled}
 			style={props.style}
 			title={props.disabled && props.disabledReason ? props.disabledReason : props.tooltip}
+			data-walkthrough={props.dataWalkthrough}
 		>
 			{props.isLoading && <img alt="" src="/images/loading.gif" height={24} />}
 			{!props.isLoading && props.image && <img alt="" src={props.image} height={props.imageHeight} />}

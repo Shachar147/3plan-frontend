@@ -1,0 +1,125 @@
+// Custom styles for react-joyride
+.react-joyride__tooltip {
+	border-radius: 12px !important;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+	transition: transform 0.2s ease-in-out !important;
+}
+
+.react-joyride__tooltip > div:has(button) {
+	gap: 8px;
+}
+
+.react-joyride__tooltip-content {
+	padding: 20px !important;
+}
+
+.react-joyride__tooltip h3 {
+	margin: 0 0 12px 0 !important;
+	font-size: 18px !important;
+	font-weight: 600 !important;
+	color: #333 !important;
+	line-height: 1.3 !important;
+}
+
+.react-joyride__tooltip p {
+	margin: 0 0 20px 0 !important;
+	font-size: 14px !important;
+	color: #666 !important;
+	line-height: 1.5 !important;
+	white-space: pre-line !important;
+}
+
+.react-joyride__tooltip-footer {
+	display: flex !important;
+	gap: 12px !important;
+	justify-content: flex-end !important;
+}
+
+.react-joyride__tooltip button {
+	padding: 10px 20px !important;
+	border-radius: 6px !important;
+	font-size: 14px !important;
+	font-weight: 500 !important;
+	cursor: pointer !important;
+	border: none !important;
+	transition: all 0.2s ease !important;
+}
+
+.react-joyride__tooltip button[data-action='primary'] {
+	background: #007bff !important;
+	color: white !important;
+
+	&:disabled {
+		background: #9e9e9e !important;
+		cursor: default !important;
+	}
+}
+
+.react-joyride__tooltip button[data-action='primary']:hover {
+	background: #0056b3 !important;
+
+	&:disabled {
+		background: #9e9e9e !important;
+		cursor: default !important;
+	}
+}
+
+.react-joyride__tooltip button[data-action='back'] {
+	background: #f8f9fa !important;
+	color: #333 !important;
+	border: 1px solid #dee2e6 !important;
+}
+
+.react-joyride__tooltip button[data-action='back']:hover {
+	background: #e9ecef !important;
+}
+
+.react-joyride__tooltip button[data-action='skip'] {
+	background: none !important;
+	color: #666 !important;
+	text-decoration: underline !important;
+}
+
+.react-joyride__tooltip button[data-action='skip']:hover {
+	color: #333 !important;
+}
+
+.react-joyride__overlay {
+	background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.react-joyride__spotlight {
+	border: 3px solid #007bff !important;
+	border-radius: 8px !important;
+	box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
+}
+
+// Mobile responsive
+@media (max-width: 768px) {
+	.react-joyride__tooltip {
+		max-width: 300px !important;
+		margin: 0 10px !important;
+	}
+
+	.react-joyride__tooltip-content {
+		padding: 16px !important;
+	}
+
+	.react-joyride__tooltip h3 {
+		font-size: 16px !important;
+	}
+
+	.react-joyride__tooltip p {
+		font-size: 13px !important;
+	}
+
+	.react-joyride__tooltip-footer {
+		flex-direction: column !important;
+		gap: 8px !important;
+	}
+
+	.react-joyride__tooltip button {
+		width: 100% !important;
+		padding: 12px 20px !important;
+	}
+}

@@ -54,6 +54,7 @@ const LandingPage = () => {
 						onClick={() => {
 							navigate('/getting-started');
 						}}
+						dataWalkthrough="create-trip-btn"
 					/>
 					<Button
 						text={TranslateService.translate(eventStore, 'CHECK_OUT_EXISTING_TRIPS')}

@@ -100,6 +100,10 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 				// @ts-ignore
 				calendarComponentRef.current.getApi().changeView('timeGridWeek');
 			}
+
+			// Expose calendar API to window for walkthrough
+			// @ts-ignore
+			window.triplanCalendarApi = calendarComponentRef.current.getApi();
 		}
 	}, [props.customDateRange, calendarComponentRef]);
 
@@ -692,6 +696,15 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}, 300);
 	};
 
+	// Expose onCalendarSelect to window for walkthrough
+	useEffect(() => {
+		// @ts-ignore
+		window.onCalendarSelect = (selectionInfo: any) => {
+			console.log('[Calendar] onCalendarSelect called from window:', selectionInfo);
+			onCalendarSelect(selectionInfo);
+		};
+	}, [eventStore.isMobile, onCalendarSelect, props.addToEventsToCategories]);
+
 	const _onAddCalendar = (selectionInfo: any) => {
 		if (!eventStore.distanceSectionAutoOpened) {
 			eventStore.setSelectedEventForNearBy(selectionInfo.event);
@@ -704,7 +717,11 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		) {
 			selectionInfo.end = addHours(new Date(selectionInfo.start), 1);
 		}
-		ReactModalService.openAddCalendarEventModal(eventStore, props.addToEventsToCategories, selectionInfo);
+		ReactModalService.openAddCalendarEventModal(
+			eventStore,
+			props.addToEventsToCategories.bind(this),
+			selectionInfo
+		);
 	};
 
 	const renderEventContent = (info: EventContentArg) => {

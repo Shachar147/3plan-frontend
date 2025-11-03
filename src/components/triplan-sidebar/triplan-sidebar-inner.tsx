@@ -97,7 +97,7 @@ const TriplanSidebarInner = (props: TriplanSidebarProps) => {
 	};
 
 	return (
-		<div>
+		<div className="triplan-sidebar-categories">
 			<TriplanSidebarMainButtons />
 			<div>
 				{isAdmin() && (

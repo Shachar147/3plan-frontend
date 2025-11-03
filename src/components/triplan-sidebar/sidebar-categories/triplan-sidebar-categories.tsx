@@ -736,6 +736,7 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 									borderTop: index === 0 ? borderStyle : '0',
 								}}
 								onClick={() => eventStore.toggleCategory(triplanCategory.id)}
+								data-walkthrough={`category-sidebar-${triplanCategory.id}`}
 							>
 								<i
 									className={
@@ -1375,21 +1376,23 @@ function TriplanSidebarCategories(props: TriplanSidebarCategoriesProps) {
 			{renderExpandCollapse()}
 			<SidebarSearch />
 			{totalDisplayedCategories >= 0 && eventStore.isFiltered && renderShowingXOutOfY()}
-			{eventStore.sidebarGroupBy === 'priority' ? (
-				renderPriorities()
-			) : eventStore.sidebarGroupBy === 'area' ? (
-				<>
-					{isRecalculating && (
-						<div className="flex-row justify-content-center align-items-center padding-block-10">
-							<i className="fa fa-spinner fa-spin margin-inline-end-5" aria-hidden="true"></i>&nbsp;
-							<span>{TranslateService.translate(eventStore, 'RECALCULATING_AREAS')}</span>
-						</div>
-					)}
-					{renderAreas()}
-				</>
-			) : (
-				renderCategories()
-			)}
+			<div data-walkthrough="sidebar-categories">
+				{eventStore.sidebarGroupBy === 'priority' ? (
+					renderPriorities()
+				) : eventStore.sidebarGroupBy === 'area' ? (
+					<>
+						{isRecalculating && (
+							<div className="flex-row justify-content-center align-items-center padding-block-10">
+								<i className="fa fa-spinner fa-spin margin-inline-end-5" aria-hidden="true"></i>&nbsp;
+								<span>{TranslateService.translate(eventStore, 'RECALCULATING_AREAS')}</span>
+							</div>
+						)}
+						{renderAreas()}
+					</>
+				) : (
+					renderCategories()
+				)}
+			</div>
 			{totalDisplayedCategories === 0 &&
 				eventStore.sidebarGroupBy != 'area' &&
 				renderNoDisplayedCategoriesPlaceholder()}
