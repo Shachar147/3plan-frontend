@@ -334,7 +334,10 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 				if (button) {
 					button.click();
 				}
-				await new Promise((resolve) => setTimeout(resolve, 2000));
+
+				setTimeout(() => {
+					window.location.reload(); // to reload destinations tab
+				}, 1500);
 			},
 		},
 	];

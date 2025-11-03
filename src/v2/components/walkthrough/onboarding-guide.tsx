@@ -372,6 +372,70 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 		};
 	}, [run, stepIndex, eventStore.calendarLocalCode, eventStore.isMobile]);
 
+	useEffect(() => {
+		if (!run) return;
+
+		const handleOverlayClick = (e: Event) => {
+			const target = e.target as HTMLElement;
+			const overlay = document.querySelector('.react-joyride__overlay');
+			const tooltip = document.querySelector('.react-joyride__tooltip');
+			const tooltipContainer = document.querySelector('.react-joyride__tooltipContainer');
+			const spotlight = document.querySelector('.react-joyride__spotlight');
+
+			if (!overlay || !tooltip) return;
+
+			const clickedOnTooltip = tooltip.contains(target) || tooltipContainer?.contains(target);
+			const clickedOnSpotlight = spotlight && spotlight.contains(target);
+			const clickedOnOverlay =
+				target === overlay || (overlay.contains(target) && !clickedOnTooltip && !clickedOnSpotlight);
+
+			if (clickedOnOverlay) {
+				e.preventDefault();
+				e.stopPropagation();
+				setRun(false);
+				walkthroughStore.completeWalkthrough();
+			}
+		};
+
+		const addOverlayListener = () => {
+			const overlay = document.querySelector('.react-joyride__overlay');
+			if (overlay) {
+				overlay.addEventListener('click', handleOverlayClick, true);
+				return true;
+			}
+			return false;
+		};
+
+		if (!addOverlayListener()) {
+			const observer = new MutationObserver(() => {
+				if (addOverlayListener()) {
+					observer.disconnect();
+				}
+			});
+			observer.observe(document.body, { childList: true, subtree: true });
+
+			const timeout = setTimeout(() => {
+				observer.disconnect();
+			}, 5000);
+
+			return () => {
+				clearTimeout(timeout);
+				observer.disconnect();
+				const overlay = document.querySelector('.react-joyride__overlay');
+				if (overlay) {
+					overlay.removeEventListener('click', handleOverlayClick, true);
+				}
+			};
+		}
+
+		return () => {
+			const overlay = document.querySelector('.react-joyride__overlay');
+			if (overlay) {
+				overlay.removeEventListener('click', handleOverlayClick, true);
+			}
+		};
+	}, [run, stepIndex, walkthroughStore]);
+
 	const nextText = TranslateService.translate(eventStore, 'WALKTHROUGH.NEXT');
 	const backText = TranslateService.translate(eventStore, 'WALKTHROUGH.BACK');
 	const skipText = TranslateService.translate(eventStore, 'WALKTHROUGH.SKIP');
