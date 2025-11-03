@@ -526,7 +526,20 @@ export const ReactModalRenderHelper = {
 		const values = Object.keys(TriplanCurrency);
 		const keys = Object.values(TriplanCurrency);
 
-		const order = [TriplanCurrency.ils, TriplanCurrency.usd, TriplanCurrency.eur, TriplanCurrency.aed];
+		const order = [
+			TriplanCurrency.ils,
+			TriplanCurrency.usd,
+			TriplanCurrency.eur,
+			TriplanCurrency.aed,
+			TriplanCurrency.baht,
+			TriplanCurrency.gbp,
+			TriplanCurrency.chf,
+			TriplanCurrency.aud,
+			TriplanCurrency.jpy,
+			TriplanCurrency.sgd,
+			TriplanCurrency.krw,
+			TriplanCurrency.czk,
+		];
 
 		const options = Object.values(TriplanCurrency)
 			.filter((x) => Number.isNaN(Number(x)))

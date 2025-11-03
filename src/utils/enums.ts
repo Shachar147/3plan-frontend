@@ -4,13 +4,27 @@ export enum TriplanCurrency {
 	ils = 'ils',
 	aed = 'aed',
 	baht = 'baht',
+	gbp = 'gbp',
+	chf = 'chf',
+	aud = 'aud',
+	jpy = 'jpy',
+	sgd = 'sgd',
+	krw = 'krw',
+	czk = 'czk',
 }
 export const exchangeRates = {
 	[TriplanCurrency.usd]: 1, // base currency
-	[TriplanCurrency.eur]: 0.88, // 1 USD = 0.9 EUR
-	[TriplanCurrency.ils]: 3.69, // 1 USD = 3.72 ILS
+	[TriplanCurrency.eur]: 0.87, // 1 USD = 0.87 EUR
+	[TriplanCurrency.ils]: 3.26, // 1 USD = 3.26 ILS
 	[TriplanCurrency.aed]: 3.67, // 1 USD = 3.67 AED
-	[TriplanCurrency.baht]: 33.35, // 1 USD = 33.35 BAHT
+	[TriplanCurrency.baht]: 32.48, // 1 USD = 32.48 BAHT
+	[TriplanCurrency.gbp]: 0.76, // 1 USD = 0.76 GBP
+	[TriplanCurrency.chf]: 0.81, // 1 USD = 0.88 CHF
+	[TriplanCurrency.aud]: 1.53, // 1 USD = 1.52 AUD
+	[TriplanCurrency.jpy]: 154.2, // 1 USD = 150 JPY
+	[TriplanCurrency.sgd]: 1.3, // 1 USD = 1.35 SGD
+	[TriplanCurrency.krw]: 1430.54, // 1 USD = 1350 KRW
+	[TriplanCurrency.czk]: 21.12, // 1 USD = 23 CZK
 };
 
 export enum TriplanPriority {
