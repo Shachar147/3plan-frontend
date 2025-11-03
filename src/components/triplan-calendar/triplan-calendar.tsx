@@ -366,7 +366,6 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 	useEffect(() => {
 		// @ts-ignore
 		window.onCalendarSelect = (selectionInfo: any) => {
-			console.log('[Calendar] onCalendarSelect called from window:', selectionInfo);
 			onCalendarSelect(selectionInfo);
 		};
 	}, [eventStore.isMobile, onCalendarSelect, props.addToEventsToCategories]);
