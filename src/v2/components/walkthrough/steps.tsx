@@ -452,7 +452,13 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			disableBeacon: false,
 			placement: eventStore.isRtl ? 'left' : 'right',
 			customZIndex: 5399,
-			beforeAction: async () => {},
+			beforeAction: async () => {
+				const button = document.querySelector('.triplan-react-modal .primary-button') as HTMLButtonElement;
+				if (button) {
+					button.disabled = true;
+					button.classList.add('disabled');
+				}
+			},
 		},
 		{
 			target: '.category-row',
@@ -540,6 +546,10 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 				}
 
 				const clickSwalConfirm = () => {
+					const button = document.querySelector('.triplan-react-modal .primary-button') as HTMLButtonElement;
+					if (button) {
+						button.classList.remove('disabled');
+					}
 					const confirmButton = document.querySelector('.swal2-confirm') as HTMLElement;
 					if (confirmButton) {
 						confirmButton.click();

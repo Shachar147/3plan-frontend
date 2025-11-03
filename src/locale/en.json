@@ -1145,7 +1145,7 @@
 	"WALKTHROUGH.SUBMIT_TRIP": "Create Trip",
 	"WALKTHROUGH.SUBMIT_TRIP_DESC": "Click to create your trip and start planning!",
 	"WALKTHROUGH.SIDEBAR_CATEGORIES": "Trip Categories",
-	"WALKTHROUGH.SIDEBAR_CATEGORIES_DESC": "These are your trip categories.\nOrganize your activities into categories like 'Attractions', 'Food', 'Hotels', etc.",
+	"WALKTHROUGH.SIDEBAR_CATEGORIES_DESC": "In this area in the side menu you can view and manage your trip categories!\nOrganize your activities by categories like 'Attractions', 'Food', 'Hotels', 'Nature' and more.\n\nWhen creating the trip you will receive basic categories that the system suggests, and you can always add, edit or delete categories as needed.\n\nThe categories will help you organize activities conveniently and plan your trip in an organized and logical way!",
 	"WALKTHROUGH.TABULAR_MENU": "Welcome to your trip planning!",
 	"WALKTHROUGH.TABULAR_MENU_DESC": "The trip planning is divided into several views, each unlocks a variety of capabilities to help you plan your trip better.",
 	"WALKTHROUGH.CREATE_CATEGORY": "Create Category",
