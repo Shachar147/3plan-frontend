@@ -137,6 +137,7 @@ function MyTrips() {
 						flavor={ButtonFlavor.primary}
 						className="padding-inline-15"
 						onClick={() => navigate('/getting-started')}
+						dataWalkthrough="create-trip-btn"
 					/>
 					{!isLoggedOn() && (
 						<Button

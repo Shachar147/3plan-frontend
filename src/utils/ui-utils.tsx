@@ -131,6 +131,7 @@ const renderMyTrips = (
 					navigate('/home');
 				}}
 				style={{ cursor: 'pointer', display: 'flex', maxHeight: '40px', height: '40px' }}
+				data-walkthrough="logo"
 			>
 				<img alt="" src="/images/logo/new-logo.png" />
 			</div>

@@ -56,6 +56,7 @@ function TabMenu(props: TabMenuProps) {
 					<div
 						key={`tab-${tab.id}`}
 						data-tab-id={tab.id}
+						data-walkthrough={`tab-${tab.id}`}
 						className={getClasses(
 							feedStore.activeTab == tab.id && 'active',
 							'item',

@@ -235,7 +235,7 @@ const TriplanSearchV2 = () => {
 			className={getClasses('search-container', shouldShowSuggestions && 'has-values')}
 			key={`search-box-${searchStore.rerenderCounter}`}
 		>
-			<div className="search-box">
+			<div className="search-box" data-walkthrough="search-box">
 				<input
 					className="search-input"
 					type="text"
