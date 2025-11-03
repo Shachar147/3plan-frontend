@@ -1379,7 +1379,6 @@
 	"IMPORT_FROM_GOOGLE_MAPS": "ייבא פעילויות מגוגל מפות",
 	"IMPORT_FROM_GOOGLE_MAPS.CONTENT": "שלבים:<br/>1. פתח את <a href=\"https://www.google.com/maps/d/\">המפות שלי בגוגל</a> ופתח את המפה שברצונך לייצא.<br/>2. בחלונית הימנית, ליד כותרת המפה, לחץ על תפריט שלוש הנקודות ולחץ על <b>ייצוא ל-KML/KMZ</b>.<br/>3. סמן <b>ייצוא כ-KML במקום KMZ.</b> ולחץ על <b>הורדה</b>.<br/>4. ייבא את הקובץ שהורדת לכאן.",
 	"MODALS.IMPORT": "ייבא",
-<<<<<<< HEAD
 	"SUGGESTED_COMBINATIONS.TITLE": "שילובים מומלצים",
 	"SUGGESTED_COMBINATIONS.SHOPPING_DAY": "יום קניות",
 	"SUGGESTED_COMBINATIONS.MUST_SEE_TOUR": "פעילויות חובה",
@@ -1406,8 +1405,7 @@
 	"VIEW_GROUP_MODAL.UNGROUP": "בטל קיבוץ",
 	"VIEW_GROUP_MODAL.UNGROUP_AND_REMOVE": "הסר מלוח השנה",
 	"MUST_ACTIVITIES": "פעילויות חובה",
-	"HIGH_ACTIVITIES": "פעילויות בעדיפות גבוהה"
-=======
+	"HIGH_ACTIVITIES": "פעילויות בעדיפות גבוהה",
 	"WALKTHROUGH.WELCOME_TITLE": "ברוכים הבאים ל-Triplan!",
 	"WALKTHROUGH.WELCOME_DESC": "בואו נעשה סיור קצר שיעזור לכם ליצור את הטיול הראשון שלכם. זה ייקח רק כמה דקות.",
 	"WALKTHROUGH.SEARCH_TITLE": "חפשו מקומות",
@@ -1479,5 +1477,4 @@
 	"WALKTHROUGH.TRIP_NAME_PATTERN.EXPLORING": "טיול משפחה ל{location}",
 	"WALKTHROUGH.TRIP_NAME_PATTERN.VACATION": "חופשה ב{location}",
 	"WALKTHROUGH.TRIP_NAME_PATTERN.WEEKEND": "סוף שבוע ב{location}"
->>>>>>> master
 }
