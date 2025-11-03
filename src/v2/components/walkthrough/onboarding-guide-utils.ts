@@ -502,13 +502,13 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 	const hours = [8, 9, 10];
 	const randomHour = hours[Math.floor(Math.random() * hours.length)];
 
-	await new Promise((resolve) => setTimeout(resolve, 500));
+	await new Promise((resolve) => setTimeout(resolve, 800));
 
 	// @ts-ignore
 	const calendarApi = window.triplanCalendarApi;
 
 	if (!calendarApi) {
-		await new Promise((resolve) => setTimeout(resolve, 500));
+		await new Promise((resolve) => setTimeout(resolve, 800));
 		// @ts-ignore
 		if (window.triplanCalendarApi) {
 			// @ts-ignore
@@ -520,7 +520,7 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 
 	await selectTimeSlot(calendarApi, randomHour, eventStore);
 
-	await new Promise((resolve) => setTimeout(resolve, 1000));
+	await new Promise((resolve) => setTimeout(resolve, 800));
 
 	const chooseWhereButton = document.querySelector(
 		'.add-calendar-event-modal-choose-where > button:first-child'
@@ -548,7 +548,7 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 		eventStore.modalValues['sidebar-event-to-add-to-calendar'] = selectedOption;
 	});
 
-	await new Promise((resolve) => setTimeout(resolve, 300));
+	await new Promise((resolve) => setTimeout(resolve, 800));
 
 	eventStore.setCalendarEvents([
 		...eventStore.getJSCalendarEvents(),
@@ -559,6 +559,8 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 			allDay: false,
 		},
 	]);
+
+	await new Promise((resolve) => setTimeout(resolve, 300));
 
 	ReactModalService.internal.closeModal(eventStore);
 };
@@ -579,8 +581,11 @@ const selectTimeSlot = async (calendarApi: any, randomHour: number, eventStore: 
 	const dayColumns = Array.from(timeGridBody.querySelectorAll('.fc-timegrid-col'));
 	const randomDayIndex = Math.floor(Math.random() * Math.min(dayColumns.length, 7));
 
+	// add randmom days (0-5) to the startDate
+	const randomDays = Math.floor(Math.random() * 5);
 	const startDate = addDays(new Date(activeStart), randomDayIndex);
 	startDate.setHours(randomHour, 0, 0, 0);
+	startDate.setDate(startDate.getDate() + randomDays);
 
 	const endDate = addHours(new Date(startDate), 1);
 
