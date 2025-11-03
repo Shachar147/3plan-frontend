@@ -99,6 +99,11 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 	);
 
 	useEffect(() => {
+		// Don't auto-start if trips are still loading
+		if (myTripsStore.isLoading) {
+			return;
+		}
+
 		if (
 			(walkthroughStore.shouldAutoStart && myTripsStore.totalTrips === 0 && guideMode === GuideMode.MAIN_PAGE) ||
 			eventStore.tripName.includes(
@@ -112,7 +117,13 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 
 			return () => clearTimeout(timer);
 		}
-	}, [walkthroughStore.shouldAutoStart, myTripsStore.totalTrips, guideMode, eventStore.tripName]);
+	}, [
+		walkthroughStore.shouldAutoStart,
+		myTripsStore.totalTrips,
+		myTripsStore.isLoading,
+		guideMode,
+		eventStore.tripName,
+	]);
 
 	const handleJoyrideCallback = (data: CallBackProps) => {
 		const { status, type, index, action } = data;
