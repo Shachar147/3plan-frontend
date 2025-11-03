@@ -502,13 +502,13 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 	const hours = [8, 9, 10];
 	const randomHour = hours[Math.floor(Math.random() * hours.length)];
 
-	await new Promise((resolve) => setTimeout(resolve, 800));
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	// @ts-ignore
 	const calendarApi = window.triplanCalendarApi;
 
 	if (!calendarApi) {
-		await new Promise((resolve) => setTimeout(resolve, 800));
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 		// @ts-ignore
 		if (window.triplanCalendarApi) {
 			// @ts-ignore
@@ -520,7 +520,7 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 
 	await selectTimeSlot(calendarApi, randomHour, eventStore);
 
-	await new Promise((resolve) => setTimeout(resolve, 800));
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	const chooseWhereButton = document.querySelector(
 		'.add-calendar-event-modal-choose-where > button:first-child'
@@ -531,7 +531,7 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 
 	chooseWhereButton.click();
 
-	await new Promise((resolve) => setTimeout(resolve, 800));
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	const allSidebarEvents = eventStore.allSidebarEvents;
 	if (allSidebarEvents.length === 0) {
@@ -548,7 +548,7 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 		eventStore.modalValues['sidebar-event-to-add-to-calendar'] = selectedOption;
 	});
 
-	await new Promise((resolve) => setTimeout(resolve, 800));
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	eventStore.setCalendarEvents([
 		...eventStore.getJSCalendarEvents(),
@@ -560,9 +560,11 @@ export const simulateDoubleClickCalendarSlot = async (eventStore: EventStore): P
 		},
 	]);
 
-	await new Promise((resolve) => setTimeout(resolve, 300));
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 
 	ReactModalService.internal.closeModal(eventStore);
+
+	return await new Promise((resolve) => setTimeout(resolve, 1000));
 };
 
 const selectTimeSlot = async (calendarApi: any, randomHour: number, eventStore: EventStore): Promise<void> => {

@@ -101,7 +101,10 @@ function OnboardingGuide({ mode }: OnboardingGuideProps) {
 	useEffect(() => {
 		if (
 			(walkthroughStore.shouldAutoStart && myTripsStore.totalTrips === 0 && guideMode === GuideMode.MAIN_PAGE) ||
-			eventStore.tripName.includes(TranslateService.translate(eventStore, 'WALKTHROUGH.EXAMPLE'))
+			eventStore.tripName.includes(
+				TranslateService.translate(eventStore, 'WALKTHROUGH.EXAMPLE', undefined, 'en')
+			) ||
+			eventStore.tripName.includes(TranslateService.translate(eventStore, 'WALKTHROUGH.EXAMPLE', undefined, 'he'))
 		) {
 			const timer = setTimeout(() => {
 				setRun(true);
