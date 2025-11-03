@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import './main-page.scss';
 import TriplanHeaderBanner from '../../components/triplan-header-banner/triplan-header-banner';
@@ -8,9 +8,10 @@ import TriplanFooter from '../../components/triplan-footer/triplan-footer';
 import ScrollToTopButton from '../../components/scroll-top/scroll-top';
 import OnboardingGuide from '../../components/walkthrough/onboarding-guide';
 import HelpIcon from '../../components/walkthrough/help-icon';
-import { walkthroughStoreContext } from '../../stores/walkthrough-store';
+import { eventStoreContext } from '../../../stores/events-store';
 
 function MainPageV2() {
+	const eventStore = useContext(eventStoreContext);
 	useHandleWindowResize();
 
 	const handleStartWalkthrough = () => {
@@ -27,8 +28,8 @@ function MainPageV2() {
 			<MainPageContent />
 			<TriplanFooter />
 			<ScrollToTopButton />
-			<OnboardingGuide />
-			<HelpIcon onClick={handleStartWalkthrough} />
+			{!eventStore.isMobile && <OnboardingGuide />}
+			{!eventStore.isMobile && <HelpIcon onClick={handleStartWalkthrough} />}
 		</div>
 	);
 }

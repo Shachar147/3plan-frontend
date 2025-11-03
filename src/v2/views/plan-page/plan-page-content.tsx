@@ -77,8 +77,8 @@ function PlanPageContent() {
 		<div>
 			<div className="plan-page-content flex-row align-items-center justify-content-center">
 				{renderTabView()}
-				<OnboardingGuide />
-				<HelpIcon onClick={handleStartWalkthrough} />
+				{!eventStore.isMobile && <OnboardingGuide />}
+				{!eventStore.isMobile && <HelpIcon onClick={handleStartWalkthrough} />}
 			</div>
 		</div>
 	);

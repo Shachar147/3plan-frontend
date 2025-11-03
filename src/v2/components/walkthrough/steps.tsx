@@ -145,7 +145,6 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 				}
 			},
 			afterAction: async () => {
-				// in case the user hit next quickly, to still write the name.
 				const tripName = localStorage.getItem('triplan-walkthrough-trip-name');
 				if (tripName) {
 					localStorage.removeItem('triplan-walkthrough-trip-name');
@@ -171,19 +170,14 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 				if (location) {
 					localStorage.removeItem('triplan-walkthrough-trip-location');
 
-					// Find the destination selector container
 					const selectorContainer = document.querySelector('[data-walkthrough="destinations-input"]');
 					if (selectorContainer) {
-						console.log('selectorContainer', selectorContainer);
-						// Step 1: Click the react-select control to open the menu
 						const selectControl = selectorContainer.querySelector('.select__control') as HTMLElement;
 						if (selectControl) {
 							selectControl.click();
-							// Wait for menu to open
 							await new Promise((resolve) => setTimeout(resolve, 300));
 						}
 
-						// Step 2: Find the react-select input (available after menu opens)
 						const reactSelectInput =
 							(selectorContainer.querySelector('input[id*="react-select"]') as HTMLInputElement) ||
 							(selectorContainer.querySelector('.select__input') as HTMLInputElement) ||
@@ -191,16 +185,12 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 							(document.querySelector('input[id*="react-select"]') as HTMLInputElement);
 
 						if (reactSelectInput) {
-							console.log('reactSelectInput', reactSelectInput);
-							// Focus and click the input to ensure it's active
 							reactSelectInput.focus();
 							reactSelectInput.click();
 							await new Promise((resolve) => setTimeout(resolve, 200));
 
-							// Step 3: Type the location name character by character (lowercase for better matching)
 							const locationLower = location.toLowerCase();
 
-							// Try to trigger react-select's onInputChange directly through React internals
 							const reactKey = Object.keys(reactSelectInput).find(
 								(key) => key.startsWith('__reactInternalInstance') || key.startsWith('__reactFiber')
 							);
@@ -209,7 +199,6 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 								const currentValue = locationLower.substring(0, i + 1);
 								const char = locationLower[i];
 
-								// Set the value using native setter
 								const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
 									HTMLInputElement.prototype,
 									'value'
@@ -220,9 +209,8 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 									reactSelectInput.value = currentValue;
 								}
 
-								// Try to call react-select's onInputChange directly if we can find it
 								if (reactKey) {
-									// @ts-ignore - accessing React internals
+									// @ts-ignore
 									const reactInstance = reactSelectInput[reactKey];
 									if (reactInstance) {
 										let props =
@@ -235,8 +223,6 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 												reactInstance.return.pendingProps ||
 												reactInstance.return.props;
 										}
-										// React-select's input might have onInputChange in a parent component
-										// Try to find it by traversing up
 										let current = reactInstance;
 										for (let j = 0; j < 5 && current; j++) {
 											const parentProps =
@@ -245,7 +231,7 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 												try {
 													parentProps.onInputChange(currentValue);
 												} catch (e) {
-													// Fall through to event dispatch
+													// Fall through
 												}
 												break;
 											}
@@ -254,7 +240,6 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 									}
 								}
 
-								// Trigger input event for react-select's onInputChange handler
 								const inputEvent = new InputEvent('input', {
 									bubbles: true,
 									cancelable: true,
@@ -263,27 +248,21 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 								});
 								reactSelectInput.dispatchEvent(inputEvent);
 
-								// Also dispatch regular input event as fallback
 								const fallbackEvent = new Event('input', { bubbles: true, cancelable: true });
 								reactSelectInput.dispatchEvent(fallbackEvent);
 
-								// Wait before next character
 								await new Promise((resolve) => setTimeout(resolve, 80));
 							}
 
-							// Step 4: Wait for dropdown to filter and render options
 							await new Promise((resolve) => setTimeout(resolve, 800));
 
-							// Step 5: Find and click the first option (retry with increasing delays)
 							for (let attempt = 0; attempt < 5; attempt++) {
-								// Look for the menu - could be in selector container or document body (if menuPortalTarget is used)
 								const menu =
 									(selectorContainer.querySelector('.select__menu') as HTMLElement) ||
 									(document.querySelector('.select__menu') as HTMLElement) ||
 									(document.querySelector('[class*="menu"]') as HTMLElement);
 
 								if (menu) {
-									// Find the first option (skip placeholder if exists)
 									const allOptions = menu.querySelectorAll(
 										'.select__option, [class*="option"], div[role="option"]'
 									);
@@ -291,7 +270,6 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 
 									for (let j = 0; j < allOptions.length; j++) {
 										const option = allOptions[j] as HTMLElement;
-										// Skip placeholder options
 										if (!option.className.includes('placeholder') && option.offsetParent !== null) {
 											firstOption = option;
 											break;
@@ -299,22 +277,15 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 									}
 
 									if (firstOption) {
-										// Scroll option into view if needed
 										firstOption.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 										await new Promise((resolve) => setTimeout(resolve, 200));
 
-										// Click the option with mouse events (react-select listens to these)
 										const mouseDown = new MouseEvent('mousedown', {
 											bubbles: true,
 											cancelable: true,
 											view: window,
 										});
 										const mouseUp = new MouseEvent('mouseup', {
-											bubbles: true,
-											cancelable: true,
-											view: window,
-										});
-										const clickEvent = new MouseEvent('click', {
 											bubbles: true,
 											cancelable: true,
 											view: window,
@@ -331,7 +302,6 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 									}
 								}
 
-								// Wait a bit more and retry with exponential backoff
 								await new Promise((resolve) => setTimeout(resolve, 200 + attempt * 100));
 							}
 						}
@@ -360,12 +330,10 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 			),
 			placement: 'top',
 			afterAction: async () => {
-				// Click submit button
 				const button = document.querySelector('[data-walkthrough="submit-trip"]') as HTMLElement;
 				if (button) {
 					button.click();
 				}
-				// Wait for redirect to plan page
 				await new Promise((resolve) => setTimeout(resolve, 2000));
 			},
 		},
@@ -373,16 +341,8 @@ const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep
 };
 
 const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): CustomStep[] => {
-	// todo complete:
-	// 4. explain about calendar view and how to schedule.
-	// 5. explain about the importance of priority (and the colors), and categories (and the icons).
-	// 6. note that if you scheduled something you can write 'הוזמן' at the description to mark it as booked.
-	// 7. explain about itinerary view.
-	// 8. explain about list view.
-	// 9. congratulations! you are now experts on planning trips!
 	return [
 		{
-			// target: `[data-tab-id=${eventStore.viewMode}]`,
 			target: '.tabular.menu',
 			content: (
 				<div>
@@ -446,9 +406,6 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			placement: 'bottom',
 			afterAction: async () => {
 				eventStore.setViewMode(ViewMode.map);
-				// setTimeout(() => {
-				// 	eventStore.setViewMode(ViewMode.map);
-				// }, 1500);
 			},
 		},
 		{
@@ -471,13 +428,9 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			),
 			placement: 'center',
 			disableBeacon: true,
-			// Position at middle of left/right 1/3 based on RTL
-			// Modal takes center 1/3 (33.33% to 66.66%)
-			// Middle of left 1/3 = 16.67%, offset from center = -33.33%
-			// Middle of right 1/3 = 83.33%, offset from center = +33.33%
-			customPositionOffset: eventStore.isRtl ? -33.33 : 33.33, // RTL: right, LTR: left
+			customPositionOffset: eventStore.isRtl ? -33.33 : 33.33,
 			customPositionOffsetPercent: true,
-			autoAdvance: true, // Auto-advance to next step after beforeAction completes
+			autoAdvance: true,
 			beforeAction: async () => {
 				const searchInput = document.querySelector('[data-walkthrough="map-search"]') as HTMLInputElement;
 				if (searchInput) {
@@ -485,15 +438,8 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 					const randomPois = LOCATION_POIS[randomLocation as keyof typeof LOCATION_POIS];
 					const randomPoi = randomPois[Math.floor(Math.random() * randomPois.length)];
 					return await simulateSearchOnMap(searchInput, randomPoi, eventStore);
-				} else {
-					console.error('Search input not found, stopping walkthrough');
 				}
 			},
-			// afterAction: async () => {
-			// 	setTimeout(() => {
-			// 		walkthroughStore.triggerOnboardingRerender();
-			// 	}, 1000);
-			// },
 		},
 		{
 			target: '.triplan-react-modal',
@@ -505,16 +451,8 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			),
 			disableBeacon: false,
 			placement: eventStore.isRtl ? 'left' : 'right',
-			customZIndex: 5399, // Use lower z-index so tooltip appears below modal
-			customPositionOffset: undefined,
-			customPositionOffsetPercent: undefined,
-			beforeAction: async () => {
-				// Close Google Places autocomplete dropdown if it's open
-				// const searchInput = document.querySelector('[data-walkthrough="map-search"]') as HTMLInputElement;
-				// if (searchInput) {
-				// 	closeAutocompletePicker(searchInput);
-				// }
-			},
+			customZIndex: 5399,
+			beforeAction: async () => {},
 		},
 		{
 			target: '.category-row',
@@ -539,11 +477,8 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			),
 			disableBeacon: false,
 			placement: 'top',
-			customZIndex: undefined,
 			fixSpotlightPosition: true,
 			afterAction: async () => {
-				// todo complete: for some reason remains UNSET:
-				// Randomly set priority value (MUST, HIGH, or MAYBE)
 				await setRandomPriority(eventStore);
 			},
 		},
@@ -557,12 +492,10 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			),
 			disableBeacon: false,
 			placement: 'top',
-			customZIndex: undefined,
+			fixSpotlightPosition: true,
 			afterAction: async () => {
-				// Randomly set preferred time value (excluding unset)
 				await setRandomPreferredTime(eventStore);
 			},
-			fixSpotlightPosition: true,
 		},
 		{
 			target: '.show-hide-more',
@@ -573,7 +506,7 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 				</div>
 			),
 			disableBeacon: false,
-			placement: 'top', //eventStore.isRtl ? 'left' : 'right',
+			placement: 'top',
 			fixSpotlightPosition: true,
 		},
 		{
@@ -586,7 +519,6 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			),
 			placement: 'top',
 			afterAction: async () => {
-				// Capture the category ID before clicking submit (modalValues gets cleared after)
 				const categoryOption = eventStore.modalValues['category'] as
 					| { value: number; label: string }
 					| undefined;
@@ -595,12 +527,10 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 					setLastAddedCategoryId(categoryId);
 				}
 
-				// Click submit activity button
 				const button = document.querySelector('.triplan-react-modal .primary-button') as HTMLElement;
 				if (button) {
 					button.click();
 				}
-				// await new Promise((resolve) => setTimeout(resolve, 500));
 
 				const sidebarCategory = document.querySelector(
 					`[data-walkthrough="category-sidebar-${getLastAddedCategoryId()}"]`
@@ -609,7 +539,6 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 					sidebarCategory.click();
 				}
 
-				// Click SweetAlert confirm buttons when they appear
 				const clickSwalConfirm = () => {
 					const confirmButton = document.querySelector('.swal2-confirm') as HTMLElement;
 					if (confirmButton) {
@@ -628,7 +557,7 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			fixSpotlightPosition: true,
 		},
 		{
-			target: `.external-events:has([data-walkthrough="category-sidebar-${getLastAddedCategoryId()}"])`, // Will be set dynamically in beforeAction
+			target: `.external-events:has([data-walkthrough="category-sidebar-${getLastAddedCategoryId()}"])`,
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.CATEGORY_SIDEBAR')}</h3>
@@ -647,11 +576,6 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 				</div>
 			),
 			placement: 'bottom',
-			// afterAction: async () => {
-			// 	setTimeout(() => {
-			// 		eventStore.setViewMode(ViewMode.calendar);
-			// 	}, 1500);
-			// },
 		},
 		{
 			target: '.fc-view-harness',
@@ -665,7 +589,6 @@ const planSteps = (eventStore: EventStore, walkthroughStore: WalkthroughStore): 
 			fixSpotlightPosition: true,
 			customZIndex: 5399,
 			beforeAction: async () => {
-				// Simulate double-clicking a random day at 08:00, 09:00, or 10:00
 				return await simulateDoubleClickCalendarSlot(eventStore);
 			},
 			autoAdvance: true,
@@ -693,6 +616,5 @@ export const getOnboardingGuideSteps = (
 	if (mode === GuideMode.PLAN) {
 		return planSteps(eventStore, walkthroughStore);
 	}
-	// GuideMode.MAIN_PAGE
 	return mainPageSteps(eventStore, rootStore);
 };
