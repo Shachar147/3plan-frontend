@@ -41,14 +41,15 @@ export interface CustomStep extends Step {
 const mainPageSteps = (eventStore: EventStore, rootStore: RootStore): CustomStep[] => {
 	return [
 		{
-			target: eventStore.isMobile ? '[data-walkthrough="slogan"]' : '[data-walkthrough="logo"]',
+			// target: eventStore.isMobile ? '[data-walkthrough="slogan"]' : '[data-walkthrough="logo"]',
+			target: 'body',
 			content: (
 				<div>
 					<h3>{TranslateService.translate(eventStore, 'WALKTHROUGH.WELCOME_TITLE')}</h3>
 					<p>{TranslateService.translate(eventStore, 'WALKTHROUGH.WELCOME_DESC')}</p>
 				</div>
 			),
-			placement: 'bottom',
+			placement: 'center',
 			disableBeacon: true,
 		},
 		{
