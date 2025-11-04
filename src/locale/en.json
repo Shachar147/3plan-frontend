@@ -1241,7 +1241,7 @@
 	"IMPORT_FROM_GOOGLE_MAPS.CONTENT": "Steps:<br/><b>1. Go to <a href=\"https://www.google.com/maps/d/\">Google My Maps</a> and open the map you want to export.<\/b><br/>2.On the left pane, near map title, hit the 3 dots menu and click on <b>Export to KML/KMZ</b>.<br/>3. Check <b>Export as KML instead of KMZ.</b> and hit <b>Downloads</b>.<br/>4. Import downloaded file here.",
 	"MODALS.IMPORT": "Import",
 	"WALKTHROUGH.WELCOME_TITLE": "Welcome to Triplan!",
-	"WALKTHROUGH.WELCOME_DESC": "Let's take a quick tour to help you create your first trip. This will only take a few minutes.",
+	"WALKTHROUGH.WELCOME_DESC": "Let's take a quick tour to help you get familiar with the application and create your first trip. This will only take a few minutes.",
 	"WALKTHROUGH.SEARCH_TITLE": "Find Places",
 	"WALKTHROUGH.SEARCH_DESC": "Search for restaurants, attractions, and activities you want to visit.",
 	"WALKTHROUGH.EXPLORE_TITLE": "Find points of interest",
