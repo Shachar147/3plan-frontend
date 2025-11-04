@@ -119,7 +119,7 @@ export class EventStore {
 	@observable secondModalSettings = defaultModalSettings;
 	@observable modalValuesRefs: any = {};
 	@observable createMode: boolean = false;
-	@observable listViewSummaryMode = ListViewSummaryMode.noDescriptions;
+	@observable listViewSummaryMode = ListViewSummaryMode.focused;
 	@observable listViewShowNavigateTo = false;
 	@observable listViewShowDaysNavigator = false;
 	@observable dataService: LocalStorageService | DBService;
@@ -936,7 +936,10 @@ export class EventStore {
 
 	@computed
 	get shouldRenderDescriptionOnListView() {
-		return this.listViewSummaryMode !== ListViewSummaryMode.noDescriptions;
+		return (
+			this.listViewSummaryMode !== ListViewSummaryMode.noDescriptions &&
+			this.listViewSummaryMode !== ListViewSummaryMode.focused
+		);
 	}
 
 	@computed

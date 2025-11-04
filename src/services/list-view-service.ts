@@ -218,7 +218,7 @@ const ListViewService = {
 			TranslateService.translate(eventStore, 'TRIP_SUMMARY.TITLE') + ' - ' + eventStore.formattedTripName;
 
 		// if we're on no description mode, do not show also prefixes.
-		if (eventStore.listViewSummaryMode === ListViewSummaryMode.noDescriptions) {
+		if (eventStore.listViewSummaryMode !== ListViewSummaryMode.full) {
 			return {
 				todoComplete,
 				ordered,
@@ -477,6 +477,7 @@ const ListViewService = {
 
 		let summaryPerDay: Record<string, string[]> = {};
 
+		// todo - allow the user to define his desired currency per trip. instead of this condition:
 		const desiredCurrency = eventStore.isHebrew ? TriplanCurrency.ils : TriplanCurrency.usd;
 		const totalPricePerDay: Record<string, MinMax> = ListViewService._getEstimatedCosts(
 			eventStore,
@@ -657,7 +658,7 @@ const ListViewService = {
 				const hasDescriptionTasks = taskKeywords.find(
 					(x) =>
 						title!.toLowerCase().indexOf(x.toLowerCase()) !== -1 ||
-						event.description?.toLowerCase().indexOf(x.toLowerCase()) !== -1
+						(event.description ?? '').toLowerCase().indexOf(x.toLowerCase()) !== -1
 				);
 
 				const hasTodolistTasks = eventStore.checkIfEventHaveOpenTasks(event);
@@ -1026,7 +1027,7 @@ const ListViewService = {
 								? '#ff5252'
 								: 'rgba(55,181,255,0.6)';
 
-						let rowClass = '';
+						let rowClass = 'distance-row';
 						if (x.orGroupNum) {
 							if (x.indent) {
 								rowClass += ` indent-or-group-${x.orGroupNum}`;
@@ -1226,7 +1227,9 @@ const ListViewService = {
 		summaryPerDay = ListViewService._handleSearch(eventStore, summaryPerDay);
 
 		// add distances
-		summaryPerDay = ListViewService._addReachingNextDestinationInstructions(eventStore, summaryPerDay);
+		if (eventStore.listViewSummaryMode !== ListViewSummaryMode.focused) {
+			summaryPerDay = ListViewService._addReachingNextDestinationInstructions(eventStore, summaryPerDay);
+		}
 
 		const noItemsPlaceholder =
 			Object.keys(summaryPerDay).length == 0
