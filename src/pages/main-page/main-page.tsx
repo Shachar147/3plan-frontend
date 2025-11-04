@@ -249,7 +249,7 @@ function MainPage(props: MainPageProps) {
 				// icon: (<i className="fa fa-calendar black-color" aria-hidden="true" />),
 				// iconActive: (<i className="fa fa-calendar blue-color" aria-hidden="true" />)
 			},
-			{
+			!eventStore.isMobile && {
 				key: ListViewSummaryMode.noDescriptions,
 				name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.NO_DESCRIPTIONS'),
 				// icon: (<i className="fa fa-calendar black-color" aria-hidden="true" />),
@@ -265,7 +265,7 @@ function MainPage(props: MainPageProps) {
 			// 	key: ListViewSummaryMode.box,
 			// 	name: TranslateService.translate(eventStore, 'BUTTON_TEXT.LIST_VIEW_SUMMARY_MODE.BOX'),
 			// },
-		];
+		].filter(Boolean);
 
 		const onChange = (newVal: string) => eventStore.setListViewSummaryMode(newVal);
 
