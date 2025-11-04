@@ -31,7 +31,7 @@ export interface SuggestedCombination {
 	suggestedName: string; // e.g., "Shopping Day", "Must-See Tour", "Activities around X"
 }
 
-const isDebug = false;
+const isDebug = false; // Set to true to enable debug logging for combination generation
 
 export class CombinationsService {
 	private static readonly MAX_TRAVEL_TIME = 30; // minutes (10 minutes between activities)
@@ -98,7 +98,8 @@ export class CombinationsService {
 		const filteredEvents = events.filter((event) => {
 			// Convert priority to number if it's a string
 			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
-			const hasValidPriority = this.ALLOWED_PRIORITIES.includes(priority || TriplanPriority.unset);
+			// Check if priority is valid (must be a number and in allowed list)
+			const hasValidPriority = priority != null && !isNaN(priority) && this.ALLOWED_PRIORITIES.includes(priority);
 			const hasLocation = event.location?.latitude && event.location?.longitude;
 
 			return hasValidPriority && hasLocation;
@@ -181,6 +182,21 @@ export class CombinationsService {
 		const rankedCombinations = this.rankCombinations(uniqueCombinations);
 		if (isDebug) console.log('Debug - final combinations after ranking:', rankedCombinations.length);
 
+		// Log summary even when debug is off if no combinations found
+		if (rankedCombinations.length === 0 && filteredEvents.length > 0) {
+			console.warn(
+				'CombinationsService: No combinations generated despite',
+				filteredEvents.length,
+				'valid events.',
+				{
+					uniqueEvents: uniqueEvents.length,
+					mustEvents: mustEvents.length,
+					seedEvents: seedEvents.length,
+					combinationsAttempted: combinations.length,
+				}
+			);
+		}
+
 		// Return only the top combinations (max 10)
 		return rankedCombinations.slice(0, this.MAX_COMBINATIONS);
 	}
@@ -230,6 +246,7 @@ export class CombinationsService {
 		const usedLocations = new Set([this.getLocationKey(seedEvent)]);
 		let currentEvent = seedEvent;
 		let totalDuration = this.getEventDuration(seedEvent);
+		let totalTravelTime = 0; // Track rounded travel times for accurate duration checking
 		let iterationCount = 0;
 		const maxIterations = 20; // Safety limit to prevent infinite loops
 
@@ -247,7 +264,7 @@ export class CombinationsService {
 				usedEventIds,
 				usedLocations,
 				distanceResults,
-				totalDuration,
+				totalDuration + totalTravelTime, // Pass total including travel times for accurate checking
 				combinationType,
 				categories
 			);
@@ -256,6 +273,11 @@ export class CombinationsService {
 				if (isDebug) console.log('Debug - no more compatible events found at iteration', iterationCount);
 				break; // No more compatible events
 			}
+
+			// Calculate and add rounded travel time before adding the event
+			const travelTime = this.getTravelTime(currentEvent, nextEvent, distanceResults);
+			const roundedTravelTime = roundTo15Minutes(travelTime);
+			totalTravelTime += roundedTravelTime;
 
 			combination.push(nextEvent);
 			usedEventIds.add(nextEvent.id);
@@ -278,9 +300,13 @@ export class CombinationsService {
 			optimizedCombination,
 			distanceResults
 		);
-		const totalTravelTime = 0; // travelTimeBetween.filter(time => !Number.isNaN(time)).reduce((sum, time) => sum + time, 0);
-		const roundedTravelTime = roundTo15Minutes(totalTravelTime);
-		const finalTotalDuration = totalDuration + roundedTravelTime;
+		// Round each travel time to 15 minutes, then sum them
+		// Note: We already calculated totalTravelTime during building, but recalculate here
+		// to ensure consistency after route optimization
+		const recalculatedTotalTravelTime = travelTimeBetween
+			.filter((time) => !Number.isNaN(time))
+			.reduce((sum, time) => sum + roundTo15Minutes(time), 0);
+		const finalTotalDuration = totalDuration + recalculatedTotalTravelTime;
 
 		// Check if combination exceeds duration limits based on type
 		const maxDuration = this.getMaxDurationForType(combinationType);
@@ -544,8 +570,10 @@ export class CombinationsService {
 		// Check duration constraint
 		const eventDuration = this.getEventDuration(event);
 		const maxDuration = this.getMaxDurationForType(combinationType);
+		// Use rounded travel time for accurate duration checking
+		const roundedTravelTime = roundTo15Minutes(travelTime);
 
-		if (currentDuration + eventDuration + travelTime > maxDuration) {
+		if (currentDuration + eventDuration + roundedTravelTime > maxDuration) {
 			if (isDebug) {
 				console.log(
 					'Debug - rejected due to duration:',

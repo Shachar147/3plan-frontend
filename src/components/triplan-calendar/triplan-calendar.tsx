@@ -145,9 +145,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 			// Find the combination to get its details
 			const combination = eventStore.suggestedCombinations.find((c) => c.id === combinationId);
 			if (combination) {
-				const totalDuration =
-					(combination.totalDuration || 0) +
-					(combination.travelTimeBetween.reduce((sum, time) => sum + roundTo15Minutes(time), 0) || 0);
+				// totalDuration already includes travel times (rounded to 15 minutes)
+				const totalDuration = combination.totalDuration || 0;
 				const eventCount = combination.events.length;
 				const title = eventEl.getAttribute('title') || 'Combination';
 				const durationString = convertMsToHM(totalDuration * 60000);
@@ -354,9 +353,8 @@ function TriplanCalendar(props: TriPlanCalendarProps, ref: Ref<TriPlanCalendarRe
 		}
 
 		// Calculate total combination duration
-		const totalDuration =
-			(combination.totalDuration || 0) +
-			(combination.travelTimeBetween.reduce((sum, time) => sum + roundTo15Minutes(time), 0) || 0);
+		// totalDuration already includes travel times (rounded to 15 minutes)
+		const totalDuration = combination.totalDuration || 0;
 		const combinationEndTime = new Date(combinationStartTime.getTime() + totalDuration * 60000);
 
 		// Create group event that surrounds all activities
