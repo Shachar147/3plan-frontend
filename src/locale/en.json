@@ -422,6 +422,7 @@
 	"ADMIN_SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "So, how many activities already verified?",
 	"ADMIN_SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT": "Statistics",
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.DETAILS": "Talk to me in numbers",
+	"SCHEDULED_ACTIVITIES_BY_CATEGORY": "Scheduled Activities by Category",
 	"ADMIN_VERIFIED_ACTIVITIES": "Verified activities",
 	"ADMIN_UNVERIFIED_ACTIVITIES": "Unverified activities",
 	"ADMIN_SIDEBAR.DOWNLOAD_BUTTON_TEXT": "Download Media",
@@ -1191,6 +1192,7 @@
 	"BACKUP_TRIP.DESCRIPTION.JSON": "Export complete trip data including trip name, dates, categories, events, and more. Can be used to recreate the exact trip using the API.",
 	"BACKUP_TRIP.DESCRIPTION.CSV": "Export activities in CSV format, compatible with the import format.",
 	"BACKUP_TRIP.EXPORT": "Export",
+	"DARK_MODE": "Dark Mode",
 	"EDIT_COLORS": "Edit Colors",
 	"EDIT_COLORS_DESCRIPTION": "Customize your trip view by editing the colors of activity priorities.\nThis helps you quickly recognize what's most important on the map, making it easier to plan your days, balance must-do activities with flexible ones, and keep your itinerary clear and organized.",
 	"PRIORITY_COLORS": "Priority Colors",
@@ -1310,5 +1312,7 @@
 	"WALKTHROUGH.TRIP_NAME_PATTERN.SUMMER": "Summer in {location}",
 	"WALKTHROUGH.TRIP_NAME_PATTERN.EXPLORING": "Exploring {location}",
 	"WALKTHROUGH.TRIP_NAME_PATTERN.VACATION": "{location} vacation",
-	"WALKTHROUGH.TRIP_NAME_PATTERN.WEEKEND": "Weekend in {location}"
+	"WALKTHROUGH.TRIP_NAME_PATTERN.WEEKEND": "Weekend in {location}",
+	"TO_DARK_MODE": "Dark mode",
+	"TO_LIGHT_MODE": "Light mode"
 }

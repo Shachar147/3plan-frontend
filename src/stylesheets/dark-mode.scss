@@ -1,0 +1,657 @@
+/* Dark Mode Styles - Applied globally via body.dark-mode */
+/* Elegant dark theme with proper contrast and modern aesthetics */
+
+body.dark-mode {
+	background-color: #0f1419;
+	transition: background-color 0.3s ease, color 0.3s ease;
+
+	.triplan-main-page-container,
+	.triplan-header-banner-footer > div > .ui.bottom {
+		background-color: #12171d; // bluish
+	}
+
+	// texts, descriptions
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		color: #e8eaed;
+	}
+	.main-feed-description {
+		color: #e8eaed;
+	}
+	.ui.attached.segment {
+		border: 1px solid #12171d !important;
+	}
+	.triplan-footer {
+		border-top: 1px solid #1b222c !important;
+		border-bottom: 1px solid #1b222c !important;
+		background-color: #0f151c !important;
+
+		+ .link-button {
+			color: white !important;
+		}
+	}
+
+	// buttons
+	.secondary-button {
+		background-color: #222d3a !important;
+		color: #e8eaed !important;
+		border: 1px solid #1b222c !important;
+
+		&:hover {
+			background-color: #1b222c !important;
+			color: #e8eaed !important;
+			border: 1px solid #1b222c !important;
+		}
+	}
+	.link-button {
+		color: white !important;
+
+		&:hover {
+			color: #a1a1a1 !important;
+		}
+
+		&.active {
+			color: white !important;
+		}
+	}
+
+	// banner
+	.triplan-main-page-container:has(.plan-trip-tab-menu) {
+		.mobile-header {
+			background-image: url('https://plus.unsplash.com/premium_photo-1724458589661-a2f42eb58aca?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmlnaHQlMjBzY2VuZXxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000') !important;
+		}
+	}
+	.triplan-header-banner .triplan-header-banner-header-line .link-button.active:not(:disabled),
+	.triplan-header-banner .triplan-header-banner-header-line .link-button:hover:not(:disabled) {
+		background-color: rgba(255, 255, 255, 0.1) !important;
+	}
+	.triplan-header-banner-header-line.sticky.is-sticky {
+		background-color: rgba(18, 23, 29, 0.95) !important; // bluish
+		border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+
+		.link-button {
+			color: #a1a1a1 !important;
+
+			&:hover {
+				color: white !important;
+			}
+
+			&.active {
+				color: white !important;
+				border-bottom: 3px solid white !important;
+			}
+		}
+	}
+	.search-box {
+		background-color: #1f2127 !important;
+
+		.search-input {
+			background-color: #1f2127 !important;
+			color: white !important;
+			&::placeholder {
+				color: rgb(204, 204, 204) !important;
+			}
+		}
+
+		i.fa.fa-times {
+			color: #808184 !important;
+			opacity: 1 !important;
+		}
+
+		.search-button {
+			background-color: transparent !important;
+
+			&:hover {
+				background-color: #0b0a0f !important;
+			}
+		}
+	}
+	.suggestions-container,
+	.suggestion-item {
+		background-color: #222d3a !important;
+
+		.suggestion-name {
+			color: white !important;
+		}
+		.suggestion-descriptor {
+			color: rgb(204, 204, 204) !important;
+		}
+
+		&:hover {
+			background-color: #1b222c !important;
+			color: white !important;
+		}
+	}
+
+	// tabs
+	.ui.tabular.menu .active.item {
+		background-color: #12171d !important; // bluish
+		color: #e8eaed !important;
+	}
+
+	// trips page
+	.name-container h4 {
+		color: white !important;
+	}
+
+	.bright-scrollbar {
+		background-color: #222d3a !important;
+	}
+
+	.bright-scrollbar::-webkit-scrollbar-thumb {
+		background-color: #1b222c !important;
+	}
+
+	.bright-scrollbar::-webkit-scrollbar-track {
+		background-color: #222d3a !important;
+	}
+
+	.bright-scrollbar::-webkit-scrollbar-thumb:hover {
+		background-color: #1b222c !important;
+	}
+
+	.bright-scrollbar::-webkit-scrollbar-thumb:active {
+		background-color: #1b222c !important;
+	}
+
+	.bright-scrollbar::-webkit-scrollbar-thumb:hover {
+		background-color: #1b222c !important;
+	}
+
+	.bright-scrollbar::-webkit-scrollbar-thumb:active {
+		background-color: #1b222c !important;
+	}
+
+	.point-of-interest {
+		background-color: #222d3a !important;
+		color: white !important;
+		border: 1px solid #1b222c !important;
+
+		&:hover {
+			background-color: #1b222c !important;
+			color: white !important;
+			border: 1px solid #1b222c !important;
+		}
+	}
+
+	.poi-details + div > button {
+		background-color: #181e25 !important;
+		color: white !important;
+		border: 1px solid #1b222c !important;
+
+		&:hover {
+			background-color: #242c36 !important;
+			color: white !important;
+			border: 1px solid #1b222c !important;
+		}
+	}
+
+	.multiple-options-toggle-button {
+		background-color: #181e25 !important;
+		color: white !important;
+		border: 1px solid #1b222c !important;
+
+		.background-circle {
+			background-color: #242c36 !important;
+			border: 1px solid #1b222c !important;
+		}
+
+		.multiple-options-toggle-button-item {
+			color: rgb(180, 180, 180) !important;
+
+			&.selected {
+				.multiple-options-toggle-button-item-text {
+					color: white !important;
+				}
+			}
+		}
+
+		&:hover {
+			background-color: #1c232b !important;
+			color: white !important;
+			border: 1px solid #1b222c !important;
+		}
+	}
+
+	.templates-view-gray-bg {
+		background-color: #181e25 !important;
+	}
+
+	.feed-view {
+		background-color: #12171d !important;
+	}
+
+	.whats-new-row {
+		background-color: #181e25 !important;
+		color: white !important;
+	}
+
+	.triplan-admin-page-container {
+		background-color: #12171d !important;
+		color: white !important;
+	}
+
+	.primary-button {
+		background-color: #102035 !important;
+		color: white !important;
+		border: 1px solid #1b222c !important;
+		box-shadow: none !important;
+
+		&:hover {
+			background-color: #1b222c !important;
+			color: white !important;
+			border: 1px solid #1b222c !important;
+		}
+	}
+
+	.triplan-selector {
+		div[class$='-control'] {
+			background-color: #181e25 !important;
+
+			div[class$='singleValue'] {
+				color: white !important;
+			}
+
+			div[class$='placeholder'] {
+				color: rgb(204, 204, 204) !important;
+			}
+
+			div[class$='input'] {
+				color: white !important;
+			}
+		}
+	}
+
+	// /* Main containers */
+	// .main-page,
+	// .triplan-sidebar,
+	// .triplan-calendar,
+	// .map-container,
+	// .itinerary-container,
+	// #root,
+	// .App {
+	// 	background-color: #0f1419;
+	// 	color: #e8eaed;
+	// }
+
+	// /* Sidebar */
+	// .external-events-container,
+	// .triplan-sidebar-inner,
+	// .sidebar-statistics,
+	// .sidebar-settings,
+	// .category-pie-chart-wrapper {
+	// 	background-color: #1a1f2e;
+	// 	color: #e8eaed;
+	// }
+
+	// /* Typography */
+	// h1, h2, h3, h4, h5, h6 {
+	// 	color: #f1f3f4;
+	// }
+
+	// p, span, div, label {
+	// 	color: #e8eaed;
+	// }
+
+	// /* Dividers */
+	// hr {
+	// 	border-color: #2d3748;
+	// 	background-color: #2d3748;
+	// }
+
+	// /* Buttons */
+	// button,
+	// .btn,
+	// .fc-button {
+	// 	background-color: #2d3748;
+	// 	color: #e8eaed;
+	// 	border-color: #4a5568;
+
+	// 	&:hover {
+	// 		background-color: #374151;
+	// 		border-color: #5a6578;
+	// 	}
+
+	// 	&:active {
+	// 		background-color: #1f2937;
+	// 	}
+
+	// 	&.primary,
+	// 	&.btn-primary {
+	// 		background-color: #3b82f6;
+	// 		color: #ffffff;
+	// 		border-color: #2563eb;
+
+	// 		&:hover {
+	// 			background-color: #2563eb;
+	// 		}
+	// 	}
+	// }
+
+	// /* Form inputs */
+	// input,
+	// textarea,
+	// select {
+	// 	background-color: #1a1f2e;
+	// 	color: #e8eaed;
+	// 	border-color: #2d3748;
+
+	// 	&:focus {
+	// 		background-color: #1f2937;
+	// 		border-color: #3b82f6;
+	// 		outline: none;
+	// 	}
+
+	// 	&::placeholder {
+	// 		color: #9ca3af;
+	// 	}
+	// }
+
+	// /* Calendar events */
+	// .fc-event,
+	// .fc-daygrid-event,
+	// .fc-timegrid-event {
+	// 	background-color: #1f2937;
+	// 	border-color: #374151;
+	// 	color: #e8eaed;
+	// }
+
+	// .fc-event-title {
+	// 	color: #e8eaed;
+	// }
+
+	// /* FullCalendar */
+	// .fc-theme-standard {
+	// 	td, th {
+	// 		border-color: #2d3748;
+	// 	}
+	// }
+
+	// .fc-col-header-cell {
+	// 	background-color: #1a1f2e;
+	// 	color: #e8eaed;
+	// 	border-color: #2d3748;
+	// }
+
+	// .fc-daygrid-day {
+	// 	background-color: #0f1419;
+	// }
+
+	// .fc-day-today {
+	// 	background-color: #1a1f2e;
+	// }
+
+	// .fc-scrollgrid {
+	// 	background-color: #0f1419;
+	// }
+
+	// .fc-timegrid-slot {
+	// 	border-color: #2d3748;
+	// }
+
+	// /* Modals */
+	// .triplan-react-modal,
+	// .swal2-container,
+	// .swal2-popup {
+	// 	background-color: #1f2937;
+	// 	color: #e8eaed;
+	// 	border-color: #374151;
+	// }
+
+	// .swal2-title {
+	// 	color: #f1f3f4;
+	// }
+
+	// .swal2-content {
+	// 	color: #e8eaed;
+	// }
+
+	// /* Cards and containers */
+	// .card,
+	// .panel,
+	// .box,
+	// .category-pie-chart-wrapper {
+	// 	background-color: #1a1f2e;
+	// 	color: #e8eaed;
+	// 	border-color: #2d3748;
+	// }
+
+	// /* Tables */
+	// table {
+	// 	background-color: #0f1419;
+	// 	color: #e8eaed;
+
+	// 	th, td {
+	// 		border-color: #2d3748;
+	// 	}
+
+	// 	th {
+	// 		background-color: #1a1f2e;
+	// 		color: #f1f3f4;
+	// 	}
+
+	// 	tr:hover {
+	// 		background-color: #1a1f2e;
+	// 	}
+	// }
+
+	// /* Links */
+	// a {
+	// 	color: #60a5fa;
+
+	// 	&:hover {
+	// 		color: #93c5fd;
+	// 	}
+	// }
+
+	// /* Sidebar categories and events */
+	// .sidebar-category,
+	// .sidebar-event,
+	// .external-events-container .fc-event {
+	// 	background-color: #1f2937;
+	// 	color: #e8eaed;
+	// 	border-color: #374151;
+
+	// 	&:hover {
+	// 		background-color: #2d3748;
+	// 		border-color: #4a5568;
+	// 	}
+	// }
+
+	// /* Header */
+	// .triplan-header,
+	// .top-bar,
+	// .mobile-header,
+	// .mobile-navbar {
+	// 	background-color: #1a1f2e;
+	// 	color: #e8eaed;
+	// 	border-color: #2d3748;
+	// }
+
+	// /* Search inputs */
+	// .triplan-search input,
+	// .map-search-location-input input,
+	// .tasks-search-container input {
+	// 	background-color: #1f2937;
+	// 	color: #e8eaed;
+	// 	border-color: #374151;
+
+	// 	&:focus {
+	// 		background-color: #2d3748;
+	// 		border-color: #3b82f6;
+	// 	}
+	// }
+
+	// /* List view */
+	// .list-container,
+	// .list-view-item {
+	// 	background-color: #0f1419;
+	// 	color: #e8eaed;
+	// 	border-color: #2d3748;
+
+	// 	&:hover {
+	// 		background-color: #1a1f2e;
+	// 	}
+	// }
+
+	// /* Sidebar groups */
+	// .sidebar-group,
+	// .sidebar-collapsable-menu {
+	// 	background-color: transparent;
+	// }
+
+	// /* Sidebar statistics */
+	// .sidebar-statistics {
+	// 	background-color: transparent;
+	// 	color: #e8eaed;
+
+	// 	i {
+	// 		color: #9ca3af;
+	// 	}
+	// }
+
+	// /* Sidebar settings */
+	// .sidebar-settings {
+	// 	background-color: transparent;
+	// 	color: #e8eaed;
+
+	// 	&:hover {
+	// 		background-color: rgba(255, 255, 255, 0.05);
+	// 	}
+
+	// 	&.active {
+	// 		background-color: rgba(59, 130, 246, 0.15);
+	// 		color: #60a5fa;
+	// 	}
+	// }
+
+	// /* Pie chart */
+	// .pie-chart-container {
+	// 	.pie-chart-legend-label,
+	// 	.pie-chart-legend-value {
+	// 		color: #e8eaed;
+	// 	}
+
+	// 	.pie-chart-empty {
+	// 		color: #9ca3af;
+	// 	}
+	// }
+
+	// /* Category pie chart wrapper */
+	// .category-pie-chart-wrapper {
+	// 	background-color: rgba(255, 255, 255, 0.03);
+	// 	border: 1px solid rgba(255, 255, 255, 0.08);
+	// 	border-radius: 8px;
+
+	// 	.category-pie-chart-title {
+	// 		color: #f1f3f4;
+	// 	}
+	// }
+
+	// /* Select inputs */
+	// .react-select__control,
+	// .react-select__menu {
+	// 	background-color: #1f2937;
+	// 	color: #e8eaed;
+	// 	border-color: #374151;
+	// }
+
+	// .react-select__option {
+	// 	background-color: #1f2937;
+	// 	color: #e8eaed;
+
+	// 	&:hover {
+	// 		background-color: #2d3748;
+	// 	}
+
+	// 	&--is-selected {
+	// 		background-color: #3b82f6;
+	// 	}
+	// }
+
+	// .react-select__single-value,
+	// .react-select__input {
+	// 	color: #e8eaed;
+	// }
+
+	// /* Icons */
+	// .fa,
+	// [class^='fa-'] {
+	// 	color: #9ca3af;
+	// }
+
+	// /* Sidebar event items */
+	// .sidebar-event-title-container,
+	// .sidebar-event-title-text {
+	// 	color: #e8eaed;
+	// }
+
+	// /* Custom dates selector */
+	// .custom-dates-container,
+	// .custom-dates-line {
+	// 	background-color: #1a1f2e;
+	// 	border-color: #2d3748;
+	// }
+
+	// /* Filter indicators */
+	// .filter-indications {
+	// 	background-color: #1f2937;
+	// 	border-color: #374151;
+	// }
+
+	// /* Map info window */
+	// .gm-style-iw,
+	// .gm-style-iw-d {
+	// 	background-color: #1f2937;
+	// 	color: #e8eaed;
+	// }
+
+	// /* Toast notifications */
+	// .toastr {
+	// 	background-color: #1f2937;
+	// 	color: #e8eaed;
+	// 	border-color: #374151;
+	// }
+
+	// /* Loading spinners */
+	// .loading-spinner,
+	// .spinner {
+	// 	border-color: #2d3748;
+	// 	border-top-color: #3b82f6;
+	// }
+
+	// /* Scrollbars */
+	// ::-webkit-scrollbar {
+	// 	background-color: #1a1f2e;
+	// 	width: 8px;
+	// }
+
+	// ::-webkit-scrollbar-thumb {
+	// 	background-color: #374151;
+	// 	border-radius: 4px;
+
+	// 	&:hover {
+	// 		background-color: #4a5568;
+	// 	}
+	// }
+
+	// /* Code blocks */
+	// code,
+	// pre {
+	// 	background-color: #1f2937;
+	// 	color: #e8eaed;
+	// 	border-color: #374151;
+	// }
+
+	// /* Badges and tags */
+	// .badge,
+	// .tag {
+	// 	background-color: #2d3748;
+	// 	color: #e8eaed;
+	// 	border-color: #4a5568;
+	// }
+}

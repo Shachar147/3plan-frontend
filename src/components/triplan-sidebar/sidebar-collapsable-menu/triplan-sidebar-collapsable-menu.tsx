@@ -10,6 +10,7 @@ import {
 	isFlightCategory,
 	isHotel,
 	isLocal,
+	isNotesCategory,
 	locationToString,
 	toDistanceString,
 } from '../../../utils/utils';
@@ -29,7 +30,13 @@ import {
 	prioritiesOrder,
 	SyncMode,
 } from '../../../utils/enums';
-import { CalendarEvent, SidebarEvent, TriplanTask, TriplanTaskStatus } from '../../../utils/interfaces';
+import {
+	CalendarEvent,
+	SidebarEvent,
+	TriplanTask,
+	TriplanTaskStatus,
+	TriPlanCategory,
+} from '../../../utils/interfaces';
 import { hotelColor, priorityToColor } from '../../../utils/consts';
 import { EventInput } from '@fullcalendar/react';
 import { withPlacesFinder } from '../../../config/config';
@@ -49,6 +56,7 @@ import { rootStoreContext } from '../../../v2/stores/root-store';
 import './sidebar-priority-filters.scss';
 import { TriplanSidebarEqualDivider } from '../triplan-sidebar-divider';
 import TriplanSidebarSyncTripButton from '../sidebar-sync-trip-button/triplan-sidebar-sync-trip-button';
+import { PieChart } from '../../common/pie-chart/pie-chart';
 
 interface TriplanSidebarCollapsableMenuProps {
 	removeEventFromSidebarById: (eventId: string) => Promise<Record<number, SidebarEvent[]>>;
@@ -1042,6 +1050,68 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 
 		const separator = ' '; // eventStore.isEnglish ? '\n' : ' ';
 
+		const renderCategoryPieChart = () => {
+			// Calculate scheduled activities by category
+			const categoryCounts: Record<string, { count: number; category: TriPlanCategory }> = {};
+
+			eventStore.calendarEvents.forEach((event) => {
+				const categoryId = event.category || '0';
+				const category = eventStore.categories.find((cat) => cat.id.toString() === categoryId.toString());
+
+				if (
+					category &&
+					!isHotel(category.title, event.title) &&
+					!isFlight(category.title, event.title) &&
+					!isNotesCategory(category.title)
+				) {
+					if (!categoryCounts[categoryId]) {
+						categoryCounts[categoryId] = { count: 0, category };
+					}
+					categoryCounts[categoryId].count++;
+				}
+			});
+
+			// Convert to pie chart data format
+			const pieData = Object.values(categoryCounts)
+				.filter((item) => item.count > 0)
+				.map((item, index) => {
+					// Generate colors based on category index (you can customize this)
+					const colors = [
+						'#37b5ff',
+						'#ff5252',
+						'#ffb752',
+						'#4caf50',
+						'#9c27b0',
+						'#ff9800',
+						'#00bcd4',
+						'#e91e63',
+						'#795548',
+						'#607d8b',
+					];
+					const color = colors[index % colors.length];
+
+					return {
+						label: item.category.title,
+						value: item.count,
+						color: color,
+					};
+				})
+				.sort((a, b) => b.value - a.value); // Sort by count descending
+
+			if (pieData.length === 0) {
+				return null;
+			}
+
+			return (
+				<div className="category-pie-chart-wrapper">
+					<h4 className="category-pie-chart-title">
+						{TranslateService.translate(eventStore, 'SCHEDULED_ACTIVITIES_BY_CATEGORY')}
+					</h4>
+					<PieChart data={pieData} size={160} />
+				</div>
+			);
+		};
+
 		const calendarSidebarStatistics = (
 			<>
 				<div className="sidebar-statistics">
@@ -1451,6 +1521,15 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			<>
 				{calendarSidebarStatistics}
 				<hr className="margin-block-2" />
+				{(() => {
+					const pieChart = renderCategoryPieChart();
+					return (
+						<>
+							{pieChart}
+							{pieChart && <hr className="margin-block-2" />}
+						</>
+					);
+				})()}
 				{renderPriceList()}
 				<hr className="margin-block-2" />
 				{renderPrioritiesStatistics()}
@@ -1460,7 +1539,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			groupTitle,
 			2,
 			undefined,
-			540
+			800 // Increased to accommodate pie chart
 		);
 		return (
 			<>
@@ -1546,19 +1625,22 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 				{settingsItems.map((item) => {
 					return (
 						<Observer key={`sidebar-settings-${item.id}`}>
-							{() => (
-								<div
-									className={getClasses(
-										'flex-row gap-5 align-items-center sidebar-settings',
-										item.className,
-										eventStore.sidebarSettings.get(item.id) && 'active'
-									)}
-									onClick={item.onClick}
-								>
-									<i className={`fa ${item.icon}`} aria-hidden="true"></i>
-									<span>{TranslateService.translate(eventStore, item.name)}</span>
-								</div>
-							)}
+							{() => {
+								const isActive = eventStore.sidebarSettings.get(item.id);
+								return (
+									<div
+										className={getClasses(
+											'flex-row gap-5 align-items-center sidebar-settings',
+											item.className,
+											isActive && 'active'
+										)}
+										onClick={item.onClick}
+									>
+										<i className={`fa ${item.icon}`} aria-hidden="true"></i>
+										<span>{TranslateService.translate(eventStore, item.name)}</span>
+									</div>
+								);
+							}}
 						</Observer>
 					);
 				})}

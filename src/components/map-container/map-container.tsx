@@ -693,8 +693,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 		return {
 			styles: [
-				...lightModeStyles,
-				// ...darkModeStyles,
+				...(eventStore.isDarkMode ? darkModeStyles : lightModeStyles),
 				moMountainMarkers,
 				noDefaultMarkers,
 				noRoadLabels,
