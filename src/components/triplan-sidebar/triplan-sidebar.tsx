@@ -21,6 +21,7 @@ export interface TriplanSidebarProps {
 }
 
 export enum SidebarGroups {
+	SUGGESTED_COMBINATIONS = 'SUGGESTED_COMBINATIONS',
 	CALENDAR_STATISTICS = 'CALENDAR_STATISTICS',
 	WARNINGS = 'WARNINGS',
 	ACTIONS = 'ACTIONS',

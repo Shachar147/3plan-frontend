@@ -19,6 +19,7 @@ export const endpoints: Record<string, any> = {
 			saveAsTemplate: '/trip/save-as-template',
 
 			updateTripByName: (tripName: string) => `/trip/name/${tripName}`,
+			updateTripByNameNoRewriteImages: (tripName: string) => `/trip/name/${tripName}/no-rewrite-images`,
 			hideTripByName: (tripName: string) => `/trip/hide/name/${tripName}`,
 			unhideTripByName: (tripName: string) => `/trip/unhide/name/${tripName}`,
 			lockTripByName: (tripName: string) => `/trip/lock/name/${tripName}`,

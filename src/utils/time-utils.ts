@@ -336,11 +336,18 @@ export const formatTimeFromISODateString = (inputDateString: string): string => 
 };
 
 export function areDatesOnDifferentDays(date1: Date, date2: Date) {
-	return (
-		date1.getFullYear() !== date2.getFullYear() ||
-		date1.getMonth() !== date2.getMonth() ||
-		date1.getDate() !== date2.getDate()
-	);
+	try {
+		return (
+			date1.getFullYear() !== date2.getFullYear() ||
+			date1.getMonth() !== date2.getMonth() ||
+			date1.getDate() !== date2.getDate()
+		);
+	} catch (error) {
+		if (date1 && date2) {
+			debugger;
+		}
+		return true;
+	}
 }
 
 export function getOffsetInHours(zeroIfProd: boolean = true) {
@@ -393,4 +400,9 @@ export function serializeDuration(eventStore: EventStore, seconds: number) {
 		result.push(seconds + ' ' + TranslateService.translate(eventStore, 'sec' + (seconds > 1 ? 's' : '')));
 	}
 	return result.join(' ');
+}
+
+export function roundTo15Minutes(minutes: number) {
+	return Math.ceil(minutes / 15) * 15;
+	// return Math.round(minutes / 15) * 15;
 }

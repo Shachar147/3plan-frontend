@@ -103,7 +103,7 @@ export class ClusteringService {
 		const MAX_EVENTS_TO_PROCESS = 1000;
 		const eventsToProcess = events.length > MAX_EVENTS_TO_PROCESS ? events.slice(0, MAX_EVENTS_TO_PROCESS) : events;
 
-		console.log(`Processing ${eventsToProcess.length} events (limited from ${events.length} for performance)`);
+		// console.log(`Processing ${eventsToProcess.length} events (limited from ${events.length} for performance)`);
 
 		const clusters: Cluster[] = [];
 		const drivingThresholdSeconds = (options.drivingThresholdMinutes || 10) * 60;
@@ -119,11 +119,12 @@ export class ClusteringService {
 			? options.maxAirDistance || 5000
 			: Math.min(drivingThresholdMeters, walkingThresholdMeters);
 
+		/*
 		console.log(
 			`Distance-based clustering using ${
 				options.useAirDistanceFallback ? 'air distance' : 'converted travel time'
 			} threshold: ${distanceThreshold}m (driving: ${drivingThresholdMeters}m, walking: ${walkingThresholdMeters}m)`
-		);
+		);*/
 
 		// Start with spatial pre-clustering to group nearby events immediately
 		const initialClusters = this.createInitialSpatialClusters(eventsToProcess, distanceThreshold, options);
@@ -240,7 +241,7 @@ export class ClusteringService {
 			clusters.push(cluster);
 		}
 
-		console.log(`Created ${clusters.length} initial spatial clusters from ${events.length} events`);
+		//console.log(`Created ${clusters.length} initial spatial clusters from ${events.length} events`);
 		return clusters;
 	}
 
@@ -253,7 +254,7 @@ export class ClusteringService {
 		maxClusters: number,
 		options: ClusteringOptions
 	): Cluster[] {
-		console.log(`Using spatial clustering for ${clusters.length} clusters`);
+		// console.log(`Using spatial clustering for ${clusters.length} clusters`);
 
 		// Shuffle clusters to avoid processing by original order
 		const shuffledClusters = [...clusters].sort(() => Math.random() - 0.5);

@@ -7,6 +7,7 @@ import {
 	Coordinate,
 	DistanceResult,
 	SidebarEvent,
+	SuggestedCombination,
 	TripActions,
 	TriPlanCategory,
 	TriplanTask,
@@ -204,6 +205,7 @@ export class EventStore {
 	@observable tasks: TriplanTask[] = [];
 	@observable tasksSearchValue = '';
 	@observable hideDoneTasks: boolean = false;
+	@observable suggestedCombinations: SuggestedCombination[] = [];
 	@observable groupTasksByEvent: boolean = false;
 
 	@observable sidebarGroupBy: 'priority' | 'category' | 'area' = 'category';
@@ -736,7 +738,7 @@ export class EventStore {
 					const problem = new Date(e.end!.toString()).getTime() > minStartDate.getTime();
 
 					if (problem || warn) {
-						console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
+						// DEBUG - console.info(`reduced ${e.title} from ${e.end} to ${minStartDate.toString()}`);
 						// e.end = minStartDate;
 						if (problem) {
 							e.className = e.className || '';
@@ -851,6 +853,18 @@ export class EventStore {
 	@computed
 	get isEnglish() {
 		return this.calendarLocalCode === 'en';
+	}
+
+	@computed
+	get suggestedCombinationsComputed() {
+		// Filter combinations based on sidebar search if needed
+		if (!this.sidebarSearchValue) {
+			return this.suggestedCombinations;
+		}
+
+		return this.suggestedCombinations.filter((combination) =>
+			combination.events.some((event) => this._isEventMatchingSearch(event, this.sidebarSearchValue))
+		);
 	}
 
 	_isEventMatchingSearch(event: SidebarEvent, searchValue: string) {
@@ -1108,6 +1122,20 @@ export class EventStore {
 		return parseInt(((this.currentEnd.getTime() - this.currentStart.getTime()) / 86400000).toString()); // + 1
 	}
 
+	@computed
+	get allEventsForCombinations() {
+		const countRelevantEvents = this.allSidebarEvents.filter((event) => {
+			const priority = typeof event.priority === 'string' ? parseInt(event.priority) : event.priority;
+			return [TriplanPriority.maybe, TriplanPriority.high, TriplanPriority.must].includes(priority);
+		}).length;
+
+		if (countRelevantEvents < 5) {
+			return this.allEventsComputed;
+		}
+
+		return this.allSidebarEvents;
+	}
+
 	// --- actions --------------------------------------------------------------
 	@action
 	setHideCustomDates(hide: boolean) {
@@ -1147,7 +1175,7 @@ export class EventStore {
 	}
 
 	@action
-	async setCalendarEvents(newCalenderEvents: CalendarEvent[], updateServer: boolean = true) {
+	async setCalendarEvents(newCalenderEvents: CalendarEvent[], updateServer: boolean = true, rewriteImages = true) {
 		this.calendarEvents = newCalenderEvents.filter((e) => Object.keys(e).includes('start'));
 
 		// lock ordered events
@@ -1159,16 +1187,25 @@ export class EventStore {
 		const defaultEvents = this.getJSCalendarEvents() as CalendarEvent[]; // todo: make sure this conversion not fucking things up
 
 		if (updateServer) {
-			return this.dataService.setCalendarEvents(defaultEvents, this.tripName);
+			return this.dataService.setCalendarEvents(defaultEvents, this.tripName, rewriteImages);
 		}
 		return true;
 	}
 
 	@action
-	async setSidebarEvents(newSidebarEvents: Record<number, SidebarEvent[]>, updateServer: boolean = true) {
+	setSuggestedCombinations(combinations: SuggestedCombination[]) {
+		this.suggestedCombinations = combinations;
+	}
+
+	@action
+	async setSidebarEvents(
+		newSidebarEvents: Record<number, SidebarEvent[]>,
+		updateServer: boolean = true,
+		rewriteImages: boolean = true
+	) {
 		this.sidebarEvents = newSidebarEvents;
 		if (updateServer) {
-			return this.dataService.setSidebarEvents(newSidebarEvents, this.tripName);
+			return this.dataService.setSidebarEvents(newSidebarEvents, this.tripName, rewriteImages);
 		}
 		return true;
 	}
@@ -1233,16 +1270,21 @@ export class EventStore {
 			delete sidebarEvent.start;
 			delete sidebarEvent.end;
 
-			sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
-			sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
+			if (categoryId != 0) {
+				sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
+				sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
 
-			newEvents[categoryId] = newEvents[categoryId] || [];
-			newEvents[categoryId].push(sidebarEvent);
+				newEvents[categoryId] = newEvents[categoryId] || [];
+				newEvents[categoryId].push(sidebarEvent);
+			}
 		});
 
-		const promise1 = this.setSidebarEvents(newEvents);
+		// groups
+		delete newEvents[0];
+
+		const promise1 = this.setSidebarEvents(newEvents, true, false);
 		this.allowRemoveAllCalendarEvents = true;
-		const promise2 = this.setCalendarEvents([]);
+		const promise2 = this.setCalendarEvents([], true, false);
 
 		return Promise.all([promise1, promise2]).then(() => {
 			LogHistoryService.logHistory(this, TripActions.clearedCalendar, {
@@ -1250,6 +1292,57 @@ export class EventStore {
 				type: 'all activities',
 			});
 		});
+	}
+
+	@action
+	async returnGroupEventsToSidebar(groupId: string) {
+		// Get all individual events in the group
+		const individualEvents = this.calendarEvents.filter((event) => event.groupId === groupId && !event.isGroup);
+
+		if (individualEvents.length === 0) {
+			return Promise.resolve();
+		}
+
+		// Create new sidebar events object
+		const newEvents = { ...this.sidebarEvents };
+		const eventToCategory: any = {};
+		const eventIdToEvent: any = {};
+
+		// Build mapping from all events
+		this.allEventsComputed.forEach((e) => {
+			eventToCategory[e.id] = e.category;
+			eventIdToEvent[e.id] = e;
+		});
+
+		// Add individual events back to sidebar
+		individualEvents.forEach((event) => {
+			const eventId = event.id!;
+			const categoryId = eventToCategory[eventId];
+			const sidebarEvent = eventIdToEvent[eventId];
+
+			if (sidebarEvent && categoryId != 0) {
+				// Clean up calendar-specific properties
+				delete sidebarEvent.start;
+				delete sidebarEvent.end;
+
+				// Set defaults if missing
+				sidebarEvent.priority = sidebarEvent.priority ?? TriplanPriority.unset;
+				sidebarEvent.preferredTime = sidebarEvent.preferredTime ?? TriplanEventPreferredTime.unset;
+
+				// Add to appropriate category
+				newEvents[categoryId] = newEvents[categoryId] || [];
+				newEvents[categoryId].push(sidebarEvent);
+			}
+		});
+
+		// Remove all events in the group from calendar
+		const filteredEvents = this.calendarEvents.filter((event) => event.groupId !== groupId);
+
+		// Update both stores properly
+		this.allowRemoveAllCalendarEvents = true;
+		await this.setCalendarEvents(filteredEvents, true, false);
+		this.allowRemoveAllCalendarEvents = false;
+		await this.setSidebarEvents(newEvents, true, false);
 	}
 
 	@computed
@@ -1886,6 +1979,15 @@ export class EventStore {
 		// todo check
 		storedEvent.preferredTime = newEvent.preferredTime ?? storedEvent.preferredTime;
 		storedEvent.category = newEvent.category ?? storedEvent.category;
+
+		// update group settings
+		storedEvent.groupId = newEvent.groupId ?? storedEvent.groupId;
+		storedEvent.isGrouped = newEvent.isGrouped ?? storedEvent.isGrouped;
+		if (storedEvent.extendedProps)
+			storedEvent.extendedProps['data-group-id'] =
+				newEvent.extendedProps['data-group-id'] ?? storedEvent.extendedProps['data-group-id'];
+		storedEvent.groupedEvents = newEvent.groupedEvents ?? storedEvent.groupedEvents;
+		storedEvent.isGroup = newEvent.isGroup ?? storedEvent.isGroup;
 
 		return storedEvent;
 	}

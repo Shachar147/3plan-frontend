@@ -21,6 +21,11 @@ export interface CalendarEvent {
 	suggestedEndTime?: any;
 	timingError?: any;
 	className?: string;
+	// Group properties
+	groupId?: string;
+	isGrouped?: boolean;
+	isGroup?: boolean;
+	groupedEvents?: string[];
 
 	extendedProps?: Record<string, any>;
 }
@@ -127,9 +132,10 @@ export interface ImportEventsConfirmInfo {
 export interface DistanceResult {
 	from: string;
 	to: string;
-	duration: string;
-	distance: string;
-	duration_value: number;
+	duration: string; // formatted string
+	distance: string; // formatted string
+	duration_value: number; // in seconds
+	distance_value: number; // in meters
 }
 
 export enum TripActions {
@@ -201,4 +207,15 @@ export interface TriplanTask {
 	isDeleted: boolean;
 	deletedAt?: number;
 	updatedAt?: number; // timestamp
+}
+
+export interface SuggestedCombination {
+	id: string;
+	events: SidebarEvent[]; // ordered
+	totalDuration: number; // in minutes
+	travelTimeBetween: number[]; // travel time between consecutive events
+	travelModeBetween: string[]; // travel mode between consecutive events ('WALKING' or 'DRIVING')
+	hasScheduledEvents: boolean; // if any event is on calendar
+	isShoppingDay: boolean;
+	suggestedName: string; // e.g., "Shopping Day", "Must-See Tour"
 }

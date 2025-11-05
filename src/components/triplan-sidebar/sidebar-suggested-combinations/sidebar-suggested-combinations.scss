@@ -1,0 +1,285 @@
+.sidebar-suggested-combinations {
+	.no-combinations {
+		padding: 16px;
+		text-align: center;
+		color: #666;
+		font-style: italic;
+	}
+
+	.combinations-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 8px;
+	}
+
+	.more-combinations-section {
+		margin-top: 12px;
+		padding: 8px;
+		border-top: 1px solid #e0e0e0;
+
+		.more-combinations-btn {
+			width: 100%;
+			padding: 8px 12px;
+			background: #f5f5f5;
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			font-size: 12px;
+			font-weight: 500;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+			&:hover:not(:disabled) {
+				background: #e8e8e8;
+				border-color: #bbb;
+			}
+
+			&:disabled {
+				background: #f9f9f9;
+				color: #999;
+				cursor: not-allowed;
+				border-color: #e0e0e0;
+			}
+
+			.loader {
+				display: inline-block;
+				margin-right: 4px;
+				animation: spin 1s linear infinite;
+			}
+
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+		}
+	}
+
+	.combination-card {
+		background: #fff;
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		cursor: grab;
+		transition: all 0.2s ease;
+		overflow: hidden;
+		flex-direction: column;
+
+		&:hover {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+			transform: translateY(-1px);
+		}
+
+		&:active {
+			cursor: grabbing;
+		}
+
+		&.has-scheduled-events {
+			border-left: 4px solid #ff9800;
+		}
+
+		.combination-header {
+			padding: 12px;
+			cursor: pointer;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			width: 100%;
+
+			.combination-title {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding-inline-start: 16px; // Add padding to prevent arrow overlap
+
+				h4 {
+					margin: 0;
+					font-size: 14px;
+					font-weight: 600;
+					color: #333;
+					flex: 1;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+
+				.shopping-icon {
+					font-size: 16px;
+				}
+
+				.warning-badge {
+					font-size: 16px;
+					cursor: help;
+				}
+			}
+
+			.combination-meta {
+				display: flex;
+				gap: 12px;
+				font-size: 12px;
+				color: #666;
+
+				.event-count {
+					font-weight: 500;
+				}
+
+				.total-time {
+					color: #2196f3;
+				}
+
+				.travel-time {
+					color: #ff9800;
+				}
+			}
+
+			.combination-priority {
+				gap: 4px;
+				display: flex;
+				flex-direction: row;
+				align-items: start;
+
+				.high-count,
+				.must-count {
+					background: #faf5bf;
+					color: #333;
+					padding: 2px 6px;
+					border-radius: 12px;
+					font-size: 11px;
+					font-weight: 600;
+					flex: 0 0 auto;
+				}
+
+				.high-count {
+					background: #ffd7d7;
+				}
+			}
+
+			.expand-icon {
+				position: absolute;
+				top: 16px;
+				inset-inline-start: 12px;
+				font-size: 12px;
+				color: #999;
+				transition: transform 0.2s ease;
+				z-index: 1;
+				background: white;
+				padding: 2px;
+				border-radius: 2px;
+			}
+		}
+
+		.combination-events {
+			border-top: 1px solid #f0f0f0;
+			padding: 8px 12px;
+			background: #fafafa;
+
+			.combination-event {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding: 6px 0;
+				position: relative;
+
+				.category-emoji {
+					font-size: 14px;
+					margin-right: 2px;
+				}
+
+				&:not(:last-child) {
+					border-bottom: 1px solid #eee;
+				}
+
+				.event-priority-dot {
+					width: 8px;
+					height: 8px;
+					border-radius: 50%;
+					flex-shrink: 0;
+				}
+
+				.event-title {
+					font-size: 12px;
+					color: #333;
+					flex: 1;
+				}
+
+				.event-duration {
+					font-size: 10px;
+					color: #2196f3;
+					background: #e3f2fd;
+					padding: 2px 6px;
+					border-radius: 10px;
+					margin-left: 8px;
+				}
+
+				.travel-indicator {
+					font-size: 10px;
+					color: #ff9800;
+					background: #fff3e0;
+					padding: 2px 6px;
+					border-radius: 10px;
+					margin-left: 8px;
+				}
+			}
+		}
+	}
+}
+
+// Drag and drop styles
+.combination-card.fc-event {
+	&.fc-event-dragging {
+		opacity: 0.8;
+		transform: rotate(5deg);
+	}
+}
+
+// Responsive design
+@media (max-width: 768px) {
+	.sidebar-suggested-combinations {
+		.combination-card {
+			.combination-header {
+				padding: 10px;
+
+				.combination-title h4 {
+					font-size: 13px;
+				}
+
+				.combination-meta {
+					font-size: 11px;
+					gap: 8px;
+				}
+			}
+
+			.combination-events {
+				padding: 6px 10px;
+
+				.combination-event {
+					padding: 4px 0;
+
+					.event-title {
+						font-size: 11px;
+					}
+				}
+			}
+		}
+	}
+}
+
+.combination-map {
+	height: 200px;
+	margin-top: 10px;
+	border-radius: 8px;
+	overflow: hidden;
+	border: 1px solid #e0e0e0;
+
+	.map-container {
+		height: 100%;
+
+		.google-map-react {
+			height: 100% !important;
+		}
+	}
+}

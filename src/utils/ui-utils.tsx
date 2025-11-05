@@ -390,7 +390,7 @@ export const SELECT_STYLE = {
 };
 
 export const getEventDivHtml = (eventStore: EventStore, calendarEvent: CalendarEvent) => {
-	const category = Number(calendarEvent.category!.toString());
+	const category = Number((calendarEvent.category || '0').toString());
 	const icon = calendarEvent.icon || eventStore.categoriesIcons[category];
 
 	const isOrdered = isEventAlreadyOrdered(eventStore, calendarEvent);

@@ -94,6 +94,7 @@ import { endpoints } from '../v2/utils/endpoints';
 import { FeatureFlagsService } from '../utils/feature-flags';
 import { newDesignRootPath } from '../v2/utils/consts';
 import { getIcon, getIconUrl } from '../components/map-container/map-container-utils';
+import MapContainer from '../components/map-container/map-container';
 
 export const ReactModalRenderHelper = {
 	renderInputWithLabel: (
@@ -6251,6 +6252,288 @@ const ReactModalService = {
 					ReactModalService.internal.closeModal(eventStore);
 				}
 			},
+		});
+	},
+
+	// View Group Modal Component
+	ViewGroupModal: ({
+		eventStore,
+		groupEvent,
+		onUngroup,
+		onUngroupAndRemove,
+		onCancel,
+	}: {
+		eventStore: EventStore;
+		groupEvent: CalendarEvent;
+		onUngroup: () => void;
+		onUngroupAndRemove: () => void;
+		onCancel: () => void;
+	}) => {
+		const groupedEvents = eventStore.calendarEvents.filter(
+			(event) => event.groupId === groupEvent.groupId && !event.isGroup
+		);
+
+		const formatDuration = (minutes: number): string => {
+			const hours = Math.floor(minutes / 60);
+			const mins = minutes % 60;
+			if (hours > 0 && mins > 0) {
+				return `${hours}h ${mins}m`;
+			} else if (hours > 0) {
+				return `${hours}h`;
+			} else {
+				return `${mins}m`;
+			}
+		};
+
+		const getEventDuration = (event: CalendarEvent): number => {
+			if (!event.duration) {
+				return 60; // Default 1 hour
+			}
+
+			const durationStr = event.duration.toLowerCase();
+			let totalMinutes = 0;
+
+			// First check for "XX:YY" format (e.g., "09:45")
+			const timeFormatMatch = durationStr.match(/^(\d{1,2}):(\d{2})$/);
+			if (timeFormatMatch) {
+				const hours = parseInt(timeFormatMatch[1]);
+				const minutes = parseInt(timeFormatMatch[2]);
+				totalMinutes = hours * 60 + minutes;
+			} else {
+				// Parse duration string (e.g., "2h 30m", "90m", "1.5h")
+				// Extract hours
+				const hourMatch = durationStr.match(/(\d+(?:\.\d+)?)h/);
+				if (hourMatch) {
+					totalMinutes += parseFloat(hourMatch[1]) * 60;
+				}
+
+				// Extract minutes
+				const minuteMatch = durationStr.match(/(\d+)m/);
+				if (minuteMatch) {
+					totalMinutes += parseInt(minuteMatch[1]);
+				}
+			}
+
+			return totalMinutes || 60; // Default to 1 hour if parsing fails
+		};
+
+		const getCategoryEmoji = (event: CalendarEvent): string => {
+			const category = Number(event.category || '0');
+			const categoryTitle = eventStore.categories?.[category]?.title?.toLowerCase() || '';
+			const eventTitle = event.title?.toLowerCase() || '';
+
+			// Food categories
+			if (
+				categoryTitle.includes('food') ||
+				categoryTitle.includes('restaurant') ||
+				eventTitle.includes('restaurant') ||
+				eventTitle.includes('cafe') ||
+				eventTitle.includes('bar') ||
+				eventTitle.includes('food')
+			) {
+				return '🍕';
+			}
+			// Shopping categories
+			if (
+				categoryTitle.includes('shopping') ||
+				categoryTitle.includes('store') ||
+				eventTitle.includes('store') ||
+				eventTitle.includes('shop')
+			) {
+				return '🛒';
+			}
+			// Sightseeing categories
+			if (
+				categoryTitle.includes('sightseeing') ||
+				categoryTitle.includes('attraction') ||
+				eventTitle.includes('bridge') ||
+				eventTitle.includes('garden') ||
+				eventTitle.includes('tower') ||
+				eventTitle.includes('museum')
+			) {
+				return '🗽';
+			}
+			// Entertainment categories
+			if (
+				categoryTitle.includes('entertainment') ||
+				categoryTitle.includes('nightlife') ||
+				eventTitle.includes('club') ||
+				eventTitle.includes('bar') ||
+				eventTitle.includes('cocktail') ||
+				eventTitle.includes('drink')
+			) {
+				return '🍹';
+			}
+			// Default
+			return '📍';
+		};
+
+		const getPriorityColor = (priority: number | string | undefined): string => {
+			const priorityNum = typeof priority === 'string' ? parseInt(priority) : priority;
+			switch (priorityNum) {
+				case 1:
+					return '#d32f2f'; // Must
+				case 2:
+					return '#f57c00'; // High
+				case 3:
+					return '#1976d2'; // Maybe
+				default:
+					return '#757575'; // Default
+			}
+		};
+
+		const getPriorityText = (priority: number | string | undefined): string => {
+			const priorityNum = typeof priority === 'string' ? parseInt(priority) : priority;
+			switch (priorityNum) {
+				case 1:
+					return 'MUST';
+				case 2:
+					return 'HIGH';
+				case 3:
+					return 'MAYBE';
+				default:
+					return 'UNSET';
+			}
+		};
+
+		return (
+			<div className="view-group-modal">
+				<div className="modal-header">
+					<h2>🎯 {groupedEvents.length} פעילויות</h2>
+					<div className="group-info">
+						<span className="total-duration">🕐 {formatDuration(getEventDuration(groupEvent))}</span>
+					</div>
+				</div>
+
+				<div className="modal-content">
+					<div className="activities-list">
+						<h3>{TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.ACTIVITIES')}</h3>
+						<div className="activities-scroll-container">
+							{groupedEvents.map((event, index) => {
+								const startTime = event.start instanceof Date ? event.start : new Date(event.start);
+								const endTime = event.end instanceof Date ? event.end : new Date(event.end);
+								const startTimeStr = startTime.toLocaleTimeString('he-IL', {
+									hour: '2-digit',
+									minute: '2-digit',
+									hour12: false,
+								});
+								const endTimeStr = endTime.toLocaleTimeString('he-IL', {
+									hour: '2-digit',
+									minute: '2-digit',
+									hour12: false,
+								});
+
+								return (
+									<div key={event.id} className="activity-item">
+										<div className="activity-number">{index + 1}</div>
+										<div className="activity-details">
+											<div className="activity-title">
+												<span className="category-emoji">{getCategoryEmoji(event)}</span>
+												{event.title}
+											</div>
+											<div className="activity-meta">
+												<span className="timing">
+													{startTimeStr} - {endTimeStr}
+												</span>
+												<span className="duration">
+													🕒 {formatDuration(getEventDuration(event))}
+												</span>
+												<span
+													className="priority"
+													style={{ color: getPriorityColor(event.priority) }}
+												>
+													{getPriorityText(event.priority)}
+												</span>
+											</div>
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					</div>
+
+					<div className="group-map">
+						<h3>{TranslateService.translate(eventStore, 'SUGGESTED_COMBINATIONS.MAP')}</h3>
+						<div className="map-container-wrapper">
+							<MapContainer
+								events={groupedEvents}
+								noHeader={true}
+								noFilters={true}
+								isReadOnly={true}
+								zoom={13}
+								isItineraryView={true}
+								hideVisibleItems={true}
+							/>
+						</div>
+					</div>
+				</div>
+
+				<div className="modal-actions">
+					<button className="btn btn-secondary" onClick={onUngroup}>
+						{TranslateService.translate(eventStore, 'VIEW_GROUP_MODAL.UNGROUP')}
+					</button>
+					<button className="btn btn-danger" onClick={onUngroupAndRemove}>
+						{TranslateService.translate(eventStore, 'VIEW_GROUP_MODAL.UNGROUP_AND_REMOVE')}
+					</button>
+				</div>
+			</div>
+		);
+	},
+
+	// Open View Group Modal
+	openViewGroupModal(eventStore: EventStore, groupEvent: CalendarEvent) {
+		const handleUngroup = () => {
+			// Remove group properties from all events in the group
+			const updatedEvents = eventStore.calendarEvents.map((event) => {
+				if (event.groupId === groupEvent.groupId) {
+					// Remove group properties
+					const { groupId, isGrouped, isGroup, groupedEvents, ...rest } = event;
+					return {
+						...rest,
+						extendedProps: {
+							...rest.extendedProps,
+							groupId: undefined,
+							isGrouped: undefined,
+							isGroup: undefined,
+							groupedEvents: undefined,
+						},
+					};
+				}
+				return event;
+			});
+
+			// Remove the group event itself
+			const filteredEvents = updatedEvents.filter((event) => event.id !== groupEvent.id);
+
+			// Update the store
+			eventStore.setCalendarEvents(filteredEvents);
+
+			// Close modal
+			ReactModalService.internal.closeModal(eventStore);
+		};
+
+		const handleUngroupAndRemove = () => {
+			// Use the new dedicated action
+			eventStore.returnGroupEventsToSidebar(groupEvent.groupId).then(() => {
+				// Close modal after events are returned to sidebar
+				ReactModalService.internal.closeModal(eventStore);
+			});
+		};
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: TranslateService.translate(eventStore, 'VIEW_GROUP_MODAL.TITLE'),
+			content: () =>
+				ReactModalService.ViewGroupModal({
+					eventStore,
+					groupEvent,
+					onUngroup: handleUngroup,
+					onUngroupAndRemove: handleUngroupAndRemove,
+					onCancel: () => ReactModalService.internal.closeModal(eventStore),
+				}),
+
+			cancelBtnText: TranslateService.translate(eventStore, 'GENERAL.CLOSE'),
+			hideConfirmBtn: true,
 		});
 	},
 };
