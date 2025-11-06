@@ -1,8 +1,13 @@
 /* Dark Mode Styles - Applied globally via body.dark-mode */
 /* Elegant dark theme with proper contrast and modern aesthetics */
 
+body.dark-mode.rtl .triplan-text-input i.fa {
+	background-color: transparent !important;
+	top: 0 !important;
+}
+
 body.dark-mode {
-	background-color: #0f1419;
+	background-color: #0f1419 !important;
 	transition: background-color 0.3s ease, color 0.3s ease;
 
 	.triplan-main-page-container,
@@ -26,8 +31,8 @@ body.dark-mode {
 		border: 1px solid #12171d !important;
 	}
 	.triplan-footer {
-		border-top: 1px solid #1b222c !important;
-		border-bottom: 1px solid #1b222c !important;
+		border-top: 1px solid #2b2e31 !important;
+		border-bottom: 1px solid #2b2e31 !important;
 		background-color: #0f151c !important;
 
 		+ .link-button {
@@ -37,14 +42,14 @@ body.dark-mode {
 
 	// buttons
 	.secondary-button {
-		background-color: #222d3a !important;
+		background-color: #202020 !important;
 		color: #e8eaed !important;
-		border: 1px solid #1b222c !important;
+		border: 1px solid #323334 !important;
 
 		&:hover {
-			background-color: #1b222c !important;
+			background-color: #2b2e31 !important;
 			color: #e8eaed !important;
-			border: 1px solid #1b222c !important;
+			border: 1px solid #2b2e31 !important;
 		}
 	}
 	.link-button {
@@ -112,7 +117,7 @@ body.dark-mode {
 	}
 	.suggestions-container,
 	.suggestion-item {
-		background-color: #222d3a !important;
+		background-color: #202020 !important;
 
 		.suggestion-name {
 			color: white !important;
@@ -122,7 +127,7 @@ body.dark-mode {
 		}
 
 		&:hover {
-			background-color: #1b222c !important;
+			background-color: #2b2e31 !important;
 			color: white !important;
 		}
 	}
@@ -131,6 +136,10 @@ body.dark-mode {
 	.ui.tabular.menu .active.item {
 		background-color: #12171d !important; // bluish
 		color: #e8eaed !important;
+		border-color: #27282a !important;
+	}
+	.ui[class*='top attached'].menu {
+		border-bottom-color: #27282a !important;
 	}
 
 	// trips page
@@ -139,65 +148,65 @@ body.dark-mode {
 	}
 
 	.bright-scrollbar {
-		background-color: #222d3a !important;
+		background-color: #202020 !important;
 	}
 
 	.bright-scrollbar::-webkit-scrollbar-thumb {
-		background-color: #1b222c !important;
+		background-color: #2b2e31 !important;
 	}
 
 	.bright-scrollbar::-webkit-scrollbar-track {
-		background-color: #222d3a !important;
+		background-color: #202020 !important;
 	}
 
 	.bright-scrollbar::-webkit-scrollbar-thumb:hover {
-		background-color: #1b222c !important;
+		background-color: #2b2e31 !important;
 	}
 
 	.bright-scrollbar::-webkit-scrollbar-thumb:active {
-		background-color: #1b222c !important;
+		background-color: #2b2e31 !important;
 	}
 
 	.bright-scrollbar::-webkit-scrollbar-thumb:hover {
-		background-color: #1b222c !important;
+		background-color: #2b2e31 !important;
 	}
 
 	.bright-scrollbar::-webkit-scrollbar-thumb:active {
-		background-color: #1b222c !important;
+		background-color: #2b2e31 !important;
 	}
 
 	.point-of-interest {
-		background-color: #222d3a !important;
+		background-color: #202020 !important;
 		color: white !important;
-		border: 1px solid #1b222c !important;
+		border: 1px solid #2b2e31 !important;
 
 		&:hover {
-			background-color: #1b222c !important;
+			background-color: #202020 !important;
 			color: white !important;
-			border: 1px solid #1b222c !important;
+			border: 1px solid #2b2e31 !important;
 		}
 	}
 
 	.poi-details + div > button {
-		background-color: #181e25 !important;
+		background-color: #373737 !important;
 		color: white !important;
-		border: 1px solid #1b222c !important;
+		border: 1px solid #2b2e31 !important;
 
 		&:hover {
-			background-color: #242c36 !important;
+			background-color: #323232 !important;
 			color: white !important;
-			border: 1px solid #1b222c !important;
+			border: 1px solid #2b2e31 !important;
 		}
 	}
 
 	.multiple-options-toggle-button {
 		background-color: #181e25 !important;
 		color: white !important;
-		border: 1px solid #1b222c !important;
+		border: 1px solid #2b2e31 !important;
 
 		.background-circle {
-			background-color: #242c36 !important;
-			border: 1px solid #1b222c !important;
+			background-color: #515254 !important;
+			border: 1px solid #2b2e31 !important;
 		}
 
 		.multiple-options-toggle-button-item {
@@ -213,7 +222,7 @@ body.dark-mode {
 		&:hover {
 			background-color: #1c232b !important;
 			color: white !important;
-			border: 1px solid #1b222c !important;
+			border: 1px solid #2b2e31 !important;
 		}
 	}
 
@@ -236,18 +245,22 @@ body.dark-mode {
 	}
 
 	.primary-button {
-		background-color: #102035 !important;
+		background-color: #202020 !important;
 		color: white !important;
-		border: 1px solid #1b222c !important;
+		border: 1px solid #202020 !important;
 		box-shadow: none !important;
 
 		&:hover {
-			background-color: #1b222c !important;
+			background-color: #3b3b3b !important;
 			color: white !important;
-			border: 1px solid #1b222c !important;
+			// border: 1px solid #3b3b3b !important;
 		}
 	}
 
+	.destination-selector-container,
+	#export-to-google-maps-mode,
+	.add-event-from-sidebar-selector,
+	.icon-selector,
 	.triplan-selector {
 		div[class$='-control'] {
 			background-color: #181e25 !important;
@@ -261,6 +274,486 @@ body.dark-mode {
 			}
 
 			div[class$='input'] {
+				color: white !important;
+			}
+		}
+
+		.select__menu {
+			background-color: #2d2d2d !important;
+			color: white !important;
+
+			.select__option {
+				background-color: #2d2d2d !important;
+				color: white !important;
+
+				&:active {
+					background-color: #2d2d2d !important;
+				}
+				&:focus {
+					background-color: #2d2d2d !important;
+				}
+
+				&:hover {
+					background-color: #323232 !important;
+				}
+			}
+		}
+		.select__multi-value {
+			background-color: #3e3e3e !important;
+			.option-label {
+				color: white !important;
+				span {
+					color: white !important;
+				}
+			}
+		}
+		.select__multi-value__remove {
+			color: white !important;
+		}
+	}
+
+	// login page
+	.login-page-v2,
+	.login-page-container,
+	.register-page-container {
+		background-color: #0f1419 !important;
+		color: #a1a1a1 !important;
+	}
+
+	a {
+		color: white;
+		transition: color 0.3s ease;
+
+		&:hover {
+			color: rgb(235, 235, 235);
+		}
+	}
+
+	.triplan-react-modal {
+		// background-color: #0f1419 !important;
+		background-color: #202020 !important;
+		color: white !important;
+
+		.primary-button {
+			background-color: #27292a !important;
+
+			&:hover {
+				background-color: #393b3b !important;
+			}
+		}
+	}
+
+	.login-page-v2 .register-page-container .register-form input[type='text'],
+	.login-page-v2 .register-page-container .register-form input[type='password'],
+	.login-page-v2 .register-page-container .login-form input[type='text'],
+	.login-page-v2 .register-page-container .login-form input[type='password'],
+	.login-page-v2 .login-page-container .register-form input[type='text'],
+	.login-page-v2 .login-page-container .register-form input[type='password'],
+	.login-page-v2 .login-page-container .login-form input[type='text'],
+	.login-page-v2 .login-page-container .login-form input[type='password'] {
+		color: white !important;
+
+		&::selection,
+		&::placeholder {
+			color: rgb(204, 204, 204) !important;
+		}
+	}
+
+	.country-header-container {
+		.fa-chevron-up,
+		.fa-chevron-down {
+			color: white !important;
+		}
+	}
+
+	.trip-template-page-content {
+		color: white !important;
+	}
+
+	.sidebar-suggestion-event {
+		background-color: #363636 !important;
+		color: white !important;
+	}
+
+	.trip-template-page-content .trip-template-itinerary-activity.notes-background {
+		background-color: #2b2e31 !important;
+		color: white !important;
+	}
+
+	.trip-template-itinerary-activity {
+		&:hover {
+			background-color: #2b2e31 !important;
+			color: white !important;
+		}
+	}
+
+	.plan-page-content {
+		color: white !important;
+
+		.main-layout {
+			background-color: #12171d;
+		}
+
+		.triplan-sidebar-main-buttons,
+		.add-activity-button,
+		.add-category-button,
+		.external-events-container {
+			background-color: #12171d !important;
+		}
+	}
+
+	// sidebar
+	.sidebar-wrapper {
+		.custom-dates-line i {
+			color: white !important;
+		}
+	}
+	.external-events-container.sidebar-minimized + .minimize-sidebar-container button {
+		background-color: #12171d !important;
+		color: white !important;
+	}
+	.sidebar-group {
+		background-color: #11151a !important;
+
+		&:not(:has(.fa-exclamation-triangle)) {
+			color: white !important;
+		}
+		border-bottom: 1px solid #27282a !important;
+	}
+	.sidebar-group-content {
+		background-color: #1f2328 !important;
+		.link-button,
+		.movable-link-button {
+			color: white !important;
+
+			&:hover {
+				color: #a1a1a1 !important;
+			}
+
+			&.active {
+				color: white !important;
+			}
+		}
+	}
+	// פעילויות באזור
+	input[id^='react-select-'][id$='-input'] {
+		background-color: #181e25 !important;
+		border-bottom-color: #181e25 !important;
+	}
+
+	textarea,
+	.triplan-text-input,
+	.triplan-text-input input {
+		background-color: #181e25 !important;
+		color: white !important;
+
+		&::placeholder {
+			color: rgb(204, 204, 204) !important;
+		}
+	}
+	.icon-selector > div,
+	.currency-selector,
+	.priority-selector,
+	.preferred-time-selector,
+	.category-selector {
+		border: 1px solid white !important;
+	}
+	.show-hide-more {
+		color: white !important;
+
+		&:hover {
+			color: #a1a1a1 !important;
+		}
+	}
+
+	.gm-icon-btn {
+		background-color: #616161 !important;
+	}
+
+	.list-view-mode-selector {
+		background-color: #202020 !important;
+	}
+
+	.mobile-footer-navigator a {
+		color: black;
+
+		&:hover {
+			color: rgba(0, 0, 0, 0.8);
+		}
+	}
+
+	.sidebar-search-container .search-container .fa-times {
+		background-color: #181e25 !important;
+		color: white !important;
+	}
+
+	.triplan-history {
+		color: black !important;
+	}
+
+	// table
+	.fc-view-harness {
+		background-color: #202020 !important;
+	}
+	.fc-timegrid-slots tbody tr td {
+		background-color: #3e3e3e !important;
+		border-color: #525252 !important;
+	}
+
+	.fc-timegrid-slots tbody tr:first-child td,
+	.fc-timegrid-slots tbody tr:nth-child(2) td
+	, .fc-timegrid-slots tbody tr:nth-child(3) td,
+	.fc-timegrid-slots tbody tr:nth-child(4) td,
+	.fc-timegrid-slots tbody tr:nth-child(5) td,
+	.fc-timegrid-slots tbody tr:nth-child(6) td,
+	.fc-timegrid-slots tbody tr:nth-child(7) td,
+	.fc-timegrid-slots tbody tr:nth-child(8) td
+		//.fc-timegrid-slots tbody tr:nth-child(9) td,
+		//.fc-timegrid-slots tbody tr:nth-child(10) td,
+		//.fc-timegrid-slots tbody tr:nth-child(11) td,
+		//.fc-timegrid-slots tbody tr:nth-child(12) td,
+		//.fc-timegrid-slots tbody tr:nth-child(13) td,
+		//.fc-timegrid-slots tbody tr:nth-child(14) td,
+		//.fc-timegrid-slots tbody tr:nth-child(15) td,
+		//.fc-timegrid-slots tbody tr:nth-child(16) td
+	{
+		background-color: #2d2d2d !important;
+	}
+
+	.fc-timegrid-event,
+	.fc-event-main {
+		background-color: #232323 !important;
+		color: white !important;
+
+		&.locked,
+		&.ordered {
+			background-color: #1e0505 !important;
+
+			.fc-event-main {
+				background-color: #1e0505 !important;
+			}
+		}
+	}
+	.fc-timegrid-event-harness-inset .fc-timegrid-event,
+	.fc-timegrid-event.fc-event-mirror,
+	.fc-timegrid-more-link {
+		box-shadow: unset !important;
+		border: 2px solid #464646 !important;
+	}
+
+	// notes
+	.fc-daygrid-event {
+		background-color: #232323 !important;
+		color: white !important;
+	}
+
+	// day toggle
+	.fc-button-group .fc-button {
+		&:not(.fc-button-active) {
+			background-color: #323232 !important;
+			border-color: #3f3f3f !important;
+			color: white !important;
+		}
+		&.fc-button-active {
+			background-color: #27292a !important;
+			border-color: #3f3f3f !important;
+			color: white !important;
+		}
+		transition: opacity 0.3s ease !important;
+		&:hover {
+			opacity: 0.8 !important;
+		}
+	}
+
+	#map-view-mode div[class$='-control'] {
+		background-color: #181e25 !important;
+		border-color: #202020 !important;
+		color: white !important;
+
+		div[class$='singleValue'] {
+			color: white !important;
+		}
+
+		div[class$='placeholder'] {
+			color: rgb(204, 204, 204) !important;
+		}
+	}
+
+	.map-header-location-input-search {
+		background-color: #181e25 !important;
+		border-color: #202020 !important;
+		color: white !important;
+		border-radius: 3px !important;
+
+		&::placeholder {
+			color: rgb(204, 204, 204) !important;
+		}
+	}
+
+	.list-view-day-title.background-white {
+		background-color: #202020 !important;
+		color: white !important;
+	}
+
+	.trip-summary .eventRow {
+		color: white !important;
+	}
+
+	.trip-summary hr {
+		border-color: white !important;
+	}
+
+	.or-row,
+	span[class^='eventRow or-group-'],
+	.or-row-separator {
+		background-color: #393939 !important;
+	}
+
+	.visible-items-header {
+		color: white !important;
+	}
+
+	.story-controls {
+		padding-top: 10px;
+		background-color: #202020 !important;
+		color: white !important;
+	}
+
+	.event-card {
+		background-color: #1b1b1b !important;
+		color: white !important;
+
+		.event-duration,
+		.event-time,
+		.event-details,
+		.event-description {
+			color: white !important;
+		}
+	}
+
+	.gm-style-iw.gm-style-iw-c {
+		background-color: #202020 !important;
+		color: white !important;
+	}
+
+	// google map info window
+	.gm-style-iw-d {
+		scrollbar-width: none; /* Firefox */
+		-ms-overflow-style: none; /* IE 10+ */
+	}
+	.gm-style-iw-d::-webkit-scrollbar {
+		display: none; /* Chrome, Safari, Edge */
+	}
+
+	[data-walkthrough='create-trip-form'] {
+		color: white !important;
+	}
+
+	.edit-name {
+		input::selection {
+			color: #a1a1a1 !important;
+		}
+	}
+
+	// onboarding guide
+	.react-joyride__overlay {
+		background-color: transparent !important;
+	}
+
+	.__floater__arrow polygon {
+		fill: #202020 !important;
+	}
+
+	.react-joyride__tooltip {
+		background-color: #202020 !important;
+		color: white !important;
+
+		h3,
+		p {
+			color: white !important;
+		}
+
+		button[data-action='skip'] {
+			color: white !important;
+		}
+	}
+
+	.react-joyride__tooltip button[data-action='primary'] {
+		background-color: #41484f !important;
+	}
+
+	// shimmering
+	.shimmer-animation {
+		animation: shimmer 3s infinite;
+		background: linear-gradient(to right, #2d2d2d 4%, #404040 25%, #2d2d2d 36%);
+		background-size: 1000px 100%;
+	}
+
+	.category-select {
+		background-color: #2d2d2d !important;
+		color: white !important;
+
+		&::placeholder {
+			color: rgb(204, 204, 204) !important;
+		}
+
+		&:focus {
+			background-color: #2d2d2d !important;
+		}
+	}
+
+	.no-items-on-map-placeholder {
+		background-color: #2d2d2d !important;
+		color: white !important;
+	}
+
+	.triplan-text-input .fa-marker-map {
+		background-color: transparent !important;
+		top: 5px !important;
+	}
+
+	// slider of images when adding activity
+	.slick-arrow:before {
+		color: white !important;
+	}
+
+	.actual-filters,
+	.actual-filters > div {
+		background-color: #2d2d2d !important;
+	}
+
+	.mobile-footer-navigator {
+		background-color: #2d2d2d !important;
+		color: white !important;
+
+		a,
+		i {
+			&:not(.selected-color) {
+				color: white !important;
+			}
+		}
+
+		a:not(:last-child) {
+			border-left: 1px solid #444444;
+		}
+
+		&:hover {
+			background-color: #323232 !important;
+			color: white !important;
+		}
+	}
+
+	.trip-name-line {
+		input {
+			background-color: #181e25 !important;
+			color: white !important;
+
+			&::placeholder {
+				color: rgb(204, 204, 204) !important;
+			}
+
+			&:focus {
+				background-color: #181e25 !important;
 				color: white !important;
 			}
 		}
