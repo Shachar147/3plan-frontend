@@ -70,7 +70,7 @@ function TriplanFooter() {
 				{ 'FOOTER.TOTAL_SYSTEM_RECOMMENDATIONS': summaries?.totalSystemRecommendations },
 			],
 		},
-	];
+	].filter(Boolean);
 
 	if (['Shachar', TEMPLATES_USER_NAME].includes(getCurrentUsername())) {
 		structure[1]['FOOTER.TRIPS_STATS'].push(
@@ -81,6 +81,11 @@ function TriplanFooter() {
 		);
 	} else {
 		structure[1]['FOOTER.TRIPS_STATS'].push(...[{ 'FOOTER.TOTAL_TEMPLATES': summaries?.totalApprovedTemplates }]);
+	}
+
+	// remvove USERS block from footer for no admins
+	if (!isAdmin()) {
+		structure.splice(0, 1);
 	}
 
 	function renderStatsBlock(stats: Record<string, any>) {

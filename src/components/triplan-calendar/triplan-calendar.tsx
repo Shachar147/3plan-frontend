@@ -16,7 +16,6 @@ import {
 	addSeconds,
 	areDatesOnDifferentDays,
 	convertMsToHM,
-	formatFromISODateString,
 	getDateRangeString,
 	getOffsetInHours,
 	isTodayInDateRange,
@@ -28,9 +27,7 @@ import { getEventDivHtml } from '../../utils/ui-utils';
 import { modalsStoreContext } from '../../stores/modals-store';
 import { runInAction } from 'mobx';
 import DraggableList from '../draggable-list/draggable-list';
-import { getClasses, isEventAlreadyOrdered, jsonDiff, lockEvents } from '../../utils/utils';
-import { TripDataSource } from '../../utils/enums';
-import { DBService } from '../../services/data-handlers/db-service';
+import { isEventAlreadyOrdered, lockEvents } from '../../utils/utils';
 import { FeatureFlagsService } from '../../utils/feature-flags';
 
 export interface TriPlanCalendarProps {

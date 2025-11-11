@@ -4,6 +4,7 @@
 	justify-content: space-between;
 	flex-direction: row-reverse;
 	gap: 16px;
+	align-items: center;
 	//width: max-content;
 	width: 100%;
 
@@ -12,6 +13,8 @@
 		display: flex;
 		flex-grow: 1;
 		flex-shrink: 0;
+		align-items: center;
+		gap: 12px;
 	}
 
 	.triplan-header-actionbar {

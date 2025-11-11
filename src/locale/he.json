@@ -221,7 +221,7 @@
 	"RECALCULATING_AREAS": "מחשב מחדש אזורים...",
 	"CHECK_OUT_EXISTING_TRIPS": "פתח את הטיולים הקיימים שלי",
 	"MODALS.DELETE_TRIP.CONTENT": "האם אתם בטוחים שברצונכם למחוק את הטיול הזה?<br/>זוהי פעולה בלתי הפיכה",
-	"MODALS.HIDE_TRIP.CONTENT": "שששש!<br/>מתכנן להפתיע את בת הזוג עם חופשה לחו״ל ופוחד שהיא תראה את התכנון? <br/><br/>הסתרה של הטיול תעלים אותו מהרשימה הרגילה<br/>ותעביר אותו לרשימה נפרדת של כל הטיולים המוסתרים.<br/><br/>כדי להגיע לרשימה הזו, גללו עד לסוף רשימת הטיולים ולחצו על <b>{X}</b>",
+	"MODALS.HIDE_TRIP.CONTENT": "שששש!<br/>מתכננת להפתיע את בן הזוג עם חופשה לחו״ל ומפחדת שהוא יראה את התכנון? <br/><br/>הסתרה של הטיול תעלים אותו מהרשימה הרגילה<br/>ותעביר אותו לרשימה נפרדת של כל הטיולים המוסתרים.<br/><br/>כדי להגיע לרשימה הזו, גללו עד לסוף רשימת הטיולים ולחצו על <b>{X}</b>",
 	"EDIT_TRIP_MODAL.TITLE": "ערוך טיול",
 	"MODALS.ERROR.TRIP_NAME_ALREADY_EXIST": "טיול עם השם הזה כבר קיים",
 	"MODALS.UPDATED_TRIP.CONTENT": "הטיול עודכן בהצלחה",
@@ -316,6 +316,7 @@
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS": "אז כמה פעילויות כבר משובצות?",
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.SHORT": "סטטיסטיקות",
 	"SIDEBAR_GROUPS.GROUP_TITLE.SIDEBAR_STATISTICS.DETAILS": "דבר אליי במספרים",
+	"SCHEDULED_ACTIVITIES_BY_CATEGORY": "פעילויות משובצות לפי קטגוריה",
 	"SIDEBAR_GROUPS.GROUP_TITLE.PRIORITIES_LEGEND": "מקרא צבעים וכמויות",
 	"NO_DISPLAYED_CATEGORIES": "אין קטגוריות להציג",
 	"SELECT_ICON_PLACEHOLDER": "הקלד כדי לחפש",
@@ -1444,6 +1445,7 @@
 	"BACKUP_TRIP.DESCRIPTION.JSON": "ייצא נתוני טיול מלאים כולל שם הטיול, תאריכי הטיול, קטגוריות ועוד. ניתן להשתמש ליצירת טיול זהה באמצעות הAPI.",
 	"BACKUP_TRIP.DESCRIPTION.CSV": "ייצא פעילויות בפורמט CSV, התואם לפורמט הייבוא.",
 	"BACKUP_TRIP.EXPORT": "ייצא",
+	"DARK_MODE": "דארק מוד",
 	"EDIT_COLORS": "ערוך צבעים",
 	"EDIT_COLORS_DESCRIPTION": "התאם את צבעי העדיפויות כדי להקל על תכנון הטיול. צבעים אלו יעזרו לך לזהות במהירות את הפעילויות החשובות ביותר על המפה, לאזן בין 'חייבים לעשות' לבין 'אולי', ולשמור על מסלול ברור ומאורגן.",
 	"PRIORITY_COLORS": "צבעי עדיפות",
@@ -1567,5 +1569,7 @@
 	"WALKTHROUGH.TRIP_NAME_PATTERN.SUMMER": "קיץ ב{location}",
 	"WALKTHROUGH.TRIP_NAME_PATTERN.EXPLORING": "טיול משפחה ל{location}",
 	"WALKTHROUGH.TRIP_NAME_PATTERN.VACATION": "חופשה ב{location}",
-	"WALKTHROUGH.TRIP_NAME_PATTERN.WEEKEND": "סוף שבוע ב{location}"
+	"WALKTHROUGH.TRIP_NAME_PATTERN.WEEKEND": "סוף שבוע ב{location}",
+	"TO_DARK_MODE": "דארק מוד",
+	"TO_LIGHT_MODE": "לייט מוד"
 }

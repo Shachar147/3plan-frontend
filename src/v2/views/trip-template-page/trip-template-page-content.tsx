@@ -247,8 +247,11 @@ function TripTemplatePageContent() {
 			<div
 				className="width-100-percents flex-col align-items-center justify-content-center text-align-center"
 				style={{
-					backgroundColor: '#fafafa',
-					backgroundImage: `url('/loaders/map-loader.gif')`,
+					backgroundColor: eventStore.isDarkMode ? '#6f665e' : '#fafafa',
+					// todo complete - dark mode
+					backgroundImage: eventStore.isDarkMode
+						? `url('/loaders/map-loader-dark.gif')`
+						: `url('/loaders/map-loader.gif')`,
 					backgroundPosition: 'center',
 					backgroundRepeat: 'no-repeat',
 				}}
@@ -350,7 +353,8 @@ function TripTemplatePageContent() {
 				style={{
 					height: 'CALC(100vh - 100px)',
 					maxHeight: '400px',
-					backgroundImage: `url('/loaders/error-gif.gif')`,
+					// todo complete: dark mode
+					backgroundImage: eventStore.isDarkMode ? '' : `url('/loaders/error-gif.gif')`,
 					backgroundSize: 'contain',
 					backgroundPositionX: 'center',
 					backgroundPositionY: 'bottom',
@@ -362,6 +366,7 @@ function TripTemplatePageContent() {
 					className="position-relative font-weight-bold"
 					style={{
 						top: eventStore.isMobile ? 120 : 150,
+						color: eventStore.isDarkMode ? 'white' : 'black',
 					}}
 				>
 					{errorMessage}

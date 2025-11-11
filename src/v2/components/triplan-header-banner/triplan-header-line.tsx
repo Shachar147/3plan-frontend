@@ -8,6 +8,7 @@ import Button, { ButtonFlavor } from '../../../components/common/button/button';
 import TranslateService from '../../../services/translate-service';
 import ReactModalService from '../../../services/react-modal-service';
 import { observer } from 'mobx-react';
+import DarkModeToggle from '../../../components/triplan-header/dark-mode-toggle/dark-mode-toggle';
 import {
 	mainPageContentTabLsKey,
 	myTripsTabId,
@@ -209,6 +210,7 @@ function TriplanHeaderLine({
 		if (isInLogin) {
 			return (
 				<div className={containerClass}>
+					<DarkModeToggle />
 					{signInOutBtn}
 					{registerBtn}
 					{languageBtn}
@@ -246,6 +248,7 @@ function TriplanHeaderLine({
 		if (isInSearch || isInViewItem) {
 			return (
 				<div className={containerClass}>
+					<DarkModeToggle />
 					{goToUserSideBtn}
 					{isAdmin() && goToAdminSideBtn}
 					{languageBtn}
@@ -256,6 +259,7 @@ function TriplanHeaderLine({
 
 		return (
 			<div className={containerClass}>
+				<DarkModeToggle />
 				{isInPlan && goToUserSideBtn}
 				{isAdmin() ? (isInAdmin ? goToUserSideBtn : goToAdminSideBtn) : undefined}
 				{!isInPlan && wishlistBtn}

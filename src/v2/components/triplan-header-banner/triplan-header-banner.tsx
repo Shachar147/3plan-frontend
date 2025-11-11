@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import './triplan-header-banner.scss';
 import { eventStoreContext } from '../../../stores/events-store';
@@ -32,8 +32,18 @@ function TriplanHeaderBanner({
 	// const bgs = ["6.jpg", "5.jpg", "7.jpg", "8.jpg", "9.jpg"];
 	// const bgs = ["6.jpg"]
 	let isInPlan = window.location.href.includes(`${newDesignRootPath}/plan/`);
-	const defaultBanner = '/images/banner/best/10.png';
+	const defaultBanner = useMemo(
+		() =>
+			eventStore.isDarkMode
+				? 'https://plus.unsplash.com/premium_photo-1724458589661-a2f42eb58aca?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmlnaHQlMjBzY2VuZXxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000'
+				: '/images/banner/best/10.png',
+		[eventStore.isDarkMode]
+	);
 	const [backgroundImage, setBackgroundImage] = useState(defaultBanner);
+
+	useEffect(() => {
+		setBackgroundImage(defaultBanner);
+	}, [defaultBanner]);
 
 	// ------------------------------------------------------------
 	// load picture for the destination we're looking at right now

@@ -978,6 +978,7 @@ const PointOfInterest = ({
 				key={`edit-label-${item.name}`}
 				overridePreview={overridePreview}
 				onCancelClick={onLabelClick}
+				editClassName="edit-name"
 			/>
 		);
 		if (isShrinkedMode) {
@@ -1174,6 +1175,7 @@ const PointOfInterest = ({
 							key={`edit-description-${item.description}`}
 							overridePreview={getEventDescription(item, eventStore, true)}
 							onCancelClick={onLabelClick}
+							editClassName="edit-description"
 						/>
 					) : (
 						item.description

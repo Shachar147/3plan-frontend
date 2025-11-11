@@ -5,6 +5,7 @@ import TranslateService from '../../../services/translate-service';
 import Button from '../../../components/common/button/button';
 import { eventStoreContext } from '../../../stores/events-store';
 import './editable-label.scss';
+import { getClasses } from '../../../utils/utils';
 
 interface EditableLabelProps {
 	name: string;
@@ -16,6 +17,7 @@ interface EditableLabelProps {
 	onLabelClick?: () => void;
 	inputType?: 'text' | 'textarea' | 'number' | 'password';
 	onCancelClick?: () => void;
+	editClassName?: string;
 }
 function EditableLabel(props: EditableLabelProps) {
 	const eventStore = useContext(eventStoreContext);
@@ -24,7 +26,7 @@ function EditableLabel(props: EditableLabelProps) {
 
 	if (isEditMode) {
 		return (
-			<div className="flex-row gap-3 align-items-center width-100-percents">
+			<div className={getClasses('flex-row gap-3 align-items-center width-100-percents', props.editClassName)}>
 				{props.inputType == 'textarea' ? (
 					<textarea
 						name={name}

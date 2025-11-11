@@ -41,6 +41,24 @@
 	}
 }
 
+.category-pie-chart-wrapper {
+	margin: 16px 0;
+	padding: 16px;
+	border-radius: 8px;
+	background-color: rgba(0, 0, 0, 0.02);
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+
+	.category-pie-chart-title {
+		direction: rtl;
+		right: 0 !important;
+		font-size: 14px;
+		font-weight: 600;
+		color: inherit;
+	}
+}
+
 body.rtl {
 	.external-events-container {
 		&.sidebar-minimized {

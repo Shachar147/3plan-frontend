@@ -235,3 +235,7 @@ body.rtl .list-container .list-view-mode-selector {
 body.rtl div[id^='react-joyride-step-'] {
 	direction: rtl;
 }
+
+body.rtl .category-pie-chart-wrapper {
+	text-align: right;
+}

@@ -30,9 +30,11 @@ function TemplateShimmeringPlaceholder() {
 
 function Template({ trip }) {
 	const [isLoading, setIsLoading] = useState(true);
-	const defaultBanner = '/images/banner/best/10.png';
-	const [backgroundImage, setBackgroundImage] = useState(defaultBanner);
 	const eventStore = useContext(eventStoreContext);
+	const defaultBanner = eventStore.isDarkMode
+		? 'https://plus.unsplash.com/premium_photo-1724458589661-a2f42eb58aca?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmlnaHQlMjBzY2VuZXxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000'
+		: '/images/banner/best/10.png';
+	const [backgroundImage, setBackgroundImage] = useState(defaultBanner);
 
 	const baseClass = 'trip-template';
 
