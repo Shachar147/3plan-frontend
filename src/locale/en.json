@@ -1161,8 +1161,8 @@
 	"ACTIVITIES.PROCESSING": "Processing activities...",
 	"ACTIVITIES.ERROR": "Error processing activities. Please try again.",
 	"ACTIVITIES.SUCCESS": "{count} activities successfully added to your trip",
-	"FOCUS_MODE": "Fullscreen Mode",
-	"OUT_OF_FOCUS_MODE": "Out of Fullscreen Mode",
+	"FOCUS_MODE": "Fullscreen",
+	"OUT_OF_FOCUS_MODE": "Normal",
 	"START_STORY": "Start Story",
 	"STOP_STORY": "Stop Story",
 	"NEXT": "Next",
@@ -1183,7 +1183,7 @@
 	"MODALS.DELETE_CALENDAR_EVENT.CONTENT": "Permanently delete this activity from calendar",
 	"YOU_MAY_ALSO_WANT_TO_VISIT": "You may also want to visit:",
 	"OOPS_SOMETHING_WENT_WRONG.TRY_REFRESH": "Oops, something went wrong :( try refreshing the page",
-	"EXPORT_MAP_TO_GOOGLE_MAPS": "Export to Google Maps",
+	"EXPORT_MAP_TO_GOOGLE_MAPS": "Export to Maps",
 	"BACKUP_TRIP.BUTTON_TEXT": "Backup Trip",
 	"BACKUP_TRIP.TITLE": "Backup Trip",
 	"BACKUP_TRIP.SELECT_FORMAT": "Select backup format",
@@ -1239,7 +1239,7 @@
 	"USE_AIR_DISTANCE_FALLBACK": "Use air distance if no drive/walk timing found",
 	"MAX_AIR_DISTANCE": "Max Air Distance (meters)",
 	"IMPORT_FROM_GOOGLE_MAPS.TITLE": "Import from Google Maps",
-	"IMPORT_FROM_GOOGLE_MAPS": "Import from Google Maps",
+	"IMPORT_FROM_GOOGLE_MAPS": "Import from Maps",
 	"IMPORT_FROM_GOOGLE_MAPS.CONTENT": "Steps:<br/><b>1. Go to <a href=\"https://www.google.com/maps/d/\">Google My Maps</a> and open the map you want to export.<\/b><br/>2.On the left pane, near map title, hit the 3 dots menu and click on <b>Export to KML/KMZ</b>.<br/>3. Check <b>Export as KML instead of KMZ.</b> and hit <b>Downloads</b>.<br/>4. Import downloaded file here.",
 	"MODALS.IMPORT": "Import",
 	"WALKTHROUGH.WELCOME_TITLE": "Welcome to Triplan!",
@@ -1313,6 +1313,6 @@
 	"WALKTHROUGH.TRIP_NAME_PATTERN.EXPLORING": "Exploring {location}",
 	"WALKTHROUGH.TRIP_NAME_PATTERN.VACATION": "{location} vacation",
 	"WALKTHROUGH.TRIP_NAME_PATTERN.WEEKEND": "Weekend in {location}",
-	"TO_DARK_MODE": "Dark mode",
-	"TO_LIGHT_MODE": "Light mode"
+	"TO_DARK_MODE": "Dark",
+	"TO_LIGHT_MODE": "Light"
 }

@@ -345,7 +345,13 @@ function LoginPageV2() {
 		);
 	}
 
-	const images = [eventStore.isHebrew ? '/images/mobile-mac-preview-he.jpeg' : '/images/mobile-mac-preview-eng.jpeg'];
+	const images = eventStore.isDarkMode
+		? [
+				eventStore.isHebrew
+					? '/images/mobile-mac-preview-he-dark.jpeg'
+					: '/images/mobile-mac-preview-eng-dark-mode.png',
+		  ]
+		: [eventStore.isHebrew ? '/images/mobile-mac-preview-he.jpeg' : '/images/mobile-mac-preview-eng.jpeg'];
 
 	function getTabs() {
 		const tabs = [

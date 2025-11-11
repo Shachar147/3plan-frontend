@@ -1521,6 +1521,10 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			<>
 				{calendarSidebarStatistics}
 				<hr className="margin-block-2" />
+				{renderPriceList()}
+				<hr className="margin-block-2" />
+				{renderPrioritiesStatistics()}
+				<hr className="margin-block-2" />
 				{(() => {
 					const pieChart = renderCategoryPieChart();
 					return (
@@ -1530,16 +1534,13 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 						</>
 					);
 				})()}
-				{renderPriceList()}
-				<hr className="margin-block-2" />
-				{renderPrioritiesStatistics()}
 			</>,
 			undefined,
 			SidebarGroups.CALENDAR_STATISTICS,
 			groupTitle,
 			2,
 			undefined,
-			800 // Increased to accommodate pie chart
+			1500 // Increased to accommodate pie chart
 		);
 		return (
 			<>
