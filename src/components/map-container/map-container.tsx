@@ -380,7 +380,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 				position: { lat: coordinate.lat, lng: coordinate.lng },
 				label: {
 					text: `${isScheduled ? '✓ ' : ''}${texts[key]}`,
-					color: '#c0bbbb',
+					color: eventStore.isDarkMode ? '#ffffff' : '#c0bbbb',
 					fontSize: '10px',
 					fontWeight: 'bold',
 					className: 'marker-label',
@@ -693,8 +693,7 @@ function MapContainer(props: MapContainerProps, ref: Ref<MapContainerRef>) {
 
 		return {
 			styles: [
-				...lightModeStyles,
-				// ...darkModeStyles,
+				...(eventStore.isDarkMode ? darkModeStyles : lightModeStyles),
 				moMountainMarkers,
 				noDefaultMarkers,
 				noRoadLabels,

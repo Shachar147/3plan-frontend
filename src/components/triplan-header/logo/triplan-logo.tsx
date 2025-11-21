@@ -21,7 +21,7 @@ function TriplanLogo({ onClick, height = 40, white = false }: TriplanLogoProps) 
 		>
 			<img
 				alt={TranslateService.translate(eventStore, 'TRIPLAN')}
-				src={`/images/logo/new-logo${white ? '-white' : ''}.png`}
+				src={`/images/logo/new-logo${white || eventStore.isDarkMode ? '-white' : ''}.png`}
 				style={{ height: calcHeight }}
 			/>
 		</div>

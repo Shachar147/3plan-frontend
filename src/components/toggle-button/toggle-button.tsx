@@ -75,24 +75,28 @@ export default function ToggleButton(props: MultipleOptionsToggleButtonProps) {
 			const width = Math.floor(childRect?.width ?? 0);
 
 			// take left / right based on current direction (for different languages)
-			const left =
-				direction === 'ltr'
-					? Math.abs(Math.floor(childRect.left) - Math.floor(containerRect.left) - 1)
-					: undefined;
-			const right =
-				direction === 'rtl'
-					? Math.abs(Math.floor(childRect.right) - Math.floor(containerRect.right) - 1)
-					: undefined;
+			try {
+				const left =
+					direction === 'ltr'
+						? Math.abs(Math.floor(childRect.left) - Math.floor(containerRect.left) - 1)
+						: undefined;
+				const right =
+					direction === 'rtl'
+						? Math.abs(Math.floor(childRect.right) - Math.floor(containerRect.right) - 1)
+						: undefined;
 
-			// fixing a race-condition in which we got here before ref was rendered so its width is 0.
-			const isRendered = width !== 0;
-			if (isRendered) {
-				setLeft(left);
-				setRight(right);
-				setWidth(width);
-				setUpdateCount((old) => old + 1);
+				// fixing a race-condition in which we got here before ref was rendered so its width is 0.
+				const isRendered = width !== 0;
+				if (isRendered) {
+					setLeft(left);
+					setRight(right);
+					setWidth(width);
+					setUpdateCount((old) => old + 1);
+				}
+				return isRendered;
+			} catch (error) {
+				console.error(error);
 			}
-			return isRendered;
 		}, 1);
 	}
 

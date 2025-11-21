@@ -648,7 +648,7 @@ const ListViewService = {
 					if (nextLineIsOr && !previousLineWasOr) {
 						// firstRowInGroup = true;
 						summaryPerDay[dayTitle].push(
-							`<span style="background-color:white; line-height:33px; text-decoration:underline;">
+							`<span class="or-row-separator" style="background-color:white; line-height:33px; text-decoration:underline;">
                                 ${TranslateService.translate(eventStore, 'AND_THEN_ONE_OF_THE_FOLLOWING')}:
                             </span>`
 						);

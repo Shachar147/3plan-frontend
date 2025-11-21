@@ -303,6 +303,10 @@ export function isFlight(category: string, title: string) {
 	return isMatching(title, FLIGHT_KEYWORDS) || isMatching(category, FLIGHT_KEYWORDS);
 }
 
+export function isNotesCategory(category: string) {
+	return isMatching(category, ['notes', 'הערות']);
+}
+
 export function isFlightCategory(eventStore: EventStore, categoryId: number) {
 	const category = eventStore.categories.find((c) => c.id == categoryId);
 	if (!category) {

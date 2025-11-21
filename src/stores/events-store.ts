@@ -127,6 +127,7 @@ export class EventStore {
 	@observable isLoadingTrip = false; // is loading trip data right now
 	@observable isMobile = false;
 	@observable isMenuOpen = false;
+	@observable isDarkMode = false;
 	@observable isSearchOpen = true;
 	@observable didChangeSearchOpenState = false;
 
@@ -258,6 +259,13 @@ export class EventStore {
 
 		if (this.mapViewMode == MapViewMode.CHRONOLOGICAL_ORDER) {
 			this.mapViewDayFilter = (localStorage.getItem('mapViewDayFilter') as string) || '';
+		}
+
+		// Load dark mode preference from localStorage
+		const savedDarkMode = localStorage.getItem('isDarkMode');
+		if (savedDarkMode !== null) {
+			this.isDarkMode = savedDarkMode === 'true';
+			this.applyDarkMode(this.isDarkMode);
 		}
 
 		this.init();
@@ -2254,6 +2262,21 @@ export class EventStore {
 			this.isSidebarMinimized = false;
 		} else {
 			this.isSidebarMinimized = true;
+		}
+	}
+
+	@action
+	toggleDarkMode() {
+		this.isDarkMode = !this.isDarkMode;
+		this.applyDarkMode(this.isDarkMode);
+		localStorage.setItem('isDarkMode', this.isDarkMode.toString());
+	}
+
+	applyDarkMode(enabled: boolean) {
+		if (enabled) {
+			document.body.classList.add('dark-mode');
+		} else {
+			document.body.classList.remove('dark-mode');
 		}
 	}
 }

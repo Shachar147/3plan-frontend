@@ -7,6 +7,7 @@ import './stylesheets/colors.css';
 import './stylesheets/buttons.scss';
 import './stylesheets/app.scss';
 import './stylesheets/rtl.scss';
+import './stylesheets/dark-mode.scss';
 import './stylesheets/fontawesome/css/font-awesome.css';
 import './stylesheets/modals.scss';
 import './stylesheets/mobile.responsive.scss';
