@@ -41,24 +41,29 @@ function TriplanFooter() {
 		});
 	}, []);
 
+	const isCurrentUserAdmin = isAdmin();
+
 	const structure: any = [
-		{
+		isCurrentUserAdmin && {
 			'FOOTER.USER_STATS': [
 				{ 'FOOTER.TOTAL_USERS': summaries?.totalUsers },
 				{ 'FOOTER.LOGGED_IN_TODAY': summaries?.totalUsersThatLoggedInToday },
 				{ 'FOOTER.LOGGED_IN_THIS_WEEK': summaries?.totalUsersThatLoggedInThisWeek },
 				{ 'FOOTER.TOTAL_USERS_NO_TRIPS': summaries?.totalUsersWithNoTrip }, // todo remove?
-			],
+			].filter(Boolean),
 		},
 		{
 			'FOOTER.TRIPS_STATS': [
 				{ 'FOOTER.TOTAL_TRIPS': summaries?.totalTrips },
 				{ 'FOOTER.AVG_CALENDAR_ITEMS_IN_TRIP': summaries?.avgCalendarItemsInTrip },
 				{ 'FOOTER.AVG_SIDEBAR_ITEMS_IN_TRIP': summaries?.avgSidebarItemsInTrip },
-				{ 'FOOTER.AVG_TRIPS_PER_USER': summaries?.avgTripsPerUser },
+				isCurrentUserAdmin && { 'FOOTER.AVG_TRIPS_PER_USER': summaries?.avgTripsPerUser },
 				{ 'FOOTER.TOTAL_PLACES_ON_CALENDAR': summaries?.totalPlacesOnCalendar },
 				{ 'FOOTER.TOTAL_PLACES_ON_SIDEBAR': summaries?.totalPlacesOnSidebar },
-			],
+				isCurrentUserAdmin && { 'FOOTER.TOTAL_TEMPLATES': summaries?.totalTemplates },
+				isCurrentUserAdmin && { 'FOOTER.TOTAL_APPROVED_TEMPLATES': summaries?.totalApprovedTemplates },
+				!isCurrentUserAdmin && { 'FOOTER.TOTAL_TEMPLATES': summaries?.totalApprovedTemplates },
+			].filter(Boolean),
 		},
 		{
 			'FOOTER.POINT_OF_INTERESTS_STATS': [
@@ -68,25 +73,9 @@ function TriplanFooter() {
 				{ 'FOOTER.TOTAL_SAVED_ITEMS': summaries?.totalSavedItems },
 				{ 'FOOTER.AVG_SAVED_ITEMS_PER_USER': summaries?.avgSavedItemsPerUser },
 				{ 'FOOTER.TOTAL_SYSTEM_RECOMMENDATIONS': summaries?.totalSystemRecommendations },
-			],
+			].filter(Boolean),
 		},
 	].filter(Boolean);
-
-	if (['Shachar', TEMPLATES_USER_NAME].includes(getCurrentUsername())) {
-		structure[1]['FOOTER.TRIPS_STATS'].push(
-			...[
-				{ 'FOOTER.TOTAL_TEMPLATES': summaries?.totalTemplates },
-				{ 'FOOTER.TOTAL_APPROVED_TEMPLATES': summaries?.totalApprovedTemplates },
-			]
-		);
-	} else {
-		structure[1]['FOOTER.TRIPS_STATS'].push(...[{ 'FOOTER.TOTAL_TEMPLATES': summaries?.totalApprovedTemplates }]);
-	}
-
-	// remvove USERS block from footer for no admins
-	if (!isAdmin()) {
-		structure.splice(0, 1);
-	}
 
 	function renderStatsBlock(stats: Record<string, any>) {
 		const title = Object.keys(stats)[0];

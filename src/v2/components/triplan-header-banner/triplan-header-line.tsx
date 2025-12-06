@@ -218,16 +218,18 @@ function TriplanHeaderLine({
 			);
 		}
 
-		const goToAdminSideBtn = (
-			<Button
-				icon="fa-star"
-				text={TranslateService.translate(eventStore, 'MOBILE_NAVBAR.ADMIN_SIDE.SHORT')}
-				onClick={() => {
-					window.location.href = `${newDesignRootPath}/admin`;
-				}}
-				flavor={ButtonFlavor.link}
-			/>
-		);
+		const goToAdminSideBtn = undefined;
+
+		// const goToAdminSideBtn = (
+		// 	<Button
+		// 		icon="fa-star"
+		// 		text={TranslateService.translate(eventStore, 'MOBILE_NAVBAR.ADMIN_SIDE.SHORT')}
+		// 		onClick={() => {
+		// 			window.location.href = `${newDesignRootPath}/admin`;
+		// 		}}
+		// 		flavor={ButtonFlavor.link}
+		// 	/>
+		// );
 
 		const goToUserSideBtn = (
 			<Button
