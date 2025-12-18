@@ -45,6 +45,20 @@ export const endpoints: Record<string, any> = {
 			getTripTasks: (tripId: number) => `/todolist/task/${tripId}`,
 			updateTaskStatus: (taskId: number) => `/todolist/task/${taskId}`,
 		},
+		packing: {
+			item: {
+				create: '/packing/item',
+				getByTrip: (tripId: number) => `/packing/item/${tripId}`,
+				update: (itemId: number) => `/packing/item/${itemId}`,
+				delete: (itemId: number) => `/packing/item/${itemId}`,
+			},
+			category: {
+				create: '/packing/category',
+				getByTrip: (tripId: number) => `/packing/category/${tripId}`,
+				update: (categoryId: number) => `/packing/category/${categoryId}`,
+				delete: (categoryId: number) => `/packing/category/${categoryId}`,
+			},
+		},
 		backgroundTasks: {
 			getTask: (taskId: any) => `/task/${taskId}`,
 		},

@@ -10,6 +10,8 @@ import {
 	TripActions,
 	TriPlanCategory,
 	TriplanTask,
+	PackingItem,
+	PackingCategory,
 } from '../utils/interfaces';
 import {
 	getEnumKey,
@@ -206,6 +208,10 @@ export class EventStore {
 	@observable tasksSearchValue = '';
 	@observable hideDoneTasks: boolean = false;
 	@observable groupTasksByEvent: boolean = false;
+
+	@observable packingItems: PackingItem[] = [];
+	@observable packingCategories: PackingCategory[] = [];
+	@observable openPackingCategories = observable.map<number | string, number>({});
 
 	@observable sidebarGroupBy: 'priority' | 'category' | 'area' = 'category';
 
@@ -418,6 +424,30 @@ export class EventStore {
 	async reloadTasks() {
 		if (this.tripId) {
 			this.initTasks(this.tripId);
+		}
+	}
+
+	@action
+	async initPackingItems(tripId: number) {
+		const itemsData = await (this.dataService as DBService).getPackingItems(tripId);
+		const categoriesData = await (this.dataService as DBService).getPackingCategories(tripId);
+		this.packingItems = itemsData.data;
+		this.packingCategories = categoriesData.data;
+	}
+
+	@action
+	async reloadPackingItems() {
+		if (this.tripId) {
+			this.initPackingItems(this.tripId);
+		}
+	}
+
+	@action
+	togglePackingCategory(categoryId: number | 'uncategorized') {
+		if (this.openPackingCategories.has(categoryId)) {
+			this.openPackingCategories.delete(categoryId);
+		} else {
+			this.openPackingCategories.set(categoryId, 1);
 		}
 	}
 
@@ -1522,6 +1552,7 @@ export class EventStore {
 
 				if (tripData.id) {
 					await this.initTasks(tripData.id);
+					await this.initPackingItems(tripData.id);
 				}
 
 				await this.updateTripData(tripData);

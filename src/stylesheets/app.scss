@@ -688,6 +688,10 @@ body {
 	gap: 30px;
 }
 
+.gap-32 {
+	gap: 32px;
+}
+
 .gap-40 {
 	gap: 40px;
 }
@@ -1301,6 +1305,11 @@ input[type='text'] {
 .width-100-percent,
 .width-100-percents {
 	width: 100%;
+}
+
+.width-50-percent,
+.width-50-percents {
+	width: 50%;
 }
 
 .height-100-percent,
