@@ -429,10 +429,31 @@ export class EventStore {
 
 	@action
 	async initPackingItems(tripId: number) {
-		const itemsData = await (this.dataService as DBService).getPackingItems(tripId);
-		const categoriesData = await (this.dataService as DBService).getPackingCategories(tripId);
-		this.packingItems = itemsData.data;
-		this.packingCategories = categoriesData.data;
+		try {
+			const itemsData = await (this.dataService as DBService).getPackingItems(tripId);
+			const categoriesData = await (this.dataService as DBService).getPackingCategories(tripId);
+
+			// Check if responses are errors (e.g., 404, 500)
+			if (itemsData?.response?.status >= 400 || categoriesData?.response?.status >= 400) {
+				this.packingItems = undefined;
+				this.packingCategories = undefined;
+				return;
+			}
+
+			// Check if data is null or undefined (backward compatibility)
+			if (!itemsData || !categoriesData) {
+				this.packingItems = undefined;
+				this.packingCategories = undefined;
+				return;
+			}
+
+			this.packingItems = itemsData.data || itemsData;
+			this.packingCategories = categoriesData.data || categoriesData;
+		} catch (error) {
+			// If API call fails (e.g., endpoint doesn't exist), hide the packing block
+			this.packingItems = undefined;
+			this.packingCategories = undefined;
+		}
 	}
 
 	@action

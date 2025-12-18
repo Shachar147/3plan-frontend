@@ -1960,6 +1960,10 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		if (eventStore.dataService.getDataSourceName() != TripDataSource.DB) {
 			return;
 		}
+		// Hide packing block if data is undefined (error or not available for backward compatibility)
+		if (eventStore.packingItems === undefined || eventStore.packingCategories === undefined) {
+			return null;
+		}
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PACKING');
 
 		const renderPackingProgress = () => {

@@ -426,13 +426,31 @@ export class DBService implements BaseDataHandler {
 
 	// Packing methods
 	async getPackingItems(tripId: number) {
-		const res: any = await apiGetPromise(this, endpoints.v1.packing.item.getByTrip(tripId));
-		return res.data;
+		try {
+			const res: any = await apiGetPromise(this, endpoints.v1.packing.item.getByTrip(tripId));
+			// Check if response is an error (404, 500, etc.)
+			if (res?.response?.status >= 400) {
+				return res; // Return the error response so it can be handled upstream
+			}
+			return res.data;
+		} catch (error) {
+			// Return error object to be handled upstream
+			return { response: { status: 404 }, data: null };
+		}
 	}
 
 	async getPackingCategories(tripId: number) {
-		const res: any = await apiGetPromise(this, endpoints.v1.packing.category.getByTrip(tripId));
-		return res.data;
+		try {
+			const res: any = await apiGetPromise(this, endpoints.v1.packing.category.getByTrip(tripId));
+			// Check if response is an error (404, 500, etc.)
+			if (res?.response?.status >= 400) {
+				return res; // Return the error response so it can be handled upstream
+			}
+			return res.data;
+		} catch (error) {
+			// Return error object to be handled upstream
+			return { response: { status: 404 }, data: null };
+		}
 	}
 
 	async createPackingItem(data: {
