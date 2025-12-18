@@ -1962,11 +1962,36 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		}
 		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PACKING');
 
+		const renderPackingProgress = () => {
+			if (eventStore.packingItems == undefined || eventStore.packingCategories == undefined) {
+				return null;
+			}
+			const items = eventStore.packingItems.filter((item) => !item.isDeleted);
+			const totalItems = items.length;
+			if (totalItems === 0) {
+				return null;
+			}
+			const packedItems = items.filter((item) => item.isPacked).length;
+			const unpackedItems = totalItems - packedItems;
+			const percentage = Math.round((packedItems / totalItems) * 100);
+
+			return (
+				<div className="padding-block-8">
+					{TranslateService.translate(eventStore, 'PACKING.PROGRESS', {
+						unpacked: unpackedItems,
+						total: totalItems,
+						percentage: percentage,
+					})}
+				</div>
+			);
+		};
+
 		const packingBlock = createSidebarGroup(
 			<div className="text-align-center white-space-pre-line flex-col gap-16">
 				<div className="opacity-0-5">
 					{TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PACKING.DESCRIPTION')}
 				</div>
+				{renderPackingProgress()}
 				{renderPackingInner()}
 				{renderAddPackingButtons()}
 			</div>,

@@ -329,6 +329,7 @@
 	"PACKING_ITEM.CATEGORY.PLACEHOLDER": "בחר קטגוריה (אופציונלי)",
 	"PACKING_CATEGORY.UNCATEGORIZED": "ללא קטגוריה",
 	"PACKING_CATEGORY.NO_ITEMS": "אין פריטים עדיין",
+	"PACKING.PROGRESS": "נשארו לך {unpacked}/{total} פריטים לארוז! אתה {percentage}% מוכן",
 	"MODALS.DELETE_PACKING_CATEGORY_ERROR.CONTENT": "אופס, משהו השתבש :(<br>קטגוריית האריזה שלך לא יכולה הייתה להימחק.",
 	"MODALS.ADD_PACKING_ITEM.CONTENT": "הוסף פריטים שצריך לארוז לטיול. ניתן לארגן אותם לקטגוריות.",
 	"MODALS.EDIT_PACKING_ITEM.CONTENT": "ערוך את פרטי פריט האריזה.",

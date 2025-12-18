@@ -744,6 +744,7 @@
 	"PACKING_ITEM.CATEGORY.PLACEHOLDER": "Select a category (optional)",
 	"PACKING_CATEGORY.UNCATEGORIZED": "Uncategorized",
 	"PACKING_CATEGORY.NO_ITEMS": "No items yet",
+	"PACKING.PROGRESS": "You have left {unpacked}/{total} items to pack! you're {percentage}% packed",
 	"MODALS.DELETE_PACKING_CATEGORY_ERROR.CONTENT": "Oops something went wrong :(<br>Your packing category could not be deleted.",
 	"MODALS.ADD_PACKING_ITEM.CONTENT": "Add items you need to pack for your trip. You can organize them into categories.",
 	"MODALS.EDIT_PACKING_ITEM.CONTENT": "Edit the packing item details.",
