@@ -8,7 +8,7 @@ import {
 	TriplanTaskStatus,
 } from '../../utils/interfaces';
 import { AllEventsEvent, BaseDataHandler, DateRangeFormatted, LocaleCode, SharedTrip, Trip } from './data-handler-base';
-import { apiDelete, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
+import { apiDelete, apiDeletePromise, apiGetPromise, apiPut, apiPost } from '../../helpers/api';
 import { TripDataSource } from '../../utils/enums';
 import { getCoordinatesRangeKey, stringToCoordinate } from '../../utils/utils';
 import axios from 'axios';
@@ -422,5 +422,65 @@ export class DBService implements BaseDataHandler {
 
 	async updateTaskStatus(taskId: number, status: TriplanTaskStatus) {
 		return await apiPut(endpoints.v1.tasks.updateTaskStatus(taskId), { status });
+	}
+
+	// Packing methods
+	async getPackingItems(tripId: number) {
+		const res: any = await apiGetPromise(this, endpoints.v1.packing.item.getByTrip(tripId));
+		return res.data;
+	}
+
+	async getPackingCategories(tripId: number) {
+		const res: any = await apiGetPromise(this, endpoints.v1.packing.category.getByTrip(tripId));
+		return res.data;
+	}
+
+	async createPackingItem(data: {
+		tripId: number;
+		title: string;
+		icon?: string;
+		categoryId?: number;
+		isPacked?: boolean;
+		order?: number;
+	}) {
+		return await apiPost(endpoints.v1.packing.item.create, data);
+	}
+
+	async updatePackingItem(
+		itemId: number,
+		data: {
+			title?: string;
+			icon?: string;
+			categoryId?: number;
+			isPacked?: boolean;
+			order?: number;
+		}
+	) {
+		return await apiPut(endpoints.v1.packing.item.update(itemId), data);
+	}
+
+	async deletePackingItem(itemId: number) {
+		const res: any = await apiDeletePromise(endpoints.v1.packing.item.delete(itemId));
+		return res.data;
+	}
+
+	async createPackingCategory(data: { tripId: number; name: string; icon?: string; order?: number }) {
+		return await apiPost(endpoints.v1.packing.category.create, data);
+	}
+
+	async updatePackingCategory(
+		categoryId: number,
+		data: {
+			name?: string;
+			icon?: string;
+			order?: number;
+		}
+	) {
+		return await apiPut(endpoints.v1.packing.category.update(categoryId), data);
+	}
+
+	async deletePackingCategory(categoryId: number) {
+		const res: any = await apiDeletePromise(endpoints.v1.packing.category.delete(categoryId));
+		return res.data;
 	}
 }

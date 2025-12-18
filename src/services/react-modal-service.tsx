@@ -33,6 +33,8 @@ import {
 	TriplanTask,
 	TriplanTaskStatus,
 	WeeklyOpeningHoursData,
+	PackingItem,
+	PackingCategory,
 } from '../utils/interfaces';
 import {
 	InputValidation,
@@ -66,6 +68,7 @@ import TextareaInput from '../components/inputs/textarea-input/textarea-input';
 import DatePicker from '../components/inputs/date-picker/date-picker';
 import { EventInput } from '@fullcalendar/react';
 import Button, { ButtonFlavor } from '../components/common/button/button';
+import { DBService } from '../services/data-handlers/db-service';
 import ImportService from './import-service';
 import { BackupService } from './backup-service';
 import { getServerAddress } from '../config/config';
@@ -601,6 +604,23 @@ export const ReactModalRenderHelper = {
 			{ ...extra, options, placeholderKey: 'TYPE_TO_SEARCH_PLACEHOLDER' },
 			'preferred-time-selector',
 			ref
+		);
+	},
+	renderIconSelector: (
+		eventStore: EventStore,
+		modalValueName: string,
+		extra: { id?: string; name?: string; value?: any; readOnly?: boolean },
+		ref?: any
+	) => {
+		return (
+			<IconSelector
+				id={extra.id}
+				modalValueName={modalValueName}
+				value={extra.value}
+				onChange={(data) => (eventStore.modalValues[modalValueName] = data)}
+				ref={ref}
+				readOnly={extra.readOnly}
+			/>
 		);
 	},
 	getRowInput: (eventStore: EventStore, row: { settings: any; textKey: string; className?: string }) => {
@@ -6249,6 +6269,558 @@ const ReactModalService = {
 					);
 
 					ReactModalService.internal.closeModal(eventStore);
+				}
+			},
+		});
+	},
+	openAddPackingItemModal(eventStore: EventStore, tripId: number) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const category_options = [
+			{ value: null, label: TranslateService.translate(eventStore, 'PACKING_CATEGORY.UNCATEGORIZED') },
+			...eventStore.packingCategories
+				.filter((cat) => !cat.isDeleted)
+				.sort((a, b) => a.order - b.order)
+				.map((cat) => ({ value: cat.id, label: cat.name })),
+		];
+
+		const rows = [
+			{
+				textKey: 'PACKING.ICON',
+				component: ReactModalRenderHelper.renderIconSelector(
+					eventStore,
+					'add-packing-item-icon',
+					{
+						id: 'add-packing-item-icon',
+						value: undefined,
+					},
+					eventStore.modalValuesRefs['add-packing-item-icon']
+				),
+				required: false,
+			},
+			{
+				textKey: 'MODALS.TITLE',
+				component: ReactModalRenderHelper.renderTextInput(eventStore, 'add-packing-item-title', {
+					placeholderKey: 'ADD_PACKING_ITEM.TITLE.PLACEHOLDER',
+					id: 'add-packing-item-title',
+					value: undefined,
+					className: 'min-width-100-important',
+				}),
+				required: true,
+			},
+			{
+				textKey: 'PACKING_ITEM.CATEGORY.LABEL',
+				component: ReactModalRenderHelper.renderSelectInput(
+					eventStore,
+					'add-packing-item-category-id',
+					{
+						options: category_options,
+						placeholderKey: 'PACKING_ITEM.CATEGORY.PLACEHOLDER',
+						removeDefaultClass: true,
+						value: null,
+						isClearable: true,
+						maxMenuHeight: eventStore.isMobile ? 45 * Math.min(category_options.length, 4) : undefined,
+					},
+					'add-packing-item-category-selector width-100-percents'
+				),
+				required: false,
+			},
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'ADD_PACKING_ITEM.MODAL_TITLE')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.ADD_PACKING_ITEM.CONTENT'),
+						}}
+					/>
+					<div>
+						{rows.map((row, idx) =>
+							ReactModalRenderHelper.renderInputWithLabel(
+								eventStore,
+								row.textKey,
+								row.component,
+								getClasses('padding-bottom-20', idx == 0 && 'border-top-gray', 'border-bottom-gray'),
+								undefined,
+								'add-packing-item-label',
+								row.required
+							)
+						)}
+					</div>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource == TripDataSource.DB) {
+					const title = eventStore.modalValues['add-packing-item-title'];
+					const categoryId = eventStore.modalValues['add-packing-item-category-id'];
+
+					if (!title) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.ERROR.TITLE_CANNOT_BE_EMPTY',
+							'error'
+						);
+						return;
+					}
+
+					try {
+						const iconOption = eventStore.modalValues['add-packing-item-icon'];
+						const icon = iconOption?.label || iconOption; // Extract icon string from option object or use directly
+						const itemData: any = {
+							tripId,
+							title,
+							isPacked: false,
+							order: 0,
+						};
+						if (icon) {
+							itemData.icon = icon;
+						}
+						// Extract value from select option object (it can be {value: number, label: string} or null)
+						const selectedCategoryValue =
+							categoryId?.value !== undefined
+								? categoryId.value
+								: categoryId === null
+								? null
+								: categoryId;
+
+						// Only include categoryId if it's a valid number (not null/undefined)
+						if (
+							selectedCategoryValue !== null &&
+							selectedCategoryValue !== undefined &&
+							!isNaN(Number(selectedCategoryValue))
+						) {
+							itemData.categoryId = Number(selectedCategoryValue);
+						}
+						await (eventStore.dataService as DBService).createPackingItem(itemData);
+						runInAction(() => {
+							eventStore.reloadPackingItems();
+						});
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ADDED.TITLE',
+							'MODALS.ADDED.PACKING_ITEM.CONTENT',
+							'success'
+						);
+						ReactModalService.internal.closeModal(eventStore);
+					} catch (e) {
+						console.error(e);
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.ADD_PACKING_ITEM_ERROR.CONTENT',
+							'error'
+						);
+					}
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
+	},
+	openEditPackingItemModal(eventStore: EventStore, item: PackingItem) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const category_options = [
+			{ value: null, label: TranslateService.translate(eventStore, 'PACKING_CATEGORY.UNCATEGORIZED') },
+			...eventStore.packingCategories
+				.filter((cat) => !cat.isDeleted)
+				.sort((a, b) => a.order - b.order)
+				.map((cat) => ({ value: cat.id, label: cat.name })),
+		];
+
+		const rows = [
+			{
+				textKey: 'PACKING.ICON',
+				component: ReactModalRenderHelper.renderIconSelector(
+					eventStore,
+					'edit-packing-item-icon',
+					{
+						id: 'edit-packing-item-icon',
+						value: item.icon,
+					},
+					eventStore.modalValuesRefs['edit-packing-item-icon']
+				),
+				required: false,
+			},
+			{
+				textKey: 'MODALS.TITLE',
+				component: ReactModalRenderHelper.renderTextInput(eventStore, 'edit-packing-item-title', {
+					placeholderKey: 'ADD_PACKING_ITEM.TITLE.PLACEHOLDER',
+					id: 'edit-packing-item-title',
+					value: item.title,
+					className: 'min-width-100-important',
+				}),
+				required: true,
+			},
+			{
+				textKey: 'PACKING_ITEM.CATEGORY.LABEL',
+				component: ReactModalRenderHelper.renderSelectInput(
+					eventStore,
+					'edit-packing-item-category-id',
+					{
+						options: category_options,
+						placeholderKey: 'PACKING_ITEM.CATEGORY.PLACEHOLDER',
+						removeDefaultClass: true,
+						value: item.categoryId || null,
+						isClearable: true,
+						maxMenuHeight: eventStore.isMobile ? 45 * Math.min(category_options.length, 4) : undefined,
+					},
+					'edit-packing-item-category-selector width-100-percents'
+				),
+				required: false,
+			},
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'EDIT_PACKING_ITEM.MODAL_TITLE', {
+				itemName: item.title,
+			})}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.EDIT_PACKING_ITEM.CONTENT'),
+						}}
+					/>
+					<div>
+						{rows.map((row, idx) =>
+							ReactModalRenderHelper.renderInputWithLabel(
+								eventStore,
+								row.textKey,
+								row.component,
+								getClasses('padding-bottom-20', idx == 0 && 'border-top-gray', 'border-bottom-gray'),
+								undefined,
+								'edit-packing-item-label',
+								row.required
+							)
+						)}
+					</div>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource == TripDataSource.DB) {
+					const title = eventStore.modalValues['edit-packing-item-title'];
+					const categoryId = eventStore.modalValues['edit-packing-item-category-id'];
+
+					if (!title) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.ERROR.TITLE_CANNOT_BE_EMPTY',
+							'error'
+						);
+						return;
+					}
+
+					try {
+						const iconOption = eventStore.modalValues['edit-packing-item-icon'];
+						const icon = iconOption?.label || iconOption; // Extract icon string from option object or use directly
+
+						const updateData: any = {
+							title,
+						};
+						if (icon !== undefined) {
+							updateData.icon = icon || null;
+						}
+						// Extract value from select option object (it can be {value: number, label: string} or null)
+						const selectedCategoryValue =
+							categoryId?.value !== undefined
+								? categoryId.value
+								: categoryId === null
+								? null
+								: categoryId;
+
+						// Explicitly handle null (uncategorized) vs undefined (no change)
+						// If categoryId is explicitly null, set it to null (uncategorized)
+						// If categoryId is a number, set it to that number
+						// Only omit if it's truly undefined
+						if (selectedCategoryValue !== undefined) {
+							updateData.categoryId =
+								selectedCategoryValue === null ? null : Number(selectedCategoryValue);
+						}
+						await (eventStore.dataService as DBService).updatePackingItem(item.id, updateData);
+						runInAction(() => {
+							eventStore.reloadPackingItems();
+						});
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.UPDATED.TITLE',
+							'MODALS.UPDATED.PACKING_ITEM.CONTENT',
+							'success'
+						);
+						ReactModalService.internal.closeModal(eventStore);
+					} catch (e) {
+						console.error(e);
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.EDIT_PACKING_ITEM_ERROR.CONTENT',
+							'error'
+						);
+					}
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
+	},
+	openAddPackingCategoryModal(eventStore: EventStore, tripId: number) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const rows = [
+			{
+				textKey: 'PACKING.ICON',
+				component: ReactModalRenderHelper.renderIconSelector(
+					eventStore,
+					'add-packing-category-icon',
+					{
+						id: 'add-packing-category-icon',
+						value: undefined,
+					},
+					eventStore.modalValuesRefs['add-packing-category-icon']
+				),
+				required: false,
+			},
+			{
+				textKey: 'MODALS.TITLE',
+				component: ReactModalRenderHelper.renderTextInput(eventStore, 'add-packing-category-name', {
+					placeholderKey: 'ADD_PACKING_CATEGORY.NAME.PLACEHOLDER',
+					id: 'add-packing-category-name',
+					value: undefined,
+					className: 'min-width-100-important',
+				}),
+				required: true,
+			},
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'ADD_PACKING_CATEGORY.MODAL_TITLE')}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.ADD_PACKING_CATEGORY.CONTENT'),
+						}}
+					/>
+					<div>
+						{rows.map((row, idx) =>
+							ReactModalRenderHelper.renderInputWithLabel(
+								eventStore,
+								row.textKey,
+								row.component,
+								getClasses('padding-bottom-20', idx == 0 && 'border-top-gray', 'border-bottom-gray'),
+								undefined,
+								'add-packing-category-label',
+								row.required
+							)
+						)}
+					</div>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource == TripDataSource.DB) {
+					const name = eventStore.modalValues['add-packing-category-name'];
+
+					if (!name) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.ERROR.TITLE_CANNOT_BE_EMPTY',
+							'error'
+						);
+						return;
+					}
+
+					try {
+						const iconOption = eventStore.modalValues['add-packing-category-icon'];
+						const icon = iconOption?.label || iconOption; // Extract icon string from option object or use directly
+
+						const categoryData: any = {
+							tripId,
+							name,
+							order: 0,
+						};
+						if (icon) {
+							categoryData.icon = icon;
+						}
+						await (eventStore.dataService as DBService).createPackingCategory(categoryData);
+						runInAction(() => {
+							eventStore.reloadPackingItems();
+						});
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ADDED.TITLE',
+							'MODALS.ADDED.PACKING_CATEGORY.CONTENT',
+							'success'
+						);
+						ReactModalService.internal.closeModal(eventStore);
+					} catch (e) {
+						console.error(e);
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.ADD_PACKING_CATEGORY_ERROR.CONTENT',
+							'error'
+						);
+					}
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
+				}
+			},
+		});
+	},
+	openEditPackingCategoryModal(eventStore: EventStore, category: PackingCategory) {
+		const tripName = eventStore.tripName.replaceAll('-', ' ');
+
+		const rows = [
+			{
+				textKey: 'PACKING.ICON',
+				component: ReactModalRenderHelper.renderIconSelector(
+					eventStore,
+					'edit-packing-category-icon',
+					{
+						id: 'edit-packing-category-icon',
+						value: category.icon,
+					},
+					eventStore.modalValuesRefs['edit-packing-category-icon']
+				),
+				required: false,
+			},
+			{
+				textKey: 'MODALS.TITLE',
+				component: ReactModalRenderHelper.renderTextInput(eventStore, 'edit-packing-category-name', {
+					placeholderKey: 'ADD_PACKING_CATEGORY.NAME.PLACEHOLDER',
+					id: 'edit-packing-category-name',
+					value: category.name,
+					className: 'min-width-100-important',
+				}),
+				required: true,
+			},
+		];
+
+		ReactModalService.internal.openModal(eventStore, {
+			...getDefaultSettings(eventStore),
+			title: `${TranslateService.translate(eventStore, 'EDIT_PACKING_CATEGORY.MODAL_TITLE', {
+				categoryName: category.name,
+			})}: ${tripName}`,
+			content: (
+				<div className="flex-col gap-20">
+					<div
+						className="white-space-pre-line"
+						dangerouslySetInnerHTML={{
+							__html: TranslateService.translate(eventStore, 'MODALS.EDIT_PACKING_CATEGORY.CONTENT'),
+						}}
+					/>
+					<div>
+						{rows.map((row, idx) =>
+							ReactModalRenderHelper.renderInputWithLabel(
+								eventStore,
+								row.textKey,
+								row.component,
+								getClasses('padding-bottom-20', idx == 0 && 'border-top-gray', 'border-bottom-gray'),
+								undefined,
+								'edit-packing-category-label',
+								row.required
+							)
+						)}
+					</div>
+				</div>
+			),
+			cancelBtnText: TranslateService.translate(eventStore, 'MODALS.CANCEL'),
+			confirmBtnText: TranslateService.translate(eventStore, 'MODALS.SAVE'),
+			confirmBtnCssClass: 'primary-button',
+			onConfirm: async () => {
+				const tripDataSource = eventStore.dataService.getDataSourceName();
+				if (tripDataSource == TripDataSource.DB) {
+					const name = eventStore.modalValues['edit-packing-category-name'];
+
+					if (!name) {
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.ERROR.TITLE_CANNOT_BE_EMPTY',
+							'error'
+						);
+						return;
+					}
+
+					try {
+						const iconOption = eventStore.modalValues['edit-packing-category-icon'];
+						const icon = iconOption?.label || iconOption; // Extract icon string from option object or use directly
+
+						const updateData: any = {
+							name,
+						};
+						if (icon !== undefined) {
+							updateData.icon = icon || null;
+						}
+						await (eventStore.dataService as DBService).updatePackingCategory(category.id, updateData);
+						runInAction(() => {
+							eventStore.reloadPackingItems();
+						});
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.UPDATED.TITLE',
+							'MODALS.UPDATED.PACKING_CATEGORY.CONTENT',
+							'success'
+						);
+						ReactModalService.internal.closeModal(eventStore);
+					} catch (e) {
+						console.error(e);
+						ReactModalService.internal.alertMessage(
+							eventStore,
+							'MODALS.ERROR.TITLE',
+							'MODALS.EDIT_PACKING_CATEGORY_ERROR.CONTENT',
+							'error'
+						);
+					}
+				} else {
+					ReactModalService.internal.alertMessage(
+						eventStore,
+						'MODALS.ERROR.TITLE',
+						'ACTION_NOT_SUPPORTED_ON_LOCAL_TRIPS',
+						'error'
+					);
+					return;
 				}
 			},
 		});

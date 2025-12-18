@@ -35,6 +35,7 @@ export enum SidebarGroups {
 	DISTANCES_NEARBY = 'DISTANCES_NEARBY',
 	DISTANCES_FROMTO = 'DISTANCES_FROMTO',
 	TASKS = 'TASKS',
+	PACKING = 'PACKING',
 }
 
 interface SidebarGroupProps {

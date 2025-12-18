@@ -202,3 +202,31 @@ export interface TriplanTask {
 	deletedAt?: number;
 	updatedAt?: number; // timestamp
 }
+
+export interface PackingItem {
+	id: number;
+	tripId: number;
+	categoryId?: number;
+	addedByUserId: number;
+	title: string;
+	icon?: string;
+	isPacked: boolean;
+	addedAt: number; // timestamp
+	updatedAt?: number; // timestamp
+	isDeleted: boolean;
+	deletedAt?: number;
+	order: number;
+}
+
+export interface PackingCategory {
+	id: number;
+	tripId: number;
+	addedByUserId: number;
+	name: string;
+	icon?: string;
+	addedAt: number; // timestamp
+	updatedAt?: number; // timestamp
+	isDeleted: boolean;
+	deletedAt?: number;
+	order: number;
+}

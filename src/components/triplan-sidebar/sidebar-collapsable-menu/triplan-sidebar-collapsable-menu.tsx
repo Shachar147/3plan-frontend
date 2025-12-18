@@ -36,6 +36,7 @@ import {
 	TriplanTask,
 	TriplanTaskStatus,
 	TriPlanCategory,
+	PackingItem,
 } from '../../../utils/interfaces';
 import { hotelColor, priorityToColor } from '../../../utils/consts';
 import { EventInput } from '@fullcalendar/react';
@@ -1695,6 +1696,318 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 		);
 	};
 
+	const renderPackingItem = (item: PackingItem) => {
+		return (
+			<div
+				className={getClasses(
+					'triplan-history space-between padding-inline-8 gap-8 align-items-center opacity-1-hover-important',
+					item.isPacked && 'opacity-0-6'
+				)}
+				key={item.id}
+			>
+				<i
+					className={getClasses('fa cursor-pointer', item.isPacked ? 'fa-check-square-o' : 'fa-square-o')}
+					onClick={() => {
+						(eventStore.dataService as DBService)
+							.updatePackingItem(item.id, { isPacked: !item.isPacked })
+							.then(() => {
+								runInAction(() => {
+									eventStore.reloadPackingItems();
+								});
+							});
+					}}
+					aria-hidden="true"
+				/>
+				<div className="flex-row gap-4 align-items-center flex-1-1-0 min-width-0">
+					<div
+						className={getClasses(
+							'history-title flex-row align-items-center flex-1-1-0 min-width-0 text-align-start',
+							item.isPacked && 'text-decoration-strike-through'
+						)}
+					>
+						{item.icon ? `${item.icon} ` : ''}
+						{item.title}
+					</div>
+				</div>
+				<i
+					className="fa cursor-pointer fa-pencil"
+					onClick={() => {
+						ReactModalService.openEditPackingItemModal(eventStore, item);
+					}}
+					aria-hidden="true"
+				/>
+				<i
+					className="fa cursor-pointer fa-trash-o"
+					onClick={() => {
+						(eventStore.dataService as DBService).deletePackingItem(item.id).then(() => {
+							runInAction(() => {
+								eventStore.reloadPackingItems();
+							});
+						});
+					}}
+					aria-hidden="true"
+				/>
+			</div>
+		);
+	};
+
+	const renderPackingInner = () => {
+		if (eventStore.packingItems == undefined || eventStore.packingCategories == undefined) {
+			return TranslateService.translate(eventStore, 'LOADING_PAGE.TITLE');
+		}
+
+		const items = eventStore.packingItems.filter((item) => !item.isDeleted);
+		const categories = eventStore.packingCategories
+			.filter((cat) => !cat.isDeleted)
+			.sort((a, b) => a.order - b.order);
+
+		// Group items by category
+		const itemsByCategory: Record<number | 'uncategorized', PackingItem[]> = { uncategorized: [] };
+		categories.forEach((cat) => {
+			itemsByCategory[cat.id] = [];
+		});
+
+		items.forEach((item) => {
+			const categoryId = item.categoryId || 'uncategorized';
+			if (!itemsByCategory[categoryId]) {
+				itemsByCategory[categoryId] = [];
+			}
+			itemsByCategory[categoryId].push(item);
+		});
+
+		// Sort items within each category: unpacked first, then packed (both by order)
+		Object.keys(itemsByCategory).forEach((key) => {
+			const categoryItems = itemsByCategory[key as number | 'uncategorized'];
+			categoryItems.sort((a, b) => {
+				// First sort by isPacked (unpacked first)
+				if (a.isPacked !== b.isPacked) {
+					return a.isPacked ? 1 : -1;
+				}
+				// Then by order
+				return a.order - b.order;
+			});
+		});
+
+		const renderCategorySection = (
+			categoryId: number | 'uncategorized',
+			categoryItems: PackingItem[],
+			index: number
+		) => {
+			const category = categoryId === 'uncategorized' ? null : categories.find((c) => c.id === categoryId);
+			const categoryName = category
+				? category.name
+				: TranslateService.translate(eventStore, 'PACKING_CATEGORY.UNCATEGORIZED');
+
+			const unpackedItems = categoryItems.filter((item) => !item.isPacked);
+			const packedItems = categoryItems.filter((item) => item.isPacked);
+
+			const closedStyle = {
+				maxHeight: 0,
+				overflowY: 'hidden',
+				padding: 0,
+				transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+			};
+
+			const openStyle = {
+				padding: '10px',
+				transition: 'padding 0.2s ease, max-height 0.3s ease-in-out',
+			};
+
+			const editIconStyle = {
+				display: 'flex',
+				justifyContent: 'flex-end',
+				flexGrow: 1,
+				paddingInline: '10px',
+				gap: '10px',
+				color: 'var(--gray)',
+			};
+
+			const arrowDirection = eventStore.getCurrentDirection() === 'ltr' ? 'right' : 'left';
+			const borderStyle = '1px solid rgba(0, 0, 0, 0.05)';
+
+			const isOpen = eventStore.openPackingCategories.has(categoryId);
+			const eventsStyle = isOpen ? openStyle : closedStyle;
+
+			return (
+				<div
+					className="external-events"
+					key={categoryId === 'uncategorized' ? 'uncategorized' : `category-${categoryId}`}
+				>
+					<div
+						className="sidebar-statistics sidebar-group"
+						style={{
+							borderBottom: borderStyle,
+							borderTop: index === 0 ? borderStyle : '0',
+						}}
+						onClick={() => eventStore.togglePackingCategory(categoryId)}
+					>
+						<i
+							className={isOpen ? 'fa fa-angle-double-down' : `fa fa-angle-double-${arrowDirection}`}
+							aria-hidden="true"
+						/>
+						<span>
+							{category?.icon ? `${category.icon} ` : ''}
+							{categoryName}
+						</span>
+						<div>
+							({unpackedItems.length}/{categoryItems.length})
+						</div>
+						{category && (
+							<div style={editIconStyle}>
+								<i
+									className={getClasses(
+										'fa fa-pencil-square-o',
+										eventStore.isTripLocked && 'display-none'
+									)}
+									aria-hidden="true"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										ReactModalService.openEditPackingCategoryModal(eventStore, category);
+									}}
+								/>
+								<i
+									className={getClasses(
+										'fa fa-trash-o',
+										eventStore.isTripLocked && 'display-none',
+										'position-relative',
+										'top--1'
+									)}
+									aria-hidden="true"
+									onClick={async (e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										try {
+											await (eventStore.dataService as DBService).deletePackingCategory(
+												category.id
+											);
+											runInAction(() => {
+												eventStore.reloadPackingItems();
+											});
+										} catch (error) {
+											console.error('Error deleting category:', error);
+											ReactModalService.internal.alertMessage(
+												eventStore,
+												'MODALS.ERROR.TITLE',
+												'MODALS.DELETE_PACKING_CATEGORY_ERROR.CONTENT',
+												'error'
+											);
+										}
+									}}
+								/>
+							</div>
+						)}
+					</div>
+					<div style={eventsStyle as any}>
+						{categoryItems.length > 0 ? (
+							<div className="flex-col gap-8">
+								{unpackedItems.map(renderPackingItem)}
+								{packedItems.map(renderPackingItem)}
+							</div>
+						) : (
+							<div className="flex-row justify-content-center text-align-center opacity-0-3 width-100-percents padding-inline-15 padding-block-8">
+								{TranslateService.translate(eventStore, 'PACKING_CATEGORY.NO_ITEMS')}
+							</div>
+						)}
+					</div>
+				</div>
+			);
+		};
+
+		const allCategorySections: Array<{ id: number | 'uncategorized'; items: PackingItem[] }> = [
+			{ id: 'uncategorized', items: itemsByCategory['uncategorized'] || [] },
+			...categories.map((cat) => ({ id: cat.id, items: itemsByCategory[cat.id] || [] })),
+		];
+
+		return (
+			<div className="flex-col">
+				{allCategorySections.map((section, index) => renderCategorySection(section.id, section.items, index))}
+			</div>
+		);
+	};
+
+	const renderAddPackingButtons = () => {
+		return (
+			<div className="flex-row gap-8 width-100-percents">
+				<Button
+					flavor={ButtonFlavor.primary}
+					className="width-50-percents"
+					onClick={() => {
+						ReactModalService.openAddPackingItemModal(eventStore, eventStore.tripId);
+					}}
+					text={TranslateService.translate(eventStore, 'ADD_PACKING_ITEM.BUTTON_TEXT')}
+					icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
+					disabled={eventStore.isTripLocked}
+					disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
+				/>
+				<Button
+					flavor={ButtonFlavor.secondary}
+					className="width-50-percents"
+					onClick={() => {
+						ReactModalService.openAddPackingCategoryModal(eventStore, eventStore.tripId);
+					}}
+					text={TranslateService.translate(eventStore, 'ADD_PACKING_CATEGORY.BUTTON_TEXT')}
+					icon={eventStore.isTripLocked ? 'fa-lock' : undefined}
+					disabled={eventStore.isTripLocked}
+					disabledReason={TranslateService.translate(eventStore, 'TRIP_IS_LOCKED')}
+				/>
+			</div>
+		);
+	};
+
+	const renderPacking = () => {
+		// supported only on the db version
+		if (eventStore.dataService.getDataSourceName() != TripDataSource.DB) {
+			return;
+		}
+		const groupTitle = TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PACKING');
+
+		const renderPackingProgress = () => {
+			if (eventStore.packingItems == undefined || eventStore.packingCategories == undefined) {
+				return null;
+			}
+			const items = eventStore.packingItems.filter((item) => !item.isDeleted);
+			const totalItems = items.length;
+			if (totalItems === 0) {
+				return null;
+			}
+			const packedItems = items.filter((item) => item.isPacked).length;
+			const unpackedItems = totalItems - packedItems;
+			const percentage = Math.round((packedItems / totalItems) * 100);
+
+			return (
+				<div className="padding-block-8">
+					{TranslateService.translate(eventStore, 'PACKING.PROGRESS', {
+						unpacked: unpackedItems,
+						total: totalItems,
+						percentage: percentage,
+					})}
+				</div>
+			);
+		};
+
+		const packingBlock = createSidebarGroup(
+			<div className="text-align-center white-space-pre-line flex-col gap-16">
+				<div className="opacity-0-5">
+					{TranslateService.translate(eventStore, 'SIDEBAR_GROUPS.GROUP_TITLE.PACKING.DESCRIPTION')}
+				</div>
+				{renderPackingProgress()}
+				{renderPackingInner()}
+				{renderAddPackingButtons()}
+			</div>,
+			undefined,
+			SidebarGroups.PACKING,
+			groupTitle,
+			10 + (eventStore.packingItems?.length ?? 0)
+		);
+		return (
+			<>
+				<hr className="margin-block-2" />
+				{packingBlock}
+			</>
+		);
+	};
+
 	return (
 		<div className="triplan-sidebar-collapsable-menu">
 			{renderWarnings()}
@@ -1702,6 +2015,7 @@ function TriplanSidebarCollapsableMenu(props: TriplanSidebarCollapsableMenuProps
 			{!eventStore.isMobile && renderImportExportActions()}
 			{renderActions()}
 			{renderTasks()}
+			{renderPacking()}
 			{renderCalendarSidebarStatistics()}
 			<TriplanSidebarEqualDivider />
 			{renderRecommendations()}
